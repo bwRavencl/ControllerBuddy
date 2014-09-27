@@ -41,8 +41,9 @@ public class ServerThread extends Thread {
 	private Joystick joystick;
 
 	public ServerThread() {
-		final Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
-		joystick = new Joystick(this, controllers[4]);
+		final Controller[] controllers = ControllerEnvironment
+				.getDefaultEnvironment().getControllers();
+		joystick = new Joystick(this, controllers[5]);
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class ServerThread extends Thread {
 						if (messageParts.length == 3) {
 							long maxAxisValue = Long.parseLong(messageParts[1]);
 							int nButtons = Integer.parseInt(messageParts[2]);
-							
+
 							joystick.setMaxAxisValue(maxAxisValue);
 							joystick.setnButtons(nButtons);
 
@@ -117,14 +118,19 @@ public class ServerThread extends Thread {
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
 					joystick.poll();
-					
+
 					for (int v : joystick.getAxis())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER
 								+ String.valueOf(v));
-					
+
 					for (boolean v : joystick.getButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER
 								+ String.valueOf(v));
+
+					sw.append(PROTOCOL_MESSAGE_DELIMITER
+							+ String.valueOf(joystick.getPressedKeys().size()));
+					for (String s : joystick.getPressedKeys())
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 
 					final byte[] sendBuf = sw.toString().getBytes("ASCII");
 					final DatagramPacket sendPacket = new DatagramPacket(
@@ -170,11 +176,11 @@ public class ServerThread extends Thread {
 				serverSocket.close();
 		}
 	}
-	
+
 	public long getUpdateRate() {
 		return updateRate;
 	}
-	
+
 	public void setUpdateRate(long updateRate) {
 		this.updateRate = updateRate;
 	}

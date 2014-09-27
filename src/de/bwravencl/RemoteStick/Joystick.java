@@ -2,13 +2,17 @@ package de.bwravencl.RemoteStick;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.bwravencl.RemoteStick.action.AxisToAxisAction;
 import de.bwravencl.RemoteStick.action.AxisToButtonAction;
+import de.bwravencl.RemoteStick.action.AxisToKeyAction;
 import de.bwravencl.RemoteStick.action.AxisToRelativeAxisAction;
 import de.bwravencl.RemoteStick.action.ButtonToButtonAction;
+import de.bwravencl.RemoteStick.action.ButtonToKeyAction;
 import de.bwravencl.RemoteStick.action.ButtonToProfileAction;
 import de.bwravencl.RemoteStick.action.IAction;
 import net.java.games.input.Component;
@@ -43,6 +47,8 @@ public class Joystick {
 	private final Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
 	private final List<Map<String, List<IAction>>> profiles = new ArrayList<Map<String, List<IAction>>>();
 
+	private final Set<String> pressedKeys = new HashSet<String>();
+
 	public Joystick(ServerThread serverThread, Controller controller) {
 		this.serverThread = serverThread;
 		this.controller = controller;
@@ -60,6 +66,11 @@ public class Joystick {
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
 		xAxisAction0.setvAxisId(ID_Z_AXIS);
 		xAxisActions.add(xAxisAction0);
+		AxisToKeyAction xAxisAction1 = new AxisToKeyAction();
+		xAxisAction1.setKeyCode("VK_I");
+		xAxisAction1.setMinAxisValueKeyDown(0.9f);
+		xAxisAction1.setMaxAxisValueKeyDown(1.0f);
+		xAxisActions.add(xAxisAction1);
 		profile0.put("x", xAxisActions);
 
 		List<IAction> yAxisActions = new ArrayList<>();
@@ -74,7 +85,6 @@ public class Joystick {
 		yAxisAction1.setMinAxisValueButtonDown(1.0f);
 		yAxisActions.add(yAxisAction1);
 		profile0.put("y", yAxisActions);
-		
 
 		List<IAction> rxAxisActions = new ArrayList<>();
 		AxisToAxisAction rxAxisAction0 = new AxisToAxisAction();
@@ -93,6 +103,13 @@ public class Joystick {
 		xButtonAction0.setvButtonId(0);
 		xButtonActions.add(xButtonAction0);
 		profile0.put("14", xButtonActions);
+		
+		List<IAction> oButtonActions = new ArrayList<>();
+		ButtonToKeyAction oButtonAction0 = new ButtonToKeyAction();
+		oButtonAction0.setKeyCode("VK_A");
+		oButtonActions.add(oButtonAction0);
+		profile0.put("13", oButtonActions);
+		
 		profiles.add(profile0);
 	}
 
@@ -181,6 +198,10 @@ public class Joystick {
 
 	public void setActiveProfile(int activeProfile) {
 		this.activeProfile = activeProfile;
+	}
+
+	public Set<String> getPressedKeys() {
+		return pressedKeys;
 	}
 
 }
