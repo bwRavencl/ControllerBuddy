@@ -116,6 +116,8 @@ public class ServerThread extends Thread {
 						sw.append(PROTOCOL_MESSAGE_UPDATE);
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
+					joystick.poll();
+					
 					for (int v : joystick.getAxis())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER
 								+ String.valueOf(v));

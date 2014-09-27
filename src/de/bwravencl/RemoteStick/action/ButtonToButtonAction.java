@@ -2,17 +2,7 @@ package de.bwravencl.RemoteStick.action;
 
 import de.bwravencl.RemoteStick.Joystick;
 
-public class ButtonToButtonAction extends InvertableAction implements IAction {
-
-	private int vButtonId = Joystick.ID_BUTTON_NONE;
-
-	public int getvButtonId() {
-		return vButtonId;
-	}
-
-	public void setvButtonId(int vButtonId) {
-		this.vButtonId = vButtonId;
-	}
+public class ButtonToButtonAction extends ToButtonAction implements IAction {
 
 	@Override
 	public void doAction(Joystick joystick, float rValue) {

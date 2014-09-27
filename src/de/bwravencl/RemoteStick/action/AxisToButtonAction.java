@@ -2,25 +2,32 @@ package de.bwravencl.RemoteStick.action;
 
 import de.bwravencl.RemoteStick.Joystick;
 
-public class AxisToButtonAction extends InvertableAction implements IAction {
+public class AxisToButtonAction extends ToButtonAction implements IAction {
 
-	private int vButtonId = Joystick.ID_BUTTON_NONE;
 	private float minAxisValueButtonDown = 0.5f;
 	private float maxAxisValueButtonDown = 1.0f;
-
-	public int getvButtonId() {
-		return vButtonId;
+	
+	public float getMinAxisValueButtonDown() {
+		return minAxisValueButtonDown;
 	}
-
-	public void setvButtonId(int vButtonId) {
-		this.vButtonId = vButtonId;
+	
+	public void setMinAxisValueButtonDown(float minAxisValueButtonDown) {
+		this.minAxisValueButtonDown = minAxisValueButtonDown;
+	}
+	
+	public float getMaxAxisValueButtonDown() {
+		return maxAxisValueButtonDown;
+	}
+	
+	public void setMaxAxisValueButtonDown(float maxAxisValueButtonDown) {
+		this.maxAxisValueButtonDown = maxAxisValueButtonDown;
 	}
 
 	@Override
 	public void doAction(Joystick joystick, float rValue) {
 		boolean down = (rValue >= minAxisValueButtonDown && rValue <= maxAxisValueButtonDown);
 
-		joystick.setButtons(vButtonId, invert ? !down : invert);
+		joystick.setButtons(vButtonId, invert ? !down : down);
 	}
 
 }

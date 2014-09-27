@@ -1,9 +1,15 @@
 package de.bwravencl.RemoteStick;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.bwravencl.RemoteStick.action.AxisToAxisAction;
+import de.bwravencl.RemoteStick.action.AxisToButtonAction;
+import de.bwravencl.RemoteStick.action.AxisToRelativeAxisAction;
+import de.bwravencl.RemoteStick.action.ButtonToButtonAction;
+import de.bwravencl.RemoteStick.action.ButtonToProfileAction;
 import de.bwravencl.RemoteStick.action.IAction;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
@@ -22,6 +28,8 @@ public class Joystick {
 	public static final int ID_S1_AXIS = 7;
 	public static final int ID_BUTTON_NONE = -1;
 
+	public static final int N_PROFILES = 16;
+
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
 	private int nButtons = 0;
@@ -30,21 +38,81 @@ public class Joystick {
 	private boolean[] buttons = new boolean[nButtons];
 
 	private final Controller controller;
-	private final Map<Component, List<IAction>> componentToActionsMap = new HashMap<Component, List<IAction>>();
+	private int activeProfile = 0;
+
+	private final Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
+	private final List<Map<String, List<IAction>>> profiles = new ArrayList<Map<String, List<IAction>>>();
 
 	public Joystick(ServerThread serverThread, Controller controller) {
+		this.serverThread = serverThread;
 		this.controller = controller;
 
 		System.out.println("Controller: " + controller.getName());
+
+		controller.poll();
+		for (Component c : controller.getComponents()) {
+			System.out.println(c.getName() + " " + c.getPollData());
+		}
+
+		Map<String, List<IAction>> profile0 = new HashMap<String, List<IAction>>();
+
+		List<IAction> xAxisActions = new ArrayList<>();
+		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
+		xAxisAction0.setvAxisId(ID_Z_AXIS);
+		xAxisActions.add(xAxisAction0);
+		profile0.put("x", xAxisActions);
+
+		List<IAction> yAxisActions = new ArrayList<>();
+		AxisToRelativeAxisAction yAxisAction0 = new AxisToRelativeAxisAction();
+		yAxisAction0.setvAxisId(ID_S0_AXIS);
+		yAxisAction0.setInvert(true);
+		yAxisAction0.setSensitivity(2.0f);
+		yAxisActions.add(yAxisAction0);
+		AxisToButtonAction yAxisAction1 = new AxisToButtonAction();
+		yAxisAction1.setvButtonId(1);
+		yAxisAction1.setMinAxisValueButtonDown(0.75f);
+		yAxisAction1.setMinAxisValueButtonDown(1.0f);
+		yAxisActions.add(yAxisAction1);
+		profile0.put("y", yAxisActions);
+		
+
+		List<IAction> rxAxisActions = new ArrayList<>();
+		AxisToAxisAction rxAxisAction0 = new AxisToAxisAction();
+		rxAxisAction0.setvAxisId(ID_X_AXIS);
+		rxAxisActions.add(rxAxisAction0);
+		profile0.put("z", rxAxisActions);
+
+		List<IAction> ryAxisActions = new ArrayList<>();
+		AxisToAxisAction ryAxisAction0 = new AxisToAxisAction();
+		ryAxisAction0.setvAxisId(ID_Y_AXIS);
+		ryAxisActions.add(ryAxisAction0);
+		profile0.put("rz", ryAxisActions);
+
+		List<IAction> xButtonActions = new ArrayList<>();
+		ButtonToButtonAction xButtonAction0 = new ButtonToButtonAction();
+		xButtonAction0.setvButtonId(0);
+		xButtonActions.add(xButtonAction0);
+		profile0.put("14", xButtonActions);
+		profiles.add(profile0);
 	}
 
-	private void poll() {
+	public void poll() {
 		controller.poll();
 
 		for (Component c : controller.getComponents()) {
-			List<IAction> actions = componentToActionsMap.get(c);
-			for (IAction a : actions)
-				a.doAction(this, c.getPollData());
+			ButtonToProfileAction profileAction = componentToProfileActionMap
+					.get(c.getName());
+			if (profileAction != null)
+				profileAction.doAction(this, c.getPollData());
+
+			if (activeProfile < profiles.size()) {
+				Map<String, List<IAction>> componentToActionMap = profiles
+						.get(activeProfile);
+				List<IAction> actions = componentToActionMap.get(c.getName());
+				if (actions != null)
+					for (IAction a : actions)
+						a.doAction(this, c.getPollData());
+			}
 		}
 	}
 
@@ -74,7 +142,6 @@ public class Joystick {
 	}
 
 	public int[] getAxis() {
-		//poll();
 		return axis;
 	}
 
@@ -89,12 +156,11 @@ public class Joystick {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
-		setAxis(id, (int) Util.normalize(value, -1.0f, 1.0f, 0.0f,
-				(float) maxAxisValue));
+		setAxis(id,
+				(int) Util.normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
 	}
 
 	public boolean[] getButtons() {
-		//poll();
 		return buttons;
 	}
 
@@ -107,6 +173,14 @@ public class Joystick {
 			setButtons(id, false);
 		else
 			setButtons(id, true);
+	}
+
+	public int getActiveProfile() {
+		return activeProfile;
+	}
+
+	public void setActiveProfile(int activeProfile) {
+		this.activeProfile = activeProfile;
 	}
 
 }
