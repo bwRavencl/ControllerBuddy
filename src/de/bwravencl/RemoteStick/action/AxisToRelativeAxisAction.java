@@ -30,7 +30,6 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	@Override
 	public void doAction(Joystick joystick, float rValue) {
 		if (Math.abs(rValue) > deadZone) {
-
 			float d = rValue * sensitivity
 					* (float) joystick.getServerThread().getUpdateRate()
 					/ (float) 1000L;

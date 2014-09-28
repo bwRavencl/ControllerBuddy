@@ -43,7 +43,7 @@ public class ServerThread extends Thread {
 	public ServerThread() {
 		final Controller[] controllers = ControllerEnvironment
 				.getDefaultEnvironment().getControllers();
-		joystick = new Joystick(this, controllers[5]);
+		joystick = new Joystick(this, controllers[4]);
 	}
 
 	@Override
@@ -128,8 +128,18 @@ public class ServerThread extends Thread {
 								+ String.valueOf(v));
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ String.valueOf(joystick.getPressedKeys().size()));
-					for (String s : joystick.getPressedKeys())
+							+ String.valueOf(joystick.getCursorDeltaX())
+							+ PROTOCOL_MESSAGE_DELIMITER
+							+ String.valueOf(joystick.getCursorDeltaY()));
+
+					//System.out.println("X: " + String.valueOf(joystick.getCursorDeltaX() + "\nY: " + String.valueOf(joystick.getCursorDeltaY())));
+					
+					joystick.setCursorDeltaX(0);
+					joystick.setCursorDeltaY(0);
+
+					sw.append(PROTOCOL_MESSAGE_DELIMITER
+							+ String.valueOf(joystick.getDownKeys().size()));
+					for (String s : joystick.getDownKeys())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 
 					final byte[] sendBuf = sw.toString().getBytes("ASCII");

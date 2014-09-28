@@ -15,6 +15,7 @@ import de.bwravencl.RemoteStick.action.ButtonToButtonAction;
 import de.bwravencl.RemoteStick.action.ButtonToKeyAction;
 import de.bwravencl.RemoteStick.action.ButtonToProfileAction;
 import de.bwravencl.RemoteStick.action.IAction;
+import de.bwravencl.RemoteStick.action.CursorAction;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
@@ -45,9 +46,11 @@ public class Joystick {
 	private int activeProfile = 0;
 
 	private final Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
-	private final List<Map<String, List<IAction>>> profiles = new ArrayList<Map<String, List<IAction>>>();
+	private final List<Profile> profiles = new ArrayList<Profile>();
 
-	private final Set<String> pressedKeys = new HashSet<String>();
+	private int cursorDeltaX = 0;
+	private int cursorDeltaY = 0;
+	private final Set<String> downKeys = new HashSet<String>();
 
 	public Joystick(ServerThread serverThread, Controller controller) {
 		this.serverThread = serverThread;
@@ -60,20 +63,27 @@ public class Joystick {
 			System.out.println(c.getName() + " " + c.getPollData());
 		}
 
-		Map<String, List<IAction>> profile0 = new HashMap<String, List<IAction>>();
+		Profile profile0 = new Profile();
+		profile0.setDescription("Main profile");
+		Profile profile1 = new Profile();
+		profile1.setDescription("View mode");
+		Profile profile2 = new Profile();
+		profile2.setDescription("Mouse mode");
 
-		List<IAction> xAxisActions = new ArrayList<>();
+		HashSet<IAction> xAxisActionsP0 = new HashSet<>();
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
 		xAxisAction0.setvAxisId(ID_Z_AXIS);
-		xAxisActions.add(xAxisAction0);
+		xAxisActionsP0.add(xAxisAction0);
+		profile0.getComponentToActionMap().put("x", xAxisActionsP0);
+		HashSet<IAction> xAxisActionsP1 = new HashSet<>();
 		AxisToKeyAction xAxisAction1 = new AxisToKeyAction();
 		xAxisAction1.setKeyCode("VK_I");
 		xAxisAction1.setMinAxisValueKeyDown(0.9f);
 		xAxisAction1.setMaxAxisValueKeyDown(1.0f);
-		xAxisActions.add(xAxisAction1);
-		profile0.put("x", xAxisActions);
+		xAxisActionsP1.add(xAxisAction1);
+		profile1.getComponentToActionMap().put("x", xAxisActionsP1);
 
-		List<IAction> yAxisActions = new ArrayList<>();
+		HashSet<IAction> yAxisActions = new HashSet<>();
 		AxisToRelativeAxisAction yAxisAction0 = new AxisToRelativeAxisAction();
 		yAxisAction0.setvAxisId(ID_S0_AXIS);
 		yAxisAction0.setInvert(true);
@@ -84,33 +94,63 @@ public class Joystick {
 		yAxisAction1.setMinAxisValueButtonDown(0.75f);
 		yAxisAction1.setMinAxisValueButtonDown(1.0f);
 		yAxisActions.add(yAxisAction1);
-		profile0.put("y", yAxisActions);
+		profile0.getComponentToActionMap().put("y", yAxisActions);
 
-		List<IAction> rxAxisActions = new ArrayList<>();
-		AxisToAxisAction rxAxisAction0 = new AxisToAxisAction();
-		rxAxisAction0.setvAxisId(ID_X_AXIS);
-		rxAxisActions.add(rxAxisAction0);
-		profile0.put("z", rxAxisActions);
+		HashSet<IAction> rxAxisActionsP0 = new HashSet<>();
+		AxisToAxisAction rxAxisAction0P0 = new AxisToAxisAction();
+		rxAxisAction0P0.setvAxisId(ID_X_AXIS);
+		rxAxisActionsP0.add(rxAxisAction0P0);
+		profile0.getComponentToActionMap().put("z", rxAxisActionsP0);
+		HashSet<IAction> rxAxisActionsP2 = new HashSet<>();
+		CursorAction rxAxisAction0P2 = new CursorAction();
+		rxAxisAction0P2.setAxis(CursorAction.Axis.X);
+		rxAxisActionsP2.add(rxAxisAction0P2);
+		profile2.getComponentToActionMap().put("z", rxAxisActionsP2);
 
-		List<IAction> ryAxisActions = new ArrayList<>();
-		AxisToAxisAction ryAxisAction0 = new AxisToAxisAction();
-		ryAxisAction0.setvAxisId(ID_Y_AXIS);
-		ryAxisActions.add(ryAxisAction0);
-		profile0.put("rz", ryAxisActions);
+		HashSet<IAction> ryAxisActionsP0 = new HashSet<>();
+		AxisToAxisAction ryAxisAction0P0 = new AxisToAxisAction();
+		ryAxisAction0P0.setvAxisId(ID_Y_AXIS);
+		ryAxisActionsP0.add(ryAxisAction0P0);
+		profile0.getComponentToActionMap().put("rz", ryAxisActionsP0);
+		HashSet<IAction> ryAxisActionsP2 = new HashSet<>();
+		CursorAction ryAxisAction0P2 = new CursorAction();
+		ryAxisAction0P2.setAxis(CursorAction.Axis.Y);
+		ryAxisActionsP2.add(ryAxisAction0P2);
+		profile2.getComponentToActionMap().put("rz", ryAxisActionsP2);
 
-		List<IAction> xButtonActions = new ArrayList<>();
-		ButtonToButtonAction xButtonAction0 = new ButtonToButtonAction();
-		xButtonAction0.setvButtonId(0);
-		xButtonActions.add(xButtonAction0);
-		profile0.put("14", xButtonActions);
-		
-		List<IAction> oButtonActions = new ArrayList<>();
+		HashSet<IAction> xButtonActionsP0 = new HashSet<>();
+		ButtonToButtonAction xButtonAction0P0 = new ButtonToButtonAction();
+		xButtonAction0P0.setvButtonId(0);
+		xButtonActionsP0.add(xButtonAction0P0);
+		profile0.getComponentToActionMap().put("14", xButtonActionsP0);
+		HashSet<IAction> xButtonActionsP2 = new HashSet<>();
+		ButtonToKeyAction xButtonAction0P2 = new ButtonToKeyAction();
+		xButtonAction0P2.setKeyCode("LBUTTON");
+		xButtonActionsP2.add(xButtonAction0P2);
+		profile2.getComponentToActionMap().put("14", xButtonActionsP2);
+
+		HashSet<IAction> oButtonActions = new HashSet<>();
 		ButtonToKeyAction oButtonAction0 = new ButtonToKeyAction();
 		oButtonAction0.setKeyCode("VK_A");
 		oButtonActions.add(oButtonAction0);
-		profile0.put("13", oButtonActions);
-		
+		profile0.getComponentToActionMap().put("13", oButtonActions);
+
+		HashSet<IAction> r1ButtonActions = new HashSet<>();
+		ButtonToProfileAction r1ButtonAction0 = new ButtonToProfileAction();
+		r1ButtonAction0.setProfileId(1);
+		r1ButtonActions.add(r1ButtonAction0);
+		componentToProfileActionMap.put("11", r1ButtonAction0);
+
+		HashSet<IAction> l1ButtonActions = new HashSet<>();
+		ButtonToProfileAction l1ButtonAction0 = new ButtonToProfileAction();
+		l1ButtonAction0.setProfileId(2);
+		l1ButtonAction0.setToggle(true);
+		l1ButtonActions.add(l1ButtonAction0);
+		componentToProfileActionMap.put("10", l1ButtonAction0);
+
 		profiles.add(profile0);
+		profiles.add(profile1);
+		profiles.add(profile2);
 	}
 
 	public void poll() {
@@ -122,10 +162,14 @@ public class Joystick {
 			if (profileAction != null)
 				profileAction.doAction(this, c.getPollData());
 
-			if (activeProfile < profiles.size()) {
-				Map<String, List<IAction>> componentToActionMap = profiles
-						.get(activeProfile);
-				List<IAction> actions = componentToActionMap.get(c.getName());
+			if (profiles.size() > 0 && activeProfile < profiles.size()) {
+				Map<String, HashSet<IAction>> componentToActionMap = profiles
+						.get(activeProfile).getComponentToActionMap();
+				Set<IAction> actions = componentToActionMap.get(c.getName());
+				if (actions == null)
+					actions = profiles.get(0).getComponentToActionMap()
+							.get(c.getName());
+
 				if (actions != null)
 					for (IAction a : actions)
 						a.doAction(this, c.getPollData());
@@ -200,8 +244,24 @@ public class Joystick {
 		this.activeProfile = activeProfile;
 	}
 
-	public Set<String> getPressedKeys() {
-		return pressedKeys;
+	public Set<String> getDownKeys() {
+		return downKeys;
+	}
+
+	public int getCursorDeltaX() {
+		return cursorDeltaX;
+	}
+
+	public void setCursorDeltaY(int cursorDeltaY) {
+		this.cursorDeltaY = cursorDeltaY;
+	}
+
+	public int getCursorDeltaY() {
+		return cursorDeltaY;
+	}
+
+	public void setCursorDeltaX(int cursorDeltaX) {
+		this.cursorDeltaX = cursorDeltaX;
 	}
 
 }

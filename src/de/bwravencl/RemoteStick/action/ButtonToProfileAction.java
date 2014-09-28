@@ -4,7 +4,19 @@ import de.bwravencl.RemoteStick.Joystick;
 
 public class ButtonToProfileAction implements IAction {
 
-	protected int profileId = 0;
+	public static final long TOGGLE_TIME = 250L;
+
+	private boolean toggle = false;
+	private long lastToggle = 0L;
+	private int profileId = 0;
+
+	public boolean isToggle() {
+		return toggle;
+	}
+
+	public void setToggle(boolean toggle) {
+		this.toggle = toggle;
+	}
 
 	public int getProfileId() {
 		return profileId;
@@ -16,10 +28,17 @@ public class ButtonToProfileAction implements IAction {
 
 	@Override
 	public void doAction(Joystick joystick, float rValue) {
-		if (rValue > 0.5f && joystick.getActiveProfile() == 0)
+		if ((!toggle || (toggle && System.currentTimeMillis() - lastToggle > TOGGLE_TIME))
+				&& rValue > 0.5f && joystick.getActiveProfile() == 0) {
 			joystick.setActiveProfile(profileId);
-		else if (rValue < 0.5f && joystick.getActiveProfile() == profileId)
+			lastToggle = System.currentTimeMillis();
+		} else if (((rValue < 0.5f && !toggle) || (rValue > 0.5f && toggle && System
+				.currentTimeMillis() - lastToggle > TOGGLE_TIME))
+				&& joystick.getActiveProfile() == profileId) {
 			joystick.setActiveProfile(0);
+			joystick.getDownKeys().clear();
+			lastToggle = System.currentTimeMillis();
+		}
 	}
 
 }
