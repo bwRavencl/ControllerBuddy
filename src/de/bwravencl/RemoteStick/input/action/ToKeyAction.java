@@ -1,11 +1,12 @@
-package de.bwravencl.RemoteStick.action;
+package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.KeyStroke;
+import de.bwravencl.RemoteStick.input.KeyStroke;
 
 public abstract class ToKeyAction extends InvertableAction {
 
 	protected boolean downUp = false;
 	protected boolean wasUp = true;
+	
 	protected KeyStroke keystroke;
 
 	public boolean isDownUp() {

@@ -1,14 +1,14 @@
-package de.bwravencl.RemoteStick;
+package de.bwravencl.RemoteStick.input;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import de.bwravencl.RemoteStick.action.IAction;
+import de.bwravencl.RemoteStick.input.action.IAction;
 
 public class Profile {
 
-	private String description = "";
+	private String description = new String();
 	private Map<String, HashSet<IAction>> componentToActionMap = new HashMap<String, HashSet<IAction>>();
 
 	public String getDescription() {

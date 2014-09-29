@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.KeyStroke;
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
 
@@ -38,12 +40,12 @@ public class ServerThread extends Thread {
 	private long updateRate = DEFAULT_UPDATE_RATE;
 	private InetAddress clientIPAddress = null;
 	private ServerState serverState = ServerState.Listening;
-	private Joystick joystick;
+	private Input joystick;
 
 	public ServerThread() {
 		final Controller[] controllers = ControllerEnvironment
 				.getDefaultEnvironment().getControllers();
-		joystick = new Joystick(this, controllers[4]);
+		joystick = new Input(this, controllers[4]);
 	}
 
 	@Override
@@ -132,6 +134,11 @@ public class ServerThread extends Thread {
 
 					joystick.setCursorDeltaX(0);
 					joystick.setCursorDeltaY(0);
+					
+					sw.append(PROTOCOL_MESSAGE_DELIMITER
+							+ joystick.getScrollClicks());
+					
+					joystick.setScrollClicks(0);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
 							+ joystick.getDownKeyCodes().size());

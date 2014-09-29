@@ -1,7 +1,7 @@
-package de.bwravencl.RemoteStick.action;
+package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.Joystick;
 import de.bwravencl.RemoteStick.Util;
+import de.bwravencl.RemoteStick.input.Input;
 
 public class CursorAction extends InvertableAction implements IAction {
 
@@ -42,12 +42,12 @@ public class CursorAction extends InvertableAction implements IAction {
 	}
 
 	@Override
-	public void doAction(Joystick joystick, float rValue) {
-		if (Math.abs(rValue) > deadZone) {
+	public void doAction(Input joystick, float value) {
+		if (Math.abs(value) > deadZone) {
 			final float rateMultiplier = (float) joystick.getServerThread()
 					.getUpdateRate() / (float) 1000L;
 
-			final float d = Util.normalize(rValue * rateMultiplier, -1.0f
+			final float d = Util.normalize(value * rateMultiplier, -1.0f
 					* rateMultiplier, 1.0f * rateMultiplier, -maxSpeed,
 					maxSpeed);
 
@@ -59,4 +59,5 @@ public class CursorAction extends InvertableAction implements IAction {
 						: d)));
 		}
 	}
+	
 }

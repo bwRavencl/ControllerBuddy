@@ -1,12 +1,12 @@
-package de.bwravencl.RemoteStick.action;
+package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.Joystick;
+import de.bwravencl.RemoteStick.input.Input;
 
 public class ButtonToKeyAction extends ToKeyAction implements IAction {
 
 	@Override
-	public void doAction(Joystick joystick, float rValue) {
-		if ((rValue < 0.5f) && !invert) {
+	public void doAction(Input joystick, float value) {
+		if ((value < 0.5f) && !invert) {
 			if (downUp)
 				wasUp = true;
 			else {

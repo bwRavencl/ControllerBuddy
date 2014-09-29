@@ -1,7 +1,7 @@
-package de.bwravencl.RemoteStick.action;
+package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.Joystick;
 import de.bwravencl.RemoteStick.Util;
+import de.bwravencl.RemoteStick.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
@@ -28,16 +28,16 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	}
 
 	@Override
-	public void doAction(Joystick joystick, float rValue) {
-		if (Math.abs(rValue) > deadZone) {
-			float d = rValue * sensitivity
+	public void doAction(Input joystick, float value) {
+		if (Math.abs(value) > deadZone) {
+			final float d = value * sensitivity
 					* (float) joystick.getServerThread().getUpdateRate()
 					/ (float) 1000L;
 
-			float oldValue = Util.normalize(joystick.getAxis()[vAxisId], 0.0f,
+			final float oldValue = Util.normalize(joystick.getAxis()[axisId], 0.0f,
 					joystick.getMaxAxisValue(), -1.0f, 1.0f);
 
-			joystick.setAxis(vAxisId, oldValue + (invert ? -d : d));
+			joystick.setAxis(axisId, oldValue + (invert ? -d : d));
 		}
 	}
 

@@ -1,4 +1,4 @@
-package de.bwravencl.RemoteStick.action;
+package de.bwravencl.RemoteStick.input.action;
 
 public abstract class InvertableAction {
 

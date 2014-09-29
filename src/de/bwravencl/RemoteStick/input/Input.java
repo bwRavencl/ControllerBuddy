@@ -1,4 +1,4 @@
-package de.bwravencl.RemoteStick;
+package de.bwravencl.RemoteStick.input;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,19 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.bwravencl.RemoteStick.action.AxisToAxisAction;
-import de.bwravencl.RemoteStick.action.AxisToButtonAction;
-import de.bwravencl.RemoteStick.action.AxisToKeyAction;
-import de.bwravencl.RemoteStick.action.AxisToRelativeAxisAction;
-import de.bwravencl.RemoteStick.action.ButtonToButtonAction;
-import de.bwravencl.RemoteStick.action.ButtonToKeyAction;
-import de.bwravencl.RemoteStick.action.ButtonToProfileAction;
-import de.bwravencl.RemoteStick.action.IAction;
-import de.bwravencl.RemoteStick.action.CursorAction;
+import de.bwravencl.RemoteStick.ServerThread;
+import de.bwravencl.RemoteStick.Util;
+import de.bwravencl.RemoteStick.input.action.AxisToAxisAction;
+import de.bwravencl.RemoteStick.input.action.AxisToButtonAction;
+import de.bwravencl.RemoteStick.input.action.AxisToKeyAction;
+import de.bwravencl.RemoteStick.input.action.AxisToRelativeAxisAction;
+import de.bwravencl.RemoteStick.input.action.AxisToScrollAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToButtonAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToKeyAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToProfileAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToScrollAction;
+import de.bwravencl.RemoteStick.input.action.CursorAction;
+import de.bwravencl.RemoteStick.input.action.IAction;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
-public class Joystick {
+public class Input {
 
 	public static final int N_AXIS = 8;
 	public static final int ID_AXIS_NONE = -1;
@@ -52,8 +56,9 @@ public class Joystick {
 	private int cursorDeltaY = 0;
 	private final Set<String> downKeysCodes = new HashSet<String>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+	private int scrollClicks = 0;
 
-	public Joystick(ServerThread serverThread, Controller controller) {
+	public Input(ServerThread serverThread, Controller controller) {
 		this.serverThread = serverThread;
 		this.controller = controller;
 
@@ -73,7 +78,7 @@ public class Joystick {
 
 		HashSet<IAction> xAxisActionsP0 = new HashSet<>();
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
-		xAxisAction0.setvAxisId(ID_Z_AXIS);
+		xAxisAction0.setAxisId(ID_Z_AXIS);
 		xAxisActionsP0.add(xAxisAction0);
 		profile0.getComponentToActionMap().put("x", xAxisActionsP0);
 		HashSet<IAction> xAxisActionsP1 = new HashSet<>();
@@ -81,28 +86,33 @@ public class Joystick {
 		KeyStroke xAxisAction1Keystroke = new KeyStroke();
 		xAxisAction1Keystroke.setKeyCodes(new String[] { "VK_I" });
 		xAxisAction1.setKeystroke(xAxisAction1Keystroke);
-		xAxisAction1.setMinAxisValueKeyDown(0.9f);
-		xAxisAction1.setMaxAxisValueKeyDown(1.0f);
+		xAxisAction1.setMinAxisValue(0.9f);
+		xAxisAction1.setMaxAxisValue(1.0f);
 		xAxisAction1.setDownUp(false);
 		xAxisActionsP1.add(xAxisAction1);
 		profile1.getComponentToActionMap().put("x", xAxisActionsP1);
 
-		HashSet<IAction> yAxisActions = new HashSet<>();
-		AxisToRelativeAxisAction yAxisAction0 = new AxisToRelativeAxisAction();
-		yAxisAction0.setvAxisId(ID_S0_AXIS);
-		yAxisAction0.setInvert(false);
-		yAxisAction0.setSensitivity(2.0f);
-		yAxisActions.add(yAxisAction0);
-		AxisToButtonAction yAxisAction1 = new AxisToButtonAction();
-		yAxisAction1.setvButtonId(1);
-		yAxisAction1.setMinAxisValueButtonDown(0.75f);
-		yAxisAction1.setMinAxisValueButtonDown(1.0f);
-		yAxisActions.add(yAxisAction1);
-		profile0.getComponentToActionMap().put("y", yAxisActions);
+		HashSet<IAction> yAxisActionsP0 = new HashSet<>();
+		AxisToRelativeAxisAction yAxisAction0P0 = new AxisToRelativeAxisAction();
+		yAxisAction0P0.setAxisId(ID_S0_AXIS);
+		yAxisAction0P0.setInvert(false);
+		yAxisAction0P0.setSensitivity(2.0f);
+		yAxisActionsP0.add(yAxisAction0P0);
+		AxisToButtonAction yAxisAction1P0 = new AxisToButtonAction();
+		yAxisAction1P0.setButtonId(1);
+		yAxisAction1P0.setMinAxisValue(0.75f);
+		yAxisAction1P0.setMinAxisValue(1.0f);
+		yAxisActionsP0.add(yAxisAction1P0);
+		profile0.getComponentToActionMap().put("y", yAxisActionsP0);
+		HashSet<IAction> yAxisActionsP2 = new HashSet<>();
+		AxisToScrollAction yAxisAction0P2 = new AxisToScrollAction();
+		yAxisAction0P2.setClicks(10);
+		yAxisActionsP2.add(yAxisAction0P2);
+		profile2.getComponentToActionMap().put("y", yAxisActionsP2);
 
 		HashSet<IAction> rxAxisActionsP0 = new HashSet<>();
 		AxisToAxisAction rxAxisAction0P0 = new AxisToAxisAction();
-		rxAxisAction0P0.setvAxisId(ID_X_AXIS);
+		rxAxisAction0P0.setAxisId(ID_X_AXIS);
 		rxAxisActionsP0.add(rxAxisAction0P0);
 		profile0.getComponentToActionMap().put("z", rxAxisActionsP0);
 		HashSet<IAction> rxAxisActionsP2 = new HashSet<>();
@@ -113,7 +123,7 @@ public class Joystick {
 
 		HashSet<IAction> ryAxisActionsP0 = new HashSet<>();
 		AxisToAxisAction ryAxisAction0P0 = new AxisToAxisAction();
-		ryAxisAction0P0.setvAxisId(ID_Y_AXIS);
+		ryAxisAction0P0.setAxisId(ID_Y_AXIS);
 		ryAxisActionsP0.add(ryAxisAction0P0);
 		profile0.getComponentToActionMap().put("rz", ryAxisActionsP0);
 		HashSet<IAction> ryAxisActionsP2 = new HashSet<>();
@@ -124,7 +134,7 @@ public class Joystick {
 
 		HashSet<IAction> xButtonActionsP0 = new HashSet<>();
 		ButtonToButtonAction xButtonAction0P0 = new ButtonToButtonAction();
-		xButtonAction0P0.setvButtonId(0);
+		xButtonAction0P0.setButtonId(0);
 		xButtonActionsP0.add(xButtonAction0P0);
 		profile0.getComponentToActionMap().put("14", xButtonActionsP0);
 		HashSet<IAction> xButtonActionsP2 = new HashSet<>();
@@ -144,6 +154,19 @@ public class Joystick {
 		oButtonAction0.setDownUp(true);
 		oButtonActions.add(oButtonAction0);
 		profile0.getComponentToActionMap().put("13", oButtonActions);
+
+		HashSet<IAction> triangleButtonActionsP2 = new HashSet<>();
+		ButtonToScrollAction triangleButtonAction = new ButtonToScrollAction();
+		triangleButtonAction.setClicks(1);
+		triangleButtonAction.setInvert(true);
+		triangleButtonActionsP2.add(triangleButtonAction);
+		profile2.getComponentToActionMap().put("12", triangleButtonActionsP2);
+		
+		HashSet<IAction> squareButtonActionsP2 = new HashSet<>();
+		ButtonToScrollAction squareButtonAction = new ButtonToScrollAction();
+		squareButtonAction.setClicks(1);
+		squareButtonActionsP2.add(squareButtonAction);
+		profile2.getComponentToActionMap().put("15", squareButtonActionsP2);
 
 		HashSet<IAction> r1ButtonActions = new HashSet<>();
 		ButtonToProfileAction r1ButtonAction0 = new ButtonToProfileAction();
@@ -278,6 +301,14 @@ public class Joystick {
 
 	public void setCursorDeltaX(int cursorDeltaX) {
 		this.cursorDeltaX = cursorDeltaX;
+	}
+	
+	public int getScrollClicks() {
+		return scrollClicks;
+	}
+	
+	public void setScrollClicks(int scrollClicks) {
+		this.scrollClicks = scrollClicks;
 	}
 
 }
