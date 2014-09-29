@@ -26,9 +26,27 @@ public class AxisToKeyAction extends ToKeyAction implements IAction {
 	@Override
 	public void doAction(Joystick joystick, float rValue) {
 		if ((rValue >= minAxisValueKeyDown && rValue <= maxAxisValueKeyDown)
-				&& !invert)
-			joystick.getDownKeys().add(keyCode);
-		else
-			joystick.getDownKeys().remove(keyCode);
+				&& !invert) {
+			if (downUp) {
+				if (wasUp) {
+					joystick.getDownUpKeyStrokes().add(keystroke);
+					wasUp = false;
+				}
+			} else {
+				for (String s : keystroke.getModifierCodes())
+					joystick.getDownKeyCodes().add(s);
+				for (String s : keystroke.getKeyCodes())
+					joystick.getDownKeyCodes().add(s);
+			}
+		} else {
+			if (downUp)
+				wasUp = true;
+			else {
+				for (String s : keystroke.getModifierCodes())
+					joystick.getDownKeyCodes().remove(s);
+				for (String s : keystroke.getKeyCodes())
+					joystick.getDownKeyCodes().remove(s);
+			}
+		}
 	}
 }

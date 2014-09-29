@@ -120,27 +120,40 @@ public class ServerThread extends Thread {
 					joystick.poll();
 
 					for (int v : joystick.getAxis())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER
-								+ String.valueOf(v));
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 					for (boolean v : joystick.getButtons())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER
-								+ String.valueOf(v));
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ String.valueOf(joystick.getCursorDeltaX())
+							+ joystick.getCursorDeltaX()
 							+ PROTOCOL_MESSAGE_DELIMITER
-							+ String.valueOf(joystick.getCursorDeltaY()));
+							+ joystick.getCursorDeltaY());
 
-					//System.out.println("X: " + String.valueOf(joystick.getCursorDeltaX() + "\nY: " + String.valueOf(joystick.getCursorDeltaY())));
-					
 					joystick.setCursorDeltaX(0);
 					joystick.setCursorDeltaY(0);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ String.valueOf(joystick.getDownKeys().size()));
-					for (String s : joystick.getDownKeys())
+							+ joystick.getDownKeyCodes().size());
+					for (String s : joystick.getDownKeyCodes())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+
+					sw.append(PROTOCOL_MESSAGE_DELIMITER
+							+ joystick.getDownUpKeyStrokes().size());
+					
+					for (KeyStroke k : joystick.getDownUpKeyStrokes()) {
+						sw.append(PROTOCOL_MESSAGE_DELIMITER
+								+ k.getModifierCodes().length);
+						for (String s : k.getModifierCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER
+								+ k.getKeyCodes().length);
+						for (String s : k.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+					}
+
+					joystick.getDownUpKeyStrokes().clear();
 
 					final byte[] sendBuf = sw.toString().getBytes("ASCII");
 					final DatagramPacket sendPacket = new DatagramPacket(

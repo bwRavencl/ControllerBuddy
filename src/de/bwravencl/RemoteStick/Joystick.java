@@ -50,7 +50,8 @@ public class Joystick {
 
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
-	private final Set<String> downKeys = new HashSet<String>();
+	private final Set<String> downKeysCodes = new HashSet<String>();
+	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public Joystick(ServerThread serverThread, Controller controller) {
 		this.serverThread = serverThread;
@@ -77,16 +78,19 @@ public class Joystick {
 		profile0.getComponentToActionMap().put("x", xAxisActionsP0);
 		HashSet<IAction> xAxisActionsP1 = new HashSet<>();
 		AxisToKeyAction xAxisAction1 = new AxisToKeyAction();
-		xAxisAction1.setKeyCode("VK_I");
+		KeyStroke xAxisAction1Keystroke = new KeyStroke();
+		xAxisAction1Keystroke.setKeyCodes(new String[] { "VK_I" });
+		xAxisAction1.setKeystroke(xAxisAction1Keystroke);
 		xAxisAction1.setMinAxisValueKeyDown(0.9f);
 		xAxisAction1.setMaxAxisValueKeyDown(1.0f);
+		xAxisAction1.setDownUp(false);
 		xAxisActionsP1.add(xAxisAction1);
 		profile1.getComponentToActionMap().put("x", xAxisActionsP1);
 
 		HashSet<IAction> yAxisActions = new HashSet<>();
 		AxisToRelativeAxisAction yAxisAction0 = new AxisToRelativeAxisAction();
 		yAxisAction0.setvAxisId(ID_S0_AXIS);
-		yAxisAction0.setInvert(true);
+		yAxisAction0.setInvert(false);
 		yAxisAction0.setSensitivity(2.0f);
 		yAxisActions.add(yAxisAction0);
 		AxisToButtonAction yAxisAction1 = new AxisToButtonAction();
@@ -125,13 +129,19 @@ public class Joystick {
 		profile0.getComponentToActionMap().put("14", xButtonActionsP0);
 		HashSet<IAction> xButtonActionsP2 = new HashSet<>();
 		ButtonToKeyAction xButtonAction0P2 = new ButtonToKeyAction();
-		xButtonAction0P2.setKeyCode("LBUTTON");
+		KeyStroke xButtonAction0P2Keystroke = new KeyStroke();
+		xButtonAction0P2Keystroke.setKeyCodes(new String[] { "LBUTTON" });
+		xButtonAction0P2.setKeystroke(xButtonAction0P2Keystroke);
 		xButtonActionsP2.add(xButtonAction0P2);
 		profile2.getComponentToActionMap().put("14", xButtonActionsP2);
 
 		HashSet<IAction> oButtonActions = new HashSet<>();
 		ButtonToKeyAction oButtonAction0 = new ButtonToKeyAction();
-		oButtonAction0.setKeyCode("VK_A");
+		KeyStroke oButtonAction0Keystroke = new KeyStroke();
+		oButtonAction0Keystroke.setModifierCodes(new String[] { "SHIFT" });
+		oButtonAction0Keystroke.setKeyCodes(new String[] { "VK_A" });
+		oButtonAction0.setKeystroke(oButtonAction0Keystroke);
+		oButtonAction0.setDownUp(true);
 		oButtonActions.add(oButtonAction0);
 		profile0.getComponentToActionMap().put("13", oButtonActions);
 
@@ -175,6 +185,8 @@ public class Joystick {
 						a.doAction(this, c.getPollData());
 			}
 		}
+
+		System.out.println("Profile " + String.valueOf(activeProfile));
 	}
 
 	public ServerThread getServerThread() {
@@ -244,8 +256,12 @@ public class Joystick {
 		this.activeProfile = activeProfile;
 	}
 
-	public Set<String> getDownKeys() {
-		return downKeys;
+	public Set<String> getDownKeyCodes() {
+		return downKeysCodes;
+	}
+
+	public Set<KeyStroke> getDownUpKeyStrokes() {
+		return downUpKeyStrokes;
 	}
 
 	public int getCursorDeltaX() {
