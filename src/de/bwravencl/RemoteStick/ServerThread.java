@@ -33,7 +33,6 @@ public class ServerThread extends Thread {
 		Listening, Connected
 	}
 
-	private boolean run = true;
 	private int port = DEFAULT_PORT;
 	private int requestAliveInterval = DEFAULT_REQUEST_ALIVE_INTERVAL;
 	private int aliveTimeout = DEFAULT_ALIVE_TIMEOUT;
@@ -41,6 +40,7 @@ public class ServerThread extends Thread {
 	private InetAddress clientIPAddress = null;
 	private ServerState serverState = ServerState.Listening;
 	private Input joystick;
+	private DatagramSocket serverSocket = null;
 
 	public ServerThread() {
 		final Controller[] controllers = ControllerEnvironment
@@ -52,7 +52,6 @@ public class ServerThread extends Thread {
 	public void run() {
 		super.run();
 
-		DatagramSocket serverSocket = null;
 		DatagramPacket receivePacket = null;
 		String message = null;
 		long counter = 0;
@@ -61,7 +60,7 @@ public class ServerThread extends Thread {
 			serverSocket = new DatagramSocket(port);
 			final byte[] receiveBuf = new byte[1024];
 
-			while (run) {
+			while (true) {
 
 				switch (serverState) {
 				case Listening:
@@ -134,10 +133,10 @@ public class ServerThread extends Thread {
 
 					joystick.setCursorDeltaX(0);
 					joystick.setCursorDeltaY(0);
-					
+
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
 							+ joystick.getScrollClicks());
-					
+
 					joystick.setScrollClicks(0);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
@@ -147,7 +146,7 @@ public class ServerThread extends Thread {
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
 							+ joystick.getDownUpKeyStrokes().size());
-					
+
 					for (KeyStroke k : joystick.getDownUpKeyStrokes()) {
 						sw.append(PROTOCOL_MESSAGE_DELIMITER
 								+ k.getModifierCodes().length);
@@ -207,12 +206,25 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	public void stopServer() {
+		if (serverSocket != null)
+			serverSocket.close();
+	}
+
 	public long getUpdateRate() {
 		return updateRate;
 	}
 
 	public void setUpdateRate(long updateRate) {
 		this.updateRate = updateRate;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 
 }
