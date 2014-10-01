@@ -1,6 +1,5 @@
 package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.Util;
 import de.bwravencl.RemoteStick.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
@@ -34,7 +33,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 					* (float) joystick.getServerThread().getUpdateRate()
 					/ (float) 1000L;
 
-			final float oldValue = Util.normalize(joystick.getAxis()[axisId], 0.0f,
+			final float oldValue = Input.normalize(joystick.getAxis()[axisId], 0.0f,
 					joystick.getMaxAxisValue(), -1.0f, 1.0f);
 
 			joystick.setAxis(axisId, oldValue + (invert ? -d : d));

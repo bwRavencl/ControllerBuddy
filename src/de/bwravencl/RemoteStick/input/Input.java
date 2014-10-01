@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import de.bwravencl.RemoteStick.ServerThread;
-import de.bwravencl.RemoteStick.Util;
 import de.bwravencl.RemoteStick.input.action.AxisToAxisAction;
 import de.bwravencl.RemoteStick.input.action.AxisToButtonAction;
 import de.bwravencl.RemoteStick.input.action.AxisToKeyAction;
@@ -37,8 +37,6 @@ public class Input {
 	public static final int ID_S1_AXIS = 7;
 	public static final int ID_BUTTON_NONE = -1;
 
-	public static final int N_PROFILES = 16;
-
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
 	private int nButtons = 0;
@@ -47,7 +45,7 @@ public class Input {
 	private boolean[] buttons = new boolean[nButtons];
 
 	private final Controller controller;
-	private int activeProfile = 0;
+	private int activeProfileIndex = 0;
 
 	private final Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
 	private final List<Profile> profiles = new ArrayList<Profile>();
@@ -58,8 +56,7 @@ public class Input {
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 	private int scrollClicks = 0;
 
-	public Input(ServerThread serverThread, Controller controller) {
-		this.serverThread = serverThread;
+	public Input(Controller controller) {
 		this.controller = controller;
 
 		System.out.println("Controller: " + controller.getName());
@@ -69,18 +66,21 @@ public class Input {
 			System.out.println(c.getName() + " " + c.getPollData());
 		}
 
-		Profile profile0 = new Profile();
-		profile0.setDescription("Main profile");
-		Profile profile1 = new Profile();
+		final Profile defaultProfile = new Profile(
+				Profile.DEFAULT_PROFILE_UUID_STRING);
+		defaultProfile.setDescription(Profile.DEFAULT_PROFILE_DESCRIPTION);
+		profiles.add(defaultProfile);
+
+		Profile profile1 = new Profile("54947df8-0e9e-4471-a2f9-9af509fb5889");
 		profile1.setDescription("View mode");
-		Profile profile2 = new Profile();
+		Profile profile2 = new Profile("046b6c7f-0b8a-43b9-b35d-6489e6daee91");
 		profile2.setDescription("Mouse mode");
 
 		HashSet<IAction> xAxisActionsP0 = new HashSet<>();
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
 		xAxisAction0.setAxisId(ID_Z_AXIS);
 		xAxisActionsP0.add(xAxisAction0);
-		profile0.getComponentToActionMap().put("x", xAxisActionsP0);
+		defaultProfile.getComponentToActionMap().put("x", xAxisActionsP0);
 		HashSet<IAction> xAxisActionsP1 = new HashSet<>();
 		AxisToKeyAction xAxisAction1 = new AxisToKeyAction();
 		KeyStroke xAxisAction1Keystroke = new KeyStroke();
@@ -103,7 +103,7 @@ public class Input {
 		yAxisAction1P0.setMinAxisValue(0.75f);
 		yAxisAction1P0.setMinAxisValue(1.0f);
 		yAxisActionsP0.add(yAxisAction1P0);
-		profile0.getComponentToActionMap().put("y", yAxisActionsP0);
+		defaultProfile.getComponentToActionMap().put("y", yAxisActionsP0);
 		HashSet<IAction> yAxisActionsP2 = new HashSet<>();
 		AxisToScrollAction yAxisAction0P2 = new AxisToScrollAction();
 		yAxisAction0P2.setClicks(10);
@@ -114,7 +114,7 @@ public class Input {
 		AxisToAxisAction rxAxisAction0P0 = new AxisToAxisAction();
 		rxAxisAction0P0.setAxisId(ID_X_AXIS);
 		rxAxisActionsP0.add(rxAxisAction0P0);
-		profile0.getComponentToActionMap().put("z", rxAxisActionsP0);
+		defaultProfile.getComponentToActionMap().put("z", rxAxisActionsP0);
 		HashSet<IAction> rxAxisActionsP2 = new HashSet<>();
 		CursorAction rxAxisAction0P2 = new CursorAction();
 		rxAxisAction0P2.setAxis(CursorAction.Axis.X);
@@ -125,7 +125,7 @@ public class Input {
 		AxisToAxisAction ryAxisAction0P0 = new AxisToAxisAction();
 		ryAxisAction0P0.setAxisId(ID_Y_AXIS);
 		ryAxisActionsP0.add(ryAxisAction0P0);
-		profile0.getComponentToActionMap().put("rz", ryAxisActionsP0);
+		defaultProfile.getComponentToActionMap().put("rz", ryAxisActionsP0);
 		HashSet<IAction> ryAxisActionsP2 = new HashSet<>();
 		CursorAction ryAxisAction0P2 = new CursorAction();
 		ryAxisAction0P2.setAxis(CursorAction.Axis.Y);
@@ -136,7 +136,7 @@ public class Input {
 		ButtonToButtonAction xButtonAction0P0 = new ButtonToButtonAction();
 		xButtonAction0P0.setButtonId(0);
 		xButtonActionsP0.add(xButtonAction0P0);
-		profile0.getComponentToActionMap().put("14", xButtonActionsP0);
+		defaultProfile.getComponentToActionMap().put("14", xButtonActionsP0);
 		HashSet<IAction> xButtonActionsP2 = new HashSet<>();
 		ButtonToKeyAction xButtonAction0P2 = new ButtonToKeyAction();
 		KeyStroke xButtonAction0P2Keystroke = new KeyStroke();
@@ -153,7 +153,7 @@ public class Input {
 		oButtonAction0.setKeystroke(oButtonAction0Keystroke);
 		oButtonAction0.setDownUp(true);
 		oButtonActions.add(oButtonAction0);
-		profile0.getComponentToActionMap().put("13", oButtonActions);
+		defaultProfile.getComponentToActionMap().put("13", oButtonActions);
 
 		HashSet<IAction> triangleButtonActionsP2 = new HashSet<>();
 		ButtonToScrollAction triangleButtonAction = new ButtonToScrollAction();
@@ -161,7 +161,7 @@ public class Input {
 		triangleButtonAction.setInvert(true);
 		triangleButtonActionsP2.add(triangleButtonAction);
 		profile2.getComponentToActionMap().put("12", triangleButtonActionsP2);
-		
+
 		HashSet<IAction> squareButtonActionsP2 = new HashSet<>();
 		ButtonToScrollAction squareButtonAction = new ButtonToScrollAction();
 		squareButtonAction.setClicks(1);
@@ -170,18 +170,17 @@ public class Input {
 
 		HashSet<IAction> r1ButtonActions = new HashSet<>();
 		ButtonToProfileAction r1ButtonAction0 = new ButtonToProfileAction();
-		r1ButtonAction0.setProfileId(1);
+		r1ButtonAction0.setProfileUuid(profile1.getUuid());
 		r1ButtonActions.add(r1ButtonAction0);
 		componentToProfileActionMap.put("11", r1ButtonAction0);
 
 		HashSet<IAction> l1ButtonActions = new HashSet<>();
 		ButtonToProfileAction l1ButtonAction0 = new ButtonToProfileAction();
-		l1ButtonAction0.setProfileId(2);
+		l1ButtonAction0.setProfileUuid(profile2.getUuid());
 		l1ButtonAction0.setToggle(true);
 		l1ButtonActions.add(l1ButtonAction0);
 		componentToProfileActionMap.put("10", l1ButtonAction0);
 
-		profiles.add(profile0);
 		profiles.add(profile1);
 		profiles.add(profile2);
 	}
@@ -195,9 +194,9 @@ public class Input {
 			if (profileAction != null)
 				profileAction.doAction(this, c.getPollData());
 
-			if (profiles.size() > 0 && activeProfile < profiles.size()) {
+			if (profiles.size() > 0 && activeProfileIndex < profiles.size()) {
 				Map<String, HashSet<IAction>> componentToActionMap = profiles
-						.get(activeProfile).getComponentToActionMap();
+						.get(activeProfileIndex).getComponentToActionMap();
 				Set<IAction> actions = componentToActionMap.get(c.getName());
 				if (actions == null)
 					actions = profiles.get(0).getComponentToActionMap()
@@ -209,7 +208,15 @@ public class Input {
 			}
 		}
 
-		System.out.println("Profile " + String.valueOf(activeProfile));
+		System.out.println("Profile " + String.valueOf(activeProfileIndex));
+	}
+
+	public Controller getController() {
+		return controller;
+	}
+
+	public List<Profile> getProfiles() {
+		return profiles;
 	}
 
 	public ServerThread getServerThread() {
@@ -252,8 +259,7 @@ public class Input {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
-		setAxis(id,
-				(int) Util.normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
+		setAxis(id, (int) normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
 	}
 
 	public boolean[] getButtons() {
@@ -271,12 +277,22 @@ public class Input {
 			setButtons(id, true);
 	}
 
-	public int getActiveProfile() {
-		return activeProfile;
+	public Profile getActiveProfile() {
+		return profiles.get(activeProfileIndex);
 	}
 
-	public void setActiveProfile(int activeProfile) {
-		this.activeProfile = activeProfile;
+	public void setActiveProfile(int activeProfileIndex) {
+		if (profiles.size() > activeProfileIndex)
+			this.activeProfileIndex = activeProfileIndex;
+	}
+
+	public void setActiveProfile(UUID profileUuid) {
+		for (Profile p : profiles) {
+			if (p.getUuid().equals(profileUuid)) {
+				setActiveProfile(profiles.indexOf(p));
+				return;
+			}
+		}
 	}
 
 	public Set<String> getDownKeyCodes() {
@@ -302,13 +318,28 @@ public class Input {
 	public void setCursorDeltaX(int cursorDeltaX) {
 		this.cursorDeltaX = cursorDeltaX;
 	}
-	
+
 	public int getScrollClicks() {
 		return scrollClicks;
 	}
-	
+
 	public void setScrollClicks(int scrollClicks) {
 		this.scrollClicks = scrollClicks;
+	}
+
+	public static float normalize(float value, float inMin, float inMax,
+			float outMin, float outMax) {
+		final float newValue;
+		final float oldRange = (inMax - inMin);
+
+		if (oldRange == 0)
+			newValue = outMin;
+		else {
+			float newRange = (outMax - outMin);
+			newValue = (((value - inMin) * newRange) / oldRange) + outMin;
+		}
+
+		return newValue;
 	}
 
 }

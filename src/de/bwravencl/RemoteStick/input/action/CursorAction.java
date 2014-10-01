@@ -1,6 +1,5 @@
 package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.Util;
 import de.bwravencl.RemoteStick.input.Input;
 
 public class CursorAction extends InvertableAction implements IAction {
@@ -47,7 +46,7 @@ public class CursorAction extends InvertableAction implements IAction {
 			final float rateMultiplier = (float) joystick.getServerThread()
 					.getUpdateRate() / (float) 1000L;
 
-			final float d = Util.normalize(value * rateMultiplier, -1.0f
+			final float d = Input.normalize(value * rateMultiplier, -1.0f
 					* rateMultiplier, 1.0f * rateMultiplier, -maxSpeed,
 					maxSpeed);
 

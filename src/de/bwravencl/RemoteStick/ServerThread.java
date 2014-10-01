@@ -10,14 +10,13 @@ import java.net.SocketTimeoutException;
 
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.KeyStroke;
-import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
 
 public class ServerThread extends Thread {
 
+	public static final int REQUEST_ALIVE_INTERVAL = 100;
+
 	public static final int DEFAULT_PORT = 28789;
-	public static final int DEFAULT_REQUEST_ALIVE_INTERVAL = 100;
-	public static final int DEFAULT_ALIVE_TIMEOUT = 1000;
+	public static final int DEFAULT_CLIENT_TIMEOUT = 1000;
 	public static final long DEFAULT_UPDATE_RATE = 5L;
 
 	public static final int PROTOCOL_VERSION = 1;
@@ -34,18 +33,16 @@ public class ServerThread extends Thread {
 	}
 
 	private int port = DEFAULT_PORT;
-	private int requestAliveInterval = DEFAULT_REQUEST_ALIVE_INTERVAL;
-	private int aliveTimeout = DEFAULT_ALIVE_TIMEOUT;
+	private int clientTimeout = DEFAULT_CLIENT_TIMEOUT;
 	private long updateRate = DEFAULT_UPDATE_RATE;
 	private InetAddress clientIPAddress = null;
 	private ServerState serverState = ServerState.Listening;
-	private Input joystick;
+	private final Input input;
 	private DatagramSocket serverSocket = null;
 
-	public ServerThread() {
-		final Controller[] controllers = ControllerEnvironment
-				.getDefaultEnvironment().getControllers();
-		joystick = new Input(this, controllers[4]);
+	public ServerThread(Input input) {
+		this.input = input;
+		input.setServerThread(this);
 	}
 
 	@Override
@@ -82,8 +79,8 @@ public class ServerThread extends Thread {
 							long maxAxisValue = Long.parseLong(messageParts[1]);
 							int nButtons = Integer.parseInt(messageParts[2]);
 
-							joystick.setMaxAxisValue(maxAxisValue);
-							joystick.setnButtons(nButtons);
+							input.setMaxAxisValue(maxAxisValue);
+							input.setnButtons(nButtons);
 
 							StringWriter sw = new StringWriter();
 							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
@@ -111,43 +108,43 @@ public class ServerThread extends Thread {
 
 					StringWriter sw = new StringWriter();
 					boolean doAliveCheck = false;
-					if (counter % requestAliveInterval == 0) {
+					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
 						sw.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
 						doAliveCheck = true;
 					} else
 						sw.append(PROTOCOL_MESSAGE_UPDATE);
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
-					joystick.poll();
+					input.poll();
 
-					for (int v : joystick.getAxis())
+					for (int v : input.getAxis())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
-					for (boolean v : joystick.getButtons())
+					for (boolean v : input.getButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ joystick.getCursorDeltaX()
+							+ input.getCursorDeltaX()
 							+ PROTOCOL_MESSAGE_DELIMITER
-							+ joystick.getCursorDeltaY());
+							+ input.getCursorDeltaY());
 
-					joystick.setCursorDeltaX(0);
-					joystick.setCursorDeltaY(0);
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ joystick.getScrollClicks());
-
-					joystick.setScrollClicks(0);
+					input.setCursorDeltaX(0);
+					input.setCursorDeltaY(0);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ joystick.getDownKeyCodes().size());
-					for (String s : joystick.getDownKeyCodes())
+							+ input.getScrollClicks());
+
+					input.setScrollClicks(0);
+
+					sw.append(PROTOCOL_MESSAGE_DELIMITER
+							+ input.getDownKeyCodes().size());
+					for (String s : input.getDownKeyCodes())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ joystick.getDownUpKeyStrokes().size());
+							+ input.getDownUpKeyStrokes().size());
 
-					for (KeyStroke k : joystick.getDownUpKeyStrokes()) {
+					for (KeyStroke k : input.getDownUpKeyStrokes()) {
 						sw.append(PROTOCOL_MESSAGE_DELIMITER
 								+ k.getModifierCodes().length);
 						for (String s : k.getModifierCodes())
@@ -159,7 +156,7 @@ public class ServerThread extends Thread {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 					}
 
-					joystick.getDownUpKeyStrokes().clear();
+					input.getDownUpKeyStrokes().clear();
 
 					final byte[] sendBuf = sw.toString().getBytes("ASCII");
 					final DatagramPacket sendPacket = new DatagramPacket(
@@ -169,7 +166,7 @@ public class ServerThread extends Thread {
 					if (doAliveCheck) {
 						receivePacket = new DatagramPacket(receiveBuf,
 								receiveBuf.length);
-						serverSocket.setSoTimeout(aliveTimeout);
+						serverSocket.setSoTimeout(clientTimeout);
 						try {
 							serverSocket.receive(receivePacket);
 
@@ -225,6 +222,14 @@ public class ServerThread extends Thread {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public int getClientTimeout() {
+		return clientTimeout;
+	}
+
+	public void setClientTimeout(int clientTimeout) {
+		this.clientTimeout = clientTimeout;
 	}
 
 }

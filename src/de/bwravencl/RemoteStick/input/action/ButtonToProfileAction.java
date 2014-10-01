@@ -1,13 +1,16 @@
 package de.bwravencl.RemoteStick.input.action;
 
+import java.util.UUID;
+
 import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.Profile;
 
 public class ButtonToProfileAction implements IAction {
 
 	private boolean toggle = false;
 	private boolean up = true;
-	
-	private int profileId = 0;
+
+	private UUID profileUuid;
 
 	public boolean isToggle() {
 		return toggle;
@@ -17,12 +20,12 @@ public class ButtonToProfileAction implements IAction {
 		this.toggle = toggle;
 	}
 
-	public int getProfileId() {
-		return profileId;
+	public UUID getProfileUuid() {
+		return profileUuid;
 	}
 
-	public void setProfileId(int profileId) {
-		this.profileId = profileId;
+	public void setProfileUuid(UUID profileUuid) {
+		this.profileUuid = profileUuid;
 	}
 
 	@Override
@@ -31,7 +34,7 @@ public class ButtonToProfileAction implements IAction {
 			if (toggle)
 				up = true;
 			else {
-				if (joystick.getActiveProfile() == profileId) {
+				if (joystick.getActiveProfile().getUuid().equals(profileUuid)) {
 					joystick.setActiveProfile(0);
 					joystick.getDownKeyCodes().clear();
 				}
@@ -39,16 +42,25 @@ public class ButtonToProfileAction implements IAction {
 		} else {
 			if (toggle) {
 				if (up) {
-					if (joystick.getActiveProfile() == 0)
-						joystick.setActiveProfile(profileId);
-					else if (joystick.getActiveProfile() == profileId) {
+					if (joystick
+							.getActiveProfile()
+							.getUuid()
+							.equals(UUID
+									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING)))
+						joystick.setActiveProfile(profileUuid);
+					else if (joystick.getActiveProfile().getUuid()
+							.equals(profileUuid)) {
 						joystick.setActiveProfile(0);
 						joystick.getDownKeyCodes().clear();
 					}
 					up = false;
 				}
-			} else if (joystick.getActiveProfile() == 0)
-				joystick.setActiveProfile(profileId);
+			} else if (joystick
+					.getActiveProfile()
+					.getUuid()
+					.equals(UUID
+							.fromString(Profile.DEFAULT_PROFILE_UUID_STRING)))
+				joystick.setActiveProfile(profileUuid);
 		}
 	}
 
