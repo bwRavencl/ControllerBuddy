@@ -1,5 +1,6 @@
 package de.bwravencl.RemoteStick.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -31,7 +32,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
@@ -65,7 +65,7 @@ public class Main {
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneAssignments;
 	private JMenu mnController;
-	private JPanel panelProfiles;
+	private JPanel panelProfileList;
 	private JPanel panelAssignments;
 	private JSpinner spinnerPort;
 	private JSpinner spinnerClientTimeout;
@@ -73,12 +73,6 @@ public class Main {
 
 	private boolean suspendControllerSettingsUpdate = false;
 
-	private final ButtonGroup buttonGroupServerState = new ButtonGroup();
-	private final Action openFileAction = new OpenFileAction();
-	private final Action saveFileAction = new SaveFileAction();
-	private final Action quitAction = new QuitAction();
-	private final Action startServerAction = new StartServerAction();
-	private final Action stopServerAction = new StopServerAction();
 	private final JFileChooser jFileChooser = new JFileChooser();
 
 	/**
@@ -133,10 +127,10 @@ public class Main {
 
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-		mnFile.add(openFileAction);
-		mnFile.add(saveFileAction);
+		mnFile.add(new OpenFileAction());
+		mnFile.add(new SaveFileAction());
 		mnFile.add(new JSeparator());
-		mnFile.add(quitAction);
+		mnFile.add(new QuitAction());
 
 		mnController = new JMenu("Controller");
 		mnController.addMenuListener(new MenuListener() {
@@ -170,15 +164,17 @@ public class Main {
 		final JMenu mnServer = new JMenu("Server");
 		menuBar.add(mnServer);
 
+		final ButtonGroup buttonGroupServerState = new ButtonGroup();
+
 		final JRadioButtonMenuItem rdbtnmntmRun = new JRadioButtonMenuItem(
 				"Run");
-		rdbtnmntmRun.setAction(startServerAction);
+		rdbtnmntmRun.setAction(new StartServerAction());
 		buttonGroupServerState.add(rdbtnmntmRun);
 		mnServer.add(rdbtnmntmRun);
 
 		final JRadioButtonMenuItem rdbtnmntmStop = new JRadioButtonMenuItem(
 				"Stop");
-		rdbtnmntmStop.setAction(stopServerAction);
+		rdbtnmntmStop.setAction(new StopServerAction());
 		rdbtnmntmStop.setSelected(true);
 		buttonGroupServerState.add(rdbtnmntmStop);
 		mnServer.add(rdbtnmntmStop);
@@ -189,13 +185,22 @@ public class Main {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRemotestickserver.getContentPane().add(tabbedPane);
 
+		final JPanel panelProfiles = new JPanel();
+		panelProfiles.setLayout(new BorderLayout());
+		tabbedPane.addTab("Profiles", null, panelProfiles, null);
+
 		final JScrollPane scrollPaneProfiles = new JScrollPane();
-		tabbedPane.addTab("Profiles", null, scrollPaneProfiles, null);
-		panelProfiles = new JPanel();
-		scrollPaneProfiles.setViewportView(panelProfiles);
-		panelProfiles.setLayout(new GridLayout(0, 2, 10, 5));
+
+		panelProfileList = new JPanel();
+		scrollPaneProfiles.setViewportView(panelProfileList);
+		panelProfileList.setLayout(new GridLayout(0, 2, 10, 5));
 		scrollPaneProfiles.setViewportBorder(new MatteBorder(10, 10, 0, 10,
-				panelProfiles.getBackground()));
+				panelProfileList.getBackground()));
+
+		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
+
+		final JButton buttonAddProfile = new JButton(new AddProfileAction());
+		panelProfiles.add(buttonAddProfile, BorderLayout.SOUTH);
 
 		scrollPaneAssignments = new JScrollPane();
 		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
@@ -252,18 +257,18 @@ public class Main {
 
 			@Override
 			public void run() {
-				panelProfiles.removeAll();
+				panelProfileList.removeAll();
 
 				final List<Profile> profiles = input.getProfiles();
 				for (Profile p : profiles) {
 					final JTextField textFieldDescription = new JTextField(p
 							.getDescription());
-					panelProfiles.add(textFieldDescription);
+					panelProfileList.add(textFieldDescription);
 					if (p.getUuid()
 							.equals(UUID
 									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING))) {
 						textFieldDescription.setEnabled(false);
-						panelProfiles.add(Box.createGlue());
+						panelProfileList.add(Box.createGlue());
 					} else {
 						final setProfileDescriptionAction setProfileDescriptionAction = new setProfileDescriptionAction(
 								p, textFieldDescription);
@@ -274,12 +279,12 @@ public class Main {
 
 						final JButton deleteProfileButton = new JButton(
 								new DeleteProfileAction(p));
-						panelProfiles.add(deleteProfileButton);
+						panelProfileList.add(deleteProfileButton);
 					}
 
 				}
 
-				panelProfiles.validate();
+				panelProfileList.validate();
 			}
 		});
 	}
@@ -598,6 +603,26 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			input.getProfiles().remove(profile);
+			updateProfilesPanel();
+		}
+	}
+
+	private class AddProfileAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public AddProfileAction() {
+			putValue(NAME, "Add Profile");
+			putValue(SHORT_DESCRIPTION, "Add a new profile");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			final Profile profile = new Profile();
+			profile.setDescription("New Profile");
+			input.getProfiles().add(profile);
+
 			updateProfilesPanel();
 		}
 	}
