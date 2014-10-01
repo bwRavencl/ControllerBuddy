@@ -193,7 +193,7 @@ public class Main {
 		tabbedPane.addTab("Profiles", null, scrollPaneProfiles, null);
 		panelProfiles = new JPanel();
 		scrollPaneProfiles.setViewportView(panelProfiles);
-		panelProfiles.setLayout(new GridLayout(0, 3, 10, 5));
+		panelProfiles.setLayout(new GridLayout(0, 2, 10, 5));
 		scrollPaneProfiles.setViewportBorder(new MatteBorder(10, 10, 0, 10,
 				panelProfiles.getBackground()));
 
@@ -258,19 +258,25 @@ public class Main {
 				for (Profile p : profiles) {
 					final JTextField textFieldDescription = new JTextField(p
 							.getDescription());
+					panelProfiles.add(textFieldDescription);
 					if (p.getUuid()
 							.equals(UUID
-									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING)))
+									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING))) {
 						textFieldDescription.setEnabled(false);
-					else {
-						final SetProfileDescriptionAction setProfileDescriptionAction = new SetProfileDescriptionAction(
+						panelProfiles.add(Box.createGlue());
+					} else {
+						final setProfileDescriptionAction setProfileDescriptionAction = new setProfileDescriptionAction(
 								p, textFieldDescription);
 						textFieldDescription
 								.addActionListener(setProfileDescriptionAction);
 						textFieldDescription
 								.addFocusListener(setProfileDescriptionAction);
+
+						final JButton deleteProfileButton = new JButton(
+								new DeleteProfileAction(p));
+						panelProfiles.add(deleteProfileButton);
 					}
-					panelProfiles.add(textFieldDescription);
+
 				}
 
 				panelProfiles.validate();
@@ -532,7 +538,7 @@ public class Main {
 		}
 	}
 
-	private class SetProfileDescriptionAction extends AbstractAction implements
+	private class setProfileDescriptionAction extends AbstractAction implements
 			FocusListener {
 		/**
 		 * 
@@ -542,7 +548,7 @@ public class Main {
 		private final Profile profile;
 		private final JTextField profileDescriptionTextField;
 
-		public SetProfileDescriptionAction(Profile profile,
+		public setProfileDescriptionAction(Profile profile,
 				JTextField profileDescriptionTextField) {
 			this.profile = profile;
 			this.profileDescriptionTextField = profileDescriptionTextField;
@@ -571,6 +577,28 @@ public class Main {
 				profile.setDescription(description);
 			else
 				profileDescriptionTextField.setText(profile.getDescription());
+		}
+	}
+
+	private class DeleteProfileAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private final Profile profile;
+
+		public DeleteProfileAction(Profile profile) {
+			this.profile = profile;
+
+			putValue(NAME, "Delete");
+			putValue(SHORT_DESCRIPTION,
+					"Delete the '" + profile.getDescription() + "' profile");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			input.getProfiles().remove(profile);
+			updateProfilesPanel();
 		}
 	}
 
