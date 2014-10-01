@@ -3,6 +3,7 @@ package de.bwravencl.RemoteStick.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 
 import javax.swing.Box;
@@ -215,37 +216,49 @@ public class Main {
 		panelServerSettings.setBorder(new MatteBorder(10, 10, 10, 10,
 				panelServerSettings.getBackground()));
 		tabbedPane.addTab("Server Settings", null, panelServerSettings, null);
-		panelServerSettings.setLayout(new GridLayout(0, 2, 10, 50));
+		panelServerSettings.setLayout(new BoxLayout(panelServerSettings, BoxLayout.Y_AXIS));
 
+		final JPanel panelPort = new JPanel();
+		panelPort.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		panelServerSettings.add(panelPort);
+		
 		final JLabel lblPort = new JLabel("Port");
-		panelServerSettings.add(lblPort);
+		panelPort.add(lblPort);
 
 		spinnerPort = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_PORT, 1024, 65535, 1));
-		panelServerSettings.add(spinnerPort);
+		panelPort.add(spinnerPort);
+		
+		final JPanel panelTimeout = new JPanel();
+		panelTimeout.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		panelServerSettings.add(panelTimeout);
 
 		final JLabel lblClientTimeout = new JLabel("Client Timeout");
-		panelServerSettings.add(lblClientTimeout);
+		panelTimeout.add(lblClientTimeout);
 
 		spinnerClientTimeout = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_CLIENT_TIMEOUT, 10, 60000, 1));
-		panelServerSettings.add(spinnerClientTimeout);
+		panelTimeout.add(spinnerClientTimeout);
 
+		final JPanel panelUpdateRate = new JPanel();
+		panelUpdateRate.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		panelServerSettings.add(panelUpdateRate);
+		
 		final JLabel lblUpdateRate = new JLabel("Update Rate");
-		panelServerSettings.add(lblUpdateRate);
+		panelUpdateRate.add(lblUpdateRate);
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
 				(int) ServerThread.DEFAULT_UPDATE_RATE, 1, 1000, 1));
-		panelServerSettings.add(spinnerUpdateRate);
+		panelUpdateRate.add(spinnerUpdateRate);
 
+		/*panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
 		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
+		panelServerSettings.add(Box.createGlue());*/
 
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"Controller Profiles", "json");
