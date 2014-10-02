@@ -56,8 +56,6 @@ import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 
-import javax.swing.border.MatteBorder;
-
 public class Main {
 
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
@@ -65,7 +63,7 @@ public class Main {
 	private Input input;
 	private ServerThread serverThread;
 
-	private JFrame frmRemotestickserver;
+	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneAssignments;
 	private JMenu mnController;
@@ -88,7 +86,7 @@ public class Main {
 			public void run() {
 				try {
 					Main window = new Main();
-					window.frmRemotestickserver.setVisible(true);
+					window.frmRemoteStickServer.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -122,13 +120,13 @@ public class Main {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmRemotestickserver = new JFrame();
-		frmRemotestickserver.setTitle("RemoteStick Server");
-		frmRemotestickserver.setBounds(100, 100, 650, 600);
-		frmRemotestickserver.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmRemoteStickServer = new JFrame();
+		frmRemoteStickServer.setTitle("RemoteStick Server");
+		frmRemoteStickServer.setBounds(100, 100, 650, 600);
+		frmRemoteStickServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final JMenuBar menuBar = new JMenuBar();
-		frmRemotestickserver.setJMenuBar(menuBar);
+		frmRemoteStickServer.setJMenuBar(menuBar);
 
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
@@ -183,12 +181,12 @@ public class Main {
 		rdbtnmntmStop.setSelected(true);
 		buttonGroupServerState.add(rdbtnmntmStop);
 		mnServer.add(rdbtnmntmStop);
-		frmRemotestickserver.getContentPane().setLayout(
-				new BoxLayout(frmRemotestickserver.getContentPane(),
+		frmRemoteStickServer.getContentPane().setLayout(
+				new BoxLayout(frmRemoteStickServer.getContentPane(),
 						BoxLayout.X_AXIS));
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		frmRemotestickserver.getContentPane().add(tabbedPane);
+		frmRemoteStickServer.getContentPane().add(tabbedPane);
 
 		final JPanel panelProfiles = new JPanel(new BorderLayout());
 		tabbedPane.addTab("Profiles", null, panelProfiles, null);
@@ -217,44 +215,63 @@ public class Main {
 		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
 
 		final JPanel panelServerSettings = new JPanel();
-		panelServerSettings.setBorder(new MatteBorder(10, 10, 10, 10,
-				panelServerSettings.getBackground()));
-		tabbedPane.addTab("Server Settings", null, panelServerSettings, null);
-		panelServerSettings.setLayout(new BoxLayout(panelServerSettings,
-				BoxLayout.Y_AXIS));
+		panelServerSettings.setLayout(new GridBagLayout());
 
-		final JPanel panelPort = new JPanel(new FlowLayout(FlowLayout.LEFT, 10,
-				0));
-		panelServerSettings.add(panelPort);
+		final JScrollPane scrollPaneServerSettings = new JScrollPane();
+		scrollPaneServerSettings.setViewportView(panelServerSettings);
+		/*
+		 * scrollPaneServerSettings.setViewportBorder(BorderFactory
+		 * .createMatteBorder(10, 10, 0, 10,
+		 * panelServerSettings.getBackground()));
+		 */
+		tabbedPane.addTab("Server Settings", null, scrollPaneServerSettings,
+				null);
+
+		final GridBagConstraints panelGridBagConstraints = new GridBagConstraints(
+				0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 5);
+
+		final FlowLayout panelFlowLayout = new FlowLayout(FlowLayout.LEADING,
+				10, 10);
+
+		final JPanel panelPort = new JPanel(panelFlowLayout);
+		panelServerSettings.add(panelPort, panelGridBagConstraints);
 
 		final JLabel lblPort = new JLabel("Port");
+		lblPort.setPreferredSize(new Dimension(100, 15));
 		panelPort.add(lblPort);
 
 		spinnerPort = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_PORT, 1024, 65535, 1));
 		panelPort.add(spinnerPort);
 
-		final JPanel panelTimeout = new JPanel(new FlowLayout(FlowLayout.LEFT,
-				10, 0));
-		panelServerSettings.add(panelTimeout);
+		final JPanel panelTimeout = new JPanel(panelFlowLayout);
+		panelServerSettings.add(panelTimeout, panelGridBagConstraints);
 
 		final JLabel lblClientTimeout = new JLabel("Client Timeout");
+		lblClientTimeout.setPreferredSize(new Dimension(100, 15));
 		panelTimeout.add(lblClientTimeout);
 
 		spinnerClientTimeout = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_CLIENT_TIMEOUT, 10, 60000, 1));
 		panelTimeout.add(spinnerClientTimeout);
 
-		final JPanel panelUpdateRate = new JPanel(new FlowLayout(
-				FlowLayout.LEFT, 10, 0));
-		panelServerSettings.add(panelUpdateRate);
+		final JPanel panelUpdateRate = new JPanel(panelFlowLayout);
+		panelServerSettings.add(panelUpdateRate, panelGridBagConstraints);
 
 		final JLabel lblUpdateRate = new JLabel("Update Rate");
+		lblUpdateRate.setPreferredSize(new Dimension(100, 15));
 		panelUpdateRate.add(lblUpdateRate);
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
 				(int) ServerThread.DEFAULT_UPDATE_RATE, 1, 1000, 1));
 		panelUpdateRate.add(spinnerUpdateRate);
+
+		panelServerSettings.add(Box.createGlue(), new GridBagConstraints(0,
+				GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0));
 
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"Controller Profiles", "json");
@@ -371,7 +388,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (jFileChooser.showOpenDialog(frmRemotestickserver) == JFileChooser.APPROVE_OPTION) {
+			if (jFileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = jFileChooser.getSelectedFile();
 			}
 		}
@@ -390,7 +407,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (jFileChooser.showSaveDialog(frmRemotestickserver) == JFileChooser.APPROVE_OPTION) {
+			if (jFileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = jFileChooser.getSelectedFile();
 			}
 		}
@@ -482,7 +499,7 @@ public class Main {
 				if (!suspendControllerSettingsUpdate
 						&& scrollPaneAssignments.equals(tabbedPane
 								.getSelectedComponent())
-						&& frmRemotestickserver.getState() != Frame.ICONIFIED)
+						&& frmRemoteStickServer.getState() != Frame.ICONIFIED)
 					EventQueue.invokeLater(new Runnable() {
 
 						@Override
