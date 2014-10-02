@@ -2,6 +2,7 @@ package de.bwravencl.RemoteStick.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -21,7 +22,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 
 import de.bwravencl.RemoteStick.ServerThread;
 import de.bwravencl.RemoteStick.input.Input;
@@ -41,7 +41,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import java.awt.GridLayout;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -193,13 +192,11 @@ public class Main {
 		final JPanel panelProfiles = new JPanel(new BorderLayout());
 		tabbedPane.addTab("Profiles", null, panelProfiles, null);
 
+		scrollPaneProfiles = new JScrollPane();
+		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
+
 		panelProfileList = new JPanel();
 		panelProfileList.setLayout(new GridBagLayout());
-
-		scrollPaneProfiles = new JScrollPane();
-		scrollPaneProfiles.setViewportBorder(new MatteBorder(10, 10, 0, 10,
-				panelProfileList.getBackground()));
-		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
 
 		final JPanel panelAddProfile = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT));
@@ -207,14 +204,12 @@ public class Main {
 		panelAddProfile.add(buttonAddProfile);
 		panelProfiles.add(panelAddProfile, BorderLayout.SOUTH);
 
-		scrollPaneAssignments = new JScrollPane();
-		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
-
 		panelAssignments = new JPanel();
+		panelAssignments.setLayout(new GridBagLayout());
+
+		scrollPaneAssignments = new JScrollPane();
 		scrollPaneAssignments.setViewportView(panelAssignments);
-		panelAssignments.setLayout(new GridLayout(0, 3, 10, 5));
-		scrollPaneAssignments.setViewportBorder(new MatteBorder(10, 10, 0, 10,
-				panelAssignments.getBackground()));
+		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
 
 		final JPanel panelServerSettings = new JPanel();
 		panelServerSettings.setBorder(new MatteBorder(10, 10, 10, 10,
@@ -272,7 +267,6 @@ public class Main {
 				for (Profile p : profiles) {
 					final JPanel panelProfile = new JPanel(new FlowLayout(
 							FlowLayout.LEFT, 20, 0));
-
 					panelProfileList.add(panelProfile, new GridBagConstraints(
 							0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.FIRST_LINE_START,
@@ -451,47 +445,119 @@ public class Main {
 						public void run() {
 
 							panelAssignments.removeAll();
-							panelAssignments.add(new JLabel("Controller: "));
 
 							final Controller controller = input.getController();
 							if (controller != null) {
-								panelAssignments.add(new JLabel(controller
-										.getName()));
-								panelAssignments.add(Box.createGlue());
-
-								panelAssignments.add(new JSeparator());
-								panelAssignments.add(new JSeparator());
-								panelAssignments.add(new JSeparator());
-
 								controller.poll();
 
 								for (Component c : controller.getComponents()) {
+									final JPanel panelComponent = new JPanel(
+											new GridBagLayout());
+									panelAssignments
+											.add(panelComponent,
+													new GridBagConstraints(
+															0,
+															GridBagConstraints.RELATIVE,
+															1,
+															1,
+															0.0,
+															0.0,
+															GridBagConstraints.FIRST_LINE_START,
+															GridBagConstraints.HORIZONTAL,
+															new Insets(0, 0, 0,
+																	0), 5, 0));
+
 									final String name = c.getName();
 									final float value = c.getPollData();
 
+									final JLabel lblName = new JLabel();
+									lblName.setPreferredSize(new Dimension(100, 15));
+
+									final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(
+											0,
+											0,
+											1,
+											1,
+											0.0,
+											0.0,
+											GridBagConstraints.BASELINE,
+											GridBagConstraints.NONE,
+											new Insets(0, 0, 0, 0), 0, 0);
+
+									final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(
+											2, 0, 1, 1, 1.0, 1.0,
+											GridBagConstraints.BASELINE,
+											GridBagConstraints.NONE,
+											new Insets(0, 0, 0, 0), 0, 0);
+
 									if (c.isAnalog()) {
-										panelAssignments.add(new JLabel(
-												"Axis: " + name));
+										lblName.setText("Axis: " + name);
+										panelComponent.add(lblName,
+												nameGridBagConstraints);
 
-										final JProgressBar jProgressBar = new JProgressBar(
+										panelComponent.add(
+												Box.createGlue(),
+												new GridBagConstraints(
+														1,
+														GridBagConstraints.RELATIVE,
+														1,
+														1,
+														1.0,
+														1.0,
+														GridBagConstraints.BASELINE,
+														GridBagConstraints.NONE,
+														new Insets(0, 0, 0, 0),
+														0, 0));
+
+										final JProgressBar progressBarValue = new JProgressBar(
 												-100, 100);
-										jProgressBar
+										progressBarValue
 												.setValue((int) (value * 100.0f));
-										panelAssignments.add(jProgressBar);
+										panelComponent.add(progressBarValue,
+												valueGridBagConstraints);
 									} else {
-										panelAssignments.add(new JLabel(
-												"Button: " + name));
+										lblName.setText("Button: " + name);
+										panelComponent.add(lblName,
+												nameGridBagConstraints);
 
-										final JLabel jLabel = new JLabel();
-										jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+										panelComponent.add(
+												Box.createGlue(),
+												new GridBagConstraints(
+														1,
+														GridBagConstraints.RELATIVE,
+														1,
+														1,
+														1.0,
+														1.0,
+														GridBagConstraints.BASELINE,
+														GridBagConstraints.NONE,
+														new Insets(0, 0, 0, 0),
+														0, 0));
+
+										final JLabel lblValue = new JLabel();
 										if (value > 0.5f)
-											jLabel.setText("Down");
+											lblValue.setText("Down");
 										else {
-											jLabel.setText("Up");
-											jLabel.setForeground(Color.LIGHT_GRAY);
+											lblValue.setText("Up");
+											lblValue.setForeground(Color.LIGHT_GRAY);
 										}
-										panelAssignments.add(jLabel);
+										panelComponent.add(lblValue,
+												valueGridBagConstraints);
 									}
+
+									panelComponent.add(
+											Box.createGlue(),
+											new GridBagConstraints(
+													3,
+													GridBagConstraints.RELATIVE,
+													1,
+													1,
+													1.0,
+													1.0,
+													GridBagConstraints.BASELINE,
+													GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0,
+													0));
 
 									final JButton editButton = new JButton(
 											new EditComponentAction(c));
@@ -524,13 +590,39 @@ public class Main {
 														MouseEvent e) {
 												}
 											});
-									panelAssignments.add(editButton);
+									panelComponent
+											.add(editButton,
+													new GridBagConstraints(
+															4,
+															GridBagConstraints.RELATIVE,
+															1,
+															1,
+															0.0,
+															0.0,
+															GridBagConstraints.BASELINE,
+															GridBagConstraints.NONE,
+															new Insets(0, 0, 0,
+																	0), 0, 0));
 								}
+
+								panelAssignments.add(
+										Box.createGlue(),
+										new GridBagConstraints(
+												0,
+												GridBagConstraints.RELATIVE,
+												1,
+												1,
+												1.0,
+												1.0,
+												GridBagConstraints.FIRST_LINE_START,
+												GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 0));
 							} else
 								panelAssignments.add(new JLabel(
 										"No active controller selected!"));
 
-							panelAssignments.validate();
+							scrollPaneAssignments
+									.setViewportView(panelAssignments);
 						}
 					});
 
