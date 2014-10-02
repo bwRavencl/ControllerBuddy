@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -71,6 +74,7 @@ public class Main {
 	private JSpinner spinnerPort;
 	private JSpinner spinnerClientTimeout;
 	private JSpinner spinnerUpdateRate;
+	private JScrollPane scrollPaneProfiles;
 
 	private boolean suspendControllerSettingsUpdate = false;
 
@@ -186,22 +190,22 @@ public class Main {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRemotestickserver.getContentPane().add(tabbedPane);
 
-		final JPanel panelProfiles = new JPanel();
-		panelProfiles.setLayout(new BorderLayout());
+		final JPanel panelProfiles = new JPanel(new BorderLayout());
 		tabbedPane.addTab("Profiles", null, panelProfiles, null);
 
-		final JScrollPane scrollPaneProfiles = new JScrollPane();
-
 		panelProfileList = new JPanel();
-		scrollPaneProfiles.setViewportView(panelProfileList);
-		panelProfileList.setLayout(new GridLayout(0, 2, 10, 5));
+		panelProfileList.setLayout(new GridBagLayout());
+
+		scrollPaneProfiles = new JScrollPane();
 		scrollPaneProfiles.setViewportBorder(new MatteBorder(10, 10, 0, 10,
 				panelProfileList.getBackground()));
-
 		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
 
+		final JPanel panelAddProfile = new JPanel(new FlowLayout(
+				FlowLayout.RIGHT));
 		final JButton buttonAddProfile = new JButton(new AddProfileAction());
-		panelProfiles.add(buttonAddProfile, BorderLayout.SOUTH);
+		panelAddProfile.add(buttonAddProfile);
+		panelProfiles.add(panelAddProfile, BorderLayout.SOUTH);
 
 		scrollPaneAssignments = new JScrollPane();
 		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
@@ -216,21 +220,22 @@ public class Main {
 		panelServerSettings.setBorder(new MatteBorder(10, 10, 10, 10,
 				panelServerSettings.getBackground()));
 		tabbedPane.addTab("Server Settings", null, panelServerSettings, null);
-		panelServerSettings.setLayout(new BoxLayout(panelServerSettings, BoxLayout.Y_AXIS));
+		panelServerSettings.setLayout(new BoxLayout(panelServerSettings,
+				BoxLayout.Y_AXIS));
 
-		final JPanel panelPort = new JPanel();
-		panelPort.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		final JPanel panelPort = new JPanel(new FlowLayout(FlowLayout.LEFT, 10,
+				0));
 		panelServerSettings.add(panelPort);
-		
+
 		final JLabel lblPort = new JLabel("Port");
 		panelPort.add(lblPort);
 
 		spinnerPort = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_PORT, 1024, 65535, 1));
 		panelPort.add(spinnerPort);
-		
-		final JPanel panelTimeout = new JPanel();
-		panelTimeout.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+
+		final JPanel panelTimeout = new JPanel(new FlowLayout(FlowLayout.LEFT,
+				10, 0));
 		panelServerSettings.add(panelTimeout);
 
 		final JLabel lblClientTimeout = new JLabel("Client Timeout");
@@ -240,25 +245,16 @@ public class Main {
 				ServerThread.DEFAULT_CLIENT_TIMEOUT, 10, 60000, 1));
 		panelTimeout.add(spinnerClientTimeout);
 
-		final JPanel panelUpdateRate = new JPanel();
-		panelUpdateRate.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		final JPanel panelUpdateRate = new JPanel(new FlowLayout(
+				FlowLayout.LEFT, 10, 0));
 		panelServerSettings.add(panelUpdateRate);
-		
+
 		final JLabel lblUpdateRate = new JLabel("Update Rate");
 		panelUpdateRate.add(lblUpdateRate);
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
 				(int) ServerThread.DEFAULT_UPDATE_RATE, 1, 1000, 1));
 		panelUpdateRate.add(spinnerUpdateRate);
-
-		/*panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());
-		panelServerSettings.add(Box.createGlue());*/
 
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"Controller Profiles", "json");
@@ -274,14 +270,27 @@ public class Main {
 
 				final List<Profile> profiles = input.getProfiles();
 				for (Profile p : profiles) {
+					final JPanel panelProfile = new JPanel(new FlowLayout(
+							FlowLayout.LEFT, 20, 0));
+
+					panelProfileList.add(panelProfile, new GridBagConstraints(
+							0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+							GridBagConstraints.FIRST_LINE_START,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							5));
+
+					final JLabel lblProfileNo = new JLabel("Profile "
+							+ profiles.indexOf(p));
+					panelProfile.add(lblProfileNo);
+
 					final JTextField textFieldDescription = new JTextField(p
-							.getDescription());
-					panelProfileList.add(textFieldDescription);
+							.getDescription(), 20);
+					panelProfile.add(textFieldDescription);
 					if (p.getUuid()
 							.equals(UUID
 									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING))) {
 						textFieldDescription.setEnabled(false);
-						panelProfileList.add(Box.createGlue());
+						panelProfile.add(Box.createGlue());
 					} else {
 						final setProfileDescriptionAction setProfileDescriptionAction = new setProfileDescriptionAction(
 								p, textFieldDescription);
@@ -292,12 +301,16 @@ public class Main {
 
 						final JButton deleteProfileButton = new JButton(
 								new DeleteProfileAction(p));
-						panelProfileList.add(deleteProfileButton);
+						panelProfile.add(deleteProfileButton);
 					}
-
 				}
 
-				panelProfileList.validate();
+				panelProfileList.add(Box.createGlue(), new GridBagConstraints(
+						0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+						GridBagConstraints.FIRST_LINE_START,
+						GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+				scrollPaneProfiles.setViewportView(panelProfileList);
 			}
 		});
 	}
