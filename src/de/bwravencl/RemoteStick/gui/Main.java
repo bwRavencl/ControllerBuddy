@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -192,11 +193,13 @@ public class Main {
 		final JPanel panelProfiles = new JPanel(new BorderLayout());
 		tabbedPane.addTab("Profiles", null, panelProfiles, null);
 
-		scrollPaneProfiles = new JScrollPane();
-		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
-
 		panelProfileList = new JPanel();
 		panelProfileList.setLayout(new GridBagLayout());
+
+		scrollPaneProfiles = new JScrollPane();
+		scrollPaneProfiles.setViewportBorder(BorderFactory.createMatteBorder(
+				10, 10, 0, 10, panelProfileList.getBackground()));
+		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
 
 		final JPanel panelAddProfile = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT));
@@ -208,7 +211,9 @@ public class Main {
 		panelAssignments.setLayout(new GridBagLayout());
 
 		scrollPaneAssignments = new JScrollPane();
-		scrollPaneAssignments.setViewportView(panelAssignments);
+		scrollPaneAssignments.setViewportBorder(BorderFactory
+				.createMatteBorder(10, 10, 0, 10,
+						panelAssignments.getBackground()));
 		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
 
 		final JPanel panelServerSettings = new JPanel();
@@ -265,26 +270,53 @@ public class Main {
 
 				final List<Profile> profiles = input.getProfiles();
 				for (Profile p : profiles) {
-					final JPanel panelProfile = new JPanel(new FlowLayout(
-							FlowLayout.LEFT, 20, 0));
+					final JPanel panelProfile = new JPanel(new GridBagLayout());
 					panelProfileList.add(panelProfile, new GridBagConstraints(
 							0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.FIRST_LINE_START,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-							5));
+							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
+									0), 0, 5));
 
 					final JLabel lblProfileNo = new JLabel("Profile "
 							+ profiles.indexOf(p));
-					panelProfile.add(lblProfileNo);
+					lblProfileNo.setPreferredSize(new Dimension(100, 15));
+					panelProfile.add(lblProfileNo, new GridBagConstraints(0, 0,
+							1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
+
+					panelProfile.add(Box.createGlue(), new GridBagConstraints(
+							1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+							GridBagConstraints.BASELINE,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 
 					final JTextField textFieldDescription = new JTextField(p
 							.getDescription(), 20);
-					panelProfile.add(textFieldDescription);
+					panelProfile.add(textFieldDescription,
+							new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
+									GridBagConstraints.BASELINE,
+									GridBagConstraints.NONE, new Insets(0, 0,
+											0, 0), 0, 0));
+
 					if (p.getUuid()
 							.equals(UUID
 									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING))) {
 						textFieldDescription.setEnabled(false);
-						panelProfile.add(Box.createGlue());
+
+						panelProfile.add(Box.createGlue(),
+								new GridBagConstraints(3,
+										GridBagConstraints.RELATIVE, 1, 1, 1.0,
+										1.0, GridBagConstraints.BASELINE,
+										GridBagConstraints.NONE, new Insets(0,
+												0, 0, 0), 0, 0));
+
+						panelProfile.add(Box.createGlue(),
+								new GridBagConstraints(4,
+										GridBagConstraints.RELATIVE, 1, 1, 1.0,
+										1.0, GridBagConstraints.BASELINE,
+										GridBagConstraints.NONE, new Insets(0,
+												0, 0, 0), 0, 0));
 					} else {
 						final setProfileDescriptionAction setProfileDescriptionAction = new setProfileDescriptionAction(
 								p, textFieldDescription);
@@ -293,9 +325,21 @@ public class Main {
 						textFieldDescription
 								.addFocusListener(setProfileDescriptionAction);
 
+						panelProfile.add(Box.createGlue(),
+								new GridBagConstraints(3,
+										GridBagConstraints.RELATIVE, 1, 1, 1.0,
+										1.0, GridBagConstraints.BASELINE,
+										GridBagConstraints.NONE, new Insets(0,
+												0, 0, 0), 0, 0));
+
 						final JButton deleteProfileButton = new JButton(
 								new DeleteProfileAction(p));
-						panelProfile.add(deleteProfileButton);
+						panelProfile.add(deleteProfileButton,
+								new GridBagConstraints(4,
+										GridBagConstraints.RELATIVE, 1, 1, 0.0,
+										0.0, GridBagConstraints.BASELINE,
+										GridBagConstraints.NONE, new Insets(0,
+												0, 0, 0), 0, 0));
 					}
 				}
 
@@ -471,15 +515,11 @@ public class Main {
 									final float value = c.getPollData();
 
 									final JLabel lblName = new JLabel();
-									lblName.setPreferredSize(new Dimension(100, 15));
+									lblName.setPreferredSize(new Dimension(100,
+											15));
 
 									final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(
-											0,
-											0,
-											1,
-											1,
-											0.0,
-											0.0,
+											0, 0, 1, 1, 0.0, 0.0,
 											GridBagConstraints.BASELINE,
 											GridBagConstraints.NONE,
 											new Insets(0, 0, 0, 0), 0, 0);
