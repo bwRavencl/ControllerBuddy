@@ -12,7 +12,7 @@ public abstract class ToScrollAction extends InvertableAction {
 		return clicks;
 	}
 
-	public void setClicks(int clicks) {
+	public void setClicks(Integer clicks) {
 		this.clicks = clicks;
 	}
 

@@ -12,7 +12,7 @@ public abstract class ToAxisAction extends InvertableAction {
 		return axisId;
 	}
 
-	public void setAxisId(int axisId) {
+	public void setAxisId(Integer axisId) {
 		this.axisId = axisId;
 	}
 

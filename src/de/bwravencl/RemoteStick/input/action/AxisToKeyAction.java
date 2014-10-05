@@ -14,7 +14,7 @@ public class AxisToKeyAction extends ToKeyAction implements IAction {
 		return minAxisValue;
 	}
 
-	public void setMinAxisValue(float minAxisValue) {
+	public void setMinAxisValue(Float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
 
@@ -22,7 +22,7 @@ public class AxisToKeyAction extends ToKeyAction implements IAction {
 		return maxAxisValue;
 	}
 
-	public void setMaxAxisValue(float maxAxisValue) {
+	public void setMaxAxisValue(Float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 

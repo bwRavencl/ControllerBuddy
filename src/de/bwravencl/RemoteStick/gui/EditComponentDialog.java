@@ -1,35 +1,44 @@
 package de.bwravencl.RemoteStick.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.KeyStroke;
 import de.bwravencl.RemoteStick.input.Profile;
 import de.bwravencl.RemoteStick.input.action.ButtonToProfileAction;
+import de.bwravencl.RemoteStick.input.action.CursorAction.Axis;
 import de.bwravencl.RemoteStick.input.action.IAction;
 import net.java.games.input.Component;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class EditComponentDialog extends JDialog {
 
@@ -50,12 +59,15 @@ public class EditComponentDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToProfileAction",
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+	public static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
 
 	private final JComboBox<Profile> comboBoxProfile;
 	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
 	private final JButton btnAdd;
 	private final JButton btnRemove;
 	private final JList<IAction> listAssignedActions = new JList<IAction>();
+	private final JLabel lblProperties;
+	private final JScrollPane scrollPaneProperties;
 
 	private final Input input;
 	private final Component component;
@@ -92,14 +104,13 @@ public class EditComponentDialog extends JDialog {
 
 		setModal(true);
 		setTitle("Component Editor '" + component.getName() + "'");
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 800, 400);
 		getContentPane().setLayout(new BorderLayout());
 
 		final JPanel panelProfile = new JPanel(new FlowLayout());
 		getContentPane().add(panelProfile, BorderLayout.NORTH);
 
-		final JLabel lblProfile = new JLabel("Profile");
-		panelProfile.add(lblProfile);
+		panelProfile.add(new JLabel("Profile"));
 
 		selectedProfile = unsavedProfiles.get(0);
 		comboBoxProfile = new JComboBox<Profile>(
@@ -111,10 +122,10 @@ public class EditComponentDialog extends JDialog {
 		panelActions.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(panelActions, BorderLayout.CENTER);
 
-		final JLabel lblAvailableActions = new JLabel("Available Actions");
-		panelActions.add(lblAvailableActions, new GridBagConstraints(0, 0, 1,
-				1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 0));
+		panelActions.add(new JLabel("Available Actions"),
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(0, 0, 0, 0), 0, 25));
 
 		listAvailableActions
 				.addListSelectionListener(new ListSelectionListener() {
@@ -123,31 +134,34 @@ public class EditComponentDialog extends JDialog {
 					public void valueChanged(ListSelectionEvent e) {
 						selectedAvailableAction = listAvailableActions
 								.getSelectedValue();
-						btnAdd.setEnabled(true);
+						if (selectedAvailableAction == null)
+							btnAdd.setEnabled(false);
+						else
+							btnAdd.setEnabled(true);
 					}
 				});
 		updateAvailableActions();
 		panelActions.add(new JScrollPane(listAvailableActions),
-				new GridBagConstraints(0, 1, 1, 5, 0.5, 1,
+				new GridBagConstraints(0, 1, 1, 5, 0.33, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
 		btnAdd = new JButton(new AddActionAction());
 		btnAdd.setEnabled(false);
-		panelActions.add(btnAdd, new GridBagConstraints(1, 2, 1, 2, 0, 0.25,
+		panelActions.add(btnAdd, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.25,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 						0, 0, 0, 0), 0, 0));
 
 		btnRemove = new JButton(new RemoveActionAction());
 		btnRemove.setEnabled(false);
-		panelActions.add(btnRemove, new GridBagConstraints(1, 4, 1, 2, 0, 0.25,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
-						0, 0, 0, 0), 0, 0));
-
-		final JLabel lblAssignedActions = new JLabel("Assigned Actions");
-		panelActions.add(lblAssignedActions, new GridBagConstraints(2, 0, 1, 1,
-				0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+		panelActions.add(btnRemove, new GridBagConstraints(1, 4, 1, 2, 0.0,
+				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
+
+		panelActions.add(new JLabel("Assigned Actions"),
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+						GridBagConstraints.CENTER, GridBagConstraints.NONE,
+						new Insets(0, 0, 0, 0), 0, 25));
 
 		listAssignedActions
 				.addListSelectionListener(new ListSelectionListener() {
@@ -156,13 +170,143 @@ public class EditComponentDialog extends JDialog {
 					public void valueChanged(ListSelectionEvent e) {
 						selectedAssignedAction = listAssignedActions
 								.getSelectedValue();
-						btnRemove.setEnabled(true);
+						if (selectedAssignedAction == null)
+							btnRemove.setEnabled(false);
+						else
+							btnRemove.setEnabled(true);
+
+						EventQueue.invokeLater(new Runnable() {
+
+							@Override
+							public void run() {
+								if (selectedAssignedAction == null) {
+									lblProperties.setVisible(false);
+									scrollPaneProperties.setVisible(false);
+								} else {
+									lblProperties.setVisible(true);
+
+									final JPanel panelProperties = new JPanel(
+											new GridBagLayout());
+
+									for (Method m : selectedAssignedAction
+											.getClass().getMethods()) {
+										final String methodDescription = m
+												.toGenericString();
+
+										if (methodDescription
+												.contains(ACTION_PROPERTY_SETTER_PREFIX)) {
+											final String propertyName = methodDescription.substring(
+													methodDescription
+															.indexOf(ACTION_PROPERTY_SETTER_PREFIX)
+															+ ACTION_PROPERTY_SETTER_PREFIX
+																	.length(),
+													methodDescription
+															.indexOf('('));
+											final String parameterType = methodDescription.substring(
+													methodDescription
+															.indexOf('(') + 1,
+													methodDescription
+															.indexOf(')'));
+
+											final Class<?> clazz;
+											try {
+												clazz = Class
+														.forName(parameterType);
+
+												final JPanel panelProperty = new JPanel(
+														new FlowLayout(
+																FlowLayout.LEADING,
+																10, 0));
+												panelProperties
+														.add(panelProperty,
+																new GridBagConstraints(
+																		0,
+																		GridBagConstraints.RELATIVE,
+																		1,
+																		1,
+																		0.0,
+																		0.0,
+																		GridBagConstraints.FIRST_LINE_START,
+																		GridBagConstraints.NONE,
+																		new Insets(
+																				0,
+																				0,
+																				0,
+																				0),
+																		0, 10));
+
+												final JLabel lblPropertyName = new JLabel(
+														propertyName);
+												lblPropertyName
+														.setPreferredSize(new Dimension(
+																100, 15));
+												panelProperty
+														.add(lblPropertyName);
+
+												if (Boolean.class == clazz) {
+													panelProperty
+															.add(new JCheckBox());
+												} else if (Integer.class == clazz) {
+													panelProperty
+															.add(new JSpinner());
+												} else if (Float.class == clazz) {
+													panelProperty
+															.add(new JSpinner());
+												} else if (UUID.class == clazz) {
+													panelProperty
+															.add(new JComboBox<>());
+												} else if (Axis.class == clazz) {
+													panelProperty
+															.add(new JComboBox<>());
+												} else if (KeyStroke.class == clazz) {
+													panelProperty
+															.add(new JComboBox<>());
+												} else {
+													System.out.println("Error: "
+															+ clazz.getName()
+															+ " GUI element not implemented!");
+												}
+											} catch (ClassNotFoundException e) {
+												e.printStackTrace();
+											}
+										}
+									}
+
+									panelProperties.add(
+											Box.createGlue(),
+											new GridBagConstraints(
+													0,
+													GridBagConstraints.RELATIVE,
+													1, 1, 1.0, 1.0,
+													GridBagConstraints.CENTER,
+													GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0,
+													0));
+
+									scrollPaneProperties
+											.setViewportView(panelProperties);
+									scrollPaneProperties.setVisible(true);
+								}
+							}
+						});
 					}
 				});
 		panelActions.add(new JScrollPane(listAssignedActions),
-				new GridBagConstraints(2, 1, 1, 5, .5, 1.0,
+				new GridBagConstraints(2, 1, 1, 5, 0.33, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
+
+		lblProperties = new JLabel("Properties");
+		lblProperties.setVisible(false);
+		panelActions.add(lblProperties, new GridBagConstraints(3, 0, 1, 1, 0.0,
+				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 25));
+
+		scrollPaneProperties = new JScrollPane();
+		scrollPaneProperties.setVisible(false);
+		panelActions.add(scrollPaneProperties, new GridBagConstraints(3, 1, 1,
+				5, 0.33, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -218,7 +362,6 @@ public class EditComponentDialog extends JDialog {
 
 	private void updateAssignedActions() {
 		listAssignedActions.setListData(getAssignedActions());
-		btnRemove.setEnabled(false);
 	}
 
 	void closeDialog() {
@@ -278,8 +421,9 @@ public class EditComponentDialog extends JDialog {
 
 				updateAvailableActions();
 				updateAssignedActions();
-				
-				listAssignedActions.setSelectedIndex(listAssignedActions.getLastVisibleIndex());
+
+				listAssignedActions.setSelectedIndex(listAssignedActions
+						.getLastVisibleIndex());
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			} catch (InstantiationException e1) {
@@ -316,6 +460,7 @@ public class EditComponentDialog extends JDialog {
 				if (actions.size() == 0)
 					componentToActionMap.remove(component.getName());
 			}
+
 			updateAvailableActions();
 			updateAssignedActions();
 		}

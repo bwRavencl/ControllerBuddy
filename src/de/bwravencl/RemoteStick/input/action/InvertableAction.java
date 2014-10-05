@@ -8,7 +8,7 @@ public abstract class InvertableAction {
 		return invert;
 	}
 
-	public void setInvert(boolean invert) {
+	public void setInvert(Boolean invert) {
 		this.invert = invert;
 	}
 	

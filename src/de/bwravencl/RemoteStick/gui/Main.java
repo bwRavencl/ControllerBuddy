@@ -319,9 +319,8 @@ public class Main {
 									GridBagConstraints.NONE, new Insets(0, 0,
 											0, 0), 0, 0));
 
-					if (p.getUuid()
-							.equals(UUID
-									.fromString(Profile.DEFAULT_PROFILE_UUID_STRING))) {
+					if (p.getUuid().equals(
+							UUID.fromString(Input.DEFAULT_PROFILE_UUID_STRING))) {
 						textFieldDescription.setEnabled(false);
 
 						panelProfile.add(Box.createGlue(),

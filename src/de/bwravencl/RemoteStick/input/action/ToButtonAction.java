@@ -12,7 +12,7 @@ public abstract class ToButtonAction extends InvertableAction {
 		return buttonId;
 	}
 
-	public void setButtonId(int buttonId) {
+	public void setButtonId(Integer buttonId) {
 		this.buttonId = buttonId;
 	}
 	

@@ -22,7 +22,7 @@ public class CursorAction extends InvertableAction implements IAction {
 		return deadZone;
 	}
 
-	public void setDeadZone(float deadZone) {
+	public void setDeadZone(Float deadZone) {
 		this.deadZone = deadZone;
 	}
 
@@ -30,7 +30,7 @@ public class CursorAction extends InvertableAction implements IAction {
 		return maxSpeed;
 	}
 
-	public void setMaxSpeed(float maxSpeed) {
+	public void setMaxSpeed(Float maxSpeed) {
 		this.maxSpeed = maxSpeed;
 	}
 

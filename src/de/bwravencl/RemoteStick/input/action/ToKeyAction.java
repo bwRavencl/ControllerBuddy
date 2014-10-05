@@ -15,7 +15,7 @@ public abstract class ToKeyAction extends InvertableAction {
 		return downUp;
 	}
 
-	public void setDownUp(boolean downUp) {
+	public void setDownUp(Boolean downUp) {
 		this.downUp = downUp;
 	}
 

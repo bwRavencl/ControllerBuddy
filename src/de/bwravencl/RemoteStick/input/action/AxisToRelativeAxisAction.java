@@ -16,7 +16,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 		return deadZone;
 	}
 
-	public void setDeadZone(float deadZone) {
+	public void setDeadZone(Float deadZone) {
 		this.deadZone = deadZone;
 	}
 
@@ -24,7 +24,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 		return sensitivity;
 	}
 
-	public void setSensitivity(float sensitivity) {
+	public void setSensitivity(Float sensitivity) {
 		this.sensitivity = sensitivity;
 	}
 

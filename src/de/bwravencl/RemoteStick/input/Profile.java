@@ -10,9 +10,6 @@ import de.bwravencl.RemoteStick.input.action.IAction;
 
 public class Profile {
 
-	public static final String DEFAULT_PROFILE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
-	public static final String DEFAULT_PROFILE_DESCRIPTION = "Default Profile";
-
 	private UUID uuid;
 	private String description = new String();
 	private Map<String, List<IAction>> componentToActionMap = new HashMap<String, List<IAction>>();

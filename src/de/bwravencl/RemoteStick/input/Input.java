@@ -37,6 +37,9 @@ public class Input {
 	public static final int ID_S1_AXIS = 7;
 	public static final int ID_BUTTON_NONE = -1;
 
+	public static final String DEFAULT_PROFILE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
+	public static final String DEFAULT_PROFILE_DESCRIPTION = "Default Profile";
+
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
 	private int nButtons = 0;
@@ -66,9 +69,8 @@ public class Input {
 			System.out.println(c.getName() + " " + c.getPollData());
 		}
 
-		final Profile defaultProfile = new Profile(
-				Profile.DEFAULT_PROFILE_UUID_STRING);
-		defaultProfile.setDescription(Profile.DEFAULT_PROFILE_DESCRIPTION);
+		final Profile defaultProfile = new Profile(DEFAULT_PROFILE_UUID_STRING);
+		defaultProfile.setDescription(DEFAULT_PROFILE_DESCRIPTION);
 		profiles.add(defaultProfile);
 
 		Profile profile1 = new Profile("54947df8-0e9e-4471-a2f9-9af509fb5889");

@@ -12,7 +12,7 @@ public class AxisToScrollAction extends ToScrollAction implements IAction {
 		return deadZone;
 	}
 
-	public void setDeadZone(float deadZone) {
+	public void setDeadZone(Float deadZone) {
 		this.deadZone = deadZone;
 	}
 
