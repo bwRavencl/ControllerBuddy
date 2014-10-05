@@ -1,7 +1,8 @@
 package de.bwravencl.RemoteStick.input;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public class Profile {
 
 	private UUID uuid;
 	private String description = new String();
-	private Map<String, HashSet<IAction>> componentToActionMap = new HashMap<String, HashSet<IAction>>();
+	private Map<String, List<IAction>> componentToActionMap = new HashMap<String, List<IAction>>();
 
 	public Profile() {
 		uuid = UUID.randomUUID();
@@ -40,12 +41,12 @@ public class Profile {
 		this.description = description;
 	}
 
-	public Map<String, HashSet<IAction>> getComponentToActionMap() {
+	public Map<String, List<IAction>> getComponentToActionMap() {
 		return componentToActionMap;
 	}
 
 	public void setComponentToActionMap(
-			Map<String, HashSet<IAction>> componentToActionMap) {
+			Map<String, List<IAction>> componentToActionMap) {
 		this.componentToActionMap = componentToActionMap;
 	}
 
@@ -59,15 +60,15 @@ public class Profile {
 		final Profile profile = new Profile(uuid.toString());
 		profile.setDescription(new String(description));
 
-		final Map<String, HashSet<IAction>> clonedComponentToActionMap = new HashMap<String, HashSet<IAction>>();
-		for (Map.Entry<String, HashSet<IAction>> e : componentToActionMap
+		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<String, List<IAction>>();
+		for (Map.Entry<String, List<IAction>> e : componentToActionMap
 				.entrySet()) {
 			for (IAction a : e.getValue()) {
 				final String key = new String(e.getKey());
 
-				HashSet<IAction> actions = clonedComponentToActionMap.get(key);
+				List<IAction> actions = clonedComponentToActionMap.get(key);
 				if (actions == null) {
-					actions = new HashSet<IAction>();
+					actions = new ArrayList<IAction>();
 					clonedComponentToActionMap.put(key, actions);
 				}
 

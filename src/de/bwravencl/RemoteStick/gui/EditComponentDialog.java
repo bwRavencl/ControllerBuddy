@@ -28,10 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class EditComponentDialog extends JDialog {
 
@@ -54,9 +52,9 @@ public class EditComponentDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 
 	private final JComboBox<Profile> comboBoxProfile;
+	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
 	private final JButton btnAdd;
 	private final JButton btnRemove;
-	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
 	private final JList<IAction> listAssignedActions = new JList<IAction>();
 
 	private final Input input;
@@ -204,10 +202,10 @@ public class EditComponentDialog extends JDialog {
 	}
 
 	private IAction[] getAssignedActions() {
-		Set<IAction> assignedActions = selectedProfile
+		List<IAction> assignedActions = selectedProfile
 				.getComponentToActionMap().get(component.getName());
 		if (assignedActions == null)
-			assignedActions = new HashSet<IAction>();
+			assignedActions = new ArrayList<IAction>();
 
 		final ButtonToProfileAction buttonToProfileAction = unsavedComponentToProfileActionMap
 				.get(component.getName());
@@ -267,19 +265,21 @@ public class EditComponentDialog extends JDialog {
 					unsavedComponentToProfileActionMap.put(component.getName(),
 							(ButtonToProfileAction) action);
 				else {
-					final Map<String, HashSet<IAction>> componentToActionMap = selectedProfile
+					final Map<String, List<IAction>> componentToActionMap = selectedProfile
 							.getComponentToActionMap();
 					final String componentName = component.getName();
 
 					if (componentToActionMap.get(componentName) == null)
 						componentToActionMap.put(componentName,
-								new HashSet<IAction>());
+								new ArrayList<IAction>());
 
 					componentToActionMap.get(componentName).add(action);
 				}
 
 				updateAvailableActions();
 				updateAssignedActions();
+				
+				listAssignedActions.setSelectedIndex(listAssignedActions.getLastVisibleIndex());
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			} catch (InstantiationException e1) {
@@ -307,9 +307,9 @@ public class EditComponentDialog extends JDialog {
 			if (selectedAssignedAction instanceof ButtonToProfileAction)
 				unsavedComponentToProfileActionMap.remove(component.getName());
 			else {
-				final Map<String, HashSet<IAction>> componentToActionMap = selectedProfile
+				final Map<String, List<IAction>> componentToActionMap = selectedProfile
 						.getComponentToActionMap();
-				final HashSet<IAction> actions = componentToActionMap
+				final List<IAction> actions = componentToActionMap
 						.get(component.getName());
 				actions.remove(selectedAssignedAction);
 

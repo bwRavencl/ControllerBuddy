@@ -76,12 +76,12 @@ public class Input {
 		Profile profile2 = new Profile("046b6c7f-0b8a-43b9-b35d-6489e6daee91");
 		profile2.setDescription("Mouse mode");
 
-		HashSet<IAction> xAxisActionsP0 = new HashSet<>();
+		List<IAction> xAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
 		xAxisAction0.setAxisId(ID_Z_AXIS);
 		xAxisActionsP0.add(xAxisAction0);
 		defaultProfile.getComponentToActionMap().put("x", xAxisActionsP0);
-		HashSet<IAction> xAxisActionsP1 = new HashSet<>();
+		List<IAction> xAxisActionsP1 = new ArrayList<>();
 		AxisToKeyAction xAxisAction1 = new AxisToKeyAction();
 		KeyStroke xAxisAction1Keystroke = new KeyStroke();
 		xAxisAction1Keystroke.setKeyCodes(new String[] { "VK_I" });
@@ -92,7 +92,7 @@ public class Input {
 		xAxisActionsP1.add(xAxisAction1);
 		profile1.getComponentToActionMap().put("x", xAxisActionsP1);
 
-		HashSet<IAction> yAxisActionsP0 = new HashSet<>();
+		List<IAction> yAxisActionsP0 = new ArrayList<>();
 		AxisToRelativeAxisAction yAxisAction0P0 = new AxisToRelativeAxisAction();
 		yAxisAction0P0.setAxisId(ID_S0_AXIS);
 		yAxisAction0P0.setInvert(false);
@@ -104,40 +104,40 @@ public class Input {
 		yAxisAction1P0.setMinAxisValue(1.0f);
 		yAxisActionsP0.add(yAxisAction1P0);
 		defaultProfile.getComponentToActionMap().put("y", yAxisActionsP0);
-		HashSet<IAction> yAxisActionsP2 = new HashSet<>();
+		List<IAction> yAxisActionsP2 = new ArrayList<>();
 		AxisToScrollAction yAxisAction0P2 = new AxisToScrollAction();
 		yAxisAction0P2.setClicks(10);
 		yAxisActionsP2.add(yAxisAction0P2);
 		profile2.getComponentToActionMap().put("y", yAxisActionsP2);
 
-		HashSet<IAction> rxAxisActionsP0 = new HashSet<>();
+		List<IAction> rxAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction rxAxisAction0P0 = new AxisToAxisAction();
 		rxAxisAction0P0.setAxisId(ID_X_AXIS);
 		rxAxisActionsP0.add(rxAxisAction0P0);
 		defaultProfile.getComponentToActionMap().put("z", rxAxisActionsP0);
-		HashSet<IAction> rxAxisActionsP2 = new HashSet<>();
+		List<IAction> rxAxisActionsP2 = new ArrayList<>();
 		CursorAction rxAxisAction0P2 = new CursorAction();
 		rxAxisAction0P2.setAxis(CursorAction.Axis.X);
 		rxAxisActionsP2.add(rxAxisAction0P2);
 		profile2.getComponentToActionMap().put("z", rxAxisActionsP2);
 
-		HashSet<IAction> ryAxisActionsP0 = new HashSet<>();
+		List<IAction> ryAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction ryAxisAction0P0 = new AxisToAxisAction();
 		ryAxisAction0P0.setAxisId(ID_Y_AXIS);
 		ryAxisActionsP0.add(ryAxisAction0P0);
 		defaultProfile.getComponentToActionMap().put("rz", ryAxisActionsP0);
-		HashSet<IAction> ryAxisActionsP2 = new HashSet<>();
+		List<IAction> ryAxisActionsP2 = new ArrayList<>();
 		CursorAction ryAxisAction0P2 = new CursorAction();
 		ryAxisAction0P2.setAxis(CursorAction.Axis.Y);
 		ryAxisActionsP2.add(ryAxisAction0P2);
 		profile2.getComponentToActionMap().put("rz", ryAxisActionsP2);
 
-		HashSet<IAction> xButtonActionsP0 = new HashSet<>();
+		List<IAction> xButtonActionsP0 = new ArrayList<>();
 		ButtonToButtonAction xButtonAction0P0 = new ButtonToButtonAction();
 		xButtonAction0P0.setButtonId(0);
 		xButtonActionsP0.add(xButtonAction0P0);
 		defaultProfile.getComponentToActionMap().put("14", xButtonActionsP0);
-		HashSet<IAction> xButtonActionsP2 = new HashSet<>();
+		List<IAction> xButtonActionsP2 = new ArrayList<>();
 		ButtonToKeyAction xButtonAction0P2 = new ButtonToKeyAction();
 		KeyStroke xButtonAction0P2Keystroke = new KeyStroke();
 		xButtonAction0P2Keystroke.setKeyCodes(new String[] { "LBUTTON" });
@@ -145,7 +145,7 @@ public class Input {
 		xButtonActionsP2.add(xButtonAction0P2);
 		profile2.getComponentToActionMap().put("14", xButtonActionsP2);
 
-		HashSet<IAction> oButtonActions = new HashSet<>();
+		List<IAction> oButtonActions = new ArrayList<>();
 		ButtonToKeyAction oButtonAction0 = new ButtonToKeyAction();
 		KeyStroke oButtonAction0Keystroke = new KeyStroke();
 		oButtonAction0Keystroke.setModifierCodes(new String[] { "SHIFT" });
@@ -155,26 +155,26 @@ public class Input {
 		oButtonActions.add(oButtonAction0);
 		defaultProfile.getComponentToActionMap().put("13", oButtonActions);
 
-		HashSet<IAction> triangleButtonActionsP2 = new HashSet<>();
+		List<IAction> triangleButtonActionsP2 = new ArrayList<>();
 		ButtonToScrollAction triangleButtonAction = new ButtonToScrollAction();
 		triangleButtonAction.setClicks(1);
 		triangleButtonAction.setInvert(true);
 		triangleButtonActionsP2.add(triangleButtonAction);
 		profile2.getComponentToActionMap().put("12", triangleButtonActionsP2);
 
-		HashSet<IAction> squareButtonActionsP2 = new HashSet<>();
+		List<IAction> squareButtonActionsP2 = new ArrayList<>();
 		ButtonToScrollAction squareButtonAction = new ButtonToScrollAction();
 		squareButtonAction.setClicks(1);
 		squareButtonActionsP2.add(squareButtonAction);
 		profile2.getComponentToActionMap().put("15", squareButtonActionsP2);
 
-		HashSet<IAction> r1ButtonActions = new HashSet<>();
+		List<IAction> r1ButtonActions = new ArrayList<>();
 		ButtonToProfileAction r1ButtonAction0 = new ButtonToProfileAction();
 		r1ButtonAction0.setProfileUuid(profile1.getUuid());
 		r1ButtonActions.add(r1ButtonAction0);
 		componentToProfileActionMap.put("11", r1ButtonAction0);
 
-		HashSet<IAction> l1ButtonActions = new HashSet<>();
+		List<IAction> l1ButtonActions = new ArrayList<>();
 		ButtonToProfileAction l1ButtonAction0 = new ButtonToProfileAction();
 		l1ButtonAction0.setProfileUuid(profile2.getUuid());
 		l1ButtonAction0.setToggle(true);
@@ -195,9 +195,9 @@ public class Input {
 				profileAction.doAction(this, c.getPollData());
 
 			if (profiles.size() > 0 && activeProfileIndex < profiles.size()) {
-				Map<String, HashSet<IAction>> componentToActionMap = profiles
-						.get(activeProfileIndex).getComponentToActionMap();
-				Set<IAction> actions = componentToActionMap.get(c.getName());
+				Map<String, List<IAction>> componentToActionMap = profiles.get(
+						activeProfileIndex).getComponentToActionMap();
+				List<IAction> actions = componentToActionMap.get(c.getName());
 				if (actions == null)
 					actions = profiles.get(0).getComponentToActionMap()
 							.get(c.getName());
