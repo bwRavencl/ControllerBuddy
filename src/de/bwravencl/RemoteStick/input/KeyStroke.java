@@ -20,5 +20,22 @@ public class KeyStroke {
 	public void setModifierCodes(String[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
 	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final KeyStroke keyStroke = new KeyStroke();
+		
+		final String[] clonedKeyCodes = new String[keyCodes.length];
+		for (int i = 0; i < keyCodes.length; i++)
+			clonedKeyCodes[i] = new String(keyCodes[i]);
+		keyStroke.setKeyCodes(clonedKeyCodes);
+		
+		final String[] clonedModifierCodes = new String[modifierCodes.length];
+		for (int i = 0; i < modifierCodes.length; i++)
+			clonedModifierCodes[i] = new String(modifierCodes[i]);
+		keyStroke.setModifierCodes(clonedModifierCodes);
+		
+		return keyStroke;
+	}
 
 }

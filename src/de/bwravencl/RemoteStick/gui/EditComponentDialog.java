@@ -78,7 +78,7 @@ public class EditComponentDialog extends JDialog {
 		for (Map.Entry<String, ButtonToProfileAction> e : input
 				.getComponentToProfileActionMap().entrySet())
 			try {
-				unsavedComponentToProfileActionMap.put(e.getKey(),
+				unsavedComponentToProfileActionMap.put(new String(e.getKey()),
 						(ButtonToProfileAction) e.getValue().clone());
 			} catch (CloneNotSupportedException e1) {
 				e1.printStackTrace();

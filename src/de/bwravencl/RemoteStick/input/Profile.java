@@ -53,10 +53,30 @@ public class Profile {
 	public String toString() {
 		return description;
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+		final Profile profile = new Profile(uuid.toString());
+		profile.setDescription(new String(description));
+
+		final Map<String, HashSet<IAction>> clonedComponentToActionMap = new HashMap<String, HashSet<IAction>>();
+		for (Map.Entry<String, HashSet<IAction>> e : componentToActionMap
+				.entrySet()) {
+			for (IAction a : e.getValue()) {
+				final String key = new String(e.getKey());
+
+				HashSet<IAction> actions = clonedComponentToActionMap.get(key);
+				if (actions == null) {
+					actions = new HashSet<IAction>();
+					clonedComponentToActionMap.put(key, actions);
+				}
+
+				actions.add((IAction) a.clone());
+			}
+		}
+		profile.setComponentToActionMap(clonedComponentToActionMap);
+
+		return profile;
 	}
 
 }

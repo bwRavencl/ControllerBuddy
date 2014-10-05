@@ -31,5 +31,13 @@ public abstract class ToKeyAction extends InvertableAction {
 	public String toString() {
 		return "Key";
 	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final ToKeyAction toKeyAction = (ToKeyAction) super.clone();
+		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
+		
+		return toKeyAction;
+	}
 
 }
