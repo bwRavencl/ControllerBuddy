@@ -12,4 +12,9 @@ public abstract class InvertableAction {
 		this.invert = invert;
 	}
 	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
 }

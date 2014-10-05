@@ -6,4 +6,5 @@ public interface IAction {
 
 	public void doAction(Input joystick, float value);
 
+	public Object clone() throws CloneNotSupportedException;
 }

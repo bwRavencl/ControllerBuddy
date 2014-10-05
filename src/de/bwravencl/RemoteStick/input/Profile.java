@@ -11,7 +11,7 @@ public class Profile {
 
 	public static final String DEFAULT_PROFILE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
 	public static final String DEFAULT_PROFILE_DESCRIPTION = "Default Profile";
-	
+
 	private UUID uuid;
 	private String description = new String();
 	private Map<String, HashSet<IAction>> componentToActionMap = new HashMap<String, HashSet<IAction>>();
@@ -47,6 +47,16 @@ public class Profile {
 	public void setComponentToActionMap(
 			Map<String, HashSet<IAction>> componentToActionMap) {
 		this.componentToActionMap = componentToActionMap;
+	}
+
+	@Override
+	public String toString() {
+		return description;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 }

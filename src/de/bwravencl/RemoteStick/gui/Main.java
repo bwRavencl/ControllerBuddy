@@ -60,9 +60,6 @@ public class Main {
 
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 
-	private Input input;
-	private ServerThread serverThread;
-
 	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneAssignments;
@@ -73,10 +70,11 @@ public class Main {
 	private JSpinner spinnerClientTimeout;
 	private JSpinner spinnerUpdateRate;
 	private JScrollPane scrollPaneProfiles;
+	private final JFileChooser jFileChooser = new JFileChooser();
 
 	private boolean suspendControllerSettingsUpdate = false;
-
-	private final JFileChooser jFileChooser = new JFileChooser();
+	private Input input;
+	private ServerThread serverThread;
 
 	/**
 	 * Launch the application.
@@ -244,6 +242,7 @@ public class Main {
 
 		spinnerPort = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_PORT, 1024, 65535, 1));
+		spinnerPort.setEditor(new JSpinner.NumberEditor(spinnerPort, "#"));
 		panelPort.add(spinnerPort);
 
 		final JPanel panelTimeout = new JPanel(panelFlowLayout);
@@ -255,6 +254,8 @@ public class Main {
 
 		spinnerClientTimeout = new JSpinner(new SpinnerNumberModel(
 				ServerThread.DEFAULT_CLIENT_TIMEOUT, 10, 60000, 1));
+		spinnerClientTimeout.setEditor(new JSpinner.NumberEditor(
+				spinnerClientTimeout, "#"));
 		panelTimeout.add(spinnerClientTimeout);
 
 		final JPanel panelUpdateRate = new JPanel(panelFlowLayout);
@@ -266,6 +267,8 @@ public class Main {
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
 				(int) ServerThread.DEFAULT_UPDATE_RATE, 1, 1000, 1));
+		spinnerUpdateRate.setEditor(new JSpinner.NumberEditor(
+				spinnerUpdateRate, "#"));
 		panelUpdateRate.add(spinnerUpdateRate);
 
 		panelServerSettings.add(Box.createGlue(), new GridBagConstraints(0,
@@ -335,7 +338,7 @@ public class Main {
 										GridBagConstraints.NONE, new Insets(0,
 												0, 0, 0), 0, 0));
 					} else {
-						final setProfileDescriptionAction setProfileDescriptionAction = new setProfileDescriptionAction(
+						final SetProfileDescriptionAction setProfileDescriptionAction = new SetProfileDescriptionAction(
 								p, textFieldDescription);
 						textFieldDescription
 								.addActionListener(setProfileDescriptionAction);
@@ -718,7 +721,7 @@ public class Main {
 		}
 	}
 
-	private class setProfileDescriptionAction extends AbstractAction implements
+	private class SetProfileDescriptionAction extends AbstractAction implements
 			FocusListener {
 		/**
 		 * 
@@ -728,7 +731,7 @@ public class Main {
 		private final Profile profile;
 		private final JTextField profileDescriptionTextField;
 
-		public setProfileDescriptionAction(Profile profile,
+		public SetProfileDescriptionAction(Profile profile,
 				JTextField profileDescriptionTextField) {
 			this.profile = profile;
 			this.profileDescriptionTextField = profileDescriptionTextField;

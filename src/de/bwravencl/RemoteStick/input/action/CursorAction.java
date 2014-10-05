@@ -4,6 +4,8 @@ import de.bwravencl.RemoteStick.input.Input;
 
 public class CursorAction extends InvertableAction implements IAction {
 
+	public static final String description = "Cursor";
+
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
 	public final float DEFAULT_MAX_SPEED = 5.0f;
 
@@ -58,5 +60,10 @@ public class CursorAction extends InvertableAction implements IAction {
 						: d)));
 		}
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Cursor";
+	}
+
 }

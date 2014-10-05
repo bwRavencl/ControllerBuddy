@@ -47,8 +47,8 @@ public class Input {
 	private final Controller controller;
 	private int activeProfileIndex = 0;
 
-	private final Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
-	private final List<Profile> profiles = new ArrayList<Profile>();
+	private Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
+	private List<Profile> profiles = new ArrayList<Profile>();
 
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
@@ -215,8 +215,21 @@ public class Input {
 		return controller;
 	}
 
+	public Map<String, ButtonToProfileAction> getComponentToProfileActionMap() {
+		return componentToProfileActionMap;
+	}
+
+	public void setComponentToProfileActionMap(
+			Map<String, ButtonToProfileAction> componentToProfileActionMap) {
+		this.componentToProfileActionMap = componentToProfileActionMap;
+	}
+
 	public List<Profile> getProfiles() {
 		return profiles;
+	}
+
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
 	}
 
 	public ServerThread getServerThread() {

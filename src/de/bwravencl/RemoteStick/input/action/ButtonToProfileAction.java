@@ -7,6 +7,8 @@ import de.bwravencl.RemoteStick.input.Profile;
 
 public class ButtonToProfileAction implements IAction {
 
+	public static final String description = "Profile";
+
 	private boolean toggle = false;
 	private boolean up = true;
 
@@ -62,6 +64,16 @@ public class ButtonToProfileAction implements IAction {
 							.fromString(Profile.DEFAULT_PROFILE_UUID_STRING)))
 				joystick.setActiveProfile(profileUuid);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Profile";
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 }

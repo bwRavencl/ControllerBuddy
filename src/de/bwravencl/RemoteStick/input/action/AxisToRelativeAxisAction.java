@@ -4,6 +4,8 @@ import de.bwravencl.RemoteStick.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
+	public static final String description = "Relative Axis";
+
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
 	public final float DEFAULT_SENSITIVITY = 1.0f;
 
@@ -33,11 +35,16 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 					* (float) joystick.getServerThread().getUpdateRate()
 					/ (float) 1000L;
 
-			final float oldValue = Input.normalize(joystick.getAxis()[axisId], 0.0f,
-					joystick.getMaxAxisValue(), -1.0f, 1.0f);
+			final float oldValue = Input.normalize(joystick.getAxis()[axisId],
+					0.0f, joystick.getMaxAxisValue(), -1.0f, 1.0f);
 
 			joystick.setAxis(axisId, oldValue + (invert ? -d : d));
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Relative Axis";
 	}
 
 }
