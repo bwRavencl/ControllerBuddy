@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -33,6 +35,7 @@ import net.java.games.input.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +62,9 @@ public class EditComponentDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToProfileAction",
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+
+	public static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
+	public static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	public static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
 
 	private final JComboBox<Profile> comboBoxProfile;
@@ -213,6 +219,13 @@ public class EditComponentDialog extends JDialog {
 												clazz = Class
 														.forName(parameterType);
 
+												final Method getterMethod = selectedAssignedAction
+														.getClass()
+														.getMethod(
+																(clazz == Boolean.class ? ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN
+																		: ACTION_PROPERTY_GETTER_PREFIX_DEFAULT)
+																		+ propertyName);
+
 												final JPanel panelProperty = new JPanel(
 														new FlowLayout(
 																FlowLayout.LEADING,
@@ -244,14 +257,26 @@ public class EditComponentDialog extends JDialog {
 														.add(lblPropertyName);
 
 												if (Boolean.class == clazz) {
-													panelProperty
-															.add(new JCheckBox());
+													final JCheckBox checkBox = new JCheckBox(
+															new JCheckBoxSetPropertyAction(
+																	m));
+													checkBox.setSelected((boolean) getterMethod
+															.invoke(selectedAssignedAction));
+													panelProperty.add(checkBox);
 												} else if (Integer.class == clazz) {
-													panelProperty
-															.add(new JSpinner());
+													final JSpinner spinner = new JSpinner();
+													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
+															m));
+													spinner.setValue(getterMethod
+															.invoke(selectedAssignedAction));
+													panelProperty.add(spinner);
 												} else if (Float.class == clazz) {
-													panelProperty
-															.add(new JSpinner());
+													final JSpinner spinner = new JSpinner();
+													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
+															m));
+													spinner.setValue(getterMethod
+															.invoke(selectedAssignedAction));
+													panelProperty.add(spinner);
 												} else if (UUID.class == clazz) {
 													panelProperty
 															.add(new JComboBox<>());
@@ -267,6 +292,16 @@ public class EditComponentDialog extends JDialog {
 															+ " GUI element not implemented!");
 												}
 											} catch (ClassNotFoundException e) {
+												e.printStackTrace();
+											} catch (IllegalAccessException e) {
+												e.printStackTrace();
+											} catch (IllegalArgumentException e) {
+												e.printStackTrace();
+											} catch (InvocationTargetException e) {
+												e.printStackTrace();
+											} catch (NoSuchMethodException e) {
+												e.printStackTrace();
+											} catch (SecurityException e) {
 												e.printStackTrace();
 											}
 										}
@@ -463,6 +498,55 @@ public class EditComponentDialog extends JDialog {
 
 			updateAvailableActions();
 			updateAssignedActions();
+		}
+	}
+
+	private class JCheckBoxSetPropertyAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private final Method setterMethod;
+
+		public JCheckBoxSetPropertyAction(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				setterMethod.invoke(selectedAssignedAction,
+						((JCheckBox) e.getSource()).isSelected());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	private class JSpinnerSetPropertyChangeListener implements ChangeListener {
+
+		private final Method setterMethod;
+
+		public JSpinnerSetPropertyChangeListener(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			try {
+				setterMethod.invoke(selectedAssignedAction,
+						((JSpinner) e.getSource()).getValue());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
