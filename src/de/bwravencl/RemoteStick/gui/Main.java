@@ -24,9 +24,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import de.bwravencl.RemoteStick.InterfaceAdapter;
 import de.bwravencl.RemoteStick.ServerThread;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.Profile;
+import de.bwravencl.RemoteStick.input.action.IAction;
 
 import javax.swing.ButtonGroup;
 import javax.swing.AbstractAction;
@@ -42,13 +44,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JSpinner;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
@@ -379,6 +391,19 @@ public class Main {
 		public void actionPerformed(ActionEvent e) {
 			if (jFileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = jFileChooser.getSelectedFile();
+
+				try {
+					@SuppressWarnings("resource")
+					final String jsonString = new Scanner(file).useDelimiter(
+							"\\A").next();
+					final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+	                        .create();
+					Input.getProfiles().add(gson.fromJson(jsonString, Profile.class));
+					updateProfilesPanel();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
 			}
 		}
 	}
@@ -398,6 +423,23 @@ public class Main {
 		public void actionPerformed(ActionEvent e) {
 			if (jFileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = jFileChooser.getSelectedFile();
+
+				final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+                        .create();
+				final String jsonString = gson.toJson(Input.getProfiles().get(Input.getProfiles().size() - 1));
+
+				try (FileOutputStream fos = new FileOutputStream(file, false)) {
+					try (BufferedWriter bw = new BufferedWriter(
+							new OutputStreamWriter(fos))) {
+						bw.write(jsonString);
+						bw.flush();
+					}
+					fos.flush();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
@@ -768,7 +810,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			input.getProfiles().remove(profile);
+			Input.getProfiles().remove(profile);
 			updateProfilesPanel();
 		}
 	}
@@ -786,8 +828,7 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			final Profile profile = new Profile();
-			profile.setDescription("New Profile");
-			input.getProfiles().add(profile);
+			Input.getProfiles().add(profile);
 
 			updateProfilesPanel();
 		}

@@ -9,6 +9,7 @@ import java.awt.Insets;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -20,6 +21,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.ListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -42,6 +44,7 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -357,21 +360,44 @@ public class EditComponentDialog extends JDialog {
 												} else if (KeyStroke.class == clazz) {
 													final int length = KeyStroke.MODIFIER_CODES.length
 															+ KeyStroke.KEY_CODES.length;
-													final String[] codes = new String[length];
+													final String[] availableCodes = new String[length];
 													System.arraycopy(
 															KeyStroke.MODIFIER_CODES,
 															0,
-															codes,
+															availableCodes,
 															0,
 															KeyStroke.MODIFIER_CODES.length);
 													System.arraycopy(
 															KeyStroke.KEY_CODES,
 															0,
-															codes,
+															availableCodes,
 															KeyStroke.MODIFIER_CODES.length,
 															KeyStroke.KEY_CODES.length);
 													final JList<String> listCodes = new JList<String>(
-															codes);
+															availableCodes);
+													listCodes
+															.addListSelectionListener(new JListSetPropertyListSelectionListener(
+																	m));
+													final KeyStroke keyStroke = (KeyStroke) getterMethod
+															.invoke(selectedAssignedAction);
+													final List<String> addedCodes = new ArrayList<String>();
+													for (String s : keyStroke
+															.getModifierCodes())
+														addedCodes.add(s);
+													for (String s : keyStroke
+															.getKeyCodes())
+														addedCodes.add(s);
+													for (String s : addedCodes) {
+														final int index = getListModelIndex(
+																listCodes
+																		.getModel(),
+																s);
+														if (index >= 0)
+															listCodes
+																	.addSelectionInterval(
+																			index,
+																			index);
+													}
 													final JScrollPane scrollPane = new JScrollPane(
 															listCodes);
 													scrollPane
@@ -452,7 +478,21 @@ public class EditComponentDialog extends JDialog {
 		updateAssignedActions();
 	}
 
-	private boolean HasProfileAction() {
+	public int getListModelIndex(ListModel<?> model, Object value) {
+		if (value == null)
+			return -1;
+
+		if (model instanceof DefaultListModel)
+			return ((DefaultListModel<?>) model).indexOf(value);
+
+		for (int i = 0; i < model.getSize(); i++)
+			if (value.equals(model.getElementAt(i)))
+				return i;
+
+		return -1;
+	}
+
+	private boolean hasProfileAction() {
 		boolean hasProfileAction = false;
 
 		for (IAction a : getAssignedActions())
@@ -471,7 +511,7 @@ public class EditComponentDialog extends JDialog {
 			final AvailableAction availableAction = new AvailableAction(s);
 			if (ButtonToProfileAction.class.getName().equals(
 					availableAction.className)) {
-				if (Input.getProfiles().size() > 1 && !HasProfileAction())
+				if (Input.getProfiles().size() > 1 && !hasProfileAction())
 					availableActions.add(availableAction);
 			} else
 				availableActions.add(availableAction);
@@ -564,7 +604,7 @@ public class EditComponentDialog extends JDialog {
 				listAssignedActions
 						.setSelectedIndex(listAssignedActions
 								.getLastVisibleIndex()
-								- (HasProfileAction()
+								- (hasProfileAction()
 										&& !(action instanceof ButtonToProfileAction) ? 1
 										: 0));
 			} catch (ClassNotFoundException e1) {
@@ -683,6 +723,47 @@ public class EditComponentDialog extends JDialog {
 			try {
 				setterMethod.invoke(selectedAssignedAction,
 						((JComboBox<?>) e.getSource()).getSelectedItem());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private class JListSetPropertyListSelectionListener implements
+			ListSelectionListener {
+
+		private final Method setterMethod;
+
+		public JListSetPropertyListSelectionListener(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			try {
+				final List<String> modifierCodes = new ArrayList<String>();
+				final List<String> keyCodes = new ArrayList<String>();
+
+				for (Object o : ((JList<?>) e.getSource())
+						.getSelectedValuesList()) {
+					if (Arrays.asList(KeyStroke.MODIFIER_CODES).contains(o))
+						modifierCodes.add((String) o);
+					else
+						keyCodes.add((String) o);
+				}
+
+				final KeyStroke keyStroke = new KeyStroke();
+				keyStroke.setModifierCodes(modifierCodes
+						.toArray(new String[modifierCodes.size()]));
+				keyStroke.setKeyCodes(keyCodes.toArray(new String[keyCodes
+						.size()]));
+
+				setterMethod.invoke(selectedAssignedAction, keyStroke);
 			} catch (IllegalAccessException e1) {
 				e1.printStackTrace();
 			} catch (IllegalArgumentException e1) {

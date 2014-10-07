@@ -7,5 +7,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RemoteStickServer/lib/jinput"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/gson-2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

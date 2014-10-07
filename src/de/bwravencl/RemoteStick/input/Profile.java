@@ -11,7 +11,7 @@ import de.bwravencl.RemoteStick.input.action.IAction;
 public class Profile {
 
 	private UUID uuid;
-	private String description = new String();
+	private String description = new String("New Profile");
 	private Map<String, List<IAction>> componentToActionMap = new HashMap<String, List<IAction>>();
 
 	public Profile() {
