@@ -18,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -25,10 +26,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.Input.VirtualAxis;
 import de.bwravencl.RemoteStick.input.KeyStroke;
 import de.bwravencl.RemoteStick.input.Profile;
 import de.bwravencl.RemoteStick.input.action.ButtonToProfileAction;
-import de.bwravencl.RemoteStick.input.action.CursorAction.Axis;
+import de.bwravencl.RemoteStick.input.action.CursorAction.MouseAxis;
 import de.bwravencl.RemoteStick.input.action.IAction;
 import net.java.games.input.Component;
 
@@ -56,7 +58,8 @@ public class EditComponentDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "AxisToButtonAction",
 			ACTION_CLASS_PREFIX + "AxisToKeyAction",
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction",
-			ACTION_CLASS_PREFIX + "AxisToScrollAction" };
+			ACTION_CLASS_PREFIX + "AxisToScrollAction",
+			ACTION_CLASS_PREFIX + "CursorAction" };
 	public static final String[] BUTTON_ACTION_CLASSES = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
@@ -264,25 +267,86 @@ public class EditComponentDialog extends JDialog {
 															.invoke(selectedAssignedAction));
 													panelProperty.add(checkBox);
 												} else if (Integer.class == clazz) {
-													final JSpinner spinner = new JSpinner();
+													int value = (int) getterMethod
+															.invoke(selectedAssignedAction);
+
+													final SpinnerNumberModel model;
+													if ("Clicks"
+															.equals(propertyName))
+														model = new SpinnerNumberModel(
+																value, 0, 20, 1);
+													else
+														model = new SpinnerNumberModel(
+																value,
+																0,
+																input.getnButtons(),
+																1);
+
+													final JSpinner spinner = new JSpinner(
+															model);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
-													spinner.setValue(getterMethod
-															.invoke(selectedAssignedAction));
 													panelProperty.add(spinner);
 												} else if (Float.class == clazz) {
-													final JSpinner spinner = new JSpinner();
+													float value = (float) getterMethod
+															.invoke(selectedAssignedAction);
+
+													final SpinnerNumberModel model;
+													if ("DeadZone"
+															.equals(propertyName))
+														model = new SpinnerNumberModel(
+																value, 0.0,
+																1.0, 0.1);
+													else if ("MaxSpeed"
+															.equals(propertyName))
+														model = new SpinnerNumberModel(
+																value, 0.0,
+																20.0, 0.1);
+													else
+														model = new SpinnerNumberModel(
+																value, -1.0,
+																1.0, 0.1);
+
+													final JSpinner spinner = new JSpinner(
+															model);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
-													spinner.setValue(getterMethod
-															.invoke(selectedAssignedAction));
 													panelProperty.add(spinner);
 												} else if (UUID.class == clazz) {
-													panelProperty
-															.add(new JComboBox<>());
-												} else if (Axis.class == clazz) {
-													panelProperty
-															.add(new JComboBox<>());
+													final JComboBox<UUID> comboBox = new JComboBox<UUID>();
+													for (Profile p : input
+															.getProfiles())
+														if (!p.getUuid()
+																.toString()
+																.equals(Input.DEFAULT_PROFILE_UUID_STRING))
+															comboBox.addItem(p
+																	.getUuid());
+													comboBox.setAction(new JComboBoxSetPropertyAction(
+															m));
+													final Object value = getterMethod
+															.invoke(selectedAssignedAction);
+													if (value == null)
+														comboBox.setSelectedIndex(0);
+													else
+														comboBox.setSelectedItem(value);
+													panelProperty.add(comboBox);
+												} else if (VirtualAxis.class == clazz) {
+													final JComboBox<VirtualAxis> comboBox = new JComboBox<VirtualAxis>(
+															VirtualAxis
+																	.values());
+													comboBox.setAction(new JComboBoxSetPropertyAction(
+															m));
+													comboBox.setSelectedItem(getterMethod
+															.invoke(selectedAssignedAction));
+													panelProperty.add(comboBox);
+												} else if (MouseAxis.class == clazz) {
+													final JComboBox<MouseAxis> comboBox = new JComboBox<MouseAxis>(
+															MouseAxis.values());
+													comboBox.setAction(new JComboBoxSetPropertyAction(
+															m));
+													comboBox.setSelectedItem(getterMethod
+															.invoke(selectedAssignedAction));
+													panelProperty.add(comboBox);
 												} else if (KeyStroke.class == clazz) {
 													panelProperty
 															.add(new JComboBox<>());
@@ -359,20 +423,28 @@ public class EditComponentDialog extends JDialog {
 		updateAssignedActions();
 	}
 
-	private void updateAvailableActions() {
+	private boolean HasProfileAction() {
 		boolean hasProfileAction = false;
+
 		for (IAction a : getAssignedActions())
 			if (a instanceof ButtonToProfileAction)
 				hasProfileAction = true;
+
+		return hasProfileAction;
+	}
+
+	private void updateAvailableActions() {
 
 		final List<AvailableAction> availableActions = new ArrayList<AvailableAction>();
 
 		for (String s : component.isAnalog() ? AXIS_ACTION_CLASSES
 				: BUTTON_ACTION_CLASSES) {
 			final AvailableAction availableAction = new AvailableAction(s);
-			if (!hasProfileAction
-					|| (hasProfileAction && !ButtonToProfileAction.class
-							.getName().equals(availableAction.className)))
+			if (ButtonToProfileAction.class.getName().equals(
+					availableAction.className)) {
+				if (input.getProfiles().size() > 1 && !HasProfileAction())
+					availableActions.add(availableAction);
+			} else
 				availableActions.add(availableAction);
 		}
 
@@ -381,18 +453,20 @@ public class EditComponentDialog extends JDialog {
 	}
 
 	private IAction[] getAssignedActions() {
-		List<IAction> assignedActions = selectedProfile
+		final List<IAction> assignedActions = selectedProfile
 				.getComponentToActionMap().get(component.getName());
-		if (assignedActions == null)
-			assignedActions = new ArrayList<IAction>();
+
+		final List<IAction> clonedAssignedActions = new ArrayList<IAction>();
+		if (assignedActions != null)
+			clonedAssignedActions.addAll(assignedActions);
 
 		final ButtonToProfileAction buttonToProfileAction = unsavedComponentToProfileActionMap
 				.get(component.getName());
 		if (buttonToProfileAction != null)
-			assignedActions.add(buttonToProfileAction);
+			clonedAssignedActions.add(buttonToProfileAction);
 
-		return (IAction[]) assignedActions.toArray(new IAction[assignedActions
-				.size()]);
+		return (IAction[]) clonedAssignedActions
+				.toArray(new IAction[clonedAssignedActions.size()]);
 	}
 
 	private void updateAssignedActions() {
@@ -419,6 +493,7 @@ public class EditComponentDialog extends JDialog {
 			selectedProfile = (Profile) comboBoxProfile.getSelectedItem();
 			updateAssignedActions();
 		}
+
 	}
 
 	private class AddActionAction extends AbstractAction {
@@ -457,8 +532,12 @@ public class EditComponentDialog extends JDialog {
 				updateAvailableActions();
 				updateAssignedActions();
 
-				listAssignedActions.setSelectedIndex(listAssignedActions
-						.getLastVisibleIndex());
+				listAssignedActions
+						.setSelectedIndex(listAssignedActions
+								.getLastVisibleIndex()
+								- (HasProfileAction()
+										&& !(action instanceof ButtonToProfileAction) ? 1
+										: 0));
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			} catch (InstantiationException e1) {
@@ -468,6 +547,7 @@ public class EditComponentDialog extends JDialog {
 			}
 
 		}
+
 	}
 
 	private class RemoveActionAction extends AbstractAction {
@@ -499,6 +579,7 @@ public class EditComponentDialog extends JDialog {
 			updateAvailableActions();
 			updateAssignedActions();
 		}
+
 	}
 
 	private class JCheckBoxSetPropertyAction extends AbstractAction {
@@ -525,6 +606,7 @@ public class EditComponentDialog extends JDialog {
 				e1.printStackTrace();
 			}
 		}
+
 	}
 
 	private class JSpinnerSetPropertyChangeListener implements ChangeListener {
@@ -538,8 +620,13 @@ public class EditComponentDialog extends JDialog {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			try {
-				setterMethod.invoke(selectedAssignedAction,
-						((JSpinner) e.getSource()).getValue());
+				Object value = (((JSpinner) e.getSource()).getValue());
+
+				if (value instanceof Double)
+					setterMethod.invoke(selectedAssignedAction,
+							((Double) value).floatValue());
+				else
+					setterMethod.invoke(selectedAssignedAction, value);
 			} catch (IllegalAccessException e1) {
 				e1.printStackTrace();
 			} catch (IllegalArgumentException e1) {
@@ -548,6 +635,34 @@ public class EditComponentDialog extends JDialog {
 				e1.printStackTrace();
 			}
 		}
+
+	}
+
+	private class JComboBoxSetPropertyAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private final Method setterMethod;
+
+		public JComboBoxSetPropertyAction(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				setterMethod.invoke(selectedAssignedAction,
+						((JComboBox<?>) e.getSource()).getSelectedItem());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
 	}
 
 	private class OKAction extends AbstractAction {
@@ -567,6 +682,7 @@ public class EditComponentDialog extends JDialog {
 
 			closeDialog();
 		}
+
 	}
 
 	private class CancelAction extends AbstractAction {
@@ -583,6 +699,7 @@ public class EditComponentDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			closeDialog();
 		}
+
 	}
 
 	private class AvailableAction {

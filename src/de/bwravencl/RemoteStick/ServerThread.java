@@ -117,7 +117,7 @@ public class ServerThread extends Thread {
 
 					input.poll();
 
-					for (int v : input.getAxis())
+					for (int v : input.getAxis().values())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 					for (boolean v : input.getButtons())

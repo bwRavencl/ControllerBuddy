@@ -35,10 +35,11 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 					* (float) joystick.getServerThread().getUpdateRate()
 					/ (float) 1000L;
 
-			final float oldValue = Input.normalize(joystick.getAxis()[axisId],
-					0.0f, joystick.getMaxAxisValue(), -1.0f, 1.0f);
+			final float oldValue = Input.normalize(
+					joystick.getAxis().get(virtualAxis), 0.0f,
+					joystick.getMaxAxisValue(), -1.0f, 1.0f);
 
-			joystick.setAxis(axisId, oldValue + (invert ? -d : d));
+			joystick.setAxis(virtualAxis, oldValue + (invert ? -d : d));
 		}
 	}
 

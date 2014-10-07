@@ -1,6 +1,7 @@
 package de.bwravencl.RemoteStick.input;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,26 +26,20 @@ import net.java.games.input.Controller;
 
 public class Input {
 
-	public static final int N_AXIS = 8;
-	public static final int ID_AXIS_NONE = -1;
-	public static final int ID_X_AXIS = 0;
-	public static final int ID_Y_AXIS = 1;
-	public static final int ID_Z_AXIS = 2;
-	public static final int ID_RX_AXIS = 3;
-	public static final int ID_RY_AXIS = 4;
-	public static final int ID_RZ_AXIS = 5;
-	public static final int ID_S0_AXIS = 6;
-	public static final int ID_S1_AXIS = 7;
-	public static final int ID_BUTTON_NONE = -1;
-
+	public static final int DEFAULT_N_BUTTONS = 8;
 	public static final String DEFAULT_PROFILE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
 	public static final String DEFAULT_PROFILE_DESCRIPTION = "Default Profile";
 
+	public enum VirtualAxis {
+		X, Y, Z, RX, RY, RZ, S0, S1
+	}
+
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
-	private int nButtons = 0;
+	private int nButtons = DEFAULT_N_BUTTONS;
 
-	private int[] axis = new int[N_AXIS];
+	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(
+			VirtualAxis.class);
 	private boolean[] buttons = new boolean[nButtons];
 
 	private final Controller controller;
@@ -80,7 +75,7 @@ public class Input {
 
 		List<IAction> xAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction xAxisAction0 = new AxisToAxisAction();
-		xAxisAction0.setAxisId(ID_Z_AXIS);
+		xAxisAction0.setVirtualAxis(VirtualAxis.Z);
 		xAxisActionsP0.add(xAxisAction0);
 		defaultProfile.getComponentToActionMap().put("x", xAxisActionsP0);
 		List<IAction> xAxisActionsP1 = new ArrayList<>();
@@ -96,7 +91,7 @@ public class Input {
 
 		List<IAction> yAxisActionsP0 = new ArrayList<>();
 		AxisToRelativeAxisAction yAxisAction0P0 = new AxisToRelativeAxisAction();
-		yAxisAction0P0.setAxisId(ID_S0_AXIS);
+		yAxisAction0P0.setVirtualAxis(VirtualAxis.S0);
 		yAxisAction0P0.setInvert(false);
 		yAxisAction0P0.setSensitivity(2.0f);
 		yAxisActionsP0.add(yAxisAction0P0);
@@ -114,23 +109,23 @@ public class Input {
 
 		List<IAction> rxAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction rxAxisAction0P0 = new AxisToAxisAction();
-		rxAxisAction0P0.setAxisId(ID_X_AXIS);
+		rxAxisAction0P0.setVirtualAxis(VirtualAxis.X);
 		rxAxisActionsP0.add(rxAxisAction0P0);
 		defaultProfile.getComponentToActionMap().put("z", rxAxisActionsP0);
 		List<IAction> rxAxisActionsP2 = new ArrayList<>();
 		CursorAction rxAxisAction0P2 = new CursorAction();
-		rxAxisAction0P2.setAxis(CursorAction.Axis.X);
+		rxAxisAction0P2.setAxis(CursorAction.MouseAxis.X);
 		rxAxisActionsP2.add(rxAxisAction0P2);
 		profile2.getComponentToActionMap().put("z", rxAxisActionsP2);
 
 		List<IAction> ryAxisActionsP0 = new ArrayList<>();
 		AxisToAxisAction ryAxisAction0P0 = new AxisToAxisAction();
-		ryAxisAction0P0.setAxisId(ID_Y_AXIS);
+		ryAxisAction0P0.setVirtualAxis(VirtualAxis.Y);
 		ryAxisActionsP0.add(ryAxisAction0P0);
 		defaultProfile.getComponentToActionMap().put("rz", ryAxisActionsP0);
 		List<IAction> ryAxisActionsP2 = new ArrayList<>();
 		CursorAction ryAxisAction0P2 = new CursorAction();
-		ryAxisAction0P2.setAxis(CursorAction.Axis.Y);
+		ryAxisAction0P2.setAxis(CursorAction.MouseAxis.Y);
 		ryAxisActionsP2.add(ryAxisAction0P2);
 		profile2.getComponentToActionMap().put("rz", ryAxisActionsP2);
 
@@ -259,22 +254,23 @@ public class Input {
 		buttons = new boolean[nButtons];
 	}
 
-	public int[] getAxis() {
+	public EnumMap<VirtualAxis, Integer> getAxis() {
 		return axis;
 	}
 
-	public void setAxis(int id, int value) {
+	public void setAxis(VirtualAxis virtualAxis, int value) {
 		value = Math.max(value, 0);
 		value = Math.min(value, (int) maxAxisValue);
 
-		axis[id] = value;
+		axis.put(virtualAxis, value);
 	}
 
-	public void setAxis(int id, float value) {
+	public void setAxis(VirtualAxis virtualAxis, float value) {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
-		setAxis(id, (int) normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
+		setAxis(virtualAxis,
+				(int) normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
 	}
 
 	public boolean[] getButtons() {

@@ -12,11 +12,11 @@ public class CursorAction extends InvertableAction implements IAction {
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float maxSpeed = DEFAULT_MAX_SPEED;
 
-	public enum Axis {
+	public enum MouseAxis {
 		X, Y
 	}
 
-	private Axis axis = Axis.X;
+	private MouseAxis axis = MouseAxis.X;
 
 	public float getDeadZone() {
 		return deadZone;
@@ -34,11 +34,11 @@ public class CursorAction extends InvertableAction implements IAction {
 		this.maxSpeed = maxSpeed;
 	}
 
-	public Axis getAxis() {
+	public MouseAxis getAxis() {
 		return axis;
 	}
 
-	public void setAxis(Axis axis) {
+	public void setAxis(MouseAxis axis) {
 		this.axis = axis;
 	}
 
@@ -52,7 +52,7 @@ public class CursorAction extends InvertableAction implements IAction {
 					* rateMultiplier, 1.0f * rateMultiplier, -maxSpeed,
 					maxSpeed);
 
-			if (axis.equals(Axis.X))
+			if (axis.equals(MouseAxis.X))
 				joystick.setCursorDeltaX((int) (joystick.getCursorDeltaX() + (invert ? -d
 						: d)));
 			else
