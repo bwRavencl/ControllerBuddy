@@ -44,7 +44,6 @@ import javax.swing.JLabel;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.JSpinner;
 import javax.swing.event.MenuEvent;
@@ -59,6 +58,7 @@ import net.java.games.input.ControllerEnvironment;
 public class Main {
 
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
+	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 
 	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
@@ -199,8 +199,9 @@ public class Main {
 
 		final JPanel panelAddProfile = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT));
-		final JButton buttonAddProfile = new JButton(new AddProfileAction());
-		panelAddProfile.add(buttonAddProfile);
+		final JButton addButton = new JButton(new AddProfileAction());
+		addButton.setPreferredSize(BUTTON_DIMENSION);
+		panelAddProfile.add(addButton);
 		panelProfiles.add(panelAddProfile, BorderLayout.SOUTH);
 
 		panelAssignments = new JPanel();
@@ -288,7 +289,7 @@ public class Main {
 			public void run() {
 				panelProfileList.removeAll();
 
-				final List<Profile> profiles = input.getProfiles();
+				final List<Profile> profiles = Input.getProfiles();
 				for (Profile p : profiles) {
 					final JPanel panelProfile = new JPanel(new GridBagLayout());
 					panelProfileList.add(panelProfile, new GridBagConstraints(
@@ -319,47 +320,33 @@ public class Main {
 									GridBagConstraints.NONE, new Insets(0, 0,
 											0, 0), 0, 0));
 
-					if (p.getUuid().equals(
-							UUID.fromString(Input.DEFAULT_PROFILE_UUID_STRING))) {
-						textFieldDescription.setEnabled(false);
+					final SetProfileDescriptionAction setProfileDescriptionAction = new SetProfileDescriptionAction(
+							p, textFieldDescription);
+					textFieldDescription
+							.addActionListener(setProfileDescriptionAction);
+					textFieldDescription
+							.addFocusListener(setProfileDescriptionAction);
 
-						panelProfile.add(Box.createGlue(),
-								new GridBagConstraints(3,
-										GridBagConstraints.RELATIVE, 1, 1, 1.0,
-										1.0, GridBagConstraints.BASELINE,
-										GridBagConstraints.NONE, new Insets(0,
-												0, 0, 0), 0, 0));
+					panelProfile.add(Box.createGlue(), new GridBagConstraints(
+							3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+							GridBagConstraints.BASELINE,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 
-						panelProfile.add(Box.createGlue(),
-								new GridBagConstraints(4,
-										GridBagConstraints.RELATIVE, 1, 1, 1.0,
-										1.0, GridBagConstraints.BASELINE,
-										GridBagConstraints.NONE, new Insets(0,
-												0, 0, 0), 0, 0));
-					} else {
-						final SetProfileDescriptionAction setProfileDescriptionAction = new SetProfileDescriptionAction(
-								p, textFieldDescription);
-						textFieldDescription
-								.addActionListener(setProfileDescriptionAction);
-						textFieldDescription
-								.addFocusListener(setProfileDescriptionAction);
+					final JButton deleteButton = new JButton(
+							new DeleteProfileAction(p));
+					deleteButton.setPreferredSize(BUTTON_DIMENSION);
+					panelProfile.add(deleteButton, new GridBagConstraints(4,
+							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+							GridBagConstraints.BASELINE,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 
-						panelProfile.add(Box.createGlue(),
-								new GridBagConstraints(3,
-										GridBagConstraints.RELATIVE, 1, 1, 1.0,
-										1.0, GridBagConstraints.BASELINE,
-										GridBagConstraints.NONE, new Insets(0,
-												0, 0, 0), 0, 0));
-
-						final JButton deleteProfileButton = new JButton(
-								new DeleteProfileAction(p));
-						panelProfile.add(deleteProfileButton,
-								new GridBagConstraints(4,
-										GridBagConstraints.RELATIVE, 1, 1, 0.0,
-										0.0, GridBagConstraints.BASELINE,
-										GridBagConstraints.NONE, new Insets(0,
-												0, 0, 0), 0, 0));
+					if (Input.isDefaultProfile(p)) {
+						textFieldDescription.setEditable(false);
+						deleteButton.setEnabled(false);
 					}
+
 				}
 
 				panelProfileList.add(Box.createGlue(), new GridBagConstraints(
@@ -621,6 +608,8 @@ public class Main {
 									final JButton editButton = new JButton(
 											new EditComponentAction(c));
 									editButton
+											.setPreferredSize(BUTTON_DIMENSION);
+									editButton
 											.addMouseListener(new MouseListener() {
 
 												@Override
@@ -791,7 +780,7 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public AddProfileAction() {
-			putValue(NAME, "Add Profile");
+			putValue(NAME, "Add");
 			putValue(SHORT_DESCRIPTION, "Add a new profile");
 		}
 

@@ -1,8 +1,10 @@
 package de.bwravencl.RemoteStick.input.action;
 
+import java.util.List;
 import java.util.UUID;
 
 import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.Profile;
 
 public class ButtonToProfileAction implements IAction {
 
@@ -13,6 +15,13 @@ public class ButtonToProfileAction implements IAction {
 
 	private UUID profileUuid;
 
+	public ButtonToProfileAction() {
+		final List<Profile> profiles = Input.getProfiles();
+
+		if (profiles.size() > 1)
+			profileUuid = profiles.get(1).getUuid();
+	}
+
 	public boolean isToggle() {
 		return toggle;
 	}
@@ -21,12 +30,16 @@ public class ButtonToProfileAction implements IAction {
 		this.toggle = toggle;
 	}
 
-	public UUID getProfileUuid() {
-		return profileUuid;
+	public Profile getProfile() {
+		for (Profile p : Input.getProfiles())
+			if (profileUuid.equals(p.getUuid()))
+				return p;
+
+		return null;
 	}
 
-	public void setProfileUuid(UUID profileUuid) {
-		this.profileUuid = profileUuid;
+	public void setProfile(Profile profile) {
+		profileUuid = profile.getUuid();
 	}
 
 	@Override
@@ -43,11 +56,7 @@ public class ButtonToProfileAction implements IAction {
 		} else {
 			if (toggle) {
 				if (up) {
-					if (joystick
-							.getActiveProfile()
-							.getUuid()
-							.equals(UUID
-									.fromString(Input.DEFAULT_PROFILE_UUID_STRING)))
+					if (Input.isDefaultProfile(joystick.getActiveProfile()))
 						joystick.setActiveProfile(profileUuid);
 					else if (joystick.getActiveProfile().getUuid()
 							.equals(profileUuid)) {
@@ -56,8 +65,7 @@ public class ButtonToProfileAction implements IAction {
 					}
 					up = false;
 				}
-			} else if (joystick.getActiveProfile().getUuid()
-					.equals(UUID.fromString(Input.DEFAULT_PROFILE_UUID_STRING)))
+			} else if (Input.isDefaultProfile(joystick.getActiveProfile()))
 				joystick.setActiveProfile(profileUuid);
 		}
 	}

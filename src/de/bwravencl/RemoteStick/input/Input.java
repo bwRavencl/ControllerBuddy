@@ -46,7 +46,7 @@ public class Input {
 	private int activeProfileIndex = 0;
 
 	private Map<String, ButtonToProfileAction> componentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
-	private List<Profile> profiles = new ArrayList<Profile>();
+	private static List<Profile> profiles = new ArrayList<Profile>();
 
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
@@ -167,13 +167,13 @@ public class Input {
 
 		List<IAction> r1ButtonActions = new ArrayList<>();
 		ButtonToProfileAction r1ButtonAction0 = new ButtonToProfileAction();
-		r1ButtonAction0.setProfileUuid(profile1.getUuid());
+		r1ButtonAction0.setProfile(profile1);
 		r1ButtonActions.add(r1ButtonAction0);
 		componentToProfileActionMap.put("11", r1ButtonAction0);
 
 		List<IAction> l1ButtonActions = new ArrayList<>();
 		ButtonToProfileAction l1ButtonAction0 = new ButtonToProfileAction();
-		l1ButtonAction0.setProfileUuid(profile2.getUuid());
+		l1ButtonAction0.setProfile(profile2);
 		l1ButtonAction0.setToggle(true);
 		l1ButtonActions.add(l1ButtonAction0);
 		componentToProfileActionMap.put("10", l1ButtonAction0);
@@ -221,12 +221,12 @@ public class Input {
 		this.componentToProfileActionMap = componentToProfileActionMap;
 	}
 
-	public List<Profile> getProfiles() {
+	public static List<Profile> getProfiles() {
 		return profiles;
 	}
 
-	public void setProfiles(List<Profile> profiles) {
-		this.profiles = profiles;
+	public static void setProfiles(List<Profile> profiles) {
+		Input.profiles = profiles;
 	}
 
 	public ServerThread getServerThread() {
@@ -351,6 +351,11 @@ public class Input {
 		}
 
 		return newValue;
+	}
+
+	public static boolean isDefaultProfile(Profile profile) {
+		return (profile.getUuid().equals(UUID
+				.fromString(Input.DEFAULT_PROFILE_UUID_STRING)));
 	}
 
 }

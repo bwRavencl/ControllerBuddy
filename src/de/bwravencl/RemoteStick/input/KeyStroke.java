@@ -1,6 +1,9 @@
 package de.bwravencl.RemoteStick.input;
 
 public class KeyStroke {
+	
+	public static final String[] KEY_CODES = {"VK_A", "VK_B", "VK_C"};
+	public static final String[] MODIFIER_CODES = {"CTRL", "ALT", "SHIFT"};
 
 	private String[] keyCodes = new String[0];
 	private String[] modifierCodes = new String[0];

@@ -12,7 +12,9 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -43,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class EditComponentDialog extends JDialog {
 
@@ -104,7 +105,7 @@ public class EditComponentDialog extends JDialog {
 			}
 
 		unsavedProfiles = new ArrayList<Profile>();
-		for (Profile p : input.getProfiles())
+		for (Profile p : Input.getProfiles())
 			try {
 				unsavedProfiles.add((Profile) p.clone());
 			} catch (CloneNotSupportedException e) {
@@ -151,17 +152,19 @@ public class EditComponentDialog extends JDialog {
 				});
 		updateAvailableActions();
 		panelActions.add(new JScrollPane(listAvailableActions),
-				new GridBagConstraints(0, 1, 1, 5, 0.33, 1.0,
+				new GridBagConstraints(0, 1, 1, 5, 0.25, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
 		btnAdd = new JButton(new AddActionAction());
+		btnAdd.setPreferredSize(Main.BUTTON_DIMENSION);
 		btnAdd.setEnabled(false);
 		panelActions.add(btnAdd, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.25,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
 						0, 0, 0, 0), 0, 0));
 
 		btnRemove = new JButton(new RemoveActionAction());
+		btnRemove.setPreferredSize(Main.BUTTON_DIMENSION);
 		btnRemove.setEnabled(false);
 		panelActions.add(btnRemove, new GridBagConstraints(1, 4, 1, 2, 0.0,
 				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -284,6 +287,11 @@ public class EditComponentDialog extends JDialog {
 
 													final JSpinner spinner = new JSpinner(
 															model);
+													final JComponent editor = spinner
+															.getEditor();
+													final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
+															.getTextField();
+													textField.setColumns(2);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
 													panelProperty.add(spinner);
@@ -296,7 +304,7 @@ public class EditComponentDialog extends JDialog {
 															.equals(propertyName))
 														model = new SpinnerNumberModel(
 																value, 0.0,
-																1.0, 0.1);
+																1.0, 0.01);
 													else if ("MaxSpeed"
 															.equals(propertyName))
 														model = new SpinnerNumberModel(
@@ -305,30 +313,29 @@ public class EditComponentDialog extends JDialog {
 													else
 														model = new SpinnerNumberModel(
 																value, -1.0,
-																1.0, 0.1);
+																1.0, 0.05);
 
 													final JSpinner spinner = new JSpinner(
 															model);
+													final JComponent editor = spinner
+															.getEditor();
+													final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
+															.getTextField();
+													textField.setColumns(3);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
 													panelProperty.add(spinner);
-												} else if (UUID.class == clazz) {
-													final JComboBox<UUID> comboBox = new JComboBox<UUID>();
-													for (Profile p : input
+												} else if (Profile.class == clazz) {
+													final JComboBox<Profile> comboBox = new JComboBox<Profile>();
+													for (Profile p : Input
 															.getProfiles())
-														if (!p.getUuid()
-																.toString()
-																.equals(Input.DEFAULT_PROFILE_UUID_STRING))
-															comboBox.addItem(p
-																	.getUuid());
+														if (!Input
+																.isDefaultProfile(p))
+															comboBox.addItem(p);
 													comboBox.setAction(new JComboBoxSetPropertyAction(
 															m));
-													final Object value = getterMethod
-															.invoke(selectedAssignedAction);
-													if (value == null)
-														comboBox.setSelectedIndex(0);
-													else
-														comboBox.setSelectedItem(value);
+													comboBox.setSelectedItem(getterMethod
+															.invoke(selectedAssignedAction));
 													panelProperty.add(comboBox);
 												} else if (VirtualAxis.class == clazz) {
 													final JComboBox<VirtualAxis> comboBox = new JComboBox<VirtualAxis>(
@@ -348,8 +355,30 @@ public class EditComponentDialog extends JDialog {
 															.invoke(selectedAssignedAction));
 													panelProperty.add(comboBox);
 												} else if (KeyStroke.class == clazz) {
+													final int length = KeyStroke.MODIFIER_CODES.length
+															+ KeyStroke.KEY_CODES.length;
+													final String[] codes = new String[length];
+													System.arraycopy(
+															KeyStroke.MODIFIER_CODES,
+															0,
+															codes,
+															0,
+															KeyStroke.MODIFIER_CODES.length);
+													System.arraycopy(
+															KeyStroke.KEY_CODES,
+															0,
+															codes,
+															KeyStroke.MODIFIER_CODES.length,
+															KeyStroke.KEY_CODES.length);
+													final JList<String> listCodes = new JList<String>(
+															codes);
+													final JScrollPane scrollPane = new JScrollPane(
+															listCodes);
+													scrollPane
+															.setPreferredSize(new Dimension(
+																	100, 100));
 													panelProperty
-															.add(new JComboBox<>());
+															.add(scrollPane);
 												} else {
 													System.out.println("Error: "
 															+ clazz.getName()
@@ -391,7 +420,7 @@ public class EditComponentDialog extends JDialog {
 					}
 				});
 		panelActions.add(new JScrollPane(listAssignedActions),
-				new GridBagConstraints(2, 1, 1, 5, 0.33, 1.0,
+				new GridBagConstraints(2, 1, 1, 5, 0.25, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
@@ -404,7 +433,7 @@ public class EditComponentDialog extends JDialog {
 		scrollPaneProperties = new JScrollPane();
 		scrollPaneProperties.setVisible(false);
 		panelActions.add(scrollPaneProperties, new GridBagConstraints(3, 1, 1,
-				5, 0.33, 1.0, GridBagConstraints.CENTER,
+				5, 0.5, 1.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final JPanel buttonPane = new JPanel();
@@ -412,12 +441,12 @@ public class EditComponentDialog extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		final JButton btnOK = new JButton(new OKAction());
-		btnOK.setActionCommand("OK");
+		btnOK.setPreferredSize(Main.BUTTON_DIMENSION);
 		buttonPane.add(btnOK);
 		getRootPane().setDefaultButton(btnOK);
 
 		final JButton btnCancel = new JButton(new CancelAction());
-		btnCancel.setActionCommand("Cancel");
+		btnCancel.setPreferredSize(Main.BUTTON_DIMENSION);
 		buttonPane.add(btnCancel);
 
 		updateAssignedActions();
@@ -442,7 +471,7 @@ public class EditComponentDialog extends JDialog {
 			final AvailableAction availableAction = new AvailableAction(s);
 			if (ButtonToProfileAction.class.getName().equals(
 					availableAction.className)) {
-				if (input.getProfiles().size() > 1 && !HasProfileAction())
+				if (Input.getProfiles().size() > 1 && !HasProfileAction())
 					availableActions.add(availableAction);
 			} else
 				availableActions.add(availableAction);
@@ -678,7 +707,7 @@ public class EditComponentDialog extends JDialog {
 
 		public void actionPerformed(ActionEvent e) {
 			input.setComponentToProfileActionMap(unsavedComponentToProfileActionMap);
-			input.setProfiles(unsavedProfiles);
+			Input.setProfiles(unsavedProfiles);
 
 			closeDialog();
 		}
