@@ -52,8 +52,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Scanner;
+import java.util.prefs.Preferences;
 
 import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -81,6 +84,11 @@ public class Main {
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 
+	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
+	public static final String PREFERENCES_PORT = "port";
+	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
+	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
+
 	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneAssignments;
@@ -96,6 +104,8 @@ public class Main {
 	private boolean suspendControllerSettingsUpdate = false;
 	private Input input;
 	private ServerThread serverThread;
+	private final Preferences preferences = Preferences.userNodeForPackage(this
+			.getClass());
 
 	/**
 	 * Launch the application.
@@ -133,6 +143,10 @@ public class Main {
 
 		final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
 		updateAssignmentsPanelThread.start();
+
+		final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
+		if (path != null)
+			loadProfile(new File(path));
 	}
 
 	/**
@@ -261,9 +275,17 @@ public class Main {
 		lblPort.setPreferredSize(new Dimension(100, 15));
 		panelPort.add(lblPort);
 
-		spinnerPort = new JSpinner(new SpinnerNumberModel(
-				ServerThread.DEFAULT_PORT, 1024, 65535, 1));
+		spinnerPort = new JSpinner(new SpinnerNumberModel(preferences.getInt(
+				PREFERENCES_PORT, ServerThread.DEFAULT_PORT), 1024, 65535, 1));
 		spinnerPort.setEditor(new JSpinner.NumberEditor(spinnerPort, "#"));
+		spinnerPort.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_PORT,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
 		panelPort.add(spinnerPort);
 
 		final JPanel panelTimeout = new JPanel(panelFlowLayout);
@@ -274,9 +296,18 @@ public class Main {
 		panelTimeout.add(lblClientTimeout);
 
 		spinnerClientTimeout = new JSpinner(new SpinnerNumberModel(
-				ServerThread.DEFAULT_CLIENT_TIMEOUT, 10, 60000, 1));
+				preferences.getInt(PREFERENCES_CLIENT_TIMEOUT,
+						ServerThread.DEFAULT_CLIENT_TIMEOUT), 10, 60000, 1));
 		spinnerClientTimeout.setEditor(new JSpinner.NumberEditor(
 				spinnerClientTimeout, "#"));
+		spinnerClientTimeout.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_CLIENT_TIMEOUT,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
 		panelTimeout.add(spinnerClientTimeout);
 
 		final JPanel panelUpdateRate = new JPanel(panelFlowLayout);
@@ -287,9 +318,18 @@ public class Main {
 		panelUpdateRate.add(lblUpdateRate);
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
-				(int) ServerThread.DEFAULT_UPDATE_RATE, 1, 1000, 1));
+				preferences.getInt(PREFERENCES_UPDATE_RATE,
+						(int) ServerThread.DEFAULT_UPDATE_RATE), 1, 1000, 1));
 		spinnerUpdateRate.setEditor(new JSpinner.NumberEditor(
 				spinnerUpdateRate, "#"));
+		spinnerUpdateRate.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_UPDATE_RATE,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
 		panelUpdateRate.add(spinnerUpdateRate);
 
 		panelServerSettings.add(Box.createGlue(), new GridBagConstraints(0,
@@ -384,6 +424,28 @@ public class Main {
 			serverThread.stopServer();
 	}
 
+	private void loadProfile(File file) {
+		try {
+			@SuppressWarnings("resource")
+			final String jsonString = new Scanner(file).useDelimiter("\\A")
+					.next();
+			final Gson gson = new GsonBuilder().registerTypeAdapter(
+					IAction.class, new InterfaceAdapter<IAction>()).create();
+
+			final Profile profile = gson.fromJson(jsonString, Profile.class);
+			Input.setProfile(profile);
+			saveLastProfile(file);
+
+			updateModesPanel();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void saveLastProfile(File file) {
+		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
+	}
+
 	private class OpenFileAction extends AbstractAction {
 		/**
 		 * 
@@ -400,23 +462,7 @@ public class Main {
 			if (fileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
 
-				try {
-					@SuppressWarnings("resource")
-					final String jsonString = new Scanner(file).useDelimiter(
-							"\\A").next();
-					final Gson gson = new GsonBuilder().registerTypeAdapter(
-							IAction.class, new InterfaceAdapter<IAction>())
-							.create();
-
-					final Profile profile = gson.fromJson(jsonString,
-							Profile.class);
-					Input.setProfile(profile);
-
-					updateModesPanel();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-
+				loadProfile(file);
 			}
 		}
 	}
@@ -452,6 +498,8 @@ public class Main {
 					writer.flush();
 					fos.flush();
 					fos.close();
+
+					saveLastProfile(file);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
