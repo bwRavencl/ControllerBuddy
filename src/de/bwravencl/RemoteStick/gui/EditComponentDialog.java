@@ -32,8 +32,9 @@ import javax.swing.event.ListSelectionListener;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.Input.VirtualAxis;
 import de.bwravencl.RemoteStick.input.KeyStroke;
+import de.bwravencl.RemoteStick.input.Mode;
 import de.bwravencl.RemoteStick.input.Profile;
-import de.bwravencl.RemoteStick.input.action.ButtonToProfileAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 import de.bwravencl.RemoteStick.input.action.CursorAction.MouseAxis;
 import de.bwravencl.RemoteStick.input.action.IAction;
 import net.java.games.input.Component;
@@ -45,7 +46,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,14 +67,14 @@ public class EditComponentDialog extends JDialog {
 	public static final String[] BUTTON_ACTION_CLASSES = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToProfileAction",
+			ACTION_CLASS_PREFIX + "ButtonToModeAction",
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 
 	public static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 	public static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	public static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
 
-	private final JComboBox<Profile> comboBoxProfile;
+	private final JComboBox<Mode> comboBoxMode;
 	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
 	private final JButton btnAdd;
 	private final JButton btnRemove;
@@ -82,11 +82,9 @@ public class EditComponentDialog extends JDialog {
 	private final JLabel lblProperties;
 	private final JScrollPane scrollPaneProperties;
 
-	private final Input input;
 	private final Component component;
-	private final Map<String, ButtonToProfileAction> unsavedComponentToProfileActionMap;
-	private final List<Profile> unsavedProfiles;
-	private Profile selectedProfile;
+	private Profile unsavedProfile;
+	private Mode selectedMode;
 	private AvailableAction selectedAvailableAction;
 	private IAction selectedAssignedAction;
 
@@ -94,42 +92,30 @@ public class EditComponentDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public EditComponentDialog(Input input, Component component) {
-		this.input = input;
 		this.component = component;
 
-		unsavedComponentToProfileActionMap = new HashMap<String, ButtonToProfileAction>();
-		for (Map.Entry<String, ButtonToProfileAction> e : input
-				.getComponentToProfileActionMap().entrySet())
-			try {
-				unsavedComponentToProfileActionMap.put(new String(e.getKey()),
-						(ButtonToProfileAction) e.getValue().clone());
-			} catch (CloneNotSupportedException e1) {
-				e1.printStackTrace();
-			}
-
-		unsavedProfiles = new ArrayList<Profile>();
-		for (Profile p : Input.getProfiles())
-			try {
-				unsavedProfiles.add((Profile) p.clone());
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+		try {
+			unsavedProfile = (Profile) Input.getProfile().clone();
+		} catch (CloneNotSupportedException e1) {
+			e1.printStackTrace();
+		}
 
 		setModal(true);
 		setTitle("Component Editor '" + component.getName() + "'");
 		setBounds(100, 100, 800, 400);
 		getContentPane().setLayout(new BorderLayout());
 
-		final JPanel panelProfile = new JPanel(new FlowLayout());
-		getContentPane().add(panelProfile, BorderLayout.NORTH);
+		final JPanel panelMode = new JPanel(new FlowLayout());
+		getContentPane().add(panelMode, BorderLayout.NORTH);
 
-		panelProfile.add(new JLabel("Profile"));
+		panelMode.add(new JLabel("Mode"));
 
-		selectedProfile = unsavedProfiles.get(0);
-		comboBoxProfile = new JComboBox<Profile>(
-				unsavedProfiles.toArray(new Profile[unsavedProfiles.size()]));
-		comboBoxProfile.addActionListener(new SelectProfileAction());
-		panelProfile.add(comboBoxProfile);
+		final List<Mode> modes = unsavedProfile.getModes();
+		selectedMode = modes.get(0);
+		comboBoxMode = new JComboBox<Mode>(
+				modes.toArray(new Mode[modes.size()]));
+		comboBoxMode.addActionListener(new SelectModeAction());
+		panelMode.add(comboBoxMode);
 
 		final JPanel panelActions = new JPanel(new GridBagLayout());
 		panelActions.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -328,12 +314,13 @@ public class EditComponentDialog extends JDialog {
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
 													panelProperty.add(spinner);
-												} else if (Profile.class == clazz) {
-													final JComboBox<Profile> comboBox = new JComboBox<Profile>();
-													for (Profile p : Input
-															.getProfiles())
-														if (!Input
-																.isDefaultProfile(p))
+												} else if (Mode.class == clazz) {
+													final JComboBox<Mode> comboBox = new JComboBox<Mode>();
+													for (Mode p : Input
+															.getProfile()
+															.getModes())
+														if (!Profile
+																.isDefaultMode(p))
 															comboBox.addItem(p);
 													comboBox.setAction(new JComboBoxSetPropertyAction(
 															m));
@@ -492,14 +479,14 @@ public class EditComponentDialog extends JDialog {
 		return -1;
 	}
 
-	private boolean hasProfileAction() {
-		boolean hasProfileAction = false;
+	private boolean hasModeAction() {
+		boolean hasModeAction = false;
 
 		for (IAction a : getAssignedActions())
-			if (a instanceof ButtonToProfileAction)
-				hasProfileAction = true;
+			if (a instanceof ButtonToModeAction)
+				hasModeAction = true;
 
-		return hasProfileAction;
+		return hasModeAction;
 	}
 
 	private void updateAvailableActions() {
@@ -509,9 +496,9 @@ public class EditComponentDialog extends JDialog {
 		for (String s : component.isAnalog() ? AXIS_ACTION_CLASSES
 				: BUTTON_ACTION_CLASSES) {
 			final AvailableAction availableAction = new AvailableAction(s);
-			if (ButtonToProfileAction.class.getName().equals(
+			if (ButtonToModeAction.class.getName().equals(
 					availableAction.className)) {
-				if (Input.getProfiles().size() > 1 && !hasProfileAction())
+				if (unsavedProfile.getModes().size() > 1 && !hasModeAction())
 					availableActions.add(availableAction);
 			} else
 				availableActions.add(availableAction);
@@ -522,17 +509,17 @@ public class EditComponentDialog extends JDialog {
 	}
 
 	private IAction[] getAssignedActions() {
-		final List<IAction> assignedActions = selectedProfile
+		final List<IAction> assignedActions = selectedMode
 				.getComponentToActionMap().get(component.getName());
 
 		final List<IAction> clonedAssignedActions = new ArrayList<IAction>();
 		if (assignedActions != null)
 			clonedAssignedActions.addAll(assignedActions);
 
-		final ButtonToProfileAction buttonToProfileAction = unsavedComponentToProfileActionMap
-				.get(component.getName());
-		if (buttonToProfileAction != null)
-			clonedAssignedActions.add(buttonToProfileAction);
+		final ButtonToModeAction buttonToModeAction = unsavedProfile
+				.getComponentToModeActionMap().get(component.getName());
+		if (buttonToModeAction != null)
+			clonedAssignedActions.add(buttonToModeAction);
 
 		return (IAction[]) clonedAssignedActions
 				.toArray(new IAction[clonedAssignedActions.size()]);
@@ -547,19 +534,19 @@ public class EditComponentDialog extends JDialog {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
-	private class SelectProfileAction extends AbstractAction {
+	private class SelectModeAction extends AbstractAction {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public SelectProfileAction() {
-			putValue(NAME, "Select Profile");
-			putValue(SHORT_DESCRIPTION, "Selects the profile to edit");
+		public SelectModeAction() {
+			putValue(NAME, "Select Mode");
+			putValue(SHORT_DESCRIPTION, "Selects the mode to edit");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			selectedProfile = (Profile) comboBoxProfile.getSelectedItem();
+			selectedMode = (Mode) comboBoxMode.getSelectedItem();
 			updateAssignedActions();
 		}
 
@@ -583,11 +570,11 @@ public class EditComponentDialog extends JDialog {
 						.forName(selectedAvailableAction.className);
 				final IAction action = (IAction) clazz.newInstance();
 
-				if (action instanceof ButtonToProfileAction)
-					unsavedComponentToProfileActionMap.put(component.getName(),
-							(ButtonToProfileAction) action);
+				if (action instanceof ButtonToModeAction)
+					unsavedProfile.getComponentToModeActionMap().put(
+							component.getName(), (ButtonToModeAction) action);
 				else {
-					final Map<String, List<IAction>> componentToActionMap = selectedProfile
+					final Map<String, List<IAction>> componentToActionMap = selectedMode
 							.getComponentToActionMap();
 					final String componentName = component.getName();
 
@@ -601,12 +588,11 @@ public class EditComponentDialog extends JDialog {
 				updateAvailableActions();
 				updateAssignedActions();
 
-				listAssignedActions
-						.setSelectedIndex(listAssignedActions
-								.getLastVisibleIndex()
-								- (hasProfileAction()
-										&& !(action instanceof ButtonToProfileAction) ? 1
-										: 0));
+				listAssignedActions.setSelectedIndex(listAssignedActions
+						.getLastVisibleIndex()
+						- (hasModeAction()
+								&& !(action instanceof ButtonToModeAction) ? 1
+								: 0));
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			} catch (InstantiationException e1) {
@@ -632,10 +618,11 @@ public class EditComponentDialog extends JDialog {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (selectedAssignedAction instanceof ButtonToProfileAction)
-				unsavedComponentToProfileActionMap.remove(component.getName());
+			if (selectedAssignedAction instanceof ButtonToModeAction)
+				unsavedProfile.getComponentToModeActionMap().remove(
+						component.getName());
 			else {
-				final Map<String, List<IAction>> componentToActionMap = selectedProfile
+				final Map<String, List<IAction>> componentToActionMap = selectedMode
 						.getComponentToActionMap();
 				final List<IAction> actions = componentToActionMap
 						.get(component.getName());
@@ -787,8 +774,7 @@ public class EditComponentDialog extends JDialog {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			input.setComponentToProfileActionMap(unsavedComponentToProfileActionMap);
-			Input.setProfiles(unsavedProfiles);
+			Input.setProfile(unsavedProfile);
 
 			closeDialog();
 		}

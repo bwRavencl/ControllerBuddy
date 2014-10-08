@@ -6,75 +6,87 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import de.bwravencl.RemoteStick.input.action.IAction;
+import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 
 public class Profile {
 
-	private UUID uuid;
-	private String description = new String("New Profile");
-	private Map<String, List<IAction>> componentToActionMap = new HashMap<String, List<IAction>>();
+	public static final String DEFAULT_MODE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
+	public static final String DEFAULT_MODE_DESCRIPTION = "Default Mode";
+
+	private Map<String, ButtonToModeAction> componentToModeActionMap = new HashMap<String, ButtonToModeAction>();
+	private List<Mode> modes = new ArrayList<Mode>();
+	private int activeModeIndex = 0;
 
 	public Profile() {
-		uuid = UUID.randomUUID();
+		final Mode defaultMode = new Mode(DEFAULT_MODE_UUID_STRING);
+		defaultMode.setDescription(DEFAULT_MODE_DESCRIPTION);
+		modes.add(defaultMode);
 	}
 
-	public Profile(String uuid) {
-		this.uuid = UUID.fromString(uuid);
+	public Map<String, ButtonToModeAction> getComponentToModeActionMap() {
+		return componentToModeActionMap;
 	}
 
-	public UUID getUuid() {
-		return uuid;
+	public void setComponentToModeActionMap(
+			Map<String, ButtonToModeAction> componentToModeActionMap) {
+		this.componentToModeActionMap = componentToModeActionMap;
 	}
 
-	public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+	public List<Mode> getModes() {
+		return modes;
 	}
 
-	public String getDescription() {
-		return description;
+	public void setModes(List<Mode> modes) {
+		this.modes = modes;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public static boolean isDefaultMode(Mode mode) {
+		return (mode.getUuid()
+				.equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
 	}
 
-	public Map<String, List<IAction>> getComponentToActionMap() {
-		return componentToActionMap;
+	public Mode getActiveMode() {
+		return modes.get(activeModeIndex);
 	}
 
-	public void setComponentToActionMap(
-			Map<String, List<IAction>> componentToActionMap) {
-		this.componentToActionMap = componentToActionMap;
+	public void setActiveMode(int index) {
+		if (modes.size() > index)
+			this.activeModeIndex = index;
 	}
 
-	@Override
-	public String toString() {
-		return description;
+	public void setActiveMode(UUID modeUuid) {
+		for (Mode p : modes) {
+			if (p.getUuid().equals(modeUuid)) {
+				setActiveMode(modes.indexOf(p));
+				return;
+			}
+		}
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final Profile profile = new Profile(uuid.toString());
-		profile.setDescription(new String(description));
+		final Profile profile = new Profile();
 
-		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<String, List<IAction>>();
-		for (Map.Entry<String, List<IAction>> e : componentToActionMap
-				.entrySet()) {
-			for (IAction a : e.getValue()) {
-				final String key = new String(e.getKey());
-
-				List<IAction> actions = clonedComponentToActionMap.get(key);
-				if (actions == null) {
-					actions = new ArrayList<IAction>();
-					clonedComponentToActionMap.put(key, actions);
-				}
-
-				actions.add((IAction) a.clone());
+		final Map<String, ButtonToModeAction> clonedComponentToModeActionMap = new HashMap<String, ButtonToModeAction>();
+		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap
+				.entrySet())
+			try {
+				clonedComponentToModeActionMap.put(new String(e.getKey()),
+						(ButtonToModeAction) e.getValue().clone());
+			} catch (CloneNotSupportedException e1) {
+				e1.printStackTrace();
 			}
-		}
-		profile.setComponentToActionMap(clonedComponentToActionMap);
+		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
+
+		final List<Mode> clonedModes = new ArrayList<Mode>();
+		for (Mode p : modes)
+			try {
+				clonedModes.add((Mode) p.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		profile.setModes(clonedModes);
 
 		return profile;
 	}
-
 }

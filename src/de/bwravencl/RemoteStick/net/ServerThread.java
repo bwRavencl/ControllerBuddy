@@ -1,4 +1,4 @@
-package de.bwravencl.RemoteStick;
+package de.bwravencl.RemoteStick.net;
 
 import java.io.IOException;
 import java.io.StringWriter;

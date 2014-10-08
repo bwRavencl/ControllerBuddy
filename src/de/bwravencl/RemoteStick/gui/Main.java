@@ -24,11 +24,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import de.bwravencl.RemoteStick.InterfaceAdapter;
-import de.bwravencl.RemoteStick.ServerThread;
 import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.input.Mode;
 import de.bwravencl.RemoteStick.input.Profile;
 import de.bwravencl.RemoteStick.input.action.IAction;
+import de.bwravencl.RemoteStick.net.ServerThread;
 
 import javax.swing.ButtonGroup;
 import javax.swing.AbstractAction;
@@ -46,11 +46,10 @@ import javax.swing.JLabel;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import java.io.Writer;
 import java.util.List;
 import java.util.Scanner;
 
@@ -61,6 +60,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
@@ -69,6 +75,9 @@ import net.java.games.input.ControllerEnvironment;
 
 public class Main {
 
+	public static final String PROFILE_FILE_EXTENSION = "json";
+	public static final String PROFILE_FILE_SUFFIX = '.' + PROFILE_FILE_EXTENSION;
+
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 
@@ -76,13 +85,13 @@ public class Main {
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneAssignments;
 	private JMenu mnController;
-	private JPanel panelProfileList;
+	private JPanel panelModeList;
 	private JPanel panelAssignments;
 	private JSpinner spinnerPort;
 	private JSpinner spinnerClientTimeout;
 	private JSpinner spinnerUpdateRate;
-	private JScrollPane scrollPaneProfiles;
-	private final JFileChooser jFileChooser = new JFileChooser();
+	private JScrollPane scrollPaneModes;
+	private final JFileChooser fileChooser = new JFileChooser();
 
 	private boolean suspendControllerSettingsUpdate = false;
 	private Input input;
@@ -120,7 +129,7 @@ public class Main {
 				break;
 			}
 
-		updateProfilesPanel();
+		updateModesPanel();
 
 		final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
 		updateAssignmentsPanelThread.start();
@@ -198,23 +207,22 @@ public class Main {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRemoteStickServer.getContentPane().add(tabbedPane);
 
-		final JPanel panelProfiles = new JPanel(new BorderLayout());
-		tabbedPane.addTab("Profiles", null, panelProfiles, null);
+		final JPanel panelModes = new JPanel(new BorderLayout());
+		tabbedPane.addTab("Modes", null, panelModes, null);
 
-		panelProfileList = new JPanel();
-		panelProfileList.setLayout(new GridBagLayout());
+		panelModeList = new JPanel();
+		panelModeList.setLayout(new GridBagLayout());
 
-		scrollPaneProfiles = new JScrollPane();
-		scrollPaneProfiles.setViewportBorder(BorderFactory.createMatteBorder(
-				10, 10, 0, 10, panelProfileList.getBackground()));
-		panelProfiles.add(scrollPaneProfiles, BorderLayout.CENTER);
+		scrollPaneModes = new JScrollPane();
+		scrollPaneModes.setViewportBorder(BorderFactory.createMatteBorder(10,
+				10, 0, 10, panelModeList.getBackground()));
+		panelModes.add(scrollPaneModes, BorderLayout.CENTER);
 
-		final JPanel panelAddProfile = new JPanel(new FlowLayout(
-				FlowLayout.RIGHT));
-		final JButton addButton = new JButton(new AddProfileAction());
+		final JPanel panelAddMode = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		final JButton addButton = new JButton(new AddModeAction());
 		addButton.setPreferredSize(BUTTON_DIMENSION);
-		panelAddProfile.add(addButton);
-		panelProfiles.add(panelAddProfile, BorderLayout.SOUTH);
+		panelAddMode.add(addButton);
+		panelModes.add(panelAddMode, BorderLayout.SOUTH);
 
 		panelAssignments = new JPanel();
 		panelAssignments.setLayout(new GridBagLayout());
@@ -290,83 +298,83 @@ public class Main {
 				new Insets(0, 0, 0, 0), 0, 0));
 
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"Controller Profiles", "json");
-		jFileChooser.setFileFilter(filter);
+				"RemoteStick Profile", PROFILE_FILE_EXTENSION);
+		fileChooser.setFileFilter(filter);
+		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
-	private void updateProfilesPanel() {
+	private void updateModesPanel() {
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
-				panelProfileList.removeAll();
+				panelModeList.removeAll();
 
-				final List<Profile> profiles = Input.getProfiles();
-				for (Profile p : profiles) {
-					final JPanel panelProfile = new JPanel(new GridBagLayout());
-					panelProfileList.add(panelProfile, new GridBagConstraints(
-							0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+				final List<Mode> modes = Input.getProfile().getModes();
+				for (Mode p : modes) {
+					final JPanel panelMode = new JPanel(new GridBagLayout());
+					panelModeList.add(panelMode, new GridBagConstraints(0,
+							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.FIRST_LINE_START,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									0), 0, 5));
 
-					final JLabel lblProfileNo = new JLabel("Profile "
-							+ profiles.indexOf(p));
-					lblProfileNo.setPreferredSize(new Dimension(100, 15));
-					panelProfile.add(lblProfileNo, new GridBagConstraints(0, 0,
-							1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
+					final JLabel lblModeNo = new JLabel("Mode "
+							+ modes.indexOf(p));
+					lblModeNo.setPreferredSize(new Dimension(100, 15));
+					panelMode.add(lblModeNo, new GridBagConstraints(0, 0, 1, 1,
+							0.0, 0.0, GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
-					panelProfile.add(Box.createGlue(), new GridBagConstraints(
-							1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+					panelMode.add(Box.createGlue(), new GridBagConstraints(1,
+							GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
 					final JTextField textFieldDescription = new JTextField(p
 							.getDescription(), 20);
-					panelProfile.add(textFieldDescription,
-							new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
-									GridBagConstraints.BASELINE,
-									GridBagConstraints.NONE, new Insets(0, 0,
-											0, 0), 0, 0));
+					panelMode.add(textFieldDescription, new GridBagConstraints(
+							2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BASELINE,
+							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
+							0));
 
-					final SetProfileDescriptionAction setProfileDescriptionAction = new SetProfileDescriptionAction(
+					final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(
 							p, textFieldDescription);
 					textFieldDescription
-							.addActionListener(setProfileDescriptionAction);
+							.addActionListener(setModeDescriptionAction);
 					textFieldDescription
-							.addFocusListener(setProfileDescriptionAction);
+							.addFocusListener(setModeDescriptionAction);
 
-					panelProfile.add(Box.createGlue(), new GridBagConstraints(
-							3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+					panelMode.add(Box.createGlue(), new GridBagConstraints(3,
+							GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
 					final JButton deleteButton = new JButton(
-							new DeleteProfileAction(p));
+							new DeleteModeAction(p));
 					deleteButton.setPreferredSize(BUTTON_DIMENSION);
-					panelProfile.add(deleteButton, new GridBagConstraints(4,
+					panelMode.add(deleteButton, new GridBagConstraints(4,
 							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
-					if (Input.isDefaultProfile(p)) {
+					if (Profile.isDefaultMode(p)) {
 						textFieldDescription.setEditable(false);
 						deleteButton.setEnabled(false);
 					}
 
 				}
 
-				panelProfileList.add(Box.createGlue(), new GridBagConstraints(
-						0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+				panelModeList.add(Box.createGlue(), new GridBagConstraints(0,
+						GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 						GridBagConstraints.FIRST_LINE_START,
 						GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-				scrollPaneProfiles.setViewportView(panelProfileList);
+				scrollPaneModes.setViewportView(panelModeList);
 			}
 		});
 	}
@@ -389,17 +397,22 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (jFileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
-				final File file = jFileChooser.getSelectedFile();
+			if (fileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
+				final File file = fileChooser.getSelectedFile();
 
 				try {
 					@SuppressWarnings("resource")
 					final String jsonString = new Scanner(file).useDelimiter(
 							"\\A").next();
-					final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-	                        .create();
-					Input.getProfiles().add(gson.fromJson(jsonString, Profile.class));
-					updateProfilesPanel();
+					final Gson gson = new GsonBuilder().registerTypeAdapter(
+							IAction.class, new InterfaceAdapter<IAction>())
+							.create();
+
+					final Profile profile = gson.fromJson(jsonString,
+							Profile.class);
+					Input.setProfile(profile);
+
+					updateModesPanel();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -421,22 +434,24 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (jFileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
-				final File file = jFileChooser.getSelectedFile();
+			if (fileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				if (!file.getName().toLowerCase().endsWith(PROFILE_FILE_SUFFIX))
+					file = new File(file.getAbsoluteFile()
+							+ PROFILE_FILE_SUFFIX);
 
-				final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-                        .create();
-				final String jsonString = gson.toJson(Input.getProfiles().get(Input.getProfiles().size() - 1));
+				final Gson gson = new GsonBuilder().registerTypeAdapter(
+						IAction.class, new InterfaceAdapter<IAction>())
+						.create();
+				final String jsonString = gson.toJson(Input.getProfile());
 
-				try (FileOutputStream fos = new FileOutputStream(file, false)) {
-					try (BufferedWriter bw = new BufferedWriter(
-							new OutputStreamWriter(fos))) {
-						bw.write(jsonString);
-						bw.flush();
-					}
+				try (FileOutputStream fos = new FileOutputStream(file)) {
+					final Writer writer = new BufferedWriter(
+							new OutputStreamWriter(fos));
+					writer.write(jsonString);
+					writer.flush();
 					fos.flush();
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
+					fos.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -751,27 +766,27 @@ public class Main {
 		}
 	}
 
-	private class SetProfileDescriptionAction extends AbstractAction implements
+	private class SetModeDescriptionAction extends AbstractAction implements
 			FocusListener {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private final Profile profile;
-		private final JTextField profileDescriptionTextField;
+		private final Mode mode;
+		private final JTextField modeDescriptionTextField;
 
-		public SetProfileDescriptionAction(Profile profile,
-				JTextField profileDescriptionTextField) {
-			this.profile = profile;
-			this.profileDescriptionTextField = profileDescriptionTextField;
+		public SetModeDescriptionAction(Mode mode,
+				JTextField modeDescriptionTextField) {
+			this.mode = mode;
+			this.modeDescriptionTextField = modeDescriptionTextField;
 
-			putValue(NAME, "Set profile description");
-			putValue(SHORT_DESCRIPTION, "Sets the description of a profile");
+			putValue(NAME, "Set mode description");
+			putValue(SHORT_DESCRIPTION, "Sets the description of a mode");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			setProfileDescription();
+			setModeDescription();
 		}
 
 		@Override
@@ -780,57 +795,97 @@ public class Main {
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			setProfileDescription();
+			setModeDescription();
 		}
 
-		private void setProfileDescription() {
-			final String description = profileDescriptionTextField.getText();
+		private void setModeDescription() {
+			final String description = modeDescriptionTextField.getText();
 
 			if (description != null && description.length() > 0)
-				profile.setDescription(description);
+				mode.setDescription(description);
 			else
-				profileDescriptionTextField.setText(profile.getDescription());
+				modeDescriptionTextField.setText(mode.getDescription());
 		}
 	}
 
-	private class DeleteProfileAction extends AbstractAction {
+	private class DeleteModeAction extends AbstractAction {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private final Profile profile;
+		private final Mode mode;
 
-		public DeleteProfileAction(Profile profile) {
-			this.profile = profile;
+		public DeleteModeAction(Mode mode) {
+			this.mode = mode;
 
 			putValue(NAME, "Delete");
-			putValue(SHORT_DESCRIPTION,
-					"Delete the '" + profile.getDescription() + "' profile");
+			putValue(SHORT_DESCRIPTION, "Delete the '" + mode.getDescription()
+					+ "' mode");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Input.getProfiles().remove(profile);
-			updateProfilesPanel();
+			Input.getProfile().getModes().remove(mode);
+			updateModesPanel();
 		}
 	}
 
-	private class AddProfileAction extends AbstractAction {
+	private class AddModeAction extends AbstractAction {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public AddProfileAction() {
+		public AddModeAction() {
 			putValue(NAME, "Add");
-			putValue(SHORT_DESCRIPTION, "Add a new profile");
+			putValue(SHORT_DESCRIPTION, "Add a new mode");
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			final Profile profile = new Profile();
-			Input.getProfiles().add(profile);
+			final Mode mode = new Mode();
+			Input.getProfile().getModes().add(mode);
 
-			updateProfilesPanel();
+			updateModesPanel();
+		}
+	}
+
+	private class InterfaceAdapter<T> implements JsonSerializer<T>,
+			JsonDeserializer<T> {
+		public JsonElement serialize(T object,
+				java.lang.reflect.Type interfaceType,
+				JsonSerializationContext context) {
+			final JsonObject wrapper = new JsonObject();
+			wrapper.addProperty("type", object.getClass().getName());
+			wrapper.add("data", context.serialize(object));
+			return wrapper;
+		}
+
+		public T deserialize(JsonElement elem,
+				java.lang.reflect.Type interfaceType,
+				JsonDeserializationContext context) throws JsonParseException {
+			final JsonObject wrapper = (JsonObject) elem;
+			final JsonElement typeName = get(wrapper, "type");
+			final JsonElement data = get(wrapper, "data");
+			final java.lang.reflect.Type actualType = typeForName(typeName);
+			return context.deserialize(data, actualType);
+		}
+
+		private java.lang.reflect.Type typeForName(final JsonElement typeElem) {
+			try {
+				return Class.forName(typeElem.getAsString());
+			} catch (ClassNotFoundException e) {
+				throw new JsonParseException(e);
+			}
+		}
+
+		private JsonElement get(final JsonObject wrapper, String memberName) {
+			final JsonElement elem = wrapper.get(memberName);
+			if (elem == null)
+				throw new JsonParseException(
+						"no '"
+								+ memberName
+								+ "' member found in what was expected to be an interface wrapper");
+			return elem;
 		}
 	}
 
