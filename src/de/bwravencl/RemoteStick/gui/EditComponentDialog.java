@@ -101,7 +101,7 @@ public class EditComponentDialog extends JDialog {
 		}
 
 		setModal(true);
-		setTitle("Component Editor '" + component.getName() + "'");
+		setTitle("Component Editor - " + component.getName());
 		setBounds(100, 100, 800, 400);
 		getContentPane().setLayout(new BorderLayout());
 
