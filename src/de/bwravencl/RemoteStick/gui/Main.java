@@ -81,6 +81,8 @@ import net.java.games.input.ControllerEnvironment;
 
 public class Main {
 
+	public static final String APPLICATION_NAME = "RemoteStick Server";
+
 	public static final String PROFILE_FILE_EXTENSION = "json";
 	public static final String PROFILE_FILE_SUFFIX = '.' + PROFILE_FILE_EXTENSION;
 
@@ -106,6 +108,7 @@ public class Main {
 	private JScrollPane scrollPaneModes;
 	private final JFileChooser fileChooser = new JFileChooser();
 
+	private Controller selectedController;
 	private boolean suspendControllerSettingsUpdate = false;
 	private Input input;
 	private ServerThread serverThread;
@@ -137,7 +140,6 @@ public class Main {
 		final String lastControllerName = preferences.get(
 				PREFERENCES_LAST_CONTROLLER, null);
 
-		Controller controller = null;
 		for (Controller c : ControllerEnvironment.getDefaultEnvironment()
 				.getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE
@@ -146,14 +148,14 @@ public class Main {
 				final boolean lastControllerFound = c.getName().equals(
 						lastControllerName);
 
-				if (controller == null || lastControllerFound)
-					controller = c;
+				if (selectedController == null || lastControllerFound)
+					selectedController = c;
 
 				if (lastControllerFound)
 					break;
 			}
 
-		if (controller == null) {
+		if (selectedController == null) {
 			int option = JOptionPane
 					.showConfirmDialog(
 							frmRemoteStickServer,
@@ -187,16 +189,14 @@ public class Main {
 
 			System.exit(0);
 		} else {
-			input = new Input(controller);
-
-			updateModesPanel();
-
-			final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
-			updateAssignmentsPanelThread.start();
+			newProfile();
 
 			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
 			if (path != null)
 				loadProfile(new File(path));
+
+			final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
+			updateAssignmentsPanelThread.start();
 		}
 	}
 
@@ -205,7 +205,7 @@ public class Main {
 	 */
 	private void initialize() {
 		frmRemoteStickServer = new JFrame();
-		frmRemoteStickServer.setTitle("RemoteStick Server");
+		frmRemoteStickServer.setTitle(APPLICATION_NAME);
 		frmRemoteStickServer.setBounds(100, 100, 650, 600);
 		frmRemoteStickServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -214,6 +214,7 @@ public class Main {
 
 		final JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
+		mnFile.add(new NewProfileAction());
 		mnFile.add(new OpenFileAction());
 		mnFile.add(new SaveFileAction());
 		mnFile.add(new JSeparator());
@@ -470,6 +471,13 @@ public class Main {
 		});
 	}
 
+	private void newProfile() {
+		input = new Input(selectedController);
+
+		frmRemoteStickServer.setTitle("Unsaved - " + APPLICATION_NAME);
+		updateModesPanel();
+	}
+
 	private void stopServer() {
 		if (serverThread != null)
 			serverThread.stopServer();
@@ -492,6 +500,8 @@ public class Main {
 				saveLastProfile(file);
 
 			updateModesPanel();
+			frmRemoteStickServer.setTitle(file.getName() + " - "
+					+ APPLICATION_NAME);
 
 			return result;
 		} catch (IOException e1) {
@@ -503,6 +513,22 @@ public class Main {
 
 	private void saveLastProfile(File file) {
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
+	}
+
+	private class NewProfileAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public NewProfileAction() {
+			putValue(NAME, "New");
+			putValue(SHORT_DESCRIPTION, "Creates a new profile");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			newProfile();
+		}
 	}
 
 	private class OpenFileAction extends AbstractAction {
@@ -644,7 +670,8 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			input = new Input(controller);
+			selectedController = controller;
+			newProfile();
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
 		}
 	}

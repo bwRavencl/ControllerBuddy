@@ -40,7 +40,7 @@ public class Input {
 
 	private static Controller controller;
 
-	private static Profile profile = new Profile();
+	private static Profile profile;
 
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
@@ -50,6 +50,7 @@ public class Input {
 
 	public Input(Controller controller) {
 		Input.controller = controller;
+		profile = new Profile();
 
 		System.out.println("Controller: " + controller.getName());
 
