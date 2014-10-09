@@ -38,7 +38,7 @@ public class Input {
 			VirtualAxis.class);
 	private boolean[] buttons = new boolean[nButtons];
 
-	private final Controller controller;
+	private static Controller controller;
 
 	private static Profile profile = new Profile();
 
@@ -49,7 +49,7 @@ public class Input {
 	private int scrollClicks = 0;
 
 	public Input(Controller controller) {
-		this.controller = controller;
+		Input.controller = controller;
 
 		System.out.println("Controller: " + controller.getName());
 
@@ -201,11 +201,43 @@ public class Input {
 		return profile;
 	}
 
-	public static void setProfile(Profile profile) {
-		Input.profile = profile;
+	public static boolean setProfile(Profile profile) {
+		if (controller == null)
+			return false;
+		else {
+			for (String s : profile.getComponentToModeActionMap().keySet()) {
+				boolean componentFound = false;
+
+				for (Component c : controller.getComponents())
+					if (s.equals(c.getName())) {
+						componentFound = true;
+						break;
+					}
+
+				if (!componentFound)
+					return false;
+			}
+
+			for (Mode m : profile.getModes())
+				for (String s : m.getComponentToActionMap().keySet()) {
+					boolean componentFound = false;
+
+					for (Component c : controller.getComponents())
+						if (s.equals(c.getName())) {
+							componentFound = true;
+							break;
+						}
+
+					if (!componentFound)
+						return false;
+				}
+
+			Input.profile = profile;
+			return true;
+		}
 	}
 
-	public Controller getController() {
+	public static Controller getController() {
 		return controller;
 	}
 

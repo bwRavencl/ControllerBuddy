@@ -17,6 +17,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JRadioButtonMenuItem;
@@ -50,6 +51,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -83,7 +86,9 @@ public class Main {
 
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
+	public static final String ERROR_DIALOG_TITLE = "Error";
 
+	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
@@ -129,24 +134,70 @@ public class Main {
 	public Main() {
 		initialize();
 
-		final Controller[] controllers = ControllerEnvironment
-				.getDefaultEnvironment().getControllers();
-		for (Controller c : controllers)
+		final String lastControllerName = preferences.get(
+				PREFERENCES_LAST_CONTROLLER, null);
+
+		Controller controller = null;
+		for (Controller c : ControllerEnvironment.getDefaultEnvironment()
+				.getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE
 					&& c.getType() != Type.TRACKBALL
 					&& c.getType() != Type.TRACKPAD) {
-				input = new Input(c);
-				break;
+				final boolean lastControllerFound = c.getName().equals(
+						lastControllerName);
+
+				if (controller == null || lastControllerFound)
+					controller = c;
+
+				if (lastControllerFound)
+					break;
 			}
 
-		updateModesPanel();
+		if (controller == null) {
+			int option = JOptionPane
+					.showConfirmDialog(
+							frmRemoteStickServer,
+							"No controller connected!\n\nPlease connect a controller now and click 'OK' to retry.\n'Cancel' quits the application.",
+							ERROR_DIALOG_TITLE, JOptionPane.OK_CANCEL_OPTION);
 
-		final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
-		updateAssignmentsPanelThread.start();
+			if (option == JOptionPane.OK_OPTION) {
+				final String javaBin = System.getProperty("java.home")
+						+ File.separator + "bin" + File.separator + "java";
+				try {
+					final File jarFile = new File(Main.class
+							.getProtectionDomain().getCodeSource()
+							.getLocation().toURI());
 
-		final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-		if (path != null)
-			loadProfile(new File(path));
+					if (jarFile.getName().endsWith(".jar")) {
+						final List<String> command = new ArrayList<String>();
+						command.add(javaBin);
+						command.add("-jar");
+						command.add(jarFile.getPath());
+
+						final ProcessBuilder builder = new ProcessBuilder(
+								command);
+						builder.start();
+					}
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			System.exit(0);
+		} else {
+			input = new Input(controller);
+
+			updateModesPanel();
+
+			final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
+			updateAssignmentsPanelThread.start();
+
+			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
+			if (path != null)
+				loadProfile(new File(path));
+		}
 	}
 
 	/**
@@ -424,7 +475,9 @@ public class Main {
 			serverThread.stopServer();
 	}
 
-	private void loadProfile(File file) {
+	private boolean loadProfile(File file) {
+		boolean result = false;
+
 		try {
 			@SuppressWarnings("resource")
 			final String jsonString = new Scanner(file).useDelimiter("\\A")
@@ -433,13 +486,19 @@ public class Main {
 					IAction.class, new InterfaceAdapter<IAction>()).create();
 
 			final Profile profile = gson.fromJson(jsonString, Profile.class);
-			Input.setProfile(profile);
-			saveLastProfile(file);
+
+			result = Input.setProfile(profile);
+			if (result)
+				saveLastProfile(file);
 
 			updateModesPanel();
+
+			return result;
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+
+		return result;
 	}
 
 	private void saveLastProfile(File file) {
@@ -462,7 +521,13 @@ public class Main {
 			if (fileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
 
-				loadProfile(file);
+				if (!loadProfile(file))
+					JOptionPane
+							.showMessageDialog(
+									frmRemoteStickServer,
+									"Could not load profile!\n\nThe currently selected controller is missing at least one axis or button referenced by the profile.\nThe profile was most likely created for a different controller model.\nThe profile has not been loaded.",
+									ERROR_DIALOG_TITLE,
+									JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -580,6 +645,7 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			input = new Input(controller);
+			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
 		}
 	}
 
@@ -601,7 +667,7 @@ public class Main {
 
 							panelAssignments.removeAll();
 
-							final Controller controller = input.getController();
+							final Controller controller = Input.getController();
 							if (controller != null) {
 								controller.poll();
 
