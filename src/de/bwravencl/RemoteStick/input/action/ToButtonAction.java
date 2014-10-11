@@ -2,8 +2,6 @@ package de.bwravencl.RemoteStick.input.action;
 
 public abstract class ToButtonAction extends InvertableAction {
 
-	public static final String description = "Button";
-
 	protected int buttonId = 0;
 
 	public int getButtonId() {

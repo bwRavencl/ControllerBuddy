@@ -4,8 +4,6 @@ import de.bwravencl.RemoteStick.input.KeyStroke;
 
 public abstract class ToKeyAction extends InvertableAction {
 
-	public static final String description = "Key";
-
 	protected boolean downUp = false;
 	protected boolean wasUp = true;
 

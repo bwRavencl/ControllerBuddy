@@ -4,8 +4,6 @@ import de.bwravencl.RemoteStick.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	public static final String description = "Relative Axis";
-
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
 	public final float DEFAULT_SENSITIVITY = 1.0f;
 

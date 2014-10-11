@@ -9,8 +9,6 @@ import de.bwravencl.RemoteStick.input.Profile;
 
 public class ButtonToModeAction implements IAction {
 
-	public static final String description = "Mode";
-
 	private boolean toggle = false;
 	private boolean up = true;
 

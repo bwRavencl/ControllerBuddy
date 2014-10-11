@@ -52,9 +52,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import javax.swing.JSpinner;
@@ -95,6 +95,12 @@ public class Main {
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
 	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
+
+	public static final int DIALOG_BOUNDS_X = 100;
+	public static final int DIALOG_BOUNDS_Y = 100;
+	public static final int DIALOG_BOUNDS_WIDTH = 600;
+	public static final int DIALOG_BOUNDS_HEIGHT = 650;
+	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 
 	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
@@ -206,7 +212,8 @@ public class Main {
 	private void initialize() {
 		frmRemoteStickServer = new JFrame();
 		frmRemoteStickServer.setTitle(APPLICATION_NAME);
-		frmRemoteStickServer.setBounds(100, 100, 650, 600);
+		frmRemoteStickServer.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y,
+				DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frmRemoteStickServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final JMenuBar menuBar = new JMenuBar();
@@ -487,9 +494,8 @@ public class Main {
 		boolean result = false;
 
 		try {
-			@SuppressWarnings("resource")
-			final String jsonString = new Scanner(file).useDelimiter("\\A")
-					.next();
+			final String jsonString = new String(Files.readAllBytes(file
+					.toPath()));
 			final Gson gson = new GsonBuilder().registerTypeAdapter(
 					IAction.class, new InterfaceAdapter<IAction>()).create();
 
@@ -899,8 +905,8 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			final EditComponentDialog editComponentDialog = new EditComponentDialog(
-					input, component);
+			final EditActionsDialog editComponentDialog = new EditActionsDialog(
+					component, input);
 			editComponentDialog.setVisible(true);
 
 			suspendControllerSettingsUpdate = false;
