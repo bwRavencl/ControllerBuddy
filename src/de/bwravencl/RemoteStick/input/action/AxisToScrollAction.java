@@ -17,15 +17,15 @@ public class AxisToScrollAction extends ToScrollAction implements IAction {
 	}
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) joystick.getServerThread()
+			final float rateMultiplier = (float) input.getServerThread()
 					.getUpdateRate() / (float) 1000L;
 
 			final float d = Input.normalize(value * rateMultiplier, -1.0f
 					* rateMultiplier, 1.0f * rateMultiplier, -clicks, clicks);
 
-			joystick.setScrollClicks((int) (joystick.getScrollClicks() + (invert ? -d
+			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d
 					: d)));
 		}
 	}

@@ -99,7 +99,7 @@ public class Main {
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 600;
-	public static final int DIALOG_BOUNDS_HEIGHT = 650;
+	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 
 	private JFrame frmRemoteStickServer;

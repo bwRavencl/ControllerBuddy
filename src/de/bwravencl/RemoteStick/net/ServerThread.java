@@ -17,7 +17,7 @@ public class ServerThread extends Thread {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_CLIENT_TIMEOUT = 1000;
-	public static final long DEFAULT_UPDATE_RATE = 5L;
+	public static final long DEFAULT_UPDATE_RATE = 10L;
 
 	public static final int PROTOCOL_VERSION = 1;
 	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";

@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class CycleAction implements IAction {
+public class ButtonToCycleAction implements IAction {
 
 	private boolean wasUp = true;
 	private int index = 0;
@@ -20,11 +20,11 @@ public class CycleAction implements IAction {
 	}
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		if (value < 0.5)
 			wasUp = true;
 		else if (wasUp) {
-			actions.get(index).doAction(joystick, value);
+			actions.get(index).doAction(input, value);
 
 			if (index == actions.size() - 1)
 				index = 0;
@@ -42,7 +42,7 @@ public class CycleAction implements IAction {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final CycleAction cycleAction = (CycleAction) super.clone();
+		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
 
 		final List<IAction> clonedActions = new ArrayList<IAction>();
 		for (IAction a : actions)

@@ -27,10 +27,10 @@ public class AxisToButtonAction extends ToButtonAction implements IAction {
 	}
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		boolean down = (value >= minAxisValue && value <= maxAxisValue);
 
-		joystick.setButtons(buttonId, invert ? !down : down);
+		input.setButtons(buttonId, invert ? !down : down);
 	}
 
 }

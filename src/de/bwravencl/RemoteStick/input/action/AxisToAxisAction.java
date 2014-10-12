@@ -5,8 +5,8 @@ import de.bwravencl.RemoteStick.input.Input;
 public class AxisToAxisAction extends ToAxisAction implements IAction {
 
 	@Override
-	public void doAction(Input joystick, float value) {
-		joystick.setAxis(virtualAxis, invert ? -value : value);
+	public void doAction(Input input, float value) {
+		input.setAxis(virtualAxis, invert ? -value : value);
 	}
 
 }

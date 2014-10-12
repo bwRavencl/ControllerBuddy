@@ -5,9 +5,9 @@ import de.bwravencl.RemoteStick.input.Input;
 public class ButtonToScrollAction extends ToScrollAction implements IAction {
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		if (value > 0.5f)
-			joystick.setScrollClicks(joystick.getScrollClicks()
+			input.setScrollClicks(input.getScrollClicks()
 					+ (invert ? -clicks : clicks));
 	}
 	

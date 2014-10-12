@@ -2,10 +2,10 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class CursorAction extends InvertableAction implements IAction {
+public class AxisToCursorAction extends InvertableAction implements IAction {
 
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
-	public final float DEFAULT_MAX_SPEED = 5.0f;
+	public final float DEFAULT_MAX_SPEED = 750.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float maxSpeed = DEFAULT_MAX_SPEED;
@@ -41,20 +41,19 @@ public class CursorAction extends InvertableAction implements IAction {
 	}
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) joystick.getServerThread()
+			final float rateMultiplier = (float) input.getServerThread()
 					.getUpdateRate() / (float) 1000L;
 
-			final float d = Input.normalize(value * rateMultiplier, -1.0f
-					* rateMultiplier, 1.0f * rateMultiplier, -maxSpeed,
-					maxSpeed);
+			float d = Input.normalize(value, -1.0f, 1.0f, -maxSpeed, maxSpeed)
+					* rateMultiplier;
 
 			if (axis.equals(MouseAxis.X))
-				joystick.setCursorDeltaX((int) (joystick.getCursorDeltaX() + (invert ? -d
+				input.setCursorDeltaX((int) (input.getCursorDeltaX() + (invert ? -d
 						: d)));
 			else
-				joystick.setCursorDeltaY((int) (joystick.getCursorDeltaY() + (invert ? -d
+				input.setCursorDeltaY((int) (input.getCursorDeltaY() + (invert ? -d
 						: d)));
 		}
 	}

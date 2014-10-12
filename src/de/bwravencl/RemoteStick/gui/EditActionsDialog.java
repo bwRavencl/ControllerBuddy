@@ -35,8 +35,8 @@ import de.bwravencl.RemoteStick.input.KeyStroke;
 import de.bwravencl.RemoteStick.input.Mode;
 import de.bwravencl.RemoteStick.input.Profile;
 import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
-import de.bwravencl.RemoteStick.input.action.CycleAction;
-import de.bwravencl.RemoteStick.input.action.CursorAction.MouseAxis;
+import de.bwravencl.RemoteStick.input.action.ButtonToCycleAction;
+import de.bwravencl.RemoteStick.input.action.AxisToCursorAction.MouseAxis;
 import de.bwravencl.RemoteStick.input.action.IAction;
 import net.java.games.input.Component;
 
@@ -61,16 +61,16 @@ public class EditActionsDialog extends JDialog {
 	public static final String[] ACTION_CLASSES_AXIS = {
 			ACTION_CLASS_PREFIX + "AxisToAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToButtonAction",
+			ACTION_CLASS_PREFIX + "AxisToCursorAction",
 			ACTION_CLASS_PREFIX + "AxisToKeyAction",
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction",
-			ACTION_CLASS_PREFIX + "AxisToScrollAction",
-			ACTION_CLASS_PREFIX + "CursorAction" };
+			ACTION_CLASS_PREFIX + "AxisToScrollAction" };
 	public static final String[] ACTION_CLASSES_BUTTON = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
+			ACTION_CLASS_PREFIX + "ButtonToCycleAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToModeAction",
-			ACTION_CLASS_PREFIX + "ButtonToScrollAction",
-			ACTION_CLASS_PREFIX + "CycleAction" };
+			ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
 	public static final String[] ACTION_CLASSES_CYCLE_ACTION = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
@@ -98,7 +98,7 @@ public class EditActionsDialog extends JDialog {
 	private Component component;
 	private Input input;
 	private Profile unsavedProfile;
-	private CycleAction cycleAction;
+	private ButtonToCycleAction cycleAction;
 	private final List<IAction> cycleActions = new ArrayList<IAction>();
 	private Mode selectedMode;
 	private AvailableAction selectedAvailableAction;
@@ -137,7 +137,7 @@ public class EditActionsDialog extends JDialog {
 		}
 	}
 
-	public EditActionsDialog(CycleAction cycleAction, Input input) {
+	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
 		this.cycleAction = cycleAction;
 
 		try {
@@ -351,8 +351,8 @@ public class EditActionsDialog extends JDialog {
 													else if ("MaxSpeed"
 															.equals(propertyName))
 														model = new SpinnerNumberModel(
-																value, 0.0,
-																20.0, 0.1);
+																value, 100.0,
+																1000.0, 0.1);
 													else
 														model = new SpinnerNumberModel(
 																value, -1.0,
@@ -861,7 +861,7 @@ public class EditActionsDialog extends JDialog {
 
 		public void actionPerformed(ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(
-					(CycleAction) selectedAssignedAction, input);
+					(ButtonToCycleAction) selectedAssignedAction, input);
 			editComponentDialog.setVisible(true);
 		}
 

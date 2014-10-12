@@ -16,7 +16,7 @@ import de.bwravencl.RemoteStick.input.action.ButtonToButtonAction;
 import de.bwravencl.RemoteStick.input.action.ButtonToKeyAction;
 import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 import de.bwravencl.RemoteStick.input.action.ButtonToScrollAction;
-import de.bwravencl.RemoteStick.input.action.CursorAction;
+import de.bwravencl.RemoteStick.input.action.AxisToCursorAction;
 import de.bwravencl.RemoteStick.input.action.IAction;
 import de.bwravencl.RemoteStick.net.ServerThread;
 import net.java.games.input.Component;
@@ -24,7 +24,7 @@ import net.java.games.input.Controller;
 
 public class Input {
 
-	public static final int DEFAULT_N_BUTTONS = 8;
+	public static final int MAX_N_BUTTONS = 32;
 
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
@@ -32,7 +32,7 @@ public class Input {
 
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
-	private int nButtons = DEFAULT_N_BUTTONS;
+	private int nButtons = MAX_N_BUTTONS;
 
 	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(
 			VirtualAxis.class);
@@ -51,6 +51,9 @@ public class Input {
 	public Input(Controller controller) {
 		Input.controller = controller;
 		profile = new Profile();
+		
+		for (VirtualAxis va : VirtualAxis.values())
+			axis.put(va, 0);
 
 		System.out.println("Controller: " + controller.getName());
 
@@ -105,8 +108,8 @@ public class Input {
 		rxAxisActionsP0.add(rxAxisAction0P0);
 		defaultMode.getComponentToActionMap().put("z", rxAxisActionsP0);
 		List<IAction> rxAxisActionsP2 = new ArrayList<>();
-		CursorAction rxAxisAction0P2 = new CursorAction();
-		rxAxisAction0P2.setAxis(CursorAction.MouseAxis.X);
+		AxisToCursorAction rxAxisAction0P2 = new AxisToCursorAction();
+		rxAxisAction0P2.setAxis(AxisToCursorAction.MouseAxis.X);
 		rxAxisActionsP2.add(rxAxisAction0P2);
 		mode2.getComponentToActionMap().put("z", rxAxisActionsP2);
 
@@ -116,8 +119,8 @@ public class Input {
 		ryAxisActionsP0.add(ryAxisAction0P0);
 		defaultMode.getComponentToActionMap().put("rz", ryAxisActionsP0);
 		List<IAction> ryAxisActionsP2 = new ArrayList<>();
-		CursorAction ryAxisAction0P2 = new CursorAction();
-		ryAxisAction0P2.setAxis(CursorAction.MouseAxis.Y);
+		AxisToCursorAction ryAxisAction0P2 = new AxisToCursorAction();
+		ryAxisAction0P2.setAxis(AxisToCursorAction.MouseAxis.Y);
 		ryAxisActionsP2.add(ryAxisAction0P2);
 		mode2.getComponentToActionMap().put("rz", ryAxisActionsP2);
 
@@ -291,7 +294,8 @@ public class Input {
 	}
 
 	public void setButtons(int id, boolean value) {
-		buttons[id] = value;
+		if (id < buttons.length)
+			buttons[id] = value;
 	}
 
 	public void setButtons(int id, float value) {
