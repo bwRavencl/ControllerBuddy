@@ -378,7 +378,7 @@ public class Main {
 
 		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_UPDATE_RATE,
-						(int) ServerThread.DEFAULT_UPDATE_RATE), 1, 1000, 1));
+						(int) ServerThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
 		spinnerUpdateRate.setEditor(new JSpinner.NumberEditor(
 				spinnerUpdateRate, "#"));
 		spinnerUpdateRate.addChangeListener(new ChangeListener() {
