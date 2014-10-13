@@ -17,6 +17,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
@@ -82,6 +83,7 @@ import net.java.games.input.ControllerEnvironment;
 public class Main {
 
 	public static final String APPLICATION_NAME = "RemoteStick Server";
+	public static final String VERSION = "0.1";
 
 	public static final String PROFILE_FILE_EXTENSION = "json";
 	public static final String PROFILE_FILE_SUFFIX = '.' + PROFILE_FILE_EXTENSION;
@@ -267,6 +269,8 @@ public class Main {
 		buttonGroupServerState.add(rdbtnmntmRun);
 		mnServer.add(rdbtnmntmRun);
 
+		menuBar.add(new JMenuItem(new AboutAction()));
+
 		final JRadioButtonMenuItem rdbtnmntmStop = new JRadioButtonMenuItem(
 				"Stop");
 		rdbtnmntmStop.setAction(new StopServerAction());
@@ -311,11 +315,6 @@ public class Main {
 
 		final JScrollPane scrollPaneServerSettings = new JScrollPane();
 		scrollPaneServerSettings.setViewportView(panelServerSettings);
-		/*
-		 * scrollPaneServerSettings.setViewportBorder(BorderFactory
-		 * .createMatteBorder(10, 10, 0, 10,
-		 * panelServerSettings.getBackground()));
-		 */
 		tabbedPane.addTab("Server Settings", null, scrollPaneServerSettings,
 				null);
 
@@ -655,6 +654,24 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			stopServer();
+		}
+	}
+
+	private class AboutAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public AboutAction() {
+			putValue(NAME, "About");
+			putValue(SHORT_DESCRIPTION, "Display version information");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(frmRemoteStickServer,
+					APPLICATION_NAME + ' ' + VERSION + "\nby Matteo Hausner",
+					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
