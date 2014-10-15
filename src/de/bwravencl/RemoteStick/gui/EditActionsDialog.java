@@ -453,22 +453,11 @@ public class EditActionsDialog extends JDialog {
 															.setPreferredSize(Main.BUTTON_DIMENSION);
 													panelProperty
 															.add(editActionsButton);
-												} else {
-													System.out.println("Error: "
-															+ clazz.getName()
-															+ " GUI element not implemented!");
-												}
-											} catch (ClassNotFoundException e) {
-												e.printStackTrace();
-											} catch (IllegalAccessException e) {
-												e.printStackTrace();
-											} catch (IllegalArgumentException e) {
-												e.printStackTrace();
-											} catch (InvocationTargetException e) {
-												e.printStackTrace();
-											} catch (NoSuchMethodException e) {
-												e.printStackTrace();
-											} catch (SecurityException e) {
+												} else
+													throw new Exception(
+															"GUI element not implemented for "
+																	+ clazz.getName());
+											} catch (Exception e) {
 												e.printStackTrace();
 											}
 										}

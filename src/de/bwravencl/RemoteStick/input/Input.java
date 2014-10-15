@@ -55,13 +55,6 @@ public class Input {
 		for (VirtualAxis va : VirtualAxis.values())
 			axis.put(va, 0);
 
-		System.out.println("Controller: " + controller.getName());
-
-		controller.poll();
-		for (Component c : controller.getComponents()) {
-			System.out.println(c.getName() + " " + c.getPollData());
-		}
-
 		Mode defaultMode = profile.getModes().get(0);
 		Mode mode1 = new Mode("54947df8-0e9e-4471-a2f9-9af509fb5889");
 		mode1.setDescription("View mode");

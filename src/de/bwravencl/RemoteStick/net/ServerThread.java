@@ -47,8 +47,6 @@ public class ServerThread extends Thread {
 
 	@Override
 	public void run() {
-		super.run();
-
 		DatagramPacket receivePacket = null;
 		String message = null;
 		long counter = 0;
@@ -57,11 +55,11 @@ public class ServerThread extends Thread {
 			serverSocket = new DatagramSocket(port);
 			final byte[] receiveBuf = new byte[1024];
 
-			while (true) {
+			// TODO: Update Status Bar
 
+			while (true) {
 				switch (serverState) {
 				case Listening:
-					System.out.println("Listenign on: " + port + "...");
 					counter = 0;
 					receivePacket = new DatagramPacket(receiveBuf,
 							receiveBuf.length);
@@ -97,10 +95,8 @@ public class ServerThread extends Thread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							System.out.println("Entering State: Connected");
-						} else
-							System.out
-									.println("Invalid CLIENT_HELLO - ingnoring!");
+							// TODO: Update Status Bar
+						}
 					}
 					break;
 				case Connected:
@@ -180,9 +176,12 @@ public class ServerThread extends Thread {
 									counter++;
 							}
 						} catch (SocketTimeoutException e) {
-							System.out.println("Client "
-									+ clientIPAddress.getCanonicalHostName()
-									+ " timed out!");
+							// TODO: Update Status Bar
+							/*
+							 * System.out.println("Client " +
+							 * clientIPAddress.getCanonicalHostName() +
+							 * " timed out!");
+							 */
 							serverState = ServerState.Listening;
 						}
 					} else
@@ -200,6 +199,7 @@ public class ServerThread extends Thread {
 		} finally {
 			if (serverSocket != null)
 				serverSocket.close();
+			// TODO: Update Status Bar
 		}
 	}
 

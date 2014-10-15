@@ -17,7 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
@@ -269,7 +268,9 @@ public class Main {
 		buttonGroupServerState.add(rdbtnmntmRun);
 		mnServer.add(rdbtnmntmRun);
 
-		menuBar.add(new JMenuItem(new AboutAction()));
+		final JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		mnHelp.add(new AboutAction());
 
 		final JRadioButtonMenuItem rdbtnmntmStop = new JRadioButtonMenuItem(
 				"Stop");
