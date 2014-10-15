@@ -455,7 +455,7 @@ public class EditActionsDialog extends JDialog {
 															.add(editActionsButton);
 												} else
 													throw new Exception(
-															"GUI element not implemented for "
+															"GUI representation implementation missing for "
 																	+ clazz.getName());
 											} catch (Exception e) {
 												e.printStackTrace();

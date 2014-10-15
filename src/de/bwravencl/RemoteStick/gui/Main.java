@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.BoxLayout;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
@@ -58,6 +57,7 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.JSpinner;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -113,6 +113,7 @@ public class Main {
 	private JSpinner spinnerClientTimeout;
 	private JSpinner spinnerUpdateRate;
 	private JScrollPane scrollPaneModes;
+	private final JLabel lblStatus = new JLabel("Ready");
 	private final JFileChooser fileChooser = new JFileChooser();
 
 	private Controller selectedController;
@@ -278,9 +279,10 @@ public class Main {
 		rdbtnmntmStop.setSelected(true);
 		buttonGroupServerState.add(rdbtnmntmStop);
 		mnServer.add(rdbtnmntmStop);
-		frmRemoteStickServer.getContentPane().setLayout(
-				new BoxLayout(frmRemoteStickServer.getContentPane(),
-						BoxLayout.X_AXIS));
+		/*
+		 * frmRemoteStickServer.getContentPane().setLayout( new
+		 * BoxLayout(frmRemoteStickServer.getContentPane(), BoxLayout.X_AXIS));
+		 */
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRemoteStickServer.getContentPane().add(tabbedPane);
@@ -396,6 +398,10 @@ public class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
 
+		lblStatus.setBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.RAISED));
+		frmRemoteStickServer.add(lblStatus, BorderLayout.SOUTH);
+
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"RemoteStick Profile", PROFILE_FILE_EXTENSION);
 		fileChooser.setFileFilter(filter);
@@ -487,7 +493,7 @@ public class Main {
 
 	private void stopServer() {
 		if (serverThread != null)
-			serverThread.stopServer();
+			serverThread.closeSocket();
 	}
 
 	private boolean loadProfile(File file) {
@@ -508,6 +514,7 @@ public class Main {
 			updateModesPanel();
 			frmRemoteStickServer.setTitle(file.getName() + " - "
 					+ APPLICATION_NAME);
+			setStatusbarText("Profile loaded: " + file.getAbsolutePath());
 
 			return result;
 		} catch (IOException e1) {
@@ -519,6 +526,10 @@ public class Main {
 
 	private void saveLastProfile(File file) {
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
+	}
+
+	public void setStatusbarText(String text) {
+		lblStatus.setText(text);
 	}
 
 	private class NewProfileAction extends AbstractAction {
@@ -597,6 +608,7 @@ public class Main {
 					fos.close();
 
 					saveLastProfile(file);
+					setStatusbarText("Profile saved: " + file.getAbsolutePath());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -633,7 +645,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			serverThread = new ServerThread(input);
+			serverThread = new ServerThread(Main.this, input);
 			serverThread.setPort((int) spinnerPort.getValue());
 			serverThread
 					.setClientTimeout((int) spinnerClientTimeout.getValue());

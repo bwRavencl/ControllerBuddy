@@ -7,7 +7,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.KeyStroke;
 
@@ -37,10 +40,12 @@ public class ServerThread extends Thread {
 	private long updateRate = DEFAULT_UPDATE_RATE;
 	private InetAddress clientIPAddress = null;
 	private ServerState serverState = ServerState.Listening;
+	private final Main main;
 	private final Input input;
 	private DatagramSocket serverSocket = null;
 
-	public ServerThread(Input input) {
+	public ServerThread(Main main, Input input) {
+		this.main = main;
 		this.input = input;
 		input.setServerThread(this);
 	}
@@ -55,7 +60,7 @@ public class ServerThread extends Thread {
 			serverSocket = new DatagramSocket(port);
 			final byte[] receiveBuf = new byte[1024];
 
-			// TODO: Update Status Bar
+			setListeningStatusbarText();
 
 			while (true) {
 				switch (serverState) {
@@ -95,7 +100,8 @@ public class ServerThread extends Thread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							// TODO: Update Status Bar
+							main.setStatusbarText("Connected with "
+									+ clientIPAddress.getCanonicalHostName());
 						}
 					}
 					break;
@@ -176,13 +182,15 @@ public class ServerThread extends Thread {
 									counter++;
 							}
 						} catch (SocketTimeoutException e) {
-							// TODO: Update Status Bar
-							/*
-							 * System.out.println("Client " +
-							 * clientIPAddress.getCanonicalHostName() +
-							 * " timed out!");
-							 */
 							serverState = ServerState.Listening;
+
+							main.setStatusbarText("Connection timed out");
+							new Timer().schedule(new TimerTask() {
+								@Override
+								public void run() {
+									setListeningStatusbarText();
+								}
+							}, 5000L);
 						}
 					} else
 						counter++;
@@ -197,15 +205,19 @@ public class ServerThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
-			if (serverSocket != null)
-				serverSocket.close();
-			// TODO: Update Status Bar
+			closeSocket();
 		}
 	}
 
-	public void stopServer() {
+	private void setListeningStatusbarText() {
+		main.setStatusbarText("Listening on port " + port);
+	}
+	
+	public void closeSocket() {
 		if (serverSocket != null)
 			serverSocket.close();
+		
+		main.setStatusbarText("Socket closed");
 	}
 
 	public long getUpdateRate() {
