@@ -16,7 +16,7 @@ public abstract class ToAxisAction extends InvertableAction {
 
 	@Override
 	public String toString() {
-		return "Axis";
+		return rb.getString("TO_AXIS_ACTION_STRING");
 	}
 
 }

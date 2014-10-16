@@ -43,7 +43,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	@Override
 	public String toString() {
-		return "Relative Axis";
+		return rb.getString("AXIS_TO_RELATIVE_AXIS_ACTION_STRING");
 	}
 
 }

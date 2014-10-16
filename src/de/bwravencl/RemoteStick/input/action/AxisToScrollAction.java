@@ -2,7 +2,7 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class AxisToScrollAction extends ToScrollAction implements IAction {
+public class AxisToScrollAction extends ToScrollAction {
 
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
 

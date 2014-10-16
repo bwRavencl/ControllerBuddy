@@ -34,15 +34,16 @@ public class ButtonToCycleAction implements IAction {
 			wasUp = false;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Cycle";
+		return rb.getString("BUTTON_TO_CYCLE_ACTION_STRING");
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
+		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super
+				.clone();
 
 		final List<IAction> clonedActions = new ArrayList<IAction>();
 		for (IAction a : actions)

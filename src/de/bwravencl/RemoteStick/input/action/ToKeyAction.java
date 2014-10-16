@@ -27,7 +27,7 @@ public abstract class ToKeyAction extends InvertableAction {
 
 	@Override
 	public String toString() {
-		return "Key";
+		return rb.getString("TO_KEY_ACTION_STRING");
 	}
 
 	@Override

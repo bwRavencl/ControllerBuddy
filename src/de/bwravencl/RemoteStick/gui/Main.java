@@ -54,6 +54,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import javax.swing.JSpinner;
@@ -74,6 +76,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
@@ -81,15 +84,14 @@ import net.java.games.input.ControllerEnvironment;
 
 public class Main {
 
-	public static final String APPLICATION_NAME = "RemoteStick Server";
-	public static final String VERSION = "0.1";
-
-	public static final String PROFILE_FILE_EXTENSION = "json";
-	public static final String PROFILE_FILE_SUFFIX = '.' + PROFILE_FILE_EXTENSION;
-
 	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-	public static final String ERROR_DIALOG_TITLE = "Error";
+
+	public static final int DIALOG_BOUNDS_X = 100;
+	public static final int DIALOG_BOUNDS_Y = 100;
+	public static final int DIALOG_BOUNDS_WIDTH = 600;
+	public static final int DIALOG_BOUNDS_HEIGHT = 600;
+	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
@@ -97,11 +99,11 @@ public class Main {
 	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
 	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
 
-	public static final int DIALOG_BOUNDS_X = 100;
-	public static final int DIALOG_BOUNDS_Y = 100;
-	public static final int DIALOG_BOUNDS_WIDTH = 600;
-	public static final int DIALOG_BOUNDS_HEIGHT = 600;
-	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
+	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
+
+	private final ResourceBundle rb = new ResourceBundleUtil()
+			.getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+					Locale.getDefault());
 
 	private JFrame frmRemoteStickServer;
 	private JTabbedPane tabbedPane;
@@ -113,7 +115,7 @@ public class Main {
 	private JSpinner spinnerClientTimeout;
 	private JSpinner spinnerUpdateRate;
 	private JScrollPane scrollPaneModes;
-	private final JLabel lblStatus = new JLabel("Ready");
+	private final JLabel lblStatus = new JLabel(rb.getString("STATUS_READY"));
 	private final JFileChooser fileChooser = new JFileChooser();
 
 	private Controller selectedController;
@@ -164,11 +166,10 @@ public class Main {
 			}
 
 		if (selectedController == null) {
-			int option = JOptionPane
-					.showConfirmDialog(
-							frmRemoteStickServer,
-							"No controller connected!\n\nPlease connect a controller now and click 'OK' to retry.\n'Cancel' quits the application.",
-							ERROR_DIALOG_TITLE, JOptionPane.OK_CANCEL_OPTION);
+			int option = JOptionPane.showConfirmDialog(frmRemoteStickServer,
+					rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"),
+					JOptionPane.OK_CANCEL_OPTION);
 
 			if (option == JOptionPane.OK_OPTION) {
 				final String javaBin = System.getProperty("java.home")
@@ -213,7 +214,7 @@ public class Main {
 	 */
 	private void initialize() {
 		frmRemoteStickServer = new JFrame();
-		frmRemoteStickServer.setTitle(APPLICATION_NAME);
+		frmRemoteStickServer.setTitle(rb.getString("APPLICATION_NAME"));
 		frmRemoteStickServer.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y,
 				DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frmRemoteStickServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -221,7 +222,7 @@ public class Main {
 		final JMenuBar menuBar = new JMenuBar();
 		frmRemoteStickServer.setJMenuBar(menuBar);
 
-		final JMenu mnFile = new JMenu("File");
+		final JMenu mnFile = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(mnFile);
 		mnFile.add(new NewProfileAction());
 		mnFile.add(new OpenFileAction());
@@ -229,7 +230,7 @@ public class Main {
 		mnFile.add(new JSeparator());
 		mnFile.add(new QuitAction());
 
-		mnController = new JMenu("Controller");
+		mnController = new JMenu(rb.getString("CONTROLLER_MENU"));
 		mnController.addMenuListener(new MenuListener() {
 
 			@Override
@@ -258,37 +259,33 @@ public class Main {
 		mnController.setEnabled(true);
 		menuBar.add(mnController);
 
-		final JMenu mnServer = new JMenu("Server");
+		final JMenu mnServer = new JMenu(rb.getString("SERVER_MENU"));
 		menuBar.add(mnServer);
 
 		final ButtonGroup buttonGroupServerState = new ButtonGroup();
 
 		final JRadioButtonMenuItem rdbtnmntmRun = new JRadioButtonMenuItem(
-				"Run");
+				rb.getString("START_SERVER_MENU_ITEM"));
 		rdbtnmntmRun.setAction(new StartServerAction());
 		buttonGroupServerState.add(rdbtnmntmRun);
 		mnServer.add(rdbtnmntmRun);
 
-		final JMenu mnHelp = new JMenu("Help");
+		final JMenu mnHelp = new JMenu(rb.getString("HELP_MENU"));
 		menuBar.add(mnHelp);
-		mnHelp.add(new AboutAction());
+		mnHelp.add(new ShowAboutDialogAction());
 
 		final JRadioButtonMenuItem rdbtnmntmStop = new JRadioButtonMenuItem(
-				"Stop");
+				rb.getString("STOP_SERVER_MENU_ITEM"));
 		rdbtnmntmStop.setAction(new StopServerAction());
 		rdbtnmntmStop.setSelected(true);
 		buttonGroupServerState.add(rdbtnmntmStop);
 		mnServer.add(rdbtnmntmStop);
-		/*
-		 * frmRemoteStickServer.getContentPane().setLayout( new
-		 * BoxLayout(frmRemoteStickServer.getContentPane(), BoxLayout.X_AXIS));
-		 */
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmRemoteStickServer.getContentPane().add(tabbedPane);
 
 		final JPanel panelModes = new JPanel(new BorderLayout());
-		tabbedPane.addTab("Modes", null, panelModes, null);
+		tabbedPane.addTab(rb.getString("MODES_TAB"), null, panelModes, null);
 
 		panelModeList = new JPanel();
 		panelModeList.setLayout(new GridBagLayout());
@@ -311,15 +308,16 @@ public class Main {
 		scrollPaneAssignments.setViewportBorder(BorderFactory
 				.createMatteBorder(10, 10, 0, 10,
 						panelAssignments.getBackground()));
-		tabbedPane.addTab("Assignments", null, scrollPaneAssignments, null);
+		tabbedPane.addTab(rb.getString("ASSIGNMENTS_TAB"), null,
+				scrollPaneAssignments, null);
 
 		final JPanel panelServerSettings = new JPanel();
 		panelServerSettings.setLayout(new GridBagLayout());
 
 		final JScrollPane scrollPaneServerSettings = new JScrollPane();
 		scrollPaneServerSettings.setViewportView(panelServerSettings);
-		tabbedPane.addTab("Server Settings", null, scrollPaneServerSettings,
-				null);
+		tabbedPane.addTab(rb.getString("SERVER_SETTINGS_TAB"), null,
+				scrollPaneServerSettings, null);
 
 		final GridBagConstraints panelGridBagConstraints = new GridBagConstraints(
 				0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
@@ -332,7 +330,7 @@ public class Main {
 		final JPanel panelPort = new JPanel(panelFlowLayout);
 		panelServerSettings.add(panelPort, panelGridBagConstraints);
 
-		final JLabel lblPort = new JLabel("Port");
+		final JLabel lblPort = new JLabel(rb.getString("PORT_LABEL"));
 		lblPort.setPreferredSize(new Dimension(100, 15));
 		panelPort.add(lblPort);
 
@@ -352,7 +350,8 @@ public class Main {
 		final JPanel panelTimeout = new JPanel(panelFlowLayout);
 		panelServerSettings.add(panelTimeout, panelGridBagConstraints);
 
-		final JLabel lblClientTimeout = new JLabel("Client Timeout");
+		final JLabel lblClientTimeout = new JLabel(
+				rb.getString("CLIENT_TIMEOUT_LABEL"));
 		lblClientTimeout.setPreferredSize(new Dimension(100, 15));
 		panelTimeout.add(lblClientTimeout);
 
@@ -374,7 +373,8 @@ public class Main {
 		final JPanel panelUpdateRate = new JPanel(panelFlowLayout);
 		panelServerSettings.add(panelUpdateRate, panelGridBagConstraints);
 
-		final JLabel lblUpdateRate = new JLabel("Update Rate");
+		final JLabel lblUpdateRate = new JLabel(
+				rb.getString("UPDATE_RATE_LABEL"));
 		lblUpdateRate.setPreferredSize(new Dimension(100, 15));
 		panelUpdateRate.add(lblUpdateRate);
 
@@ -403,9 +403,11 @@ public class Main {
 		frmRemoteStickServer.add(lblStatus, BorderLayout.SOUTH);
 
 		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"RemoteStick Profile", PROFILE_FILE_EXTENSION);
+				rb.getString("PROFILE_FILE_DESCRIPTION"),
+				rb.getString("PROFILE_FILE_EXTENSION"));
 		fileChooser.setFileFilter(filter);
-		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
+		fileChooser.setSelectedFile(new File(rb
+				.getString("PROFILE_FILE_SUFFIX")));
 	}
 
 	private void updateModesPanel() {
@@ -459,7 +461,7 @@ public class Main {
 							0));
 
 					final JButton deleteButton = new JButton(
-							new DeleteModeAction(p));
+							new RemoveModeAction(p));
 					deleteButton.setPreferredSize(BUTTON_DIMENSION);
 					panelMode.add(deleteButton, new GridBagConstraints(4,
 							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
@@ -487,7 +489,8 @@ public class Main {
 	private void newProfile() {
 		input = new Input(selectedController);
 
-		frmRemoteStickServer.setTitle("Unsaved - " + APPLICATION_NAME);
+		frmRemoteStickServer.setTitle(rb
+				.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
 	}
 
@@ -512,9 +515,10 @@ public class Main {
 				saveLastProfile(file);
 
 			updateModesPanel();
-			frmRemoteStickServer.setTitle(file.getName() + " - "
-					+ APPLICATION_NAME);
-			setStatusbarText("Profile loaded: " + file.getAbsolutePath());
+			frmRemoteStickServer.setTitle(file.getName()
+					+ rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED")
+					+ file.getAbsolutePath());
 
 			return result;
 		} catch (IOException e1) {
@@ -539,8 +543,9 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public NewProfileAction() {
-			putValue(NAME, "New");
-			putValue(SHORT_DESCRIPTION, "Creates a new profile");
+			putValue(NAME, rb.getString("NEW_PROFILE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("NEW_PROFILE_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -555,9 +560,9 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public OpenFileAction() {
-			putValue(NAME, "Open");
+			putValue(NAME, rb.getString("OPEN_PROFILE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					"Loads a controller configuration from a file");
+					rb.getString("OPEN_PROFILE_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -565,12 +570,10 @@ public class Main {
 				final File file = fileChooser.getSelectedFile();
 
 				if (!loadProfile(file))
-					JOptionPane
-							.showMessageDialog(
-									frmRemoteStickServer,
-									"Could not load profile!\n\nThe currently selected controller is missing at least one axis or button referenced by the profile.\nThe profile was most likely created for a different controller model.\nThe profile has not been loaded.",
-									ERROR_DIALOG_TITLE,
-									JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frmRemoteStickServer,
+							rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+							rb.getString("ERROR_DIALOG_TITLE"),
+							JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -582,17 +585,18 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public SaveFileAction() {
-			putValue(NAME, "Save");
+			putValue(NAME, rb.getString("SAVE_PROFILE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					"Saves the controller configuration to a file");
+					rb.getString("SAVE_PROFILE_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			if (fileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				if (!file.getName().toLowerCase().endsWith(PROFILE_FILE_SUFFIX))
-					file = new File(file.getAbsoluteFile()
-							+ PROFILE_FILE_SUFFIX);
+				final String profileFileSuffix = rb
+						.getString("PROFILE_FILE_SUFFIX");
+				if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
+					file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
 				final Gson gson = new GsonBuilder().registerTypeAdapter(
 						IAction.class, new InterfaceAdapter<IAction>())
@@ -608,7 +612,8 @@ public class Main {
 					fos.close();
 
 					saveLastProfile(file);
-					setStatusbarText("Profile saved: " + file.getAbsolutePath());
+					setStatusbarText(rb.getString("STATUS_PROFILE_SAVED")
+							+ file.getAbsolutePath());
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -623,8 +628,8 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public QuitAction() {
-			putValue(NAME, "Quit");
-			putValue(SHORT_DESCRIPTION, "Quits the application");
+			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -640,8 +645,9 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public StartServerAction() {
-			putValue(NAME, "Start");
-			putValue(SHORT_DESCRIPTION, "Starts the server");
+			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -661,8 +667,9 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public StopServerAction() {
-			putValue(NAME, "Stop");
-			putValue(SHORT_DESCRIPTION, "Stops the server");
+			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -670,21 +677,22 @@ public class Main {
 		}
 	}
 
-	private class AboutAction extends AbstractAction {
+	private class ShowAboutDialogAction extends AbstractAction {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public AboutAction() {
-			putValue(NAME, "About");
-			putValue(SHORT_DESCRIPTION, "Display version information");
+		public ShowAboutDialogAction() {
+			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(frmRemoteStickServer,
-					APPLICATION_NAME + ' ' + VERSION + "\nby Matteo Hausner",
-					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE);
+					rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -701,8 +709,11 @@ public class Main {
 
 			final String name = controller.getName();
 			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION, "Selects '" + name
-					+ "' as the active controller");
+			putValue(
+					SHORT_DESCRIPTION,
+					rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_PREFIX")
+							+ name
+							+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -771,7 +782,8 @@ public class Main {
 											new Insets(0, 0, 0, 0), 0, 0);
 
 									if (c.isAnalog()) {
-										lblName.setText("Axis: " + name);
+										lblName.setText(rb
+												.getString("AXIS_LABEL") + name);
 										panelComponent.add(lblName,
 												nameGridBagConstraints);
 
@@ -796,7 +808,9 @@ public class Main {
 										panelComponent.add(progressBarValue,
 												valueGridBagConstraints);
 									} else {
-										lblName.setText("Button: " + name);
+										lblName.setText(rb
+												.getString("BUTTON_LABEL")
+												+ name);
 										panelComponent.add(lblName,
 												nameGridBagConstraints);
 
@@ -816,9 +830,11 @@ public class Main {
 
 										final JLabel lblValue = new JLabel();
 										if (value > 0.5f)
-											lblValue.setText("Down");
+											lblValue.setText(rb
+													.getString("BUTTON_DOWN_LABEL"));
 										else {
-											lblValue.setText("Up");
+											lblValue.setText(rb
+													.getString("BUTTON_UP_LABEL"));
 											lblValue.setForeground(Color.LIGHT_GRAY);
 										}
 										panelComponent.add(lblValue,
@@ -899,9 +915,7 @@ public class Main {
 												GridBagConstraints.FIRST_LINE_START,
 												GridBagConstraints.NONE,
 												new Insets(0, 0, 0, 0), 0, 0));
-							} else
-								panelAssignments.add(new JLabel(
-										"No active controller selected!"));
+							}
 
 							scrollPaneAssignments
 									.setViewportView(panelAssignments);
@@ -928,10 +942,12 @@ public class Main {
 		public EditComponentAction(Component component) {
 			this.component = component;
 
-			putValue(NAME, "Edit");
-			putValue(SHORT_DESCRIPTION,
-					"Edit actions of the '" + component.getName()
-							+ "' component");
+			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
+			putValue(
+					SHORT_DESCRIPTION,
+					rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_PREFIX")
+							+ component.getName()
+							+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -957,9 +973,6 @@ public class Main {
 				JTextField modeDescriptionTextField) {
 			this.mode = mode;
 			this.modeDescriptionTextField = modeDescriptionTextField;
-
-			putValue(NAME, "Set mode description");
-			putValue(SHORT_DESCRIPTION, "Sets the description of a mode");
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -985,7 +998,7 @@ public class Main {
 		}
 	}
 
-	private class DeleteModeAction extends AbstractAction {
+	private class RemoveModeAction extends AbstractAction {
 		/**
 		 * 
 		 */
@@ -993,12 +1006,15 @@ public class Main {
 
 		private final Mode mode;
 
-		public DeleteModeAction(Mode mode) {
+		public RemoveModeAction(Mode mode) {
 			this.mode = mode;
 
-			putValue(NAME, "Delete");
-			putValue(SHORT_DESCRIPTION, "Delete the '" + mode.getDescription()
-					+ "' mode");
+			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
+			putValue(
+					SHORT_DESCRIPTION,
+					rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_PREFIX")
+							+ mode.getDescription()
+							+ rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1014,8 +1030,9 @@ public class Main {
 		private static final long serialVersionUID = 1L;
 
 		public AddModeAction() {
-			putValue(NAME, "Add");
-			putValue(SHORT_DESCRIPTION, "Add a new mode");
+			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1028,12 +1045,17 @@ public class Main {
 
 	private class InterfaceAdapter<T> implements JsonSerializer<T>,
 			JsonDeserializer<T> {
+
+		public static final String PROPERTY_TYPE = "type";
+		public static final String PROPERTY_DATA = "data";
+
 		public JsonElement serialize(T object,
 				java.lang.reflect.Type interfaceType,
 				JsonSerializationContext context) {
 			final JsonObject wrapper = new JsonObject();
-			wrapper.addProperty("type", object.getClass().getName());
-			wrapper.add("data", context.serialize(object));
+			wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
+			wrapper.add(PROPERTY_DATA, context.serialize(object));
+
 			return wrapper;
 		}
 
@@ -1041,9 +1063,10 @@ public class Main {
 				java.lang.reflect.Type interfaceType,
 				JsonDeserializationContext context) throws JsonParseException {
 			final JsonObject wrapper = (JsonObject) elem;
-			final JsonElement typeName = get(wrapper, "type");
-			final JsonElement data = get(wrapper, "data");
+			final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
+			final JsonElement data = get(wrapper, PROPERTY_DATA);
 			final java.lang.reflect.Type actualType = typeForName(typeName);
+
 			return context.deserialize(data, actualType);
 		}
 
@@ -1059,9 +1082,9 @@ public class Main {
 			final JsonElement elem = wrapper.get(memberName);
 			if (elem == null)
 				throw new JsonParseException(
-						"no '"
+						"No member '"
 								+ memberName
-								+ "' member found in what was expected to be an interface wrapper");
+								+ "' found in what was expected to be an interface wrapper");
 			return elem;
 		}
 	}

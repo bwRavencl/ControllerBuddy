@@ -72,7 +72,7 @@ public class ButtonToModeAction implements IAction {
 
 	@Override
 	public String toString() {
-		return "Mode";
+		return rb.getString("BUTTON_TO_MODE_ACTION_STRING");
 	}
 
 	@Override

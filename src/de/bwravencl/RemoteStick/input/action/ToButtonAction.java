@@ -14,7 +14,7 @@ public abstract class ToButtonAction extends InvertableAction {
 
 	@Override
 	public String toString() {
-		return "Button";
+		return rb.getString("TO_BUTTON_ACTION_STRING");
 	}
 
 }

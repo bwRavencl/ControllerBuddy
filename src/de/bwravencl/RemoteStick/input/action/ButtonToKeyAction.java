@@ -2,7 +2,7 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class ButtonToKeyAction extends ToKeyAction implements IAction {
+public class ButtonToKeyAction extends ToKeyAction {
 
 	@Override
 	public void doAction(Input input, float value) {

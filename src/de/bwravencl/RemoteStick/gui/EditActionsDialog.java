@@ -38,6 +38,7 @@ import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 import de.bwravencl.RemoteStick.input.action.ButtonToCycleAction;
 import de.bwravencl.RemoteStick.input.action.AxisToCursorAction.MouseAxis;
 import de.bwravencl.RemoteStick.input.action.IAction;
+import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
 
 import java.awt.GridBagLayout;
@@ -48,7 +49,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class EditActionsDialog extends JDialog {
 
@@ -87,6 +90,10 @@ public class EditActionsDialog extends JDialog {
 	public static final int DIALOG_BOUNDS_WIDTH = 800;
 	public static final int DIALOG_BOUNDS_HEIGHT = 400;
 
+	private final ResourceBundle rb = new ResourceBundleUtil()
+			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+					Locale.getDefault());
+
 	private JComboBox<Mode> comboBoxMode;
 	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
 	private JButton btnAdd;
@@ -117,12 +124,13 @@ public class EditActionsDialog extends JDialog {
 
 			setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH,
 					DIALOG_BOUNDS_HEIGHT);
-			setTitle("Component Editor - " + component.getName());
+			setTitle(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR_PREFIX")
+					+ component.getName());
 
 			final JPanel panelMode = new JPanel(new FlowLayout());
 			getContentPane().add(panelMode, BorderLayout.NORTH);
 
-			panelMode.add(new JLabel("Mode"));
+			panelMode.add(new JLabel(rb.getString("MODE_LABEL")));
 
 			final List<Mode> modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
@@ -149,7 +157,8 @@ public class EditActionsDialog extends JDialog {
 			setBounds(DIALOG_BOUNDS_X + Main.DIALOG_BOUNDS_X_Y_OFFSET,
 					DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET,
 					DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-			setTitle(cycleAction.toString() + " Editor");
+			setTitle(cycleAction.toString()
+					+ rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR_SUFFIX"));
 
 			init(input);
 		} catch (CloneNotSupportedException e) {
@@ -169,7 +178,7 @@ public class EditActionsDialog extends JDialog {
 		panelActions.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(panelActions, BorderLayout.CENTER);
 
-		panelActions.add(new JLabel("Available Actions"),
+		panelActions.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")),
 				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.NONE,
 						new Insets(0, 0, 0, 0), 0, 25));
@@ -207,7 +216,7 @@ public class EditActionsDialog extends JDialog {
 				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
 				new Insets(0, 0, 0, 0), 0, 0));
 
-		panelActions.add(new JLabel("Assigned Actions"),
+		panelActions.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")),
 				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.NONE,
 						new Insets(0, 0, 0, 0), 0, 25));
@@ -487,7 +496,7 @@ public class EditActionsDialog extends JDialog {
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
-		lblProperties = new JLabel("Properties");
+		lblProperties = new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL"));
 		lblProperties.setVisible(false);
 		panelActions.add(lblProperties, new GridBagConstraints(3, 0, 1, 1, 0.0,
 				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
@@ -608,11 +617,6 @@ public class EditActionsDialog extends JDialog {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public SelectModeAction() {
-			putValue(NAME, "Select Mode");
-			putValue(SHORT_DESCRIPTION, "Selects the mode to edit");
-		}
-
 		public void actionPerformed(ActionEvent e) {
 			selectedMode = (Mode) comboBoxMode.getSelectedItem();
 			updateAssignedActions();
@@ -627,9 +631,9 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public AddActionAction() {
-			putValue(NAME, "Add");
+			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					"Add the selected action to the component");
+					rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -683,9 +687,9 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public RemoveActionAction() {
-			putValue(NAME, "Remove");
+			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					"Remove the selected action to the component");
+					rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -843,9 +847,12 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public EditActionsAction() {
-			putValue(NAME, "Edit");
-			putValue(SHORT_DESCRIPTION, "Edit actions of the '"
-					+ selectedAssignedAction.toString() + "' action");
+			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(
+					SHORT_DESCRIPTION,
+					rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_PREFIX")
+							+ selectedAssignedAction.toString()
+							+ rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -863,8 +870,8 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public OKAction() {
-			putValue(NAME, "OK");
-			putValue(SHORT_DESCRIPTION, "Apply changes");
+			putValue(NAME, rb.getString("OK_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -885,8 +892,9 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public CancelAction() {
-			putValue(NAME, "Cancel");
-			putValue(SHORT_DESCRIPTION, "Dismiss changes");
+			putValue(NAME, rb.getString("CANCEL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION,
+					rb.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
 		public void actionPerformed(ActionEvent e) {

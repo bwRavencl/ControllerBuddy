@@ -7,9 +7,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.KeyStroke;
@@ -43,6 +46,10 @@ public class ServerThread extends Thread {
 	private final Main main;
 	private final Input input;
 	private DatagramSocket serverSocket = null;
+
+	private final ResourceBundle rb = new ResourceBundleUtil()
+			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+					Locale.getDefault());
 
 	public ServerThread(Main main, Input input) {
 		this.main = main;
@@ -100,7 +107,8 @@ public class ServerThread extends Thread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							main.setStatusbarText("Connected with "
+							main.setStatusbarText(rb
+									.getString("STATUS_CONNECTED")
 									+ clientIPAddress.getCanonicalHostName());
 						}
 					}
@@ -184,7 +192,8 @@ public class ServerThread extends Thread {
 						} catch (SocketTimeoutException e) {
 							serverState = ServerState.Listening;
 
-							main.setStatusbarText("Connection timed out");
+							main.setStatusbarText(rb
+									.getString("STATUS_TIMEOUT"));
 							new Timer().schedule(new TimerTask() {
 								@Override
 								public void run() {
@@ -210,14 +219,14 @@ public class ServerThread extends Thread {
 	}
 
 	private void setListeningStatusbarText() {
-		main.setStatusbarText("Listening on port " + port);
+		main.setStatusbarText(rb.getString("STATUS_LISTENING") + port);
 	}
-	
+
 	public void closeSocket() {
 		if (serverSocket != null)
 			serverSocket.close();
-		
-		main.setStatusbarText("Socket closed");
+
+		main.setStatusbarText(rb.getString("STATUS_SOCKET_CLOSED"));
 	}
 
 	public long getUpdateRate() {

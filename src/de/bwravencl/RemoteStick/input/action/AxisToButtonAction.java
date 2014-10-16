@@ -2,7 +2,7 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class AxisToButtonAction extends ToButtonAction implements IAction {
+public class AxisToButtonAction extends ToButtonAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;

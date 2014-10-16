@@ -16,7 +16,7 @@ public abstract class ToScrollAction extends InvertableAction {
 
 	@Override
 	public String toString() {
-		return "Scroll";
+		return rb.getString("TO_SCROLL_ACTION_STRING");
 	}
 
 }

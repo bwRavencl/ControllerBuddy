@@ -1,6 +1,6 @@
 package de.bwravencl.RemoteStick.input.action;
 
-public abstract class InvertableAction {
+public abstract class InvertableAction implements IAction {
 
 	protected boolean invert = false;
 

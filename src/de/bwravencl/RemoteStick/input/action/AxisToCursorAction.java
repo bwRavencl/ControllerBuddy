@@ -2,7 +2,7 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class AxisToCursorAction extends InvertableAction implements IAction {
+public class AxisToCursorAction extends InvertableAction {
 
 	public final float DEFAULT_DEAD_ZONE = 0.25f;
 	public final float DEFAULT_MAX_SPEED = 750.0f;
@@ -60,7 +60,7 @@ public class AxisToCursorAction extends InvertableAction implements IAction {
 
 	@Override
 	public String toString() {
-		return "Cursor";
+		return rb.getString("AXIS_TO_CURSOR_ACTION_STRING");
 	}
 
 }
