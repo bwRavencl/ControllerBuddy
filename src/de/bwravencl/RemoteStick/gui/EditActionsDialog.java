@@ -104,8 +104,8 @@ public class EditActionsDialog extends JDialog {
 			+ Main.DIALOG_BOUNDS_X_Y_OFFSET;
 	private static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y
 			+ Main.DIALOG_BOUNDS_X_Y_OFFSET;
-	private static final int DIALOG_BOUNDS_WIDTH = 800;
-	private static final int DIALOG_BOUNDS_HEIGHT = 400;
+	private static final int DIALOG_BOUNDS_WIDTH = 950;
+	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 
 	private Component component;
 	private Input input;
@@ -469,7 +469,7 @@ public class EditActionsDialog extends JDialog {
 															listCodes);
 													scrollPane
 															.setPreferredSize(new Dimension(
-																	100, 100));
+																	175, 200));
 													panelProperty
 															.add(scrollPane);
 												} else if (List.class == clazz) {
