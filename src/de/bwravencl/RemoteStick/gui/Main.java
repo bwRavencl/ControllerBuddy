@@ -85,23 +85,28 @@ import net.java.games.input.ControllerEnvironment;
 
 public class Main {
 
-	public static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
-	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 600;
 	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
-
-	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
-	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
-	public static final String PREFERENCES_PORT = "port";
-	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
-	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
-
+	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 
+	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
+	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
+	private static final String PREFERENCES_PORT = "port";
+	private static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
+	private static final String PREFERENCES_UPDATE_RATE = "update_rate";
+
+	private static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
+
+	private Controller selectedController;
+	private Input input;
+	private ServerThread serverThread;
+	private boolean suspendControllerSettingsUpdate = false;
+	private final Preferences preferences = Preferences.userNodeForPackage(this
+			.getClass());
 	private final ResourceBundle rb = new ResourceBundleUtil()
 			.getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 					Locale.getDefault());
@@ -118,13 +123,6 @@ public class Main {
 	private JScrollPane scrollPaneModes;
 	private final JLabel lblStatus = new JLabel(rb.getString("STATUS_READY"));
 	private final JFileChooser fileChooser = new JFileChooser();
-
-	private Controller selectedController;
-	private boolean suspendControllerSettingsUpdate = false;
-	private Input input;
-	private ServerThread serverThread;
-	private final Preferences preferences = Preferences.userNodeForPackage(this
-			.getClass());
 
 	/**
 	 * Launch the application.
@@ -546,10 +544,11 @@ public class Main {
 	}
 
 	private class NewProfileAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 5703987691203427504L;
 
 		public NewProfileAction() {
 			putValue(NAME, rb.getString("NEW_PROFILE_ACTION_NAME"));
@@ -560,13 +559,15 @@ public class Main {
 		public void actionPerformed(ActionEvent e) {
 			newProfile();
 		}
+
 	}
 
 	private class OpenFileAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -8932510785275935297L;
 
 		public OpenFileAction() {
 			putValue(NAME, rb.getString("OPEN_PROFILE_ACTION_NAME"));
@@ -585,13 +586,15 @@ public class Main {
 							JOptionPane.ERROR_MESSAGE);
 			}
 		}
+
 	}
 
 	private class SaveFileAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -8469921697479550983L;
 
 		public SaveFileAction() {
 			putValue(NAME, rb.getString("SAVE_PROFILE_ACTION_NAME"));
@@ -628,13 +631,15 @@ public class Main {
 				}
 			}
 		}
+
 	}
 
 	private class QuitAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 8952460723177800923L;
 
 		public QuitAction() {
 			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
@@ -645,13 +650,15 @@ public class Main {
 			stopServer();
 			System.exit(0);
 		}
+
 	}
 
 	private class StartServerAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1758447420975631146L;
 
 		public StartServerAction() {
 			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
@@ -667,13 +674,15 @@ public class Main {
 			serverThread.setUpdateRate((int) spinnerUpdateRate.getValue());
 			serverThread.start();
 		}
+
 	}
 
 	private class StopServerAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 6023207463370122769L;
 
 		public StopServerAction() {
 			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
@@ -684,13 +693,15 @@ public class Main {
 		public void actionPerformed(ActionEvent e) {
 			stopServer();
 		}
+
 	}
 
 	private class ShowAboutDialogAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -2578971543384483382L;
 
 		public ShowAboutDialogAction() {
 			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
@@ -703,13 +714,15 @@ public class Main {
 					rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
+
 	}
 
 	private class SelectControllerAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -2043467156713598592L;
 
 		private final Controller controller;
 
@@ -730,6 +743,7 @@ public class Main {
 			newProfile();
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
 		}
+
 	}
 
 	private class UpdateAssignmentsPanelThread extends Thread {
@@ -938,13 +952,15 @@ public class Main {
 				}
 			}
 		}
+
 	}
 
 	private class EditComponentAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 8811608785278071903L;
 
 		private final Component component;
 
@@ -966,14 +982,16 @@ public class Main {
 
 			suspendControllerSettingsUpdate = false;
 		}
+
 	}
 
 	private class SetModeDescriptionAction extends AbstractAction implements
 			FocusListener {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -6706537047137827688L;
 
 		private final Mode mode;
 		private final JTextField modeDescriptionTextField;
@@ -1005,13 +1023,15 @@ public class Main {
 			else
 				modeDescriptionTextField.setText(mode.getDescription());
 		}
+
 	}
 
 	private class RemoveModeAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -1056071724769862582L;
 
 		private final Mode mode;
 
@@ -1030,13 +1050,15 @@ public class Main {
 			Input.getProfile().getModes().remove(mode);
 			updateModesPanel();
 		}
+
 	}
 
 	private class AddModeAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -4881923833724315489L;
 
 		public AddModeAction() {
 			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
@@ -1050,6 +1072,7 @@ public class Main {
 
 			updateModesPanel();
 		}
+
 	}
 
 	private class InterfaceAdapter<T> implements JsonSerializer<T>,
@@ -1096,6 +1119,7 @@ public class Main {
 								+ "' found in what was expected to be an interface wrapper");
 			return elem;
 		}
+
 	}
 
 }

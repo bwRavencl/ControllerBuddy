@@ -1,3 +1,20 @@
+/* Copyright (C) 2014  Matteo Hausner
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package de.bwravencl.RemoteStick.input;
 
 import java.util.ArrayList;
@@ -30,28 +47,24 @@ public class Input {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
+	private static Controller controller;
+	private static Profile profile;
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
 	private int nButtons = MAX_N_BUTTONS;
-
 	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(
 			VirtualAxis.class);
 	private boolean[] buttons = new boolean[nButtons];
-
-	private static Controller controller;
-
-	private static Profile profile;
-
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
+	private int scrollClicks = 0;
 	private final Set<String> downKeysCodes = new HashSet<String>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
-	private int scrollClicks = 0;
 
 	public Input(Controller controller) {
 		Input.controller = controller;
 		profile = new Profile();
-		
+
 		for (VirtualAxis va : VirtualAxis.values())
 			axis.put(va, 0);
 

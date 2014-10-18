@@ -59,38 +59,45 @@ public class EditActionsDialog extends JDialog {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8876286334367723566L;
 
 	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.RemoteStick.input.action.";
-	public static final String[] ACTION_CLASSES_AXIS = {
+	private static final String[] ACTION_CLASSES_AXIS = {
 			ACTION_CLASS_PREFIX + "AxisToAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToButtonAction",
 			ACTION_CLASS_PREFIX + "AxisToCursorAction",
 			ACTION_CLASS_PREFIX + "AxisToKeyAction",
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToScrollAction" };
-	public static final String[] ACTION_CLASSES_BUTTON = {
+	private static final String[] ACTION_CLASSES_BUTTON = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToModeAction",
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
-	public static final String[] ACTION_CLASSES_CYCLE_ACTION = {
+	private static final String[] ACTION_CLASSES_CYCLE_ACTION = {
 			ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
+	private static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
+	private static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
 
-	public static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
-	public static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
-	public static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
-
-	public static final int DIALOG_BOUNDS_X = Main.DIALOG_BOUNDS_X
+	private static final int DIALOG_BOUNDS_X = Main.DIALOG_BOUNDS_X
 			+ Main.DIALOG_BOUNDS_X_Y_OFFSET;
-	public static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y
+	private static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y
 			+ Main.DIALOG_BOUNDS_X_Y_OFFSET;
-	public static final int DIALOG_BOUNDS_WIDTH = 800;
-	public static final int DIALOG_BOUNDS_HEIGHT = 400;
+	private static final int DIALOG_BOUNDS_WIDTH = 800;
+	private static final int DIALOG_BOUNDS_HEIGHT = 400;
 
+	private Component component;
+	private Input input;
+	private Profile unsavedProfile;
+	private ButtonToCycleAction cycleAction;
+	private final List<IAction> cycleActions = new ArrayList<IAction>();
+	private Mode selectedMode;
+	private AvailableAction selectedAvailableAction;
+	private IAction selectedAssignedAction;
 	private final ResourceBundle rb = new ResourceBundleUtil()
 			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 					Locale.getDefault());
@@ -102,15 +109,6 @@ public class EditActionsDialog extends JDialog {
 	private final JList<IAction> listAssignedActions = new JList<IAction>();
 	private JLabel lblProperties;
 	private JScrollPane scrollPaneProperties;
-
-	private Component component;
-	private Input input;
-	private Profile unsavedProfile;
-	private ButtonToCycleAction cycleAction;
-	private final List<IAction> cycleActions = new ArrayList<IAction>();
-	private Mode selectedMode;
-	private AvailableAction selectedAvailableAction;
-	private IAction selectedAssignedAction;
 
 	/**
 	 * Create the dialog.
@@ -614,10 +612,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class SelectModeAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -800704681422511116L;
 
 		public void actionPerformed(ActionEvent e) {
 			selectedMode = (Mode) comboBoxMode.getSelectedItem();
@@ -627,10 +626,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class AddActionAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -7713175853948284887L;
 
 		public AddActionAction() {
 			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
@@ -683,10 +683,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class RemoveActionAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -5681740772832902238L;
 
 		public RemoveActionAction() {
 			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
@@ -719,10 +720,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class JCheckBoxSetPropertyAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -33052386834598414L;
 
 		private final Method setterMethod;
 
@@ -775,10 +777,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class JComboBoxSetPropertyAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1938012378184518954L;
 
 		private final Method setterMethod;
 
@@ -843,10 +846,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class EditActionsAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -6538021954760621595L;
 
 		public EditActionsAction() {
 			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
@@ -866,10 +870,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class OKAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = -6947022759101822700L;
 
 		public OKAction() {
 			putValue(
@@ -891,10 +896,11 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private class CancelAction extends AbstractAction {
+
 		/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 8086810563127997199L;
 
 		public CancelAction() {
 			putValue(

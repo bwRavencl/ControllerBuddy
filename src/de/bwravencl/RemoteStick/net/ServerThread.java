@@ -1,3 +1,20 @@
+/* Copyright (C) 2014  Matteo Hausner
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package de.bwravencl.RemoteStick.net;
 
 import java.io.IOException;
@@ -19,34 +36,33 @@ import de.bwravencl.RemoteStick.input.KeyStroke;
 
 public class ServerThread extends Thread {
 
-	public static final int REQUEST_ALIVE_INTERVAL = 100;
-
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_CLIENT_TIMEOUT = 1000;
 	public static final long DEFAULT_UPDATE_RATE = 10L;
 
-	public static final int PROTOCOL_VERSION = 1;
-	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";
-	public static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
-	public static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
-	public static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
-	public static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE
+	private static final int PROTOCOL_VERSION = 1;
+	private static final String PROTOCOL_MESSAGE_DELIMITER = ":";
+	private static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
+	private static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
+	private static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
+	private static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE
 			+ "_ALIVE";
-	public static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
+	private static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
+	
+	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	private enum ServerState {
 		Listening, Connected
 	}
 
+	private final Main main;
+	private final Input input;
 	private int port = DEFAULT_PORT;
 	private int clientTimeout = DEFAULT_CLIENT_TIMEOUT;
 	private long updateRate = DEFAULT_UPDATE_RATE;
-	private InetAddress clientIPAddress = null;
 	private ServerState serverState = ServerState.Listening;
-	private final Main main;
-	private final Input input;
 	private DatagramSocket serverSocket = null;
-
+	private InetAddress clientIPAddress = null;
 	private final ResourceBundle rb = new ResourceBundleUtil()
 			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 					Locale.getDefault());
