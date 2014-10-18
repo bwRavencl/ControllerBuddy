@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.ListModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -124,7 +125,8 @@ public class EditActionsDialog extends JDialog {
 
 			setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH,
 					DIALOG_BOUNDS_HEIGHT);
-			setTitle(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR_PREFIX")
+			setTitle(rb
+					.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR_PREFIX")
 					+ component.getName());
 
 			final JPanel panelMode = new JPanel(new FlowLayout());
@@ -870,7 +872,10 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public OKAction() {
-			putValue(NAME, rb.getString("OK_ACTION_NAME"));
+			putValue(
+					NAME,
+					UIManager.getLookAndFeelDefaults().get(
+							"OptionPane.okButtonText"));
 			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
 		}
 
@@ -892,7 +897,10 @@ public class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 
 		public CancelAction() {
-			putValue(NAME, rb.getString("CANCEL_ACTION_NAME"));
+			putValue(
+					NAME,
+					UIManager.getLookAndFeelDefaults().get(
+							"OptionPane.cancelButtonText"));
 			putValue(SHORT_DESCRIPTION,
 					rb.getString("CANCEL_ACTION_DESCRIPTION"));
 		}

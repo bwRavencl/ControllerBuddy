@@ -23,6 +23,7 @@ import javax.swing.JSeparator;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.Mode;
@@ -166,10 +167,18 @@ public class Main {
 			}
 
 		if (selectedController == null) {
-			int option = JOptionPane.showConfirmDialog(frmRemoteStickServer,
-					rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"),
-					JOptionPane.OK_CANCEL_OPTION);
+			int option = JOptionPane
+					.showConfirmDialog(
+							frmRemoteStickServer,
+							rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_1")
+									+ UIManager.getLookAndFeelDefaults().get(
+											"OptionPane.okButtonText")
+									+ rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_2")
+									+ UIManager.getLookAndFeelDefaults().get(
+											"OptionPane.cancelButtonText")
+									+ rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_3"),
+							rb.getString("ERROR_DIALOG_TITLE"),
+							JOptionPane.OK_CANCEL_OPTION);
 
 			if (option == JOptionPane.OK_OPTION) {
 				final String javaBin = System.getProperty("java.home")
