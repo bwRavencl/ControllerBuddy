@@ -1,3 +1,20 @@
+/* Copyright (C) 2014  Matteo Hausner
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 package de.bwravencl.RemoteStick.gui;
 
 import java.awt.BorderLayout;
@@ -91,7 +108,7 @@ public class Main {
 	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
+	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "Strings";
 
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
