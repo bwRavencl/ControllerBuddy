@@ -49,4 +49,4 @@ Physical Controller         vJoy Device Driver
 </pre>
 
 #####Requirements:
-- Java SE Runtime Environment 8
+- Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
