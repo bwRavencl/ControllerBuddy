@@ -119,17 +119,9 @@ public class EditActionsDialog extends JDialog {
 			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 					Locale.getDefault());
 
-	private JComboBox<Mode> comboBoxMode;
-	private final JList<AvailableAction> listAvailableActions = new JList<AvailableAction>();
-	private JButton btnAdd;
-	private JButton btnRemove;
-	private final JList<IAction> listAssignedActions = new JList<IAction>();
-	private JLabel lblProperties;
-	private JScrollPane scrollPaneProperties;
+	private final JList<AvailableAction> availableActionsList = new JList<AvailableAction>();
+	private final JList<IAction> assignedActionsList = new JList<IAction>();
 
-	/**
-	 * Create the dialog.
-	 */
 	public EditActionsDialog(Component component, Input input) {
 		this.component = component;
 
@@ -144,17 +136,28 @@ public class EditActionsDialog extends JDialog {
 					.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR_PREFIX")
 					+ component.getName());
 
-			final JPanel panelMode = new JPanel(new FlowLayout());
-			getContentPane().add(panelMode, BorderLayout.NORTH);
+			final JPanel modePanel = new JPanel(new FlowLayout());
+			getContentPane().add(modePanel, BorderLayout.NORTH);
 
-			panelMode.add(new JLabel(rb.getString("MODE_LABEL")));
+			modePanel.add(new JLabel(rb.getString("MODE_LABEL")));
 
 			final List<Mode> modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
-			comboBoxMode = new JComboBox<Mode>(modes.toArray(new Mode[modes
-					.size()]));
-			comboBoxMode.addActionListener(new SelectModeAction());
-			panelMode.add(comboBoxMode);
+			final JComboBox<Mode> modeComboBox = new JComboBox<Mode>(
+					modes.toArray(new Mode[modes.size()]));
+			modeComboBox.addActionListener(new AbstractAction() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -9107064465015662054L;
+
+				public void actionPerformed(ActionEvent e) {
+					selectedMode = (Mode) modeComboBox.getSelectedItem();
+					updateAssignedActions();
+				}
+			});
+			modePanel.add(modeComboBox);
 
 			init(input);
 		} catch (CloneNotSupportedException e) {
@@ -191,76 +194,89 @@ public class EditActionsDialog extends JDialog {
 	private void init(Input input) {
 		this.input = input;
 
-		final JPanel panelActions = new JPanel(new GridBagLayout());
-		panelActions.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(panelActions, BorderLayout.CENTER);
+		final JPanel actionsPanel = new JPanel(new GridBagLayout());
+		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
-		panelActions.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")),
+		actionsPanel.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")),
 				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.NONE,
 						new Insets(0, 0, 0, 0), 0, 25));
 
-		listAvailableActions
+		final JButton addButton = new JButton(new AddActionAction());
+		addButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		addButton.setEnabled(false);
+		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0.0,
+				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0));
+
+		final JButton removeButton = new JButton(new RemoveActionAction());
+		removeButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		removeButton.setEnabled(false);
+		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0.0,
+				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0));
+
+		availableActionsList
 				.addListSelectionListener(new ListSelectionListener() {
 
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
-						selectedAvailableAction = listAvailableActions
+						selectedAvailableAction = availableActionsList
 								.getSelectedValue();
 						if (selectedAvailableAction == null)
-							btnAdd.setEnabled(false);
+							addButton.setEnabled(false);
 						else
-							btnAdd.setEnabled(true);
+							addButton.setEnabled(true);
 					}
 				});
 		updateAvailableActions();
-		panelActions.add(new JScrollPane(listAvailableActions),
+		actionsPanel.add(new JScrollPane(availableActionsList),
 				new GridBagConstraints(0, 1, 1, 5, 0.25, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
-		btnAdd = new JButton(new AddActionAction());
-		btnAdd.setPreferredSize(Main.BUTTON_DIMENSION);
-		btnAdd.setEnabled(false);
-		panelActions.add(btnAdd, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.25,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(
-						0, 0, 0, 0), 0, 0));
-
-		btnRemove = new JButton(new RemoveActionAction());
-		btnRemove.setPreferredSize(Main.BUTTON_DIMENSION);
-		btnRemove.setEnabled(false);
-		panelActions.add(btnRemove, new GridBagConstraints(1, 4, 1, 2, 0.0,
-				0.25, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 0));
-
-		panelActions.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")),
+		actionsPanel.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")),
 				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.NONE,
 						new Insets(0, 0, 0, 0), 0, 25));
 
-		listAssignedActions
+		final JLabel propertiesLabel = new JLabel(
+				rb.getString("ASSIGNED_ACTIONS_LABEL"));
+		propertiesLabel.setVisible(false);
+		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1,
+				0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 25));
+
+		final JScrollPane propertiesScrollPane = new JScrollPane();
+		propertiesScrollPane.setVisible(false);
+		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1,
+				5, 0.5, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
+		assignedActionsList
 				.addListSelectionListener(new ListSelectionListener() {
 
 					@Override
 					public void valueChanged(ListSelectionEvent e) {
-						selectedAssignedAction = listAssignedActions
+						selectedAssignedAction = assignedActionsList
 								.getSelectedValue();
 						if (selectedAssignedAction == null)
-							btnRemove.setEnabled(false);
+							removeButton.setEnabled(false);
 						else
-							btnRemove.setEnabled(true);
+							removeButton.setEnabled(true);
 
 						EventQueue.invokeLater(new Runnable() {
 
 							@Override
 							public void run() {
 								if (selectedAssignedAction == null) {
-									lblProperties.setVisible(false);
-									scrollPaneProperties.setVisible(false);
+									propertiesLabel.setVisible(false);
+									propertiesScrollPane.setVisible(false);
 								} else {
-									lblProperties.setVisible(true);
+									propertiesLabel.setVisible(true);
 
-									final JPanel panelProperties = new JPanel(
+									final JPanel propertiesPanel = new JPanel(
 											new GridBagLayout());
 
 									for (Method m : selectedAssignedAction
@@ -301,12 +317,12 @@ public class EditActionsDialog extends JDialog {
 																		: ACTION_PROPERTY_GETTER_PREFIX_DEFAULT)
 																		+ propertyName);
 
-												final JPanel panelProperty = new JPanel(
+												final JPanel propertyPanel = new JPanel(
 														new FlowLayout(
 																FlowLayout.LEADING,
 																10, 0));
-												panelProperties
-														.add(panelProperty,
+												propertiesPanel
+														.add(propertyPanel,
 																new GridBagConstraints(
 																		0,
 																		GridBagConstraints.RELATIVE,
@@ -323,13 +339,13 @@ public class EditActionsDialog extends JDialog {
 																				0),
 																		0, 10));
 
-												final JLabel lblPropertyName = new JLabel(
+												final JLabel propertyNameLabel = new JLabel(
 														propertyName);
-												lblPropertyName
+												propertyNameLabel
 														.setPreferredSize(new Dimension(
 																100, 15));
-												panelProperty
-														.add(lblPropertyName);
+												propertyPanel
+														.add(propertyNameLabel);
 
 												if (Boolean.class == clazz) {
 													final JCheckBox checkBox = new JCheckBox(
@@ -337,7 +353,7 @@ public class EditActionsDialog extends JDialog {
 																	m));
 													checkBox.setSelected((boolean) getterMethod
 															.invoke(selectedAssignedAction));
-													panelProperty.add(checkBox);
+													propertyPanel.add(checkBox);
 												} else if (Integer.class == clazz) {
 													int value = (int) getterMethod
 															.invoke(selectedAssignedAction);
@@ -363,7 +379,7 @@ public class EditActionsDialog extends JDialog {
 													textField.setColumns(2);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
-													panelProperty.add(spinner);
+													propertyPanel.add(spinner);
 												} else if (Float.class == clazz) {
 													float value = (float) getterMethod
 															.invoke(selectedAssignedAction);
@@ -393,7 +409,7 @@ public class EditActionsDialog extends JDialog {
 													textField.setColumns(3);
 													spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(
 															m));
-													panelProperty.add(spinner);
+													propertyPanel.add(spinner);
 												} else if (Mode.class == clazz) {
 													final JComboBox<Mode> comboBox = new JComboBox<Mode>();
 													for (Mode p : Input
@@ -406,7 +422,7 @@ public class EditActionsDialog extends JDialog {
 															m));
 													comboBox.setSelectedItem(getterMethod
 															.invoke(selectedAssignedAction));
-													panelProperty.add(comboBox);
+													propertyPanel.add(comboBox);
 												} else if (VirtualAxis.class == clazz) {
 													final JComboBox<VirtualAxis> comboBox = new JComboBox<VirtualAxis>(
 															VirtualAxis
@@ -415,7 +431,7 @@ public class EditActionsDialog extends JDialog {
 															m));
 													comboBox.setSelectedItem(getterMethod
 															.invoke(selectedAssignedAction));
-													panelProperty.add(comboBox);
+													propertyPanel.add(comboBox);
 												} else if (MouseAxis.class == clazz) {
 													final JComboBox<MouseAxis> comboBox = new JComboBox<MouseAxis>(
 															MouseAxis.values());
@@ -423,7 +439,7 @@ public class EditActionsDialog extends JDialog {
 															m));
 													comboBox.setSelectedItem(getterMethod
 															.invoke(selectedAssignedAction));
-													panelProperty.add(comboBox);
+													propertyPanel.add(comboBox);
 												} else if (KeyStroke.class == clazz) {
 													final int length = KeyStroke.MODIFIER_CODES.length
 															+ KeyStroke.KEY_CODES.length;
@@ -440,11 +456,10 @@ public class EditActionsDialog extends JDialog {
 															availableCodes,
 															KeyStroke.MODIFIER_CODES.length,
 															KeyStroke.KEY_CODES.length);
-													final JList<String> listCodes = new JList<String>(
+													final JList<String> codes = new JList<String>(
 															availableCodes);
-													listCodes
-															.addListSelectionListener(new JListSetPropertyListSelectionListener(
-																	m));
+													codes.addListSelectionListener(new JListSetPropertyListSelectionListener(
+															m));
 													final KeyStroke keyStroke = (KeyStroke) getterMethod
 															.invoke(selectedAssignedAction);
 													final List<String> addedCodes = new ArrayList<String>();
@@ -456,28 +471,26 @@ public class EditActionsDialog extends JDialog {
 														addedCodes.add(s);
 													for (String s : addedCodes) {
 														final int index = getListModelIndex(
-																listCodes
-																		.getModel(),
+																codes.getModel(),
 																s);
 														if (index >= 0)
-															listCodes
-																	.addSelectionInterval(
-																			index,
-																			index);
+															codes.addSelectionInterval(
+																	index,
+																	index);
 													}
 													final JScrollPane scrollPane = new JScrollPane(
-															listCodes);
+															codes);
 													scrollPane
 															.setPreferredSize(new Dimension(
 																	175, 200));
-													panelProperty
+													propertyPanel
 															.add(scrollPane);
 												} else if (List.class == clazz) {
 													final JButton editActionsButton = new JButton(
 															new EditActionsAction());
 													editActionsButton
 															.setPreferredSize(Main.BUTTON_DIMENSION);
-													panelProperty
+													propertyPanel
 															.add(editActionsButton);
 												} else
 													throw new Exception(
@@ -489,7 +502,7 @@ public class EditActionsDialog extends JDialog {
 										}
 									}
 
-									panelProperties.add(
+									propertiesPanel.add(
 											Box.createGlue(),
 											new GridBagConstraints(
 													0,
@@ -500,43 +513,31 @@ public class EditActionsDialog extends JDialog {
 													new Insets(0, 0, 0, 0), 0,
 													0));
 
-									scrollPaneProperties
-											.setViewportView(panelProperties);
-									scrollPaneProperties.setVisible(true);
+									propertiesScrollPane
+											.setViewportView(propertiesPanel);
+									propertiesScrollPane.setVisible(true);
 								}
 							}
 						});
 					}
 				});
-		panelActions.add(new JScrollPane(listAssignedActions),
+		actionsPanel.add(new JScrollPane(assignedActionsList),
 				new GridBagConstraints(2, 1, 1, 5, 0.25, 1.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(0, 0, 0, 0), 0, 0));
 
-		lblProperties = new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL"));
-		lblProperties.setVisible(false);
-		panelActions.add(lblProperties, new GridBagConstraints(3, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 25));
+		final JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		scrollPaneProperties = new JScrollPane();
-		scrollPaneProperties.setVisible(false);
-		panelActions.add(scrollPaneProperties, new GridBagConstraints(3, 1, 1,
-				5, 0.5, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		final JButton okButton = new JButton(new OKAction());
+		okButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		buttonPanel.add(okButton);
+		getRootPane().setDefaultButton(okButton);
 
-		final JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-
-		final JButton btnOK = new JButton(new OKAction());
-		btnOK.setPreferredSize(Main.BUTTON_DIMENSION);
-		buttonPane.add(btnOK);
-		getRootPane().setDefaultButton(btnOK);
-
-		final JButton btnCancel = new JButton(new CancelAction());
-		btnCancel.setPreferredSize(Main.BUTTON_DIMENSION);
-		buttonPane.add(btnCancel);
+		final JButton cancelButton = new JButton(new CancelAction());
+		cancelButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		buttonPanel.add(cancelButton);
 
 		updateAssignedActions();
 	}
@@ -592,7 +593,7 @@ public class EditActionsDialog extends JDialog {
 				availableActions.add(availableAction);
 		}
 
-		listAvailableActions.setListData(availableActions
+		availableActionsList.setListData(availableActions
 				.toArray(new AvailableAction[availableActions.size()]));
 	}
 
@@ -620,26 +621,12 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private void updateAssignedActions() {
-		listAssignedActions.setListData(getAssignedActions());
+		assignedActionsList.setListData(getAssignedActions());
 	}
 
 	void closeDialog() {
 		setVisible(false);
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-	}
-
-	private class SelectModeAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -800704681422511116L;
-
-		public void actionPerformed(ActionEvent e) {
-			selectedMode = (Mode) comboBoxMode.getSelectedItem();
-			updateAssignedActions();
-		}
-
 	}
 
 	private class AddActionAction extends AbstractAction {
@@ -682,7 +669,7 @@ public class EditActionsDialog extends JDialog {
 				updateAvailableActions();
 				updateAssignedActions();
 
-				listAssignedActions.setSelectedIndex(listAssignedActions
+				assignedActionsList.setSelectedIndex(assignedActionsList
 						.getLastVisibleIndex()
 						- (hasModeAction()
 								&& !(action instanceof ButtonToModeAction) ? 1

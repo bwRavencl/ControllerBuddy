@@ -77,6 +77,7 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import javax.swing.JSpinner;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -128,28 +129,22 @@ public class Main {
 			.getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 					Locale.getDefault());
 
-	private JFrame frmRemoteStickServer;
-	private JTabbedPane tabbedPane;
-	private JScrollPane scrollPaneAssignments;
-	private JMenu mnController;
-	private JPanel panelModeList;
-	private JPanel panelAssignments;
-	private JSpinner spinnerPort;
-	private JSpinner spinnerClientTimeout;
-	private JSpinner spinnerUpdateRate;
-	private JScrollPane scrollPaneModes;
-	private final JLabel lblStatus = new JLabel(rb.getString("STATUS_READY"));
+	private final JFrame frame;
+	private final JPanel modesListPanel;
+	private final JSpinner portSpinner;
+	private final JSpinner clientTimeoutSpinner;
+	private final JSpinner updateRateSpinner;
+	private final JScrollPane modesScrollPane;
+	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 	private final JFileChooser fileChooser = new JFileChooser();
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+
 			public void run() {
 				try {
-					Main window = new Main();
-					window.frmRemoteStickServer.setVisible(true);
+					Main main = new Main();
+					main.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -157,11 +152,205 @@ public class Main {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public Main() {
-		initialize();
+		frame = new JFrame();
+		frame.setTitle(rb.getString("APPLICATION_NAME"));
+		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH,
+				DIALOG_BOUNDS_HEIGHT);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		final JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+
+		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
+		menuBar.add(fileMenu);
+		fileMenu.add(new NewProfileAction());
+		fileMenu.add(new OpenFileAction());
+		fileMenu.add(new SaveFileAction());
+		fileMenu.add(new JSeparator());
+		fileMenu.add(new QuitAction());
+
+		final JMenu controllerMenu = new JMenu(rb.getString("CONTROLLER_MENU"));
+		controllerMenu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuSelected(MenuEvent e) {
+				controllerMenu.removeAll();
+
+				final Controller[] controllers = ControllerEnvironment
+						.getDefaultEnvironment().getControllers();
+
+				for (Controller c : controllers)
+					if (c.getType() != Type.KEYBOARD
+							&& c.getType() != Type.MOUSE
+							&& c.getType() != Type.TRACKBALL
+							&& c.getType() != Type.TRACKPAD)
+						controllerMenu.add(new SelectControllerAction(c));
+			}
+
+			@Override
+			public void menuDeselected(MenuEvent e) {
+			}
+
+			@Override
+			public void menuCanceled(MenuEvent e) {
+			}
+		});
+		controllerMenu.setEnabled(true);
+		menuBar.add(controllerMenu);
+
+		final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
+		menuBar.add(serverMenu);
+
+		final ButtonGroup buttonGroupServerState = new ButtonGroup();
+
+		final JRadioButtonMenuItem startServerRadioButtonMenuItem = new JRadioButtonMenuItem(
+				rb.getString("START_SERVER_MENU_ITEM"));
+		startServerRadioButtonMenuItem.setAction(new StartServerAction());
+		buttonGroupServerState.add(startServerRadioButtonMenuItem);
+		serverMenu.add(startServerRadioButtonMenuItem);
+
+		final JMenu helpMenu = new JMenu(rb.getString("HELP_MENU"));
+		menuBar.add(helpMenu);
+		helpMenu.add(new ShowAboutDialogAction());
+
+		final JRadioButtonMenuItem stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(
+				rb.getString("STOP_SERVER_MENU_ITEM"));
+		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
+		stopServerRadioButtonMenuItem.setSelected(true);
+		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
+		serverMenu.add(stopServerRadioButtonMenuItem);
+
+		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		frame.getContentPane().add(tabbedPane);
+
+		final JPanel modesPanel = new JPanel(new BorderLayout());
+		tabbedPane.addTab(rb.getString("MODES_TAB"), null, modesPanel, null);
+
+		modesListPanel = new JPanel();
+		modesListPanel.setLayout(new GridBagLayout());
+
+		modesScrollPane = new JScrollPane();
+		modesScrollPane.setViewportBorder(BorderFactory.createMatteBorder(10,
+				10, 0, 10, modesListPanel.getBackground()));
+		modesPanel.add(modesScrollPane, BorderLayout.CENTER);
+
+		final JPanel addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		final JButton addButton = new JButton(new AddModeAction());
+		addButton.setPreferredSize(BUTTON_DIMENSION);
+		addModePanel.add(addButton);
+		modesPanel.add(addModePanel, BorderLayout.SOUTH);
+
+		final JPanel assignmentsPanel = new JPanel();
+		assignmentsPanel.setLayout(new GridBagLayout());
+
+		final JScrollPane assignmentsScrollPane = new JScrollPane();
+		assignmentsScrollPane.setViewportBorder(BorderFactory
+				.createMatteBorder(10, 10, 0, 10,
+						assignmentsPanel.getBackground()));
+		tabbedPane.addTab(rb.getString("ASSIGNMENTS_TAB"), null,
+				assignmentsScrollPane, null);
+
+		final JPanel serverSettingsPanel = new JPanel();
+		serverSettingsPanel.setLayout(new GridBagLayout());
+
+		final JScrollPane serverSettingsScrollPane = new JScrollPane();
+		serverSettingsScrollPane.setViewportView(serverSettingsPanel);
+		tabbedPane.addTab(rb.getString("SERVER_SETTINGS_TAB"), null,
+				serverSettingsScrollPane, null);
+
+		final GridBagConstraints panelGridBagConstraints = new GridBagConstraints(
+				0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 5);
+
+		final FlowLayout panelFlowLayout = new FlowLayout(FlowLayout.LEADING,
+				10, 10);
+
+		final JPanel portPanel = new JPanel(panelFlowLayout);
+		serverSettingsPanel.add(portPanel, panelGridBagConstraints);
+
+		final JLabel portLabel = new JLabel(rb.getString("PORT_LABEL"));
+		portLabel.setPreferredSize(new Dimension(100, 15));
+		portPanel.add(portLabel);
+
+		portSpinner = new JSpinner(new SpinnerNumberModel(preferences.getInt(
+				PREFERENCES_PORT, ServerThread.DEFAULT_PORT), 1024, 65535, 1));
+		portSpinner.setEditor(new JSpinner.NumberEditor(portSpinner, "#"));
+		portSpinner.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_PORT,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		portPanel.add(portSpinner);
+
+		final JPanel timeoutPanel = new JPanel(panelFlowLayout);
+		serverSettingsPanel.add(timeoutPanel, panelGridBagConstraints);
+
+		final JLabel clientTimeoutLabel = new JLabel(
+				rb.getString("CLIENT_TIMEOUT_LABEL"));
+		clientTimeoutLabel.setPreferredSize(new Dimension(100, 15));
+		timeoutPanel.add(clientTimeoutLabel);
+
+		clientTimeoutSpinner = new JSpinner(new SpinnerNumberModel(
+				preferences.getInt(PREFERENCES_CLIENT_TIMEOUT,
+						ServerThread.DEFAULT_CLIENT_TIMEOUT), 10, 60000, 1));
+		clientTimeoutSpinner.setEditor(new JSpinner.NumberEditor(
+				clientTimeoutSpinner, "#"));
+		clientTimeoutSpinner.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_CLIENT_TIMEOUT,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		timeoutPanel.add(clientTimeoutSpinner);
+
+		final JPanel updateRatePanel = new JPanel(panelFlowLayout);
+		serverSettingsPanel.add(updateRatePanel, panelGridBagConstraints);
+
+		final JLabel updateRateLabel = new JLabel(
+				rb.getString("UPDATE_RATE_LABEL"));
+		updateRateLabel.setPreferredSize(new Dimension(100, 15));
+		updateRatePanel.add(updateRateLabel);
+
+		updateRateSpinner = new JSpinner(new SpinnerNumberModel(
+				preferences.getInt(PREFERENCES_UPDATE_RATE,
+						(int) ServerThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
+		updateRateSpinner.setEditor(new JSpinner.NumberEditor(
+				updateRateSpinner, "#"));
+		updateRateSpinner.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_UPDATE_RATE,
+						(int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		updateRatePanel.add(updateRateSpinner);
+
+		serverSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0,
+				GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+				new Insets(0, 0, 0, 0), 0, 0));
+
+		final Border outsideBorder = BorderFactory
+				.createEtchedBorder(EtchedBorder.RAISED);
+		final Border insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
+		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder,
+				insideBorder));
+		frame.add(statusLabel, BorderLayout.SOUTH);
+
+		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				rb.getString("PROFILE_FILE_DESCRIPTION"),
+				rb.getString("PROFILE_FILE_EXTENSION"));
+		fileChooser.setFileFilter(filter);
+		fileChooser.setSelectedFile(new File(rb
+				.getString("PROFILE_FILE_SUFFIX")));
 
 		final String lastControllerName = preferences.get(
 				PREFERENCES_LAST_CONTROLLER, null);
@@ -184,7 +373,7 @@ public class Main {
 		if (selectedController == null) {
 			int option = JOptionPane
 					.showConfirmDialog(
-							frmRemoteStickServer,
+							frame,
 							rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_1")
 									+ UIManager.getLookAndFeelDefaults().get(
 											"OptionPane.okButtonText")
@@ -228,210 +417,243 @@ public class Main {
 			if (path != null)
 				loadProfile(new File(path));
 
-			final Thread updateAssignmentsPanelThread = new UpdateAssignmentsPanelThread();
+			final Thread updateAssignmentsPanelThread = new Thread() {
+
+				@Override
+				public void run() {
+					while (true) {
+						if (!suspendControllerSettingsUpdate
+								&& assignmentsScrollPane.equals(tabbedPane
+										.getSelectedComponent())
+								&& frame.getState() != Frame.ICONIFIED)
+							EventQueue.invokeLater(new Runnable() {
+
+								@Override
+								public void run() {
+
+									assignmentsPanel.removeAll();
+
+									final Controller controller = input
+											.getController();
+									if (controller != null) {
+										controller.poll();
+
+										for (Component c : controller
+												.getComponents()) {
+											final JPanel componentPanel = new JPanel(
+													new GridBagLayout());
+											assignmentsPanel
+													.add(componentPanel,
+															new GridBagConstraints(
+																	0,
+																	GridBagConstraints.RELATIVE,
+																	1,
+																	1,
+																	0.0,
+																	0.0,
+																	GridBagConstraints.FIRST_LINE_START,
+																	GridBagConstraints.HORIZONTAL,
+																	new Insets(
+																			0,
+																			0,
+																			0,
+																			0),
+																	5, 0));
+
+											final String name = c.getName();
+											final float value = c.getPollData();
+
+											final JLabel nameLabel = new JLabel();
+											nameLabel
+													.setPreferredSize(new Dimension(
+															100, 15));
+
+											final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(
+													0,
+													0,
+													1,
+													1,
+													0.0,
+													0.0,
+													GridBagConstraints.BASELINE,
+													GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0,
+													0);
+
+											final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(
+													2,
+													0,
+													1,
+													1,
+													1.0,
+													1.0,
+													GridBagConstraints.BASELINE,
+													GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0,
+													0);
+
+											if (c.isAnalog()) {
+												nameLabel.setText(rb
+														.getString("AXIS_LABEL")
+														+ name);
+												componentPanel.add(nameLabel,
+														nameGridBagConstraints);
+
+												componentPanel.add(
+														Box.createGlue(),
+														new GridBagConstraints(
+																1,
+																GridBagConstraints.RELATIVE,
+																1,
+																1,
+																1.0,
+																1.0,
+																GridBagConstraints.BASELINE,
+																GridBagConstraints.NONE,
+																new Insets(0,
+																		0, 0, 0),
+																0, 0));
+
+												final JProgressBar valueProgressBar = new JProgressBar(
+														-100, 100);
+												valueProgressBar
+														.setValue((int) (value * 100.0f));
+												componentPanel
+														.add(valueProgressBar,
+																valueGridBagConstraints);
+											} else {
+												nameLabel.setText(rb
+														.getString("BUTTON_LABEL")
+														+ name);
+												componentPanel.add(nameLabel,
+														nameGridBagConstraints);
+
+												componentPanel.add(
+														Box.createGlue(),
+														new GridBagConstraints(
+																1,
+																GridBagConstraints.RELATIVE,
+																1,
+																1,
+																1.0,
+																1.0,
+																GridBagConstraints.BASELINE,
+																GridBagConstraints.NONE,
+																new Insets(0,
+																		0, 0, 0),
+																0, 0));
+
+												final JLabel valueLabel = new JLabel();
+												if (value > 0.5f)
+													valueLabel.setText(rb
+															.getString("BUTTON_DOWN_LABEL"));
+												else {
+													valueLabel.setText(rb
+															.getString("BUTTON_UP_LABEL"));
+													valueLabel
+															.setForeground(Color.LIGHT_GRAY);
+												}
+												componentPanel
+														.add(valueLabel,
+																valueGridBagConstraints);
+											}
+
+											componentPanel.add(
+													Box.createGlue(),
+													new GridBagConstraints(
+															3,
+															GridBagConstraints.RELATIVE,
+															1,
+															1,
+															1.0,
+															1.0,
+															GridBagConstraints.BASELINE,
+															GridBagConstraints.NONE,
+															new Insets(0, 0, 0,
+																	0), 0, 0));
+
+											final JButton editButton = new JButton(
+													new EditComponentAction(c));
+											editButton
+													.setPreferredSize(BUTTON_DIMENSION);
+											editButton
+													.addMouseListener(new MouseListener() {
+
+														@Override
+														public void mouseReleased(
+																MouseEvent e) {
+														}
+
+														@Override
+														public void mousePressed(
+																MouseEvent e) {
+															suspendControllerSettingsUpdate = true;
+														}
+
+														@Override
+														public void mouseExited(
+																MouseEvent e) {
+														}
+
+														@Override
+														public void mouseEntered(
+																MouseEvent e) {
+														}
+
+														@Override
+														public void mouseClicked(
+																MouseEvent e) {
+														}
+													});
+											componentPanel
+													.add(editButton,
+															new GridBagConstraints(
+																	4,
+																	GridBagConstraints.RELATIVE,
+																	1,
+																	1,
+																	0.0,
+																	0.0,
+																	GridBagConstraints.BASELINE,
+																	GridBagConstraints.NONE,
+																	new Insets(
+																			0,
+																			0,
+																			0,
+																			0),
+																	0, 0));
+										}
+
+										assignmentsPanel.add(
+												Box.createGlue(),
+												new GridBagConstraints(
+														0,
+														GridBagConstraints.RELATIVE,
+														1,
+														1,
+														1.0,
+														1.0,
+														GridBagConstraints.FIRST_LINE_START,
+														GridBagConstraints.NONE,
+														new Insets(0, 0, 0, 0),
+														0, 0));
+									}
+
+									assignmentsScrollPane
+											.setViewportView(assignmentsPanel);
+								}
+							});
+
+						try {
+							Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_RATE);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
 			updateAssignmentsPanelThread.start();
 		}
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frmRemoteStickServer = new JFrame();
-		frmRemoteStickServer.setTitle(rb.getString("APPLICATION_NAME"));
-		frmRemoteStickServer.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y,
-				DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-		frmRemoteStickServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		final JMenuBar menuBar = new JMenuBar();
-		frmRemoteStickServer.setJMenuBar(menuBar);
-
-		final JMenu mnFile = new JMenu(rb.getString("FILE_MENU"));
-		menuBar.add(mnFile);
-		mnFile.add(new NewProfileAction());
-		mnFile.add(new OpenFileAction());
-		mnFile.add(new SaveFileAction());
-		mnFile.add(new JSeparator());
-		mnFile.add(new QuitAction());
-
-		mnController = new JMenu(rb.getString("CONTROLLER_MENU"));
-		mnController.addMenuListener(new MenuListener() {
-
-			@Override
-			public void menuSelected(MenuEvent e) {
-				mnController.removeAll();
-
-				final Controller[] controllers = ControllerEnvironment
-						.getDefaultEnvironment().getControllers();
-
-				for (Controller c : controllers)
-					if (c.getType() != Type.KEYBOARD
-							&& c.getType() != Type.MOUSE
-							&& c.getType() != Type.TRACKBALL
-							&& c.getType() != Type.TRACKPAD)
-						mnController.add(new SelectControllerAction(c));
-			}
-
-			@Override
-			public void menuDeselected(MenuEvent e) {
-			}
-
-			@Override
-			public void menuCanceled(MenuEvent e) {
-			}
-		});
-		mnController.setEnabled(true);
-		menuBar.add(mnController);
-
-		final JMenu mnServer = new JMenu(rb.getString("SERVER_MENU"));
-		menuBar.add(mnServer);
-
-		final ButtonGroup buttonGroupServerState = new ButtonGroup();
-
-		final JRadioButtonMenuItem rdbtnmntmRun = new JRadioButtonMenuItem(
-				rb.getString("START_SERVER_MENU_ITEM"));
-		rdbtnmntmRun.setAction(new StartServerAction());
-		buttonGroupServerState.add(rdbtnmntmRun);
-		mnServer.add(rdbtnmntmRun);
-
-		final JMenu mnHelp = new JMenu(rb.getString("HELP_MENU"));
-		menuBar.add(mnHelp);
-		mnHelp.add(new ShowAboutDialogAction());
-
-		final JRadioButtonMenuItem rdbtnmntmStop = new JRadioButtonMenuItem(
-				rb.getString("STOP_SERVER_MENU_ITEM"));
-		rdbtnmntmStop.setAction(new StopServerAction());
-		rdbtnmntmStop.setSelected(true);
-		buttonGroupServerState.add(rdbtnmntmStop);
-		mnServer.add(rdbtnmntmStop);
-
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		frmRemoteStickServer.getContentPane().add(tabbedPane);
-
-		final JPanel panelModes = new JPanel(new BorderLayout());
-		tabbedPane.addTab(rb.getString("MODES_TAB"), null, panelModes, null);
-
-		panelModeList = new JPanel();
-		panelModeList.setLayout(new GridBagLayout());
-
-		scrollPaneModes = new JScrollPane();
-		scrollPaneModes.setViewportBorder(BorderFactory.createMatteBorder(10,
-				10, 0, 10, panelModeList.getBackground()));
-		panelModes.add(scrollPaneModes, BorderLayout.CENTER);
-
-		final JPanel panelAddMode = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		final JButton addButton = new JButton(new AddModeAction());
-		addButton.setPreferredSize(BUTTON_DIMENSION);
-		panelAddMode.add(addButton);
-		panelModes.add(panelAddMode, BorderLayout.SOUTH);
-
-		panelAssignments = new JPanel();
-		panelAssignments.setLayout(new GridBagLayout());
-
-		scrollPaneAssignments = new JScrollPane();
-		scrollPaneAssignments.setViewportBorder(BorderFactory
-				.createMatteBorder(10, 10, 0, 10,
-						panelAssignments.getBackground()));
-		tabbedPane.addTab(rb.getString("ASSIGNMENTS_TAB"), null,
-				scrollPaneAssignments, null);
-
-		final JPanel panelServerSettings = new JPanel();
-		panelServerSettings.setLayout(new GridBagLayout());
-
-		final JScrollPane scrollPaneServerSettings = new JScrollPane();
-		scrollPaneServerSettings.setViewportView(panelServerSettings);
-		tabbedPane.addTab(rb.getString("SERVER_SETTINGS_TAB"), null,
-				scrollPaneServerSettings, null);
-
-		final GridBagConstraints panelGridBagConstraints = new GridBagConstraints(
-				0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 5);
-
-		final FlowLayout panelFlowLayout = new FlowLayout(FlowLayout.LEADING,
-				10, 10);
-
-		final JPanel panelPort = new JPanel(panelFlowLayout);
-		panelServerSettings.add(panelPort, panelGridBagConstraints);
-
-		final JLabel lblPort = new JLabel(rb.getString("PORT_LABEL"));
-		lblPort.setPreferredSize(new Dimension(100, 15));
-		panelPort.add(lblPort);
-
-		spinnerPort = new JSpinner(new SpinnerNumberModel(preferences.getInt(
-				PREFERENCES_PORT, ServerThread.DEFAULT_PORT), 1024, 65535, 1));
-		spinnerPort.setEditor(new JSpinner.NumberEditor(spinnerPort, "#"));
-		spinnerPort.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				preferences.putInt(PREFERENCES_PORT,
-						(int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
-		panelPort.add(spinnerPort);
-
-		final JPanel panelTimeout = new JPanel(panelFlowLayout);
-		panelServerSettings.add(panelTimeout, panelGridBagConstraints);
-
-		final JLabel lblClientTimeout = new JLabel(
-				rb.getString("CLIENT_TIMEOUT_LABEL"));
-		lblClientTimeout.setPreferredSize(new Dimension(100, 15));
-		panelTimeout.add(lblClientTimeout);
-
-		spinnerClientTimeout = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_CLIENT_TIMEOUT,
-						ServerThread.DEFAULT_CLIENT_TIMEOUT), 10, 60000, 1));
-		spinnerClientTimeout.setEditor(new JSpinner.NumberEditor(
-				spinnerClientTimeout, "#"));
-		spinnerClientTimeout.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				preferences.putInt(PREFERENCES_CLIENT_TIMEOUT,
-						(int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
-		panelTimeout.add(spinnerClientTimeout);
-
-		final JPanel panelUpdateRate = new JPanel(panelFlowLayout);
-		panelServerSettings.add(panelUpdateRate, panelGridBagConstraints);
-
-		final JLabel lblUpdateRate = new JLabel(
-				rb.getString("UPDATE_RATE_LABEL"));
-		lblUpdateRate.setPreferredSize(new Dimension(100, 15));
-		panelUpdateRate.add(lblUpdateRate);
-
-		spinnerUpdateRate = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_UPDATE_RATE,
-						(int) ServerThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
-		spinnerUpdateRate.setEditor(new JSpinner.NumberEditor(
-				spinnerUpdateRate, "#"));
-		spinnerUpdateRate.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				preferences.putInt(PREFERENCES_UPDATE_RATE,
-						(int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
-		panelUpdateRate.add(spinnerUpdateRate);
-
-		panelServerSettings.add(Box.createGlue(), new GridBagConstraints(0,
-				GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-				new Insets(0, 0, 0, 0), 0, 0));
-
-		lblStatus.setBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.RAISED));
-		frmRemoteStickServer.add(lblStatus, BorderLayout.SOUTH);
-
-		final FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				rb.getString("PROFILE_FILE_DESCRIPTION"),
-				rb.getString("PROFILE_FILE_EXTENSION"));
-		fileChooser.setFileFilter(filter);
-		fileChooser.setSelectedFile(new File(rb
-				.getString("PROFILE_FILE_SUFFIX")));
 	}
 
 	private void updateModesPanel() {
@@ -439,46 +661,46 @@ public class Main {
 
 			@Override
 			public void run() {
-				panelModeList.removeAll();
+				modesListPanel.removeAll();
 
 				final List<Mode> modes = Input.getProfile().getModes();
 				for (Mode p : modes) {
-					final JPanel panelMode = new JPanel(new GridBagLayout());
-					panelModeList.add(panelMode, new GridBagConstraints(0,
+					final JPanel modePanel = new JPanel(new GridBagLayout());
+					modesListPanel.add(modePanel, new GridBagConstraints(0,
 							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.FIRST_LINE_START,
 							GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0,
 									0), 0, 5));
 
-					final JLabel lblModeNo = new JLabel("Mode "
+					final JLabel modeNoLabel = new JLabel("Mode "
 							+ modes.indexOf(p));
-					lblModeNo.setPreferredSize(new Dimension(100, 15));
-					panelMode.add(lblModeNo, new GridBagConstraints(0, 0, 1, 1,
-							0.0, 0.0, GridBagConstraints.BASELINE,
+					modeNoLabel.setPreferredSize(new Dimension(100, 15));
+					modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1,
+							1, 0.0, 0.0, GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
-					panelMode.add(Box.createGlue(), new GridBagConstraints(1,
+					modePanel.add(Box.createGlue(), new GridBagConstraints(1,
 							GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
-					final JTextField textFieldDescription = new JTextField(p
+					final JTextField descriptionTextField = new JTextField(p
 							.getDescription(), 20);
-					panelMode.add(textFieldDescription, new GridBagConstraints(
+					modePanel.add(descriptionTextField, new GridBagConstraints(
 							2, 0, 1, 1, 1.0, 1.0, GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
 					final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(
-							p, textFieldDescription);
-					textFieldDescription
+							p, descriptionTextField);
+					descriptionTextField
 							.addActionListener(setModeDescriptionAction);
-					textFieldDescription
+					descriptionTextField
 							.addFocusListener(setModeDescriptionAction);
 
-					panelMode.add(Box.createGlue(), new GridBagConstraints(3,
+					modePanel.add(Box.createGlue(), new GridBagConstraints(3,
 							GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
@@ -487,25 +709,25 @@ public class Main {
 					final JButton deleteButton = new JButton(
 							new RemoveModeAction(p));
 					deleteButton.setPreferredSize(BUTTON_DIMENSION);
-					panelMode.add(deleteButton, new GridBagConstraints(4,
+					modePanel.add(deleteButton, new GridBagConstraints(4,
 							GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.BASELINE,
 							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
 							0));
 
 					if (Profile.isDefaultMode(p)) {
-						textFieldDescription.setEditable(false);
+						descriptionTextField.setEditable(false);
 						deleteButton.setEnabled(false);
 					}
 
 				}
 
-				panelModeList.add(Box.createGlue(), new GridBagConstraints(0,
+				modesListPanel.add(Box.createGlue(), new GridBagConstraints(0,
 						GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 						GridBagConstraints.FIRST_LINE_START,
 						GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-				scrollPaneModes.setViewportView(panelModeList);
+				modesScrollPane.setViewportView(modesListPanel);
 			}
 		});
 	}
@@ -513,8 +735,7 @@ public class Main {
 	private void newProfile() {
 		input = new Input(selectedController);
 
-		frmRemoteStickServer.setTitle(rb
-				.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
 	}
 
@@ -539,7 +760,7 @@ public class Main {
 				saveLastProfile(file);
 
 			updateModesPanel();
-			frmRemoteStickServer.setTitle(file.getName()
+			frame.setTitle(file.getName()
 					+ rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED")
 					+ file.getAbsolutePath());
@@ -557,7 +778,7 @@ public class Main {
 	}
 
 	public void setStatusbarText(String text) {
-		lblStatus.setText(text);
+		statusLabel.setText(text);
 	}
 
 	private class NewProfileAction extends AbstractAction {
@@ -593,11 +814,11 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (fileChooser.showOpenDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
+			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
 
 				if (!loadProfile(file))
-					JOptionPane.showMessageDialog(frmRemoteStickServer,
+					JOptionPane.showMessageDialog(frame,
 							rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"),
 							JOptionPane.ERROR_MESSAGE);
@@ -620,7 +841,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (fileChooser.showSaveDialog(frmRemoteStickServer) == JFileChooser.APPROVE_OPTION) {
+			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				final String profileFileSuffix = rb
 						.getString("PROFILE_FILE_SUFFIX");
@@ -685,10 +906,10 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			serverThread = new ServerThread(Main.this, input);
-			serverThread.setPort((int) spinnerPort.getValue());
+			serverThread.setPort((int) portSpinner.getValue());
 			serverThread
-					.setClientTimeout((int) spinnerClientTimeout.getValue());
-			serverThread.setUpdateRate((int) spinnerUpdateRate.getValue());
+					.setClientTimeout((int) clientTimeoutSpinner.getValue());
+			serverThread.setUpdateRate((int) updateRateSpinner.getValue());
 			serverThread.start();
 		}
 
@@ -727,7 +948,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(frmRemoteStickServer,
+			JOptionPane.showMessageDialog(frame,
 					rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -759,215 +980,6 @@ public class Main {
 			selectedController = controller;
 			newProfile();
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
-		}
-
-	}
-
-	private class UpdateAssignmentsPanelThread extends Thread {
-
-		@Override
-		public void run() {
-			super.run();
-
-			while (true) {
-				if (!suspendControllerSettingsUpdate
-						&& scrollPaneAssignments.equals(tabbedPane
-								.getSelectedComponent())
-						&& frmRemoteStickServer.getState() != Frame.ICONIFIED)
-					EventQueue.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-
-							panelAssignments.removeAll();
-
-							final Controller controller = input.getController();
-							if (controller != null) {
-								controller.poll();
-
-								for (Component c : controller.getComponents()) {
-									final JPanel panelComponent = new JPanel(
-											new GridBagLayout());
-									panelAssignments
-											.add(panelComponent,
-													new GridBagConstraints(
-															0,
-															GridBagConstraints.RELATIVE,
-															1,
-															1,
-															0.0,
-															0.0,
-															GridBagConstraints.FIRST_LINE_START,
-															GridBagConstraints.HORIZONTAL,
-															new Insets(0, 0, 0,
-																	0), 5, 0));
-
-									final String name = c.getName();
-									final float value = c.getPollData();
-
-									final JLabel lblName = new JLabel();
-									lblName.setPreferredSize(new Dimension(100,
-											15));
-
-									final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(
-											0, 0, 1, 1, 0.0, 0.0,
-											GridBagConstraints.BASELINE,
-											GridBagConstraints.NONE,
-											new Insets(0, 0, 0, 0), 0, 0);
-
-									final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(
-											2, 0, 1, 1, 1.0, 1.0,
-											GridBagConstraints.BASELINE,
-											GridBagConstraints.NONE,
-											new Insets(0, 0, 0, 0), 0, 0);
-
-									if (c.isAnalog()) {
-										lblName.setText(rb
-												.getString("AXIS_LABEL") + name);
-										panelComponent.add(lblName,
-												nameGridBagConstraints);
-
-										panelComponent.add(
-												Box.createGlue(),
-												new GridBagConstraints(
-														1,
-														GridBagConstraints.RELATIVE,
-														1,
-														1,
-														1.0,
-														1.0,
-														GridBagConstraints.BASELINE,
-														GridBagConstraints.NONE,
-														new Insets(0, 0, 0, 0),
-														0, 0));
-
-										final JProgressBar progressBarValue = new JProgressBar(
-												-100, 100);
-										progressBarValue
-												.setValue((int) (value * 100.0f));
-										panelComponent.add(progressBarValue,
-												valueGridBagConstraints);
-									} else {
-										lblName.setText(rb
-												.getString("BUTTON_LABEL")
-												+ name);
-										panelComponent.add(lblName,
-												nameGridBagConstraints);
-
-										panelComponent.add(
-												Box.createGlue(),
-												new GridBagConstraints(
-														1,
-														GridBagConstraints.RELATIVE,
-														1,
-														1,
-														1.0,
-														1.0,
-														GridBagConstraints.BASELINE,
-														GridBagConstraints.NONE,
-														new Insets(0, 0, 0, 0),
-														0, 0));
-
-										final JLabel lblValue = new JLabel();
-										if (value > 0.5f)
-											lblValue.setText(rb
-													.getString("BUTTON_DOWN_LABEL"));
-										else {
-											lblValue.setText(rb
-													.getString("BUTTON_UP_LABEL"));
-											lblValue.setForeground(Color.LIGHT_GRAY);
-										}
-										panelComponent.add(lblValue,
-												valueGridBagConstraints);
-									}
-
-									panelComponent.add(
-											Box.createGlue(),
-											new GridBagConstraints(
-													3,
-													GridBagConstraints.RELATIVE,
-													1,
-													1,
-													1.0,
-													1.0,
-													GridBagConstraints.BASELINE,
-													GridBagConstraints.NONE,
-													new Insets(0, 0, 0, 0), 0,
-													0));
-
-									final JButton editButton = new JButton(
-											new EditComponentAction(c));
-									editButton
-											.setPreferredSize(BUTTON_DIMENSION);
-									editButton
-											.addMouseListener(new MouseListener() {
-
-												@Override
-												public void mouseReleased(
-														MouseEvent e) {
-												}
-
-												@Override
-												public void mousePressed(
-														MouseEvent e) {
-													suspendControllerSettingsUpdate = true;
-												}
-
-												@Override
-												public void mouseExited(
-														MouseEvent e) {
-												}
-
-												@Override
-												public void mouseEntered(
-														MouseEvent e) {
-												}
-
-												@Override
-												public void mouseClicked(
-														MouseEvent e) {
-												}
-											});
-									panelComponent
-											.add(editButton,
-													new GridBagConstraints(
-															4,
-															GridBagConstraints.RELATIVE,
-															1,
-															1,
-															0.0,
-															0.0,
-															GridBagConstraints.BASELINE,
-															GridBagConstraints.NONE,
-															new Insets(0, 0, 0,
-																	0), 0, 0));
-								}
-
-								panelAssignments.add(
-										Box.createGlue(),
-										new GridBagConstraints(
-												0,
-												GridBagConstraints.RELATIVE,
-												1,
-												1,
-												1.0,
-												1.0,
-												GridBagConstraints.FIRST_LINE_START,
-												GridBagConstraints.NONE,
-												new Insets(0, 0, 0, 0), 0, 0));
-							}
-
-							scrollPaneAssignments
-									.setViewportView(panelAssignments);
-						}
-					});
-
-				try {
-					Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_RATE);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 
 	}
@@ -1095,8 +1107,8 @@ public class Main {
 	private class InterfaceAdapter<T> implements JsonSerializer<T>,
 			JsonDeserializer<T> {
 
-		public static final String PROPERTY_TYPE = "type";
-		public static final String PROPERTY_DATA = "data";
+		private static final String PROPERTY_TYPE = "type";
+		private static final String PROPERTY_DATA = "data";
 
 		public JsonElement serialize(T object,
 				java.lang.reflect.Type interfaceType,
