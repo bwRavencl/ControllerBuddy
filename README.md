@@ -31,20 +31,19 @@ For maximum platform-independence RemoteStick Server was implemented as a Java a
 
 #####Architecture:
 <pre>
-Host                        Client
-----                        ------
+Host:                        Client:
 
-RemoteStick Server -------> RemoteStick Client
+RemoteStick Server  ------>  RemoteStick Client
 
-^                           |
-|                           |
-|                           v
+        ^                           |
+        |                           |
+        |                           v
 
 Physical Controller         vJoy Device Driver
 
-                            |
-                            |
-                            v
+                                    |
+                                    |
+                                    v
 
                             Target Application
 </pre>
