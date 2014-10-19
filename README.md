@@ -6,7 +6,9 @@ GNU General Public License v2.0
 
 #####Description:
 RemoteStick allows the feeding of input from a physical game-controller connected to a host computer to a virtual joystick (provided by the vJoy device driver) of a second computer.
-Consequently RemoteStick consists of two separate applications: RemoteStick Server and RemoteStick Client (http://github.com/bwRavencl/RemoteStickClient),  both of which communicate via a lightweight UDP-based protocol.  
+
+Consequently RemoteStick consists of two separate applications: RemoteStick Server and RemoteStick Client (http://github.com/bwRavencl/RemoteStickClient), both of which communicate via a lightweight UDP-based protocol.
+
 In order to support complex input profiles, RemoteStick Server provides very flexible programming of the physical controller. Each axis or button present on the device can be mapped to one or multiple actions invoked on the target host.
 
 Currently the following actions are supported:
