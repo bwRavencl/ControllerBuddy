@@ -242,7 +242,7 @@ public class EditActionsDialog extends JDialog {
 						new Insets(0, 0, 0, 0), 0, 25));
 
 		final JLabel propertiesLabel = new JLabel(
-				rb.getString("ASSIGNED_ACTIONS_LABEL"));
+				rb.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1,
 				0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
