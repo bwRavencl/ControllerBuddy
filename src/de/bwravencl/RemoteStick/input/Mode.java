@@ -25,7 +25,7 @@ import java.util.UUID;
 
 import de.bwravencl.RemoteStick.input.action.IAction;
 
-public class Mode {
+public class Mode implements Cloneable {
 
 	private UUID uuid;
 	private String description = new String("New Mode");

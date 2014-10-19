@@ -29,7 +29,7 @@ import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 
-public class Profile {
+public class Profile implements Cloneable {
 
 	public static final String DEFAULT_MODE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
 

@@ -534,7 +534,7 @@ public class Main {
 
 			final Profile profile = gson.fromJson(jsonString, Profile.class);
 
-			result = Input.setProfile(profile);
+			result = Input.setProfile(profile, input.getController());
 			if (result)
 				saveLastProfile(file);
 
@@ -781,7 +781,7 @@ public class Main {
 
 							panelAssignments.removeAll();
 
-							final Controller controller = Input.getController();
+							final Controller controller = input.getController();
 							if (controller != null) {
 								controller.poll();
 

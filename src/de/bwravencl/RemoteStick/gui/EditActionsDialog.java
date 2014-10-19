@@ -903,7 +903,7 @@ public class EditActionsDialog extends JDialog {
 
 		public void actionPerformed(ActionEvent e) {
 			if (isComponentEditor())
-				Input.setProfile(unsavedProfile);
+				Input.setProfile(unsavedProfile, input.getController());
 			else
 				cycleAction.setActions(cycleActions);
 
@@ -944,7 +944,7 @@ public class EditActionsDialog extends JDialog {
 
 		@Override
 		public String toString() {
-			String description = null;
+			String description = "";
 
 			try {
 				final Class<?> clazz = Class.forName(className);

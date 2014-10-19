@@ -47,8 +47,8 @@ public class Input {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
-	private static Controller controller;
-	private static Profile profile;
+	private static Profile profile = new Profile();
+	private Controller controller;
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
 	private int nButtons = MAX_N_BUTTONS;
@@ -62,8 +62,7 @@ public class Input {
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public Input(Controller controller) {
-		Input.controller = controller;
-		profile = new Profile();
+		this.controller = controller;
 
 		for (VirtualAxis va : VirtualAxis.values())
 			axis.put(va, 0);
@@ -211,7 +210,7 @@ public class Input {
 		return profile;
 	}
 
-	public static boolean setProfile(Profile profile) {
+	public static boolean setProfile(Profile profile, Controller controller) {
 		if (controller == null)
 			return false;
 		else {
@@ -247,7 +246,7 @@ public class Input {
 		}
 	}
 
-	public static Controller getController() {
+	public Controller getController() {
 		return controller;
 	}
 
