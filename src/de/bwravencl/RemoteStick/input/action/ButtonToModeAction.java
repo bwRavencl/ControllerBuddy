@@ -1,4 +1,4 @@
-/* Copyright (C) 2014  Matteo Hausner
+/* Copyright (C) 2015  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,11 @@ import de.bwravencl.RemoteStick.input.Profile;
 
 public class ButtonToModeAction implements IAction {
 
+	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+
 	private boolean toggle = false;
 	private boolean up = true;
+	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	private UUID modeUuid;
 
@@ -46,6 +49,14 @@ public class ButtonToModeAction implements IAction {
 		this.toggle = toggle;
 	}
 
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
+
 	public Mode getMode() {
 		for (Mode m : Input.getProfile().getModes())
 			if (modeUuid.equals(m.getUuid()))
@@ -62,7 +73,7 @@ public class ButtonToModeAction implements IAction {
 	public void doAction(Input input, float value) {
 		final Profile profile = Input.getProfile();
 
-		if (value < 0.5f) {
+		if (value != activationValue) {
 			if (toggle)
 				up = true;
 			else {

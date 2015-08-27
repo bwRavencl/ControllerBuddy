@@ -15,15 +15,32 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.RemoteStick.input.action;
+package de.bwravencl.RemoteStick.vjoy;
 
-import de.bwravencl.RemoteStick.input.Input;
+import com.sun.jna.Native;
 
-public class AxisToAxisAction extends ToAxisAction {
+public class VJoy {
 
-	@Override
-	public void doAction(Input input, float value) {
-		input.setAxis(virtualAxis, invert ? -value : value);
+	public static String getDefaultLibraryPath() {
+		final String arch = System.getProperty("sun.arch.data.model");
+
+		final String archFolder;
+		if ("64".equals(arch))
+			archFolder = "x64";
+		else
+			archFolder = "x86";
+
+		return System.getenv("ProgramFiles") + "\\vJoy\\" + archFolder;
+	}
+
+	public static IVjoyInterface loadLibrary() throws Exception {
+		System.setProperty("jna.library.path", VJoy.getDefaultLibraryPath());
+
+		try {
+			return (IVjoyInterface) Native.loadLibrary("vJoyInterface", IVjoyInterface.class);
+		} catch (UnsatisfiedLinkError e) {
+			throw new Exception(e);
+		}
 	}
 
 }

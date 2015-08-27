@@ -1,4 +1,4 @@
-/* Copyright (C) 2014  Matteo Hausner
+/* Copyright (C) 2015  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ import net.java.games.input.Controller;
 
 public class Input {
 
-	public static final int MAX_N_BUTTONS = 32;
+	public static final int MAX_N_BUTTONS = 128;
 
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
-	private static Profile profile = new Profile();
+	private static Profile profile;
 	private Controller controller;
 	private ServerThread serverThread;
 	private long maxAxisValue = 0;
@@ -67,7 +67,8 @@ public class Input {
 		for (VirtualAxis va : VirtualAxis.values())
 			axis.put(va, 0);
 
-		Mode defaultMode = profile.getModes().get(0);
+		profile = new Profile();
+		/*Mode defaultMode = profile.getModes().get(0);
 		Mode mode1 = new Mode("54947df8-0e9e-4471-a2f9-9af509fb5889");
 		mode1.setDescription("View mode");
 		Mode mode2 = new Mode("046b6c7f-0b8a-43b9-b35d-6489e6daee91");
@@ -179,7 +180,7 @@ public class Input {
 		profile.getComponentToModeActionMap().put("10", l1ButtonAction0);
 
 		profile.getModes().add(mode1);
-		profile.getModes().add(mode2);
+		profile.getModes().add(mode2);*/
 	}
 
 	public void poll() {

@@ -9,5 +9,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/gson-2.3.jar"/>
+	<classpathentry kind="lib" path="libs/jna/jna-platform.jar"/>
+	<classpathentry kind="lib" path="libs/jna/jna.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

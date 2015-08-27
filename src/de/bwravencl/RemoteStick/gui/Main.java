@@ -1,4 +1,4 @@
-/* Copyright (C) 2014  Matteo Hausner
+/* Copyright (C) 2015  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -184,7 +185,8 @@ public class Main {
 					if (c.getType() != Type.KEYBOARD
 							&& c.getType() != Type.MOUSE
 							&& c.getType() != Type.TRACKBALL
-							&& c.getType() != Type.TRACKPAD)
+							&& c.getType() != Type.TRACKPAD
+							&& c.getType() != Type.UNKNOWN)
 						controllerMenu.add(new SelectControllerAction(c));
 			}
 
@@ -359,7 +361,8 @@ public class Main {
 				.getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE
 					&& c.getType() != Type.TRACKBALL
-					&& c.getType() != Type.TRACKPAD) {
+					&& c.getType() != Type.TRACKPAD
+					&& c.getType() != Type.UNKNOWN) {
 				final boolean lastControllerFound = c.getName().equals(
 						lastControllerName);
 
@@ -544,15 +547,16 @@ public class Main {
 																0, 0));
 
 												final JLabel valueLabel = new JLabel();
-												if (value > 0.5f)
-													valueLabel.setText(rb
-															.getString("BUTTON_DOWN_LABEL"));
+												final StringWriter sw = new StringWriter();
+												if (value > 0.0f)
+													sw.append(rb.getString("BUTTON_DOWN_LABEL"));
 												else {
-													valueLabel.setText(rb
-															.getString("BUTTON_UP_LABEL"));
+													sw.append(rb.getString("BUTTON_UP_LABEL"));
 													valueLabel
 															.setForeground(Color.LIGHT_GRAY);
 												}
+												sw.append(" (" + String.valueOf(value) + ')');
+												valueLabel.setText(sw.toString());
 												componentPanel
 														.add(valueLabel,
 																valueGridBagConstraints);

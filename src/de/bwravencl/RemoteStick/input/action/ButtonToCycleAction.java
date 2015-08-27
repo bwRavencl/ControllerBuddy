@@ -1,4 +1,4 @@
-/* Copyright (C) 2014  Matteo Hausner
+/* Copyright (C) 2015  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,20 @@ import de.bwravencl.RemoteStick.input.Input;
 
 public class ButtonToCycleAction implements IAction {
 
+	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+
 	private boolean wasUp = true;
 	private int index = 0;
+	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private List<IAction> actions = new ArrayList<IAction>();
+
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
 
 	public List<IAction> getActions() {
 		return actions;
@@ -38,7 +49,7 @@ public class ButtonToCycleAction implements IAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (value < 0.5)
+		if (value != activationValue)
 			wasUp = true;
 		else if (wasUp) {
 			actions.get(index).doAction(input, value);
@@ -59,8 +70,7 @@ public class ButtonToCycleAction implements IAction {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super
-				.clone();
+		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
 
 		final List<IAction> clonedActions = new ArrayList<IAction>();
 		for (IAction a : actions)

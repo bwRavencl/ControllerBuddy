@@ -1,4 +1,4 @@
-/* Copyright (C) 2014  Matteo Hausner
+/* Copyright (C) 2015  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,23 @@ package de.bwravencl.RemoteStick.input.action;
 import de.bwravencl.RemoteStick.input.Input;
 
 public class ButtonToButtonAction extends ToButtonAction {
+	
+	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
+	private float activationValue = DEFAULT_ACTIVATION_VALUE;
+
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
+	
 	@Override
 	public void doAction(Input input, float value) {
-		input.setButtons(buttonId, invert ? -value : value);
+		if (value == activationValue)
+			input.setButtons(buttonId, invert ? -value : value);
 	}
 
 }
