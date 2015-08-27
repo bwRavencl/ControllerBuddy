@@ -15,9 +15,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.RemoteStick.vjoy;
+package de.bwravencl.RemoteStick.output.vjoy;
+
+import java.io.File;
+import java.util.prefs.Preferences;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.BOOL;
@@ -25,12 +29,30 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
-public class VJoyThread {
+import de.bwravencl.RemoteStick.gui.Main;
+import de.bwravencl.RemoteStick.input.Input;
+import de.bwravencl.RemoteStick.output.IOutput;
+
+public class VJoyThread extends Thread implements IOutput {
+
+	private final Main main;
+	private final Input input;
+
+	public VJoyThread(Main main, Input input) {
+		this.main = main;
+		this.input = input;
+		input.setOutput(this);
+	}
+
+	@Override
+	public long getUpdateRate() {
+		return 0;
+	}
 
 	public static void main(String[] args) {
 		IVjoyInterface vJoy;
 		try {
-			vJoy = VJoy.loadLibrary();
+			vJoy = loadLibrary(null);
 
 			final UINT rID = new UINT(1L);
 
@@ -94,6 +116,41 @@ public class VJoyThread {
 			System.out.println("Status: " + vJoy.GetVJDStatus(rID));
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static final String LIBRARY_NAME = "vJoyInterface";
+	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
+
+	public static String getDefaultInstallationPath() {
+		return System.getenv("ProgramFiles") + "\\vJoy";
+	}
+
+	public static String getDefaultLibraryFolderPath() {
+		return getDefaultInstallationPath() + getArchFolderName();
+	}
+
+	public static String getLibraryFilePath(String vJoyDirectory) {
+		return vJoyDirectory + File.separator + getArchFolderName() + File.separator + LIBRARY_FILENAME;
+	}
+
+	public static String getArchFolderName() {
+		final String arch = System.getProperty("sun.arch.data.model");
+
+		if ("64".equals(arch))
+			return "x64";
+		else
+			return "x86";
+	}
+
+	public static IVjoyInterface loadLibrary(Preferences preferences) throws Exception {
+		System.setProperty("jna.library.path",
+				preferences.get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath()));
+
+		try {
+			return (IVjoyInterface) Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
+		} catch (UnsatisfiedLinkError e) {
+			throw new Exception(e);
 		}
 	}
 

@@ -46,12 +46,9 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	@Override
 	public void doAction(Input joystick, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float d = value * sensitivity
-					* (float) joystick.getServerThread().getUpdateRate()
-					/ (float) 1000L;
+			final float d = value * sensitivity * (float) joystick.getOutput().getUpdateRate() / (float) 1000L;
 
-			final float oldValue = Input.normalize(
-					joystick.getAxis().get(virtualAxis), 0.0f,
+			final float oldValue = Input.normalize(joystick.getAxis().get(virtualAxis), 0.0f,
 					joystick.getMaxAxisValue(), -1.0f, 1.0f);
 
 			joystick.setAxis(virtualAxis, oldValue + (invert ? -d : d));

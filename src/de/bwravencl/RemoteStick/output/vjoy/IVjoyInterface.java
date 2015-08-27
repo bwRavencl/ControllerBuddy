@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.RemoteStick.vjoy;
+package de.bwravencl.RemoteStick.output.vjoy;
 
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;

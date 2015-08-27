@@ -36,14 +36,12 @@ public class AxisToScrollAction extends ToScrollAction {
 	@Override
 	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getServerThread()
-					.getUpdateRate() / (float) 1000L;
+			final float rateMultiplier = (float) input.getOutput().getUpdateRate() / (float) 1000L;
 
-			final float d = Input.normalize(value * rateMultiplier, -1.0f
-					* rateMultiplier, 1.0f * rateMultiplier, -clicks, clicks);
+			final float d = Input.normalize(value * rateMultiplier, -1.0f * rateMultiplier, 1.0f * rateMultiplier,
+					-clicks, clicks);
 
-			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d
-					: d)));
+			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
 		}
 	}
 

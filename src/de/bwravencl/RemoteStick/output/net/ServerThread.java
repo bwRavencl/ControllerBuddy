@@ -15,7 +15,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.RemoteStick.net;
+package de.bwravencl.RemoteStick.output.net;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,8 +33,9 @@ import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.KeyStroke;
+import de.bwravencl.RemoteStick.output.IOutput;
 
-public class ServerThread extends Thread {
+public class ServerThread extends Thread implements IOutput {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_CLIENT_TIMEOUT = 1000;
@@ -45,10 +46,9 @@ public class ServerThread extends Thread {
 	private static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
 	private static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
 	private static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
-	private static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE
-			+ "_ALIVE";
+	private static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE + "_ALIVE";
 	private static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
-	
+
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	private enum ServerState {
@@ -63,14 +63,13 @@ public class ServerThread extends Thread {
 	private ServerState serverState = ServerState.Listening;
 	private DatagramSocket serverSocket = null;
 	private InetAddress clientIPAddress = null;
-	private final ResourceBundle rb = new ResourceBundleUtil()
-			.getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
-					Locale.getDefault());
+	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
 
 	public ServerThread(Main main, Input input) {
 		this.main = main;
 		this.input = input;
-		input.setServerThread(this);
+		input.setOutput(this);
 	}
 
 	@Override
@@ -89,17 +88,14 @@ public class ServerThread extends Thread {
 				switch (serverState) {
 				case Listening:
 					counter = 0;
-					receivePacket = new DatagramPacket(receiveBuf,
-							receiveBuf.length);
+					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(0);
 					serverSocket.receive(receivePacket);
 					clientIPAddress = receivePacket.getAddress();
-					message = new String(receivePacket.getData(), 0,
-							receivePacket.getLength());
+					message = new String(receivePacket.getData(), 0, receivePacket.getLength());
 
 					if (message.startsWith(PROTOCOL_MESSAGE_CLIENT_HELLO)) {
-						final String[] messageParts = message
-								.split(PROTOCOL_MESSAGE_DELIMITER);
+						final String[] messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
 
 						if (messageParts.length == 3) {
 							long maxAxisValue = Long.parseLong(messageParts[1]);
@@ -115,17 +111,14 @@ public class ServerThread extends Thread {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(updateRate));
 
-							final byte[] sendBuf = sw.toString().getBytes(
-									"ASCII");
-							final DatagramPacket sendPacket = new DatagramPacket(
-									sendBuf, sendBuf.length, clientIPAddress,
-									port);
+							final byte[] sendBuf = sw.toString().getBytes("ASCII");
+							final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length,
+									clientIPAddress, port);
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							main.setStatusbarText(rb
-									.getString("STATUS_CONNECTED")
-									+ clientIPAddress.getCanonicalHostName());
+							main.setStatusbarText(
+									rb.getString("STATUS_CONNECTED") + clientIPAddress.getCanonicalHostName());
 						}
 					}
 					break;
@@ -149,35 +142,28 @@ public class ServerThread extends Thread {
 					for (boolean v : input.getButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
-					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ input.getCursorDeltaX()
-							+ PROTOCOL_MESSAGE_DELIMITER
+					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
 							+ input.getCursorDeltaY());
 
 					input.setCursorDeltaX(0);
 					input.setCursorDeltaY(0);
 
-					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ input.getScrollClicks());
+					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
 
 					input.setScrollClicks(0);
 
-					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ input.getDownKeyCodes().size());
+					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyCodes().size());
 					for (String s : input.getDownKeyCodes())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 
-					sw.append(PROTOCOL_MESSAGE_DELIMITER
-							+ input.getDownUpKeyStrokes().size());
+					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 
 					for (KeyStroke k : input.getDownUpKeyStrokes()) {
-						sw.append(PROTOCOL_MESSAGE_DELIMITER
-								+ k.getModifierCodes().length);
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + k.getModifierCodes().length);
 						for (String s : k.getModifierCodes())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER
-								+ k.getKeyCodes().length);
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + k.getKeyCodes().length);
 						for (String s : k.getKeyCodes())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
 					}
@@ -185,31 +171,26 @@ public class ServerThread extends Thread {
 					input.getDownUpKeyStrokes().clear();
 
 					final byte[] sendBuf = sw.toString().getBytes("ASCII");
-					final DatagramPacket sendPacket = new DatagramPacket(
-							sendBuf, sendBuf.length, clientIPAddress, port);
+					final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+							port);
 					serverSocket.send(sendPacket);
 
 					if (doAliveCheck) {
-						receivePacket = new DatagramPacket(receiveBuf,
-								receiveBuf.length);
+						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 						serverSocket.setSoTimeout(clientTimeout);
 						try {
 							serverSocket.receive(receivePacket);
 
-							if (clientIPAddress.equals(receivePacket
-									.getAddress())) {
-								message = new String(receivePacket.getData(),
-										0, receivePacket.getLength());
+							if (clientIPAddress.equals(receivePacket.getAddress())) {
+								message = new String(receivePacket.getData(), 0, receivePacket.getLength());
 
-								if (PROTOCOL_MESSAGE_CLIENT_ALIVE
-										.equals(message))
+								if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
 									counter++;
 							}
 						} catch (SocketTimeoutException e) {
 							serverState = ServerState.Listening;
 
-							main.setStatusbarText(rb
-									.getString("STATUS_TIMEOUT"));
+							main.setStatusbarText(rb.getString("STATUS_TIMEOUT"));
 							new Timer().schedule(new TimerTask() {
 								@Override
 								public void run() {
