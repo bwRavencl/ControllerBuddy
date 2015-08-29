@@ -25,7 +25,7 @@ import java.util.Set;
 
 import de.bwravencl.RemoteStick.input.action.ButtonToModeAction;
 import de.bwravencl.RemoteStick.input.action.IAction;
-import de.bwravencl.RemoteStick.output.IOutput;
+import de.bwravencl.RemoteStick.output.OutputThread;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
@@ -39,16 +39,16 @@ public class Input {
 
 	private static Profile profile;
 	private Controller controller;
-	private IOutput output;
-	private long maxAxisValue = 0;
-	private int nButtons = MAX_N_BUTTONS;
+	private OutputThread outputThread;
 	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
-	private boolean[] buttons = new boolean[nButtons];
+	private boolean[] buttons;
 	private int cursorDeltaX = 0;
 	private int cursorDeltaY = 0;
 	private int scrollClicks = 0;
-	private final Set<String> downKeysCodes = new HashSet<String>();
+	private final Set<Integer> downKeysCodes = new HashSet<Integer>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
+	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 
 	public Input(Controller controller) {
 		this.controller = controller;
@@ -231,29 +231,16 @@ public class Input {
 		return controller;
 	}
 
-	public IOutput getOutput() {
-		return output;
+	public OutputThread getOutputThread() {
+		return outputThread;
 	}
 
-	public void setOutput(IOutput output) {
-		this.output = output;
+	public void setOutputThread(OutputThread outputThread) {
+		this.outputThread = outputThread;
 	}
-
-	public long getMaxAxisValue() {
-		return maxAxisValue;
-	}
-
-	public void setMaxAxisValue(long maxAxisValue) {
-		this.maxAxisValue = maxAxisValue;
-	}
-
-	public int getnButtons() {
-		return nButtons;
-	}
-
+	
 	public void setnButtons(int nButtons) {
-		this.nButtons = nButtons;
-		buttons = new boolean[nButtons];
+		buttons = new boolean[Math.min(outputThread.getnButtons(), MAX_N_BUTTONS)];
 	}
 
 	public EnumMap<VirtualAxis, Integer> getAxis() {
@@ -261,8 +248,8 @@ public class Input {
 	}
 
 	public void setAxis(VirtualAxis virtualAxis, int value) {
-		value = Math.max(value, 0);
-		value = Math.min(value, (int) maxAxisValue);
+		value = Math.max(value, outputThread.getMinAxisValue());
+		value = Math.min(value, outputThread.getMaxAxisValue());
 
 		axis.put(virtualAxis, value);
 	}
@@ -271,7 +258,8 @@ public class Input {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
-		setAxis(virtualAxis, (int) normalize(value, -1.0f, 1.0f, 0.0f, maxAxisValue));
+		setAxis(virtualAxis,
+				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()));
 	}
 
 	public boolean[] getButtons() {
@@ -290,12 +278,20 @@ public class Input {
 			setButtons(id, true);
 	}
 
-	public Set<String> getDownKeyCodes() {
+	public Set<Integer> getDownKeyCodes() {
 		return downKeysCodes;
 	}
 
 	public Set<KeyStroke> getDownUpKeyStrokes() {
 		return downUpKeyStrokes;
+	}
+	
+	public Set<Integer> getDownMouseButtons() {
+		return downMouseButtons;
+	}
+	
+	public Set<Integer> getDownUpMouseButtons() {
+		return downUpMouseButtons;
 	}
 
 	public int getCursorDeltaX() {

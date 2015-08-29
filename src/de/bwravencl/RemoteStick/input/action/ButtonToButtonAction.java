@@ -20,7 +20,7 @@ package de.bwravencl.RemoteStick.input.action;
 import de.bwravencl.RemoteStick.input.Input;
 
 public class ButtonToButtonAction extends ToButtonAction {
-	
+
 	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
@@ -32,11 +32,11 @@ public class ButtonToButtonAction extends ToButtonAction {
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
 	}
-	
+
 	@Override
 	public void doAction(Input input, float value) {
-		if (value == activationValue)
-			input.setButtons(buttonId, invert ? -value : value);
+		boolean down = value == activationValue ? !invert : invert;
+		input.setButtons(buttonId, down ? 1.0f : 0.0f);
 	}
 
 }

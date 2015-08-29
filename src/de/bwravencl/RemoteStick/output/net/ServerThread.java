@@ -24,22 +24,18 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.Input;
 import de.bwravencl.RemoteStick.input.KeyStroke;
-import de.bwravencl.RemoteStick.output.IOutput;
+import de.bwravencl.RemoteStick.output.OutputThread;
 
-public class ServerThread extends Thread implements IOutput {
+public class ServerThread extends OutputThread {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_CLIENT_TIMEOUT = 1000;
-	public static final long DEFAULT_UPDATE_RATE = 10L;
 
 	private static final int PROTOCOL_VERSION = 1;
 	private static final String PROTOCOL_MESSAGE_DELIMITER = ":";
@@ -55,21 +51,14 @@ public class ServerThread extends Thread implements IOutput {
 		Listening, Connected
 	}
 
-	private final Main main;
-	private final Input input;
 	private int port = DEFAULT_PORT;
 	private int clientTimeout = DEFAULT_CLIENT_TIMEOUT;
-	private long updateRate = DEFAULT_UPDATE_RATE;
 	private ServerState serverState = ServerState.Listening;
 	private DatagramSocket serverSocket = null;
 	private InetAddress clientIPAddress = null;
-	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	public ServerThread(Main main, Input input) {
-		this.main = main;
-		this.input = input;
-		input.setOutput(this);
+		super(main, input);
 	}
 
 	@Override
@@ -97,12 +86,10 @@ public class ServerThread extends Thread implements IOutput {
 					if (message.startsWith(PROTOCOL_MESSAGE_CLIENT_HELLO)) {
 						final String[] messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
 
-						if (messageParts.length == 3) {
-							long maxAxisValue = Long.parseLong(messageParts[1]);
-							int nButtons = Integer.parseInt(messageParts[2]);
-
-							input.setMaxAxisValue(maxAxisValue);
-							input.setnButtons(nButtons);
+						if (messageParts.length == 4) {
+							minAxisValue = Integer.parseInt(messageParts[1]);
+							maxAxisValue = Integer.parseInt(messageParts[2]);
+							setnButtons(Integer.parseInt(messageParts[3]));
 
 							StringWriter sw = new StringWriter();
 							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
@@ -118,7 +105,7 @@ public class ServerThread extends Thread implements IOutput {
 
 							serverState = ServerState.Connected;
 							main.setStatusbarText(
-									rb.getString("STATUS_CONNECTED") + clientIPAddress.getCanonicalHostName());
+									rb.getString("STATUS_CONNECTED_WITH") + clientIPAddress.getCanonicalHostName());
 						}
 					}
 					break;
@@ -153,19 +140,19 @@ public class ServerThread extends Thread implements IOutput {
 					input.setScrollClicks(0);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyCodes().size());
-					for (String s : input.getDownKeyCodes())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+					for (int k : input.getDownKeyCodes())
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 
-					for (KeyStroke k : input.getDownUpKeyStrokes()) {
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + k.getModifierCodes().length);
-						for (String s : k.getModifierCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+					for (KeyStroke ks : input.getDownUpKeyStrokes()) {
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
+						for (int k : ks.getModifierCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + k.getKeyCodes().length);
-						for (String s : k.getKeyCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + s);
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
+						for (int k : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
 					}
 
 					input.getDownUpKeyStrokes().clear();
@@ -224,14 +211,6 @@ public class ServerThread extends Thread implements IOutput {
 			serverSocket.close();
 
 		main.setStatusbarText(rb.getString("STATUS_SOCKET_CLOSED"));
-	}
-
-	public long getUpdateRate() {
-		return updateRate;
-	}
-
-	public void setUpdateRate(long updateRate) {
-		this.updateRate = updateRate;
 	}
 
 	public int getPort() {

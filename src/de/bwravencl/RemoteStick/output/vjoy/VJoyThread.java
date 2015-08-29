@@ -17,8 +17,18 @@
 
 package de.bwravencl.RemoteStick.output.vjoy;
 
+import java.awt.AWTException;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.io.File;
-import java.util.prefs.Preferences;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -31,103 +41,26 @@ import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.RemoteStick.gui.Main;
 import de.bwravencl.RemoteStick.input.Input;
-import de.bwravencl.RemoteStick.output.IOutput;
+import de.bwravencl.RemoteStick.input.KeyStroke;
+import de.bwravencl.RemoteStick.output.OutputThread;
 
-public class VJoyThread extends Thread implements IOutput {
+public class VJoyThread extends OutputThread {
 
-	private final Main main;
-	private final Input input;
-
-	public VJoyThread(Main main, Input input) {
-		this.main = main;
-		this.input = input;
-		input.setOutput(this);
-	}
-
-	@Override
-	public long getUpdateRate() {
-		return 0;
-	}
-
-	public static void main(String[] args) {
-		IVjoyInterface vJoy;
-		try {
-			vJoy = loadLibrary(null);
-
-			final UINT rID = new UINT(1L);
-
-			System.out.println("Version: " + String.valueOf(vJoy.GetvJoyVersion().shortValue()));
-
-			System.out.println("Enabled: " + vJoy.vJoyEnabled());
-
-			System.out.println("Product String: " + vJoy.GetvJoyProductString().getPointer().getWideString(0L));
-
-			System.out.println("Product String: " + vJoy.GetvJoyManufacturerString().getPointer().getWideString(0L));
-
-			System.out.println("Product String: " + vJoy.GetvJoySerialNumberString().getPointer().getWideString(0L));
-
-			Pointer DllVer = new Memory(WinDef.WORD.SIZE);
-			Pointer DrvVer = new Memory(WinDef.WORD.SIZE);
-			System.out.println("DriverMatch: " + vJoy.DriverMatch(DllVer, DrvVer));
-			System.out.println("DllVer: " + DllVer.getShort(0L));
-			System.out.println("DrvVer: " + DrvVer.getShort(0L));
-
-			System.out.println("Button Number: " + vJoy.GetVJDButtonNumber(rID));
-
-			System.out.println("Disc Pov Number: " + vJoy.GetVJDDiscPovNumber(rID));
-
-			System.out.println("Cont Pov Number: " + vJoy.GetVJDContPovNumber(rID));
-
-			System.out
-					.println("Axis exists: " + vJoy.GetVJDAxisExist(rID, IVjoyInterface.HID_USAGE_SL0).booleanValue());
-
-			System.out.println("Status: " + vJoy.GetVJDStatus(rID));
-			System.out.println("Aquire: " + vJoy.AcquireVJD(rID));
-			System.out.println("Status: " + vJoy.GetVJDStatus(rID));
-
-			System.out.println("Reset VJD: " + vJoy.ResetVJD(rID));
-			vJoy.ResetAll();
-			System.out.println("Reset Buttons: " + vJoy.ResetButtons(rID));
-			System.out.println("Reset Povs: " + vJoy.ResetPovs(rID));
-
-			Pointer Max = new Memory(LONG.SIZE);
-			System.out.println(vJoy.GetVJDAxisMax(rID, IVjoyInterface.HID_USAGE_X, Max));
-			int maxAxisValue = Max.getInt(0L);
-			System.out.println("Max Axis Value: " + maxAxisValue);
-
-			Pointer Min = new Memory(LONG.SIZE);
-			System.out.println(vJoy.GetVJDAxisMin(rID, IVjoyInterface.HID_USAGE_X, Min));
-			int minAxisValue = Min.getInt(0L);
-			System.out.println("Min Axis Value: " + minAxisValue);
-
-			System.out.println("Set Axis: " + vJoy.SetAxis(new LONG(maxAxisValue), rID, IVjoyInterface.HID_USAGE_X));
-
-			System.out.println("Set Btn: " + vJoy.SetBtn(new BOOL(1L), rID, new UCHAR(1)));
-
-			/*
-			 * System.out.println("Set Disc Pov: " + vJoy.SetDiscPov(int Value,
-			 * rID, UCHAR nPov));
-			 * 
-			 * System.out.println("Set Pov: " + vJoy.SetContPov(DWORD Value,
-			 * rID, UCHAR nPov));
-			 */
-
-			vJoy.RelinquishVJD(rID);
-			System.out.println("Status: " + vJoy.GetVJDStatus(rID));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	public static final int DEFAULT_VJOY_DEVICE = 1;
 
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
 
+	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
+	protected IVjoyInterface vJoy;
+	private boolean run = true;
+
 	public static String getDefaultInstallationPath() {
-		return System.getenv("ProgramFiles") + "\\vJoy";
+		return System.getenv("ProgramFiles") + File.separator + "vJoy";
 	}
 
 	public static String getDefaultLibraryFolderPath() {
-		return getDefaultInstallationPath() + getArchFolderName();
+		return getDefaultInstallationPath() + File.separator + getArchFolderName();
 	}
 
 	public static String getLibraryFilePath(String vJoyDirectory) {
@@ -143,15 +76,224 @@ public class VJoyThread extends Thread implements IOutput {
 			return "x86";
 	}
 
-	public static IVjoyInterface loadLibrary(Preferences preferences) throws Exception {
+	public VJoyThread(Main main, Input input) {
+		super(main, input);
+	}
+
+	protected boolean connect() {
 		System.setProperty("jna.library.path",
-				preferences.get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath()));
+				main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultLibraryFolderPath()));
 
 		try {
-			return (IVjoyInterface) Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
+			vJoy = (IVjoyInterface) Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
+
+			final Pointer dllVersion = new Memory(WinDef.WORD.SIZE);
+			final Pointer drvVersion = new Memory(WinDef.WORD.SIZE);
+			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_1") + dllVersion.getShort(0L)
+								+ rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_2") + drvVersion.getShort(0L)
+								+ rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			if (!vJoy.vJoyEnabled().booleanValue()) {
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			if (vJoy.GetVJDStatus(vJoyDevice) != IVjoyInterface.VJD_STAT_FREE) {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT_PREFIX") + vJoyDevice.toString()
+								+ rb.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			final boolean hasAxisX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
+			final boolean hasAxisY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
+			final boolean hasAxisZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
+			final boolean hasAxisRX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
+			final boolean hasAxisRY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
+			final boolean hasAxisRZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
+			final boolean hasAxisSL0 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
+			final boolean hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
+			if (!(hasAxisX && hasAxisY && hasAxisZ && hasAxisRX && hasAxisRY && hasAxisRZ && hasAxisSL0
+					&& hasAxisSL1)) {
+				final List<String> missingAxis = new ArrayList<String>();
+				if (!hasAxisX)
+					missingAxis.add("X");
+				if (!hasAxisY)
+					missingAxis.add("Y");
+				if (!hasAxisZ)
+					missingAxis.add("Z");
+				if (!hasAxisRX)
+					missingAxis.add("Rx");
+				if (!hasAxisRY)
+					missingAxis.add("Ry");
+				if (!hasAxisRZ)
+					missingAxis.add("Rz");
+				if (!hasAxisSL0)
+					missingAxis.add("Slider");
+				if (!hasAxisSL1)
+					missingAxis.add("Dial/Slider2");
+
+				final String missingAxisString = missingAxis.toString().replace("[", "").replace("]", "");
+
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_1") + vJoyDevice.toString()
+								+ rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_2") + missingAxisString
+								+ rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_3"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			if (!vJoy.AcquireVJD(vJoyDevice).booleanValue()) {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_PREFIX") + vJoyDevice.toString()
+								+ rb.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			if (!vJoy.ResetVJD(vJoyDevice).booleanValue()) {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("COULD_NOT_RESET_VJOY_DEVICE_PREFIX") + vJoyDevice.toString()
+								+ rb.getString("COULD_NOT_RESET_VJOY_DEVICE_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			final Pointer Min = new Memory(LONG.SIZE);
+			vJoy.GetVJDAxisMin(vJoyDevice, IVjoyInterface.HID_USAGE_X, Min);
+			minAxisValue = Min.getInt(0L);
+
+			final Pointer Max = new Memory(LONG.SIZE);
+			vJoy.GetVJDAxisMax(vJoyDevice, IVjoyInterface.HID_USAGE_X, Max);
+			maxAxisValue = Max.getInt(0L);
+
+			setnButtons(vJoy.GetVJDButtonNumber(vJoyDevice));
+
+			main.setStatusbarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
+			return true;
 		} catch (UnsatisfiedLinkError e) {
-			throw new Exception(e);
+			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("COULD_NOT_LOAD_VJOY_LIBRARY"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 	}
 
+	protected void disconnect() {
+		if (vJoy != null) {
+			vJoy.ResetVJD(vJoyDevice);
+			vJoy.RelinquishVJD(vJoyDevice);
+			main.setStatusbarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
+			main.stopFeeder();
+		}
+	}
+
+	@Override
+	public void run() {
+		if (connect()) {
+			try {
+				final Robot robot = new Robot();
+				final Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
+				final Set<Integer> oldDownKeyCodes = new HashSet<Integer>();
+
+				while (run) {
+					input.poll();
+
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.X)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_X);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.Y)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_Y);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.Z)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_Z);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.RX)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_RX);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.RY)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_RY);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.RZ)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_RZ);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.S0)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_SL0);
+					vJoy.SetAxis(new LONG(input.getAxis().get(Input.VirtualAxis.S1)), vJoyDevice,
+							IVjoyInterface.HID_USAGE_SL1);
+
+					for (int i = 0; i < input.getButtons().length; i++)
+						vJoy.SetBtn(new BOOL(input.getButtons()[i] ? 1L : 0L), vJoyDevice, new UCHAR(i + 1));
+
+					final Point currentPosition = MouseInfo.getPointerInfo().getLocation();
+					robot.mouseMove(currentPosition.x + input.getCursorDeltaX(),
+							currentPosition.y + input.getCursorDeltaY());
+					input.setCursorDeltaX(0);
+					input.setCursorDeltaY(0);
+
+					oldDownMouseButtons.removeAll(input.getDownMouseButtons());
+					for (int b : oldDownMouseButtons)
+						robot.mouseRelease(InputEvent.getMaskForButton(b));
+
+					for (int b : input.getDownMouseButtons())
+						robot.mousePress(InputEvent.getMaskForButton(b));
+					oldDownMouseButtons.addAll(input.getDownMouseButtons());
+
+					for (int b : input.getDownUpMouseButtons())
+						robot.mousePress(InputEvent.getMaskForButton(b));
+					for (int b : input.getDownUpMouseButtons())
+						robot.mouseRelease(InputEvent.getMaskForButton(b));
+					input.getDownUpMouseButtons().clear();
+
+					robot.mouseWheel(input.getScrollClicks());
+					input.setScrollClicks(0);
+
+					oldDownKeyCodes.removeAll(input.getDownKeyCodes());
+					for (int k : oldDownKeyCodes)
+						robot.keyRelease(k);
+
+					for (int k : input.getDownKeyCodes())
+						robot.keyPress(k);
+					oldDownKeyCodes.addAll(input.getDownKeyCodes());
+
+					for (KeyStroke ks : input.getDownUpKeyStrokes()) {
+						for (int k : ks.getModifierCodes())
+							robot.keyPress(k);
+
+						for (int k : ks.getKeyCodes())
+							robot.keyPress(k);
+
+						for (int k : ks.getKeyCodes())
+							robot.keyRelease(k);
+
+						for (int k : ks.getModifierCodes())
+							robot.keyRelease(k);
+					}
+					input.getDownUpKeyStrokes().clear();
+
+					try {
+						Thread.sleep(updateRate);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
+
+		disconnect();
+	}
+
+	public void stopFeeder() {
+		run = false;
+	}
+
+	public UINT getvJoyDevice() {
+		return vJoyDevice;
+	}
+
+	public void setvJoyDevice(UINT vJoyDevice) {
+		this.vJoyDevice = vJoyDevice;
+	}
 }

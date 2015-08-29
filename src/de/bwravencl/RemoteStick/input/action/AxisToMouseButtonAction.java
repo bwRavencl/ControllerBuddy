@@ -19,7 +19,7 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class AxisToKeyAction extends ToKeyAction {
+public class AxisToMouseButtonAction extends ToMouseButtonAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;
@@ -48,24 +48,17 @@ public class AxisToKeyAction extends ToKeyAction {
 		if ((value >= minAxisValue && value <= maxAxisValue) && !invert) {
 			if (downUp) {
 				if (wasUp) {
-					input.getDownUpKeyStrokes().add(keystroke);
+					input.getDownUpMouseButtons().add(mouseButton);
 					wasUp = false;
 				}
 			} else {
-				for (int k : keystroke.getModifierCodes())
-					input.getDownKeyCodes().add(k);
-				for (int k : keystroke.getKeyCodes())
-					input.getDownKeyCodes().add(k);
+				input.getDownMouseButtons().add(mouseButton);
 			}
 		} else {
 			if (downUp)
 				wasUp = true;
-			else {
-				for (int k : keystroke.getModifierCodes())
-					input.getDownKeyCodes().remove(k);
-				for (int k : keystroke.getKeyCodes())
-					input.getDownKeyCodes().remove(k);
-			}
+			else
+				input.getDownMouseButtons().remove(mouseButton);
 		}
 	}
 

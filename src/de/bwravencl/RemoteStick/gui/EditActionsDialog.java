@@ -62,11 +62,11 @@ import net.java.games.input.Component;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -82,11 +82,12 @@ public class EditActionsDialog extends JDialog {
 	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.RemoteStick.input.action.";
 	private static final String[] ACTION_CLASSES_AXIS = { ACTION_CLASS_PREFIX + "AxisToAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToButtonAction", ACTION_CLASS_PREFIX + "AxisToCursorAction",
-			ACTION_CLASS_PREFIX + "AxisToKeyAction", ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction",
-			ACTION_CLASS_PREFIX + "AxisToScrollAction" };
+			ACTION_CLASS_PREFIX + "AxisToKeyAction", ACTION_CLASS_PREFIX + "AxisToMouseButtonAction",
+			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction", ACTION_CLASS_PREFIX + "AxisToScrollAction" };
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToModeAction", ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
+			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToModeAction",
+			ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
@@ -97,6 +98,8 @@ public class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET;
 	private static final int DIALOG_BOUNDS_WIDTH = 950;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
+
+	private static final Map<String, Integer> keyCodeMap = KeyStroke.getKeyCodeMap();
 
 	private Component component;
 	private Input input;
@@ -290,8 +293,10 @@ public class EditActionsDialog extends JDialog {
 											final SpinnerNumberModel model;
 											if ("Clicks".equals(propertyName))
 												model = new SpinnerNumberModel(value, 0, 20, 1);
+											else if ("MouseButton".equals(propertyName))
+												model = new SpinnerNumberModel(value, 1, 3, 1);
 											else
-												model = new SpinnerNumberModel(value, 0, input.getnButtons(), 1);
+												model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS, 1);
 
 											final JSpinner spinner = new JSpinner(model);
 											final JComponent editor = spinner.getEditor();
@@ -304,7 +309,9 @@ public class EditActionsDialog extends JDialog {
 											float value = (float) getterMethod.invoke(selectedAssignedAction);
 
 											final SpinnerNumberModel model;
-											if ("DeadZone".equals(propertyName))
+											if ("ActivationValue".equals(propertyName))
+												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.1);
+											else if ("DeadZone".equals(propertyName))
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 											else if ("MaxSpeed".equals(propertyName))
 												model = new SpinnerNumberModel(value, 100.0, 1000.0, 0.1);
@@ -339,23 +346,20 @@ public class EditActionsDialog extends JDialog {
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
 										} else if (KeyStroke.class == clazz) {
-											final int length = KeyStroke.MODIFIER_CODES.length
-													+ KeyStroke.KEY_CODES.length;
-											final String[] availableCodes = new String[length];
-											System.arraycopy(KeyStroke.MODIFIER_CODES, 0, availableCodes, 0,
-													KeyStroke.MODIFIER_CODES.length);
-											System.arraycopy(KeyStroke.KEY_CODES, 0, availableCodes,
-													KeyStroke.MODIFIER_CODES.length, KeyStroke.KEY_CODES.length);
-											final JList<String> codes = new JList<String>(availableCodes);
+											final List<String> availableCodes = new ArrayList<String>();
+											for (String s : keyCodeMap.keySet())
+												availableCodes.add(s);
+											final JList<String> codes = new JList<String>(
+													availableCodes.toArray(new String[availableCodes.size()]));
 											codes.addListSelectionListener(
 													new JListSetPropertyListSelectionListener(m));
 											final KeyStroke keyStroke = (KeyStroke) getterMethod
 													.invoke(selectedAssignedAction);
 											final List<String> addedCodes = new ArrayList<String>();
-											for (String s : keyStroke.getModifierCodes())
-												addedCodes.add(s);
-											for (String s : keyStroke.getKeyCodes())
-												addedCodes.add(s);
+											for (int k : keyStroke.getModifierCodes())
+												addedCodes.add(KeyEvent.getKeyText(k));
+											for (int k : keyStroke.getKeyCodes())
+												addedCodes.add(KeyEvent.getKeyText(k));
 											for (String s : addedCodes) {
 												final int index = getListModelIndex(codes.getModel(), s);
 												if (index >= 0)
@@ -666,19 +670,26 @@ public class EditActionsDialog extends JDialog {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			try {
-				final List<String> modifierCodes = new ArrayList<String>();
-				final List<String> keyCodes = new ArrayList<String>();
+				final List<Integer> modifierCodes = new ArrayList<Integer>();
+				final List<Integer> keyCodes = new ArrayList<Integer>();
 
 				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					if (Arrays.asList(KeyStroke.MODIFIER_CODES).contains(o))
-						modifierCodes.add((String) o);
+					int k = keyCodeMap.get((String) o);
+					boolean isModifier = false;
+					for (int m : KeyStroke.MODIFIER_CODES) {
+						if (k == m)
+							isModifier = true;
+					}
+
+					if (isModifier)
+						modifierCodes.add(k);
 					else
-						keyCodes.add((String) o);
+						keyCodes.add(k);
 				}
 
 				final KeyStroke keyStroke = new KeyStroke();
-				keyStroke.setModifierCodes(modifierCodes.toArray(new String[modifierCodes.size()]));
-				keyStroke.setKeyCodes(keyCodes.toArray(new String[keyCodes.size()]));
+				keyStroke.setModifierCodes(modifierCodes.toArray(new Integer[modifierCodes.size()]));
+				keyStroke.setKeyCodes(keyCodes.toArray(new Integer[keyCodes.size()]));
 
 				setterMethod.invoke(selectedAssignedAction, keyStroke);
 			} catch (IllegalAccessException e1) {

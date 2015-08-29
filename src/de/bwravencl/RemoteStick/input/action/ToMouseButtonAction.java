@@ -17,32 +17,34 @@
 
 package de.bwravencl.RemoteStick.input.action;
 
-import de.bwravencl.RemoteStick.input.Input;
+public abstract class ToMouseButtonAction extends InvertableAction {
 
-public class AxisToScrollAction extends ToScrollAction {
+	public static final int DEFAULT_MOUSE_BUTTON = 1;
 
-	public final float DEFAULT_DEAD_ZONE = 0.25f;
+	protected boolean downUp = false;
+	protected boolean wasUp = true;
 
-	private float deadZone = DEFAULT_DEAD_ZONE;
+	protected int mouseButton = DEFAULT_MOUSE_BUTTON;
 
-	public float getDeadZone() {
-		return deadZone;
+	public boolean isDownUp() {
+		return downUp;
 	}
 
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
+	public void setDownUp(Boolean downUp) {
+		this.downUp = downUp;
+	}
+
+	public int getMouseButton() {
+		return mouseButton;
+	}
+
+	public void setMouseButton(Integer mouseButton) {
+		this.mouseButton = mouseButton;
 	}
 
 	@Override
-	public void doAction(Input input, float value) {
-		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
-
-			final float d = Input.normalize(value * rateMultiplier, -0.99f * rateMultiplier, 0.99f * rateMultiplier,
-					-clicks, clicks);
-
-			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
-		}
+	public String toString() {
+		return rb.getString("TO_MOUSE_BUTTON_ACTION_STRING");
 	}
 
 }

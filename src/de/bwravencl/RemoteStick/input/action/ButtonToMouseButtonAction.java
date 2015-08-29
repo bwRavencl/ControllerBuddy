@@ -19,29 +19,36 @@ package de.bwravencl.RemoteStick.input.action;
 
 import de.bwravencl.RemoteStick.input.Input;
 
-public class AxisToScrollAction extends ToScrollAction {
+public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 
-	public final float DEFAULT_DEAD_ZONE = 0.25f;
+	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
-	private float deadZone = DEFAULT_DEAD_ZONE;
+	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
-	public float getDeadZone() {
-		return deadZone;
+	public float getActivationValue() {
+		return activationValue;
 	}
 
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
 	}
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
-
-			final float d = Input.normalize(value * rateMultiplier, -0.99f * rateMultiplier, 0.99f * rateMultiplier,
-					-clicks, clicks);
-
-			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
+		if ((value != activationValue) ^ invert) {
+			if (downUp)
+				wasUp = true;
+			else
+				input.getDownMouseButtons().remove(mouseButton);
+		} else {
+			if (downUp) {
+				if (wasUp) {
+					input.getDownUpMouseButtons().add(mouseButton);
+					wasUp = false;
+				}
+			} else {
+				input.getDownMouseButtons().add(mouseButton);
+			}
 		}
 	}
 

@@ -35,14 +35,14 @@ public class ButtonToKeyAction extends ToKeyAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		if ((value != activationValue) && !invert) {
+		if ((value != activationValue) ^ invert) {
 			if (downUp)
 				wasUp = true;
 			else {
-				for (String s : keystroke.getModifierCodes())
-					input.getDownKeyCodes().remove(s);
-				for (String s : keystroke.getKeyCodes())
-					input.getDownKeyCodes().remove(s);
+				for (int k : keystroke.getModifierCodes())
+					input.getDownKeyCodes().remove(k);
+				for (int k : keystroke.getKeyCodes())
+					input.getDownKeyCodes().remove(k);
 			}
 		} else {
 			if (downUp) {
@@ -51,10 +51,10 @@ public class ButtonToKeyAction extends ToKeyAction {
 					wasUp = false;
 				}
 			} else {
-				for (String s : keystroke.getModifierCodes())
-					input.getDownKeyCodes().add(s);
-				for (String s : keystroke.getKeyCodes())
-					input.getDownKeyCodes().add(s);
+				for (int k : keystroke.getModifierCodes())
+					input.getDownKeyCodes().add(k);
+				for (int k : keystroke.getKeyCodes())
+					input.getDownKeyCodes().add(k);
 			}
 		}
 	}

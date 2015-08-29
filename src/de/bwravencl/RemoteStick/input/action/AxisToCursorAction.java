@@ -60,7 +60,7 @@ public class AxisToCursorAction extends InvertableAction {
 	@Override
 	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutput().getUpdateRate() / (float) 1000L;
+			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
 
 			float d = Input.normalize(value, -1.0f, 1.0f, -maxSpeed, maxSpeed) * rateMultiplier;
 

@@ -98,6 +98,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.sun.jna.platform.win32.WinDef.UINT;
 
 import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
@@ -120,6 +121,7 @@ public class Main {
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+	public static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_CLIENT_TIMEOUT = "client_timeout";
 	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
@@ -137,9 +139,12 @@ public class Main {
 
 	private final JFrame frame;
 	private JRadioButtonMenuItem startFeederRadioButtonMenuItem;
+	private JRadioButtonMenuItem stopFeederRadioButtonMenuItem;
 	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
+	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private final JPanel modesListPanel;
 	private JLabel vJoyDirectoryLabel1;
+	private JSpinner vJoyDeviceSpinner;
 	private final JSpinner portSpinner;
 	private final JSpinner clientTimeoutSpinner;
 	private final JSpinner updateRateSpinner;
@@ -166,6 +171,14 @@ public class Main {
 	}
 
 	public Main() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				stopFeeder();
+				stopServer();
+			}
+		});
+
 		frame = new JFrame();
 		frame.setTitle(rb.getString("APPLICATION_NAME"));
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
@@ -226,10 +239,10 @@ public class Main {
 			buttonGroupVJoyState.add(startFeederRadioButtonMenuItem);
 			vJoyMenu.add(startFeederRadioButtonMenuItem);
 
-			final JRadioButtonMenuItem stopFeederRadioButtonMenuItem = new JRadioButtonMenuItem(
-					rb.getString("STOP_FEEDER_MENU_ITEM"));
+			stopFeederRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_FEEDER_MENU_ITEM"));
 			stopFeederRadioButtonMenuItem.setAction(new StopFeederAction());
 			stopFeederRadioButtonMenuItem.setSelected(true);
+			stopFeederRadioButtonMenuItem.setEnabled(false);
 			buttonGroupVJoyState.add(stopFeederRadioButtonMenuItem);
 			vJoyMenu.add(stopFeederRadioButtonMenuItem);
 		}
@@ -244,10 +257,10 @@ public class Main {
 		buttonGroupServerState.add(startServerRadioButtonMenuItem);
 		serverMenu.add(startServerRadioButtonMenuItem);
 
-		final JRadioButtonMenuItem stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(
-				rb.getString("STOP_SERVER_MENU_ITEM"));
+		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_SERVER_MENU_ITEM"));
 		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
 		stopServerRadioButtonMenuItem.setSelected(true);
+		stopServerRadioButtonMenuItem.setEnabled(false);
 		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
 		serverMenu.add(stopServerRadioButtonMenuItem);
 
@@ -309,6 +322,25 @@ public class Main {
 
 			final JButton vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
+
+			final JPanel vJoyDevicePanel = new JPanel(panelFlowLayout);
+			settingsPanel.add(vJoyDevicePanel, panelGridBagConstraints);
+
+			final JLabel vJoyDeviceLabel = new JLabel(rb.getString("VJOY_DEVICE_LABEL"));
+			vJoyDeviceLabel.setPreferredSize(new Dimension(100, 15));
+			vJoyDevicePanel.add(vJoyDeviceLabel);
+
+			vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
+					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
+			vJoyDeviceSpinner.setEditor(new JSpinner.NumberEditor(vJoyDeviceSpinner, "#"));
+			vJoyDeviceSpinner.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue());
+				}
+			});
+			vJoyDevicePanel.add(vJoyDeviceSpinner);
 		}
 
 		final JPanel portPanel = new JPanel(panelFlowLayout);
@@ -632,14 +664,22 @@ public class Main {
 		updateModesPanel();
 	}
 
-	private void stopFeeder() {
+	public void stopFeeder() {
+		if (feederThread != null)
+			feederThread.stopFeeder();
+		stopFeederRadioButtonMenuItem.setSelected(true);
+		stopFeederRadioButtonMenuItem.setEnabled(false);
+		startFeederRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
 	}
 
-	private void stopServer() {
+	public void stopServer() {
 		if (serverThread != null)
 			serverThread.closeSocket();
+		stopServerRadioButtonMenuItem.setSelected(true);
+		stopServerRadioButtonMenuItem.setEnabled(false);
 		startFeederRadioButtonMenuItem.setEnabled(true);
+		startServerRadioButtonMenuItem.setEnabled(true);
 	}
 
 	private boolean loadProfile(File file) {
@@ -668,12 +708,21 @@ public class Main {
 		return result;
 	}
 
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
 	private void saveLastProfile(File file) {
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
 	}
 
 	public void setStatusbarText(String text) {
-		statusLabel.setText(text);
+		if (statusLabel != null)
+			statusLabel.setText(text);
 	}
 
 	private class NewProfileAction extends AbstractAction {
@@ -771,9 +820,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			stopFeeder();
-			stopServer();
-			System.exit(0);
+			Main.this.frame.dispose();
 		}
 
 	}
@@ -791,8 +838,11 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			startFeederRadioButtonMenuItem.setEnabled(false);
 			startServerRadioButtonMenuItem.setEnabled(false);
+			stopFeederRadioButtonMenuItem.setEnabled(true);
 			feederThread = new VJoyThread(Main.this, input);
+			feederThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 			feederThread.start();
 		}
 
@@ -830,6 +880,8 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			startFeederRadioButtonMenuItem.setEnabled(false);
+			startServerRadioButtonMenuItem.setEnabled(false);
+			stopServerRadioButtonMenuItem.setEnabled(true);
 			serverThread = new ServerThread(Main.this, input);
 			serverThread.setPort((int) portSpinner.getValue());
 			serverThread.setClientTimeout((int) clientTimeoutSpinner.getValue());
@@ -1038,8 +1090,9 @@ public class Main {
 					vJoyDirectoryLabel1.setText(path);
 				} else
 					JOptionPane.showMessageDialog(frame,
-							rb.getString("INVALID_VJOY_DIRECTORY_PREFIX") + VJoyThread.getDefaultInstallationPath()
-									+ rb.getString("INVALID_VJOY_DIRECTORY_SUFFIX"),
+							rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_PREFIX")
+									+ VJoyThread.getDefaultInstallationPath()
+									+ rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_SUFFIX"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
