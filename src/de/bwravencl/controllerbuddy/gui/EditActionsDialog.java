@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
@@ -101,6 +100,7 @@ public class EditActionsDialog extends JDialog {
 
 	private static final Map<String, Integer> keyCodeMap = KeyStroke.getKeyCodeMap();
 
+	private Main main;
 	private Component component;
 	private Input input;
 	private Profile unsavedProfile;
@@ -115,8 +115,9 @@ public class EditActionsDialog extends JDialog {
 	private final JList<AvailableAction> availableActionsList = new JList<AvailableAction>();
 	private final JList<IAction> assignedActionsList = new JList<IAction>();
 
-	public EditActionsDialog(Frame owner, Component component, Input input) {
-		super(owner);
+	public EditActionsDialog(Main main, Component component, Input input) {
+		super(main.getFrame());
+		this.main = main;
 		this.component = component;
 
 		try {
@@ -737,9 +738,10 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (isComponentEditor())
+			if (isComponentEditor()) {
 				Input.setProfile(unsavedProfile, input.getController());
-			else
+				main.setUnsavedChangesTitle();
+			} else
 				cycleAction.setActions(cycleActions);
 
 			closeDialog();

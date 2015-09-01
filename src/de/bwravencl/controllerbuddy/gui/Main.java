@@ -41,7 +41,6 @@ import javax.swing.JSeparator;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.UIManager;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -74,7 +73,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +114,7 @@ public class Main {
 	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "Strings";
+	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	public static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
@@ -220,7 +218,8 @@ public class Main {
 
 				for (Controller c : controllers)
 					if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
-							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN)
+							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN
+							&& !c.getName().startsWith("vJoy"))
 						deviceMenu.add(new SelectControllerAction(c));
 			}
 
@@ -454,7 +453,7 @@ public class Main {
 
 		for (Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
-					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN) {
+					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy")) {
 				final boolean lastControllerFound = c.getName().equals(lastControllerName);
 
 				if (selectedController == null || lastControllerFound)
@@ -465,37 +464,8 @@ public class Main {
 			}
 
 		if (selectedController == null) {
-			int option = JOptionPane.showConfirmDialog(frame,
-					rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_1")
-							+ UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText")
-							+ rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_2")
-							+ UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText")
-							+ rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_PART_3"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION);
-
-			if (option == JOptionPane.OK_OPTION) {
-				final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator
-						+ "java";
-				try {
-					final File jarFile = new File(
-							Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-					if (jarFile.getName().endsWith(".jar")) {
-						final List<String> command = new ArrayList<String>();
-						command.add(javaBin);
-						command.add("-jar");
-						command.add(jarFile.getPath());
-
-						final ProcessBuilder builder = new ProcessBuilder(command);
-						builder.start();
-					}
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
+			JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		} else {
 			newProfile();
@@ -699,6 +669,7 @@ public class Main {
 
 		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
+		setStatusbarText(rb.getString("STATUS_READY"));
 	}
 
 	public void stopLocal() {
@@ -750,8 +721,8 @@ public class Main {
 			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
 
 			return result;
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return result;
@@ -772,6 +743,14 @@ public class Main {
 	public void setStatusbarText(String text) {
 		if (statusLabel != null)
 			statusLabel.setText(text);
+	}
+
+	public void setUnsavedChangesTitle() {
+		final String title = frame.getTitle();
+
+		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
+				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
+			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
 	}
 
 	private class NewProfileAction extends AbstractAction {
@@ -847,6 +826,7 @@ public class Main {
 					fos.close();
 
 					saveLastProfile(file);
+					frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 					setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -1069,7 +1049,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this.frame, component, input);
+			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
 			editComponentDialog.setVisible(true);
 
 			suspendControllerSettingsUpdate = false;
@@ -1108,9 +1088,10 @@ public class Main {
 		private void setModeDescription() {
 			final String description = modeDescriptionTextField.getText();
 
-			if (description != null && description.length() > 0)
+			if (description != null && description.length() > 0) {
 				mode.setDescription(description);
-			else
+				setUnsavedChangesTitle();
+			} else
 				modeDescriptionTextField.setText(mode.getDescription());
 		}
 
@@ -1135,6 +1116,7 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			Input.getProfile().getModes().remove(mode);
+			setUnsavedChangesTitle();
 			updateModesPanel();
 		}
 
@@ -1156,6 +1138,7 @@ public class Main {
 			final Mode mode = new Mode();
 			Input.getProfile().getModes().add(mode);
 
+			setUnsavedChangesTitle();
 			updateModesPanel();
 		}
 
