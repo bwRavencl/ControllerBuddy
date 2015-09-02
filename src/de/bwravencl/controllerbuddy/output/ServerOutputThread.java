@@ -136,8 +136,10 @@ public class ServerOutputThread extends OutputThread {
 					for (int v : input.getAxis().values())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
-					for (boolean v : input.getButtons())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
+					for (int i = 0; i < nButtons; i++) {
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
+						input.getButtons()[i] = false;
+					}
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
 							+ input.getCursorDeltaY());
@@ -147,6 +149,7 @@ public class ServerOutputThread extends OutputThread {
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
 					for (int b : input.getDownMouseButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+					input.getDownMouseButtons().clear();
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
 					for (int b : input.getDownUpMouseButtons())
@@ -156,6 +159,7 @@ public class ServerOutputThread extends OutputThread {
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyCodes().size());
 					for (int k : input.getDownKeyCodes())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+					input.getDownKeyCodes().clear();
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 					for (KeyStroke ks : input.getDownUpKeyStrokes()) {

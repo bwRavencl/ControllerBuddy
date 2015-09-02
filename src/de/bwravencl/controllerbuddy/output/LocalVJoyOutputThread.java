@@ -66,8 +66,10 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		axisS1 = new LONG(input.getAxis().get(Input.VirtualAxis.S1));
 
 		buttons = new BOOL[nButtons];
-		for (int i = 0; i < nButtons; i++)
+		for (int i = 0; i < nButtons; i++) {
 			buttons[i] = new BOOL(input.getButtons()[i] ? 1L : 0L);
+			input.getButtons()[i] = false;
+		}
 
 		final Point currentPosition = MouseInfo.getPointerInfo().getLocation();
 		cursorX = currentPosition.x + input.getCursorDeltaX();
@@ -76,6 +78,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		input.setCursorDeltaY(0);
 
 		newDownMouseButtons = new HashSet<Integer>(input.getDownMouseButtons());
+		input.getDownMouseButtons().clear();
 		oldDownMouseButtons.removeAll(newDownMouseButtons);
 		newUpMouseButtons = new HashSet<Integer>(oldDownMouseButtons);
 		oldDownMouseButtons.clear();
@@ -85,6 +88,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		input.getDownUpMouseButtons().clear();
 
 		newDownKeyCodes = new HashSet<Integer>(input.getDownKeyCodes());
+		input.getDownKeyCodes().clear();
 		oldDownKeyCodes.removeAll(newDownKeyCodes);
 		newUpKeyCodes = new HashSet<Integer>(oldDownKeyCodes);
 		oldDownKeyCodes.clear();

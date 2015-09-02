@@ -1115,7 +1115,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Input.getProfile().getModes().remove(mode);
+			Input.getProfile().removeMode(mode);
 			setUnsavedChangesTitle();
 			updateModesPanel();
 		}

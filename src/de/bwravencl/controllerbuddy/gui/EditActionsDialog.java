@@ -286,7 +286,12 @@ public class EditActionsDialog extends JDialog {
 
 										if (Boolean.class == clazz) {
 											final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
-											checkBox.setSelected((boolean) getterMethod.invoke(selectedAssignedAction));
+											if (!isComponentEditor() && "DownUp".equals(propertyName)) {
+												checkBox.setSelected(true);
+												checkBox.setEnabled(false);
+											} else
+												checkBox.setSelected(
+														(boolean) getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(checkBox);
 										} else if (Integer.class == clazz) {
 											int value = (int) getterMethod.invoke(selectedAssignedAction);
@@ -314,6 +319,9 @@ public class EditActionsDialog extends JDialog {
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 											else if ("DeadZone".equals(propertyName))
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
+											else if ("MinAxisValue".equals(propertyName)
+													|| "MaxAxisValue".equals(propertyName))
+												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 											else if ("MaxSpeed".equals(propertyName))
 												model = new SpinnerNumberModel(value, 100.0, 1000.0, 0.1);
 											else
@@ -326,6 +334,10 @@ public class EditActionsDialog extends JDialog {
 											textField.setColumns(3);
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
+											if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
+												spinner.setValue((Float) cycleAction.getActivationValue());
+												spinner.setEnabled(false);
+											}
 										} else if (Mode.class == clazz) {
 											final JComboBox<Mode> comboBox = new JComboBox<Mode>();
 											for (Mode p : Input.getProfile().getModes())

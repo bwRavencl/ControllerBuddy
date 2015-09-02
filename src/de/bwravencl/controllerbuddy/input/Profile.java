@@ -39,18 +39,31 @@ public class Profile implements Cloneable {
 
 	public Profile() {
 		final Mode defaultMode = new Mode(DEFAULT_MODE_UUID_STRING);
-		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(
-				Main.STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
+		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+				Locale.getDefault());
 		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
 		modes.add(defaultMode);
+	}
+
+	public void removeMode(Mode mode) {
+		final List<String> actionsToRemove = new ArrayList<String>();
+
+		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet()) {
+			if (e.getValue().getMode().equals(mode))
+				actionsToRemove.add(e.getKey());
+		}
+
+		for (String s : actionsToRemove)
+			componentToModeActionMap.remove(s);
+
+		modes.remove(mode);
 	}
 
 	public Map<String, ButtonToModeAction> getComponentToModeActionMap() {
 		return componentToModeActionMap;
 	}
 
-	public void setComponentToModeActionMap(
-			Map<String, ButtonToModeAction> componentToModeActionMap) {
+	public void setComponentToModeActionMap(Map<String, ButtonToModeAction> componentToModeActionMap) {
 		this.componentToModeActionMap = componentToModeActionMap;
 	}
 
@@ -63,8 +76,7 @@ public class Profile implements Cloneable {
 	}
 
 	public static boolean isDefaultMode(Mode mode) {
-		return (mode.getUuid()
-				.equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
+		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
 	}
 
 	public Mode getActiveMode() {
@@ -90,11 +102,9 @@ public class Profile implements Cloneable {
 		final Profile profile = new Profile();
 
 		final Map<String, ButtonToModeAction> clonedComponentToModeActionMap = new HashMap<String, ButtonToModeAction>();
-		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap
-				.entrySet())
+		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet())
 			try {
-				clonedComponentToModeActionMap.put(new String(e.getKey()),
-						(ButtonToModeAction) e.getValue().clone());
+				clonedComponentToModeActionMap.put(new String(e.getKey()), (ButtonToModeAction) e.getValue().clone());
 			} catch (CloneNotSupportedException e1) {
 				e1.printStackTrace();
 			}
