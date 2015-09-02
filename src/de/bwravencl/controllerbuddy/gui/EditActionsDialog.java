@@ -52,6 +52,7 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.KeyCode;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -61,7 +62,6 @@ import net.java.games.input.Component;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -97,8 +97,6 @@ public class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET;
 	private static final int DIALOG_BOUNDS_WIDTH = 950;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
-
-	private static final Map<String, Integer> keyCodeMap = KeyStroke.getKeyCodeMap();
 
 	private Main main;
 	private Component component;
@@ -360,7 +358,7 @@ public class EditActionsDialog extends JDialog {
 											propertyPanel.add(comboBox);
 										} else if (KeyStroke.class == clazz) {
 											final List<String> availableCodes = new ArrayList<String>();
-											for (String s : keyCodeMap.keySet())
+											for (String s : KeyCode.nameToKeyCodeMap.keySet())
 												availableCodes.add(s);
 											final JList<String> codes = new JList<String>(
 													availableCodes.toArray(new String[availableCodes.size()]));
@@ -370,9 +368,9 @@ public class EditActionsDialog extends JDialog {
 													.invoke(selectedAssignedAction);
 											final List<String> addedCodes = new ArrayList<String>();
 											for (int k : keyStroke.getModifierCodes())
-												addedCodes.add(KeyEvent.getKeyText(k));
+												addedCodes.add(KeyCode.keyCodeToNameMap.get(k));
 											for (int k : keyStroke.getKeyCodes())
-												addedCodes.add(KeyEvent.getKeyText(k));
+												addedCodes.add(KeyCode.keyCodeToNameMap.get(k));
 											for (String s : addedCodes) {
 												final int index = getListModelIndex(codes.getModel(), s);
 												if (index >= 0)
@@ -687,10 +685,10 @@ public class EditActionsDialog extends JDialog {
 				final List<Integer> keyCodes = new ArrayList<Integer>();
 
 				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					int k = keyCodeMap.get((String) o);
+					int k = KeyCode.nameToKeyCodeMap.get((String) o);
 					boolean isModifier = false;
-					for (int m : KeyStroke.MODIFIER_CODES) {
-						if (k == m)
+					for (KeyCode kc : KeyCode.MODIFIER_KEY_CODES) {
+						if (k == kc.keyCode)
 							isModifier = true;
 					}
 

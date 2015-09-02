@@ -17,9 +17,6 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,11 +28,17 @@ import javax.swing.JOptionPane;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinUser.INPUT;
+import com.sun.jna.platform.win32.WinUser.KEYBDINPUT;
+import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -50,7 +53,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
-	protected Robot robot;
 	protected boolean run = true;
 
 	protected LONG axisX;
@@ -64,20 +66,21 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected BOOL[] buttons;
 
-	protected int cursorX;
-	protected int cursorY;
+	protected int cursorDeltaX;
+	protected int cursorDeltaY;
 
 	protected int scrollClicks;
 
-	protected Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
-	protected Set<Integer> newUpMouseButtons;
-	protected Set<Integer> newDownMouseButtons;
-	protected Set<Integer> downUpMouseButtons;
+	protected final Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
+	protected final Set<Integer> newUpMouseButtons = new HashSet<Integer>();
+	protected final Set<Integer> newDownMouseButtons = new HashSet<Integer>();
+	protected final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 
-	protected Set<Integer> oldDownKeyCodes = new HashSet<Integer>();
-	protected Set<Integer> newUpKeyCodes;
-	protected Set<Integer> newDownKeyCodes;
-	protected Set<KeyStroke> downUpKeyStrokes;
+	protected final Set<Integer> oldDownModifiers = new HashSet<Integer>();
+	protected final Set<Integer> newUpModifiers = new HashSet<Integer>();
+	protected final Set<Integer> newDownModifiers = new HashSet<Integer>();
+	protected final Set<Integer> downNormalKeys = new HashSet<Integer>();
+	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public static String getDefaultInstallationPath() {
 		return System.getenv("ProgramFiles") + File.separator + "vJoy";
@@ -100,14 +103,49 @@ public abstract class VJoyOutputThread extends OutputThread {
 			return "x86";
 	}
 
+	protected static void updateOutputSets(Set<Integer> sourceSet, Set<Integer> oldDownSet, Set<Integer> newUpSet,
+			Set<Integer> newDownSet) {
+		final Set<Integer> stillDownSet = new HashSet<Integer>();
+
+		newUpSet.clear();
+		for (int o : oldDownSet) {
+			boolean stillDown = false;
+
+			for (int n : sourceSet) {
+				if (n == o) {
+					stillDown = true;
+					break;
+				}
+			}
+
+			if (stillDown)
+				stillDownSet.add(o);
+			else
+				newUpSet.add(o);
+		}
+
+		newDownSet.clear();
+		for (int n : sourceSet) {
+			boolean alreadyDown = false;
+
+			for (int o : oldDownSet) {
+				if (o == n) {
+					alreadyDown = true;
+					break;
+				}
+			}
+
+			if (!alreadyDown)
+				newDownSet.add(n);
+		}
+
+		oldDownSet.clear();
+		oldDownSet.addAll(stillDownSet);
+		oldDownSet.addAll(newDownSet);
+	}
+
 	public VJoyOutputThread(Main main, Input input) {
 		super(main, input);
-
-		try {
-			robot = new Robot();
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public UINT getvJoyDevice() {
@@ -226,6 +264,39 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected abstract boolean readInput() throws Exception;
 
+	private static void doMouseButtonInput(int button, boolean press) {
+		final INPUT input = new INPUT();
+		input.type = new DWORD(INPUT.INPUT_MOUSE);
+		input.input.setType(MOUSEINPUT.class);
+		long mask = 0L;
+		switch (button) {
+		case 1:
+			mask = (press ? 0x0002L : 0x0004L);
+			break;
+		case 2:
+			mask = (press ? 0x0008L : 0x0010L);
+			break;
+		case 3:
+			mask = (press ? 0x0020L : 0x0040L);
+			break;
+		}
+		input.input.mi.dwFlags = new DWORD(mask);
+
+		if (mask != 0L)
+			User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+	}
+
+	private static void doKeyboardInput(int keyCode, boolean down) {
+		final INPUT input = new INPUT();
+		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
+		input.input.setType(KEYBDINPUT.class);
+		input.input.ki.wVk = new WORD(keyCode);
+		if (!down)
+			input.input.ki.dwFlags = new DWORD(0x0002L);
+
+		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+	}
+
 	protected void writeOutput() {
 		if (run) {
 			vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X);
@@ -240,38 +311,56 @@ public abstract class VJoyOutputThread extends OutputThread {
 			for (int i = 0; i < buttons.length; i++)
 				vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1));
 
-			robot.mouseMove(cursorX, cursorY);
+			if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+				final INPUT input = new INPUT();
+				input.type = new DWORD(INPUT.INPUT_MOUSE);
+				input.input.setType(MOUSEINPUT.class);
+				input.input.mi.dx = new LONG(cursorDeltaX);
+				input.input.mi.dy = new LONG(cursorDeltaY);
+				input.input.mi.dwFlags = new DWORD(0x0001L);
 
-			for (int b : newUpMouseButtons)
-				robot.mouseRelease(InputEvent.getMaskForButton(b));
-
-			for (int b : newDownMouseButtons)
-				robot.mousePress(InputEvent.getMaskForButton(b));
-
-			for (int b : downUpMouseButtons) {
-				int mask = InputEvent.getMaskForButton(b);
-				robot.mousePress(mask);
-				robot.mouseRelease(mask);
+				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
 
-			robot.mouseWheel(scrollClicks);
+			for (int b : newUpMouseButtons)
+				doMouseButtonInput(b, false);
 
-			for (int k : newUpKeyCodes)
-				robot.keyRelease(k);
+			for (int b : newDownMouseButtons)
+				doMouseButtonInput(b, true);
 
-			for (int k : newDownKeyCodes)
-				robot.keyPress(k);
+			for (int b : downUpMouseButtons) {
+				doMouseButtonInput(b, true);
+				doMouseButtonInput(b, false);
+			}
+
+			for (int k : newUpModifiers)
+				doKeyboardInput(k, false);
+
+			for (int k : newDownModifiers)
+				doKeyboardInput(k, true);
+
+			for (int k : downNormalKeys)
+				doKeyboardInput(k, true);
 
 			for (KeyStroke ks : downUpKeyStrokes) {
 				for (int k : ks.getModifierCodes())
-					robot.keyPress(k);
-				
-				for (int k : ks.getKeyCodes()) {
-					robot.keyPress(k);
-					robot.keyRelease(k);
-				}
+					doKeyboardInput(k, true);
+
+				for (int k : ks.getKeyCodes())
+					doKeyboardInput(k, true);
+
 				for (int k : ks.getModifierCodes())
-					robot.keyRelease(k);
+					doKeyboardInput(k, false);
+			}
+
+			if (scrollClicks != 0) {
+				final INPUT input = new INPUT();
+				input.type = new DWORD(INPUT.INPUT_MOUSE);
+				input.input.setType(MOUSEINPUT.class);
+				input.input.mi.mouseData = new DWORD(scrollClicks * 120L);
+				input.input.mi.dwFlags = new DWORD(0x0800L);
+
+				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
 		}
 	}
@@ -280,6 +369,13 @@ public abstract class VJoyOutputThread extends OutputThread {
 		if (vJoy != null) {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
+
+			for (int k : oldDownMouseButtons)
+				doMouseButtonInput(k, false);
+
+			for (int k : oldDownModifiers)
+				doKeyboardInput(k, false);
+
 			main.setStatusbarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
 		}
 	}

@@ -47,7 +47,7 @@ public class Input {
 	private int scrollClicks = 1;
 	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
 	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-	private final Set<Integer> downKeyCodes = new HashSet<Integer>();
+	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public Input(Controller controller) {
@@ -171,8 +171,8 @@ public class Input {
 			setButtons(id, true);
 	}
 
-	public Set<Integer> getDownKeyCodes() {
-		return downKeyCodes;
+	public Set<KeyStroke> getDownKeyStrokes() {
+		return downKeyStrokes;
 	}
 
 	public Set<KeyStroke> getDownUpKeyStrokes() {

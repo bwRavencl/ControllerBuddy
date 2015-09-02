@@ -79,7 +79,7 @@ public class ButtonToModeAction implements IAction {
 			else {
 				if (profile.getActiveMode().getUuid().equals(modeUuid)) {
 					profile.setActiveMode(0);
-					input.getDownKeyCodes().clear();
+					input.getDownKeyStrokes().clear();
 				}
 			}
 		} else {
@@ -89,7 +89,7 @@ public class ButtonToModeAction implements IAction {
 						profile.setActiveMode(modeUuid);
 					else if (profile.getActiveMode().getUuid().equals(modeUuid)) {
 						profile.setActiveMode(0);
-						input.getDownKeyCodes().clear();
+						input.getDownKeyStrokes().clear();
 					}
 					up = false;
 				}

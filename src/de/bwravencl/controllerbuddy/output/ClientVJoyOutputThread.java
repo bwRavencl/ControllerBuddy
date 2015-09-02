@@ -17,8 +17,6 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.DatagramPacket;
@@ -27,6 +25,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -220,67 +219,80 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							buttons[i - 1] = new BOOL(button ? 1L : 0L);
 						}
 
-						final Point currentPosition = MouseInfo.getPointerInfo().getLocation();
-						cursorX = currentPosition.x + Integer.parseInt(messageParts[10 + nButtons]);
+						cursorDeltaX = input.getCursorDeltaX();
 						input.setCursorDeltaX(0);
-						cursorY = currentPosition.y + Integer.parseInt(messageParts[11 + nButtons]);
+						cursorDeltaY = input.getCursorDeltaY();
 						input.setCursorDeltaY(0);
 
 						final int nDownMouseButtons = Integer.parseInt(messageParts[12 + nButtons]);
-						newDownMouseButtons = new HashSet<Integer>(nDownMouseButtons);
+						final Set<Integer> sourceDownMouseButtons = new HashSet<Integer>(nDownMouseButtons);
 						for (int i = 1; i <= nDownMouseButtons; i++)
-							newDownMouseButtons.add(Integer.parseInt(messageParts[12 + nButtons + i]));
-						oldDownMouseButtons.removeAll(newDownMouseButtons);
-						newUpMouseButtons = new HashSet<Integer>(oldDownMouseButtons);
-						oldDownMouseButtons.clear();
-						oldDownMouseButtons.addAll(newDownMouseButtons);
+							sourceDownMouseButtons.add(Integer.parseInt(messageParts[12 + nButtons + i]));
+						updateOutputSets(sourceDownMouseButtons, oldDownMouseButtons, newUpMouseButtons,
+								newDownMouseButtons);
 
+						downUpMouseButtons.clear();
 						final int nDownUpMouseButtons = Integer
 								.parseInt(messageParts[13 + nButtons + nDownMouseButtons]);
-						downUpMouseButtons = new HashSet<Integer>(nDownUpMouseButtons);
 						for (int i = 1; i <= nDownUpMouseButtons; i++) {
 							final int b = Integer.parseInt(messageParts[13 + nButtons + nDownMouseButtons + i]);
 							System.out.println("Added d/u mb: " + b);
 							downUpMouseButtons.add(b);
 						}
 
-						final int nDownKeyCodes = Integer
+						final Set<Integer> sourceModifiers = new HashSet<Integer>();
+						downNormalKeys.clear();
+						int nDownKeyStrokes = Integer
 								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
-						newDownKeyCodes = new HashSet<Integer>(nDownKeyCodes);
-						for (int i = 1; i <= nDownKeyCodes; i++)
-							newDownKeyCodes.add(Integer.parseInt(
-									messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i]));
-						oldDownKeyCodes.removeAll(newDownKeyCodes);
-						newUpKeyCodes = new HashSet<Integer>(oldDownKeyCodes);
-						oldDownKeyCodes.clear();
-						oldDownKeyCodes.addAll(newDownKeyCodes);
+						for (int i = 1; i <= nDownKeyStrokes; i++) {
+							final int nDownModifierCodes = Integer.parseInt(
+									messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i]);
+							for (int j = 1; j <= nDownModifierCodes; j++) {
+								final int k = Integer.parseInt(
+										messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i + j]);
+								sourceModifiers.add(k);
+							}
 
-						int nDownUpKeyStrokes = Integer.parseInt(
-								messageParts[15 + nButtons + nDownMouseButtons + nDownUpMouseButtons + nDownKeyCodes]);
-						downUpKeyStrokes = new HashSet<KeyStroke>(nDownUpKeyStrokes);
+							final int nDownKeyCodes = Integer.parseInt(
+									messageParts[15 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i]);
+							for (int j = 1; j <= nDownKeyCodes; j++) {
+								final int k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
+										+ nDownUpMouseButtons + nDownModifierCodes + i + j]);
+								downNormalKeys.add(k);
+							}
+
+							final int spacing = nDownModifierCodes + nDownKeyCodes + 1;
+							nDownKeyStrokes += spacing;
+							i += spacing;
+						}
+						updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
+
+						downUpKeyStrokes.clear();
+						int nDownUpKeyStrokes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
+								+ nDownUpMouseButtons + nDownKeyStrokes]);
 						for (int i = 1; i <= nDownUpKeyStrokes; i++) {
 							final KeyStroke keyStroke = new KeyStroke();
-							downUpKeyStrokes.add(keyStroke);
 
 							final int nDownUpModifierCodes = Integer.parseInt(messageParts[15 + nButtons
-									+ nDownMouseButtons + nDownUpMouseButtons + nDownKeyCodes + i]);
+									+ nDownMouseButtons + nDownUpMouseButtons + nDownKeyStrokes + i]);
 							final Integer[] modifierCodes = new Integer[nDownUpModifierCodes];
 							for (int j = 1; j <= nDownUpModifierCodes; j++) {
 								final int k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
-										+ nDownUpMouseButtons + nDownKeyCodes + i + j]);
+										+ nDownUpMouseButtons + nDownKeyStrokes + i + j]);
 								modifierCodes[j - 1] = k;
 							}
 							keyStroke.setModifierCodes(modifierCodes);
 
 							final int nDownUpKeyCodes = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyCodes + nDownUpModifierCodes + i]);
+									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i]);
 							final Integer[] keyCodes = new Integer[nDownUpKeyCodes];
 							for (int j = 1; j <= nDownUpKeyCodes; j++) {
 								final int k = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-										+ nDownUpMouseButtons + nDownKeyCodes + nDownUpModifierCodes + i + j]);
+										+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i + j]);
 								keyCodes[j - 1] = k;
 							}
 							keyStroke.setKeyCodes(keyCodes);
+							downUpKeyStrokes.add(keyStroke);
 
 							final int spacing = nDownUpModifierCodes + nDownUpKeyCodes + 1;
 							nDownUpKeyStrokes += spacing;
@@ -288,7 +300,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						}
 
 						scrollClicks = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-								+ nDownUpMouseButtons + nDownKeyCodes + nDownUpKeyStrokes]);
+								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
 
 						counter = newCounter;
 						retVal = true;

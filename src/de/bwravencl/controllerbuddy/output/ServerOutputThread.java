@@ -149,17 +149,22 @@ public class ServerOutputThread extends OutputThread {
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
 					for (int b : input.getDownMouseButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
-					input.getDownMouseButtons().clear();
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
 					for (int b : input.getDownUpMouseButtons())
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
 					input.getDownUpMouseButtons().clear();
 
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyCodes().size());
-					for (int k : input.getDownKeyCodes())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
-					input.getDownKeyCodes().clear();
+					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
+					for (KeyStroke ks : input.getDownKeyStrokes()) {
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
+						for (int k : ks.getModifierCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
+						for (int k : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+					}
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 					for (KeyStroke ks : input.getDownUpKeyStrokes()) {

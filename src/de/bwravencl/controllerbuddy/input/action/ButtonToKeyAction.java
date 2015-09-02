@@ -38,24 +38,16 @@ public class ButtonToKeyAction extends ToKeyAction {
 		if ((value != activationValue) ^ invert) {
 			if (downUp)
 				wasUp = true;
-			else {
-				for (int k : keystroke.getModifierCodes())
-					input.getDownKeyCodes().remove(k);
-				for (int k : keystroke.getKeyCodes())
-					input.getDownKeyCodes().remove(k);
-			}
+			else
+				input.getDownKeyStrokes().remove(keystroke);
 		} else {
 			if (downUp) {
 				if (wasUp) {
 					input.getDownUpKeyStrokes().add(keystroke);
 					wasUp = false;
 				}
-			} else {
-				for (int k : keystroke.getModifierCodes())
-					input.getDownKeyCodes().add(k);
-				for (int k : keystroke.getKeyCodes())
-					input.getDownKeyCodes().add(k);
-			}
+			} else
+				input.getDownKeyStrokes().add(keystroke);
 		}
 	}
 

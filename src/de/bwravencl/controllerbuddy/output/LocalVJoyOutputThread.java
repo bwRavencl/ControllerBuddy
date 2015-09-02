@@ -17,9 +17,9 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -71,30 +71,27 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 			input.getButtons()[i] = false;
 		}
 
-		final Point currentPosition = MouseInfo.getPointerInfo().getLocation();
-		cursorX = currentPosition.x + input.getCursorDeltaX();
+		cursorDeltaX = input.getCursorDeltaX();
 		input.setCursorDeltaX(0);
-		cursorY = currentPosition.y + input.getCursorDeltaY();
+		cursorDeltaY = input.getCursorDeltaY();
 		input.setCursorDeltaY(0);
 
-		newDownMouseButtons = new HashSet<Integer>(input.getDownMouseButtons());
-		input.getDownMouseButtons().clear();
-		oldDownMouseButtons.removeAll(newDownMouseButtons);
-		newUpMouseButtons = new HashSet<Integer>(oldDownMouseButtons);
-		oldDownMouseButtons.clear();
-		oldDownMouseButtons.addAll(newDownMouseButtons);
+		updateOutputSets(input.getDownMouseButtons(), oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons);
 
-		downUpMouseButtons = new HashSet<Integer>(input.getDownUpMouseButtons());
+		downUpMouseButtons.clear();
+		downUpMouseButtons.addAll((input.getDownUpMouseButtons()));
 		input.getDownUpMouseButtons().clear();
 
-		newDownKeyCodes = new HashSet<Integer>(input.getDownKeyCodes());
-		input.getDownKeyCodes().clear();
-		oldDownKeyCodes.removeAll(newDownKeyCodes);
-		newUpKeyCodes = new HashSet<Integer>(oldDownKeyCodes);
-		oldDownKeyCodes.clear();
-		oldDownKeyCodes.addAll(newDownKeyCodes);
+		final Set<Integer> sourceModifiers = new HashSet<Integer>();
+		downNormalKeys.clear();
+		for (KeyStroke ks : input.getDownKeyStrokes()) {
+			sourceModifiers.addAll(Arrays.asList(ks.getModifierCodes()));
+			downNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
+		}
+		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
 
-		downUpKeyStrokes = new HashSet<KeyStroke>(input.getDownUpKeyStrokes());
+		downUpKeyStrokes.clear();
+		downUpKeyStrokes.addAll(input.getDownUpKeyStrokes());
 		input.getDownUpKeyStrokes().clear();
 
 		scrollClicks = input.getScrollClicks();

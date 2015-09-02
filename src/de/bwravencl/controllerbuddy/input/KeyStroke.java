@@ -17,58 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class KeyStroke {
-
-	private static class RightModifierKey {
-
-		public RightModifierKey(String name, int keyCode) {
-			this.name = name;
-			this.keyCode = keyCode;
-		}
-
-		public String name;
-
-		public int keyCode;
-
-	}
-
-	private static final RightModifierKey[] rightModifierKeys = { new RightModifierKey("Right Shift", 0xA1),
-			new RightModifierKey("Right Control", 0xA3), new RightModifierKey("Right Alt", 0xA5),
-			new RightModifierKey("Right Windows", 0x5C) };
-
-	public static final int[] MODIFIER_CODES = { KeyEvent.VK_SHIFT, KeyEvent.VK_CONTROL, KeyEvent.VK_ALT,
-			KeyEvent.VK_WINDOWS, KeyEvent.VK_CONTEXT_MENU, KeyEvent.VK_ALT_GRAPH };
-
-	public static Map<String, Integer> getKeyCodeMap() {
-		final Map<String, Integer> keyCodeMap = new TreeMap<String, Integer>();
-
-		for (RightModifierKey rmk : rightModifierKeys)
-			keyCodeMap.put(rmk.name, rmk.keyCode);
-
-		final Field[] fields = KeyEvent.class.getDeclaredFields();
-		for (Field f : fields) {
-			if (Modifier.isStatic(f.getModifiers())) {
-				if (f.getType() == int.class && f.getName().startsWith("VK_")) {
-					try {
-						int keyCode = f.getInt(null);
-						keyCodeMap.put(KeyEvent.getKeyText(keyCode), keyCode);
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		return keyCodeMap;
-	}
 
 	private Integer[] keyCodes = {};
 	private Integer[] modifierCodes = {};
