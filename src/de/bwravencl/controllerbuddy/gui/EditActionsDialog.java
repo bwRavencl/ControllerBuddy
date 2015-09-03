@@ -252,12 +252,13 @@ public class EditActionsDialog extends JDialog {
 
 							for (Method m : selectedAssignedAction.getClass().getMethods()) {
 								final String methodDescription = m.toGenericString();
+								String methodName = methodDescription.substring(0, methodDescription.indexOf('('));
+								methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
-								if (methodDescription.contains(ACTION_PROPERTY_SETTER_PREFIX)) {
-									final String propertyName = methodDescription.substring(
-											methodDescription.indexOf(ACTION_PROPERTY_SETTER_PREFIX)
-													+ ACTION_PROPERTY_SETTER_PREFIX.length(),
-											methodDescription.indexOf('('));
+								if (methodName.startsWith(ACTION_PROPERTY_SETTER_PREFIX)) {
+									final String propertyName = methodName
+											.substring(methodName.indexOf(ACTION_PROPERTY_SETTER_PREFIX)
+													+ ACTION_PROPERTY_SETTER_PREFIX.length());
 									String parameterType = methodDescription.substring(
 											methodDescription.indexOf('(') + 1, methodDescription.indexOf(')'));
 									if (parameterType.contains("<"))
@@ -285,6 +286,7 @@ public class EditActionsDialog extends JDialog {
 										if (Boolean.class == clazz) {
 											final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
 											if (!isComponentEditor() && "DownUp".equals(propertyName)) {
+												m.invoke(selectedAssignedAction, true);
 												checkBox.setSelected(true);
 												checkBox.setEnabled(false);
 											} else
@@ -333,7 +335,9 @@ public class EditActionsDialog extends JDialog {
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
 											if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
-												spinner.setValue((Float) cycleAction.getActivationValue());
+												final float parentActivationValue = cycleAction.getActivationValue();
+												m.invoke(selectedAssignedAction, parentActivationValue);
+												spinner.setValue(parentActivationValue);
 												spinner.setEnabled(false);
 											}
 										} else if (Mode.class == clazz) {
@@ -479,7 +483,7 @@ public class EditActionsDialog extends JDialog {
 	private IAction[] getAssignedActions() {
 		final List<IAction> assignedActions;
 		if (isComponentEditor())
-			assignedActions = selectedMode.getComponentToActionMap().get(component.getName());
+			assignedActions = selectedMode.getComponentToActionsMap().get(component.getName());
 		else
 			assignedActions = cycleActions;
 
@@ -527,7 +531,7 @@ public class EditActionsDialog extends JDialog {
 					unsavedProfile.getComponentToModeActionMap().put(component.getName(), (ButtonToModeAction) action);
 				else {
 					if (isComponentEditor()) {
-						final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionMap();
+						final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
 						final String componentName = component.getName();
 
 						if (componentToActionMap.get(componentName) == null)
@@ -572,7 +576,7 @@ public class EditActionsDialog extends JDialog {
 				unsavedProfile.getComponentToModeActionMap().remove(component.getName());
 			else {
 				if (isComponentEditor()) {
-					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionMap();
+					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
 					final List<IAction> actions = componentToActionMap.get(component.getName());
 					actions.remove(selectedAssignedAction);
 
@@ -777,7 +781,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class AvailableAction {
+	private static class AvailableAction {
 
 		private final String className;
 

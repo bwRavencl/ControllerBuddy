@@ -73,6 +73,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,7 @@ import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 
-public class Main {
+public final class Main {
 
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
@@ -115,8 +116,6 @@ public class Main {
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
-	public static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
-			"/icon_128.png" };
 
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
@@ -128,6 +127,8 @@ public class Main {
 	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
 
 	private static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
+	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
+			"/icon_128.png" };
 
 	private Controller selectedController;
 	private Input input;
@@ -180,6 +181,7 @@ public class Main {
 			@Override
 			public void run() {
 				stopLocal();
+				stopClient();
 				stopServer();
 			}
 		});
@@ -674,7 +676,7 @@ public class Main {
 
 	public void stopLocal() {
 		if (localThread != null)
-			localThread.stopFeeder();
+			localThread.stopOutput();
 		stopLocalRadioButtonMenuItem.setSelected(true);
 		stopLocalRadioButtonMenuItem.setEnabled(false);
 		startLocalRadioButtonMenuItem.setEnabled(true);
@@ -684,7 +686,7 @@ public class Main {
 
 	public void stopClient() {
 		if (clientThread != null)
-			clientThread.stopFeeder();
+			clientThread.stopOutput();
 		stopClientRadioButtonMenuItem.setSelected(true);
 		stopClientRadioButtonMenuItem.setEnabled(false);
 		startLocalRadioButtonMenuItem.setEnabled(true);
@@ -694,7 +696,7 @@ public class Main {
 
 	public void stopServer() {
 		if (serverThread != null)
-			serverThread.closeSocket();
+			serverThread.stopOutput();
 		stopServerRadioButtonMenuItem.setSelected(true);
 		stopServerRadioButtonMenuItem.setEnabled(false);
 		startLocalRadioButtonMenuItem.setEnabled(true);
@@ -706,7 +708,7 @@ public class Main {
 		boolean result = false;
 
 		try {
-			final String jsonString = new String(Files.readAllBytes(file.toPath()));
+			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
 					.create();
 
@@ -809,6 +811,7 @@ public class Main {
 
 		public void actionPerformed(ActionEvent e) {
 			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				input.reset();
 				File file = fileChooser.getSelectedFile();
 				final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
 				if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
@@ -819,7 +822,7 @@ public class Main {
 				final String jsonString = gson.toJson(Input.getProfile());
 
 				try (FileOutputStream fos = new FileOutputStream(file)) {
-					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos));
+					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
 					writer.write(jsonString);
 					writer.flush();
 					fos.flush();
@@ -849,7 +852,7 @@ public class Main {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Main.this.frame.dispose();
+			System.exit(0);
 		}
 
 	}
@@ -1216,7 +1219,7 @@ public class Main {
 
 	}
 
-	private class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<T> {
+	private static class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<T> {
 
 		private static final String PROPERTY_TYPE = "type";
 		private static final String PROPERTY_DATA = "data";

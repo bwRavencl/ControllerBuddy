@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-public class KeyStroke {
+public class KeyStroke implements Cloneable {
 
 	private Integer[] keyCodes = {};
 	private Integer[] modifierCodes = {};

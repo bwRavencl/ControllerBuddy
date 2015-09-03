@@ -51,6 +51,17 @@ public abstract class VJoyOutputThread extends OutputThread {
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
 
+	private static final DWORD MOUSEEVENTF_MOVE = new DWORD(0x0001L);
+	private static final DWORD MOUSEEVENTF_LEFTDOWN = new DWORD(0x0002L);
+	private static final DWORD MOUSEEVENTF_LEFTUP = new DWORD(0x0004L);
+	private static final DWORD MOUSEEVENTF_RIGHTDOWN = new DWORD(0x0008L);
+	private static final DWORD MOUSEEVENTF_RIGHTUP = new DWORD(0x0010L);
+	private static final DWORD MOUSEEVENTF_MIDDLEDOWN = new DWORD(0x0020L);
+	private static final DWORD MOUSEEVENTF_MIDDLEUP = new DWORD(0x0040L);
+	private static final DWORD MOUSEEVENTF_WHEEL = new DWORD(0x0800L);
+	private static final DWORD KEYEVENTF_KEYUP = new DWORD(0x0002L);
+	private static final long WHEEL_DELTA = 120L;
+
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
 	protected boolean run = true;
@@ -264,26 +275,25 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected abstract boolean readInput() throws Exception;
 
-	private static void doMouseButtonInput(int button, boolean press) {
+	private static void doMouseButtonInput(int button, boolean down) {
 		final INPUT input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_MOUSE);
 		input.input.setType(MOUSEINPUT.class);
-		long mask = 0L;
 		switch (button) {
 		case 1:
-			mask = (press ? 0x0002L : 0x0004L);
+			input.input.mi.dwFlags = (down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP);
 			break;
 		case 2:
-			mask = (press ? 0x0008L : 0x0010L);
+			input.input.mi.dwFlags = (down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP);
 			break;
 		case 3:
-			mask = (press ? 0x0020L : 0x0040L);
+			input.input.mi.dwFlags = (down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP);
+			break;
+		default:
 			break;
 		}
-		input.input.mi.dwFlags = new DWORD(mask);
 
-		if (mask != 0L)
-			User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
 
 	private static void doKeyboardInput(int keyCode, boolean down) {
@@ -292,7 +302,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wVk = new WORD(keyCode);
 		if (!down)
-			input.input.ki.dwFlags = new DWORD(0x0002L);
+			input.input.ki.dwFlags = KEYEVENTF_KEYUP;
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
@@ -317,7 +327,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				input.input.setType(MOUSEINPUT.class);
 				input.input.mi.dx = new LONG(cursorDeltaX);
 				input.input.mi.dy = new LONG(cursorDeltaY);
-				input.input.mi.dwFlags = new DWORD(0x0001L);
+				input.input.mi.dwFlags = MOUSEEVENTF_MOVE;
 
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
@@ -357,8 +367,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 				final INPUT input = new INPUT();
 				input.type = new DWORD(INPUT.INPUT_MOUSE);
 				input.input.setType(MOUSEINPUT.class);
-				input.input.mi.mouseData = new DWORD(scrollClicks * 120L);
-				input.input.mi.dwFlags = new DWORD(0x0800L);
+				input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
+				input.input.mi.dwFlags = MOUSEEVENTF_WHEEL;
 
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
@@ -380,7 +390,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	public void stopFeeder() {
+	@Override
+	public void stopOutput() {
+		super.stopOutput();
+
 		run = false;
 	}
 }

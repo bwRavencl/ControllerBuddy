@@ -25,6 +25,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -84,7 +85,8 @@ public class ServerOutputThread extends OutputThread {
 					serverSocket.setSoTimeout(0);
 					serverSocket.receive(receivePacket);
 					clientIPAddress = receivePacket.getAddress();
-					message = new String(receivePacket.getData(), 0, receivePacket.getLength());
+					message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+							StandardCharsets.US_ASCII);
 
 					if (message.startsWith(PROTOCOL_MESSAGE_CLIENT_HELLO)) {
 						final String[] messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
@@ -194,7 +196,8 @@ public class ServerOutputThread extends OutputThread {
 							serverSocket.receive(receivePacket);
 
 							if (clientIPAddress.equals(receivePacket.getAddress())) {
-								message = new String(receivePacket.getData(), 0, receivePacket.getLength());
+								message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+										StandardCharsets.US_ASCII);
 
 								if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
 									counter++;
@@ -229,7 +232,7 @@ public class ServerOutputThread extends OutputThread {
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		} finally {
-			closeSocket();
+			stopOutput();
 		}
 	}
 
@@ -237,7 +240,10 @@ public class ServerOutputThread extends OutputThread {
 		main.setStatusbarText(rb.getString("STATUS_LISTENING") + port);
 	}
 
-	public void closeSocket() {
+	@Override
+	public void stopOutput() {
+		super.stopOutput();
+
 		if (serverSocket != null)
 			serverSocket.close();
 

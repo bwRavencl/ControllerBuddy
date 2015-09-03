@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToScrollAction extends ToScrollAction {
 
-	public final float DEFAULT_DEAD_ZONE = 0.25f;
+	public static final float DEFAULT_DEAD_ZONE = 0.25f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 

@@ -21,8 +21,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	public final float DEFAULT_DEAD_ZONE = 0.25f;
-	public final float DEFAULT_SENSITIVITY = 1.0f;
+	public static final float DEFAULT_DEAD_ZONE = 0.25f;
+	public static final float DEFAULT_SENSITIVITY = 1.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float sensitivity = DEFAULT_SENSITIVITY;

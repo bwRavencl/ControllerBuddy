@@ -21,8 +21,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToCursorAction extends InvertableAction {
 
-	public final float DEFAULT_DEAD_ZONE = 0.25f;
-	public final float DEFAULT_MAX_SPEED = 750.0f;
+	public static final float DEFAULT_DEAD_ZONE = 0.25f;
+	public static final float DEFAULT_MAX_SPEED = 750.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float maxSpeed = DEFAULT_MAX_SPEED;

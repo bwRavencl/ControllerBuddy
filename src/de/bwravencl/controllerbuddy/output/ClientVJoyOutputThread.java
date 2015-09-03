@@ -24,6 +24,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,7 +145,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				final DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				try {
 					clientSocket.receive(receivePacket);
-					String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
+					String message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+							StandardCharsets.US_ASCII);
 
 					if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_SERVER_HELLO)) {
 						final String[] messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
@@ -197,7 +199,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 			try {
 				final DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				clientSocket.receive(receivePacket);
-				final String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
+				final String message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+						StandardCharsets.US_ASCII);
 
 				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE)) {
 					final String[] messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
@@ -219,10 +222,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							buttons[i - 1] = new BOOL(button ? 1L : 0L);
 						}
 
-						cursorDeltaX = input.getCursorDeltaX();
-						input.setCursorDeltaX(0);
-						cursorDeltaY = input.getCursorDeltaY();
-						input.setCursorDeltaY(0);
+						cursorDeltaX = Integer.parseInt(messageParts[10 + nButtons]);
+						cursorDeltaY = Integer.parseInt(messageParts[11 + nButtons]);
 
 						final int nDownMouseButtons = Integer.parseInt(messageParts[12 + nButtons]);
 						final Set<Integer> sourceDownMouseButtons = new HashSet<Integer>(nDownMouseButtons);
@@ -236,7 +237,6 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 								.parseInt(messageParts[13 + nButtons + nDownMouseButtons]);
 						for (int i = 1; i <= nDownUpMouseButtons; i++) {
 							final int b = Integer.parseInt(messageParts[13 + nButtons + nDownMouseButtons + i]);
-							System.out.println("Added d/u mb: " + b);
 							downUpMouseButtons.add(b);
 						}
 
@@ -253,8 +253,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 								sourceModifiers.add(k);
 							}
 
-							final int nDownKeyCodes = Integer.parseInt(
-									messageParts[15 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i]);
+							final int nDownKeyCodes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
+									+ nDownUpMouseButtons + nDownModifierCodes + i]);
 							for (int j = 1; j <= nDownKeyCodes; j++) {
 								final int k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
 										+ nDownUpMouseButtons + nDownModifierCodes + i + j]);
@@ -316,6 +316,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				run = false;
 			}
 			break;
 		}

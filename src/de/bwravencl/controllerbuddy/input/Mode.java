@@ -20,19 +20,26 @@ package de.bwravencl.controllerbuddy.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import net.brockmatt.util.ResourceBundleUtil;
 
 public class Mode implements Cloneable {
 
 	private UUID uuid;
-	private String description = new String("New Mode");
-	private Map<String, List<IAction>> componentToActionMap = new HashMap<String, List<IAction>>();
+	private String description;
+	private Map<String, List<IAction>> componentToActionsMap = new HashMap<String, List<IAction>>();
 
 	public Mode() {
 		uuid = UUID.randomUUID();
+		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+				Locale.getDefault());
+		description = rb.getString("NEW_MODE_DESCRIPTION");
 	}
 
 	public Mode(String uuid) {
@@ -55,13 +62,12 @@ public class Mode implements Cloneable {
 		this.description = description;
 	}
 
-	public Map<String, List<IAction>> getComponentToActionMap() {
-		return componentToActionMap;
+	public Map<String, List<IAction>> getComponentToActionsMap() {
+		return componentToActionsMap;
 	}
 
-	public void setComponentToActionMap(
-			Map<String, List<IAction>> componentToActionMap) {
-		this.componentToActionMap = componentToActionMap;
+	public void setComponentToActionMap(Map<String, List<IAction>> componentToActionsMap) {
+		this.componentToActionsMap = componentToActionsMap;
 	}
 
 	@Override
@@ -75,8 +81,7 @@ public class Mode implements Cloneable {
 		mode.setDescription(new String(description));
 
 		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<String, List<IAction>>();
-		for (Map.Entry<String, List<IAction>> e : componentToActionMap
-				.entrySet()) {
+		for (Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet()) {
 			for (IAction a : e.getValue()) {
 				final String key = new String(e.getKey());
 

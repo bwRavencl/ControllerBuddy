@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
@@ -68,15 +69,28 @@ public class Input {
 				modeAction.doAction(this, c.getPollData());
 
 			final List<Mode> modes = profile.getModes();
-			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionMap();
+			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
 
 			List<IAction> actions = componentToActionMap.get(c.getName());
 			if (actions == null)
-				actions = modes.get(0).getComponentToActionMap().get(c.getName());
+				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
 
 			if (actions != null)
 				for (IAction a : actions)
 					a.doAction(this, c.getPollData());
+		}
+	}
+
+	public void reset() {
+		profile.setActiveMode(0);
+
+		for (Mode m : profile.getModes()) {
+			for (List<IAction> actions : m.getComponentToActionsMap().values()) {
+				for (IAction a : actions) {
+					if (a instanceof ButtonToCycleAction)
+						((ButtonToCycleAction) a).reset();
+				}
+			}
 		}
 	}
 
@@ -102,7 +116,7 @@ public class Input {
 			}
 
 			for (Mode m : profile.getModes())
-				for (String s : m.getComponentToActionMap().keySet()) {
+				for (String s : m.getComponentToActionsMap().keySet()) {
 					boolean componentFound = false;
 
 					for (Component c : controller.getComponents())

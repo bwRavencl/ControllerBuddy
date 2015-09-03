@@ -26,8 +26,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public interface IAction extends Cloneable {
 
-	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(
-			Main.STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
+	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
 
 	public void doAction(Input input, float value);
 

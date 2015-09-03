@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 
-	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 

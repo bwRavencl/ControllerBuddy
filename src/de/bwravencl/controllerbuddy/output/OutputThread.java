@@ -78,4 +78,8 @@ public abstract class OutputThread extends Thread {
 		input.setnButtons(nButtons);
 	}
 
+	public void stopOutput() {
+		input.reset();
+	}
+
 }

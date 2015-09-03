@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class ButtonToCycleAction implements IAction {
 
-	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
 	private boolean wasUp = true;
 	private int index = 0;
@@ -47,11 +47,16 @@ public class ButtonToCycleAction implements IAction {
 		this.actions = actions;
 	}
 
+	public void reset() {
+		index = 0;
+	}
+
 	@Override
 	public void doAction(Input input, float value) {
-		if (value != activationValue)
+		if (value != activationValue) {
+			actions.get(index).doAction(input, value);
 			wasUp = true;
-		else if (wasUp) {
+		} else if (wasUp) {
 			actions.get(index).doAction(input, value);
 
 			if (index == actions.size() - 1)
