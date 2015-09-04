@@ -1,5 +1,6 @@
+![ControllerBuddy Logo](https://github.com/bwRavencl/ControllerBuddy/raw/master/res/icon_128.png
+"ControllerBuddy")
 ##ControllerBuddy
-===============
 
 #####License Information:
 GNU General Public License v2.0
@@ -37,21 +38,21 @@ For maximum platform-independence ControllerBuddy was implemented as a Java appl
 
 #####Architecture:
 <pre>
-       Host:                   Client:
+       Host:                             Client:
 
 Physical Controller
          |
          |
          v
-  ControllerBuddy  ----->  ControllerBuddy
-         |                        |
-         |                        |
-         v                        v
- vJoy Device Driver       vJoy Device Driver
-         |                        |
-         |                        |
-         v                        v
- Target Application       Target Application
+  ControllerBuddy  --------------->  ControllerBuddy
+         |                                  |
+         |                                  |
+         v                                  v
+ vJoy Device Driver                 vJoy Device Driver
+         |                                  |
+         |                                  |
+         v                                  v
+ Target Application                 Target Application
 </pre>
 
 #####Requirements:
