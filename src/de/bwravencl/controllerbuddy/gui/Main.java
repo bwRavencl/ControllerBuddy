@@ -105,14 +105,539 @@ import net.java.games.input.ControllerEnvironment;
 
 public final class Main {
 
+	private class AddModeAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4881923833724315489L;
+
+		public AddModeAction() {
+			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final Mode mode = new Mode();
+			Input.getProfile().getModes().add(mode);
+
+			setUnsavedChangesTitle();
+			updateModesPanel();
+		}
+
+	}
+
+	private class ChangeVJoyDirectoryAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7672382299595684105L;
+
+		public ChangeVJoyDirectoryAction() {
+			putValue(NAME, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final JFileChooser vJoyDirectoryFileChooser = new JFileChooser(
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
+			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+			if (vJoyDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				final String path = vJoyDirectoryFileChooser.getSelectedFile().getAbsolutePath();
+				final File file = new File(VJoyOutputThread.getLibraryFilePath(path));
+
+				if (file.exists()) {
+					preferences.put(PREFERENCES_VJOY_DIRECTORY, path);
+					vJoyDirectoryLabel1.setText(path);
+				} else
+					JOptionPane.showMessageDialog(frame,
+							rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_PREFIX")
+									+ VJoyOutputThread.getDefaultInstallationPath()
+									+ rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_SUFFIX"),
+							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+	}
+
+	private class EditComponentAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8811608785278071903L;
+
+		private final Component component;
+
+		public EditComponentAction(Component component) {
+			this.component = component;
+
+			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_PREFIX") + component.getName()
+					+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
+			editComponentDialog.setVisible(true);
+
+			suspendControllerSettingsUpdate = false;
+		}
+
+	}
+
+	private static class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<T> {
+
+		private static final String PROPERTY_TYPE = "type";
+		private static final String PROPERTY_DATA = "data";
+
+		@Override
+		public T deserialize(JsonElement elem, java.lang.reflect.Type interfaceType, JsonDeserializationContext context)
+				throws JsonParseException {
+			final JsonObject wrapper = (JsonObject) elem;
+			final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
+			final JsonElement data = get(wrapper, PROPERTY_DATA);
+			final java.lang.reflect.Type actualType = typeForName(typeName);
+
+			return context.deserialize(data, actualType);
+		}
+
+		private JsonElement get(final JsonObject wrapper, String memberName) {
+			final JsonElement elem = wrapper.get(memberName);
+			if (elem == null)
+				throw new JsonParseException(
+						"No member '" + memberName + "' found in what was expected to be an interface wrapper");
+			return elem;
+		}
+
+		@Override
+		public JsonElement serialize(T object, java.lang.reflect.Type interfaceType, JsonSerializationContext context) {
+			final JsonObject wrapper = new JsonObject();
+			wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
+			wrapper.add(PROPERTY_DATA, context.serialize(object));
+
+			return wrapper;
+		}
+
+		private java.lang.reflect.Type typeForName(final JsonElement typeElem) {
+			try {
+				return Class.forName(typeElem.getAsString());
+			} catch (ClassNotFoundException e) {
+				throw new JsonParseException(e);
+			}
+		}
+
+	}
+
+	private class NewProfileAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5703987691203427504L;
+
+		public NewProfileAction() {
+			putValue(NAME, rb.getString("NEW_PROFILE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("NEW_PROFILE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			newProfile();
+		}
+
+	}
+
+	private class OpenFileAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8932510785275935297L;
+
+		public OpenFileAction() {
+			putValue(NAME, rb.getString("OPEN_PROFILE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_PROFILE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				final File file = fileChooser.getSelectedFile();
+
+				if (!loadProfile(file))
+					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+	}
+
+	private class QuitAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8952460723177800923L;
+
+		public QuitAction() {
+			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+		}
+
+	}
+
+	private class RemoveModeAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1056071724769862582L;
+
+		private final Mode mode;
+
+		public RemoveModeAction(Mode mode) {
+			this.mode = mode;
+
+			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_PREFIX") + mode.getDescription()
+					+ rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_SUFFIX"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Input.getProfile().removeMode(mode);
+			setUnsavedChangesTitle();
+			updateModesPanel();
+		}
+
+	}
+
+	private class SaveFileAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8469921697479550983L;
+
+		public SaveFileAction() {
+			putValue(NAME, rb.getString("SAVE_PROFILE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_PROFILE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				input.reset();
+				File file = fileChooser.getSelectedFile();
+				final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
+				if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
+					file = new File(file.getAbsoluteFile() + profileFileSuffix);
+
+				final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+						.create();
+				final String jsonString = gson.toJson(Input.getProfile());
+
+				try (FileOutputStream fos = new FileOutputStream(file)) {
+					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+					writer.write(jsonString);
+					writer.flush();
+					fos.flush();
+					fos.close();
+
+					saveLastProfile(file);
+					frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+					setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	private class SelectControllerAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2043467156713598592L;
+
+		private final Controller controller;
+
+		public SelectControllerAction(Controller controller) {
+			this.controller = controller;
+
+			final String name = controller.getName();
+			putValue(NAME, name);
+			putValue(SHORT_DESCRIPTION, rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_PREFIX") + name
+					+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			selectedController = controller;
+			newProfile();
+			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
+		}
+
+	}
+
+	private class SetHostAction extends AbstractAction implements FocusListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7674562782751876814L;
+
+		private final JTextField hostTextField;
+
+		public SetHostAction(JTextField hostTextField) {
+			this.hostTextField = hostTextField;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			setHost();
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			setHost();
+		}
+
+		private void setHost() {
+			final String host = hostTextField.getText();
+
+			if (host != null && host.length() > 0)
+				preferences.put(PREFERENCES_HOST, host);
+			else
+				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST));
+		}
+
+	}
+
+	private class SetModeDescriptionAction extends AbstractAction implements FocusListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6706537047137827688L;
+
+		private final Mode mode;
+		private final JTextField modeDescriptionTextField;
+
+		public SetModeDescriptionAction(Mode mode, JTextField modeDescriptionTextField) {
+			this.mode = mode;
+			this.modeDescriptionTextField = modeDescriptionTextField;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			setModeDescription();
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			setModeDescription();
+		}
+
+		private void setModeDescription() {
+			final String description = modeDescriptionTextField.getText();
+
+			if (description != null && description.length() > 0) {
+				mode.setDescription(description);
+				setUnsavedChangesTitle();
+			} else
+				modeDescriptionTextField.setText(mode.getDescription());
+		}
+
+	}
+
+	private class ShowAboutDialogAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2578971543384483382L;
+
+		public ShowAboutDialogAction() {
+			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+
+	}
+
+	private class StartClientAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3975574941559749481L;
+
+		public StartClientAction() {
+			putValue(NAME, rb.getString("START_CLIENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("START_CLIENT_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			startLocalRadioButtonMenuItem.setEnabled(false);
+			startClientRadioButtonMenuItem.setEnabled(false);
+			startServerRadioButtonMenuItem.setEnabled(false);
+			stopClientRadioButtonMenuItem.setEnabled(true);
+			clientThread = new ClientVJoyOutputThread(Main.this, input);
+			clientThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
+			clientThread.setHost(hostTextField.getText());
+			clientThread.setPort((int) portSpinner.getValue());
+			clientThread.setTimeout((int) timeoutSpinner.getValue());
+			clientThread.start();
+		}
+
+	}
+
+	private class StartLocalAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2003502124995392039L;
+
+		public StartLocalAction() {
+			putValue(NAME, rb.getString("START_LOCAL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("START_LOCAL_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			startLocalRadioButtonMenuItem.setEnabled(false);
+			startClientRadioButtonMenuItem.setEnabled(false);
+			startServerRadioButtonMenuItem.setEnabled(false);
+			stopLocalRadioButtonMenuItem.setEnabled(true);
+			localThread = new LocalVJoyOutputThread(Main.this, input);
+			localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
+			localThread.setUpdateRate((int) updateRateSpinner.getValue());
+			localThread.start();
+		}
+
+	}
+
+	private class StartServerAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1758447420975631146L;
+
+		public StartServerAction() {
+			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("START_SERVER_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			startLocalRadioButtonMenuItem.setEnabled(false);
+			startClientRadioButtonMenuItem.setEnabled(false);
+			startServerRadioButtonMenuItem.setEnabled(false);
+			stopServerRadioButtonMenuItem.setEnabled(true);
+			serverThread = new ServerOutputThread(Main.this, input);
+			serverThread.setPort((int) portSpinner.getValue());
+			serverThread.setTimeout((int) timeoutSpinner.getValue());
+			serverThread.setUpdateRate((int) updateRateSpinner.getValue());
+			serverThread.start();
+		}
+
+	}
+
+	private class StopClientAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2863419586328503426L;
+
+		public StopClientAction() {
+			putValue(NAME, rb.getString("STOP_CLIENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopClient();
+		}
+
+	}
+
+	private class StopLocalAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4859431944733030332L;
+
+		public StopLocalAction() {
+			putValue(NAME, rb.getString("STOP_LOCAL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopLocal();
+		}
+
+	}
+
+	private class StopServerAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6023207463370122769L;
+
+		public StopServerAction() {
+			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			stopServer();
+		}
+
+	}
+
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 600;
 	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 
+	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
@@ -121,38 +646,13 @@ public final class Main {
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_TIMEOUT = "timeout";
 	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
-
 	private static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
-	private Controller selectedController;
-	private Input input;
-	private LocalVJoyOutputThread localThread;
-	private ClientVJoyOutputThread clientThread;
-	private ServerOutputThread serverThread;
-	private boolean suspendControllerSettingsUpdate = false;
-	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
-	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
-
-	private final JFrame frame;
-	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
-	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
-	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
-	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
-	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
-	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
-	private final JPanel modesListPanel;
-	private JLabel vJoyDirectoryLabel1;
-	private JSpinner vJoyDeviceSpinner;
-	private JTextField hostTextField;
-	private final JSpinner portSpinner;
-	private final JSpinner timeoutSpinner;
-	private final JSpinner updateRateSpinner;
-	private final JScrollPane modesScrollPane;
-	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
-	private final JFileChooser fileChooser = new JFileChooser();
+	public static boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -169,9 +669,53 @@ public final class Main {
 		});
 	}
 
-	public static boolean isWindows() {
-		return System.getProperty("os.name").startsWith("Windows");
-	}
+	private Controller selectedController;
+	private Input input;
+	private LocalVJoyOutputThread localThread;
+	private ClientVJoyOutputThread clientThread;
+
+	private ServerOutputThread serverThread;
+
+	private boolean suspendControllerSettingsUpdate = false;
+
+	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
+
+	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
+
+	private final JFrame frame;
+
+	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
+
+	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
+
+	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
+
+	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
+
+	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
+
+	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+
+	private final JPanel modesListPanel;
+
+	private JLabel vJoyDirectoryLabel1;
+
+	private JSpinner vJoyDeviceSpinner;
+
+	private JTextField hostTextField;
+
+	private final JSpinner portSpinner;
+
+	private final JSpinner timeoutSpinner;
+
+	private final JSpinner updateRateSpinner;
+
+	private final JScrollPane modesScrollPane;
+
+	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
+
+	private final JFileChooser fileChooser = new JFileChooser();
 
 	public Main() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -210,6 +754,14 @@ public final class Main {
 		deviceMenu.addMenuListener(new MenuListener() {
 
 			@Override
+			public void menuCanceled(MenuEvent e) {
+			}
+
+			@Override
+			public void menuDeselected(MenuEvent e) {
+			}
+
+			@Override
 			public void menuSelected(MenuEvent e) {
 				deviceMenu.removeAll();
 
@@ -220,14 +772,6 @@ public final class Main {
 							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN
 							&& !c.getName().startsWith("vJoy"))
 						deviceMenu.add(new SelectControllerAction(c));
-			}
-
-			@Override
-			public void menuDeselected(MenuEvent e) {
-			}
-
-			@Override
-			public void menuCanceled(MenuEvent e) {
 			}
 		});
 		deviceMenu.setEnabled(true);
@@ -558,7 +1102,15 @@ public final class Main {
 											editButton.addMouseListener(new MouseListener() {
 
 												@Override
-												public void mouseReleased(MouseEvent e) {
+												public void mouseClicked(MouseEvent e) {
+												}
+
+												@Override
+												public void mouseEntered(MouseEvent e) {
+												}
+
+												@Override
+												public void mouseExited(MouseEvent e) {
 												}
 
 												@Override
@@ -567,15 +1119,7 @@ public final class Main {
 												}
 
 												@Override
-												public void mouseExited(MouseEvent e) {
-												}
-
-												@Override
-												public void mouseEntered(MouseEvent e) {
-												}
-
-												@Override
-												public void mouseClicked(MouseEvent e) {
+												public void mouseReleased(MouseEvent e) {
 												}
 											});
 											componentPanel.add(editButton,
@@ -604,6 +1148,95 @@ public final class Main {
 			};
 			updateAssignmentsPanelThread.start();
 		}
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	private boolean loadProfile(File file) {
+		boolean result = false;
+
+		try {
+			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+					.create();
+
+			final Profile profile = gson.fromJson(jsonString, Profile.class);
+
+			result = Input.setProfile(profile, input.getController());
+			if (result)
+				saveLastProfile(file);
+
+			updateModesPanel();
+			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+
+			return result;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	private void newProfile() {
+		input = new Input(selectedController);
+
+		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+		updateModesPanel();
+		setStatusbarText(rb.getString("STATUS_READY"));
+	}
+
+	private void saveLastProfile(File file) {
+		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
+	}
+
+	public void setStatusbarText(String text) {
+		if (statusLabel != null)
+			statusLabel.setText(text);
+	}
+
+	public void setUnsavedChangesTitle() {
+		final String title = frame.getTitle();
+
+		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
+				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
+			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
+	}
+
+	public void stopClient() {
+		if (clientThread != null)
+			clientThread.stopOutput();
+		stopClientRadioButtonMenuItem.setSelected(true);
+		stopClientRadioButtonMenuItem.setEnabled(false);
+		startLocalRadioButtonMenuItem.setEnabled(true);
+		startClientRadioButtonMenuItem.setEnabled(true);
+		startServerRadioButtonMenuItem.setEnabled(true);
+	}
+
+	public void stopLocal() {
+		if (localThread != null)
+			localThread.stopOutput();
+		stopLocalRadioButtonMenuItem.setSelected(true);
+		stopLocalRadioButtonMenuItem.setEnabled(false);
+		startLocalRadioButtonMenuItem.setEnabled(true);
+		startClientRadioButtonMenuItem.setEnabled(true);
+		startServerRadioButtonMenuItem.setEnabled(true);
+	}
+
+	public void stopServer() {
+		if (serverThread != null)
+			serverThread.stopOutput();
+		stopServerRadioButtonMenuItem.setSelected(true);
+		stopServerRadioButtonMenuItem.setEnabled(false);
+		startLocalRadioButtonMenuItem.setEnabled(true);
+		startClientRadioButtonMenuItem.setEnabled(true);
+		startServerRadioButtonMenuItem.setEnabled(true);
 	}
 
 	private void updateModesPanel() {
@@ -661,620 +1294,6 @@ public final class Main {
 				modesScrollPane.setViewportView(modesListPanel);
 			}
 		});
-	}
-
-	private void newProfile() {
-		input = new Input(selectedController);
-
-		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
-		updateModesPanel();
-		setStatusbarText(rb.getString("STATUS_READY"));
-	}
-
-	public void stopLocal() {
-		if (localThread != null)
-			localThread.stopOutput();
-		stopLocalRadioButtonMenuItem.setSelected(true);
-		stopLocalRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
-		startServerRadioButtonMenuItem.setEnabled(true);
-	}
-
-	public void stopClient() {
-		if (clientThread != null)
-			clientThread.stopOutput();
-		stopClientRadioButtonMenuItem.setSelected(true);
-		stopClientRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
-		startServerRadioButtonMenuItem.setEnabled(true);
-	}
-
-	public void stopServer() {
-		if (serverThread != null)
-			serverThread.stopOutput();
-		stopServerRadioButtonMenuItem.setSelected(true);
-		stopServerRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
-		startServerRadioButtonMenuItem.setEnabled(true);
-	}
-
-	private boolean loadProfile(File file) {
-		boolean result = false;
-
-		try {
-			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-					.create();
-
-			final Profile profile = gson.fromJson(jsonString, Profile.class);
-
-			result = Input.setProfile(profile, input.getController());
-			if (result)
-				saveLastProfile(file);
-
-			updateModesPanel();
-			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
-
-			return result;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return result;
-	}
-
-	public Preferences getPreferences() {
-		return preferences;
-	}
-
-	public JFrame getFrame() {
-		return frame;
-	}
-
-	private void saveLastProfile(File file) {
-		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
-	}
-
-	public void setStatusbarText(String text) {
-		if (statusLabel != null)
-			statusLabel.setText(text);
-	}
-
-	public void setUnsavedChangesTitle() {
-		final String title = frame.getTitle();
-
-		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
-				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
-			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
-	}
-
-	private class NewProfileAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5703987691203427504L;
-
-		public NewProfileAction() {
-			putValue(NAME, rb.getString("NEW_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("NEW_PROFILE_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			newProfile();
-		}
-
-	}
-
-	private class OpenFileAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -8932510785275935297L;
-
-		public OpenFileAction() {
-			putValue(NAME, rb.getString("OPEN_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_PROFILE_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final File file = fileChooser.getSelectedFile();
-
-				if (!loadProfile(file))
-					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
-		}
-
-	}
-
-	private class SaveFileAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -8469921697479550983L;
-
-		public SaveFileAction() {
-			putValue(NAME, rb.getString("SAVE_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_PROFILE_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				input.reset();
-				File file = fileChooser.getSelectedFile();
-				final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
-				if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
-					file = new File(file.getAbsoluteFile() + profileFileSuffix);
-
-				final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-						.create();
-				final String jsonString = gson.toJson(Input.getProfile());
-
-				try (FileOutputStream fos = new FileOutputStream(file)) {
-					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-					writer.write(jsonString);
-					writer.flush();
-					fos.flush();
-					fos.close();
-
-					saveLastProfile(file);
-					frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-					setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-
-	}
-
-	private class QuitAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 8952460723177800923L;
-
-		public QuitAction() {
-			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.exit(0);
-		}
-
-	}
-
-	private class StartLocalAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2003502124995392039L;
-
-		public StartLocalAction() {
-			putValue(NAME, rb.getString("START_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_LOCAL_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopLocalRadioButtonMenuItem.setEnabled(true);
-			localThread = new LocalVJoyOutputThread(Main.this, input);
-			localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-			localThread.setUpdateRate((int) updateRateSpinner.getValue());
-			localThread.start();
-		}
-
-	}
-
-	private class StopLocalAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -4859431944733030332L;
-
-		public StopLocalAction() {
-			putValue(NAME, rb.getString("STOP_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			stopLocal();
-		}
-
-	}
-
-	private class StartClientAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 3975574941559749481L;
-
-		public StartClientAction() {
-			putValue(NAME, rb.getString("START_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_CLIENT_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopClientRadioButtonMenuItem.setEnabled(true);
-			clientThread = new ClientVJoyOutputThread(Main.this, input);
-			clientThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-			clientThread.setHost(hostTextField.getText());
-			clientThread.setPort((int) portSpinner.getValue());
-			clientThread.setTimeout((int) timeoutSpinner.getValue());
-			clientThread.start();
-		}
-
-	}
-
-	private class StopClientAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2863419586328503426L;
-
-		public StopClientAction() {
-			putValue(NAME, rb.getString("STOP_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			stopClient();
-		}
-
-	}
-
-	private class StartServerAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1758447420975631146L;
-
-		public StartServerAction() {
-			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_SERVER_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopServerRadioButtonMenuItem.setEnabled(true);
-			serverThread = new ServerOutputThread(Main.this, input);
-			serverThread.setPort((int) portSpinner.getValue());
-			serverThread.setTimeout((int) timeoutSpinner.getValue());
-			serverThread.setUpdateRate((int) updateRateSpinner.getValue());
-			serverThread.start();
-		}
-
-	}
-
-	private class StopServerAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 6023207463370122769L;
-
-		public StopServerAction() {
-			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			stopServer();
-		}
-
-	}
-
-	private class ShowAboutDialogAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2578971543384483382L;
-
-		public ShowAboutDialogAction() {
-			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-
-	}
-
-	private class SelectControllerAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2043467156713598592L;
-
-		private final Controller controller;
-
-		public SelectControllerAction(Controller controller) {
-			this.controller = controller;
-
-			final String name = controller.getName();
-			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION, rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_PREFIX") + name
-					+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			selectedController = controller;
-			newProfile();
-			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
-		}
-
-	}
-
-	private class EditComponentAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 8811608785278071903L;
-
-		private final Component component;
-
-		public EditComponentAction(Component component) {
-			this.component = component;
-
-			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_PREFIX") + component.getName()
-					+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
-			editComponentDialog.setVisible(true);
-
-			suspendControllerSettingsUpdate = false;
-		}
-
-	}
-
-	private class SetModeDescriptionAction extends AbstractAction implements FocusListener {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -6706537047137827688L;
-
-		private final Mode mode;
-		private final JTextField modeDescriptionTextField;
-
-		public SetModeDescriptionAction(Mode mode, JTextField modeDescriptionTextField) {
-			this.mode = mode;
-			this.modeDescriptionTextField = modeDescriptionTextField;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			setModeDescription();
-		}
-
-		@Override
-		public void focusGained(FocusEvent e) {
-		}
-
-		@Override
-		public void focusLost(FocusEvent e) {
-			setModeDescription();
-		}
-
-		private void setModeDescription() {
-			final String description = modeDescriptionTextField.getText();
-
-			if (description != null && description.length() > 0) {
-				mode.setDescription(description);
-				setUnsavedChangesTitle();
-			} else
-				modeDescriptionTextField.setText(mode.getDescription());
-		}
-
-	}
-
-	private class RemoveModeAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -1056071724769862582L;
-
-		private final Mode mode;
-
-		public RemoveModeAction(Mode mode) {
-			this.mode = mode;
-
-			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_PREFIX") + mode.getDescription()
-					+ rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_SUFFIX"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Input.getProfile().removeMode(mode);
-			setUnsavedChangesTitle();
-			updateModesPanel();
-		}
-
-	}
-
-	private class AddModeAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -4881923833724315489L;
-
-		public AddModeAction() {
-			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final Mode mode = new Mode();
-			Input.getProfile().getModes().add(mode);
-
-			setUnsavedChangesTitle();
-			updateModesPanel();
-		}
-
-	}
-
-	private class ChangeVJoyDirectoryAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7672382299595684105L;
-
-		public ChangeVJoyDirectoryAction() {
-			putValue(NAME, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final JFileChooser vJoyDirectoryFileChooser = new JFileChooser(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
-			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-			if (vJoyDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final String path = vJoyDirectoryFileChooser.getSelectedFile().getAbsolutePath();
-				final File file = new File(VJoyOutputThread.getLibraryFilePath(path));
-
-				if (file.exists()) {
-					preferences.put(PREFERENCES_VJOY_DIRECTORY, path);
-					vJoyDirectoryLabel1.setText(path);
-				} else
-					JOptionPane.showMessageDialog(frame,
-							rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_PREFIX")
-									+ VJoyOutputThread.getDefaultInstallationPath()
-									+ rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_SUFFIX"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
-		}
-
-	}
-
-	private class SetHostAction extends AbstractAction implements FocusListener {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7674562782751876814L;
-
-		private final JTextField hostTextField;
-
-		public SetHostAction(JTextField hostTextField) {
-			this.hostTextField = hostTextField;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			setHost();
-		}
-
-		@Override
-		public void focusGained(FocusEvent e) {
-		}
-
-		@Override
-		public void focusLost(FocusEvent e) {
-			setHost();
-		}
-
-		private void setHost() {
-			final String host = hostTextField.getText();
-
-			if (host != null && host.length() > 0)
-				preferences.put(PREFERENCES_HOST, host);
-			else
-				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST));
-		}
-
-	}
-
-	private static class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<T> {
-
-		private static final String PROPERTY_TYPE = "type";
-		private static final String PROPERTY_DATA = "data";
-
-		@Override
-		public JsonElement serialize(T object, java.lang.reflect.Type interfaceType, JsonSerializationContext context) {
-			final JsonObject wrapper = new JsonObject();
-			wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
-			wrapper.add(PROPERTY_DATA, context.serialize(object));
-
-			return wrapper;
-		}
-
-		@Override
-		public T deserialize(JsonElement elem, java.lang.reflect.Type interfaceType, JsonDeserializationContext context)
-				throws JsonParseException {
-			final JsonObject wrapper = (JsonObject) elem;
-			final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
-			final JsonElement data = get(wrapper, PROPERTY_DATA);
-			final java.lang.reflect.Type actualType = typeForName(typeName);
-
-			return context.deserialize(data, actualType);
-		}
-
-		private java.lang.reflect.Type typeForName(final JsonElement typeElem) {
-			try {
-				return Class.forName(typeElem.getAsString());
-			} catch (ClassNotFoundException e) {
-				throw new JsonParseException(e);
-			}
-		}
-
-		private JsonElement get(final JsonObject wrapper, String memberName) {
-			final JsonElement elem = wrapper.get(memberName);
-			if (elem == null)
-				throw new JsonParseException(
-						"No member '" + memberName + "' found in what was expected to be an interface wrapper");
-			return elem;
-		}
-
 	}
 
 }

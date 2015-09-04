@@ -35,21 +35,9 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	public void run() {
-		if (init()) {
-			while (run) {
-				if (readInput())
-					writeOutput();
-
-				try {
-					Thread.sleep(updateRate);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		deInit();
+	protected void deInit() {
+		super.deInit();
+		main.stopLocal();
 	}
 
 	@Override
@@ -101,9 +89,21 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	protected void deInit() {
-		super.deInit();
-		main.stopLocal();
+	public void run() {
+		if (init()) {
+			while (run) {
+				if (readInput())
+					writeOutput();
+
+				try {
+					Thread.sleep(updateRate);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		deInit();
 	}
 
 }

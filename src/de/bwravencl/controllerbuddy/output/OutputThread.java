@@ -45,37 +45,37 @@ public abstract class OutputThread extends Thread {
 		input.setOutputThread(this);
 	}
 
-	public long getUpdateRate() {
-		return updateRate;
-	}
-
-	public void setUpdateRate(long updateRate) {
-		this.updateRate = updateRate;
+	public int getMaxAxisValue() {
+		return maxAxisValue;
 	}
 
 	public int getMinAxisValue() {
 		return minAxisValue;
 	}
 
-	public void setMinAxisValue(int minAxisValue) {
-		this.minAxisValue = minAxisValue;
+	public int getnButtons() {
+		return nButtons;
 	}
 
-	public int getMaxAxisValue() {
-		return maxAxisValue;
+	public long getUpdateRate() {
+		return updateRate;
 	}
 
 	public void setMaxAxisValue(int maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	public int getnButtons() {
-		return nButtons;
+	public void setMinAxisValue(int minAxisValue) {
+		this.minAxisValue = minAxisValue;
 	}
 
 	public void setnButtons(int nButtons) {
 		this.nButtons = nButtons;
 		input.setnButtons(nButtons);
+	}
+
+	public void setUpdateRate(long updateRate) {
+		this.updateRate = updateRate;
 	}
 
 	public void stopOutput() {

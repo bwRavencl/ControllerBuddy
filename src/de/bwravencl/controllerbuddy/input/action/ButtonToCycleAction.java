@@ -31,24 +31,16 @@ public class ButtonToCycleAction implements IAction {
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private List<IAction> actions = new ArrayList<IAction>();
 
-	public float getActivationValue() {
-		return activationValue;
-	}
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
 
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
+		final List<IAction> clonedActions = new ArrayList<IAction>();
+		for (IAction a : actions)
+			clonedActions.add((IAction) a.clone());
+		cycleAction.setActions(clonedActions);
 
-	public List<IAction> getActions() {
-		return actions;
-	}
-
-	public void setActions(List<IAction> actions) {
-		this.actions = actions;
-	}
-
-	public void reset() {
-		index = 0;
+		return cycleAction;
 	}
 
 	@Override
@@ -68,21 +60,29 @@ public class ButtonToCycleAction implements IAction {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("BUTTON_TO_CYCLE_ACTION_STRING");
+	public List<IAction> getActions() {
+		return actions;
+	}
+
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void reset() {
+		index = 0;
+	}
+
+	public void setActions(List<IAction> actions) {
+		this.actions = actions;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
-
-		final List<IAction> clonedActions = new ArrayList<IAction>();
-		for (IAction a : actions)
-			clonedActions.add((IAction) a.clone());
-		cycleAction.setActions(clonedActions);
-
-		return cycleAction;
+	public String toString() {
+		return rb.getString("BUTTON_TO_CYCLE_ACTION_STRING");
 	}
 
 }

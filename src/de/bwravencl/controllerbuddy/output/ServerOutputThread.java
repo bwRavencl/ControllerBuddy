@@ -37,22 +37,23 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class ServerOutputThread extends OutputThread {
 
-	public static final int DEFAULT_PORT = 28789;
-	public static final int DEFAULT_TIMEOUT = 2000;
+	private enum ServerState {
+		Listening, Connected
+	}
 
+	public static final int DEFAULT_PORT = 28789;
+
+	public static final int DEFAULT_TIMEOUT = 2000;
 	public static final int PROTOCOL_VERSION = 2;
 	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";
 	public static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
 	public static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
 	public static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
 	public static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE + "_ALIVE";
+
 	public static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
 
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
-
-	private enum ServerState {
-		Listening, Connected
-	}
 
 	private int port = DEFAULT_PORT;
 	private int timeout = DEFAULT_TIMEOUT;
@@ -61,6 +62,14 @@ public class ServerOutputThread extends OutputThread {
 
 	public ServerOutputThread(Main main, Input input) {
 		super(main, input);
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public int getTimeout() {
+		return timeout;
 	}
 
 	@Override
@@ -240,6 +249,14 @@ public class ServerOutputThread extends OutputThread {
 		main.setStatusbarText(rb.getString("STATUS_LISTENING") + port);
 	}
 
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
 	@Override
 	public void stopOutput() {
 		super.stopOutput();
@@ -248,22 +265,6 @@ public class ServerOutputThread extends OutputThread {
 			serverSocket.close();
 
 		main.setStatusbarText(rb.getString("STATUS_SOCKET_CLOSED"));
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public int getTimeout() {
-		return timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
 	}
 
 }

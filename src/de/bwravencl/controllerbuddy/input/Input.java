@@ -32,71 +32,30 @@ import net.java.games.input.Controller;
 
 public class Input {
 
-	public static final int MAX_N_BUTTONS = 128;
-
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
+	public static final int MAX_N_BUTTONS = 128;
+
 	private static Profile profile;
-
-	private Controller controller;
-	private OutputThread outputThread;
-	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
-	private boolean[] buttons;
-	private int cursorDeltaX = 5;
-	private int cursorDeltaY = 5;
-	private int scrollClicks = 1;
-	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
-	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
-	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
-
-	public Input(Controller controller) {
-		this.controller = controller;
-
-		for (VirtualAxis va : VirtualAxis.values())
-			axis.put(va, 0);
-
-		profile = new Profile();
-	}
-
-	public void poll() {
-		controller.poll();
-
-		for (Component c : controller.getComponents()) {
-			final ButtonToModeAction modeAction = profile.getComponentToModeActionMap().get(c.getName());
-			if (modeAction != null)
-				modeAction.doAction(this, c.getPollData());
-
-			final List<Mode> modes = profile.getModes();
-			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
-
-			List<IAction> actions = componentToActionMap.get(c.getName());
-			if (actions == null)
-				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
-
-			if (actions != null)
-				for (IAction a : actions)
-					a.doAction(this, c.getPollData());
-		}
-	}
-
-	public void reset() {
-		profile.setActiveMode(0);
-
-		for (Mode m : profile.getModes()) {
-			for (List<IAction> actions : m.getComponentToActionsMap().values()) {
-				for (IAction a : actions) {
-					if (a instanceof ButtonToCycleAction)
-						((ButtonToCycleAction) a).reset();
-				}
-			}
-		}
-	}
 
 	public static Profile getProfile() {
 		return profile;
+	}
+
+	public static float normalize(float value, float inMin, float inMax, float outMin, float outMax) {
+		final float newValue;
+		final float oldRange = (inMax - inMin);
+
+		if (oldRange == 0)
+			newValue = outMin;
+		else {
+			float newRange = (outMax - outMin);
+			newValue = (((value - inMin) * newRange) / oldRange) + outMin;
+		}
+
+		return newValue;
 	}
 
 	public static boolean setProfile(Profile profile, Controller controller) {
@@ -135,31 +94,106 @@ public class Input {
 		}
 	}
 
-	public Controller getController() {
-		return controller;
-	}
+	private Controller controller;
+	private OutputThread outputThread;
+	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
+	private boolean[] buttons;
+	private int cursorDeltaX = 5;
+	private int cursorDeltaY = 5;
+	private int scrollClicks = 1;
+	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
 
-	public OutputThread getOutputThread() {
-		return outputThread;
-	}
+	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 
-	public void setOutputThread(OutputThread outputThread) {
-		this.outputThread = outputThread;
-	}
+	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
 
-	public void setnButtons(int nButtons) {
-		buttons = new boolean[Math.min(outputThread.getnButtons(), MAX_N_BUTTONS)];
+	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+
+	public Input(Controller controller) {
+		this.controller = controller;
+
+		for (VirtualAxis va : VirtualAxis.values())
+			axis.put(va, 0);
+
+		profile = new Profile();
 	}
 
 	public EnumMap<VirtualAxis, Integer> getAxis() {
 		return axis;
 	}
 
-	public void setAxis(VirtualAxis virtualAxis, int value) {
-		value = Math.max(value, outputThread.getMinAxisValue());
-		value = Math.min(value, outputThread.getMaxAxisValue());
+	public boolean[] getButtons() {
+		return buttons;
+	}
 
-		axis.put(virtualAxis, value);
+	public Controller getController() {
+		return controller;
+	}
+
+	public int getCursorDeltaX() {
+		return cursorDeltaX;
+	}
+
+	public int getCursorDeltaY() {
+		return cursorDeltaY;
+	}
+
+	public Set<KeyStroke> getDownKeyStrokes() {
+		return downKeyStrokes;
+	}
+
+	public Set<Integer> getDownMouseButtons() {
+		return downMouseButtons;
+	}
+
+	public Set<KeyStroke> getDownUpKeyStrokes() {
+		return downUpKeyStrokes;
+	}
+
+	public Set<Integer> getDownUpMouseButtons() {
+		return downUpMouseButtons;
+	}
+
+	public OutputThread getOutputThread() {
+		return outputThread;
+	}
+
+	public int getScrollClicks() {
+		return scrollClicks;
+	}
+
+	public void poll() {
+		controller.poll();
+
+		for (Component c : controller.getComponents()) {
+			final ButtonToModeAction modeAction = profile.getComponentToModeActionMap().get(c.getName());
+			if (modeAction != null)
+				modeAction.doAction(this, c.getPollData());
+
+			final List<Mode> modes = profile.getModes();
+			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
+
+			List<IAction> actions = componentToActionMap.get(c.getName());
+			if (actions == null)
+				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
+
+			if (actions != null)
+				for (IAction a : actions)
+					a.doAction(this, c.getPollData());
+		}
+	}
+
+	public void reset() {
+		profile.setActiveMode(0);
+
+		for (Mode m : profile.getModes()) {
+			for (List<IAction> actions : m.getComponentToActionsMap().values()) {
+				for (IAction a : actions) {
+					if (a instanceof ButtonToCycleAction)
+						((ButtonToCycleAction) a).reset();
+				}
+			}
+		}
 	}
 
 	public void setAxis(VirtualAxis virtualAxis, float value) {
@@ -170,8 +204,11 @@ public class Input {
 				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()));
 	}
 
-	public boolean[] getButtons() {
-		return buttons;
+	public void setAxis(VirtualAxis virtualAxis, int value) {
+		value = Math.max(value, outputThread.getMinAxisValue());
+		value = Math.min(value, outputThread.getMaxAxisValue());
+
+		axis.put(virtualAxis, value);
 	}
 
 	public void setButtons(int id, boolean value) {
@@ -186,58 +223,24 @@ public class Input {
 			setButtons(id, true);
 	}
 
-	public Set<KeyStroke> getDownKeyStrokes() {
-		return downKeyStrokes;
-	}
-
-	public Set<KeyStroke> getDownUpKeyStrokes() {
-		return downUpKeyStrokes;
-	}
-
-	public Set<Integer> getDownMouseButtons() {
-		return downMouseButtons;
-	}
-
-	public Set<Integer> getDownUpMouseButtons() {
-		return downUpMouseButtons;
-	}
-
-	public int getCursorDeltaX() {
-		return cursorDeltaX;
+	public void setCursorDeltaX(int cursorDeltaX) {
+		this.cursorDeltaX = cursorDeltaX;
 	}
 
 	public void setCursorDeltaY(int cursorDeltaY) {
 		this.cursorDeltaY = cursorDeltaY;
 	}
 
-	public int getCursorDeltaY() {
-		return cursorDeltaY;
+	public void setnButtons(int nButtons) {
+		buttons = new boolean[Math.min(outputThread.getnButtons(), MAX_N_BUTTONS)];
 	}
 
-	public void setCursorDeltaX(int cursorDeltaX) {
-		this.cursorDeltaX = cursorDeltaX;
-	}
-
-	public int getScrollClicks() {
-		return scrollClicks;
+	public void setOutputThread(OutputThread outputThread) {
+		this.outputThread = outputThread;
 	}
 
 	public void setScrollClicks(int scrollClicks) {
 		this.scrollClicks = scrollClicks;
-	}
-
-	public static float normalize(float value, float inMin, float inMax, float outMin, float outMax) {
-		final float newValue;
-		final float oldRange = (inMax - inMin);
-
-		if (oldRange == 0)
-			newValue = outMin;
-		else {
-			float newRange = (outMax - outMin);
-			newValue = (((value - inMin) * newRange) / oldRange) + outMin;
-		}
-
-		return newValue;
 	}
 
 }

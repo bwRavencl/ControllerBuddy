@@ -21,51 +21,20 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToCursorAction extends InvertableAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.15f;
-	public static final float DEFAULT_EXPONENT = 2.0f;
-	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000.0f;
-
-	private float deadZone = DEFAULT_DEAD_ZONE;
-	private float exponent = DEFAULT_EXPONENT;
-	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
-
 	public enum MouseAxis {
 		X, Y
 	}
 
+	public static final float DEFAULT_DEAD_ZONE = 0.15f;
+	public static final float DEFAULT_EXPONENT = 2.0f;
+
+	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000.0f;
+	private float deadZone = DEFAULT_DEAD_ZONE;
+	private float exponent = DEFAULT_EXPONENT;
+
+	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
+
 	private MouseAxis axis = MouseAxis.X;
-
-	public float getDeadZone() {
-		return deadZone;
-	}
-
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
-	}
-
-	public float getExponent() {
-		return exponent;
-	}
-
-	public void setExponent(Float exponent) {
-		this.exponent = exponent;
-	}
-
-	public float getMaxCursorSpeed() {
-		return maxCursorSpeed;
-	}
-
-	public void setMaxCursorSpeed(Float maxCursorSpeed) {
-		this.maxCursorSpeed = maxCursorSpeed;
-	}
-
-	public MouseAxis getAxis() {
-		return axis;
-	}
-
-	public void setAxis(MouseAxis axis) {
-		this.axis = axis;
-	}
 
 	@Override
 	public void doAction(Input input, float value) {
@@ -81,6 +50,38 @@ public class AxisToCursorAction extends InvertableAction {
 			else
 				input.setCursorDeltaY((int) (input.getCursorDeltaY() + (invert ? -d : d)));
 		}
+	}
+
+	public MouseAxis getAxis() {
+		return axis;
+	}
+
+	public float getDeadZone() {
+		return deadZone;
+	}
+
+	public float getExponent() {
+		return exponent;
+	}
+
+	public float getMaxCursorSpeed() {
+		return maxCursorSpeed;
+	}
+
+	public void setAxis(MouseAxis axis) {
+		this.axis = axis;
+	}
+
+	public void setDeadZone(Float deadZone) {
+		this.deadZone = deadZone;
+	}
+
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
+	}
+
+	public void setMaxCursorSpeed(Float maxCursorSpeed) {
+		this.maxCursorSpeed = maxCursorSpeed;
 	}
 
 	@Override

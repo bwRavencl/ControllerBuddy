@@ -39,13 +39,13 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class ClientVJoyOutputThread extends VJoyOutputThread {
 
-	public static final String DEFAULT_HOST = "127.0.0.1";
-
-	private static final int N_CONNECTION_RETRIES = 10;
-
 	private enum ClientState {
 		Connecting, Connected
 	}
+
+	public static final String DEFAULT_HOST = "127.0.0.1";
+
+	private static final int N_CONNECTION_RETRIES = 10;
 
 	private String host = DEFAULT_HOST;
 	private int port = ServerOutputThread.DEFAULT_PORT;
@@ -61,58 +61,22 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		super(main, input);
 	}
 
-	public String getHost() {
-		return host;
+	@Override
+	protected void deInit() {
+		super.deInit();
+		main.stopClient();
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	public String getHost() {
+		return host;
 	}
 
 	public int getPort() {
 		return port;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
 	public int getTimeout() {
 		return timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-
-	@Override
-	public void run() {
-		try {
-			if (init()) {
-				hostAddress = InetAddress.getByName(host);
-				clientSocket = new DatagramSocket(port + 1);
-				clientSocket.setSoTimeout(timeout);
-
-				while (run) {
-					if (readInput())
-						writeOutput();
-				}
-			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(),
-					rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
-							+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} finally {
-			if (clientSocket != null)
-				clientSocket.close();
-			deInit();
-		}
 	}
 
 	@Override
@@ -325,9 +289,45 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	protected void deInit() {
-		super.deInit();
-		main.stopClient();
+	public void run() {
+		try {
+			if (init()) {
+				hostAddress = InetAddress.getByName(host);
+				clientSocket = new DatagramSocket(port + 1);
+				clientSocket.setSoTimeout(timeout);
+
+				while (run) {
+					if (readInput())
+						writeOutput();
+				}
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(main.getFrame(),
+					rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
+							+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (clientSocket != null)
+				clientSocket.close();
+			deInit();
+		}
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 }

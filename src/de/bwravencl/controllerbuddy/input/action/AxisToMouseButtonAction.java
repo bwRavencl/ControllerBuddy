@@ -27,25 +27,9 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction {
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
-	public float getMinAxisValue() {
-		return minAxisValue;
-	}
-
-	public void setMinAxisValue(Float minAxisValue) {
-		this.minAxisValue = minAxisValue;
-	}
-
-	public float getMaxAxisValue() {
-		return maxAxisValue;
-	}
-
-	public void setMaxAxisValue(Float maxAxisValue) {
-		this.maxAxisValue = maxAxisValue;
-	}
-
 	@Override
 	public void doAction(Input input, float value) {
-		if ((value >= minAxisValue && value <= maxAxisValue) && !invert) {
+		if (value >= minAxisValue && value <= maxAxisValue) {
 			if (downUp) {
 				if (wasUp) {
 					input.getDownUpMouseButtons().add(mouseButton);
@@ -60,6 +44,22 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction {
 			else
 				input.getDownMouseButtons().remove(mouseButton);
 		}
+	}
+
+	public float getMaxAxisValue() {
+		return maxAxisValue;
+	}
+
+	public float getMinAxisValue() {
+		return minAxisValue;
+	}
+
+	public void setMaxAxisValue(Float maxAxisValue) {
+		this.maxAxisValue = maxAxisValue;
+	}
+
+	public void setMinAxisValue(Float minAxisValue) {
+		this.minAxisValue = minAxisValue;
 	}
 
 }

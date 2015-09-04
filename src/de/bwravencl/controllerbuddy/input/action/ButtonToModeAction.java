@@ -41,32 +41,9 @@ public class ButtonToModeAction implements IAction {
 			modeUuid = modes.get(1).getUuid();
 	}
 
-	public boolean isToggle() {
-		return toggle;
-	}
-
-	public void setToggle(Boolean toggle) {
-		this.toggle = toggle;
-	}
-
-	public float getActivationValue() {
-		return activationValue;
-	}
-
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
-	public Mode getMode() {
-		for (Mode m : Input.getProfile().getModes())
-			if (modeUuid.equals(m.getUuid()))
-				return m;
-
-		return null;
-	}
-
-	public void setMode(Mode mode) {
-		modeUuid = mode.getUuid();
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 	@Override
@@ -98,14 +75,37 @@ public class ButtonToModeAction implements IAction {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("BUTTON_TO_MODE_ACTION_STRING");
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public Mode getMode() {
+		for (Mode m : Input.getProfile().getModes())
+			if (modeUuid.equals(m.getUuid()))
+				return m;
+
+		return null;
+	}
+
+	public boolean isToggle() {
+		return toggle;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
+
+	public void setMode(Mode mode) {
+		modeUuid = mode.getUuid();
+	}
+
+	public void setToggle(Boolean toggle) {
+		this.toggle = toggle;
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public String toString() {
+		return rb.getString("BUTTON_TO_MODE_ACTION_STRING");
 	}
 
 }

@@ -21,17 +21,17 @@ public abstract class InvertableAction implements IAction {
 
 	protected boolean invert = false;
 
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 	public boolean isInvert() {
 		return invert;
 	}
 
 	public void setInvert(Boolean invert) {
 		this.invert = invert;
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
 	}
 
 }

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class ToMouseButtonAction extends InvertableAction {
+public abstract class ToMouseButtonAction implements IAction {
 
 	public static final int DEFAULT_MOUSE_BUTTON = 1;
 
@@ -26,16 +26,21 @@ public abstract class ToMouseButtonAction extends InvertableAction {
 
 	protected int mouseButton = DEFAULT_MOUSE_BUTTON;
 
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public int getMouseButton() {
+		return mouseButton;
+	}
+
 	public boolean isDownUp() {
 		return downUp;
 	}
 
 	public void setDownUp(Boolean downUp) {
 		this.downUp = downUp;
-	}
-
-	public int getMouseButton() {
-		return mouseButton;
 	}
 
 	public void setMouseButton(Integer mouseButton) {

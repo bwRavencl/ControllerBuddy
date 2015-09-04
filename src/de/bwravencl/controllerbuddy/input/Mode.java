@@ -46,35 +46,6 @@ public class Mode implements Cloneable {
 		this.uuid = UUID.fromString(uuid);
 	}
 
-	public UUID getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(UUID uuid) {
-		this.uuid = uuid;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Map<String, List<IAction>> getComponentToActionsMap() {
-		return componentToActionsMap;
-	}
-
-	public void setComponentToActionMap(Map<String, List<IAction>> componentToActionsMap) {
-		this.componentToActionsMap = componentToActionsMap;
-	}
-
-	@Override
-	public String toString() {
-		return description;
-	}
-
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final Mode mode = new Mode(uuid.toString());
@@ -97,6 +68,35 @@ public class Mode implements Cloneable {
 		mode.setComponentToActionMap(clonedComponentToActionMap);
 
 		return mode;
+	}
+
+	public Map<String, List<IAction>> getComponentToActionsMap() {
+		return componentToActionsMap;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public void setComponentToActionMap(Map<String, List<IAction>> componentToActionsMap) {
+		this.componentToActionsMap = componentToActionsMap;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	@Override
+	public String toString() {
+		return description;
 	}
 
 }

@@ -25,17 +25,9 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
-	public float getActivationValue() {
-		return activationValue;
-	}
-
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
 	@Override
 	public void doAction(Input input, float value) {
-		if ((value != activationValue) ^ invert) {
+		if (value != activationValue) {
 			if (downUp)
 				wasUp = true;
 			else
@@ -50,6 +42,14 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 				input.getDownMouseButtons().add(mouseButton);
 			}
 		}
+	}
+
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
 	}
 
 }

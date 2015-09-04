@@ -19,12 +19,24 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 
-public abstract class ToKeyAction extends InvertableAction {
+public abstract class ToKeyAction implements IAction {
 
 	protected boolean downUp = false;
 	protected boolean wasUp = true;
 
 	protected KeyStroke keystroke = new KeyStroke();
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final ToKeyAction toKeyAction = (ToKeyAction) super.clone();
+		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
+
+		return toKeyAction;
+	}
+
+	public KeyStroke getKeystroke() {
+		return keystroke;
+	}
 
 	public boolean isDownUp() {
 		return downUp;
@@ -34,10 +46,6 @@ public abstract class ToKeyAction extends InvertableAction {
 		this.downUp = downUp;
 	}
 
-	public KeyStroke getKeystroke() {
-		return keystroke;
-	}
-
 	public void setKeystroke(KeyStroke keystroke) {
 		this.keystroke = keystroke;
 	}
@@ -45,14 +53,6 @@ public abstract class ToKeyAction extends InvertableAction {
 	@Override
 	public String toString() {
 		return rb.getString("TO_KEY_ACTION_STRING");
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		final ToKeyAction toKeyAction = (ToKeyAction) super.clone();
-		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
-
-		return toKeyAction;
 	}
 
 }

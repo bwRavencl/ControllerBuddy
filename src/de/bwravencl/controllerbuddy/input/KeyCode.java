@@ -150,17 +150,17 @@ public class KeyCode {
 		}
 	}
 
-	public KeyCode(String name, int keyCode, String description) {
-		this.name = name;
-		this.keyCode = keyCode;
-		this.description = description;
-	}
-
 	public String name;
 
 	public int keyCode;
 
 	public String description;
+
+	public KeyCode(String name, int keyCode, String description) {
+		this.name = name;
+		this.keyCode = keyCode;
+		this.description = description;
+	}
 
 	@Override
 	public String toString() {

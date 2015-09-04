@@ -25,18 +25,18 @@ public class ButtonToButtonAction extends ToButtonAction {
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
+	@Override
+	public void doAction(Input input, float value) {
+		final boolean down = value == activationValue ? !invert : invert;
+		input.setButtons(buttonId, down ? 1.0f : 0.0f);
+	}
+
 	public float getActivationValue() {
 		return activationValue;
 	}
 
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
-	}
-
-	@Override
-	public void doAction(Input input, float value) {
-		final boolean down = value == activationValue ? !invert : invert;
-		input.setButtons(buttonId, down ? 1.0f : 0.0f);
 	}
 
 }

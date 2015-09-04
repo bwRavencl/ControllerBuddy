@@ -27,27 +27,27 @@ public class AxisToButtonAction extends ToButtonAction {
 	private float minAxisValue = 0.5f;
 	private float maxAxisValue = 1.0f;
 
-	public float getMinAxisValue() {
-		return minAxisValue;
-	}
+	@Override
+	public void doAction(Input input, float value) {
+		boolean down = (value >= minAxisValue && value <= maxAxisValue);
 
-	public void setMinAxisValue(Float minAxisValue) {
-		this.minAxisValue = minAxisValue;
+		input.setButtons(buttonId, invert ? !down : down);
 	}
 
 	public float getMaxAxisValue() {
 		return maxAxisValue;
 	}
 
+	public float getMinAxisValue() {
+		return minAxisValue;
+	}
+
 	public void setMaxAxisValue(Float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	@Override
-	public void doAction(Input input, float value) {
-		boolean down = (value >= minAxisValue && value <= maxAxisValue);
-
-		input.setButtons(buttonId, invert ? !down : down);
+	public void setMinAxisValue(Float minAxisValue) {
+		this.minAxisValue = minAxisValue;
 	}
 
 }

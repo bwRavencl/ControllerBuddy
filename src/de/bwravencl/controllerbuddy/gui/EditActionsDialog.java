@@ -72,12 +72,318 @@ import net.java.games.input.Component;
 
 public class EditActionsDialog extends JDialog {
 
+	private class AddActionAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7713175853948284887L;
+
+		public AddActionAction() {
+			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
+				final IAction action = (IAction) clazz.newInstance();
+
+				if (action instanceof ButtonToModeAction)
+					unsavedProfile.getComponentToModeActionMap().put(component.getName(), (ButtonToModeAction) action);
+				else {
+					if (isComponentEditor()) {
+						final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
+						final String componentName = component.getName();
+
+						if (componentToActionMap.get(componentName) == null)
+							componentToActionMap.put(componentName, new ArrayList<IAction>());
+
+						componentToActionMap.get(componentName).add(action);
+					} else
+						cycleActions.add(action);
+				}
+
+				updateAvailableActions();
+				updateAssignedActions();
+
+				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
+						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			}
+
+		}
+
+	}
+
+	private static class AvailableAction {
+
+		private final String className;
+
+		public AvailableAction(String className) {
+			this.className = className;
+		}
+
+		@Override
+		public String toString() {
+			String description = "";
+
+			try {
+				final Class<?> clazz = Class.forName(className);
+				description = clazz.newInstance().toString();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+
+			return description;
+		}
+
+	}
+
+	private class CancelAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8086810563127997199L;
+
+		public CancelAction() {
+			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText"));
+			putValue(SHORT_DESCRIPTION, rb.getString("CANCEL_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			closeDialog();
+		}
+
+	}
+
+	private class EditActionsAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6538021954760621595L;
+
+		public EditActionsAction() {
+			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_PREFIX")
+					+ selectedAssignedAction.toString() + rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final EditActionsDialog editComponentDialog = new EditActionsDialog(
+					(ButtonToCycleAction) selectedAssignedAction, input);
+			editComponentDialog.setVisible(true);
+		}
+
+	}
+
+	private class JCheckBoxSetPropertyAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -33052386834598414L;
+
+		private final Method setterMethod;
+
+		public JCheckBoxSetPropertyAction(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private class JComboBoxSetPropertyAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1938012378184518954L;
+
+		private final Method setterMethod;
+
+		public JComboBoxSetPropertyAction(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private class JListSetPropertyListSelectionListener implements ListSelectionListener {
+
+		private final Method setterMethod;
+
+		public JListSetPropertyListSelectionListener(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			try {
+				final List<Integer> modifierCodes = new ArrayList<Integer>();
+				final List<Integer> keyCodes = new ArrayList<Integer>();
+
+				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
+					int k = KeyCode.nameToKeyCodeMap.get(o);
+					boolean isModifier = false;
+					for (KeyCode kc : KeyCode.MODIFIER_KEY_CODES) {
+						if (k == kc.keyCode)
+							isModifier = true;
+					}
+
+					if (isModifier)
+						modifierCodes.add(k);
+					else
+						keyCodes.add(k);
+				}
+
+				final KeyStroke keyStroke = new KeyStroke();
+				keyStroke.setModifierCodes(modifierCodes.toArray(new Integer[modifierCodes.size()]));
+				keyStroke.setKeyCodes(keyCodes.toArray(new Integer[keyCodes.size()]));
+
+				setterMethod.invoke(selectedAssignedAction, keyStroke);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private class JSpinnerSetPropertyChangeListener implements ChangeListener {
+
+		private final Method setterMethod;
+
+		public JSpinnerSetPropertyChangeListener(Method setterMethod) {
+			this.setterMethod = setterMethod;
+		}
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			try {
+				Object value = (((JSpinner) e.getSource()).getValue());
+
+				if (value instanceof Double)
+					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
+				else
+					setterMethod.invoke(selectedAssignedAction, value);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private class OKAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6947022759101822700L;
+
+		public OKAction() {
+			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText"));
+			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (isComponentEditor()) {
+				Input.setProfile(unsavedProfile, input.getController());
+				main.setUnsavedChangesTitle();
+			} else
+				cycleAction.setActions(cycleActions);
+
+			closeDialog();
+		}
+
+	}
+
+	private class RemoveActionAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5681740772832902238L;
+
+		public RemoveActionAction() {
+			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (selectedAssignedAction instanceof ButtonToModeAction)
+				unsavedProfile.getComponentToModeActionMap().remove(component.getName());
+			else {
+				if (isComponentEditor()) {
+					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
+					final List<IAction> actions = componentToActionMap.get(component.getName());
+					actions.remove(selectedAssignedAction);
+
+					if (actions.size() == 0)
+						componentToActionMap.remove(component.getName());
+				} else
+					cycleActions.remove(selectedAssignedAction);
+			}
+
+			updateAvailableActions();
+			updateAssignedActions();
+		}
+
+	}
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8876286334367723566L;
-
 	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.controllerbuddy.input.action.";
+
 	private static final String[] ACTION_CLASSES_AXIS = { ACTION_CLASS_PREFIX + "AxisToAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToButtonAction", ACTION_CLASS_PREFIX + "AxisToCursorAction",
 			ACTION_CLASS_PREFIX + "AxisToKeyAction", ACTION_CLASS_PREFIX + "AxisToMouseButtonAction",
@@ -91,26 +397,68 @@ public class EditActionsDialog extends JDialog {
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	private static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
-
 	private static final int DIALOG_BOUNDS_X = Main.DIALOG_BOUNDS_X + Main.DIALOG_BOUNDS_X_Y_OFFSET;
 	private static final int DIALOG_BOUNDS_Y = Main.DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET;
 	private static final int DIALOG_BOUNDS_WIDTH = 950;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 
+	public static int getListModelIndex(ListModel<?> model, Object value) {
+		if (value == null)
+			return -1;
+
+		if (model instanceof DefaultListModel)
+			return ((DefaultListModel<?>) model).indexOf(value);
+
+		for (int i = 0; i < model.getSize(); i++)
+			if (value.equals(model.getElementAt(i)))
+				return i;
+
+		return -1;
+	}
+
 	private Main main;
+
 	private Component component;
+
 	private Input input;
+
 	private Profile unsavedProfile;
+
 	private ButtonToCycleAction cycleAction;
+
 	private final List<IAction> cycleActions = new ArrayList<IAction>();
+
 	private Mode selectedMode;
+
 	private AvailableAction selectedAvailableAction;
+
 	private IAction selectedAssignedAction;
+
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
 	private final JList<AvailableAction> availableActionsList = new JList<AvailableAction>();
+
 	private final JList<IAction> assignedActionsList = new JList<IAction>();
+
+	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
+		this.cycleAction = cycleAction;
+
+		try {
+			for (IAction a : cycleAction.getActions())
+				cycleActions.add((IAction) a.clone());
+
+			preInit();
+
+			setBounds(DIALOG_BOUNDS_X + Main.DIALOG_BOUNDS_X_Y_OFFSET, DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET,
+					DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
+			setTitle(cycleAction.toString() + rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR_SUFFIX"));
+
+			init(input);
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public EditActionsDialog(Main main, Component component, Input input) {
 		super(main.getFrame());
@@ -154,28 +502,40 @@ public class EditActionsDialog extends JDialog {
 		}
 	}
 
-	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
-		this.cycleAction = cycleAction;
-
-		try {
-			for (IAction a : cycleAction.getActions())
-				cycleActions.add((IAction) a.clone());
-
-			preInit();
-
-			setBounds(DIALOG_BOUNDS_X + Main.DIALOG_BOUNDS_X_Y_OFFSET, DIALOG_BOUNDS_Y + Main.DIALOG_BOUNDS_X_Y_OFFSET,
-					DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-			setTitle(cycleAction.toString() + rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR_SUFFIX"));
-
-			init(input);
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
+	void closeDialog() {
+		setVisible(false);
+		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
-	private void preInit() {
-		setModal(true);
-		getContentPane().setLayout(new BorderLayout());
+	private IAction[] getAssignedActions() {
+		final List<IAction> assignedActions;
+		if (isComponentEditor())
+			assignedActions = selectedMode.getComponentToActionsMap().get(component.getName());
+		else
+			assignedActions = cycleActions;
+
+		final List<IAction> clonedAssignedActions = new ArrayList<IAction>();
+		if (assignedActions != null)
+			clonedAssignedActions.addAll(assignedActions);
+
+		if (isComponentEditor()) {
+			final ButtonToModeAction buttonToModeAction = unsavedProfile.getComponentToModeActionMap()
+					.get(component.getName());
+			if (buttonToModeAction != null)
+				clonedAssignedActions.add(buttonToModeAction);
+		}
+
+		return clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
+	}
+
+	private boolean hasModeAction() {
+		boolean hasModeAction = false;
+
+		for (IAction a : getAssignedActions())
+			if (a instanceof ButtonToModeAction)
+				hasModeAction = true;
+
+		return hasModeAction;
 	}
 
 	private void init(Input input) {
@@ -435,28 +795,13 @@ public class EditActionsDialog extends JDialog {
 		return component != null;
 	}
 
-	public static int getListModelIndex(ListModel<?> model, Object value) {
-		if (value == null)
-			return -1;
-
-		if (model instanceof DefaultListModel)
-			return ((DefaultListModel<?>) model).indexOf(value);
-
-		for (int i = 0; i < model.getSize(); i++)
-			if (value.equals(model.getElementAt(i)))
-				return i;
-
-		return -1;
+	private void preInit() {
+		setModal(true);
+		getContentPane().setLayout(new BorderLayout());
 	}
 
-	private boolean hasModeAction() {
-		boolean hasModeAction = false;
-
-		for (IAction a : getAssignedActions())
-			if (a instanceof ButtonToModeAction)
-				hasModeAction = true;
-
-		return hasModeAction;
+	private void updateAssignedActions() {
+		assignedActionsList.setListData(getAssignedActions());
 	}
 
 	private void updateAvailableActions() {
@@ -482,342 +827,6 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		availableActionsList.setListData(availableActions.toArray(new AvailableAction[availableActions.size()]));
-	}
-
-	private IAction[] getAssignedActions() {
-		final List<IAction> assignedActions;
-		if (isComponentEditor())
-			assignedActions = selectedMode.getComponentToActionsMap().get(component.getName());
-		else
-			assignedActions = cycleActions;
-
-		final List<IAction> clonedAssignedActions = new ArrayList<IAction>();
-		if (assignedActions != null)
-			clonedAssignedActions.addAll(assignedActions);
-
-		if (isComponentEditor()) {
-			final ButtonToModeAction buttonToModeAction = unsavedProfile.getComponentToModeActionMap()
-					.get(component.getName());
-			if (buttonToModeAction != null)
-				clonedAssignedActions.add(buttonToModeAction);
-		}
-
-		return clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
-	}
-
-	private void updateAssignedActions() {
-		assignedActionsList.setListData(getAssignedActions());
-	}
-
-	void closeDialog() {
-		setVisible(false);
-		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-	}
-
-	private class AddActionAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7713175853948284887L;
-
-		public AddActionAction() {
-			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
-				final IAction action = (IAction) clazz.newInstance();
-
-				if (action instanceof ButtonToModeAction)
-					unsavedProfile.getComponentToModeActionMap().put(component.getName(), (ButtonToModeAction) action);
-				else {
-					if (isComponentEditor()) {
-						final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
-						final String componentName = component.getName();
-
-						if (componentToActionMap.get(componentName) == null)
-							componentToActionMap.put(componentName, new ArrayList<IAction>());
-
-						componentToActionMap.get(componentName).add(action);
-					} else
-						cycleActions.add(action);
-				}
-
-				updateAvailableActions();
-				updateAssignedActions();
-
-				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
-						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (InstantiationException e1) {
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			}
-
-		}
-
-	}
-
-	private class RemoveActionAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -5681740772832902238L;
-
-		public RemoveActionAction() {
-			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (selectedAssignedAction instanceof ButtonToModeAction)
-				unsavedProfile.getComponentToModeActionMap().remove(component.getName());
-			else {
-				if (isComponentEditor()) {
-					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
-					final List<IAction> actions = componentToActionMap.get(component.getName());
-					actions.remove(selectedAssignedAction);
-
-					if (actions.size() == 0)
-						componentToActionMap.remove(component.getName());
-				} else
-					cycleActions.remove(selectedAssignedAction);
-			}
-
-			updateAvailableActions();
-			updateAssignedActions();
-		}
-
-	}
-
-	private class JCheckBoxSetPropertyAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -33052386834598414L;
-
-		private final Method setterMethod;
-
-		public JCheckBoxSetPropertyAction(Method setterMethod) {
-			this.setterMethod = setterMethod;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-	}
-
-	private class JSpinnerSetPropertyChangeListener implements ChangeListener {
-
-		private final Method setterMethod;
-
-		public JSpinnerSetPropertyChangeListener(Method setterMethod) {
-			this.setterMethod = setterMethod;
-		}
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			try {
-				Object value = (((JSpinner) e.getSource()).getValue());
-
-				if (value instanceof Double)
-					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
-				else
-					setterMethod.invoke(selectedAssignedAction, value);
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-	}
-
-	private class JComboBoxSetPropertyAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1938012378184518954L;
-
-		private final Method setterMethod;
-
-		public JComboBoxSetPropertyAction(Method setterMethod) {
-			this.setterMethod = setterMethod;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-	}
-
-	private class JListSetPropertyListSelectionListener implements ListSelectionListener {
-
-		private final Method setterMethod;
-
-		public JListSetPropertyListSelectionListener(Method setterMethod) {
-			this.setterMethod = setterMethod;
-		}
-
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			try {
-				final List<Integer> modifierCodes = new ArrayList<Integer>();
-				final List<Integer> keyCodes = new ArrayList<Integer>();
-
-				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					int k = KeyCode.nameToKeyCodeMap.get(o);
-					boolean isModifier = false;
-					for (KeyCode kc : KeyCode.MODIFIER_KEY_CODES) {
-						if (k == kc.keyCode)
-							isModifier = true;
-					}
-
-					if (isModifier)
-						modifierCodes.add(k);
-					else
-						keyCodes.add(k);
-				}
-
-				final KeyStroke keyStroke = new KeyStroke();
-				keyStroke.setModifierCodes(modifierCodes.toArray(new Integer[modifierCodes.size()]));
-				keyStroke.setKeyCodes(keyCodes.toArray(new Integer[keyCodes.size()]));
-
-				setterMethod.invoke(selectedAssignedAction, keyStroke);
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
-				e1.printStackTrace();
-			}
-		}
-
-	}
-
-	private class EditActionsAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -6538021954760621595L;
-
-		public EditActionsAction() {
-			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_PREFIX")
-					+ selectedAssignedAction.toString() + rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(
-					(ButtonToCycleAction) selectedAssignedAction, input);
-			editComponentDialog.setVisible(true);
-		}
-
-	}
-
-	private class OKAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -6947022759101822700L;
-
-		public OKAction() {
-			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText"));
-			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (isComponentEditor()) {
-				Input.setProfile(unsavedProfile, input.getController());
-				main.setUnsavedChangesTitle();
-			} else
-				cycleAction.setActions(cycleActions);
-
-			closeDialog();
-		}
-
-	}
-
-	private class CancelAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 8086810563127997199L;
-
-		public CancelAction() {
-			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText"));
-			putValue(SHORT_DESCRIPTION, rb.getString("CANCEL_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			closeDialog();
-		}
-
-	}
-
-	private static class AvailableAction {
-
-		private final String className;
-
-		public AvailableAction(String className) {
-			this.className = className;
-		}
-
-		@Override
-		public String toString() {
-			String description = "";
-
-			try {
-				final Class<?> clazz = Class.forName(className);
-				description = clazz.newInstance().toString();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-
-			return description;
-		}
-
 	}
 
 }

@@ -25,18 +25,18 @@ public class ButtonToScrollAction extends ToScrollAction {
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
+	@Override
+	public void doAction(Input input, float value) {
+		if (value == activationValue)
+			input.setScrollClicks(input.getScrollClicks() + (invert ? -clicks : clicks));
+	}
+
 	public float getActivationValue() {
 		return activationValue;
 	}
 
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
-	}
-
-	@Override
-	public void doAction(Input input, float value) {
-		if (value == activationValue)
-			input.setScrollClicks(input.getScrollClicks() + (invert ? -clicks : clicks));
 	}
 
 }

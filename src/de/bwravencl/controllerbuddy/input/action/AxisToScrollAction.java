@@ -27,22 +27,6 @@ public class AxisToScrollAction extends ToScrollAction {
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;
 
-	public float getDeadZone() {
-		return deadZone;
-	}
-
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
-	}
-
-	public float getExponent() {
-		return exponent;
-	}
-
-	public void setExponent(Float exponent) {
-		this.exponent = exponent;
-	}
-
 	@Override
 	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
@@ -55,6 +39,22 @@ public class AxisToScrollAction extends ToScrollAction {
 
 			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
 		}
+	}
+
+	public float getDeadZone() {
+		return deadZone;
+	}
+
+	public float getExponent() {
+		return exponent;
+	}
+
+	public void setDeadZone(Float deadZone) {
+		this.deadZone = deadZone;
+	}
+
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
 	}
 
 }

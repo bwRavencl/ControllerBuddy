@@ -29,37 +29,6 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
-	public float getDeadZone() {
-		return deadZone;
-	}
-
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
-	}
-
-	public float getExponent() {
-		return exponent;
-	}
-
-	public void setExponent(Float exponent) {
-		this.exponent = exponent;
-	}
-
-	/*
-	 * public float getSensitivity() { return sensitivity; }
-	 * 
-	 * public void setSensitivity(Float sensitivity) { this.sensitivity =
-	 * sensitivity; }
-	 */
-
-	public float getMaxRelativeSpeed() {
-		return maxRelativeSpeed;
-	}
-
-	public void setMaxRelativeSpeed(Float maxRelativeSpeed) {
-		this.maxRelativeSpeed = maxRelativeSpeed;
-	}
-
 	@Override
 	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
@@ -81,6 +50,37 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 			input.setAxis(virtualAxis, oldValue + (invert ? -d : d));
 		}
+	}
+
+	public float getDeadZone() {
+		return deadZone;
+	}
+
+	public float getExponent() {
+		return exponent;
+	}
+
+	public float getMaxRelativeSpeed() {
+		return maxRelativeSpeed;
+	}
+
+	/*
+	 * public float getSensitivity() { return sensitivity; }
+	 * 
+	 * public void setSensitivity(Float sensitivity) { this.sensitivity =
+	 * sensitivity; }
+	 */
+
+	public void setDeadZone(Float deadZone) {
+		this.deadZone = deadZone;
+	}
+
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
+	}
+
+	public void setMaxRelativeSpeed(Float maxRelativeSpeed) {
+		this.maxRelativeSpeed = maxRelativeSpeed;
 	}
 
 	@Override

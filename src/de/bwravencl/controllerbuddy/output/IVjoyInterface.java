@@ -46,23 +46,9 @@ public interface IVjoyInterface extends Library {
 	public static final int VJD_STAT_MISS = 3;
 	public static final int VJD_STAT_UNKN = 4;
 
-	public SHORT GetvJoyVersion();
-
-	public BOOL vJoyEnabled();
-
-	public PVOID GetvJoyProductString();
-
-	public PVOID GetvJoyManufacturerString();
-
-	public PVOID GetvJoySerialNumberString();
+	public BOOL AcquireVJD(UINT rID);
 
 	public BOOL DriverMatch(Pointer DllVer, Pointer DrvVer);
-
-	public int GetVJDButtonNumber(UINT rID);
-
-	public int GetVJDDiscPovNumber(UINT rID);
-
-	public int GetVJDContPovNumber(UINT rID);
 
 	public BOOL GetVJDAxisExist(UINT rID, UINT Axis);
 
@@ -70,15 +56,23 @@ public interface IVjoyInterface extends Library {
 
 	public BOOL GetVJDAxisMin(UINT rID, UINT Axis, Pointer Min);
 
-	public BOOL AcquireVJD(UINT rID);
+	public int GetVJDButtonNumber(UINT rID);
 
-	public void RelinquishVJD(UINT rID);
+	public int GetVJDContPovNumber(UINT rID);
 
-	public BOOL UpdateVJD(UINT rID, PVOID pData);
+	public int GetVJDDiscPovNumber(UINT rID);
 
 	public int GetVJDStatus(UINT rID);
 
-	public BOOL ResetVJD(UINT rID);
+	public PVOID GetvJoyManufacturerString();
+
+	public PVOID GetvJoyProductString();
+
+	public PVOID GetvJoySerialNumberString();
+
+	public SHORT GetvJoyVersion();
+
+	public void RelinquishVJD(UINT rID);
 
 	public void ResetAll();
 
@@ -86,12 +80,18 @@ public interface IVjoyInterface extends Library {
 
 	public BOOL ResetPovs(UINT rID);
 
+	public BOOL ResetVJD(UINT rID);
+
 	public BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
 
 	public BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
 
+	public BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
+
 	public BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
 
-	public BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
+	public BOOL UpdateVJD(UINT rID, PVOID pData);
+
+	public BOOL vJoyEnabled();
 
 }

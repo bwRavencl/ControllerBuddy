@@ -33,8 +33,13 @@ public class Profile implements Cloneable {
 
 	public static final String DEFAULT_MODE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
 
+	public static boolean isDefaultMode(Mode mode) {
+		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
+	}
+
 	private Map<String, ButtonToModeAction> componentToModeActionMap = new HashMap<String, ButtonToModeAction>();
 	private List<Mode> modes = new ArrayList<Mode>();
+
 	private int activeModeIndex = 0;
 
 	public Profile() {
@@ -43,58 +48,6 @@ public class Profile implements Cloneable {
 				Locale.getDefault());
 		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
 		modes.add(defaultMode);
-	}
-
-	public void removeMode(Mode mode) {
-		final List<String> actionsToRemove = new ArrayList<String>();
-
-		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet()) {
-			if (e.getValue().getMode().equals(mode))
-				actionsToRemove.add(e.getKey());
-		}
-
-		for (String s : actionsToRemove)
-			componentToModeActionMap.remove(s);
-
-		modes.remove(mode);
-	}
-
-	public Map<String, ButtonToModeAction> getComponentToModeActionMap() {
-		return componentToModeActionMap;
-	}
-
-	public void setComponentToModeActionMap(Map<String, ButtonToModeAction> componentToModeActionMap) {
-		this.componentToModeActionMap = componentToModeActionMap;
-	}
-
-	public List<Mode> getModes() {
-		return modes;
-	}
-
-	public void setModes(List<Mode> modes) {
-		this.modes = modes;
-	}
-
-	public static boolean isDefaultMode(Mode mode) {
-		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
-	}
-
-	public Mode getActiveMode() {
-		return modes.get(activeModeIndex);
-	}
-
-	public void setActiveMode(int index) {
-		if (modes.size() > index)
-			this.activeModeIndex = index;
-	}
-
-	public void setActiveMode(UUID modeUuid) {
-		for (Mode p : modes) {
-			if (p.getUuid().equals(modeUuid)) {
-				setActiveMode(modes.indexOf(p));
-				return;
-			}
-		}
 	}
 
 	@Override
@@ -120,6 +73,54 @@ public class Profile implements Cloneable {
 		profile.setModes(clonedModes);
 
 		return profile;
+	}
+
+	public Mode getActiveMode() {
+		return modes.get(activeModeIndex);
+	}
+
+	public Map<String, ButtonToModeAction> getComponentToModeActionMap() {
+		return componentToModeActionMap;
+	}
+
+	public List<Mode> getModes() {
+		return modes;
+	}
+
+	public void removeMode(Mode mode) {
+		final List<String> actionsToRemove = new ArrayList<String>();
+
+		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet()) {
+			if (e.getValue().getMode().equals(mode))
+				actionsToRemove.add(e.getKey());
+		}
+
+		for (String s : actionsToRemove)
+			componentToModeActionMap.remove(s);
+
+		modes.remove(mode);
+	}
+
+	public void setActiveMode(int index) {
+		if (modes.size() > index)
+			this.activeModeIndex = index;
+	}
+
+	public void setActiveMode(UUID modeUuid) {
+		for (Mode p : modes) {
+			if (p.getUuid().equals(modeUuid)) {
+				setActiveMode(modes.indexOf(p));
+				return;
+			}
+		}
+	}
+
+	public void setComponentToModeActionMap(Map<String, ButtonToModeAction> componentToModeActionMap) {
+		this.componentToModeActionMap = componentToModeActionMap;
+	}
+
+	public void setModes(List<Mode> modes) {
+		this.modes = modes;
 	}
 
 }

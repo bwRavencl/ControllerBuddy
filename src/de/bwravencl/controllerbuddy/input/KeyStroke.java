@@ -22,22 +22,6 @@ public class KeyStroke implements Cloneable {
 	private Integer[] keyCodes = {};
 	private Integer[] modifierCodes = {};
 
-	public Integer[] getKeyCodes() {
-		return keyCodes;
-	}
-
-	public void setKeyCodes(Integer[] keyCodes) {
-		this.keyCodes = keyCodes;
-	}
-
-	public Integer[] getModifierCodes() {
-		return modifierCodes;
-	}
-
-	public void setModifierCodes(Integer[] modifierCodes) {
-		this.modifierCodes = modifierCodes;
-	}
-
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final KeyStroke keyStroke = new KeyStroke();
@@ -53,6 +37,22 @@ public class KeyStroke implements Cloneable {
 		keyStroke.setModifierCodes(clonedModifierCodes);
 
 		return keyStroke;
+	}
+
+	public Integer[] getKeyCodes() {
+		return keyCodes;
+	}
+
+	public Integer[] getModifierCodes() {
+		return modifierCodes;
+	}
+
+	public void setKeyCodes(Integer[] keyCodes) {
+		this.keyCodes = keyCodes;
+	}
+
+	public void setModifierCodes(Integer[] modifierCodes) {
+		this.modifierCodes = modifierCodes;
 	}
 
 }

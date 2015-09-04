@@ -25,17 +25,9 @@ public class ButtonToKeyAction extends ToKeyAction {
 
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
-	public float getActivationValue() {
-		return activationValue;
-	}
-
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
 	@Override
 	public void doAction(Input input, float value) {
-		if ((value != activationValue) ^ invert) {
+		if (value != activationValue) {
 			if (downUp)
 				wasUp = true;
 			else
@@ -49,6 +41,14 @@ public class ButtonToKeyAction extends ToKeyAction {
 			} else
 				input.getDownKeyStrokes().add(keystroke);
 		}
+	}
+
+	public float getActivationValue() {
+		return activationValue;
+	}
+
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
 	}
 
 }
