@@ -39,6 +39,7 @@ public class Input {
 	}
 
 	private static Profile profile;
+
 	private Controller controller;
 	private OutputThread outputThread;
 	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);

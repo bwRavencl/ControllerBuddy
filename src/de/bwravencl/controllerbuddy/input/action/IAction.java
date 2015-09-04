@@ -20,9 +20,9 @@ package de.bwravencl.controllerbuddy.input.action;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import net.brockmatt.util.ResourceBundleUtil;
 
 public interface IAction extends Cloneable {
 

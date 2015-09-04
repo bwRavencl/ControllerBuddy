@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import net.brockmatt.util.ResourceBundleUtil;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
+import net.brockmatt.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
 

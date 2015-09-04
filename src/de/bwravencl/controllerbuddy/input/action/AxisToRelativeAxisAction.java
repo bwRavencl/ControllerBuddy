@@ -21,11 +21,13 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.25f;
-	public static final float DEFAULT_SENSITIVITY = 1.0f;
+	public static final float DEFAULT_DEAD_ZONE = 0.15f;
+	public static final float DEFAULT_EXPONENT = 2.0f;
+	public static final float DEFAULT_MAX_RELATIVE_SPEED = 6.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
-	private float sensitivity = DEFAULT_SENSITIVITY;
+	private float exponent = DEFAULT_EXPONENT;
+	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
 	public float getDeadZone() {
 		return deadZone;
@@ -35,24 +37,49 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 		this.deadZone = deadZone;
 	}
 
-	public float getSensitivity() {
-		return sensitivity;
+	public float getExponent() {
+		return exponent;
 	}
 
-	public void setSensitivity(Float sensitivity) {
-		this.sensitivity = sensitivity;
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
+	}
+
+	/*
+	 * public float getSensitivity() { return sensitivity; }
+	 * 
+	 * public void setSensitivity(Float sensitivity) { this.sensitivity =
+	 * sensitivity; }
+	 */
+
+	public float getMaxRelativeSpeed() {
+		return maxRelativeSpeed;
+	}
+
+	public void setMaxRelativeSpeed(Float maxRelativeSpeed) {
+		this.maxRelativeSpeed = maxRelativeSpeed;
 	}
 
 	@Override
-	public void doAction(Input joystick, float value) {
+	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
-			final float d = value * sensitivity * (float) joystick.getOutputThread().getUpdateRate() / (float) 1000L;
+			/*
+			 * final float d = (Math.signum(value) * (float)
+			 * Math.pow(Math.abs(value * 100.0f), exponent) / 100.0f)
+			 * sensitivity * (float) input.getOutputThread().getUpdateRate() /
+			 * (float) 1000L;
+			 */
 
-			final float oldValue = Input.normalize(joystick.getAxis().get(virtualAxis),
-					joystick.getOutputThread().getMinAxisValue(), joystick.getOutputThread().getMaxAxisValue(), -1.0f,
-					1.0f);
+			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
 
-			joystick.setAxis(virtualAxis, oldValue + (invert ? -d : d));
+			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
+					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxRelativeSpeed,
+					maxRelativeSpeed) * rateMultiplier;
+
+			final float oldValue = Input.normalize(input.getAxis().get(virtualAxis),
+					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1.0f, 1.0f);
+
+			input.setAxis(virtualAxis, oldValue + (invert ? -d : d));
 		}
 	}
 

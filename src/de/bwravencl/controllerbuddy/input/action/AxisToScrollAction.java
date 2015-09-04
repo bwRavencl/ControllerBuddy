@@ -21,9 +21,11 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToScrollAction extends ToScrollAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.25f;
+	public static final float DEFAULT_DEAD_ZONE = 0.15f;
+	public static final float DEFAULT_EXPONENT = 1.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
+	private float exponent = DEFAULT_EXPONENT;
 
 	public float getDeadZone() {
 		return deadZone;
@@ -33,13 +35,23 @@ public class AxisToScrollAction extends ToScrollAction {
 		this.deadZone = deadZone;
 	}
 
+	public float getExponent() {
+		return exponent;
+	}
+
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
+	}
+
 	@Override
 	public void doAction(Input input, float value) {
 		if (Math.abs(value) > deadZone) {
 			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
 
-			final float d = Input.normalize(value * rateMultiplier, -0.99f * rateMultiplier, 0.99f * rateMultiplier,
-					-clicks, clicks);
+			final float d = -Input.normalize(
+					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent) * rateMultiplier,
+					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
+					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
 			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
 		}

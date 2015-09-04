@@ -35,7 +35,7 @@ public class ButtonToButtonAction extends ToButtonAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		boolean down = value == activationValue ? !invert : invert;
+		final boolean down = value == activationValue ? !invert : invert;
 		input.setButtons(buttonId, down ? 1.0f : 0.0f);
 	}
 

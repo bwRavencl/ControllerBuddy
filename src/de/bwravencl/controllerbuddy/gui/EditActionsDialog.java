@@ -22,7 +22,17 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -48,28 +58,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.KeyCode;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
-import de.bwravencl.controllerbuddy.input.KeyCode;
+import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction.MouseAxis;
 import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
-
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 public class EditActionsDialog extends JDialog {
 
@@ -141,6 +140,7 @@ public class EditActionsDialog extends JDialog {
 				 */
 				private static final long serialVersionUID = -9107064465015662054L;
 
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					selectedMode = (Mode) modeComboBox.getSelectedItem();
 					updateAssignedActions();
@@ -298,7 +298,7 @@ public class EditActionsDialog extends JDialog {
 
 											final SpinnerNumberModel model;
 											if ("Clicks".equals(propertyName))
-												model = new SpinnerNumberModel(value, 0, 20, 1);
+												model = new SpinnerNumberModel(value, 1, 20, 1);
 											else if ("MouseButton".equals(propertyName))
 												model = new SpinnerNumberModel(value, 1, 3, 1);
 											else
@@ -319,11 +319,15 @@ public class EditActionsDialog extends JDialog {
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 											else if ("DeadZone".equals(propertyName))
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
+											else if ("Exponent".equals(propertyName))
+												model = new SpinnerNumberModel(value, 1.0, 5.0, 0.1);
 											else if ("MinAxisValue".equals(propertyName)
 													|| "MaxAxisValue".equals(propertyName))
 												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
-											else if ("MaxSpeed".equals(propertyName))
-												model = new SpinnerNumberModel(value, 100.0, 1000.0, 0.1);
+											else if ("MaxCursorSpeed".equals(propertyName))
+												model = new SpinnerNumberModel(value, 100.0, 10000.0, 1.0);
+											else if ("MaxRelativeSpeed".equals(propertyName))
+												model = new SpinnerNumberModel(value, 0.1, 100.0, 0.01);
 											else
 												model = new SpinnerNumberModel(value, -1.0, 1.0, 0.05);
 
@@ -331,7 +335,7 @@ public class EditActionsDialog extends JDialog {
 											final JComponent editor = spinner.getEditor();
 											final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
 													.getTextField();
-											textField.setColumns(3);
+											textField.setColumns(4);
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
 											if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
@@ -498,7 +502,7 @@ public class EditActionsDialog extends JDialog {
 				clonedAssignedActions.add(buttonToModeAction);
 		}
 
-		return (IAction[]) clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
+		return clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
 	}
 
 	private void updateAssignedActions() {
@@ -522,6 +526,7 @@ public class EditActionsDialog extends JDialog {
 			putValue(SHORT_DESCRIPTION, rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
@@ -571,6 +576,7 @@ public class EditActionsDialog extends JDialog {
 			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (selectedAssignedAction instanceof ButtonToModeAction)
 				unsavedProfile.getComponentToModeActionMap().remove(component.getName());
@@ -605,6 +611,7 @@ public class EditActionsDialog extends JDialog {
 			this.setterMethod = setterMethod;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
@@ -660,6 +667,7 @@ public class EditActionsDialog extends JDialog {
 			this.setterMethod = setterMethod;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
@@ -689,7 +697,7 @@ public class EditActionsDialog extends JDialog {
 				final List<Integer> keyCodes = new ArrayList<Integer>();
 
 				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					int k = KeyCode.nameToKeyCodeMap.get((String) o);
+					int k = KeyCode.nameToKeyCodeMap.get(o);
 					boolean isModifier = false;
 					for (KeyCode kc : KeyCode.MODIFIER_KEY_CODES) {
 						if (k == kc.keyCode)
@@ -731,6 +739,7 @@ public class EditActionsDialog extends JDialog {
 					+ selectedAssignedAction.toString() + rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(
 					(ButtonToCycleAction) selectedAssignedAction, input);
@@ -751,6 +760,7 @@ public class EditActionsDialog extends JDialog {
 			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (isComponentEditor()) {
 				Input.setProfile(unsavedProfile, input.getController());
@@ -775,6 +785,7 @@ public class EditActionsDialog extends JDialog {
 			putValue(SHORT_DESCRIPTION, rb.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			closeDialog();
 		}

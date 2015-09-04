@@ -21,11 +21,13 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToCursorAction extends InvertableAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.25f;
-	public static final float DEFAULT_MAX_SPEED = 750.0f;
+	public static final float DEFAULT_DEAD_ZONE = 0.15f;
+	public static final float DEFAULT_EXPONENT = 2.0f;
+	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
-	private float maxSpeed = DEFAULT_MAX_SPEED;
+	private float exponent = DEFAULT_EXPONENT;
+	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
 
 	public enum MouseAxis {
 		X, Y
@@ -41,12 +43,20 @@ public class AxisToCursorAction extends InvertableAction {
 		this.deadZone = deadZone;
 	}
 
-	public float getMaxSpeed() {
-		return maxSpeed;
+	public float getExponent() {
+		return exponent;
 	}
 
-	public void setMaxSpeed(Float maxSpeed) {
-		this.maxSpeed = maxSpeed;
+	public void setExponent(Float exponent) {
+		this.exponent = exponent;
+	}
+
+	public float getMaxCursorSpeed() {
+		return maxCursorSpeed;
+	}
+
+	public void setMaxCursorSpeed(Float maxCursorSpeed) {
+		this.maxCursorSpeed = maxCursorSpeed;
 	}
 
 	public MouseAxis getAxis() {
@@ -62,7 +72,9 @@ public class AxisToCursorAction extends InvertableAction {
 		if (Math.abs(value) > deadZone) {
 			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
 
-			float d = Input.normalize(value, -1.0f, 1.0f, -maxSpeed, maxSpeed) * rateMultiplier;
+			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
+					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxCursorSpeed,
+					maxCursorSpeed) * rateMultiplier;
 
 			if (axis.equals(MouseAxis.X))
 				input.setCursorDeltaX((int) (input.getCursorDeltaX() + (invert ? -d : d)));

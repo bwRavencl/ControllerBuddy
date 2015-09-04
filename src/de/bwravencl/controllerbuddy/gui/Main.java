@@ -27,45 +27,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JSeparator;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
-import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
-import de.bwravencl.controllerbuddy.output.ServerOutputThread;
-import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.AbstractAction;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.swing.JTabbedPane;
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -81,7 +47,28 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -101,6 +88,15 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
+import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
+import de.bwravencl.controllerbuddy.output.OutputThread;
+import de.bwravencl.controllerbuddy.output.ServerOutputThread;
+import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
@@ -161,6 +157,7 @@ public final class Main {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					Main main = new Main();
@@ -293,7 +290,7 @@ public final class Main {
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowAboutDialogAction());
 
-		final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		frame.getContentPane().add(tabbedPane);
 
 		final JPanel modesPanel = new JPanel(new BorderLayout());
@@ -408,7 +405,7 @@ public final class Main {
 		updateRatePanel.add(updateRateLabel);
 
 		updateRateSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_UPDATE_RATE, (int) ServerOutputThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
+				preferences.getInt(PREFERENCES_UPDATE_RATE, (int) OutputThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
 		updateRateSpinner.setEditor(new JSpinner.NumberEditor(updateRateSpinner, "#"));
 		updateRateSpinner.addChangeListener(new ChangeListener() {
 
@@ -767,6 +764,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("NEW_PROFILE_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			newProfile();
 		}
@@ -785,6 +783,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_PROFILE_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
@@ -809,6 +808,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_PROFILE_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				input.reset();
@@ -851,6 +851,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			System.exit(0);
 		}
@@ -869,6 +870,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("START_LOCAL_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			startLocalRadioButtonMenuItem.setEnabled(false);
 			startClientRadioButtonMenuItem.setEnabled(false);
@@ -894,6 +896,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			stopLocal();
 		}
@@ -912,6 +915,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("START_CLIENT_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			startLocalRadioButtonMenuItem.setEnabled(false);
 			startClientRadioButtonMenuItem.setEnabled(false);
@@ -939,6 +943,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			stopClient();
 		}
@@ -957,6 +962,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			startLocalRadioButtonMenuItem.setEnabled(false);
 			startClientRadioButtonMenuItem.setEnabled(false);
@@ -983,6 +989,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			stopServer();
 		}
@@ -1001,6 +1008,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
 					JOptionPane.INFORMATION_MESSAGE);
@@ -1026,6 +1034,7 @@ public final class Main {
 					+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			selectedController = controller;
 			newProfile();
@@ -1051,6 +1060,7 @@ public final class Main {
 					+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
 			editComponentDialog.setVisible(true);
@@ -1075,6 +1085,7 @@ public final class Main {
 			this.modeDescriptionTextField = modeDescriptionTextField;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			setModeDescription();
 		}
@@ -1117,6 +1128,7 @@ public final class Main {
 					+ rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_SUFFIX"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			Input.getProfile().removeMode(mode);
 			setUnsavedChangesTitle();
@@ -1137,6 +1149,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final Mode mode = new Mode();
 			Input.getProfile().getModes().add(mode);
@@ -1159,6 +1172,7 @@ public final class Main {
 			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			final JFileChooser vJoyDirectoryFileChooser = new JFileChooser(
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
@@ -1195,6 +1209,7 @@ public final class Main {
 			this.hostTextField = hostTextField;
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			setHost();
 		}
@@ -1224,6 +1239,7 @@ public final class Main {
 		private static final String PROPERTY_TYPE = "type";
 		private static final String PROPERTY_DATA = "data";
 
+		@Override
 		public JsonElement serialize(T object, java.lang.reflect.Type interfaceType, JsonSerializationContext context) {
 			final JsonObject wrapper = new JsonObject();
 			wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
@@ -1232,6 +1248,7 @@ public final class Main {
 			return wrapper;
 		}
 
+		@Override
 		public T deserialize(JsonElement elem, java.lang.reflect.Type interfaceType, JsonDeserializationContext context)
 				throws JsonParseException {
 			final JsonObject wrapper = (JsonObject) elem;
