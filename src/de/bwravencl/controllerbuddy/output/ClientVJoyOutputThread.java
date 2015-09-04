@@ -205,7 +205,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						}
 
 						final Set<Integer> sourceModifiers = new HashSet<Integer>();
-						downNormalKeys.clear();
+						final Set<Integer> sourceNormalKeys = new HashSet<Integer>();
 						int nDownKeyStrokes = Integer
 								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
 						for (int i = 1; i <= nDownKeyStrokes; i++) {
@@ -222,7 +222,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							for (int j = 1; j <= nDownKeyCodes; j++) {
 								final int k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
 										+ nDownUpMouseButtons + nDownModifierCodes + i + j]);
-								downNormalKeys.add(k);
+								sourceNormalKeys.add(k);
 							}
 
 							final int spacing = nDownModifierCodes + nDownKeyCodes + 1;
@@ -230,6 +230,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							i += spacing;
 						}
 						updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
+						updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys);
 
 						downUpKeyStrokes.clear();
 						int nDownUpKeyStrokes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons

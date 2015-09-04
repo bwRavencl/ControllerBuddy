@@ -169,23 +169,23 @@ public class ServerOutputThread extends OutputThread {
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
 					for (KeyStroke ks : input.getDownKeyStrokes()) {
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-						for (int k : ks.getModifierCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+						for (int c : ks.getModifierCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-						for (int k : ks.getKeyCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+						for (int c : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 					}
 
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 					for (KeyStroke ks : input.getDownUpKeyStrokes()) {
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-						for (int k : ks.getModifierCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+						for (int c : ks.getModifierCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-						for (int k : ks.getKeyCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + k);
+						for (int c : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 					}
 					input.getDownUpKeyStrokes().clear();
 

@@ -71,12 +71,13 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		input.getDownUpMouseButtons().clear();
 
 		final Set<Integer> sourceModifiers = new HashSet<Integer>();
-		downNormalKeys.clear();
+		final Set<Integer> sourceNormalKeys = new HashSet<Integer>();
 		for (KeyStroke ks : input.getDownKeyStrokes()) {
 			sourceModifiers.addAll(Arrays.asList(ks.getModifierCodes()));
-			downNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
+			sourceNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
 		}
 		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
+		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys);
 
 		downUpKeyStrokes.clear();
 		downUpKeyStrokes.addAll(input.getDownUpKeyStrokes());

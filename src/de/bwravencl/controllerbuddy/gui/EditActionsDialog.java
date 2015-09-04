@@ -59,10 +59,10 @@ import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
-import de.bwravencl.controllerbuddy.input.KeyCode;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -262,17 +262,17 @@ public class EditActionsDialog extends JDialog {
 				final List<Integer> keyCodes = new ArrayList<Integer>();
 
 				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					int k = KeyCode.nameToKeyCodeMap.get(o);
+					int c = ScanCode.nameToScanCodeMap.get(o);
 					boolean isModifier = false;
-					for (KeyCode kc : KeyCode.MODIFIER_KEY_CODES) {
-						if (k == kc.keyCode)
+					for (ScanCode sc : ScanCode.MODIFIER_SCAN_CODES) {
+						if (c == sc.scanCode)
 							isModifier = true;
 					}
 
 					if (isModifier)
-						modifierCodes.add(k);
+						modifierCodes.add(c);
 					else
-						keyCodes.add(k);
+						keyCodes.add(c);
 				}
 
 				final KeyStroke keyStroke = new KeyStroke();
@@ -683,7 +683,7 @@ public class EditActionsDialog extends JDialog {
 												model = new SpinnerNumberModel(value, 1.0, 5.0, 0.1);
 											else if ("MinAxisValue".equals(propertyName)
 													|| "MaxAxisValue".equals(propertyName))
-												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
+												model = new SpinnerNumberModel(value, -1.0, 1.0, 0.01);
 											else if ("MaxCursorSpeed".equals(propertyName))
 												model = new SpinnerNumberModel(value, 100.0, 10000.0, 1.0);
 											else if ("MaxRelativeSpeed".equals(propertyName))
@@ -726,7 +726,7 @@ public class EditActionsDialog extends JDialog {
 											propertyPanel.add(comboBox);
 										} else if (KeyStroke.class == clazz) {
 											final List<String> availableCodes = new ArrayList<String>();
-											for (String s : KeyCode.nameToKeyCodeMap.keySet())
+											for (String s : ScanCode.nameToScanCodeMap.keySet())
 												availableCodes.add(s);
 											final JList<String> codes = new JList<String>(
 													availableCodes.toArray(new String[availableCodes.size()]));
@@ -735,10 +735,10 @@ public class EditActionsDialog extends JDialog {
 											final KeyStroke keyStroke = (KeyStroke) getterMethod
 													.invoke(selectedAssignedAction);
 											final List<String> addedCodes = new ArrayList<String>();
-											for (int k : keyStroke.getModifierCodes())
-												addedCodes.add(KeyCode.keyCodeToNameMap.get(k));
-											for (int k : keyStroke.getKeyCodes())
-												addedCodes.add(KeyCode.keyCodeToNameMap.get(k));
+											for (int c : keyStroke.getModifierCodes())
+												addedCodes.add(ScanCode.scanCodeToNameMap.get(c));
+											for (int c : keyStroke.getKeyCodes())
+												addedCodes.add(ScanCode.scanCodeToNameMap.get(c));
 											for (String s : addedCodes) {
 												final int index = getListModelIndex(codes.getModel(), s);
 												if (index >= 0)

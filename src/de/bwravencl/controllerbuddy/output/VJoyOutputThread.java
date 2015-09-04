@@ -51,24 +51,29 @@ public abstract class VJoyOutputThread extends OutputThread {
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
 
-	private static final DWORD MOUSEEVENTF_MOVE = new DWORD(0x0001L);
-	private static final DWORD MOUSEEVENTF_LEFTDOWN = new DWORD(0x0002L);
-	private static final DWORD MOUSEEVENTF_LEFTUP = new DWORD(0x0004L);
-	private static final DWORD MOUSEEVENTF_RIGHTDOWN = new DWORD(0x0008L);
-	private static final DWORD MOUSEEVENTF_RIGHTUP = new DWORD(0x0010L);
-	private static final DWORD MOUSEEVENTF_MIDDLEDOWN = new DWORD(0x0020L);
-	private static final DWORD MOUSEEVENTF_MIDDLEUP = new DWORD(0x0040L);
-	private static final DWORD MOUSEEVENTF_WHEEL = new DWORD(0x0800L);
-	private static final DWORD KEYEVENTF_KEYUP = new DWORD(0x0002L);
+	private static final long KEYEVENTF_KEYUP = 0x0002L;
+	private static final long KEYEVENTF_SCANCODE = 0x0008L;
+	private static final long MOUSEEVENTF_MOVE = 0x0001L;
+	private static final long MOUSEEVENTF_LEFTDOWN = 0x0002L;
+	private static final long MOUSEEVENTF_LEFTUP = 0x0004L;
+	private static final long MOUSEEVENTF_RIGHTDOWN = 0x0008L;
+	private static final long MOUSEEVENTF_RIGHTUP = 0x0010L;
+	private static final long MOUSEEVENTF_MIDDLEDOWN = 0x0020L;
+	private static final long MOUSEEVENTF_MIDDLEUP = 0x0040L;
+	private static final long MOUSEEVENTF_WHEEL = 0x0800L;
 	private static final long WHEEL_DELTA = 120L;
 
-	private static void doKeyboardInput(int keyCode, boolean down) {
+	private static void doKeyboardInput(int scanCode, boolean down) {
 		final INPUT input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
 		input.input.setType(KEYBDINPUT.class);
-		input.input.ki.wVk = new WORD(keyCode);
-		if (!down)
-			input.input.ki.dwFlags = KEYEVENTF_KEYUP;
+		input.input.ki.wScan = new WORD(scanCode);
+		final long flags;
+		if (down)
+			flags = KEYEVENTF_SCANCODE;
+		else
+			flags = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE;
+		input.input.ki.dwFlags = new DWORD(flags);
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
@@ -79,13 +84,13 @@ public abstract class VJoyOutputThread extends OutputThread {
 		input.input.setType(MOUSEINPUT.class);
 		switch (button) {
 		case 1:
-			input.input.mi.dwFlags = (down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP);
+			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP));
 			break;
 		case 2:
-			input.input.mi.dwFlags = (down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP);
+			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP));
 			break;
 		case 3:
-			input.input.mi.dwFlags = (down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP);
+			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP));
 			break;
 		default:
 			break;
@@ -159,38 +164,33 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
 	protected boolean run = true;
+
 	protected LONG axisX;
-
 	protected LONG axisY;
-
 	protected LONG axisZ;
 	protected LONG axisRX;
-
 	protected LONG axisRY;
-
 	protected LONG axisRZ;
 	protected LONG axisS0;
 	protected LONG axisS1;
+
 	protected BOOL[] buttons;
 
 	protected int cursorDeltaX;
 	protected int cursorDeltaY;
 	protected int scrollClicks;
+
 	protected final Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
 	protected final Set<Integer> newUpMouseButtons = new HashSet<Integer>();
-
 	protected final Set<Integer> newDownMouseButtons = new HashSet<Integer>();
-
 	protected final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 
 	protected final Set<Integer> oldDownModifiers = new HashSet<Integer>();
-
 	protected final Set<Integer> newUpModifiers = new HashSet<Integer>();
-
 	protected final Set<Integer> newDownModifiers = new HashSet<Integer>();
-
-	protected final Set<Integer> downNormalKeys = new HashSet<Integer>();
-
+	protected final Set<Integer> oldDownNormalKeys = new HashSet<Integer>();
+	protected final Set<Integer> newUpNormalKeys = new HashSet<Integer>();
+	protected final Set<Integer> newDownNormalKeys = new HashSet<Integer>();
 	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public VJoyOutputThread(Main main, Input input) {
@@ -202,11 +202,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
 
-			for (int k : oldDownMouseButtons)
-				doMouseButtonInput(k, false);
+			for (int b : oldDownMouseButtons)
+				doMouseButtonInput(b, false);
 
-			for (int k : oldDownModifiers)
-				doKeyboardInput(k, false);
+			for (int c : oldDownModifiers)
+				doKeyboardInput(c, false);
 
 			main.setStatusbarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
 		}
@@ -355,7 +355,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				input.input.setType(MOUSEINPUT.class);
 				input.input.mi.dx = new LONG(cursorDeltaX);
 				input.input.mi.dy = new LONG(cursorDeltaY);
-				input.input.mi.dwFlags = MOUSEEVENTF_MOVE;
+				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
 
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
@@ -371,24 +371,29 @@ public abstract class VJoyOutputThread extends OutputThread {
 				doMouseButtonInput(b, false);
 			}
 
-			for (int k : newUpModifiers)
-				doKeyboardInput(k, false);
+			for (int c : newUpModifiers)
+				doKeyboardInput(c, false);
 
-			for (int k : newDownModifiers)
-				doKeyboardInput(k, true);
+			for (int c : newUpNormalKeys)
+				doKeyboardInput(c, false);
 
-			for (int k : downNormalKeys)
-				doKeyboardInput(k, true);
+			for (int c : newDownModifiers)
+				doKeyboardInput(c, true);
+
+			for (int c : newDownNormalKeys)
+				doKeyboardInput(c, true);
 
 			for (KeyStroke ks : downUpKeyStrokes) {
-				for (int k : ks.getModifierCodes())
-					doKeyboardInput(k, true);
+				for (int c : ks.getModifierCodes())
+					doKeyboardInput(c, true);
 
-				for (int k : ks.getKeyCodes())
-					doKeyboardInput(k, true);
+				for (int c : ks.getKeyCodes()) {
+					doKeyboardInput(c, true);
+					doKeyboardInput(c, false);
+				}
 
-				for (int k : ks.getModifierCodes())
-					doKeyboardInput(k, false);
+				for (int c : ks.getModifierCodes())
+					doKeyboardInput(c, false);
 			}
 
 			if (scrollClicks != 0) {
@@ -396,7 +401,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				input.type = new DWORD(INPUT.INPUT_MOUSE);
 				input.input.setType(MOUSEINPUT.class);
 				input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
-				input.input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
 
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
