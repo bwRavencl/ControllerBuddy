@@ -9,7 +9,7 @@ public interface ISuspendableAction extends IAction {
 
 	static final long SUSPEND_TIME = 750L;
 
-	final Set<ISuspendableAction> suspendedActions = new HashSet<ISuspendableAction>();
+	static final Set<ISuspendableAction> suspendedActions = new HashSet<ISuspendableAction>();
 
 	default boolean isSuspended() {
 		return suspendedActions.contains(this);

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,11 +28,18 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,11 +56,13 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,6 +79,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -230,6 +241,21 @@ public final class Main {
 			} catch (ClassNotFoundException e) {
 				throw new JsonParseException(e);
 			}
+		}
+
+	}
+
+	private class LaunchInTrayCheckBoxAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5224908351960158549L;
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final JCheckBox checkBox = (JCheckBox) e.getSource();
+			preferences.putBoolean(PREFERENCES_LAUNCH_IN_TRAY, checkBox.isSelected());
 		}
 
 	}
@@ -490,6 +516,28 @@ public final class Main {
 
 	}
 
+	private class ShowAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8578159622754054457L;
+
+		public ShowAction() {
+			putValue(NAME, rb.getString("SHOW_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final WindowEvent openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
+			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
+			frame.setVisible(true);
+			frame.setExtendedState(Frame.NORMAL);
+		}
+
+	}
+
 	private class StartClientAction extends AbstractAction {
 
 		/**
@@ -628,6 +676,7 @@ public final class Main {
 
 	}
 
+	private static final boolean DEFAULT_LAUNCH_IN_TRAY = false;
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 600;
@@ -636,6 +685,7 @@ public final class Main {
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
+	public static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
@@ -643,7 +693,7 @@ public final class Main {
 	public static final String PREFERENCES_HOST = "host";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_TIMEOUT = "timeout";
-	public static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+	public static final String PREFERENCES_LAUNCH_IN_TRAY = "launch_in_tray";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
@@ -658,8 +708,12 @@ public final class Main {
 			@Override
 			public void run() {
 				try {
-					Main main = new Main();
-					main.frame.setVisible(true);
+					final Main main = new Main();
+					if (SystemTray.isSupported())
+						main.frame.setVisible(
+								!main.preferences.getBoolean(PREFERENCES_LAUNCH_IN_TRAY, DEFAULT_LAUNCH_IN_TRAY));
+					else
+						main.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -694,6 +748,8 @@ public final class Main {
 	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
 
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+
+	private MenuItem showMenuItem;
 
 	private final JPanel modesListPanel;
 
@@ -755,9 +811,44 @@ public final class Main {
 		});
 
 		frame = new JFrame();
+		frame.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+
+				if (showMenuItem != null)
+					showMenuItem.setEnabled(true);
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				super.windowDeiconified(e);
+
+				if (showMenuItem != null)
+					showMenuItem.setEnabled(false);
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				super.windowIconified(e);
+
+				if (showMenuItem != null)
+					showMenuItem.setEnabled(true);
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				super.windowOpened(e);
+
+				if (showMenuItem != null)
+					showMenuItem.setEnabled(false);
+			}
+
+		});
 		frame.setTitle(rb.getString("APPLICATION_NAME"));
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		final List<Image> icons = new ArrayList<Image>();
 		for (String s : ICON_RESOURCE_PATHS) {
@@ -772,11 +863,13 @@ public final class Main {
 		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
 		fileMenu.add(new NewAction());
-		fileMenu.add(new OpenAction());
+		final OpenAction openAction = new OpenAction();
+		fileMenu.add(openAction);
 		fileMenu.add(new SaveAction());
 		fileMenu.add(new SaveAsAction());
 		fileMenu.add(new JSeparator());
-		fileMenu.add(new QuitAction());
+		final QuitAction quitAction = new QuitAction();
+		fileMenu.add(quitAction);
 
 		final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
 		deviceMenu.addMenuListener(new MenuListener() {
@@ -1006,6 +1099,55 @@ public final class Main {
 			}
 		});
 		timeoutPanel.add(timeoutSpinner);
+
+		if (SystemTray.isSupported()) {
+			final JPanel launchInTrayPanel = new JPanel(panelFlowLayout);
+			settingsPanel.add(launchInTrayPanel, panelGridBagConstraints);
+
+			final JLabel launchInTrayLabel = new JLabel(rb.getString("LAUNCH_IN_TRAY_LABEL"));
+			launchInTrayLabel.setPreferredSize(new Dimension(100, 15));
+			launchInTrayPanel.add(launchInTrayLabel);
+
+			final JCheckBox launchInTrayCheckBox = new JCheckBox(new LaunchInTrayCheckBoxAction());
+			launchInTrayCheckBox
+					.setSelected(preferences.getBoolean(PREFERENCES_LAUNCH_IN_TRAY, DEFAULT_LAUNCH_IN_TRAY));
+			launchInTrayCheckBox.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					preferences.putBoolean(PREFERENCES_LAUNCH_IN_TRAY, launchInTrayCheckBox.isSelected());
+				}
+			});
+			launchInTrayPanel.add(launchInTrayCheckBox);
+
+			final PopupMenu popupMenu = new PopupMenu();
+
+			final ShowAction showAction = new ShowAction();
+			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
+			showMenuItem.addActionListener(showAction);
+			popupMenu.add(showMenuItem);
+
+			popupMenu.addSeparator();
+
+			final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
+			openMenuItem.addActionListener(openAction);
+			popupMenu.add(openMenuItem);
+
+			popupMenu.addSeparator();
+
+			final MenuItem quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
+			quitMenuItem.addActionListener(quitAction);
+			popupMenu.add(quitMenuItem);
+
+			final TrayIcon trayIcon = new TrayIcon(frame.getIconImage());
+			trayIcon.setToolTip(rb.getString("APPLICATION_NAME"));
+			trayIcon.setPopupMenu(popupMenu);
+			try {
+				SystemTray.getSystemTray().add(trayIcon);
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
 
 		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
