@@ -43,6 +43,7 @@ import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 
 public abstract class VJoyOutputThread extends OutputThread {
 
@@ -309,6 +310,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final Pointer Max = new Memory(LONG.SIZE);
 			vJoy.GetVJDAxisMax(vJoyDevice, IVjoyInterface.HID_USAGE_X, Max);
 			maxAxisValue = Max.getInt(0L);
+			
+			for (VirtualAxis va : VirtualAxis.values())
+				input.setAxis(va, 0.0f);
 
 			setnButtons(vJoy.GetVJDButtonNumber(vJoyDevice));
 
