@@ -32,13 +32,6 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	@Override
 	public void doAction(Input input, float value) {
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			/*
-			 * final float d = (Math.signum(value) * (float)
-			 * Math.pow(Math.abs(value * 100.0f), exponent) / 100.0f)
-			 * sensitivity * (float) input.getOutputThread().getUpdateRate() /
-			 * (float) 1000L;
-			 */
-
 			final float rateMultiplier = (float) input.getOutputThread().getPollInterval() / (float) 1000L;
 
 			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
@@ -63,13 +56,6 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
 	}
-
-	/*
-	 * public float getSensitivity() { return sensitivity; }
-	 * 
-	 * public void setSensitivity(Float sensitivity) { this.sensitivity =
-	 * sensitivity; }
-	 */
 
 	public void setDeadZone(Float deadZone) {
 		this.deadZone = deadZone;

@@ -390,8 +390,8 @@ public class EditActionsDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction", ACTION_CLASS_PREFIX + "AxisToScrollAction" };
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToModeAction",
-			ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
+			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToButtonAction",
+			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
