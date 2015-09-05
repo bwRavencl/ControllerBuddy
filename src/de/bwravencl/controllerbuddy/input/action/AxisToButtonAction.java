@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToButtonAction extends ToButtonAction {
+public class AxisToButtonAction extends ToButtonAction implements ISuspendableAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;
@@ -30,8 +30,9 @@ public class AxisToButtonAction extends ToButtonAction {
 	@Override
 	public void doAction(Input input, float value) {
 		boolean down = (value >= minAxisValue && value <= maxAxisValue);
+		down &= isSuspended();
 
-		input.setButtons(buttonId, invert ? !down : down);
+		input.setButtons(buttonId, down);
 	}
 
 	public float getMaxAxisValue() {

@@ -125,7 +125,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 									rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 							retry = -1;
 						} else {
-							updateRate = Long.parseLong(messageParts[2]);
+							pollInterval = Long.parseLong(messageParts[2]);
 							success = true;
 						}
 					} else {
@@ -148,7 +148,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				clientState = ClientState.Connected;
 				main.setStatusbarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
 						+ rb.getString("STATUS_CONNECTED_TO_PART_2") + port + rb.getString("STATUS_CONNECTED_TO_PART_3")
-						+ updateRate + rb.getString("STATUS_CONNECTED_TO_PART_4"));
+						+ pollInterval + rb.getString("STATUS_CONNECTED_TO_PART_4"));
 			} else {
 				if (retry != -1 && run)
 					JOptionPane.showMessageDialog(main.getFrame(),

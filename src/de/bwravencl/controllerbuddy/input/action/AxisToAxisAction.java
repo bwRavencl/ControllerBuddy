@@ -19,11 +19,12 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToAxisAction extends ToAxisAction {
+public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		input.setAxis(virtualAxis, invert ? -value : value);
+		if (!isSuspended())
+			input.setAxis(virtualAxis, invert ? -value : value);
 	}
 
 }

@@ -110,7 +110,7 @@ public class ServerOutputThread extends OutputThread {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(PROTOCOL_VERSION));
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
-							sw.append(String.valueOf(updateRate));
+							sw.append(String.valueOf(pollInterval));
 
 							final byte[] sendBuf = sw.toString().getBytes("ASCII");
 							final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length,
@@ -121,14 +121,14 @@ public class ServerOutputThread extends OutputThread {
 							main.setStatusbarText(
 									rb.getString("STATUS_CONNECTED_TO_PART_1") + clientIPAddress.getCanonicalHostName()
 											+ rb.getString("STATUS_CONNECTED_TO_PART_2") + clientPort
-											+ rb.getString("STATUS_CONNECTED_TO_PART_3") + updateRate
+											+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
 											+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
 						}
 					}
 					break;
 				case Connected:
 					try {
-						Thread.sleep(updateRate);
+						Thread.sleep(pollInterval);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

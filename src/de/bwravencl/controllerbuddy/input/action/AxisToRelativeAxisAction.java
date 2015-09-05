@@ -21,9 +21,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.15f;
+	public static final float DEFAULT_DEAD_ZONE = 0.25f;
 	public static final float DEFAULT_EXPONENT = 2.0f;
-	public static final float DEFAULT_MAX_RELATIVE_SPEED = 6.0f;
+	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4.0f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;
@@ -31,7 +31,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (Math.abs(value) > deadZone) {
+		if (!isSuspended() && Math.abs(value) > deadZone) {
 			/*
 			 * final float d = (Math.signum(value) * (float)
 			 * Math.pow(Math.abs(value * 100.0f), exponent) / 100.0f)
@@ -39,7 +39,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 			 * (float) 1000L;
 			 */
 
-			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
+			final float rateMultiplier = (float) input.getOutputThread().getPollInterval() / (float) 1000L;
 
 			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
 					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxRelativeSpeed,

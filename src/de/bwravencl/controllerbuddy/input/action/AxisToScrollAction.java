@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToScrollAction extends ToScrollAction {
+public class AxisToScrollAction extends ToScrollAction implements ISuspendableAction {
 
 	public static final float DEFAULT_DEAD_ZONE = 0.15f;
 	public static final float DEFAULT_EXPONENT = 1.0f;
@@ -29,8 +29,8 @@ public class AxisToScrollAction extends ToScrollAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
+		if (!isSuspended() && Math.abs(value) > deadZone) {
+			final float rateMultiplier = (float) input.getOutputThread().getPollInterval() / (float) 1000L;
 
 			final float d = -Input.normalize(
 					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent) * rateMultiplier,

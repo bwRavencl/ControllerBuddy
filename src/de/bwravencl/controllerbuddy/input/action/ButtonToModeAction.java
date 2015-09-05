@@ -18,6 +18,8 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import de.bwravencl.controllerbuddy.input.Input;
@@ -41,9 +43,31 @@ public class ButtonToModeAction implements IAction {
 			modeUuid = modes.get(1).getUuid();
 	}
 
+	private void activateMode(Profile profile) {
+		profile.setActiveMode(modeUuid);
+	}
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	private void deactivateMode(Input input, Profile profile) {
+		final Set<String> components = profile.getActiveMode().getComponentToActionsMap().keySet();
+		final Map<String, List<IAction>> defaultComponentToActionsMap = profile.getModes().get(0)
+				.getComponentToActionsMap();
+
+		for (String c : components) {
+			if (defaultComponentToActionsMap.containsKey(c)) {
+				for (IAction a : defaultComponentToActionsMap.get(c)) {
+					if (a instanceof ISuspendableAction)
+						((ISuspendableAction) a).suspend();
+				}
+			}
+		}
+
+		profile.setActiveMode(0);
+		input.getDownKeyStrokes().clear();
 	}
 
 	@Override
@@ -54,24 +78,21 @@ public class ButtonToModeAction implements IAction {
 			if (toggle)
 				up = true;
 			else {
-				if (profile.getActiveMode().getUuid().equals(modeUuid)) {
-					profile.setActiveMode(0);
-					input.getDownKeyStrokes().clear();
-				}
+				if (profile.getActiveMode().getUuid().equals(modeUuid))
+					deactivateMode(input, profile);
 			}
 		} else {
 			if (toggle) {
 				if (up) {
 					if (Profile.isDefaultMode(profile.getActiveMode()))
-						profile.setActiveMode(modeUuid);
-					else if (profile.getActiveMode().getUuid().equals(modeUuid)) {
-						profile.setActiveMode(0);
-						input.getDownKeyStrokes().clear();
-					}
+						activateMode(profile);
+					else if (profile.getActiveMode().getUuid().equals(modeUuid))
+						deactivateMode(input, profile);
+
 					up = false;
 				}
 			} else if (Profile.isDefaultMode(profile.getActiveMode()))
-				profile.setActiveMode(modeUuid);
+				activateMode(profile);
 		}
 	}
 

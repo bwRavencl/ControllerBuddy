@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToCursorAction extends InvertableAction {
+public class AxisToCursorAction extends InvertableAction implements ISuspendableAction {
 
 	public enum MouseAxis {
 		X, Y
@@ -38,8 +38,8 @@ public class AxisToCursorAction extends InvertableAction {
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutputThread().getUpdateRate() / (float) 1000L;
+		if (!isSuspended() && Math.abs(value) > deadZone) {
+			final float rateMultiplier = (float) input.getOutputThread().getPollInterval() / (float) 1000L;
 
 			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
 					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxCursorSpeed,

@@ -234,16 +234,16 @@ public final class Main {
 
 	}
 
-	private class NewProfileAction extends AbstractAction {
+	private class NewAction extends AbstractAction {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 5703987691203427504L;
 
-		public NewProfileAction() {
-			putValue(NAME, rb.getString("NEW_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("NEW_PROFILE_ACTION_DESCRIPTION"));
+		public NewAction() {
+			putValue(NAME, rb.getString("NEW_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("NEW_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -253,16 +253,16 @@ public final class Main {
 
 	}
 
-	private class OpenFileAction extends AbstractAction {
+	private class OpenAction extends AbstractAction {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -8932510785275935297L;
 
-		public OpenFileAction() {
-			putValue(NAME, rb.getString("OPEN_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_PROFILE_ACTION_DESCRIPTION"));
+		public OpenAction() {
+			putValue(NAME, rb.getString("OPEN_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -323,45 +323,43 @@ public final class Main {
 
 	}
 
-	private class SaveFileAction extends AbstractAction {
+	private class SaveAction extends AbstractAction {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -8469921697479550983L;
 
-		public SaveFileAction() {
-			putValue(NAME, rb.getString("SAVE_PROFILE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_PROFILE_ACTION_DESCRIPTION"));
+		public SaveAction() {
+			putValue(NAME, rb.getString("SAVE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				input.reset();
-				File file = fileChooser.getSelectedFile();
-				final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
-				if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
-					file = new File(file.getAbsoluteFile() + profileFileSuffix);
+			if (currentFile != null)
+				saveProfile(currentFile);
+			else
+				saveProfileAs();
+		}
 
-				final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-						.create();
-				final String jsonString = gson.toJson(Input.getProfile());
+	}
 
-				try (FileOutputStream fos = new FileOutputStream(file)) {
-					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-					writer.write(jsonString);
-					writer.flush();
-					fos.flush();
-					fos.close();
+	private class SaveAsAction extends AbstractAction {
 
-					saveLastProfile(file);
-					frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-					setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8469921697479550983L;
+
+		public SaveAsAction() {
+			putValue(NAME, rb.getString("SAVE_AS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_AS_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			saveProfileAs();
 		}
 
 	}
@@ -540,7 +538,7 @@ public final class Main {
 			stopLocalRadioButtonMenuItem.setEnabled(true);
 			localThread = new LocalVJoyOutputThread(Main.this, input);
 			localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-			localThread.setUpdateRate((int) updateRateSpinner.getValue());
+			localThread.setPollInterval((int) pollIntervalSpinner.getValue());
 			localThread.start();
 		}
 
@@ -567,7 +565,7 @@ public final class Main {
 			serverThread = new ServerOutputThread(Main.this, input);
 			serverThread.setPort((int) portSpinner.getValue());
 			serverThread.setTimeout((int) timeoutSpinner.getValue());
-			serverThread.setUpdateRate((int) updateRateSpinner.getValue());
+			serverThread.setPollInterval((int) pollIntervalSpinner.getValue());
 			serverThread.start();
 		}
 
@@ -645,8 +643,8 @@ public final class Main {
 	public static final String PREFERENCES_HOST = "host";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_TIMEOUT = "timeout";
-	public static final String PREFERENCES_UPDATE_RATE = "update_rate";
-	private static final long ASSIGNMENTS_PANEL_UPDATE_RATE = 100L;
+	public static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
@@ -709,13 +707,42 @@ public final class Main {
 
 	private final JSpinner timeoutSpinner;
 
-	private final JSpinner updateRateSpinner;
+	private final JSpinner pollIntervalSpinner;
 
 	private final JScrollPane modesScrollPane;
 
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 
-	private final JFileChooser fileChooser = new JFileChooser();
+	private final JFileChooser fileChooser = new JFileChooser() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4669170626378955605L;
+
+		@Override
+		public void approveSelection() {
+			final File file = getSelectedFile();
+			if (file.exists() && getDialogType() == SAVE_DIALOG) {
+				final int result = JOptionPane.showConfirmDialog(this,
+						file.getName() + " exists already.\nDo you want to replace it?", "File exists",
+						JOptionPane.YES_NO_CANCEL_OPTION);
+				switch (result) {
+				case JOptionPane.NO_OPTION:
+					return;
+				case JOptionPane.CLOSED_OPTION:
+					return;
+				case JOptionPane.CANCEL_OPTION:
+					cancelSelection();
+					return;
+				default:
+					break;
+				}
+			}
+			super.approveSelection();
+		}
+	};
+
+	private File currentFile;
 
 	public Main() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -744,9 +771,10 @@ public final class Main {
 
 		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
-		fileMenu.add(new NewProfileAction());
-		fileMenu.add(new OpenFileAction());
-		fileMenu.add(new SaveFileAction());
+		fileMenu.add(new NewAction());
+		fileMenu.add(new OpenAction());
+		fileMenu.add(new SaveAction());
+		fileMenu.add(new SaveAsAction());
 		fileMenu.add(new JSeparator());
 		fileMenu.add(new QuitAction());
 
@@ -874,6 +902,25 @@ public final class Main {
 
 		final FlowLayout panelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
 
+		final JPanel pollIntervalPanel = new JPanel(panelFlowLayout);
+		settingsPanel.add(pollIntervalPanel, panelGridBagConstraints);
+
+		final JLabel pollIntervalLabel = new JLabel(rb.getString("POLL_INTERVAL_LABEL"));
+		pollIntervalLabel.setPreferredSize(new Dimension(100, 15));
+		pollIntervalPanel.add(pollIntervalLabel);
+
+		pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
+				preferences.getInt(PREFERENCES_POLL_INTERVAL, (int) OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
+		pollIntervalSpinner.setEditor(new JSpinner.NumberEditor(pollIntervalSpinner, "#"));
+		pollIntervalSpinner.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue());
+			}
+		});
+		pollIntervalPanel.add(pollIntervalSpinner);
+
 		if (isWindows()) {
 			final JPanel vJoyDirectoryPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
@@ -940,25 +987,6 @@ public final class Main {
 			}
 		});
 		portPanel.add(portSpinner);
-
-		final JPanel updateRatePanel = new JPanel(panelFlowLayout);
-		settingsPanel.add(updateRatePanel, panelGridBagConstraints);
-
-		final JLabel updateRateLabel = new JLabel(rb.getString("UPDATE_RATE_LABEL"));
-		updateRateLabel.setPreferredSize(new Dimension(100, 15));
-		updateRatePanel.add(updateRateLabel);
-
-		updateRateSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_UPDATE_RATE, (int) OutputThread.DEFAULT_UPDATE_RATE), 10, 500, 1));
-		updateRateSpinner.setEditor(new JSpinner.NumberEditor(updateRateSpinner, "#"));
-		updateRateSpinner.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				preferences.putInt(PREFERENCES_UPDATE_RATE, (int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
-		updateRatePanel.add(updateRateSpinner);
 
 		final JPanel timeoutPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(timeoutPanel, panelGridBagConstraints);
@@ -1139,7 +1167,7 @@ public final class Main {
 							});
 
 						try {
-							Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_RATE);
+							Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -1185,6 +1213,7 @@ public final class Main {
 	}
 
 	private void newProfile() {
+		currentFile = null;
 		input = new Input(selectedController);
 
 		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
@@ -1193,7 +1222,41 @@ public final class Main {
 	}
 
 	private void saveLastProfile(File file) {
+		currentFile = file;
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
+	}
+
+	private void saveProfile(File file) {
+		input.reset();
+
+		final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
+		if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
+			file = new File(file.getAbsoluteFile() + profileFileSuffix);
+
+		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+				.create();
+		final String jsonString = gson.toJson(Input.getProfile());
+
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+			writer.write(jsonString);
+			writer.flush();
+			fos.flush();
+			fos.close();
+
+			saveLastProfile(file);
+			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void saveProfileAs() {
+		fileChooser.setSelectedFile(currentFile);
+		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			saveProfile(fileChooser.getSelectedFile());
+		}
 	}
 
 	public void setStatusbarText(String text) {

@@ -97,7 +97,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 					writeOutput();
 
 				try {
-					Thread.sleep(updateRate);
+					Thread.sleep(pollInterval);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

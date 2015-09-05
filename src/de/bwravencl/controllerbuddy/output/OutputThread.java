@@ -26,12 +26,12 @@ import net.brockmatt.util.ResourceBundleUtil;
 
 public abstract class OutputThread extends Thread {
 
-	public static final long DEFAULT_UPDATE_RATE = 10L;
+	public static final long DEFAULT_POLL_INTERVAL = 10L;
 
 	protected final Main main;
 	protected final Input input;
 
-	protected long updateRate = DEFAULT_UPDATE_RATE;
+	protected long pollInterval = DEFAULT_POLL_INTERVAL;
 	protected int minAxisValue;
 	protected int maxAxisValue;
 	protected int nButtons;
@@ -57,8 +57,8 @@ public abstract class OutputThread extends Thread {
 		return nButtons;
 	}
 
-	public long getUpdateRate() {
-		return updateRate;
+	public long getPollInterval() {
+		return pollInterval;
 	}
 
 	public void setMaxAxisValue(int maxAxisValue) {
@@ -74,8 +74,8 @@ public abstract class OutputThread extends Thread {
 		input.setnButtons(nButtons);
 	}
 
-	public void setUpdateRate(long updateRate) {
-		this.updateRate = updateRate;
+	public void setPollInterval(long pollInterval) {
+		this.pollInterval = pollInterval;
 	}
 
 	public void stopOutput() {

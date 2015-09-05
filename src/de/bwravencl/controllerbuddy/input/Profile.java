@@ -107,12 +107,11 @@ public class Profile implements Cloneable {
 	}
 
 	public void setActiveMode(UUID modeUuid) {
-		for (Mode p : modes) {
-			if (p.getUuid().equals(modeUuid)) {
-				setActiveMode(modes.indexOf(p));
-				return;
-			}
+		for (Mode m : modes) {
+			if (m.getUuid().equals(modeUuid))
+				setActiveMode(modes.indexOf(m));
 		}
+
 	}
 
 	public void setComponentToModeActionMap(Map<String, ButtonToModeAction> componentToModeActionMap) {
