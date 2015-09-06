@@ -29,13 +29,16 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -250,34 +253,29 @@ public class EditActionsDialog extends JDialog {
 	private class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
 		private final Method setterMethod;
+		private final KeyStroke keyStroke;
+		private final boolean modifiers;
 
-		public JListSetPropertyListSelectionListener(Method setterMethod) {
+		public JListSetPropertyListSelectionListener(Method setterMethod, KeyStroke keyStroke, boolean modifiers) {
 			this.setterMethod = setterMethod;
+			this.keyStroke = keyStroke;
+			this.modifiers = modifiers;
 		}
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			try {
-				final List<Integer> modifierCodes = new ArrayList<Integer>();
-				final List<Integer> keyCodes = new ArrayList<Integer>();
+				final Set<Integer> scanCodes = new HashSet<Integer>();
 
-				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList()) {
-					int c = ScanCode.nameToScanCodeMap.get(o);
-					boolean isModifier = false;
-					for (ScanCode sc : ScanCode.MODIFIER_SCAN_CODES) {
-						if (c == sc.scanCode)
-							isModifier = true;
-					}
+				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
+					scanCodes.add(ScanCode.nameToScanCodeMap.get(o));
 
-					if (isModifier)
-						modifierCodes.add(c);
-					else
-						keyCodes.add(c);
-				}
+				final Integer[] scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
 
-				final KeyStroke keyStroke = new KeyStroke();
-				keyStroke.setModifierCodes(modifierCodes.toArray(new Integer[modifierCodes.size()]));
-				keyStroke.setKeyCodes(keyCodes.toArray(new Integer[keyCodes.size()]));
+				if (modifiers)
+					keyStroke.setModifierCodes(scanCodesArray);
+				else
+					keyStroke.setKeyCodes(scanCodesArray);
 
 				setterMethod.invoke(selectedAssignedAction, keyStroke);
 			} catch (IllegalAccessException e1) {
@@ -383,7 +381,6 @@ public class EditActionsDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 8876286334367723566L;
 	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.controllerbuddy.input.action.";
-
 	private static final String[] ACTION_CLASSES_AXIS = { ACTION_CLASS_PREFIX + "AxisToAxisAction",
 			ACTION_CLASS_PREFIX + "AxisToButtonAction", ACTION_CLASS_PREFIX + "AxisToCursorAction",
 			ACTION_CLASS_PREFIX + "AxisToKeyAction", ACTION_CLASS_PREFIX + "AxisToMouseButtonAction",
@@ -417,28 +414,17 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private Main main;
-
 	private Component component;
-
 	private Input input;
-
 	private Profile unsavedProfile;
-
 	private ButtonToCycleAction cycleAction;
-
 	private final List<IAction> cycleActions = new ArrayList<IAction>();
-
 	private Mode selectedMode;
-
 	private AvailableAction selectedAvailableAction;
-
 	private IAction selectedAssignedAction;
-
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
-
 	private final JList<AvailableAction> availableActionsList = new JList<AvailableAction>();
-
 	private final JList<IAction> assignedActionsList = new JList<IAction>();
 
 	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
@@ -725,28 +711,58 @@ public class EditActionsDialog extends JDialog {
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
 										} else if (KeyStroke.class == clazz) {
-											final List<String> availableCodes = new ArrayList<String>();
-											for (String s : ScanCode.nameToScanCodeMap.keySet())
-												availableCodes.add(s);
-											final JList<String> codes = new JList<String>(
-													availableCodes.toArray(new String[availableCodes.size()]));
-											codes.addListSelectionListener(
-													new JListSetPropertyListSelectionListener(m));
 											final KeyStroke keyStroke = (KeyStroke) getterMethod
 													.invoke(selectedAssignedAction);
-											final List<String> addedCodes = new ArrayList<String>();
+											final Set<String> availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
+
+											final JPanel modifiersPanel = new JPanel();
+											modifiersPanel
+													.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
+											final JLabel modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
+											modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+											modifiersPanel.add(modifiersLabel);
+											modifiersPanel.add(Box.createVerticalStrut(5));
+											final JList<String> modifierList = new JList<String>(
+													availableScanCodes.toArray(new String[availableScanCodes.size()]));
+											modifierList.addListSelectionListener(
+													new JListSetPropertyListSelectionListener(m, keyStroke, true));
+
+											final List<String> addedModifiers = new ArrayList<String>();
 											for (int c : keyStroke.getModifierCodes())
-												addedCodes.add(ScanCode.scanCodeToNameMap.get(c));
-											for (int c : keyStroke.getKeyCodes())
-												addedCodes.add(ScanCode.scanCodeToNameMap.get(c));
-											for (String s : addedCodes) {
-												final int index = getListModelIndex(codes.getModel(), s);
+												addedModifiers.add(ScanCode.scanCodeToNameMap.get(c));
+											for (String s : addedModifiers) {
+												final int index = getListModelIndex(modifierList.getModel(), s);
 												if (index >= 0)
-													codes.addSelectionInterval(index, index);
+													modifierList.addSelectionInterval(index, index);
 											}
-											final JScrollPane scrollPane = new JScrollPane(codes);
-											scrollPane.setPreferredSize(new Dimension(175, 200));
-											propertyPanel.add(scrollPane);
+											final JScrollPane modifiersScrollPane = new JScrollPane(modifierList);
+											modifiersScrollPane.setPreferredSize(new Dimension(175, 200));
+											modifiersPanel.add(modifiersScrollPane);
+											propertyPanel.add(modifiersPanel);
+
+											final JPanel keysPanel = new JPanel();
+											keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
+											final JLabel keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
+											keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+											keysPanel.add(keysLabel);
+											keysPanel.add(Box.createVerticalStrut(5));
+											final JList<String> keyList = new JList<String>(
+													availableScanCodes.toArray(new String[availableScanCodes.size()]));
+											keyList.addListSelectionListener(
+													new JListSetPropertyListSelectionListener(m, keyStroke, false));
+											final List<String> addedKeys = new ArrayList<String>();
+											for (int c : keyStroke.getKeyCodes())
+												addedKeys.add(ScanCode.scanCodeToNameMap.get(c));
+											for (String s : addedKeys) {
+												final int index = getListModelIndex(keyList.getModel(), s);
+												if (index >= 0)
+													keyList.addSelectionInterval(index, index);
+											}
+											final JScrollPane keysScrollPane = new JScrollPane(keyList);
+											keysScrollPane.setPreferredSize(new Dimension(175, 200));
+											keysPanel.add(keysScrollPane);
+											propertyPanel.add(keysPanel);
+
 										} else if (List.class == clazz) {
 											final JButton editActionsButton = new JButton(new EditActionsAction());
 											editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);

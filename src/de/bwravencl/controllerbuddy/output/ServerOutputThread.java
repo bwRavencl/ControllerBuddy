@@ -42,7 +42,6 @@ public class ServerOutputThread extends OutputThread {
 	}
 
 	public static final int DEFAULT_PORT = 28789;
-
 	public static final int DEFAULT_TIMEOUT = 2000;
 	public static final int PROTOCOL_VERSION = 2;
 	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";
@@ -50,9 +49,7 @@ public class ServerOutputThread extends OutputThread {
 	public static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
 	public static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
 	public static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE + "_ALIVE";
-
 	public static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
-
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	private int port = DEFAULT_PORT;

@@ -30,7 +30,6 @@ public abstract class OutputThread extends Thread {
 
 	protected final Main main;
 	protected final Input input;
-
 	protected long pollInterval = DEFAULT_POLL_INTERVAL;
 	protected int minAxisValue;
 	protected int maxAxisValue;

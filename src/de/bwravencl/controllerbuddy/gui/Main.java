@@ -62,7 +62,6 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -87,6 +86,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -241,21 +246,6 @@ public final class Main {
 			} catch (ClassNotFoundException e) {
 				throw new JsonParseException(e);
 			}
-		}
-
-	}
-
-	private class LaunchInTrayCheckBoxAction extends AbstractAction {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5224908351960158549L;
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final JCheckBox checkBox = (JCheckBox) e.getSource();
-			preferences.putBoolean(PREFERENCES_LAUNCH_IN_TRAY, checkBox.isSelected());
 		}
 
 	}
@@ -552,16 +542,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopClientRadioButtonMenuItem.setEnabled(true);
-			clientThread = new ClientVJoyOutputThread(Main.this, input);
-			clientThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-			clientThread.setHost(hostTextField.getText());
-			clientThread.setPort((int) portSpinner.getValue());
-			clientThread.setTimeout((int) timeoutSpinner.getValue());
-			clientThread.start();
+			startClient();
 		}
 
 	}
@@ -580,14 +561,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopLocalRadioButtonMenuItem.setEnabled(true);
-			localThread = new LocalVJoyOutputThread(Main.this, input);
-			localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-			localThread.setPollInterval((int) pollIntervalSpinner.getValue());
-			localThread.start();
+			startLocal();
 		}
 
 	}
@@ -606,15 +580,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			startLocalRadioButtonMenuItem.setEnabled(false);
-			startClientRadioButtonMenuItem.setEnabled(false);
-			startServerRadioButtonMenuItem.setEnabled(false);
-			stopServerRadioButtonMenuItem.setEnabled(true);
-			serverThread = new ServerOutputThread(Main.this, input);
-			serverThread.setPort((int) portSpinner.getValue());
-			serverThread.setTimeout((int) timeoutSpinner.getValue());
-			serverThread.setPollInterval((int) pollIntervalSpinner.getValue());
-			serverThread.start();
+			startServer();
 		}
 
 	}
@@ -676,14 +642,17 @@ public final class Main {
 
 	}
 
-	private static final boolean DEFAULT_LAUNCH_IN_TRAY = false;
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 600;
 	public static final int DIALOG_BOUNDS_HEIGHT = 600;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-
+	public static final String OPTION_AUTOSTART = "autostart";
+	public static final String OPTION_TRAY = "tray";
+	public static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
+	public static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
+	public static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	public static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
 	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
@@ -693,10 +662,11 @@ public final class Main {
 	public static final String PREFERENCES_HOST = "host";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_TIMEOUT = "timeout";
-	public static final String PREFERENCES_LAUNCH_IN_TRAY = "launch_in_tray";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
 
 	public static boolean isWindows() {
 		return System.getProperty("os.name").startsWith("Windows");
@@ -707,13 +677,29 @@ public final class Main {
 
 			@Override
 			public void run() {
+				final Options options = new Options();
+				options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
+				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
+
 				try {
+					final CommandLine commandLine = new DefaultParser().parse(options, args);
+
 					final Main main = new Main();
-					if (SystemTray.isSupported())
-						main.frame.setVisible(
-								!main.preferences.getBoolean(PREFERENCES_LAUNCH_IN_TRAY, DEFAULT_LAUNCH_IN_TRAY));
-					else
+					if (!commandLine.hasOption("tray"))
 						main.frame.setVisible(true);
+					if (commandLine.hasOption(OPTION_AUTOSTART)) {
+						final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+
+						if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
+							main.startLocal();
+						else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
+							main.startClient();
+						else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+							main.startServer();
+					}
+				} catch (ParseException e) {
+					final HelpFormatter helpFormatter = new HelpFormatter();
+					helpFormatter.printHelp("ControllerBuddy", options, true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -725,50 +711,26 @@ public final class Main {
 	private Input input;
 	private LocalVJoyOutputThread localThread;
 	private ClientVJoyOutputThread clientThread;
-
 	private ServerOutputThread serverThread;
-
 	private boolean suspendControllerSettingsUpdate = false;
-
 	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
-
-	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
-
 	private final JFrame frame;
-
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
-
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
-
 	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
-
 	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
-
 	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
-
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
-
 	private MenuItem showMenuItem;
-
 	private final JPanel modesListPanel;
-
 	private JLabel vJoyDirectoryLabel1;
-
 	private JSpinner vJoyDeviceSpinner;
-
 	private JTextField hostTextField;
-
 	private final JSpinner portSpinner;
-
 	private final JSpinner timeoutSpinner;
-
 	private final JSpinner pollIntervalSpinner;
-
 	private final JScrollPane modesScrollPane;
-
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
-
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 * 
@@ -797,7 +759,6 @@ public final class Main {
 			super.approveSelection();
 		}
 	};
-
 	private File currentFile;
 
 	public Main() {
@@ -1101,25 +1062,6 @@ public final class Main {
 		timeoutPanel.add(timeoutSpinner);
 
 		if (SystemTray.isSupported()) {
-			final JPanel launchInTrayPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(launchInTrayPanel, panelGridBagConstraints);
-
-			final JLabel launchInTrayLabel = new JLabel(rb.getString("LAUNCH_IN_TRAY_LABEL"));
-			launchInTrayLabel.setPreferredSize(new Dimension(100, 15));
-			launchInTrayPanel.add(launchInTrayLabel);
-
-			final JCheckBox launchInTrayCheckBox = new JCheckBox(new LaunchInTrayCheckBoxAction());
-			launchInTrayCheckBox
-					.setSelected(preferences.getBoolean(PREFERENCES_LAUNCH_IN_TRAY, DEFAULT_LAUNCH_IN_TRAY));
-			launchInTrayCheckBox.addChangeListener(new ChangeListener() {
-
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					preferences.putBoolean(PREFERENCES_LAUNCH_IN_TRAY, launchInTrayCheckBox.isSelected());
-				}
-			});
-			launchInTrayPanel.add(launchInTrayCheckBox);
-
 			final PopupMenu popupMenu = new PopupMenu();
 
 			final ShowAction showAction = new ShowAction();
@@ -1412,6 +1354,42 @@ public final class Main {
 		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
 				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
 			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
+	}
+
+	public void startClient() {
+		startLocalRadioButtonMenuItem.setEnabled(false);
+		startClientRadioButtonMenuItem.setEnabled(false);
+		startServerRadioButtonMenuItem.setEnabled(false);
+		stopClientRadioButtonMenuItem.setEnabled(true);
+		clientThread = new ClientVJoyOutputThread(Main.this, input);
+		clientThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
+		clientThread.setHost(hostTextField.getText());
+		clientThread.setPort((int) portSpinner.getValue());
+		clientThread.setTimeout((int) timeoutSpinner.getValue());
+		clientThread.start();
+	}
+
+	public void startLocal() {
+		startLocalRadioButtonMenuItem.setEnabled(false);
+		startClientRadioButtonMenuItem.setEnabled(false);
+		startServerRadioButtonMenuItem.setEnabled(false);
+		stopLocalRadioButtonMenuItem.setEnabled(true);
+		localThread = new LocalVJoyOutputThread(Main.this, input);
+		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
+		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
+		localThread.start();
+	}
+
+	public void startServer() {
+		startLocalRadioButtonMenuItem.setEnabled(false);
+		startClientRadioButtonMenuItem.setEnabled(false);
+		startServerRadioButtonMenuItem.setEnabled(false);
+		stopServerRadioButtonMenuItem.setEnabled(true);
+		serverThread = new ServerOutputThread(Main.this, input);
+		serverThread.setPort((int) portSpinner.getValue());
+		serverThread.setTimeout((int) timeoutSpinner.getValue());
+		serverThread.setPollInterval((int) pollIntervalSpinner.getValue());
+		serverThread.start();
 	}
 
 	public void stopClient() {

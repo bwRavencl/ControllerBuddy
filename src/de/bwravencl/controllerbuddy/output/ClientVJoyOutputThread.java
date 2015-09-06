@@ -44,13 +44,11 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
-
 	private static final int N_CONNECTION_RETRIES = 10;
 
 	private String host = DEFAULT_HOST;
 	private int port = ServerOutputThread.DEFAULT_PORT;
 	private int timeout = ServerOutputThread.DEFAULT_TIMEOUT;
-
 	private ClientState clientState = ClientState.Connecting;
 	private InetAddress hostAddress;
 	private DatagramSocket clientSocket;

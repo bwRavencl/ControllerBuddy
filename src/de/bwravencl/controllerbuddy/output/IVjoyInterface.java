@@ -39,7 +39,6 @@ public interface IVjoyInterface extends Library {
 	public static final UINT HID_USAGE_SL1 = new UINT(0x37L);
 	public static final UINT HID_USAGE_WHL = new UINT(0x38L);
 	public static final UINT HID_USAGE_POV = new UINT(0x39L);
-
 	public static final int VJD_STAT_OWN = 0;
 	public static final int VJD_STAT_FREE = 1;
 	public static final int VJD_STAT_BUSY = 2;

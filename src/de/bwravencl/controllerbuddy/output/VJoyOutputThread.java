@@ -48,10 +48,8 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 public abstract class VJoyOutputThread extends OutputThread {
 
 	public static final int DEFAULT_VJOY_DEVICE = 1;
-
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
-
 	private static final long KEYEVENTF_KEYUP = 0x0002L;
 	private static final long KEYEVENTF_SCANCODE = 0x0008L;
 	private static final long MOUSEEVENTF_MOVE = 0x0001L;
@@ -165,7 +163,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
 	protected boolean run = true;
-
 	protected LONG axisX;
 	protected LONG axisY;
 	protected LONG axisZ;
@@ -174,18 +171,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected LONG axisRZ;
 	protected LONG axisS0;
 	protected LONG axisS1;
-
 	protected BOOL[] buttons;
-
 	protected int cursorDeltaX;
 	protected int cursorDeltaY;
 	protected int scrollClicks;
-
 	protected final Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
 	protected final Set<Integer> newUpMouseButtons = new HashSet<Integer>();
 	protected final Set<Integer> newDownMouseButtons = new HashSet<Integer>();
 	protected final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-
 	protected final Set<Integer> oldDownModifiers = new HashSet<Integer>();
 	protected final Set<Integer> newUpModifiers = new HashSet<Integer>();
 	protected final Set<Integer> newDownModifiers = new HashSet<Integer>();

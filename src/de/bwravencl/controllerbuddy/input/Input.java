@@ -102,11 +102,8 @@ public class Input {
 	private int cursorDeltaY = 5;
 	private int scrollClicks = 1;
 	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
-
 	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
-
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public Input(Controller controller) {
