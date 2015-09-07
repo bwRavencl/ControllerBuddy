@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Set;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
@@ -65,29 +68,56 @@ public class Input {
 			for (String s : profile.getComponentToModeActionMap().keySet()) {
 				boolean componentFound = false;
 
-				for (Component c : controller.getComponents())
+				for (Component c : controller.getComponents()) {
 					if (s.equals(c.getName())) {
 						componentFound = true;
 						break;
 					}
+				}
 
 				if (!componentFound)
 					return false;
 			}
 
-			for (Mode m : profile.getModes())
+			for (Mode m : profile.getModes()) {
 				for (String s : m.getComponentToActionsMap().keySet()) {
 					boolean componentFound = false;
 
-					for (Component c : controller.getComponents())
+					for (Component c : controller.getComponents()) {
 						if (s.equals(c.getName())) {
 							componentFound = true;
 							break;
 						}
+					}
 
 					if (!componentFound)
 						return false;
 				}
+
+				class ActionComparator implements Comparator<IAction> {
+					@Override
+					public int compare(IAction o1, IAction o2) {
+						if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
+							final IButtonToAction buttonToAction1 = (IButtonToAction) o1;
+							final IButtonToAction buttonToAction2 = (IButtonToAction) o2;
+
+							final boolean o1IsLongPress = buttonToAction1.isLongPress();
+							final boolean o2IsLongPress = buttonToAction2.isLongPress();
+
+							if (o1IsLongPress && !o2IsLongPress)
+								return -1;
+							else if (!o1IsLongPress && o2IsLongPress)
+								return 1;
+							else
+								return 0;
+						} else
+							return 0;
+					}
+				}
+
+				for (List<IAction> actions : m.getComponentToActionsMap().values())
+					Collections.sort(actions, new ActionComparator());
+			}
 
 			Input.profile = profile;
 			return true;

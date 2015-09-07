@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -547,6 +548,7 @@ public class EditActionsDialog extends JDialog {
 		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0.0, 0.25, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
+		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -575,6 +577,7 @@ public class EditActionsDialog extends JDialog {
 		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 0.5, 1.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
+		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignedActionsList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
