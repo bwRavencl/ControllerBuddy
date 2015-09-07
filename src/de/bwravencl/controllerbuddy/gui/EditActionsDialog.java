@@ -60,6 +60,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.DefaultFormatter;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -301,7 +302,7 @@ public class EditActionsDialog extends JDialog {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			try {
-				Object value = (((JSpinner) e.getSource()).getValue());
+				final Object value = (((JSpinner) e.getSource()).getValue());
 
 				if (value instanceof Double)
 					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
@@ -635,8 +636,11 @@ public class EditActionsDialog extends JDialog {
 
 										if (Boolean.class == clazz) {
 											final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
-											if (!isComponentEditor() && ("DownUp".equals(propertyName)
-													|| "LongPress".equals(propertyName))) {
+											if (!isComponentEditor() && "LongPress".equals(propertyName)) {
+												m.invoke(selectedAssignedAction, false);
+												checkBox.setSelected(false);
+												checkBox.setEnabled(false);
+											} else if (!isComponentEditor() && "DownUp".equals(propertyName)) {
 												m.invoke(selectedAssignedAction, true);
 												checkBox.setSelected(true);
 												checkBox.setEnabled(false);
@@ -660,6 +664,9 @@ public class EditActionsDialog extends JDialog {
 											final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
 													.getTextField();
 											textField.setColumns(2);
+											final DefaultFormatter formatter = (DefaultFormatter) textField
+													.getFormatter();
+											formatter.setCommitsOnValidEdit(true);
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
 										} else if (Float.class == clazz) {
@@ -687,6 +694,9 @@ public class EditActionsDialog extends JDialog {
 											final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
 													.getTextField();
 											textField.setColumns(4);
+											final DefaultFormatter formatter = (DefaultFormatter) textField
+													.getFormatter();
+											formatter.setCommitsOnValidEdit(true);
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
 											if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {

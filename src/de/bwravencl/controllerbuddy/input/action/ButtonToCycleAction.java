@@ -48,15 +48,16 @@ public class ButtonToCycleAction implements IButtonToAction {
 
 		if (value != activationValue) {
 			actions.get(index).doAction(input, value);
-			wasUp = true;
+			if (wasUp == false) {
+				if (index == actions.size() - 1)
+					index = 0;
+				else
+					index++;
+
+				wasUp = true;
+			}
 		} else if (wasUp) {
-			actions.get(index).doAction(input, value);
-
-			if (index == actions.size() - 1)
-				index = 0;
-			else
-				index++;
-
+			actions.get(index).doAction(input, activationValue);
 			wasUp = false;
 		}
 	}

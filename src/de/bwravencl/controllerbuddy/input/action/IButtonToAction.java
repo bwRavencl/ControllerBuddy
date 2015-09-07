@@ -40,7 +40,8 @@ public interface IButtonToAction extends IAction {
 		} else if (action instanceof ToMouseButtonAction) {
 			final ToMouseButtonAction toMouseButtonAction = (ToMouseButtonAction) action;
 			return toMouseButtonAction.isDownUp();
-		}
+		} else if (action instanceof ButtonToCycleAction)
+			return true;
 
 		return false;
 	}

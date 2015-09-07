@@ -757,8 +757,8 @@ public final class Main {
 			final File file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final int result = JOptionPane.showConfirmDialog(this,
-						file.getName() + " exists already.\nDo you want to replace it?", "File exists",
-						JOptionPane.YES_NO_CANCEL_OPTION);
+						file.getName() + rb.getString("FILE_EXISTS_DIALOG_TEXT"),
+						rb.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.NO_OPTION:
 					return;
