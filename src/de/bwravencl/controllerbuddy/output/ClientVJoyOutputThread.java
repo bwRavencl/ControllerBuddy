@@ -83,7 +83,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 		switch (clientState) {
 		case Connecting:
-			main.setStatusbarText(rb.getString("STATUS_CONNECTING_TO_HOST_PART_1") + host
+			main.setStatusBarText(rb.getString("STATUS_CONNECTING_TO_HOST_PART_1") + host
 					+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_2") + port
 					+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_3"));
 
@@ -128,7 +128,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						}
 					} else {
 						retry--;
-						main.setStatusbarText(
+						main.setStatusBarText(
 								rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_1") + (N_CONNECTION_RETRIES - retry)
 										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_2") + N_CONNECTION_RETRIES
 										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_3"));
@@ -136,7 +136,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				} catch (SocketTimeoutException e) {
 					e.printStackTrace();
 					retry--;
-					main.setStatusbarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
+					main.setStatusBarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
 							+ (N_CONNECTION_RETRIES - retry) + rb.getString("STATUS_TIMEOUT_RETRYING_PART_2")
 							+ N_CONNECTION_RETRIES + rb.getString("STATUS_TIMEOUT_RETRYING_PART_3"));
 				}
@@ -144,7 +144,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 			if (success) {
 				clientState = ClientState.Connected;
-				main.setStatusbarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
+				main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
 						+ rb.getString("STATUS_CONNECTED_TO_PART_2") + port + rb.getString("STATUS_CONNECTED_TO_PART_3")
 						+ pollInterval + rb.getString("STATUS_CONNECTED_TO_PART_4"));
 			} else {

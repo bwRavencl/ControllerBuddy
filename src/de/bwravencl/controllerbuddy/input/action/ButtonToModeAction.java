@@ -26,12 +26,11 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 
-public class ButtonToModeAction implements IAction {
-
-	public final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+public class ButtonToModeAction implements IButtonToAction {
 
 	private boolean toggle = false;
 	private boolean up = true;
+	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	private UUID modeUuid;
@@ -72,6 +71,7 @@ public class ButtonToModeAction implements IAction {
 
 	@Override
 	public void doAction(Input input, float value) {
+		value = handleLongPress(value);
 		final Profile profile = Input.getProfile();
 
 		if (value != activationValue) {
@@ -122,6 +122,14 @@ public class ButtonToModeAction implements IAction {
 
 	public void setToggle(Boolean toggle) {
 		this.toggle = toggle;
+	}
+
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	public void setLongPress(Boolean longPress) {
+		this.longPress = longPress;
 	}
 
 	@Override

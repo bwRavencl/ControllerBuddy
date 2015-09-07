@@ -26,8 +26,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
@@ -81,7 +79,7 @@ public class ServerOutputThread extends OutputThread {
 			serverSocket = new DatagramSocket(port);
 			final byte[] receiveBuf = new byte[1024];
 
-			setListeningStatusbarText();
+			main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
 
 			while (true) {
 				switch (serverState) {
@@ -115,7 +113,7 @@ public class ServerOutputThread extends OutputThread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							main.setStatusbarText(
+							main.setStatusBarText(
 									rb.getString("STATUS_CONNECTED_TO_PART_1") + clientIPAddress.getCanonicalHostName()
 											+ rb.getString("STATUS_CONNECTED_TO_PART_2") + clientPort
 											+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
@@ -210,14 +208,7 @@ public class ServerOutputThread extends OutputThread {
 							}
 						} catch (SocketTimeoutException e) {
 							serverState = ServerState.Listening;
-
-							main.setStatusbarText(rb.getString("STATUS_TIMEOUT"));
-							new Timer().schedule(new TimerTask() {
-								@Override
-								public void run() {
-									setListeningStatusbarText();
-								}
-							}, 5000L);
+							main.scheduleStatusBarText(rb.getString("STATUS_LISTENING") + port);
 						}
 					} else
 						counter++;
@@ -242,10 +233,6 @@ public class ServerOutputThread extends OutputThread {
 		}
 	}
 
-	private void setListeningStatusbarText() {
-		main.setStatusbarText(rb.getString("STATUS_LISTENING") + port);
-	}
-
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -261,7 +248,7 @@ public class ServerOutputThread extends OutputThread {
 		if (serverSocket != null)
 			serverSocket.close();
 
-		main.setStatusbarText(rb.getString("STATUS_SOCKET_CLOSED"));
+		main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
 	}
 
 }

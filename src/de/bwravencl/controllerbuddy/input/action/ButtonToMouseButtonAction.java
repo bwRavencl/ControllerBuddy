@@ -19,14 +19,15 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToMouseButtonAction extends ToMouseButtonAction {
+public class ButtonToMouseButtonAction extends ToMouseButtonAction implements IButtonToAction {
 
-	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
-
+	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
 	public void doAction(Input input, float value) {
+		value = handleLongPress(value);
+
 		if (value != activationValue) {
 			if (downUp)
 				wasUp = true;
@@ -38,10 +39,10 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 					input.getDownUpMouseButtons().add(mouseButton);
 					wasUp = false;
 				}
-			} else {
+			} else
 				input.getDownMouseButtons().add(mouseButton);
-			}
 		}
+
 	}
 
 	public float getActivationValue() {
@@ -50,6 +51,14 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction {
 
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
+	}
+
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	public void setLongPress(Boolean longPress) {
+		this.longPress = longPress;
 	}
 
 }

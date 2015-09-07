@@ -22,12 +22,11 @@ import java.util.List;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToCycleAction implements IAction {
-
-	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+public class ButtonToCycleAction implements IButtonToAction {
 
 	private boolean wasUp = true;
 	private int index = 0;
+	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private List<IAction> actions = new ArrayList<IAction>();
 
@@ -45,6 +44,8 @@ public class ButtonToCycleAction implements IAction {
 
 	@Override
 	public void doAction(Input input, float value) {
+		value = handleLongPress(value);
+		
 		if (value != activationValue) {
 			actions.get(index).doAction(input, value);
 			wasUp = true;
@@ -78,6 +79,14 @@ public class ButtonToCycleAction implements IAction {
 
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
+	}
+
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	public void setLongPress(Boolean longPress) {
+		this.longPress = longPress;
 	}
 
 	@Override

@@ -202,7 +202,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			for (int c : oldDownModifiers)
 				doKeyboardInput(c, false);
 
-			main.setStatusbarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
+			main.setStatusBarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
 		}
 	}
 
@@ -309,7 +309,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			setnButtons(vJoy.GetVJDButtonNumber(vJoyDevice));
 
-			main.setStatusbarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
+			main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
 			return true;
 		} catch (UnsatisfiedLinkError e) {
 			e.printStackTrace();

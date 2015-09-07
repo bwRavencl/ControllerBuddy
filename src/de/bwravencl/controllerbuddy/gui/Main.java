@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -308,6 +311,9 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			stopLocal();
+			stopClient();
+			stopServer();
 			System.exit(0);
 		}
 
@@ -762,15 +768,6 @@ public final class Main {
 	private File currentFile;
 
 	public Main() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				stopLocal();
-				stopClient();
-				stopServer();
-			}
-		});
-
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
 
@@ -1286,7 +1283,8 @@ public final class Main {
 
 			updateModesPanel();
 			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-			setStatusbarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+			setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+			scheduleStatusBarText(rb.getString("STATUS_READY"));
 
 			return result;
 		} catch (IOException e) {
@@ -1296,13 +1294,22 @@ public final class Main {
 		return result;
 	}
 
+	public void scheduleStatusBarText(String text) {
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				setStatusBarText(text);
+			}
+		}, 5000L);
+	}
+
 	private void newProfile() {
 		currentFile = null;
 		input = new Input(selectedController);
 
 		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
-		setStatusbarText(rb.getString("STATUS_READY"));
+		setStatusBarText(rb.getString("STATUS_READY"));
 	}
 
 	private void saveLastProfile(File file) {
@@ -1330,7 +1337,8 @@ public final class Main {
 
 			saveLastProfile(file);
 			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-			setStatusbarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
+			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
+			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -1343,7 +1351,7 @@ public final class Main {
 		}
 	}
 
-	public void setStatusbarText(String text) {
+	public void setStatusBarText(String text) {
 		if (statusLabel != null)
 			statusLabel.setText(text);
 	}
@@ -1354,6 +1362,15 @@ public final class Main {
 		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
 				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
 			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
+	}
+
+	private static void setEnabledRecursive(java.awt.Component component, boolean enabled) {
+		component.setEnabled(enabled);
+
+		if (component instanceof Container) {
+			for (java.awt.Component child : ((Container) component).getComponents())
+				setEnabledRecursive(child, enabled);
+		}
 	}
 
 	public void startClient() {
@@ -1374,6 +1391,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopLocalRadioButtonMenuItem.setEnabled(true);
+		setEnabledRecursive(modesListPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
@@ -1385,6 +1403,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
+		setEnabledRecursive(modesListPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1410,6 +1429,7 @@ public final class Main {
 		startLocalRadioButtonMenuItem.setEnabled(true);
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
+		setEnabledRecursive(modesListPanel, true);
 	}
 
 	public void stopServer() {
@@ -1420,6 +1440,7 @@ public final class Main {
 		startLocalRadioButtonMenuItem.setEnabled(true);
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
+		setEnabledRecursive(modesListPanel, true);
 	}
 
 	private void updateModesPanel() {

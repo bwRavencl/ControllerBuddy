@@ -19,14 +19,17 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToScrollAction extends ToScrollAction {
+public class ButtonToScrollAction extends ToScrollAction implements IButtonToAction {
 
 	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 
+	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
 	public void doAction(Input input, float value) {
+		value = handleLongPress(value);
+
 		if (value == activationValue)
 			input.setScrollClicks(input.getScrollClicks() + (invert ? -clicks : clicks));
 	}
@@ -37,6 +40,14 @@ public class ButtonToScrollAction extends ToScrollAction {
 
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
+	}
+
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	public void setLongPress(Boolean longPress) {
+		this.longPress = longPress;
 	}
 
 }

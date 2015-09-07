@@ -387,11 +387,11 @@ public class EditActionsDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction", ACTION_CLASS_PREFIX + "AxisToScrollAction" };
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToModeAction",
-			ACTION_CLASS_PREFIX + "ButtonToButtonAction", ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset",
-			ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
+			ACTION_CLASS_PREFIX + "ButtonToModeAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
+			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
+			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	private static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
@@ -505,7 +505,7 @@ public class EditActionsDialog extends JDialog {
 		if (assignedActions != null)
 			clonedAssignedActions.addAll(assignedActions);
 
-		if (isComponentEditor()) {
+		if (isComponentEditor() && Profile.isDefaultMode(selectedMode)) {
 			final ButtonToModeAction buttonToModeAction = unsavedProfile.getComponentToModeActionMap()
 					.get(component.getName());
 			if (buttonToModeAction != null)
@@ -632,7 +632,8 @@ public class EditActionsDialog extends JDialog {
 
 										if (Boolean.class == clazz) {
 											final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
-											if (!isComponentEditor() && "DownUp".equals(propertyName)) {
+											if (!isComponentEditor() && ("DownUp".equals(propertyName)
+													|| "LongPress".equals(propertyName))) {
 												m.invoke(selectedAssignedAction, true);
 												checkBox.setSelected(true);
 												checkBox.setEnabled(false);
