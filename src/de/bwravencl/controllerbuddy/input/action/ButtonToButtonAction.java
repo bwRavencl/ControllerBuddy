@@ -27,22 +27,24 @@ public class ButtonToButtonAction extends ToButtonAction implements IButtonToAct
 	@Override
 	public void doAction(Input input, float value) {
 		value = handleLongPress(value);
-		
+
 		final boolean down = value == activationValue;
 		input.setButtons(buttonId, down ? 1.0f : 0.0f);
 	}
 
+	@Override
 	public float getActivationValue() {
 		return activationValue;
-	}
-
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	@Override
 	public boolean isLongPress() {
 		return longPress;
+	}
+
+	@Override
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
 	}
 
 	@Override

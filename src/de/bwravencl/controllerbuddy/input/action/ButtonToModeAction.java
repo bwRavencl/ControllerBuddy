@@ -96,6 +96,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		}
 	}
 
+	@Override
 	public float getActivationValue() {
 		return activationValue;
 	}
@@ -108,12 +109,23 @@ public class ButtonToModeAction implements IButtonToAction {
 		return null;
 	}
 
+	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
+
 	public boolean isToggle() {
 		return toggle;
 	}
 
+	@Override
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
+	}
+
+	@Override
+	public void setLongPress(Boolean longPress) {
+		this.longPress = longPress;
 	}
 
 	public void setMode(Mode mode) {
@@ -122,14 +134,6 @@ public class ButtonToModeAction implements IButtonToAction {
 
 	public void setToggle(Boolean toggle) {
 		this.toggle = toggle;
-	}
-
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	public void setLongPress(Boolean longPress) {
-		this.longPress = longPress;
 	}
 
 	@Override

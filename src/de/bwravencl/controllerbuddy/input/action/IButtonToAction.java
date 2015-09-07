@@ -16,14 +16,6 @@ public interface IButtonToAction extends IAction {
 	static final Set<IButtonToAction> actionToWasDown = new HashSet<IButtonToAction>();
 	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<IButtonToAction, Long>();
 
-	public float getActivationValue();
-
-	public void setActivationValue(Float activationValue);
-
-	public boolean isLongPress();
-
-	public void setLongPress(Boolean longPress);
-
 	static boolean isDownUpAction(IAction action) {
 		if (action instanceof ToKeyAction) {
 			final ToKeyAction toKeyAction = (ToKeyAction) action;
@@ -35,6 +27,8 @@ public interface IButtonToAction extends IAction {
 
 		return false;
 	}
+
+	public float getActivationValue();
 
 	default float handleLongPress(float value) {
 		final float activationValue = getActivationValue();
@@ -74,4 +68,10 @@ public interface IButtonToAction extends IAction {
 				return value;
 		}
 	}
+
+	public boolean isLongPress();
+
+	public void setActivationValue(Float activationValue);
+
+	public void setLongPress(Boolean longPress);
 }

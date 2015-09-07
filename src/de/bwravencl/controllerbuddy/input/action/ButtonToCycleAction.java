@@ -45,7 +45,7 @@ public class ButtonToCycleAction implements IButtonToAction {
 	@Override
 	public void doAction(Input input, float value) {
 		value = handleLongPress(value);
-		
+
 		if (value != activationValue) {
 			actions.get(index).doAction(input, value);
 			wasUp = true;
@@ -65,8 +65,14 @@ public class ButtonToCycleAction implements IButtonToAction {
 		return actions;
 	}
 
+	@Override
 	public float getActivationValue() {
 		return activationValue;
+	}
+
+	@Override
+	public boolean isLongPress() {
+		return longPress;
 	}
 
 	public void reset() {
@@ -77,14 +83,12 @@ public class ButtonToCycleAction implements IButtonToAction {
 		this.actions = actions;
 	}
 
+	@Override
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
 	}
 
-	public boolean isLongPress() {
-		return longPress;
-	}
-
+	@Override
 	public void setLongPress(Boolean longPress) {
 		this.longPress = longPress;
 	}

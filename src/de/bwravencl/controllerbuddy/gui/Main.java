@@ -713,6 +713,15 @@ public final class Main {
 		});
 	}
 
+	private static void setEnabledRecursive(java.awt.Component component, boolean enabled) {
+		component.setEnabled(enabled);
+
+		if (component instanceof Container) {
+			for (java.awt.Component child : ((Container) component).getComponents())
+				setEnabledRecursive(child, enabled);
+		}
+	}
+
 	private Controller selectedController;
 	private Input input;
 	private LocalVJoyOutputThread localThread;
@@ -765,6 +774,7 @@ public final class Main {
 			super.approveSelection();
 		}
 	};
+
 	private File currentFile;
 
 	public Main() {
@@ -1294,15 +1304,6 @@ public final class Main {
 		return result;
 	}
 
-	public void scheduleStatusBarText(String text) {
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				setStatusBarText(text);
-			}
-		}, 5000L);
-	}
-
 	private void newProfile() {
 		currentFile = null;
 		input = new Input(selectedController);
@@ -1351,6 +1352,27 @@ public final class Main {
 		}
 	}
 
+	public void scheduleStatusBarText(String text) {
+		class StatusBarTextTimerTask extends TimerTask {
+
+			private final String newText;
+			private final String originalText;
+
+			public StatusBarTextTimerTask(String newText) {
+				this.newText = newText;
+				originalText = statusLabel.getText();
+			}
+
+			@Override
+			public void run() {
+				if (statusLabel.getText().equals(originalText))
+					setStatusBarText(newText);
+			}
+		}
+
+		new Timer().schedule(new StatusBarTextTimerTask(text), 5000L);
+	}
+
 	public void setStatusBarText(String text) {
 		if (statusLabel != null)
 			statusLabel.setText(text);
@@ -1362,15 +1384,6 @@ public final class Main {
 		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
 				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
 			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
-	}
-
-	private static void setEnabledRecursive(java.awt.Component component, boolean enabled) {
-		component.setEnabled(enabled);
-
-		if (component instanceof Container) {
-			for (java.awt.Component child : ((Container) component).getComponents())
-				setEnabledRecursive(child, enabled);
-		}
 	}
 
 	public void startClient() {

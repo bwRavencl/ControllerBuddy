@@ -44,18 +44,22 @@ public class ButtonToKeyAction extends ToKeyAction implements IButtonToAction {
 		}
 	}
 
+	@Override
 	public float getActivationValue() {
 		return activationValue;
 	}
 
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
+	@Override
 	public boolean isLongPress() {
 		return longPress;
 	}
 
+	@Override
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
+
+	@Override
 	public void setLongPress(Boolean longPress) {
 		this.longPress = longPress;
 	}

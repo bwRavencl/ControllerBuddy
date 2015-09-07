@@ -34,6 +34,7 @@ public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonTo
 			input.setAxis(virtualAxis, resetValue);
 	}
 
+	@Override
 	public float getActivationValue() {
 		return activationValue;
 	}
@@ -42,20 +43,23 @@ public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonTo
 		return resetValue;
 	}
 
-	public void setActivationValue(Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
-	public void setResetValue(Float resetValue) {
-		this.resetValue = resetValue;
-	}
-
+	@Override
 	public boolean isLongPress() {
 		return longPress;
 	}
 
+	@Override
+	public void setActivationValue(Float activationValue) {
+		this.activationValue = activationValue;
+	}
+
+	@Override
 	public void setLongPress(Boolean longPress) {
 		this.longPress = longPress;
+	}
+
+	public void setResetValue(Float resetValue) {
+		this.resetValue = resetValue;
 	}
 
 	@Override
