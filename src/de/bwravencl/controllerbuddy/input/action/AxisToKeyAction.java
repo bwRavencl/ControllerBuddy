@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToKeyAction extends ToKeyAction implements ISuspendableAction {
 
-	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
+	public static final float DEFAULT_MIN_AXIS_VALUE = 0.75f;
 	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;
 
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
