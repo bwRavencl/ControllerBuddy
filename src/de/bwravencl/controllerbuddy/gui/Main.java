@@ -650,8 +650,8 @@ public final class Main {
 
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
-	public static final int DIALOG_BOUNDS_WIDTH = 600;
-	public static final int DIALOG_BOUNDS_HEIGHT = 600;
+	public static final int DIALOG_BOUNDS_WIDTH = 580;
+	public static final int DIALOG_BOUNDS_HEIGHT = 640;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 	public static final String OPTION_AUTOSTART = "autostart";
@@ -738,6 +738,7 @@ public final class Main {
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private MenuItem showMenuItem;
 	private final JPanel modesListPanel;
+	private final JPanel assignmentsPanel;
 	private JLabel vJoyDirectoryLabel1;
 	private JSpinner vJoyDeviceSpinner;
 	private JTextField hostTextField;
@@ -943,7 +944,7 @@ public final class Main {
 		addModePanel.add(addButton);
 		modesPanel.add(addModePanel, BorderLayout.SOUTH);
 
-		final JPanel assignmentsPanel = new JPanel();
+		assignmentsPanel = new JPanel();
 		assignmentsPanel.setLayout(new GridBagLayout());
 
 		final JScrollPane assignmentsScrollPane = new JScrollPane();
@@ -1148,7 +1149,6 @@ public final class Main {
 
 								@Override
 								public void run() {
-
 									assignmentsPanel.removeAll();
 
 									final Controller controller = input.getController();
@@ -1161,7 +1161,7 @@ public final class Main {
 													new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0,
 															0.0, GridBagConstraints.FIRST_LINE_START,
 															GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 5,
-															0));
+															5));
 
 											final String name = c.getName();
 											final float value = c.getPollData();
@@ -1183,7 +1183,7 @@ public final class Main {
 
 												componentPanel.add(Box.createGlue(),
 														new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1,
-																1.0, 1.0, GridBagConstraints.BASELINE,
+																0.0, 0.0, GridBagConstraints.BASELINE,
 																GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 												final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
@@ -1195,7 +1195,7 @@ public final class Main {
 
 												componentPanel.add(Box.createGlue(),
 														new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1,
-																1.0, 1.0, GridBagConstraints.BASELINE,
+																0.0, 0.0, GridBagConstraints.BASELINE,
 																GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 												final JLabel valueLabel = new JLabel();
@@ -1212,8 +1212,8 @@ public final class Main {
 											}
 
 											componentPanel.add(Box.createGlue(),
-													new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0,
-															1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+													new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0,
+															0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 															new Insets(0, 0, 0, 0), 0, 0));
 
 											final JButton editButton = new JButton(new EditComponentAction(c));
@@ -1253,6 +1253,7 @@ public final class Main {
 														new Insets(0, 0, 0, 0), 0, 0));
 									}
 
+									setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
 									assignmentsScrollPane.setViewportView(assignmentsPanel);
 								}
 							});
@@ -1405,6 +1406,7 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopLocalRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
+		setEnabledRecursive(assignmentsPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
@@ -1417,6 +1419,7 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
+		setEnabledRecursive(assignmentsPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1443,6 +1446,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
+		setEnabledRecursive(assignmentsPanel, true);
 	}
 
 	public void stopServer() {
@@ -1454,6 +1458,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
+		setEnabledRecursive(assignmentsPanel, true);
 	}
 
 	private void updateModesPanel() {
