@@ -506,8 +506,10 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			final ImageIcon icon = new ImageIcon(
+					Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
-					JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 
 	}
