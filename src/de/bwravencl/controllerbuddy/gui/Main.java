@@ -506,8 +506,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			final ImageIcon icon = new ImageIcon(
-					Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
+			final ImageIcon icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
 					JOptionPane.INFORMATION_MESSAGE, icon);
 		}
@@ -732,6 +731,8 @@ public final class Main {
 	private boolean suspendControllerSettingsUpdate = false;
 	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
 	private final JFrame frame;
+	private final NewAction newAction = new NewAction();
+	private final OpenAction openAction = new OpenAction();
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
@@ -749,6 +750,7 @@ public final class Main {
 	private final JSpinner pollIntervalSpinner;
 	private final JScrollPane modesScrollPane;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
+	private final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 * 
@@ -833,8 +835,7 @@ public final class Main {
 
 		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
-		fileMenu.add(new NewAction());
-		final OpenAction openAction = new OpenAction();
+		fileMenu.add(newAction);
 		fileMenu.add(openAction);
 		fileMenu.add(new SaveAction());
 		fileMenu.add(new SaveAsAction());
@@ -1081,7 +1082,6 @@ public final class Main {
 
 			popupMenu.addSeparator();
 
-			final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 			openMenuItem.addActionListener(openAction);
 			popupMenu.add(openMenuItem);
 
@@ -1409,6 +1409,9 @@ public final class Main {
 		stopLocalRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
+		newAction.setEnabled(false);
+		openAction.setEnabled(false);
+		openMenuItem.setEnabled(false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
@@ -1422,6 +1425,9 @@ public final class Main {
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
+		newAction.setEnabled(false);
+		openAction.setEnabled(false);
+		openMenuItem.setEnabled(false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1449,6 +1455,9 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
+		openMenuItem.setEnabled(true);
+		newAction.setEnabled(true);
+		openAction.setEnabled(true);
 	}
 
 	public void stopServer() {
@@ -1461,6 +1470,9 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
+		openMenuItem.setEnabled(true);
+		newAction.setEnabled(true);
+		openAction.setEnabled(true);
 	}
 
 	private void updateModesPanel() {
