@@ -1329,7 +1329,7 @@ public final class Main {
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
 		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-				.create();
+				.setPrettyPrinting().create();
 		final String jsonString = gson.toJson(Input.getProfile());
 
 		try (FileOutputStream fos = new FileOutputStream(file)) {
