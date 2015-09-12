@@ -1299,6 +1299,7 @@ public final class Main {
 			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 			setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
+			fileChooser.setSelectedFile(file);
 
 			return result;
 		} catch (IOException e) {
@@ -1315,6 +1316,7 @@ public final class Main {
 		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
+		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 	}
 
 	private void saveLastProfile(File file) {
