@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
@@ -42,7 +44,15 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	protected boolean readInput() {
-		input.poll();
+		if (!input.poll()) {
+			JOptionPane.showMessageDialog(main.getFrame(),
+					rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
+							+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			stopOutput();
+
+			return false;
+		}
 
 		axisX = new LONG(input.getAxis().get(Input.VirtualAxis.X));
 		axisY = new LONG(input.getAxis().get(Input.VirtualAxis.Y));

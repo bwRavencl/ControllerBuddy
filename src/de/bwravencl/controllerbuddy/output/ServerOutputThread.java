@@ -59,6 +59,14 @@ public class ServerOutputThread extends OutputThread {
 		super(main, input);
 	}
 
+	private void deInit() {
+		if (serverSocket != null)
+			serverSocket.close();
+
+		main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
+		main.stopServer();
+	}
+
 	public int getPort() {
 		return port;
 	}
@@ -81,7 +89,7 @@ public class ServerOutputThread extends OutputThread {
 
 			main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
 
-			while (true) {
+			while (run) {
 				switch (serverState) {
 				case Listening:
 					counter = 0;
@@ -137,81 +145,88 @@ public class ServerOutputThread extends OutputThread {
 						sw.append(PROTOCOL_MESSAGE_UPDATE);
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
-					input.poll();
+					if (!input.poll()) {
+						JOptionPane.showMessageDialog(main.getFrame(),
+								rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX")
+										+ input.getController().getName()
+										+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
+								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						stopOutput();
+					} else {
+						for (int v : input.getAxis().values())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
-					for (int v : input.getAxis().values())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
-
-					for (int i = 0; i < nButtons; i++) {
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
-						input.getButtons()[i] = false;
-					}
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
-							+ input.getCursorDeltaY());
-					input.setCursorDeltaX(0);
-					input.setCursorDeltaY(0);
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
-					for (int b : input.getDownMouseButtons())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
-					for (int b : input.getDownUpMouseButtons())
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
-					input.getDownUpMouseButtons().clear();
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
-					for (KeyStroke ks : input.getDownKeyStrokes()) {
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-						for (int c : ks.getModifierCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
-
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-						for (int c : ks.getKeyCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
-					}
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
-					for (KeyStroke ks : input.getDownUpKeyStrokes()) {
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-						for (int c : ks.getModifierCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
-
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-						for (int c : ks.getKeyCodes())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
-					}
-					input.getDownUpKeyStrokes().clear();
-
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
-					input.setScrollClicks(0);
-
-					final byte[] sendBuf = sw.toString().getBytes("ASCII");
-
-					final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
-							clientPort);
-					serverSocket.send(sendPacket);
-
-					if (doAliveCheck) {
-						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-						serverSocket.setSoTimeout(timeout);
-						try {
-							serverSocket.receive(receivePacket);
-
-							if (clientIPAddress.equals(receivePacket.getAddress())) {
-								message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-										StandardCharsets.US_ASCII);
-
-								if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
-									counter++;
-							}
-						} catch (SocketTimeoutException e) {
-							serverState = ServerState.Listening;
-							main.scheduleStatusBarText(rb.getString("STATUS_LISTENING") + port);
+						for (int i = 0; i < nButtons; i++) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
+							input.getButtons()[i] = false;
 						}
-					} else
-						counter++;
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
+								+ input.getCursorDeltaY());
+						input.setCursorDeltaX(0);
+						input.setCursorDeltaY(0);
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
+						for (int b : input.getDownMouseButtons())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
+						for (int b : input.getDownUpMouseButtons())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+						input.getDownUpMouseButtons().clear();
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
+						for (KeyStroke ks : input.getDownKeyStrokes()) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
+							for (int c : ks.getModifierCodes())
+								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
+							for (int c : ks.getKeyCodes())
+								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+						}
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
+						for (KeyStroke ks : input.getDownUpKeyStrokes()) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
+							for (int c : ks.getModifierCodes())
+								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
+							for (int c : ks.getKeyCodes())
+								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+						}
+						input.getDownUpKeyStrokes().clear();
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
+						input.setScrollClicks(0);
+
+						final byte[] sendBuf = sw.toString().getBytes("ASCII");
+
+						final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+								clientPort);
+						serverSocket.send(sendPacket);
+
+						if (doAliveCheck) {
+							receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+							serverSocket.setSoTimeout(timeout);
+							try {
+								serverSocket.receive(receivePacket);
+
+								if (clientIPAddress.equals(receivePacket.getAddress())) {
+									message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+											StandardCharsets.US_ASCII);
+
+									if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
+										counter++;
+								}
+							} catch (SocketTimeoutException e) {
+								serverState = ServerState.Listening;
+								main.scheduleStatusBarText(rb.getString("STATUS_LISTENING") + port);
+							}
+						} else
+							counter++;
+					}
 
 					break;
 				}
@@ -229,7 +244,7 @@ public class ServerOutputThread extends OutputThread {
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		} finally {
-			stopOutput();
+			deInit();
 		}
 	}
 
@@ -239,16 +254,6 @@ public class ServerOutputThread extends OutputThread {
 
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
-	}
-
-	@Override
-	public void stopOutput() {
-		super.stopOutput();
-
-		if (serverSocket != null)
-			serverSocket.close();
-
-		main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
 	}
 
 }

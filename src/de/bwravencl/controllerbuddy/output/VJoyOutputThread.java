@@ -162,7 +162,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
-	protected boolean run = true;
 	protected LONG axisX;
 	protected LONG axisY;
 	protected LONG axisZ;
@@ -323,13 +322,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	public void setvJoyDevice(UINT vJoyDevice) {
 		this.vJoyDevice = vJoyDevice;
-	}
-
-	@Override
-	public void stopOutput() {
-		super.stopOutput();
-
-		run = false;
 	}
 
 	protected void writeOutput() {

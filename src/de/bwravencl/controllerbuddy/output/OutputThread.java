@@ -30,6 +30,7 @@ public abstract class OutputThread extends Thread {
 
 	protected final Main main;
 	protected final Input input;
+	protected boolean run = true;
 	protected long pollInterval = DEFAULT_POLL_INTERVAL;
 	protected int minAxisValue;
 	protected int maxAxisValue;
@@ -78,6 +79,7 @@ public abstract class OutputThread extends Thread {
 	}
 
 	public void stopOutput() {
+		run = false;
 		input.reset();
 	}
 

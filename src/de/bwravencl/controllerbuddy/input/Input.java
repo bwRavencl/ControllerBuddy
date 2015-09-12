@@ -189,8 +189,9 @@ public class Input {
 		return scrollClicks;
 	}
 
-	public void poll() {
-		controller.poll();
+	public boolean poll() {
+		if (!controller.poll())
+			return false;
 
 		for (Component c : controller.getComponents()) {
 			final ButtonToModeAction modeAction = profile.getComponentToModeActionMap().get(c.getName());
@@ -208,6 +209,8 @@ public class Input {
 				for (IAction a : actions)
 					a.doAction(this, c.getPollData());
 		}
+
+		return true;
 	}
 
 	public void reset() {

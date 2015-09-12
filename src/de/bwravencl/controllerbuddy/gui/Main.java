@@ -860,11 +860,12 @@ public final class Main {
 
 				final Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 
-				for (Controller c : controllers)
+				for (Controller c : controllers) {
 					if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
 							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN
 							&& !c.getName().startsWith("vJoy"))
 						deviceMenu.add(new SelectControllerAction(c));
+				}
 			}
 		});
 		deviceMenu.setEnabled(true);
