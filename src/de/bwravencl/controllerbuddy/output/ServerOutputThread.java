@@ -64,7 +64,7 @@ public class ServerOutputThread extends OutputThread {
 			serverSocket.close();
 
 		main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
-		main.stopServer();
+		main.stopServer(false);
 	}
 
 	public int getPort() {

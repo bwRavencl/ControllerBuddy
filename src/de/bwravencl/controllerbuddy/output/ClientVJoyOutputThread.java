@@ -62,7 +62,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	@Override
 	protected void deInit() {
 		super.deInit();
-		main.stopClient();
+		main.stopClient(false);
 	}
 
 	public String getHost() {

@@ -311,9 +311,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopLocal();
-			stopClient();
-			stopServer();
+			stopAll();
 			System.exit(0);
 		}
 
@@ -606,7 +604,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopClient();
+			stopClient(true);
 		}
 
 	}
@@ -625,7 +623,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopLocal();
+			stopLocal(true);
 		}
 
 	}
@@ -644,11 +642,15 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopServer();
+			stopServer(true);
 		}
 
 	}
 
+	private static final int OUTPUT_TYPE_NONE = 0;
+	private static final int OUTPUT_TYPE_LOCAL = 1;
+	private static final int OUTPUT_TYPE_CLIENT = 2;
+	private static final int OUTPUT_TYPE_SERVER = 3;
 	public static final int DIALOG_BOUNDS_X = 100;
 	public static final int DIALOG_BOUNDS_Y = 100;
 	public static final int DIALOG_BOUNDS_WIDTH = 580;
@@ -728,10 +730,10 @@ public final class Main {
 	private LocalVJoyOutputThread localThread;
 	private ClientVJoyOutputThread clientThread;
 	private ServerOutputThread serverThread;
+	private int lastOutputType = OUTPUT_TYPE_NONE;
 	private boolean suspendControllerSettingsUpdate = false;
 	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
 	private final JFrame frame;
-	private final NewAction newAction = new NewAction();
 	private final OpenAction openAction = new OpenAction();
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
@@ -750,7 +752,6 @@ public final class Main {
 	private final JSpinner pollIntervalSpinner;
 	private final JScrollPane modesScrollPane;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
-	private final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 * 
@@ -835,7 +836,7 @@ public final class Main {
 
 		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
-		fileMenu.add(newAction);
+		fileMenu.add(new NewAction());
 		fileMenu.add(openAction);
 		fileMenu.add(new SaveAction());
 		fileMenu.add(new SaveAsAction());
@@ -1083,6 +1084,7 @@ public final class Main {
 
 			popupMenu.addSeparator();
 
+			final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 			openMenuItem.addActionListener(openAction);
 			popupMenu.add(openMenuItem);
 
@@ -1282,6 +1284,8 @@ public final class Main {
 	}
 
 	private boolean loadProfile(File file) {
+		stopAll();
+
 		boolean result = false;
 
 		try {
@@ -1292,14 +1296,16 @@ public final class Main {
 			final Profile profile = gson.fromJson(jsonString, Profile.class);
 
 			result = Input.setProfile(profile, input.getController());
-			if (result)
+			if (result) {
 				saveLastProfile(file);
+				updateModesPanel();
+				frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+				setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+				scheduleStatusBarText(rb.getString("STATUS_READY"));
+				fileChooser.setSelectedFile(file);
 
-			updateModesPanel();
-			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-			setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
-			scheduleStatusBarText(rb.getString("STATUS_READY"));
-			fileChooser.setSelectedFile(file);
+				restartLast();
+			}
 
 			return result;
 		} catch (IOException e) {
@@ -1310,6 +1316,8 @@ public final class Main {
 	}
 
 	private void newProfile() {
+		stopAll();
+
 		currentFile = null;
 		input = new Input(selectedController);
 
@@ -1317,6 +1325,25 @@ public final class Main {
 		updateModesPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
+
+		restartLast();
+	}
+
+	private void restartLast() {
+		switch (lastOutputType) {
+		case OUTPUT_TYPE_LOCAL:
+			startLocal();
+			break;
+		case OUTPUT_TYPE_CLIENT:
+			startClient();
+			break;
+		case OUTPUT_TYPE_SERVER:
+			startServer();
+			break;
+		case OUTPUT_TYPE_NONE:
+		default:
+			break;
+		}
 	}
 
 	private void saveLastProfile(File file) {
@@ -1393,6 +1420,8 @@ public final class Main {
 	}
 
 	public void startClient() {
+		lastOutputType = OUTPUT_TYPE_CLIENT;
+		startClientRadioButtonMenuItem.setSelected(true);
 		startLocalRadioButtonMenuItem.setEnabled(false);
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
@@ -1406,15 +1435,14 @@ public final class Main {
 	}
 
 	public void startLocal() {
+		lastOutputType = OUTPUT_TYPE_LOCAL;
+		startLocalRadioButtonMenuItem.setSelected(true);
 		startLocalRadioButtonMenuItem.setEnabled(false);
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopLocalRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
-		newAction.setEnabled(false);
-		openAction.setEnabled(false);
-		openMenuItem.setEnabled(false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
@@ -1422,15 +1450,14 @@ public final class Main {
 	}
 
 	public void startServer() {
+		lastOutputType = OUTPUT_TYPE_SERVER;
+		startServerRadioButtonMenuItem.setSelected(true);
 		startLocalRadioButtonMenuItem.setEnabled(false);
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
-		newAction.setEnabled(false);
-		openAction.setEnabled(false);
-		openMenuItem.setEnabled(false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1438,7 +1465,22 @@ public final class Main {
 		serverThread.start();
 	}
 
-	public void stopClient() {
+	private void stopAll() {
+		stopLocal(false);
+		stopClient(false);
+		stopServer(false);
+
+		while ((localThread != null && localThread.isAlive()) || (clientThread != null && clientThread.isAlive())
+				|| (serverThread != null && serverThread.isAlive())) {
+			try {
+				Thread.sleep(100L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void stopClient(boolean resetLastOutputType) {
 		if (clientThread != null)
 			clientThread.stopOutput();
 		stopClientRadioButtonMenuItem.setSelected(true);
@@ -1446,9 +1488,11 @@ public final class Main {
 		startLocalRadioButtonMenuItem.setEnabled(true);
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
+		if (resetLastOutputType)
+			lastOutputType = OUTPUT_TYPE_NONE;
 	}
 
-	public void stopLocal() {
+	public void stopLocal(boolean resetLastOutputType) {
 		if (localThread != null)
 			localThread.stopOutput();
 		stopLocalRadioButtonMenuItem.setSelected(true);
@@ -1458,12 +1502,11 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
-		openMenuItem.setEnabled(true);
-		newAction.setEnabled(true);
-		openAction.setEnabled(true);
+		if (resetLastOutputType)
+			lastOutputType = OUTPUT_TYPE_NONE;
 	}
 
-	public void stopServer() {
+	public void stopServer(boolean resetLastOutputType) {
 		if (serverThread != null)
 			serverThread.stopOutput();
 		stopServerRadioButtonMenuItem.setSelected(true);
@@ -1473,66 +1516,55 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
-		openMenuItem.setEnabled(true);
-		newAction.setEnabled(true);
-		openAction.setEnabled(true);
+		if (resetLastOutputType)
+			lastOutputType = OUTPUT_TYPE_NONE;
 	}
 
 	private void updateModesPanel() {
-		EventQueue.invokeLater(new Runnable() {
+		modesListPanel.removeAll();
 
-			@Override
-			public void run() {
-				modesListPanel.removeAll();
+		final List<Mode> modes = Input.getProfile().getModes();
+		for (Mode p : modes) {
+			final JPanel modePanel = new JPanel(new GridBagLayout());
+			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-				final List<Mode> modes = Input.getProfile().getModes();
-				for (Mode p : modes) {
-					final JPanel modePanel = new JPanel(new GridBagLayout());
-					modesListPanel.add(modePanel,
-							new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-									new Insets(0, 0, 0, 0), 0, 5));
+			final JLabel modeNoLabel = new JLabel("Mode " + modes.indexOf(p));
+			modeNoLabel.setPreferredSize(new Dimension(100, 15));
+			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-					final JLabel modeNoLabel = new JLabel("Mode " + modes.indexOf(p));
-					modeNoLabel.setPreferredSize(new Dimension(100, 15));
-					modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
-							GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-					modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1.0,
-							1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			final JTextField descriptionTextField = new JTextField(p.getDescription(), 20);
+			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-					final JTextField descriptionTextField = new JTextField(p.getDescription(), 20);
-					modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
-							GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(p,
+					descriptionTextField);
+			descriptionTextField.addActionListener(setModeDescriptionAction);
+			descriptionTextField.addFocusListener(setModeDescriptionAction);
 
-					final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(p,
-							descriptionTextField);
-					descriptionTextField.addActionListener(setModeDescriptionAction);
-					descriptionTextField.addFocusListener(setModeDescriptionAction);
+			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-					modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0,
-							1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			final JButton deleteButton = new JButton(new RemoveModeAction(p));
+			deleteButton.setPreferredSize(BUTTON_DIMENSION);
+			modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-					final JButton deleteButton = new JButton(new RemoveModeAction(p));
-					deleteButton.setPreferredSize(BUTTON_DIMENSION);
-					modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-							GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
-					if (Profile.isDefaultMode(p)) {
-						descriptionTextField.setEditable(false);
-						deleteButton.setEnabled(false);
-					}
-
-				}
-
-				modesListPanel.add(Box.createGlue(),
-						new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-								GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0,
-								0));
-
-				modesScrollPane.setViewportView(modesListPanel);
+			if (Profile.isDefaultMode(p)) {
+				descriptionTextField.setEditable(false);
+				deleteButton.setEnabled(false);
 			}
-		});
+
+		}
+
+		modesListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+		modesScrollPane.setViewportView(modesListPanel);
 	}
 
 }
