@@ -752,6 +752,7 @@ public final class Main {
 	private final JSpinner pollIntervalSpinner;
 	private final JScrollPane modesScrollPane;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
+	private TrayIcon trayIcon;
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 * 
@@ -820,7 +821,7 @@ public final class Main {
 			}
 
 		});
-		frame.setTitle(rb.getString("APPLICATION_NAME"));
+		setTitle(rb.getString("APPLICATION_NAME"));
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
@@ -1094,7 +1095,7 @@ public final class Main {
 			quitMenuItem.addActionListener(quitAction);
 			popupMenu.add(quitMenuItem);
 
-			final TrayIcon trayIcon = new TrayIcon(frame.getIconImage());
+			trayIcon = new TrayIcon(frame.getIconImage());
 			trayIcon.setToolTip(rb.getString("APPLICATION_NAME"));
 			trayIcon.setPopupMenu(popupMenu);
 			try {
@@ -1299,7 +1300,7 @@ public final class Main {
 			if (result) {
 				saveLastProfile(file);
 				updateModesPanel();
-				frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+				setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 				setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
 				scheduleStatusBarText(rb.getString("STATUS_READY"));
 				fileChooser.setSelectedFile(file);
@@ -1321,7 +1322,7 @@ public final class Main {
 		currentFile = null;
 		input = new Input(selectedController);
 
-		frame.setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+		setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
@@ -1370,7 +1371,7 @@ public final class Main {
 			fos.close();
 
 			saveLastProfile(file);
-			frame.setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (IOException e1) {
@@ -1411,12 +1412,18 @@ public final class Main {
 			statusLabel.setText(text);
 	}
 
+	private void setTitle(String title) {
+		frame.setTitle(title);
+		if (trayIcon != null)
+			trayIcon.setToolTip(title);
+	}
+
 	public void setUnsavedChangesTitle() {
 		final String title = frame.getTitle();
 
 		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
 				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
-			frame.setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
+			setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
 	}
 
 	public void startClient() {
