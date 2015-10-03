@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Profile;
 
 public interface IButtonToAction extends IAction {
 
@@ -66,6 +67,16 @@ public interface IButtonToAction extends IAction {
 						if (actions.contains(this)) {
 							actionToWasDown.removeAll(actions);
 							break;
+						}
+					}
+
+					if (!Profile.isDefaultMode(Input.getProfile().getActiveMode())) {
+						for (List<IAction> actions : Input.getProfile().getModes().get(0).getComponentToActionsMap()
+								.values()) {
+							if (actions.contains(this)) {
+								actionToWasDown.removeAll(actions);
+								break;
+							}
 						}
 					}
 				}
