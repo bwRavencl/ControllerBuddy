@@ -1097,6 +1097,7 @@ public final class Main {
 
 			trayIcon = new TrayIcon(frame.getIconImage());
 			trayIcon.setToolTip(rb.getString("APPLICATION_NAME"));
+			trayIcon.addActionListener(showAction);
 			trayIcon.setPopupMenu(popupMenu);
 			try {
 				SystemTray.getSystemTray().add(trayIcon);
