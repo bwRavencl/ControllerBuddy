@@ -390,7 +390,7 @@ public class EditActionsDialog extends JDialog {
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToModeAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction", };
+			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
@@ -481,6 +481,7 @@ public class EditActionsDialog extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					selectedMode = (Mode) modeComboBox.getSelectedItem();
 					updateAssignedActions();
+					updateAvailableActions();
 				}
 			});
 			modePanel.add(modeComboBox);
@@ -836,7 +837,6 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private void updateAvailableActions() {
-
 		final List<AvailableAction> availableActions = new ArrayList<AvailableAction>();
 
 		String[] actionClasses;
@@ -851,8 +851,11 @@ public class EditActionsDialog extends JDialog {
 		for (String s : actionClasses) {
 			final AvailableAction availableAction = new AvailableAction(s);
 			if (ButtonToModeAction.class.getName().equals(availableAction.className)) {
-				if (unsavedProfile.getModes().size() > 1 && !hasModeAction())
-					availableActions.add(availableAction);
+				if (unsavedProfile.getModes().size() > 1 && !hasModeAction()) {
+					if (Profile.isDefaultMode(selectedMode)
+							|| !availableAction.className.endsWith(ButtonToModeAction.class.getName()))
+						availableActions.add(availableAction);
+				}
 			} else
 				availableActions.add(availableAction);
 		}

@@ -29,8 +29,7 @@ public class AxisToButtonAction extends ToButtonAction implements ISuspendableAc
 
 	@Override
 	public void doAction(Input input, float value) {
-		boolean down = (value >= minAxisValue && value <= maxAxisValue);
-		down &= isSuspended();
+		final boolean down = (!isSuspended() && value >= minAxisValue && value <= maxAxisValue);
 
 		input.setButtons(buttonId, down);
 	}
