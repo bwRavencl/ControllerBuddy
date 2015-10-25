@@ -205,9 +205,10 @@ public class Input {
 			if (actions == null)
 				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
 
-			if (actions != null)
+			if (actions != null) {
 				for (IAction a : actions)
 					a.doAction(this, c.getPollData());
+			}
 		}
 
 		return true;
