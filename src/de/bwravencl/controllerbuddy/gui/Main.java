@@ -105,6 +105,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.input.Input;
@@ -1141,8 +1142,11 @@ public final class Main {
 			newProfile();
 
 			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-			if (path != null)
-				loadProfile(new File(path));
+			if (path != null) {
+				if (!loadProfile(new File(path)))
+					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
 
 			final Thread updateAssignmentsPanelThread = new Thread() {
 
@@ -1295,18 +1299,22 @@ public final class Main {
 			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
 					.create();
 
-			final Profile profile = gson.fromJson(jsonString, Profile.class);
+			try {
+				final Profile profile = gson.fromJson(jsonString, Profile.class);
 
-			result = Input.setProfile(profile, input.getController());
-			if (result) {
-				saveLastProfile(file);
-				updateModesPanel();
-				setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
-				setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
-				scheduleStatusBarText(rb.getString("STATUS_READY"));
-				fileChooser.setSelectedFile(file);
+				result = Input.setProfile(profile, input.getController());
+				if (result) {
+					saveLastProfile(file);
+					updateModesPanel();
+					setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+					setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+					scheduleStatusBarText(rb.getString("STATUS_READY"));
+					fileChooser.setSelectedFile(file);
 
-				restartLast();
+					restartLast();
+				}
+			} catch (JsonSyntaxException e) {
+				e.printStackTrace();
 			}
 
 			return result;

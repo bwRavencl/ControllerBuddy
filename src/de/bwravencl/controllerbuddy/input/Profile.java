@@ -37,7 +37,7 @@ public class Profile implements Cloneable {
 		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
 	}
 
-	private Map<String, ButtonToModeAction> componentToModeActionMap = new HashMap<String, ButtonToModeAction>();
+	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
 	private List<Mode> modes = new ArrayList<Mode>();
 	private int activeModeIndex = 0;
 
@@ -53,13 +53,18 @@ public class Profile implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		final Profile profile = new Profile();
 
-		final Map<String, ButtonToModeAction> clonedComponentToModeActionMap = new HashMap<String, ButtonToModeAction>();
-		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet())
-			try {
-				clonedComponentToModeActionMap.put(new String(e.getKey()), (ButtonToModeAction) e.getValue().clone());
-			} catch (CloneNotSupportedException e1) {
-				e1.printStackTrace();
+		final Map<String, List<ButtonToModeAction>> clonedComponentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
+		for (Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
+			final List<ButtonToModeAction> buttonToModeActions = new ArrayList<ButtonToModeAction>();
+			for (ButtonToModeAction a : e.getValue()) {
+				try {
+					buttonToModeActions.add((ButtonToModeAction) a.clone());
+				} catch (CloneNotSupportedException e1) {
+					e1.printStackTrace();
+				}
 			}
+			clonedComponentToModeActionMap.put(new String(e.getKey()), buttonToModeActions);
+		}
 		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
 
 		final List<Mode> clonedModes = new ArrayList<Mode>();
@@ -78,7 +83,7 @@ public class Profile implements Cloneable {
 		return modes.get(activeModeIndex);
 	}
 
-	public Map<String, ButtonToModeAction> getComponentToModeActionMap() {
+	public Map<String, List<ButtonToModeAction>> getComponentToModeActionMap() {
 		return componentToModeActionMap;
 	}
 
@@ -89,9 +94,11 @@ public class Profile implements Cloneable {
 	public void removeMode(Mode mode) {
 		final List<String> actionsToRemove = new ArrayList<String>();
 
-		for (Map.Entry<String, ButtonToModeAction> e : componentToModeActionMap.entrySet()) {
-			if (e.getValue().getMode().equals(mode))
-				actionsToRemove.add(e.getKey());
+		for (Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
+			for (ButtonToModeAction a : e.getValue()) {
+				if (a.equals(mode))
+					actionsToRemove.add(e.getKey());
+			}
 		}
 
 		for (String s : actionsToRemove)
@@ -113,7 +120,7 @@ public class Profile implements Cloneable {
 
 	}
 
-	public void setComponentToModeActionMap(Map<String, ButtonToModeAction> componentToModeActionMap) {
+	public void setComponentToModeActionMap(Map<String, List<ButtonToModeAction>> componentToModeActionMap) {
 		this.componentToModeActionMap = componentToModeActionMap;
 	}
 

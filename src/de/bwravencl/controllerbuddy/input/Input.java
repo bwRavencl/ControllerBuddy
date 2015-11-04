@@ -194,9 +194,11 @@ public class Input {
 			return false;
 
 		for (Component c : controller.getComponents()) {
-			final ButtonToModeAction modeAction = profile.getComponentToModeActionMap().get(c.getName());
-			if (modeAction != null)
-				modeAction.doAction(this, c.getPollData());
+			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
+			if (buttonToModeActions != null) {
+				for (ButtonToModeAction a : buttonToModeActions)
+					a.doAction(this, c.getPollData());
+			}
 
 			final List<Mode> modes = profile.getModes();
 			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
