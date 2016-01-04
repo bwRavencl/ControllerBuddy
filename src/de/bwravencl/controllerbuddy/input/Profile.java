@@ -96,7 +96,7 @@ public class Profile implements Cloneable {
 
 		for (Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
 			for (ButtonToModeAction a : e.getValue()) {
-				if (a.equals(mode))
+				if (a.getMode().equals(mode))
 					actionsToRemove.add(e.getKey());
 			}
 		}
