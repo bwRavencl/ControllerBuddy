@@ -1,4 +1,4 @@
-/* Copyright (C) 2015  Matteo Hausner
+/* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,12 +27,20 @@ import java.util.UUID;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
+import net.java.games.input.Component;
 
 public class ButtonToModeAction implements IButtonToAction {
+
+	private static final Deque<ButtonToModeAction> buttonToModeActionStack = new LinkedList<ButtonToModeAction>();
+
+	public static Deque<ButtonToModeAction> getButtonToModeActionStack() {
+		return buttonToModeActionStack;
+	}
 
 	private boolean toggle = false;
 	private boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
+
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	private UUID modeUuid;
@@ -43,7 +53,10 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	private void activateMode(Profile profile) {
-		profile.setActiveMode(modeUuid);
+		if (!buttonToModeActionStack.contains(this)) {
+			buttonToModeActionStack.push(this);
+			profile.setActiveMode(modeUuid);
+		}
 	}
 
 	@Override
@@ -51,22 +64,59 @@ public class ButtonToModeAction implements IButtonToAction {
 		return super.clone();
 	}
 
-	private void deactivateMode(Input input, Profile profile) {
-		final Set<String> components = profile.getActiveMode().getComponentToActionsMap().keySet();
-		final Map<String, List<IAction>> defaultComponentToActionsMap = profile.getModes().get(0)
-				.getComponentToActionsMap();
+	private boolean componentNotUsedByActiveMode(Input input) {
+		final Profile profile = Input.getProfile();
 
-		for (String c : components) {
-			if (defaultComponentToActionsMap.containsKey(c)) {
-				for (IAction a : defaultComponentToActionsMap.get(c)) {
-					if (a instanceof ISuspendableAction)
-						((ISuspendableAction) a).suspend();
+		Component component = null;
+		componentLoop: for (Component c : input.getController().getComponents()) {
+			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
+			if (buttonToModeActions != null) {
+				for (ButtonToModeAction a : buttonToModeActions) {
+					if (a.equals(this)) {
+						component = c;
+						break componentLoop;
+					}
 				}
 			}
 		}
 
-		profile.setActiveMode(0);
-		input.getDownKeyStrokes().clear();
+		if (component != null) {
+			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
+			final List<IAction> actions = componentToActionMap.get(component.getName());
+
+			return actions == null;
+		} else
+			return true;
+	}
+
+	private void deactivateMode(Input input, Profile profile) {
+		if (buttonToModeActionStack.contains(this)) {
+			while (!buttonToModeActionStack.isEmpty() && !buttonToModeActionStack.peek().equals(this))
+				buttonToModeActionStack.poll().deactivateMode(input, profile);
+
+			Mode previousMode = profile.getModes().get(0);
+			if (!buttonToModeActionStack.isEmpty()) {
+				buttonToModeActionStack.pop();
+				if (!buttonToModeActionStack.isEmpty())
+					previousMode = buttonToModeActionStack.peek().getMode();
+			}
+
+			final Set<String> components = profile.getActiveMode().getComponentToActionsMap().keySet();
+			final Map<String, List<IAction>> defaultComponentToActionsMap = previousMode.getComponentToActionsMap();
+			if (defaultComponentToActionsMap != null) {
+				for (String c : components) {
+					if (defaultComponentToActionsMap.containsKey(c)) {
+						for (IAction a : defaultComponentToActionsMap.get(c)) {
+							if (a instanceof ISuspendableAction)
+								((ISuspendableAction) a).suspend();
+						}
+					}
+				}
+			}
+
+			profile.setActiveMode(previousMode.getUuid());
+			input.getDownKeyStrokes().clear();
+		}
 	}
 
 	@Override
@@ -77,21 +127,19 @@ public class ButtonToModeAction implements IButtonToAction {
 		if (value != activationValue) {
 			if (toggle)
 				up = true;
-			else {
-				if (profile.getActiveMode().getUuid().equals(modeUuid))
-					deactivateMode(input, profile);
-			}
+			else
+				deactivateMode(input, profile);
 		} else {
 			if (toggle) {
 				if (up) {
-					if (Profile.isDefaultMode(profile.getActiveMode()))
-						activateMode(profile);
-					else if (profile.getActiveMode().getUuid().equals(modeUuid))
+					if (profile.getActiveMode().getUuid().equals(modeUuid))
 						deactivateMode(input, profile);
+					else
+						activateMode(profile);
 
 					up = false;
 				}
-			} else if (Profile.isDefaultMode(profile.getActiveMode()))
+			} else if (Profile.isDefaultMode(profile.getActiveMode()) || (componentNotUsedByActiveMode(input)))
 				activateMode(profile);
 		}
 	}

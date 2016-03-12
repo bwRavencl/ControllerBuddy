@@ -26,6 +26,8 @@ Currently the following actions are supported:
 - Mouse button presses
 - Mouse scrolling
 - Cycles of actions
+- Mode switching
+- Relative axis resetting
 
 ControllerBuddy supports the creation of multiple input modes, which are best be described as shift-states.
 In each mode, each physical axis or button can be mapped to a different action.
@@ -55,6 +57,14 @@ Physical Controller
  Target Application                 Target Application
 </pre>
 
+#####Command Line Parameters:
+usage: ControllerBuddy [-autostart <arg>] [-tray]
+ -autostart <arg>   automatically start the:
+                    local feeder [-autostart local] or
+                    client [-autostart client] or
+                    server [-autostart server]
+ -tray              launch in tray
+
 #####Requirements:
 - Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
-- vJoy 2.0.5 (http://vjoystick.sourceforge.net)
+- vJoy 2.1.6 (http://vjoystick.sourceforge.net)

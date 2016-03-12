@@ -1,4 +1,4 @@
-/* Copyright (C) 2015  Matteo Hausner
+/* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import java.util.TimerTask;
 
 public interface ISuspendableAction extends IAction {
 
-	static final long SUSPEND_TIME = 750L;
+	static final long SUSPEND_TIME = 500L;
 
 	static final Set<ISuspendableAction> suspendedActions = new HashSet<ISuspendableAction>();
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015  Matteo Hausner
+/* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,8 +114,10 @@ public class Profile implements Cloneable {
 
 	public void setActiveMode(UUID modeUuid) {
 		for (Mode m : modes) {
-			if (m.getUuid().equals(modeUuid))
+			if (m.getUuid().equals(modeUuid)) {
 				setActiveMode(modes.indexOf(m));
+				break;
+			}
 		}
 
 	}
