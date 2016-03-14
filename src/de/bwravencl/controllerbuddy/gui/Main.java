@@ -1,4 +1,4 @@
-/* Copyright (C) 2015  Matteo Hausner
+/* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,15 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
@@ -65,6 +68,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -672,11 +676,36 @@ public final class Main {
 	public static final String PREFERENCES_HOST = "host";
 	public static final String PREFERENCES_PORT = "port";
 	public static final String PREFERENCES_TIMEOUT = "timeout";
+	public static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
+
+	private static JFrame overlayFrame;
+
+	private final static JLabel labelCurrentMode = new JLabel();
+
+	private static void deInitOverlay() {
+		if (overlayFrame != null)
+			overlayFrame.setVisible(false);
+	}
+
+	private static void initOverlay() {
+		labelCurrentMode.setForeground(Color.GREEN);
+		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
+		if (overlayFrame == null) {
+			overlayFrame = new JFrame();
+			overlayFrame.setAlwaysOnTop(true);
+			overlayFrame.setFocusableWindowState(false);
+			overlayFrame.setUndecorated(true);
+			overlayFrame.setBackground(new Color(255, 255, 255, 0));
+			overlayFrame.add(labelCurrentMode);
+		}
+		updateOverlayLocation();
+		overlayFrame.setVisible(true);
+	}
 
 	public static boolean isWindows() {
 		return System.getProperty("os.name").startsWith("Windows");
@@ -726,6 +755,23 @@ public final class Main {
 		}
 	}
 
+	public static void setOverlayText(String text) {
+		labelCurrentMode.setText(text);
+		updateOverlayLocation();
+	}
+
+	private static void updateOverlayLocation() {
+		if (overlayFrame != null) {
+			overlayFrame.pack();
+			final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			final GraphicsDevice graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
+			final Rectangle rectangle = graphicsDevice.getDefaultConfiguration().getBounds();
+			final int x = (int) rectangle.getMaxX() - overlayFrame.getWidth();
+			final int y = 0;
+			overlayFrame.setLocation(x, y);
+		}
+	}
+
 	private Controller selectedController;
 	private Input input;
 	private LocalVJoyOutputThread localThread;
@@ -751,9 +797,13 @@ public final class Main {
 	private final JSpinner portSpinner;
 	private final JSpinner timeoutSpinner;
 	private final JSpinner pollIntervalSpinner;
+
 	private final JScrollPane modesScrollPane;
+
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
+
 	private TrayIcon trayIcon;
+
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 * 
@@ -1075,6 +1125,27 @@ public final class Main {
 			}
 		});
 		timeoutPanel.add(timeoutSpinner);
+
+		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
+				|| preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false)) {
+			final JPanel overlayPanel = new JPanel(panelFlowLayout);
+			settingsPanel.add(overlayPanel, panelGridBagConstraints);
+
+			final JLabel overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
+			overlayLabel.setPreferredSize(new Dimension(100, 15));
+			overlayPanel.add(overlayLabel);
+
+			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
+			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false));
+			showOverlayCheckBox.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, ((JCheckBox) e.getSource()).isSelected());
+				}
+			});
+			overlayPanel.add(showOverlayCheckBox);
+		}
 
 		if (SystemTray.isSupported()) {
 			final PopupMenu popupMenu = new PopupMenu();
@@ -1448,6 +1519,9 @@ public final class Main {
 		clientThread.setPort((int) portSpinner.getValue());
 		clientThread.setTimeout((int) timeoutSpinner.getValue());
 		clientThread.start();
+
+		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false))
+			initOverlay();
 	}
 
 	public void startLocal() {
@@ -1463,6 +1537,9 @@ public final class Main {
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
 		localThread.start();
+
+		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false))
+			initOverlay();
 	}
 
 	public void startServer() {
@@ -1506,6 +1583,8 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
+
+		deInitOverlay();
 	}
 
 	public void stopLocal(boolean resetLastOutputType) {
@@ -1520,6 +1599,8 @@ public final class Main {
 		setEnabledRecursive(assignmentsPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
+
+		deInitOverlay();
 	}
 
 	public void stopServer(boolean resetLastOutputType) {
