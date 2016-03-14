@@ -58,12 +58,14 @@ Physical Controller
 </pre>
 
 #####Command Line Parameters:
+<pre>
 usage: ControllerBuddy [-autostart <arg>] [-tray]
  -autostart <arg>   automatically start the:
                     local feeder [-autostart local] or
                     client [-autostart client] or
                     server [-autostart server]
  -tray              launch in tray
+</pre>
 
 #####Requirements:
 - Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
