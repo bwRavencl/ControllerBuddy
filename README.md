@@ -34,7 +34,7 @@ In each mode, each physical axis or button can be mapped to a different action.
 Mode switching can be done by either holding down a button on the physical controller or by tapping it once.
 
 The whole programming of the physical controller can be performed via the graphical user interface of ControllerBuddy.
-The resulting can be exported to a simple JSON-based file format.
+The resulting profile can be exported to a simple JSON-based file format.
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
