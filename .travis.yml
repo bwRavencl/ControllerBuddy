@@ -1,0 +1,14 @@
+language: java
+jdk: oraclejdk8
+script: "./gradlew oneJar"
+deploy:
+  provider: releases
+  api_key:
+    secure: XVuMNsPnksHKbaw6elofKOpvyQPa+C1WJ4TE+S5AjDmcu+yEVC7IB88CdY2lEs5uP96RwcxH7Fdi+kv0nzqXuacLwI+0rLfbyQvzlQP52P4N1Aa1sfdg9AzGS6XRzyy7EB+B8TI5vPC+ZMIKOtiZjlSmIYIRA+2gya19TKJnKDGruSTTiZ7qBU8/DigKSiYfoc0FYr+scElMtIPNTxJc3QuyNnXAG1y9N24sT2tHd3P5C1aKpvK3eX9Uos9J7VVjaGOoOu7eRCM2ea0UqTBSHlV2JRNXgBAKm22ne875zbyo4z/D4UjhhVyrme7MlxF5Fq7wde3bZnV0gIrvgGCR4nUxB42VjuqhnCQnhOYEAfZHCTcvwks/g7095BGIp5pyhoQlip7KD8ZSV1l/wG1UgQM1V67s7/r2f7dMaXP7bNlgLh9AfaQKCdaYalWonks/ag/Ao9vvbKYGmxHtjVVCVh+lg6Insd49+UYQJ57Dk641WbJRWG5GyQWBM8sSTXNZIOxRUUnAZ3aZJQt2iFAtqxUlI6U/55Ibsz2iWsZV9f1BKZ51EQ4loug+KgsRtadz2morR6UB0w2sKj0I1n9Gt/IS+ca0EfkiZ0thip+kX6CxqZKIcId/rrlJUcLM2s/yOw6Iutz6KQ70HB2eaUhzn1J4/wojhaUh9MurxXu54M4=
+  file_glob: true
+  file: build/libs/ControllerBuddy-*-standalone.jar
+  skip_cleanup: true
+  on:
+    repo: bwRavencl/ControllerBuddy
+notifications:
+  email: false

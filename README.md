@@ -84,3 +84,5 @@ The following tasks are supported:
 | Delete build and gen directories  | gradlew clean        |
 
 Please note that building requires Java JDK 8.
+
+[![Build Status](https://travis-ci.org/bwRavencl/ControllerBuddy.svg?branch=master)](https://travis-ci.org/bwRavencl/ControllerBuddy)
