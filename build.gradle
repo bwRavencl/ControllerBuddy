@@ -75,7 +75,7 @@ natives {
 
 run {
     dependsOn unpackNatives
-    systemProperty 'java.library.path', "$buildDir/natives/windows;$buildDir/natives/osx;$buildDir/natives/linux"
+    systemProperty 'java.library.path', "$buildDir/natives/windows${File.pathSeparatorChar}$buildDir/natives/osx${File.pathSeparatorChar}$buildDir/natives/linux"
 }
 
 apply plugin: 'gradle-one-jar'
