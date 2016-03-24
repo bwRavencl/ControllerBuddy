@@ -108,8 +108,7 @@ public class Profile implements Cloneable {
 	}
 
 	public void setActiveMode(int index) {
-		if (modes.size() > index)
-		{
+		if (modes.size() > index) {
 			activeModeIndex = index;
 			Main.setOverlayText(modes.get(index).getDescription());
 		}

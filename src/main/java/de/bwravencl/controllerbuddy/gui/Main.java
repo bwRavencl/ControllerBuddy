@@ -112,6 +112,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
+import de.bwravencl.controllerbuddy.Version;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -510,8 +511,10 @@ public final class Main {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			final ImageIcon icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
-			JOptionPane.showMessageDialog(frame, rb.getString("ABOUT_DIALOG_TEXT"), (String) getValue(NAME),
-					JOptionPane.INFORMATION_MESSAGE, icon);
+			JOptionPane.showMessageDialog(frame,
+					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.getVersion()
+							+ rb.getString("ABOUT_DIALOG_TEXT_SUFFIX"),
+					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 
 	}
@@ -1559,8 +1562,10 @@ public final class Main {
 	}
 
 	private void stopAll() {
-		stopLocal(false);
-		stopClient(false);
+		if (isWindows()) {
+			stopLocal(false);
+			stopClient(false);
+		}
 		stopServer(false);
 
 		while ((localThread != null && localThread.isAlive()) || (clientThread != null && clientThread.isAlive())
@@ -1608,8 +1613,10 @@ public final class Main {
 			serverThread.stopOutput();
 		stopServerRadioButtonMenuItem.setSelected(true);
 		stopServerRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
+		if (isWindows()) {
+			startLocalRadioButtonMenuItem.setEnabled(true);
+			startClientRadioButtonMenuItem.setEnabled(true);
+		}
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesListPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);

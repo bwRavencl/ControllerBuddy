@@ -1,4 +1,4 @@
-![ControllerBuddy Logo](https://github.com/bwRavencl/ControllerBuddy/raw/master/res/icon_128.png
+![ControllerBuddy Logo](https://github.com/bwRavencl/ControllerBuddy/raw/master/src/main/resources/icon_128.png
 "ControllerBuddy")
 ##ControllerBuddy
 
@@ -70,3 +70,17 @@ usage: ControllerBuddy [-autostart <arg>] [-tray]
 #####Requirements:
 - Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
 - vJoy 2.1.6 (http://vjoystick.sourceforge.net)
+
+#####Building:
+ControllerBuddy uses the Gradle build system.  
+The following tasks are supported:
+
+| Task                              | Command              |
+| --------------------------------- | -------------------- |
+| Run ControllerBuddy               | gradlew run          |
+| Create a One-JAR runnable archive | gradlew oneJar       |
+| Generate Eclipse files            | gradlew eclipse      |
+| Clean Eclipse files               | gradlew cleanEclipse |
+| Delete build and gen directories  | gradlew clean        |
+
+Please note that building requires Java JDK 8.

@@ -1,0 +1,108 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.6.0-rc.1',
+                  'com.github.rholder:gradle-one-jar:1.0.4' 
+    }
+}
+
+plugins {
+    id 'com.stehno.natives' version '0.2.4'
+}
+
+apply plugin: 'application'
+
+def genDir = 'gen'
+def versionDir = "$genDir/main/java"
+
+task generateVersion {
+    def outputDir = file("$versionDir")
+    outputs.dir outputDir
+    doFirst {
+        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/Version.java")
+        srcFile.parentFile.mkdirs()
+        srcFile.write("""
+package de.bwravencl.controllerbuddy;
+public class Version {
+   public static String getVersion() { return "$project.version"; }
+}
+""")
+    }
+}
+
+task cleanVersion {
+    delete genDir
+}
+
+clean {
+    dependsOn cleanVersion
+}
+
+compileJava {
+    dependsOn generateVersion
+    source generateVersion.outputs.files, sourceSets.main.java
+}
+
+ext {
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+}
+
+mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
+sourceCompatibility = 1.8
+version = "0.2-${git.head().abbreviatedId}"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'commons-cli:commons-cli:1.3.1',
+            'com.google.code.gson:gson:2.6.2',
+            'net.java.dev.jna:jna:4.2.2',
+            'net.java.dev.jna:jna-platform:4.2.2',
+            'net.java.jinput:jinput:2.0.6'
+}
+
+natives {
+    jars = [
+        'jinput-platform-2.0.6-natives-windows',
+        'jinput-platform-2.0.6-natives-osx',
+        'jinput-platform-2.0.6-natives-linux'
+    ]
+}
+
+run {
+    dependsOn unpackNatives
+    systemProperty 'java.library.path', "$buildDir/natives/windows;$buildDir/natives/osx;$buildDir/natives/linux"
+}
+
+apply plugin: 'gradle-one-jar'
+
+task oneJar(type: OneJar, dependsOn: 'unpackNatives') {
+    mainClass = 'de.bwravencl.controllerbuddy.gui.Main'
+    binLib = fileTree(dir: "$buildDir/natives", includes: ['windows/*.dll', 'osx/*.jnilib', 'linux/*.so'])
+}
+
+apply plugin: 'eclipse'
+
+tasks.eclipse.dependsOn generateVersion, unpackNatives
+
+eclipse {
+    classpath {
+        file.whenMerged { cp ->
+            cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
+        }
+    }
+}
+
+eclipse.classpath { containers "org.springsource.ide.eclipse.gradle.classpathcontainer" }
+eclipse.classpath.file {
+    withXml { xml ->
+        def node = xml.asNode()
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-windows.jar') }.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/windows"])
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-osx.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/osx"])
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-linux.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/linux"])
+    }
+}
