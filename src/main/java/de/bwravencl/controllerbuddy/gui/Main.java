@@ -1654,16 +1654,16 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final JButton deleteButton = new JButton(new RemoveModeAction(p));
-			deleteButton.setPreferredSize(BUTTON_DIMENSION);
-			modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
 			if (Profile.isDefaultMode(p)) {
 				descriptionTextField.setEditable(false);
+				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width));
+			} else {
+				final JButton deleteButton = new JButton(new RemoveModeAction(p));
+				deleteButton.setPreferredSize(BUTTON_DIMENSION);
+				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 				deleteButton.setEnabled(false);
 			}
-
 		}
 
 		modesListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
