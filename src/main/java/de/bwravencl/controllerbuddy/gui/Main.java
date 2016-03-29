@@ -792,6 +792,7 @@ public final class Main {
 	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private MenuItem showMenuItem;
+	private final JPanel modesPanel;
 	private final JPanel modesListPanel;
 	private final JPanel assignmentsPanel;
 	private JLabel vJoyDirectoryLabel1;
@@ -987,7 +988,7 @@ public final class Main {
 		final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		frame.getContentPane().add(tabbedPane);
 
-		final JPanel modesPanel = new JPanel(new BorderLayout());
+		modesPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(rb.getString("MODES_TAB"), null, modesPanel, null);
 
 		modesListPanel = new JPanel();
@@ -1534,7 +1535,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopLocalRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesListPanel, false);
+		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
@@ -1552,7 +1553,7 @@ public final class Main {
 		startClientRadioButtonMenuItem.setEnabled(false);
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesListPanel, false);
+		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
@@ -1600,7 +1601,7 @@ public final class Main {
 		startLocalRadioButtonMenuItem.setEnabled(true);
 		startClientRadioButtonMenuItem.setEnabled(true);
 		startServerRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesListPanel, true);
+		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
@@ -1618,7 +1619,7 @@ public final class Main {
 			startClientRadioButtonMenuItem.setEnabled(true);
 		}
 		startServerRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesListPanel, true);
+		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
