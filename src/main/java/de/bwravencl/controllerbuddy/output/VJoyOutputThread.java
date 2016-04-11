@@ -120,7 +120,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	protected static void updateOutputSets(Set<Integer> sourceSet, Set<Integer> oldDownSet, Set<Integer> newUpSet,
-			Set<Integer> newDownSet) {
+			Set<Integer> newDownSet, boolean keepStillDown) {
 		final Set<Integer> stillDownSet = new HashSet<Integer>();
 
 		newUpSet.clear();
@@ -141,6 +141,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 
 		newDownSet.clear();
+
+		if (keepStillDown)
+			newDownSet.addAll(stillDownSet);
+
 		for (int n : sourceSet) {
 			boolean alreadyDown = false;
 

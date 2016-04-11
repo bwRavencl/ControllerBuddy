@@ -74,7 +74,8 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		cursorDeltaY = input.getCursorDeltaY();
 		input.setCursorDeltaY(0);
 
-		updateOutputSets(input.getDownMouseButtons(), oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons);
+		updateOutputSets(input.getDownMouseButtons(), oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons,
+				false);
 
 		downUpMouseButtons.clear();
 		downUpMouseButtons.addAll((input.getDownUpMouseButtons()));
@@ -86,8 +87,8 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 			sourceModifiers.addAll(Arrays.asList(ks.getModifierCodes()));
 			sourceNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
 		}
-		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
-		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys);
+		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
+		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
 		downUpKeyStrokes.clear();
 		downUpKeyStrokes.addAll(input.getDownUpKeyStrokes());

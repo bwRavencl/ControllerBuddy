@@ -192,7 +192,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						for (int i = 1; i <= nDownMouseButtons; i++)
 							sourceDownMouseButtons.add(Integer.parseInt(messageParts[12 + nButtons + i]));
 						updateOutputSets(sourceDownMouseButtons, oldDownMouseButtons, newUpMouseButtons,
-								newDownMouseButtons);
+								newDownMouseButtons, false);
 
 						downUpMouseButtons.clear();
 						final int nDownUpMouseButtons = Integer
@@ -227,8 +227,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							nDownKeyStrokes += spacing;
 							i += spacing;
 						}
-						updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers);
-						updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys);
+						updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
+						updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
 						downUpKeyStrokes.clear();
 						int nDownUpKeyStrokes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
