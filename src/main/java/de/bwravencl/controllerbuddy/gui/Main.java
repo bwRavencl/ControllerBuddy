@@ -1410,8 +1410,6 @@ public final class Main {
 		updateModesPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
-
-		restartLast();
 	}
 
 	private void restartLast() {

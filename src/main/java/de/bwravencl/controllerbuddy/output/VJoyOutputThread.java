@@ -210,8 +210,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	protected boolean init() {
-		System.setProperty("jna.library.path",
-				main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultLibraryFolderPath()));
+		System.setProperty("jna.library.path", main.getPreferences().get(
+				Main.PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {
 			vJoy = (IVjoyInterface) Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
