@@ -54,8 +54,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,6 +71,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -90,6 +93,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -114,6 +119,7 @@ import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.Version;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -185,6 +191,35 @@ public final class Main {
 									+ rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_SUFFIX"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
+		}
+
+	}
+
+	private class DisplayIndicatorAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3316770144012465987L;
+
+		private final VirtualAxis virtualAxis;
+
+		public DisplayIndicatorAction(VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+
+			putValue(NAME, rb.getString("DISPLAY_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("DISPLAY_INDICATOR_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (((JCheckBox) e.getSource()).isSelected())
+				Input.getProfile().getVirtualAxisToColorMap().put(virtualAxis, new Color(0, 0, 0, 128));
+			else
+				Input.getProfile().getVirtualAxisToColorMap().remove(virtualAxis);
+
+			setUnsavedChangesTitle();
+			updateOverlayPanel();
 		}
 
 	}
@@ -417,6 +452,34 @@ public final class Main {
 
 	}
 
+	private class SelectIndicatorColorAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3316770144012465987L;
+
+		private final VirtualAxis virtualAxis;
+
+		public SelectIndicatorColorAction(VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+
+			putValue(NAME, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color", frame.getBackground());
+			if (newColor != null)
+				Input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
+
+			setUnsavedChangesTitle();
+			updateOverlayPanel();
+		}
+
+	}
+
 	private class SetHostAction extends AbstractAction implements FocusListener {
 
 		/**
@@ -455,7 +518,7 @@ public final class Main {
 
 	}
 
-	private class SetModeDescriptionAction extends AbstractAction implements FocusListener {
+	private class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
 
 		/**
 		 * 
@@ -476,11 +539,17 @@ public final class Main {
 		}
 
 		@Override
-		public void focusGained(FocusEvent e) {
+		public void changedUpdate(DocumentEvent e) {
+			setModeDescription();
 		}
 
 		@Override
-		public void focusLost(FocusEvent e) {
+		public void insertUpdate(DocumentEvent e) {
+			setModeDescription();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
 			setModeDescription();
 		}
 
@@ -685,27 +754,64 @@ public final class Main {
 			"/icon_128.png" };
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
+	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<VirtualAxis, JProgressBar>();
 
 	private static JFrame overlayFrame;
+	private static JPanel indicatorPanel;
 
 	private final static JLabel labelCurrentMode = new JLabel();
 
+	private static LocalVJoyOutputThread localThread;
+
+	private static ClientVJoyOutputThread clientThread;
+
+	private static ServerOutputThread serverThread;
+
 	private static void deInitOverlay() {
-		if (overlayFrame != null)
+		if (overlayFrame != null) {
 			overlayFrame.setVisible(false);
+			overlayFrame.remove(indicatorPanel);
+		}
+
+		virtualAxisToProgressBarMap.clear();
 	}
 
 	private static void initOverlay() {
-		labelCurrentMode.setForeground(Color.GREEN);
+		labelCurrentMode.setForeground(Color.RED);
+		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
+
 		if (overlayFrame == null) {
 			overlayFrame = new JFrame();
+			overlayFrame.setLayout(new BorderLayout());
 			overlayFrame.setAlwaysOnTop(true);
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
 			overlayFrame.setBackground(new Color(255, 255, 255, 0));
-			overlayFrame.add(labelCurrentMode);
+			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_START);
 		}
+
+		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
+
+		for (VirtualAxis va : Input.VirtualAxis.values()) {
+			final Map<VirtualAxis, Color> virtualAxisToColorMap = Input.getProfile().getVirtualAxisToColorMap();
+
+			if (virtualAxisToColorMap.containsKey(va)) {
+				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
+				progressBar.setPreferredSize(new Dimension(21, 149));
+				progressBar.setBorder(
+						BorderFactory.createDashedBorder(Color.black, (float) progressBar.getPreferredSize().getWidth(),
+								(float) progressBar.getPreferredSize().getWidth()));
+				progressBar.setBackground(Color.LIGHT_GRAY);
+				progressBar.setForeground(virtualAxisToColorMap.get(va));
+				indicatorPanel.add(progressBar);
+				virtualAxisToProgressBarMap.put(va, progressBar);
+			}
+		}
+
+		overlayFrame.add(indicatorPanel);
+
 		updateOverlayLocation();
 		overlayFrame.setVisible(true);
 	}
@@ -763,6 +869,27 @@ public final class Main {
 		updateOverlayLocation();
 	}
 
+	public static void updateOverlayAxisIndicators() {
+		for (VirtualAxis va : Input.VirtualAxis.values()) {
+			if (virtualAxisToProgressBarMap.containsKey(va)) {
+				OutputThread outputThread = null;
+				if (localThread != null && localThread.isAlive())
+					outputThread = localThread;
+				else if (clientThread != null && clientThread.isAlive())
+					outputThread = clientThread;
+				else if (serverThread != null && serverThread.isAlive())
+					outputThread = serverThread;
+
+				if (outputThread != null) {
+					final JProgressBar progressBar = virtualAxisToProgressBarMap.get(va);
+					progressBar.setMinimum(-outputThread.getMaxAxisValue());
+					progressBar.setMaximum(outputThread.getMinAxisValue());
+					progressBar.setValue(-Input.getAxis().get(va));
+				}
+			}
+		}
+	}
+
 	private static void updateOverlayLocation() {
 		if (overlayFrame != null) {
 			overlayFrame.pack();
@@ -777,9 +904,6 @@ public final class Main {
 
 	private Controller selectedController;
 	private Input input;
-	private LocalVJoyOutputThread localThread;
-	private ClientVJoyOutputThread clientThread;
-	private ServerOutputThread serverThread;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
 	private boolean suspendControllerSettingsUpdate = false;
 	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
@@ -793,19 +917,19 @@ public final class Main {
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private MenuItem showMenuItem;
 	private final JPanel modesPanel;
+	private final JScrollPane modesScrollPane;
 	private final JPanel modesListPanel;
 	private final JPanel assignmentsPanel;
+	private final JPanel overlayPanel;
+	private final JScrollPane indicatorsScrollPane;
+	private final JPanel indicatorsListPanel;
 	private JLabel vJoyDirectoryLabel1;
 	private JSpinner vJoyDeviceSpinner;
 	private JTextField hostTextField;
 	private final JSpinner portSpinner;
 	private final JSpinner timeoutSpinner;
 	private final JSpinner pollIntervalSpinner;
-
-	private final JScrollPane modesScrollPane;
-
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
-
 	private TrayIcon trayIcon;
 
 	private final JFileChooser fileChooser = new JFileChooser() {
@@ -1013,6 +1137,17 @@ public final class Main {
 				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, assignmentsPanel.getBackground()));
 		tabbedPane.addTab(rb.getString("ASSIGNMENTS_TAB"), null, assignmentsScrollPane, null);
 
+		overlayPanel = new JPanel(new BorderLayout());
+		tabbedPane.addTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null);
+
+		indicatorsListPanel = new JPanel();
+		indicatorsListPanel.setLayout(new GridBagLayout());
+
+		indicatorsScrollPane = new JScrollPane();
+		indicatorsScrollPane
+				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, indicatorsListPanel.getBackground()));
+		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
+
 		final JPanel settingsPanel = new JPanel();
 		settingsPanel.setLayout(new GridBagLayout());
 
@@ -1132,12 +1267,12 @@ public final class Main {
 
 		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
 				|| preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false)) {
-			final JPanel overlayPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(overlayPanel, panelGridBagConstraints);
+			final JPanel overlaySettingsPanel = new JPanel(panelFlowLayout);
+			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
 			final JLabel overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
 			overlayLabel.setPreferredSize(new Dimension(100, 15));
-			overlayPanel.add(overlayLabel);
+			overlaySettingsPanel.add(overlayLabel);
 
 			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false));
@@ -1148,7 +1283,7 @@ public final class Main {
 					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, ((JCheckBox) e.getSource()).isSelected());
 				}
 			});
-			overlayPanel.add(showOverlayCheckBox);
+			overlaySettingsPanel.add(showOverlayCheckBox);
 		}
 
 		if (SystemTray.isSupported()) {
@@ -1381,6 +1516,7 @@ public final class Main {
 				if (result) {
 					saveLastProfile(file);
 					updateModesPanel();
+					updateOverlayPanel();
 					setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 					setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
 					scheduleStatusBarText(rb.getString("STATUS_READY"));
@@ -1408,6 +1544,7 @@ public final class Main {
 
 		setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		updateModesPanel();
+		updateOverlayPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 	}
@@ -1535,6 +1672,7 @@ public final class Main {
 		stopLocalRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
+		setEnabledRecursive(overlayPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
@@ -1553,6 +1691,7 @@ public final class Main {
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
+		setEnabledRecursive(overlayPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1601,6 +1740,7 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
+		setEnabledRecursive(overlayPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
@@ -1619,6 +1759,7 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
+		setEnabledRecursive(overlayPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 	}
@@ -1632,7 +1773,7 @@ public final class Main {
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final JLabel modeNoLabel = new JLabel("Mode " + modes.indexOf(p));
+			final JLabel modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(p));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1647,7 +1788,7 @@ public final class Main {
 			final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(p,
 					descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
-			descriptionTextField.addFocusListener(setModeDescriptionAction);
+			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1668,6 +1809,54 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		modesScrollPane.setViewportView(modesListPanel);
+	}
+
+	private void updateOverlayPanel() {
+		indicatorsListPanel.removeAll();
+
+		for (VirtualAxis va : Input.VirtualAxis.values()) {
+			final JPanel indicatorPanel = new JPanel(new GridBagLayout());
+			indicatorsListPanel.add(indicatorPanel,
+					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
+							0, 5));
+
+			final JLabel virtualAxisLabel = new JLabel(va.toString() + rb.getString("AXIS_LABEL_SUFFIX"));
+			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
+			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+			boolean enabled = Input.getProfile().getVirtualAxisToColorMap().containsKey(va);
+
+			final JLabel colorLabel = new JLabel();
+			if (enabled) {
+				colorLabel.setOpaque(true);
+				colorLabel.setBackground(Input.getProfile().getVirtualAxisToColorMap().get(va));
+			} else
+				colorLabel.setText(rb.getString("INDICATOR_DISABLED_LABEL"));
+			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+			colorLabel.setPreferredSize(new Dimension(100, 15));
+			colorLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+			final JButton colorButton = new JButton(new SelectIndicatorColorAction(va));
+			colorButton.setPreferredSize(BUTTON_DIMENSION);
+			colorButton.setEnabled(enabled);
+			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+			final JCheckBox displayCheckBox = new JCheckBox(new DisplayIndicatorAction(va));
+			displayCheckBox.setSelected(enabled);
+			indicatorPanel.add(displayCheckBox, new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		}
+
+		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+		indicatorsScrollPane.setViewportView(indicatorsListPanel);
 	}
 
 }

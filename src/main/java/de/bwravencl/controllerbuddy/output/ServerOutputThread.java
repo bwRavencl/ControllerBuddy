@@ -153,7 +153,7 @@ public class ServerOutputThread extends OutputThread {
 								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						stopOutput();
 					} else {
-						for (int v : input.getAxis().values())
+						for (int v : Input.getAxis().values())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 						for (int i = 0; i < nButtons; i++) {

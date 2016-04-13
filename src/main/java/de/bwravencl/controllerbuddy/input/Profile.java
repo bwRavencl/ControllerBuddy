@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import net.brockmatt.util.ResourceBundleUtil;
 
@@ -40,6 +42,7 @@ public class Profile implements Cloneable {
 	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
 	private List<Mode> modes = new ArrayList<Mode>();
 	private int activeModeIndex = 0;
+	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
 
 	public Profile() {
 		final Mode defaultMode = new Mode(DEFAULT_MODE_UUID_STRING);
@@ -68,13 +71,22 @@ public class Profile implements Cloneable {
 		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
 
 		final List<Mode> clonedModes = new ArrayList<Mode>();
-		for (Mode p : modes)
+		for (Mode p : modes) {
 			try {
 				clonedModes.add((Mode) p.clone());
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
 			}
+		}
 		profile.setModes(clonedModes);
+
+		final Map<VirtualAxis, Color> clonedVirtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
+		for (Map.Entry<VirtualAxis, Color> e : virtualAxisToColorMap.entrySet()) {
+			final Color color = e.getValue();
+			clonedVirtualAxisToColorMap.put(e.getKey(),
+					new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
+		}
+		profile.setVirtualAxisToColorMap(clonedVirtualAxisToColorMap);
 
 		return profile;
 	}
@@ -89,6 +101,10 @@ public class Profile implements Cloneable {
 
 	public List<Mode> getModes() {
 		return modes;
+	}
+
+	public Map<VirtualAxis, Color> getVirtualAxisToColorMap() {
+		return virtualAxisToColorMap;
 	}
 
 	public void removeMode(Mode mode) {
@@ -130,6 +146,10 @@ public class Profile implements Cloneable {
 
 	public void setModes(List<Mode> modes) {
 		this.modes = modes;
+	}
+
+	public void setVirtualAxisToColorMap(Map<VirtualAxis, Color> virtualAxisToColorMap) {
+		this.virtualAxisToColorMap = virtualAxisToColorMap;
 	}
 
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015  Matteo Hausner
+/* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxRelativeSpeed,
 					maxRelativeSpeed) * rateMultiplier;
 
-			final float oldValue = Input.normalize(input.getAxis().get(virtualAxis),
+			final float oldValue = Input.normalize(Input.getAxis().get(virtualAxis),
 					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1.0f, 1.0f);
 
 			input.setAxis(virtualAxis, oldValue + (invert ? -d : d));

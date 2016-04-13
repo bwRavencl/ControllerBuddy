@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -42,6 +43,12 @@ public class Input {
 	public static final int MAX_N_BUTTONS = 128;
 
 	private static Profile profile;
+
+	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
+
+	public static EnumMap<VirtualAxis, Integer> getAxis() {
+		return axis;
+	}
 
 	public static Profile getProfile() {
 		return profile;
@@ -126,7 +133,6 @@ public class Input {
 
 	private Controller controller;
 	private OutputThread outputThread;
-	private EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
 	private boolean[] buttons;
 	private int cursorDeltaX = 5;
 	private int cursorDeltaY = 5;
@@ -134,6 +140,7 @@ public class Input {
 	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
 	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
+
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public Input(Controller controller) {
@@ -143,10 +150,6 @@ public class Input {
 			axis.put(va, 0);
 
 		profile = new Profile();
-	}
-
-	public EnumMap<VirtualAxis, Integer> getAxis() {
-		return axis;
 	}
 
 	public boolean[] getButtons() {
@@ -212,6 +215,8 @@ public class Input {
 					a.doAction(this, c.getPollData());
 			}
 		}
+
+		Main.updateOverlayAxisIndicators();
 
 		return true;
 	}
