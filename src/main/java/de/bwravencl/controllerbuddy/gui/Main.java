@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -788,7 +787,7 @@ public final class Main {
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
 			overlayFrame.setBackground(new Color(255, 255, 255, 0));
-			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_START);
+			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		}
 
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -893,11 +892,9 @@ public final class Main {
 	private static void updateOverlayLocation() {
 		if (overlayFrame != null) {
 			overlayFrame.pack();
-			final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			final GraphicsDevice graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
-			final Rectangle rectangle = graphicsDevice.getDefaultConfiguration().getBounds();
+			final Rectangle rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 			final int x = (int) rectangle.getMaxX() - overlayFrame.getWidth();
-			final int y = 0;
+			final int y = (int) rectangle.getMaxY() - overlayFrame.getHeight();
 			overlayFrame.setLocation(x, y);
 		}
 	}
