@@ -469,7 +469,8 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color", frame.getBackground());
+			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color",
+					Input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
 			if (newColor != null)
 				Input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
 
