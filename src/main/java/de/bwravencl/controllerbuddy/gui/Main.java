@@ -919,6 +919,7 @@ public final class Main {
 	private final JPanel modesListPanel;
 	private final JPanel assignmentsPanel;
 	private final JPanel overlayPanel;
+	private final JPanel settingsPanel;
 	private final JScrollPane indicatorsScrollPane;
 	private final JPanel indicatorsListPanel;
 	private JLabel vJoyDirectoryLabel1;
@@ -1146,7 +1147,7 @@ public final class Main {
 				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, indicatorsListPanel.getBackground()));
 		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 
-		final JPanel settingsPanel = new JPanel();
+		settingsPanel = new JPanel();
 		settingsPanel.setLayout(new GridBagLayout());
 
 		final JScrollPane settingsScrollPane = new JScrollPane();
@@ -1264,7 +1265,7 @@ public final class Main {
 		timeoutPanel.add(timeoutSpinner);
 
 		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
-				|| preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false)) {
+				|| preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true)) {
 			final JPanel overlaySettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
@@ -1273,7 +1274,7 @@ public final class Main {
 			overlaySettingsPanel.add(overlayLabel);
 
 			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
-			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false));
+			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
 			showOverlayCheckBox.addChangeListener(new ChangeListener() {
 
 				@Override
@@ -1657,7 +1658,7 @@ public final class Main {
 		clientThread.setTimeout((int) timeoutSpinner.getValue());
 		clientThread.start();
 
-		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false))
+		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
 			initOverlay();
 	}
 
@@ -1671,12 +1672,13 @@ public final class Main {
 		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
 		setEnabledRecursive(overlayPanel, false);
+		setEnabledRecursive(settingsPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
 		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
 		localThread.start();
 
-		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, false))
+		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
 			initOverlay();
 	}
 
@@ -1690,6 +1692,7 @@ public final class Main {
 		setEnabledRecursive(modesPanel, false);
 		setEnabledRecursive(assignmentsPanel, false);
 		setEnabledRecursive(overlayPanel, false);
+		setEnabledRecursive(settingsPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort((int) portSpinner.getValue());
 		serverThread.setTimeout((int) timeoutSpinner.getValue());
@@ -1739,6 +1742,7 @@ public final class Main {
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
+		setEnabledRecursive(settingsPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
@@ -1758,6 +1762,7 @@ public final class Main {
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
+		setEnabledRecursive(settingsPanel, true);
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 	}
