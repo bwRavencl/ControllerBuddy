@@ -1804,7 +1804,6 @@ public final class Main {
 				deleteButton.setPreferredSize(BUTTON_DIMENSION);
 				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-				deleteButton.setEnabled(false);
 			}
 		}
 
