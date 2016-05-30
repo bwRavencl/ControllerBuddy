@@ -559,8 +559,7 @@ public final class Main {
 			if (description != null && description.length() > 0) {
 				mode.setDescription(description);
 				setUnsavedChangesTitle();
-			} else
-				modeDescriptionTextField.setText(mode.getDescription());
+			}
 		}
 
 	}
