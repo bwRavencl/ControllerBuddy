@@ -134,7 +134,7 @@ public class ButtonToModeAction implements IButtonToAction {
 				if (up) {
 					if (profile.getActiveMode().getUuid().equals(modeUuid))
 						deactivateMode(input, profile);
-					else
+					else if (Profile.isDefaultMode(profile.getActiveMode()) || (componentNotUsedByActiveMode(input)))
 						activateMode(profile);
 
 					up = false;
