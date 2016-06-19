@@ -364,10 +364,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 				doMouseButtonInput(b, false);
 			}
 
-			for (int c : newUpModifiers)
-				doKeyboardInput(c, false);
-
 			for (int c : newUpNormalKeys)
+				doKeyboardInput(c, false);
+			
+			for (int c : newUpModifiers)
 				doKeyboardInput(c, false);
 
 			for (int c : newDownModifiers)
