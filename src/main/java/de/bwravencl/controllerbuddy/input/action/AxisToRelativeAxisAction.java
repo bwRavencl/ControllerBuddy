@@ -21,11 +21,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.25f;
 	public static final float DEFAULT_EXPONENT = 2.0f;
 	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4.0f;
 
-	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
@@ -45,20 +43,12 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 		}
 	}
 
-	public float getDeadZone() {
-		return deadZone;
-	}
-
 	public float getExponent() {
 		return exponent;
 	}
 
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
-	}
-
-	public void setDeadZone(Float deadZone) {
-		this.deadZone = deadZone;
 	}
 
 	public void setExponent(Float exponent) {

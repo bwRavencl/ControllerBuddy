@@ -21,10 +21,22 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 
 public abstract class ToAxisAction extends InvertableAction {
 
+	public static final float DEFAULT_DEAD_ZONE = 0.0f;
+
 	protected VirtualAxis virtualAxis = VirtualAxis.X;
+
+	protected float deadZone = DEFAULT_DEAD_ZONE;
+
+	public float getDeadZone() {
+		return deadZone;
+	}
 
 	public VirtualAxis getVirtualAxis() {
 		return virtualAxis;
+	}
+
+	public void setDeadZone(Float deadZone) {
+		this.deadZone = deadZone;
 	}
 
 	public void setVirtualAxis(VirtualAxis virtualAxis) {
