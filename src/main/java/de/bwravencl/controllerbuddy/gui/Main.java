@@ -1547,7 +1547,7 @@ public final class Main {
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 	}
 
-	private void restartLast() {
+	public void restartLast() {
 		switch (lastOutputType) {
 		case OUTPUT_TYPE_LOCAL:
 			startLocal();

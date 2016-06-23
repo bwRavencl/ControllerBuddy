@@ -164,6 +164,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 		oldDownSet.addAll(newDownSet);
 	}
 
+	protected boolean restart = false;
+
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
 	protected LONG axisX;
@@ -330,73 +332,84 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected void writeOutput() {
 		if (run) {
-			vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X);
-			vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y);
-			vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z);
-			vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX);
-			vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY);
-			vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ);
-			vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0);
-			vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1);
+			boolean res = true;
+
+			res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
+			res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
+			res &= vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
+			res &= vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
+			res &= vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
+			res &= vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
+			res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
+			res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
 
 			for (int i = 0; i < buttons.length; i++)
-				vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1));
+				res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
 
-			if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-				final INPUT input = new INPUT();
-				input.type = new DWORD(INPUT.INPUT_MOUSE);
-				input.input.setType(MOUSEINPUT.class);
-				input.input.mi.dx = new LONG(cursorDeltaX);
-				input.input.mi.dy = new LONG(cursorDeltaY);
-				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
+			if (res) {
+				if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+					final INPUT input = new INPUT();
+					input.type = new DWORD(INPUT.INPUT_MOUSE);
+					input.input.setType(MOUSEINPUT.class);
+					input.input.mi.dx = new LONG(cursorDeltaX);
+					input.input.mi.dy = new LONG(cursorDeltaY);
+					input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
 
-				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
-			}
-
-			for (int b : newUpMouseButtons)
-				doMouseButtonInput(b, false);
-
-			for (int b : newDownMouseButtons)
-				doMouseButtonInput(b, true);
-
-			for (int b : downUpMouseButtons) {
-				doMouseButtonInput(b, true);
-				doMouseButtonInput(b, false);
-			}
-
-			for (int c : newUpNormalKeys)
-				doKeyboardInput(c, false);
-			
-			for (int c : newUpModifiers)
-				doKeyboardInput(c, false);
-
-			for (int c : newDownModifiers)
-				doKeyboardInput(c, true);
-
-			for (int c : newDownNormalKeys)
-				doKeyboardInput(c, true);
-
-			for (KeyStroke ks : downUpKeyStrokes) {
-				for (int c : ks.getModifierCodes())
-					doKeyboardInput(c, true);
-
-				for (int c : ks.getKeyCodes()) {
-					doKeyboardInput(c, true);
-					doKeyboardInput(c, false);
+					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 				}
 
-				for (int c : ks.getModifierCodes())
+				for (int b : newUpMouseButtons)
+					doMouseButtonInput(b, false);
+
+				for (int b : newDownMouseButtons)
+					doMouseButtonInput(b, true);
+
+				for (int b : downUpMouseButtons) {
+					doMouseButtonInput(b, true);
+					doMouseButtonInput(b, false);
+				}
+
+				for (int c : newUpNormalKeys)
 					doKeyboardInput(c, false);
-			}
 
-			if (scrollClicks != 0) {
-				final INPUT input = new INPUT();
-				input.type = new DWORD(INPUT.INPUT_MOUSE);
-				input.input.setType(MOUSEINPUT.class);
-				input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
-				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
+				for (int c : newUpModifiers)
+					doKeyboardInput(c, false);
 
-				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+				for (int c : newDownModifiers)
+					doKeyboardInput(c, true);
+
+				for (int c : newDownNormalKeys)
+					doKeyboardInput(c, true);
+
+				for (KeyStroke ks : downUpKeyStrokes) {
+					for (int c : ks.getModifierCodes())
+						doKeyboardInput(c, true);
+
+					for (int c : ks.getKeyCodes()) {
+						doKeyboardInput(c, true);
+						doKeyboardInput(c, false);
+					}
+
+					for (int c : ks.getModifierCodes())
+						doKeyboardInput(c, false);
+				}
+
+				if (scrollClicks != 0) {
+					final INPUT input = new INPUT();
+					input.type = new DWORD(INPUT.INPUT_MOUSE);
+					input.input.setType(MOUSEINPUT.class);
+					input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
+					input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
+
+					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+				}
+			} else {
+				if (JOptionPane.showConfirmDialog(main.getFrame(),
+						rb.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"), rb.getString("ERROR_DIALOG_TITLE"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+					restart = true;
+
+				stopOutput();
 			}
 		}
 	}

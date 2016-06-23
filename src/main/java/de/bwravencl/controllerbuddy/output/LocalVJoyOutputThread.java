@@ -40,6 +40,9 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	protected void deInit() {
 		super.deInit();
 		main.stopLocal(false);
+
+		if (restart)
+			main.restartLast();
 	}
 
 	@Override
