@@ -766,6 +766,8 @@ public final class Main {
 
 	private static ServerOutputThread serverThread;
 
+	private static Dimension prevScreenSize;
+
 	private static void deInitOverlay() {
 		if (overlayFrame != null) {
 			overlayFrame.setVisible(false);
@@ -869,6 +871,13 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		if (prevScreenSize == null || screenSize.width != prevScreenSize.width
+				|| screenSize.height != prevScreenSize.height) {
+			prevScreenSize = screenSize;
+			updateOverlayLocation();
+		}
+
 		for (VirtualAxis va : Input.VirtualAxis.values()) {
 			if (virtualAxisToProgressBarMap.containsKey(va)) {
 				OutputThread outputThread = null;
