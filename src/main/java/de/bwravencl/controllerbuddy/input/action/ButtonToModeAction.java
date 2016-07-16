@@ -101,7 +101,15 @@ public class ButtonToModeAction implements IButtonToAction {
 					previousMode = buttonToModeActionStack.peek().getMode();
 			}
 
-			final Set<String> components = profile.getActiveMode().getComponentToActionsMap().keySet();
+			final Map<String, List<IAction>> componentToActionsMap = profile.getActiveMode().getComponentToActionsMap();
+			for (List<IAction> actions : componentToActionsMap.values()) {
+				for (IAction a : actions) {
+					if (a instanceof ToKeyAction)
+						((ToKeyAction) a).resetWasUp();
+				}
+			}
+
+			final Set<String> components = componentToActionsMap.keySet();
 			final Map<String, List<IAction>> defaultComponentToActionsMap = previousMode.getComponentToActionsMap();
 			if (defaultComponentToActionsMap != null) {
 				for (String c : components) {

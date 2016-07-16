@@ -42,6 +42,10 @@ public abstract class ToKeyAction implements IAction {
 		return downUp;
 	}
 
+	public void resetWasUp() {
+		wasUp = false;
+	}
+
 	public void setDownUp(Boolean downUp) {
 		this.downUp = downUp;
 	}
