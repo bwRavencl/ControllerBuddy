@@ -224,17 +224,16 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			final Pointer dllVersion = new Memory(WinDef.WORD.SIZE);
 			final Pointer drvVersion = new Memory(WinDef.WORD.SIZE);
+			if (!vJoy.vJoyEnabled().booleanValue()) {
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
 			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_1") + dllVersion.getShort(0L)
 								+ rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_2") + drvVersion.getShort(0L)
 								+ rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-
-			if (!vJoy.vJoyEnabled().booleanValue()) {
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
