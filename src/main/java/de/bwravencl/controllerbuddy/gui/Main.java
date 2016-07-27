@@ -866,8 +866,10 @@ public final class Main {
 	}
 
 	public static void setOverlayText(String text) {
+		final int prevTextLength = labelCurrentMode.getText().length();
 		labelCurrentMode.setText(text);
-		updateOverlayLocation();
+		if (prevTextLength <= text.length())
+			updateOverlayLocation();
 	}
 
 	public static void updateOverlayAxisIndicators() {
