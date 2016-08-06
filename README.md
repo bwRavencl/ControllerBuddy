@@ -61,12 +61,13 @@ Physical Controller
 
 #####Command Line Parameters:
 <pre>
-usage: ControllerBuddy [-autostart <arg>] [-tray]
+usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
  -autostart <arg>   automatically start the:
                     local feeder [-autostart local] or
                     client [-autostart client] or
                     server [-autostart server]
- -tray              launch in tray
+ -tray              launch in system tray
+ -version           print version and quit
 </pre>
 
 #####Requirements:

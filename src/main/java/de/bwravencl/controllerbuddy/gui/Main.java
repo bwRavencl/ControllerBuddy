@@ -735,6 +735,7 @@ public final class Main {
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 	public static final String OPTION_AUTOSTART = "autostart";
 	public static final String OPTION_TRAY = "tray";
+	public static final String OPTION_VERSION = "version";
 	public static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
 	public static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
 	public static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
@@ -829,22 +830,26 @@ public final class Main {
 				final Options options = new Options();
 				options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
 				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
+				options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
 
 				try {
 					final CommandLine commandLine = new DefaultParser().parse(options, args);
+					if (commandLine.hasOption(OPTION_VERSION))
+						System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
+					else {
+						final Main main = new Main();
+						if (!commandLine.hasOption(OPTION_TRAY))
+							main.frame.setVisible(true);
+						if (commandLine.hasOption(OPTION_AUTOSTART)) {
+							final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 
-					final Main main = new Main();
-					if (!commandLine.hasOption("tray"))
-						main.frame.setVisible(true);
-					if (commandLine.hasOption(OPTION_AUTOSTART)) {
-						final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
-
-						if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
-							main.startLocal();
-						else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
-							main.startClient();
-						else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
-							main.startServer();
+							if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
+								main.startLocal();
+							else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
+								main.startClient();
+							else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+								main.startServer();
+						}
 					}
 				} catch (ParseException e) {
 					final HelpFormatter helpFormatter = new HelpFormatter();
