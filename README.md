@@ -36,6 +36,8 @@ Mode switching can be done by either holding down a button on the physical contr
 The whole programming of the physical controller can be performed via the graphical user interface of ControllerBuddy.
 The resulting profile can be exported to a simple JSON-based file format.
 
+ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes. The axes displayed by the overlay can be customized on a per-profile basis. The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
+
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
 #####Architecture:
@@ -72,7 +74,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray]
 - vJoy 2.1.6 (http://vjoystick.sourceforge.net)
 
 #####Building:
-ControllerBuddy uses the Gradle build system.  
+ControllerBuddy uses the Gradle build system. 
 The following tasks are supported:
 
 | Task                              | Command              |

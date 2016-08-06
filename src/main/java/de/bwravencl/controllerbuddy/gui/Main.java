@@ -873,6 +873,9 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
+		overlayFrame.setAlwaysOnTop(false);
+		overlayFrame.setAlwaysOnTop(true);
+
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		if (prevScreenSize == null || screenSize.width != prevScreenSize.width
 				|| screenSize.height != prevScreenSize.height) {
