@@ -51,7 +51,7 @@ ext {
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
 sourceCompatibility = 1.8
-version = "0.2-${git.head().abbreviatedId}"
+version = "0.3-${git.head().abbreviatedId}"
 
 repositories {
     mavenCentral()

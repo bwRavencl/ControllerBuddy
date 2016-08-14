@@ -1393,7 +1393,7 @@ public final class Main {
 									if (controller != null) {
 										controller.poll();
 
-										for (Component c : controller.getComponents()) {
+										for (Component c : Input.getComponents(controller)) {
 											final JPanel componentPanel = new JPanel(new GridBagLayout());
 											assignmentsPanel.add(componentPanel,
 													new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0,
