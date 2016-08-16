@@ -65,6 +65,7 @@ import javax.swing.text.DefaultFormatter;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
@@ -396,8 +397,9 @@ public class EditActionsDialog extends JDialog {
 			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction", ACTION_CLASS_PREFIX + "AxisToScrollAction" };
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToModeAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+			ACTION_CLASS_PREFIX + "ButtonToLockKeyAction", ACTION_CLASS_PREFIX + "ButtonToModeAction",
+			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset",
+			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
@@ -732,6 +734,12 @@ public class EditActionsDialog extends JDialog {
 										} else if (MouseAxis.class == clazz) {
 											final JComboBox<MouseAxis> comboBox = new JComboBox<MouseAxis>(
 													MouseAxis.values());
+											comboBox.setAction(new JComboBoxSetPropertyAction(m));
+											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+											propertyPanel.add(comboBox);
+										} else if (LockKey.class == clazz) {
+											final JComboBox<LockKey> comboBox = new JComboBox<LockKey>(
+													LockKey.LOCK_KEYS);
 											comboBox.setAction(new JComboBoxSetPropertyAction(m));
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);

@@ -250,12 +250,11 @@ public class Input {
 	private int cursorDeltaY = 5;
 	private int scrollClicks = 1;
 	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
-
 	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
-
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+	private final Set<Integer> onLockKeys = new HashSet<Integer>();
+	private final Set<Integer> offLockKeys = new HashSet<Integer>();
 
 	public Input(Controller controller) {
 		this.controller = controller;
@@ -296,6 +295,14 @@ public class Input {
 
 	public Set<Integer> getDownUpMouseButtons() {
 		return downUpMouseButtons;
+	}
+
+	public Set<Integer> getOffLockKeys() {
+		return offLockKeys;
+	}
+
+	public Set<Integer> getOnLockKeys() {
+		return onLockKeys;
 	}
 
 	public OutputThread getOutputThread() {

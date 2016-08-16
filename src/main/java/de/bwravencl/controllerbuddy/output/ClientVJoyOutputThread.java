@@ -268,6 +268,16 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						scrollClicks = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
 
+						final int nOnLockKeys = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
+								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
+						for (int i = 1; i <= nOnLockKeys; i++)
+							onLockKeys.add(i);
+
+						final int nOffLockKeys = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
+								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys]);
+						for (int i = 1; i <= nOffLockKeys; i++)
+							offLockKeys.add(i);
+
 						counter = newCounter;
 						retVal = true;
 					}

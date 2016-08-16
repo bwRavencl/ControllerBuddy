@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,6 +62,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 	private static final long MOUSEEVENTF_MIDDLEUP = 0x0040L;
 	private static final long MOUSEEVENTF_WHEEL = 0x0800L;
 	private static final long WHEEL_DELTA = 120L;
+
+	static {
+		Native.register("User32");
+	}
 
 	private static void doKeyboardInput(int scanCode, boolean down) {
 		final INPUT input = new INPUT();
@@ -115,8 +120,21 @@ public abstract class VJoyOutputThread extends OutputThread {
 		return getDefaultInstallationPath() + File.separator + getArchFolderName();
 	}
 
+	private static native short GetKeyState(int KeyState);
+
 	public static String getLibraryFilePath(String vJoyDirectory) {
 		return vJoyDirectory + File.separator + getArchFolderName() + File.separator + LIBRARY_FILENAME;
+	}
+
+	private static void setLockKeyState(int virtualKeyCode, boolean on) {
+		final boolean state = (GetKeyState(virtualKeyCode) & 0x1) != 0;
+
+		if (state != on) {
+			final Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+			toolkit.setLockingKeyState(virtualKeyCode, true);
+			toolkit.setLockingKeyState(virtualKeyCode, false);
+		}
 	}
 
 	protected static void updateOutputSets(Set<Integer> sourceSet, Set<Integer> oldDownSet, Set<Integer> newUpSet,
@@ -190,6 +208,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected final Set<Integer> oldDownNormalKeys = new HashSet<Integer>();
 	protected final Set<Integer> newUpNormalKeys = new HashSet<Integer>();
 	protected final Set<Integer> newDownNormalKeys = new HashSet<Integer>();
+	protected final Set<Integer> onLockKeys = new HashSet<Integer>();
+	protected final Set<Integer> offLockKeys = new HashSet<Integer>();
 	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
 
 	public VJoyOutputThread(Main main, Input input) {
@@ -367,6 +387,12 @@ public abstract class VJoyOutputThread extends OutputThread {
 					doMouseButtonInput(b, true);
 					doMouseButtonInput(b, false);
 				}
+
+				for (int e : onLockKeys)
+					setLockKeyState(e, true);
+
+				for (int e : offLockKeys)
+					setLockKeyState(e, false);
 
 				for (int c : newUpNormalKeys)
 					doKeyboardInput(c, false);

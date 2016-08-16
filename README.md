@@ -25,6 +25,7 @@ Currently the following actions are supported:
 - Keyboard inputs
 - Mouse button presses
 - Mouse scrolling
+- Lock key toggling
 - Cycles of actions
 - Mode switching
 - Relative axis resetting

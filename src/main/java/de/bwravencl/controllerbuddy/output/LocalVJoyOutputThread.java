@@ -100,6 +100,14 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		scrollClicks = input.getScrollClicks();
 		input.setScrollClicks(0);
 
+		onLockKeys.clear();
+		onLockKeys.addAll(input.getOnLockKeys());
+		input.getOnLockKeys().clear();
+
+		offLockKeys.clear();
+		offLockKeys.addAll(input.getOffLockKeys());
+		input.getOffLockKeys().clear();
+
 		return true;
 	}
 

@@ -41,7 +41,7 @@ public class ServerOutputThread extends OutputThread {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
-	public static final int PROTOCOL_VERSION = 2;
+	public static final int PROTOCOL_VERSION = 3;
 	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";
 	public static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
 	public static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
@@ -200,6 +200,16 @@ public class ServerOutputThread extends OutputThread {
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
 						input.setScrollClicks(0);
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOnLockKeys().size());
+						for (int c : input.getOnLockKeys())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+						input.getOnLockKeys().clear();
+
+						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOffLockKeys().size());
+						for (int c : input.getOffLockKeys())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+						input.getOffLockKeys().clear();
 
 						final byte[] sendBuf = sw.toString().getBytes("ASCII");
 
