@@ -1703,8 +1703,10 @@ public final class Main {
 	public void startServer() {
 		lastOutputType = OUTPUT_TYPE_SERVER;
 		startServerRadioButtonMenuItem.setSelected(true);
-		startLocalRadioButtonMenuItem.setEnabled(false);
-		startClientRadioButtonMenuItem.setEnabled(false);
+		if (isWindows()) {
+			startLocalRadioButtonMenuItem.setEnabled(false);
+			startClientRadioButtonMenuItem.setEnabled(false);
+		}
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, false);
