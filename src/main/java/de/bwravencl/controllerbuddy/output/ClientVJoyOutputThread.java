@@ -110,12 +110,12 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				final DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				try {
 					clientSocket.receive(receivePacket);
-					String message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+					final String message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
 							StandardCharsets.US_ASCII);
 
 					if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_SERVER_HELLO)) {
 						final String[] messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
-						int serverProtocolVersion = Integer.parseInt(messageParts[1]);
+						final int serverProtocolVersion = Integer.parseInt(messageParts[1]);
 						if (ServerOutputThread.PROTOCOL_VERSION != serverProtocolVersion) {
 							JOptionPane.showMessageDialog(main.getFrame(),
 									rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_1")
@@ -136,7 +136,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_2") + N_CONNECTION_RETRIES
 										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_3"));
 					}
-				} catch (SocketTimeoutException e) {
+				} catch (final SocketTimeoutException e) {
 					e.printStackTrace();
 					retry--;
 					main.setStatusBarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
@@ -288,7 +288,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					final DatagramPacket sendPacket1 = new DatagramPacket(sendBuf1, sendBuf1.length, hostAddress, port);
 					clientSocket.send(sendPacket1);
 				}
-			} catch (SocketTimeoutException e) {
+			} catch (final SocketTimeoutException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -313,13 +313,13 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						writeOutput();
 				}
 			}
-		} catch (UnknownHostException e) {
+		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(),
 					rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
 							+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

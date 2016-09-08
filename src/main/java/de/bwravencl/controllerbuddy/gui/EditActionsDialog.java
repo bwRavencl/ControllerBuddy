@@ -81,7 +81,7 @@ public class EditActionsDialog extends JDialog {
 	private class AddActionAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -7713175853948284887L;
 
@@ -121,11 +121,11 @@ public class EditActionsDialog extends JDialog {
 
 				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
-			} catch (ClassNotFoundException e1) {
+			} catch (final ClassNotFoundException e1) {
 				e1.printStackTrace();
-			} catch (InstantiationException e1) {
+			} catch (final InstantiationException e1) {
 				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
 			}
 
@@ -148,11 +148,11 @@ public class EditActionsDialog extends JDialog {
 			try {
 				final Class<?> clazz = Class.forName(className);
 				description = clazz.newInstance().toString();
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				e.printStackTrace();
-			} catch (InstantiationException e) {
+			} catch (final InstantiationException e) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				e.printStackTrace();
 			}
 
@@ -164,7 +164,7 @@ public class EditActionsDialog extends JDialog {
 	private class CancelAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 8086810563127997199L;
 
@@ -183,7 +183,7 @@ public class EditActionsDialog extends JDialog {
 	private class EditActionsAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -6538021954760621595L;
 
@@ -205,7 +205,7 @@ public class EditActionsDialog extends JDialog {
 	private class JCheckBoxSetPropertyAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -33052386834598414L;
 
@@ -219,11 +219,11 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
+			} catch (final IllegalArgumentException e1) {
 				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
+			} catch (final InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -233,7 +233,7 @@ public class EditActionsDialog extends JDialog {
 	private class JComboBoxSetPropertyAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1938012378184518954L;
 
@@ -247,11 +247,11 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
+			} catch (final IllegalArgumentException e1) {
 				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
+			} catch (final InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -275,7 +275,7 @@ public class EditActionsDialog extends JDialog {
 			try {
 				final Set<Integer> scanCodes = new HashSet<Integer>();
 
-				for (Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
+				for (final Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
 					scanCodes.add(ScanCode.nameToScanCodeMap.get(o));
 
 				final Integer[] scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
@@ -286,11 +286,11 @@ public class EditActionsDialog extends JDialog {
 					keyStroke.setKeyCodes(scanCodesArray);
 
 				setterMethod.invoke(selectedAssignedAction, keyStroke);
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
+			} catch (final IllegalArgumentException e1) {
 				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
+			} catch (final InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -314,11 +314,11 @@ public class EditActionsDialog extends JDialog {
 					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
 				else
 					setterMethod.invoke(selectedAssignedAction, value);
-			} catch (IllegalAccessException e1) {
+			} catch (final IllegalAccessException e1) {
 				e1.printStackTrace();
-			} catch (IllegalArgumentException e1) {
+			} catch (final IllegalArgumentException e1) {
 				e1.printStackTrace();
-			} catch (InvocationTargetException e1) {
+			} catch (final InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -328,7 +328,7 @@ public class EditActionsDialog extends JDialog {
 	private class OKAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -6947022759101822700L;
 
@@ -353,7 +353,7 @@ public class EditActionsDialog extends JDialog {
 	private class RemoveActionAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -5681740772832902238L;
 
@@ -387,7 +387,7 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 8876286334367723566L;
 	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.controllerbuddy.input.action.";
@@ -443,7 +443,7 @@ public class EditActionsDialog extends JDialog {
 		this.cycleAction = cycleAction;
 
 		try {
-			for (IAction a : cycleAction.getActions())
+			for (final IAction a : cycleAction.getActions())
 				cycleActions.add((IAction) a.clone());
 
 			preInit();
@@ -453,7 +453,7 @@ public class EditActionsDialog extends JDialog {
 			setTitle(cycleAction.toString() + rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR_SUFFIX"));
 
 			init(input);
-		} catch (CloneNotSupportedException e) {
+		} catch (final CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -482,7 +482,7 @@ public class EditActionsDialog extends JDialog {
 			modeComboBox.addActionListener(new AbstractAction() {
 
 				/**
-				 * 
+				 *
 				 */
 				private static final long serialVersionUID = -9107064465015662054L;
 
@@ -496,7 +496,7 @@ public class EditActionsDialog extends JDialog {
 			modePanel.add(modeComboBox);
 
 			init(input);
-		} catch (CloneNotSupportedException e) {
+		} catch (final CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -521,7 +521,7 @@ public class EditActionsDialog extends JDialog {
 			final List<ButtonToModeAction> buttonToModeActions = unsavedProfile.getComponentToModeActionMap()
 					.get(component.getName());
 			if (buttonToModeActions != null) {
-				for (ButtonToModeAction a : buttonToModeActions)
+				for (final ButtonToModeAction a : buttonToModeActions)
 					clonedAssignedActions.add(a);
 			}
 		}
@@ -532,7 +532,7 @@ public class EditActionsDialog extends JDialog {
 	private boolean hasModeAction() {
 		boolean hasModeAction = false;
 
-		for (IAction a : getAssignedActions())
+		for (final IAction a : getAssignedActions())
 			if (a instanceof ButtonToModeAction)
 				hasModeAction = true;
 
@@ -613,7 +613,7 @@ public class EditActionsDialog extends JDialog {
 
 							final JPanel propertiesPanel = new JPanel(new GridBagLayout());
 
-							for (Method m : selectedAssignedAction.getClass().getMethods()) {
+							for (final Method m : selectedAssignedAction.getClass().getMethods()) {
 								final String methodDescription = m.toGenericString();
 								String methodName = methodDescription.substring(0, methodDescription.indexOf('('));
 								methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
@@ -661,7 +661,7 @@ public class EditActionsDialog extends JDialog {
 														(boolean) getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(checkBox);
 										} else if (Integer.class == clazz) {
-											int value = (int) getterMethod.invoke(selectedAssignedAction);
+											final int value = (int) getterMethod.invoke(selectedAssignedAction);
 
 											final SpinnerNumberModel model;
 											if ("Clicks".equals(propertyName))
@@ -682,7 +682,7 @@ public class EditActionsDialog extends JDialog {
 											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
 											propertyPanel.add(spinner);
 										} else if (Float.class == clazz) {
-											float value = (float) getterMethod.invoke(selectedAssignedAction);
+											final float value = (float) getterMethod.invoke(selectedAssignedAction);
 
 											final SpinnerNumberModel model;
 											if ("ActivationValue".equals(propertyName))
@@ -719,7 +719,7 @@ public class EditActionsDialog extends JDialog {
 											}
 										} else if (Mode.class == clazz) {
 											final JComboBox<Mode> comboBox = new JComboBox<Mode>();
-											for (Mode p : Input.getProfile().getModes())
+											for (final Mode p : Input.getProfile().getModes())
 												if (!Profile.isDefaultMode(p))
 													comboBox.addItem(p);
 											comboBox.setAction(new JComboBoxSetPropertyAction(m));
@@ -761,9 +761,9 @@ public class EditActionsDialog extends JDialog {
 													new JListSetPropertyListSelectionListener(m, keyStroke, true));
 
 											final List<String> addedModifiers = new ArrayList<String>();
-											for (int c : keyStroke.getModifierCodes())
+											for (final int c : keyStroke.getModifierCodes())
 												addedModifiers.add(ScanCode.scanCodeToNameMap.get(c));
-											for (String s : addedModifiers) {
+											for (final String s : addedModifiers) {
 												final int index = getListModelIndex(modifierList.getModel(), s);
 												if (index >= 0)
 													modifierList.addSelectionInterval(index, index);
@@ -784,9 +784,9 @@ public class EditActionsDialog extends JDialog {
 											keyList.addListSelectionListener(
 													new JListSetPropertyListSelectionListener(m, keyStroke, false));
 											final List<String> addedKeys = new ArrayList<String>();
-											for (int c : keyStroke.getKeyCodes())
+											for (final int c : keyStroke.getKeyCodes())
 												addedKeys.add(ScanCode.scanCodeToNameMap.get(c));
-											for (String s : addedKeys) {
+											for (final String s : addedKeys) {
 												final int index = getListModelIndex(keyList.getModel(), s);
 												if (index >= 0)
 													keyList.addSelectionInterval(index, index);
@@ -803,7 +803,7 @@ public class EditActionsDialog extends JDialog {
 										} else
 											throw new Exception(
 													"GUI representation implementation missing for " + clazz.getName());
-									} catch (Exception e) {
+									} catch (final Exception e) {
 										e.printStackTrace();
 									}
 								}
@@ -865,7 +865,7 @@ public class EditActionsDialog extends JDialog {
 		} else
 			actionClasses = ACTION_CLASSES_CYCLE_ACTION;
 
-		for (String s : actionClasses) {
+		for (final String s : actionClasses) {
 			final AvailableAction availableAction = new AvailableAction(s);
 			if (ButtonToModeAction.class.getName().equals(availableAction.className)) {
 				if (unsavedProfile.getModes().size() > 1) {

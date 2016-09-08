@@ -73,7 +73,7 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 	}
 
 	public void setLockKey(LockKey lockKey) {
-		this.virtualKeyCode = LockKey.lockKeyToVirtualKeyCodeMap.get(lockKey);
+		virtualKeyCode = LockKey.lockKeyToVirtualKeyCodeMap.get(lockKey);
 	}
 
 	@Override

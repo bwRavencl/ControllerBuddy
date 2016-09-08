@@ -29,8 +29,8 @@ public interface IAction extends Cloneable {
 	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
-	public Object clone() throws CloneNotSupportedException;
+	Object clone() throws CloneNotSupportedException;
 
-	public void doAction(Input input, float value);
+	void doAction(Input input, float value);
 
 }

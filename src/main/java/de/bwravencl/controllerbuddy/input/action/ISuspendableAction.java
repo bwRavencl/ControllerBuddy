@@ -22,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface ISuspendableAction extends IAction {
+interface ISuspendableAction extends IAction {
 
 	static final long SUSPEND_TIME = 500L;
 
@@ -32,7 +32,7 @@ public interface ISuspendableAction extends IAction {
 		return suspendedActions.contains(this);
 	}
 
-	public default void suspend() {
+	default void suspend() {
 		suspendedActions.remove(this);
 		suspendedActions.add(this);
 

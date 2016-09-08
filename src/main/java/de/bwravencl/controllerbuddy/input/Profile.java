@@ -57,12 +57,12 @@ public class Profile implements Cloneable {
 		final Profile profile = new Profile();
 
 		final Map<String, List<ButtonToModeAction>> clonedComponentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
-		for (Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
+		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
 			final List<ButtonToModeAction> buttonToModeActions = new ArrayList<ButtonToModeAction>();
-			for (ButtonToModeAction a : e.getValue()) {
+			for (final ButtonToModeAction a : e.getValue()) {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) a.clone());
-				} catch (CloneNotSupportedException e1) {
+				} catch (final CloneNotSupportedException e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -71,17 +71,17 @@ public class Profile implements Cloneable {
 		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
 
 		final List<Mode> clonedModes = new ArrayList<Mode>();
-		for (Mode p : modes) {
+		for (final Mode p : modes) {
 			try {
 				clonedModes.add((Mode) p.clone());
-			} catch (CloneNotSupportedException e) {
+			} catch (final CloneNotSupportedException e) {
 				e.printStackTrace();
 			}
 		}
 		profile.setModes(clonedModes);
 
 		final Map<VirtualAxis, Color> clonedVirtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
-		for (Map.Entry<VirtualAxis, Color> e : virtualAxisToColorMap.entrySet()) {
+		for (final Map.Entry<VirtualAxis, Color> e : virtualAxisToColorMap.entrySet()) {
 			final Color color = e.getValue();
 			clonedVirtualAxisToColorMap.put(e.getKey(),
 					new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
@@ -110,14 +110,14 @@ public class Profile implements Cloneable {
 	public void removeMode(Mode mode) {
 		final List<String> actionsToRemove = new ArrayList<String>();
 
-		for (Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
-			for (ButtonToModeAction a : e.getValue()) {
+		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
+			for (final ButtonToModeAction a : e.getValue()) {
 				if (a.getMode().equals(mode))
 					actionsToRemove.add(e.getKey());
 			}
 		}
 
-		for (String s : actionsToRemove)
+		for (final String s : actionsToRemove)
 			componentToModeActionMap.remove(s);
 
 		modes.remove(mode);
@@ -131,7 +131,7 @@ public class Profile implements Cloneable {
 	}
 
 	public void setActiveMode(UUID modeUuid) {
-		for (Mode m : modes) {
+		for (final Mode m : modes) {
 			if (m.getUuid().equals(modeUuid)) {
 				setActiveMode(modes.indexOf(m));
 				break;

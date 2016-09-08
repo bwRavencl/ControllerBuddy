@@ -138,7 +138,7 @@ public final class Main {
 	private class AddModeAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -4881923833724315489L;
 
@@ -161,7 +161,7 @@ public final class Main {
 	private class ChangeVJoyDirectoryAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -7672382299595684105L;
 
@@ -197,7 +197,7 @@ public final class Main {
 	private class DisplayIndicatorAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 3316770144012465987L;
 
@@ -226,7 +226,7 @@ public final class Main {
 	private class EditComponentAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 8811608785278071903L;
 
@@ -286,7 +286,7 @@ public final class Main {
 		private java.lang.reflect.Type typeForName(final JsonElement typeElem) {
 			try {
 				return Class.forName(typeElem.getAsString());
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new JsonParseException(e);
 			}
 		}
@@ -296,7 +296,7 @@ public final class Main {
 	private class NewAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 5703987691203427504L;
 
@@ -315,7 +315,7 @@ public final class Main {
 	private class OpenAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -8932510785275935297L;
 
@@ -340,7 +340,7 @@ public final class Main {
 	private class QuitAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 8952460723177800923L;
 
@@ -360,7 +360,7 @@ public final class Main {
 	private class RemoveModeAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -1056071724769862582L;
 
@@ -386,7 +386,7 @@ public final class Main {
 	private class SaveAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -8469921697479550983L;
 
@@ -408,7 +408,7 @@ public final class Main {
 	private class SaveAsAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -8469921697479550983L;
 
@@ -427,7 +427,7 @@ public final class Main {
 	private class SelectControllerAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -2043467156713598592L;
 
@@ -454,7 +454,7 @@ public final class Main {
 	private class SelectIndicatorColorAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 3316770144012465987L;
 
@@ -483,7 +483,7 @@ public final class Main {
 	private class SetHostAction extends AbstractAction implements FocusListener {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -7674562782751876814L;
 
@@ -521,7 +521,7 @@ public final class Main {
 	private class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -6706537047137827688L;
 
@@ -567,7 +567,7 @@ public final class Main {
 	private class ShowAboutDialogAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -2578971543384483382L;
 
@@ -590,7 +590,7 @@ public final class Main {
 	private class ShowAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 8578159622754054457L;
 
@@ -612,7 +612,7 @@ public final class Main {
 	private class StartClientAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 3975574941559749481L;
 
@@ -631,7 +631,7 @@ public final class Main {
 	private class StartLocalAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -2003502124995392039L;
 
@@ -650,7 +650,7 @@ public final class Main {
 	private class StartServerAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1758447420975631146L;
 
@@ -669,7 +669,7 @@ public final class Main {
 	private class StopClientAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -2863419586328503426L;
 
@@ -688,7 +688,7 @@ public final class Main {
 	private class StopLocalAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -4859431944733030332L;
 
@@ -707,7 +707,7 @@ public final class Main {
 	private class StopServerAction extends AbstractAction {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 6023207463370122769L;
 
@@ -796,7 +796,7 @@ public final class Main {
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
 
-		for (VirtualAxis va : Input.VirtualAxis.values()) {
+		for (final VirtualAxis va : Input.VirtualAxis.values()) {
 			final Map<VirtualAxis, Color> virtualAxisToColorMap = Input.getProfile().getVirtualAxisToColorMap();
 
 			if (virtualAxisToColorMap.containsKey(va)) {
@@ -851,10 +851,10 @@ public final class Main {
 								main.startServer();
 						}
 					}
-				} catch (ParseException e) {
+				} catch (final ParseException e) {
 					final HelpFormatter helpFormatter = new HelpFormatter();
 					helpFormatter.printHelp("ControllerBuddy", options, true);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -865,7 +865,7 @@ public final class Main {
 		component.setEnabled(enabled);
 
 		if (component instanceof Container) {
-			for (java.awt.Component child : ((Container) component).getComponents())
+			for (final java.awt.Component child : ((Container) component).getComponents())
 				setEnabledRecursive(child, enabled);
 		}
 	}
@@ -888,7 +888,7 @@ public final class Main {
 			updateOverlayLocation();
 		}
 
-		for (VirtualAxis va : Input.VirtualAxis.values()) {
+		for (final VirtualAxis va : Input.VirtualAxis.values()) {
 			if (virtualAxisToProgressBarMap.containsKey(va)) {
 				OutputThread outputThread = null;
 				if (localThread != null && localThread.isAlive())
@@ -951,7 +951,7 @@ public final class Main {
 
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -4669170626378955605L;
 
@@ -1022,7 +1022,7 @@ public final class Main {
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		final List<Image> icons = new ArrayList<Image>();
-		for (String s : ICON_RESOURCE_PATHS) {
+		for (final String s : ICON_RESOURCE_PATHS) {
 			final ImageIcon icon = new ImageIcon(Main.class.getResource(s));
 			icons.add(icon.getImage());
 		}
@@ -1058,7 +1058,7 @@ public final class Main {
 
 				final Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
 
-				for (Controller c : controllers) {
+				for (final Controller c : controllers) {
 					if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
 							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN
 							&& !c.getName().startsWith("vJoy"))
@@ -1329,7 +1329,7 @@ public final class Main {
 			trayIcon.setPopupMenu(popupMenu);
 			try {
 				SystemTray.getSystemTray().add(trayIcon);
-			} catch (AWTException e) {
+			} catch (final AWTException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1349,7 +1349,7 @@ public final class Main {
 
 		final String lastControllerName = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 
-		for (Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
+		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
 					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy")) {
 				final boolean lastControllerFound = c.getName().equals(lastControllerName);
@@ -1393,7 +1393,7 @@ public final class Main {
 									if (controller != null) {
 										controller.poll();
 
-										for (Component c : Input.getComponents(controller)) {
+										for (final Component c : Input.getComponents(controller)) {
 											final JPanel componentPanel = new JPanel(new GridBagLayout());
 											assignmentsPanel.add(componentPanel,
 													new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0,
@@ -1498,7 +1498,7 @@ public final class Main {
 
 						try {
 							Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
@@ -1541,12 +1541,12 @@ public final class Main {
 
 					restartLast();
 				}
-			} catch (JsonSyntaxException e) {
+			} catch (final JsonSyntaxException e) {
 				e.printStackTrace();
 			}
 
 			return result;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
@@ -1610,7 +1610,7 @@ public final class Main {
 			setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -1731,7 +1731,7 @@ public final class Main {
 				|| (serverThread != null && serverThread.isAlive())) {
 			try {
 				Thread.sleep(100L);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1791,7 +1791,7 @@ public final class Main {
 		modesListPanel.removeAll();
 
 		final List<Mode> modes = Input.getProfile().getModes();
-		for (Mode p : modes) {
+		for (final Mode p : modes) {
 			final JPanel modePanel = new JPanel(new GridBagLayout());
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
@@ -1836,7 +1836,7 @@ public final class Main {
 	private void updateOverlayPanel() {
 		indicatorsListPanel.removeAll();
 
-		for (VirtualAxis va : Input.VirtualAxis.values()) {
+		for (final VirtualAxis va : Input.VirtualAxis.values()) {
 			final JPanel indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorsListPanel.add(indicatorPanel,
 					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
@@ -1848,7 +1848,7 @@ public final class Main {
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			boolean enabled = Input.getProfile().getVirtualAxisToColorMap().containsKey(va);
+			final boolean enabled = Input.getProfile().getVirtualAxisToColorMap().containsKey(va);
 
 			final JLabel colorLabel = new JLabel();
 			if (enabled) {

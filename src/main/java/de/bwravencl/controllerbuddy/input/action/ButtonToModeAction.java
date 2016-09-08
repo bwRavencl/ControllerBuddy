@@ -68,10 +68,10 @@ public class ButtonToModeAction implements IButtonToAction {
 		final Profile profile = Input.getProfile();
 
 		Component component = null;
-		componentLoop: for (Component c : Input.getComponents(input.getController())) {
+		componentLoop: for (final Component c : Input.getComponents(input.getController())) {
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
 			if (buttonToModeActions != null) {
-				for (ButtonToModeAction a : buttonToModeActions) {
+				for (final ButtonToModeAction a : buttonToModeActions) {
 					if (a.equals(this)) {
 						component = c;
 						break componentLoop;
@@ -102,8 +102,8 @@ public class ButtonToModeAction implements IButtonToAction {
 			}
 
 			final Map<String, List<IAction>> componentToActionsMap = profile.getActiveMode().getComponentToActionsMap();
-			for (List<IAction> actions : componentToActionsMap.values()) {
-				for (IAction a : actions) {
+			for (final List<IAction> actions : componentToActionsMap.values()) {
+				for (final IAction a : actions) {
 					if (a instanceof ToKeyAction)
 						((ToKeyAction) a).resetWasUp();
 				}
@@ -112,9 +112,9 @@ public class ButtonToModeAction implements IButtonToAction {
 			final Set<String> components = componentToActionsMap.keySet();
 			final Map<String, List<IAction>> defaultComponentToActionsMap = previousMode.getComponentToActionsMap();
 			if (defaultComponentToActionsMap != null) {
-				for (String c : components) {
+				for (final String c : components) {
 					if (defaultComponentToActionsMap.containsKey(c)) {
-						for (IAction a : defaultComponentToActionsMap.get(c)) {
+						for (final IAction a : defaultComponentToActionsMap.get(c)) {
 							if (a instanceof ISuspendableAction)
 								((ISuspendableAction) a).suspend();
 						}
@@ -158,7 +158,7 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	public Mode getMode() {
-		for (Mode m : Input.getProfile().getModes())
+		for (final Mode m : Input.getProfile().getModes())
 			if (modeUuid.equals(m.getUuid()))
 				return m;
 

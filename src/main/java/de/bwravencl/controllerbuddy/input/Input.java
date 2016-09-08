@@ -60,7 +60,7 @@ public class Input {
 
 		private final XInputState pState = new XInputState();
 
-		private Field hasPolledField;
+		private final Field hasPolledField;
 
 		public GuideButtonComponent(int dwUserIndex) throws UnsatisfiedLinkError, Exception {
 			super("Guide Button", new Component.Identifier.Button("Guide Button"));
@@ -92,9 +92,9 @@ public class Input {
 
 			try {
 				hasPolledField.setBoolean(this, false);
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				e.printStackTrace();
 			}
 
@@ -139,7 +139,7 @@ public class Input {
 			if (Main.isWindows() && XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
 
 				final List<Controller> xbox360Controllers = new ArrayList<Controller>();
-				for (Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+				for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
 					if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
 						xbox360Controllers.add(c);
 				}
@@ -150,9 +150,9 @@ public class Input {
 						final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
 						cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
 						cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
-					} catch (UnsatisfiedLinkError e) {
+					} catch (final UnsatisfiedLinkError e) {
 						e.printStackTrace();
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -173,7 +173,7 @@ public class Input {
 		if (oldRange == 0)
 			newValue = outMin;
 		else {
-			float newRange = (outMax - outMin);
+			final float newRange = (outMax - outMin);
 			newValue = (((value - inMin) * newRange) / oldRange) + outMin;
 		}
 
@@ -184,10 +184,10 @@ public class Input {
 		if (controller == null)
 			return false;
 		else {
-			for (String s : profile.getComponentToModeActionMap().keySet()) {
+			for (final String s : profile.getComponentToModeActionMap().keySet()) {
 				boolean componentFound = false;
 
-				for (Component c : getComponents(controller)) {
+				for (final Component c : getComponents(controller)) {
 					if (s.equals(c.getName())) {
 						componentFound = true;
 						break;
@@ -198,11 +198,11 @@ public class Input {
 					return false;
 			}
 
-			for (Mode m : profile.getModes()) {
-				for (String s : m.getComponentToActionsMap().keySet()) {
+			for (final Mode m : profile.getModes()) {
+				for (final String s : m.getComponentToActionsMap().keySet()) {
 					boolean componentFound = false;
 
-					for (Component c : getComponents(controller)) {
+					for (final Component c : getComponents(controller)) {
 						if (s.equals(c.getName())) {
 							componentFound = true;
 							break;
@@ -234,7 +234,7 @@ public class Input {
 					}
 				}
 
-				for (List<IAction> actions : m.getComponentToActionsMap().values())
+				for (final List<IAction> actions : m.getComponentToActionsMap().values())
 					Collections.sort(actions, new ActionComparator());
 			}
 
@@ -243,7 +243,7 @@ public class Input {
 		}
 	}
 
-	private Controller controller;
+	private final Controller controller;
 	private OutputThread outputThread;
 	private boolean[] buttons;
 	private int cursorDeltaX = 5;
@@ -259,7 +259,7 @@ public class Input {
 	public Input(Controller controller) {
 		this.controller = controller;
 
-		for (VirtualAxis va : VirtualAxis.values())
+		for (final VirtualAxis va : VirtualAxis.values())
 			axis.put(va, 0);
 
 		profile = new Profile();
@@ -317,10 +317,10 @@ public class Input {
 		if (!controller.poll())
 			return false;
 
-		for (Component c : getComponents(controller)) {
+		for (final Component c : getComponents(controller)) {
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
 			if (buttonToModeActions != null) {
-				for (ButtonToModeAction a : buttonToModeActions)
+				for (final ButtonToModeAction a : buttonToModeActions)
 					a.doAction(this, c.getPollData());
 			}
 
@@ -332,7 +332,7 @@ public class Input {
 				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
 
 			if (actions != null) {
-				for (IAction a : actions)
+				for (final IAction a : actions)
 					a.doAction(this, c.getPollData());
 			}
 		}
@@ -346,9 +346,9 @@ public class Input {
 		profile.setActiveMode(0);
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 
-		for (Mode m : profile.getModes()) {
-			for (List<IAction> actions : m.getComponentToActionsMap().values()) {
-				for (IAction a : actions) {
+		for (final Mode m : profile.getModes()) {
+			for (final List<IAction> actions : m.getComponentToActionsMap().values()) {
+				for (final IAction a : actions) {
 					if (a instanceof ButtonToCycleAction)
 						((ButtonToCycleAction) a).reset();
 				}

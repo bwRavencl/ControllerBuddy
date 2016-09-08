@@ -52,8 +52,8 @@ public class Mode implements Cloneable {
 		mode.setDescription(new String(description));
 
 		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<String, List<IAction>>();
-		for (Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet()) {
-			for (IAction a : e.getValue()) {
+		for (final Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet()) {
+			for (final IAction a : e.getValue()) {
 				final String key = new String(e.getKey());
 
 				List<IAction> actions = clonedComponentToActionMap.get(key);

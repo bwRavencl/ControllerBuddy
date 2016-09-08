@@ -108,7 +108,7 @@ public class ServerOutputThread extends OutputThread {
 							maxAxisValue = Integer.parseInt(messageParts[2]);
 							setnButtons(Integer.parseInt(messageParts[3]));
 
-							StringWriter sw = new StringWriter();
+							final StringWriter sw = new StringWriter();
 							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(PROTOCOL_VERSION));
@@ -132,11 +132,11 @@ public class ServerOutputThread extends OutputThread {
 				case Connected:
 					try {
 						Thread.sleep(pollInterval);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					}
 
-					StringWriter sw = new StringWriter();
+					final StringWriter sw = new StringWriter();
 					boolean doAliveCheck = false;
 					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
 						sw.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
@@ -153,7 +153,7 @@ public class ServerOutputThread extends OutputThread {
 								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						stopOutput();
 					} else {
-						for (int v : Input.getAxis().values())
+						for (final int v : Input.getAxis().values())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 						for (int i = 0; i < nButtons; i++) {
@@ -167,33 +167,33 @@ public class ServerOutputThread extends OutputThread {
 						input.setCursorDeltaY(0);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
-						for (int b : input.getDownMouseButtons())
+						for (final int b : input.getDownMouseButtons())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
-						for (int b : input.getDownUpMouseButtons())
+						for (final int b : input.getDownUpMouseButtons())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
 						input.getDownUpMouseButtons().clear();
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
-						for (KeyStroke ks : input.getDownKeyStrokes()) {
+						for (final KeyStroke ks : input.getDownKeyStrokes()) {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-							for (int c : ks.getModifierCodes())
+							for (final int c : ks.getModifierCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-							for (int c : ks.getKeyCodes())
+							for (final int c : ks.getKeyCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
-						for (KeyStroke ks : input.getDownUpKeyStrokes()) {
+						for (final KeyStroke ks : input.getDownUpKeyStrokes()) {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-							for (int c : ks.getModifierCodes())
+							for (final int c : ks.getModifierCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-							for (int c : ks.getKeyCodes())
+							for (final int c : ks.getKeyCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 						input.getDownUpKeyStrokes().clear();
@@ -202,12 +202,12 @@ public class ServerOutputThread extends OutputThread {
 						input.setScrollClicks(0);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOnLockKeys().size());
-						for (int c : input.getOnLockKeys())
+						for (final int c : input.getOnLockKeys())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOnLockKeys().clear();
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOffLockKeys().size());
-						for (int c : input.getOffLockKeys())
+						for (final int c : input.getOffLockKeys())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOffLockKeys().clear();
 
@@ -230,7 +230,7 @@ public class ServerOutputThread extends OutputThread {
 									if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
 										counter++;
 								}
-							} catch (SocketTimeoutException e) {
+							} catch (final SocketTimeoutException e) {
 								serverState = ServerState.Listening;
 								main.scheduleStatusBarText(rb.getString("STATUS_LISTENING") + port);
 							}
@@ -241,15 +241,15 @@ public class ServerOutputThread extends OutputThread {
 					break;
 				}
 			}
-		} catch (BindException e) {
+		} catch (final BindException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(),
 					rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_PREFIX") + port
 							+ rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_SUFFIX"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} catch (SocketException e) {
+		} catch (final SocketException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

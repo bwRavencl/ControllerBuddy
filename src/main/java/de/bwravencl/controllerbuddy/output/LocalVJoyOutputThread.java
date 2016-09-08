@@ -86,7 +86,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 		final Set<Integer> sourceModifiers = new HashSet<Integer>();
 		final Set<Integer> sourceNormalKeys = new HashSet<Integer>();
-		for (KeyStroke ks : input.getDownKeyStrokes()) {
+		for (final KeyStroke ks : input.getDownKeyStrokes()) {
 			sourceModifiers.addAll(Arrays.asList(ks.getModifierCodes()));
 			sourceNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
 		}
@@ -120,7 +120,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 				try {
 					Thread.sleep(pollInterval);
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 			}

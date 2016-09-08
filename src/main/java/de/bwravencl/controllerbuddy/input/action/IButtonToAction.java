@@ -28,9 +28,9 @@ import de.bwravencl.controllerbuddy.input.Profile;
 
 public interface IButtonToAction extends IAction {
 
-	public static final long MIN_LONG_PRESS_TIME = 1000L;
-	public static final boolean DEFAULT_LONG_PRESS = false;
-	public static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
+	static final long MIN_LONG_PRESS_TIME = 1000L;
+	static final boolean DEFAULT_LONG_PRESS = false;
+	static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
 	static final Set<IButtonToAction> actionToWasDown = new HashSet<IButtonToAction>();
 	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<IButtonToAction, Long>();
 
@@ -47,7 +47,7 @@ public interface IButtonToAction extends IAction {
 		return false;
 	}
 
-	public float getActivationValue();
+	float getActivationValue();
 
 	default float handleLongPress(float value) {
 		final float activationValue = getActivationValue();
@@ -62,7 +62,7 @@ public interface IButtonToAction extends IAction {
 					return value;
 			} else if (actionToDownSinceMap.containsKey(this)) {
 				if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
-					for (List<IAction> actions : Input.getProfile().getActiveMode().getComponentToActionsMap()
+					for (final List<IAction> actions : Input.getProfile().getActiveMode().getComponentToActionsMap()
 							.values()) {
 						if (actions.contains(this)) {
 							actionToWasDown.removeAll(actions);
@@ -71,8 +71,8 @@ public interface IButtonToAction extends IAction {
 					}
 
 					if (!Profile.isDefaultMode(Input.getProfile().getActiveMode())) {
-						for (List<IAction> actions : Input.getProfile().getModes().get(0).getComponentToActionsMap()
-								.values()) {
+						for (final List<IAction> actions : Input.getProfile().getModes().get(0)
+								.getComponentToActionsMap().values()) {
 							if (actions.contains(this)) {
 								actionToWasDown.removeAll(actions);
 								break;
@@ -99,9 +99,9 @@ public interface IButtonToAction extends IAction {
 		}
 	}
 
-	public boolean isLongPress();
+	boolean isLongPress();
 
-	public void setActivationValue(Float activationValue);
+	void setActivationValue(Float activationValue);
 
-	public void setLongPress(Boolean longPress);
+	void setLongPress(Boolean longPress);
 }

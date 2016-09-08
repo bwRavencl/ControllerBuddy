@@ -142,10 +142,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 		final Set<Integer> stillDownSet = new HashSet<Integer>();
 
 		newUpSet.clear();
-		for (int o : oldDownSet) {
+		for (final int o : oldDownSet) {
 			boolean stillDown = false;
 
-			for (int n : sourceSet) {
+			for (final int n : sourceSet) {
 				if (n == o) {
 					stillDown = true;
 					break;
@@ -163,10 +163,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 		if (keepStillDown)
 			newDownSet.addAll(stillDownSet);
 
-		for (int n : sourceSet) {
+		for (final int n : sourceSet) {
 			boolean alreadyDown = false;
 
-			for (int o : oldDownSet) {
+			for (final int o : oldDownSet) {
 				if (o == n) {
 					alreadyDown = true;
 					break;
@@ -221,10 +221,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
 
-			for (int b : oldDownMouseButtons)
+			for (final int b : oldDownMouseButtons)
 				doMouseButtonInput(b, false);
 
-			for (int c : oldDownModifiers)
+			for (final int c : oldDownModifiers)
 				doKeyboardInput(c, false);
 
 			main.setStatusBarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
@@ -328,14 +328,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 			vJoy.GetVJDAxisMax(vJoyDevice, IVjoyInterface.HID_USAGE_X, Max);
 			maxAxisValue = Max.getInt(0L);
 
-			for (VirtualAxis va : VirtualAxis.values())
+			for (final VirtualAxis va : VirtualAxis.values())
 				input.setAxis(va, 0.0f);
 
 			setnButtons(vJoy.GetVJDButtonNumber(vJoyDevice));
 
 			main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
 			return true;
-		} catch (UnsatisfiedLinkError e) {
+		} catch (final UnsatisfiedLinkError e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -377,45 +377,45 @@ public abstract class VJoyOutputThread extends OutputThread {
 					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 				}
 
-				for (int b : newUpMouseButtons)
+				for (final int b : newUpMouseButtons)
 					doMouseButtonInput(b, false);
 
-				for (int b : newDownMouseButtons)
+				for (final int b : newDownMouseButtons)
 					doMouseButtonInput(b, true);
 
-				for (int b : downUpMouseButtons) {
+				for (final int b : downUpMouseButtons) {
 					doMouseButtonInput(b, true);
 					doMouseButtonInput(b, false);
 				}
 
-				for (int e : onLockKeys)
+				for (final int e : onLockKeys)
 					setLockKeyState(e, true);
 
-				for (int e : offLockKeys)
+				for (final int e : offLockKeys)
 					setLockKeyState(e, false);
 
-				for (int c : newUpNormalKeys)
+				for (final int c : newUpNormalKeys)
 					doKeyboardInput(c, false);
 
-				for (int c : newUpModifiers)
+				for (final int c : newUpModifiers)
 					doKeyboardInput(c, false);
 
-				for (int c : newDownModifiers)
+				for (final int c : newDownModifiers)
 					doKeyboardInput(c, true);
 
-				for (int c : newDownNormalKeys)
+				for (final int c : newDownNormalKeys)
 					doKeyboardInput(c, true);
 
-				for (KeyStroke ks : downUpKeyStrokes) {
-					for (int c : ks.getModifierCodes())
+				for (final KeyStroke ks : downUpKeyStrokes) {
+					for (final int c : ks.getModifierCodes())
 						doKeyboardInput(c, true);
 
-					for (int c : ks.getKeyCodes()) {
+					for (final int c : ks.getKeyCodes()) {
 						doKeyboardInput(c, true);
 						doKeyboardInput(c, false);
 					}
 
-					for (int c : ks.getModifierCodes())
+					for (final int c : ks.getModifierCodes())
 						doKeyboardInput(c, false);
 				}
 

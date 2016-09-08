@@ -1,16 +1,16 @@
 /* Copyright (C) 2016  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU General License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General License for more details.
  *
- * You should have received a copy of the GNU General Public License along
+ * You should have received a copy of the GNU General License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
@@ -27,70 +27,70 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
-public interface IVjoyInterface extends Library {
+interface IVjoyInterface extends Library {
 
-	public static final UINT HID_USAGE_X = new UINT(0x30L);
-	public static final UINT HID_USAGE_Y = new UINT(0x31L);
-	public static final UINT HID_USAGE_Z = new UINT(0x32L);
-	public static final UINT HID_USAGE_RX = new UINT(0x33L);
-	public static final UINT HID_USAGE_RY = new UINT(0x34L);
-	public static final UINT HID_USAGE_RZ = new UINT(0x35L);
-	public static final UINT HID_USAGE_SL0 = new UINT(0x36L);
-	public static final UINT HID_USAGE_SL1 = new UINT(0x37L);
-	public static final UINT HID_USAGE_WHL = new UINT(0x38L);
-	public static final UINT HID_USAGE_POV = new UINT(0x39L);
-	public static final int VJD_STAT_OWN = 0;
-	public static final int VJD_STAT_FREE = 1;
-	public static final int VJD_STAT_BUSY = 2;
-	public static final int VJD_STAT_MISS = 3;
-	public static final int VJD_STAT_UNKN = 4;
+	static final UINT HID_USAGE_X = new UINT(0x30L);
+	static final UINT HID_USAGE_Y = new UINT(0x31L);
+	static final UINT HID_USAGE_Z = new UINT(0x32L);
+	static final UINT HID_USAGE_RX = new UINT(0x33L);
+	static final UINT HID_USAGE_RY = new UINT(0x34L);
+	static final UINT HID_USAGE_RZ = new UINT(0x35L);
+	static final UINT HID_USAGE_SL0 = new UINT(0x36L);
+	static final UINT HID_USAGE_SL1 = new UINT(0x37L);
+	static final UINT HID_USAGE_WHL = new UINT(0x38L);
+	static final UINT HID_USAGE_POV = new UINT(0x39L);
+	static final int VJD_STAT_OWN = 0;
+	static final int VJD_STAT_FREE = 1;
+	static final int VJD_STAT_BUSY = 2;
+	static final int VJD_STAT_MISS = 3;
+	static final int VJD_STAT_UNKN = 4;
 
-	public BOOL AcquireVJD(UINT rID);
+	BOOL AcquireVJD(UINT rID);
 
-	public BOOL DriverMatch(Pointer DllVer, Pointer DrvVer);
+	BOOL DriverMatch(Pointer DllVer, Pointer DrvVer);
 
-	public BOOL GetVJDAxisExist(UINT rID, UINT Axis);
+	BOOL GetVJDAxisExist(UINT rID, UINT Axis);
 
-	public BOOL GetVJDAxisMax(UINT rID, UINT Axis, Pointer Max);
+	BOOL GetVJDAxisMax(UINT rID, UINT Axis, Pointer Max);
 
-	public BOOL GetVJDAxisMin(UINT rID, UINT Axis, Pointer Min);
+	BOOL GetVJDAxisMin(UINT rID, UINT Axis, Pointer Min);
 
-	public int GetVJDButtonNumber(UINT rID);
+	int GetVJDButtonNumber(UINT rID);
 
-	public int GetVJDContPovNumber(UINT rID);
+	int GetVJDContPovNumber(UINT rID);
 
-	public int GetVJDDiscPovNumber(UINT rID);
+	int GetVJDDiscPovNumber(UINT rID);
 
-	public int GetVJDStatus(UINT rID);
+	int GetVJDStatus(UINT rID);
 
-	public PVOID GetvJoyManufacturerString();
+	PVOID GetvJoyManufacturerString();
 
-	public PVOID GetvJoyProductString();
+	PVOID GetvJoyProductString();
 
-	public PVOID GetvJoySerialNumberString();
+	PVOID GetvJoySerialNumberString();
 
-	public SHORT GetvJoyVersion();
+	SHORT GetvJoyVersion();
 
-	public void RelinquishVJD(UINT rID);
+	void RelinquishVJD(UINT rID);
 
-	public void ResetAll();
+	void ResetAll();
 
-	public BOOL ResetButtons(UINT rID);
+	BOOL ResetButtons(UINT rID);
 
-	public BOOL ResetPovs(UINT rID);
+	BOOL ResetPovs(UINT rID);
 
-	public BOOL ResetVJD(UINT rID);
+	BOOL ResetVJD(UINT rID);
 
-	public BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
+	BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
 
-	public BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
+	BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
 
-	public BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
+	BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
 
-	public BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
+	BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
 
-	public BOOL UpdateVJD(UINT rID, PVOID pData);
+	BOOL UpdateVJD(UINT rID, PVOID pData);
 
-	public BOOL vJoyEnabled();
+	BOOL vJoyEnabled();
 
 }

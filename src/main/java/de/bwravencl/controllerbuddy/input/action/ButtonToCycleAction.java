@@ -35,7 +35,7 @@ public class ButtonToCycleAction implements IButtonToAction {
 		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
 
 		final List<IAction> clonedActions = new ArrayList<IAction>();
-		for (IAction a : actions)
+		for (final IAction a : actions)
 			clonedActions.add((IAction) a.clone());
 		cycleAction.setActions(clonedActions);
 

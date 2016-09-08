@@ -79,7 +79,7 @@ public class ScanCode {
 		nameToScanCodeMap = new TreeMap<String, Integer>();
 		scanCodeToNameMap = new HashMap<Integer, String>();
 
-		for (ScanCode sc : SCAN_CODES) {
+		for (final ScanCode sc : SCAN_CODES) {
 			nameToScanCodeMap.put(sc.name, sc.scanCode);
 			scanCodeToNameMap.put(sc.scanCode, sc.name);
 		}

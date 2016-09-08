@@ -34,7 +34,7 @@ public class LockKey {
 		lockKeyToVirtualKeyCodeMap = new HashMap<LockKey, Integer>();
 		virtualKeyCodeToLockKeyMap = new HashMap<Integer, LockKey>();
 
-		for (LockKey lk : LOCK_KEYS) {
+		for (final LockKey lk : LOCK_KEYS) {
 			lockKeyToVirtualKeyCodeMap.put(lk, lk.virtualKeyCode);
 			virtualKeyCodeToLockKeyMap.put(lk.virtualKeyCode, lk);
 		}
