@@ -801,8 +801,9 @@ public class EditActionsDialog extends JDialog {
 											editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
 											propertyPanel.add(editActionsButton);
 										} else
-											throw new Exception(
-													"GUI representation implementation missing for " + clazz.getName());
+											throw new Exception(getClass().getName()
+													+ ": GUI representation implementation missing for "
+													+ clazz.getName());
 									} catch (final Exception e) {
 										e.printStackTrace();
 									}

@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -43,6 +44,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -115,8 +117,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.sun.jna.platform.win32.WinDef.UINT;
+import com.trolltech.qt.core.QCoreApplication;
 
 import de.bwravencl.controllerbuddy.Version;
+import de.bwravencl.controllerbuddy.gui.mumbleoverlay.MumbleOverlay;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -154,6 +158,43 @@ public final class Main {
 
 			setUnsavedChangesTitle();
 			updateModesPanel();
+		}
+
+	}
+
+	private class ChangeMumbleDirectoryAction extends AbstractAction {
+
+		/**
+		 *
+		 */
+		private static final long serialVersionUID = 8249400342495050289L;
+
+		public ChangeMumbleDirectoryAction() {
+			putValue(NAME, rb.getString("CHANGE_MUMBLE_DIRECTORY_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_MUMBLE_DIRECTORY_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final JFileChooser mumbleDirectoryFileChooser = new JFileChooser(
+					preferences.get(PREFERENCES_MUMBLE_DIRECTORY, MumbleOverlay.getDefaultMumbleInstallationPath()));
+			mumbleDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+			if (mumbleDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				final String path = mumbleDirectoryFileChooser.getSelectedFile().getAbsolutePath();
+				final String helper32 = MumbleOverlay.getMumbleHelperFilePath(path, false);
+				final String helper64 = MumbleOverlay.getMumbleHelperFilePath(path, true);
+
+				if (helper32 != null && helper64 != null) {
+					preferences.put(PREFERENCES_MUMBLE_DIRECTORY, path);
+					mumbleDirectoryLabel1.setText(path);
+				} else
+					JOptionPane.showMessageDialog(frame,
+							rb.getString("INVALID_MUMBLE_DIRECTORY_DIALOG_TEXT_PREFIX")
+									+ MumbleOverlay.getDefaultMumbleInstallationPath()
+									+ rb.getString("INVALID_MUMBLE_DIRECTORY_DIALOG_TEXT_SUFFIX"),
+							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 	}
@@ -269,8 +310,8 @@ public final class Main {
 		private JsonElement get(final JsonObject wrapper, String memberName) {
 			final JsonElement elem = wrapper.get(memberName);
 			if (elem == null)
-				throw new JsonParseException(
-						"No member '" + memberName + "' found in what was expected to be an interface wrapper");
+				throw new JsonParseException(getClass().getName() + ": No member '" + memberName
+						+ "' found in what was expected to be an interface wrapper");
 			return elem;
 		}
 
@@ -287,7 +328,7 @@ public final class Main {
 			try {
 				return Class.forName(typeElem.getAsString());
 			} catch (final ClassNotFoundException e) {
-				throw new JsonParseException(e);
+				throw new JsonParseException(getClass().getName() + ": " + e);
 			}
 		}
 
@@ -733,89 +774,43 @@ public final class Main {
 	public static final int DIALOG_BOUNDS_HEIGHT = 640;
 	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
-	public static final String OPTION_AUTOSTART = "autostart";
-	public static final String OPTION_TRAY = "tray";
-	public static final String OPTION_VERSION = "version";
-	public static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
-	public static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
-	public static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
+	private static final String OPTION_AUTOSTART = "autostart";
+	private static final String OPTION_TRAY = "tray";
+	private static final String OPTION_VERSION = "version";
+	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
+	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
+	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
-	public static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
-	public static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
-	public static final String PREFERENCES_LAST_PROFILE = "last_profile";
+	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
+	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
-	public static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
-	public static final String PREFERENCES_HOST = "host";
-	public static final String PREFERENCES_PORT = "port";
-	public static final String PREFERENCES_TIMEOUT = "timeout";
-	public static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
+	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
+	private static final String PREFERENCES_HOST = "host";
+	private static final String PREFERENCES_PORT = "port";
+	private static final String PREFERENCES_TIMEOUT = "timeout";
+	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
+	private static final String PREFERENCES_USE_MUMBLE_OVERLAY = "use_mumble_overlay";
+	public static final String PREFERENCES_MUMBLE_DIRECTORY = "mumble_directory";
+	private static final String PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL = "mumble_overlay_update_intervall";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<VirtualAxis, JProgressBar>();
-
 	private static JFrame overlayFrame;
 	private static JPanel indicatorPanel;
-
 	private final static JLabel labelCurrentMode = new JLabel();
-
 	private static LocalVJoyOutputThread localThread;
-
 	private static ClientVJoyOutputThread clientThread;
-
 	private static ServerOutputThread serverThread;
-
 	private static Dimension prevScreenSize;
+	private static boolean mumbleOverlayActive;
+	private static boolean mumbleOverlayRedraw = true;
 
-	private static void deInitOverlay() {
-		if (overlayFrame != null) {
-			overlayFrame.setVisible(false);
-			overlayFrame.remove(indicatorPanel);
-		}
-
-		virtualAxisToProgressBarMap.clear();
-	}
-
-	private static void initOverlay() {
-		labelCurrentMode.setForeground(Color.RED);
-		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
-		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
-
-		if (overlayFrame == null) {
-			overlayFrame = new JFrame();
-			overlayFrame.setLayout(new BorderLayout());
-			overlayFrame.setAlwaysOnTop(true);
-			overlayFrame.setFocusableWindowState(false);
-			overlayFrame.setUndecorated(true);
-			overlayFrame.setBackground(new Color(255, 255, 255, 0));
-			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
-		}
-
-		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
-
-		for (final VirtualAxis va : Input.VirtualAxis.values()) {
-			final Map<VirtualAxis, Color> virtualAxisToColorMap = Input.getProfile().getVirtualAxisToColorMap();
-
-			if (virtualAxisToColorMap.containsKey(va)) {
-				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
-				progressBar.setPreferredSize(new Dimension(21, 149));
-				progressBar.setBorder(
-						BorderFactory.createDashedBorder(Color.black, (float) progressBar.getPreferredSize().getWidth(),
-								(float) progressBar.getPreferredSize().getWidth()));
-				progressBar.setBackground(Color.LIGHT_GRAY);
-				progressBar.setForeground(virtualAxisToColorMap.get(va));
-				indicatorPanel.add(progressBar);
-				virtualAxisToProgressBarMap.put(va, progressBar);
-			}
-		}
-
-		overlayFrame.add(indicatorPanel);
-
-		updateOverlayLocation();
-		overlayFrame.setVisible(true);
+	public static boolean is64Bit() {
+		return "64".equals(System.getProperty("sun.arch.data.model"));
 	}
 
 	public static boolean isWindows() {
@@ -875,11 +870,14 @@ public final class Main {
 		labelCurrentMode.setText(text);
 		if (prevTextLength <= text.length())
 			updateOverlayLocation();
+		mumbleOverlayRedraw = true;
 	}
 
 	public static void updateOverlayAxisIndicators() {
-		overlayFrame.setAlwaysOnTop(false);
-		overlayFrame.setAlwaysOnTop(true);
+		if (overlayFrame.isAlwaysOnTop()) {
+			overlayFrame.setAlwaysOnTop(false);
+			overlayFrame.setAlwaysOnTop(true);
+		}
 
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		if (prevScreenSize == null || screenSize.width != prevScreenSize.width
@@ -902,7 +900,12 @@ public final class Main {
 					final JProgressBar progressBar = virtualAxisToProgressBarMap.get(va);
 					progressBar.setMinimum(-outputThread.getMaxAxisValue());
 					progressBar.setMaximum(outputThread.getMinAxisValue());
-					progressBar.setValue(-Input.getAxis().get(va));
+
+					final int newValue = -Input.getAxis().get(va);
+					if (progressBar.getValue() != newValue) {
+						progressBar.setValue(newValue);
+						mumbleOverlayRedraw = true;
+					}
 				}
 			}
 		}
@@ -919,6 +922,7 @@ public final class Main {
 	}
 
 	private Controller selectedController;
+
 	private Input input;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
 	private boolean suspendControllerSettingsUpdate = false;
@@ -946,6 +950,11 @@ public final class Main {
 	private final JSpinner portSpinner;
 	private final JSpinner timeoutSpinner;
 	private final JSpinner pollIntervalSpinner;
+	private JPanel mumbleOverlaySettingsPanel;
+	private JPanel mumbleDirectoryPanel;
+	private JPanel mumbleOverlayFpsPanel;
+	private JSpinner mumbleOverlayFpsSpinner;
+	private JLabel mumbleDirectoryLabel1;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 	private TrayIcon trayIcon;
 
@@ -1181,11 +1190,11 @@ public final class Main {
 		settingsPanel.add(pollIntervalPanel, panelGridBagConstraints);
 
 		final JLabel pollIntervalLabel = new JLabel(rb.getString("POLL_INTERVAL_LABEL"));
-		pollIntervalLabel.setPreferredSize(new Dimension(100, 15));
+		pollIntervalLabel.setPreferredSize(new Dimension(120, 15));
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_POLL_INTERVAL, (int) OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
+				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
 		pollIntervalSpinner.setEditor(new JSpinner.NumberEditor(pollIntervalSpinner, "#"));
 		pollIntervalSpinner.addChangeListener(new ChangeListener() {
 
@@ -1201,7 +1210,7 @@ public final class Main {
 			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
 
 			final JLabel vJoyDirectoryLabel = new JLabel(rb.getString("VJOY_DIRECTORY_LABEL"));
-			vJoyDirectoryLabel.setPreferredSize(new Dimension(100, 15));
+			vJoyDirectoryLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			vJoyDirectoryLabel1 = new JLabel(
@@ -1215,7 +1224,7 @@ public final class Main {
 			settingsPanel.add(vJoyDevicePanel, panelGridBagConstraints);
 
 			final JLabel vJoyDeviceLabel = new JLabel(rb.getString("VJOY_DEVICE_LABEL"));
-			vJoyDeviceLabel.setPreferredSize(new Dimension(100, 15));
+			vJoyDeviceLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1234,7 +1243,7 @@ public final class Main {
 			settingsPanel.add(hostPanel, panelGridBagConstraints);
 
 			final JLabel hostLabel = new JLabel(rb.getString("HOST_LABEL"));
-			hostLabel.setPreferredSize(new Dimension(100, 15));
+			hostLabel.setPreferredSize(new Dimension(120, 15));
 			hostPanel.add(hostLabel);
 
 			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 10);
@@ -1248,7 +1257,7 @@ public final class Main {
 		settingsPanel.add(portPanel, panelGridBagConstraints);
 
 		final JLabel portLabel = new JLabel(rb.getString("PORT_LABEL"));
-		portLabel.setPreferredSize(new Dimension(100, 15));
+		portLabel.setPreferredSize(new Dimension(120, 15));
 		portPanel.add(portLabel);
 
 		portSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1267,7 +1276,7 @@ public final class Main {
 		settingsPanel.add(timeoutPanel, panelGridBagConstraints);
 
 		final JLabel timeoutLabel = new JLabel(rb.getString("TIMEOUT_LABEL"));
-		timeoutLabel.setPreferredSize(new Dimension(100, 15));
+		timeoutLabel.setPreferredSize(new Dimension(120, 15));
 		timeoutPanel.add(timeoutLabel);
 
 		timeoutSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1288,7 +1297,7 @@ public final class Main {
 			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
 			final JLabel overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
-			overlayLabel.setPreferredSize(new Dimension(100, 15));
+			overlayLabel.setPreferredSize(new Dimension(120, 15));
 			overlaySettingsPanel.add(overlayLabel);
 
 			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
@@ -1297,10 +1306,72 @@ public final class Main {
 
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, ((JCheckBox) e.getSource()).isSelected());
+					final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
+
+					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
+
+					setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
+					setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
+					setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
 				}
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
+
+			if (isWindows() && is64Bit()) {
+				mumbleOverlaySettingsPanel = new JPanel(panelFlowLayout);
+				settingsPanel.add(mumbleOverlaySettingsPanel, panelGridBagConstraints);
+
+				final JLabel mumbleOverlayLabel = new JLabel(rb.getString("MUMBLE_OVERLAY_LABEL"));
+				mumbleOverlayLabel.setPreferredSize(new Dimension(120, 15));
+				mumbleOverlaySettingsPanel.add(mumbleOverlayLabel);
+
+				final JCheckBox useMumbleOverlayCheckBox = new JCheckBox(rb.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
+				useMumbleOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, true));
+				useMumbleOverlayCheckBox.addChangeListener(new ChangeListener() {
+
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY,
+								((JCheckBox) e.getSource()).isSelected());
+					}
+				});
+				mumbleOverlaySettingsPanel.add(useMumbleOverlayCheckBox);
+
+				mumbleDirectoryPanel = new JPanel(panelFlowLayout);
+				settingsPanel.add(mumbleDirectoryPanel, panelGridBagConstraints);
+
+				final JLabel mumbleDirectoryLabel = new JLabel(rb.getString("MUMBLE_DIRECTORY_LABEL"));
+				mumbleDirectoryLabel.setPreferredSize(new Dimension(120, 15));
+				mumbleDirectoryPanel.add(mumbleDirectoryLabel);
+
+				mumbleDirectoryLabel1 = new JLabel(preferences.get(PREFERENCES_MUMBLE_DIRECTORY,
+						MumbleOverlay.getDefaultMumbleInstallationPath()));
+				mumbleDirectoryPanel.add(mumbleDirectoryLabel1);
+
+				final JButton mumbleDirectoryButton = new JButton(new ChangeMumbleDirectoryAction());
+				mumbleDirectoryPanel.add(mumbleDirectoryButton);
+
+				mumbleOverlayFpsPanel = new JPanel(panelFlowLayout);
+				settingsPanel.add(mumbleOverlayFpsPanel, panelGridBagConstraints);
+
+				final JLabel mumbleOverlayFpsLabel = new JLabel(rb.getString("MUMBLE_OVERLAY_FPS_LABEL"));
+				mumbleOverlayFpsLabel.setPreferredSize(new Dimension(120, 15));
+				mumbleOverlayFpsPanel.add(mumbleOverlayFpsLabel);
+
+				mumbleOverlayFpsSpinner = new JSpinner(
+						new SpinnerNumberModel(1000 / preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
+								MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL), 1, 20, 1));
+				mumbleOverlayFpsSpinner.setEditor(new JSpinner.NumberEditor(mumbleOverlayFpsSpinner, "#"));
+				mumbleOverlayFpsSpinner.addChangeListener(new ChangeListener() {
+
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						preferences.putInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
+								1000 / (int) ((JSpinner) e.getSource()).getValue());
+					}
+				});
+				mumbleOverlayFpsPanel.add(mumbleOverlayFpsSpinner);
+			}
 		}
 
 		if (SystemTray.isSupported()) {
@@ -1508,12 +1579,139 @@ public final class Main {
 		}
 	}
 
+	private void deInitOverlay() {
+		if (overlayFrame != null) {
+			overlayFrame.setVisible(false);
+			overlayFrame.remove(indicatorPanel);
+		}
+
+		virtualAxisToProgressBarMap.clear();
+		if (isMumbleOverlayEnabled()) {
+			mumbleOverlayActive = false;
+			mumbleOverlayRedraw = true;
+		}
+	}
+
 	public JFrame getFrame() {
 		return frame;
 	}
 
 	public Preferences getPreferences() {
 		return preferences;
+	}
+
+	private void initOverlay() {
+		labelCurrentMode.setForeground(Color.RED);
+		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
+		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
+
+		final boolean mumbleOverlayEnabled = isMumbleOverlayEnabled();
+
+		if (overlayFrame == null) {
+			overlayFrame = new JFrame();
+			overlayFrame.setLayout(new BorderLayout());
+			overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);
+			overlayFrame.setFocusableWindowState(false);
+			overlayFrame.setUndecorated(true);
+			overlayFrame.setBackground(new Color(255, 255, 255, 0));
+			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
+		}
+
+		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
+
+		for (final VirtualAxis va : Input.VirtualAxis.values()) {
+			final Map<VirtualAxis, Color> virtualAxisToColorMap = Input.getProfile().getVirtualAxisToColorMap();
+
+			if (virtualAxisToColorMap.containsKey(va)) {
+				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
+				progressBar.setPreferredSize(new Dimension(21, 149));
+				progressBar.setBorder(
+						BorderFactory.createDashedBorder(Color.black, (float) progressBar.getPreferredSize().getWidth(),
+								(float) progressBar.getPreferredSize().getWidth()));
+				progressBar.setBackground(Color.LIGHT_GRAY);
+				progressBar.setForeground(virtualAxisToColorMap.get(va));
+				indicatorPanel.add(progressBar);
+				virtualAxisToProgressBarMap.put(va, progressBar);
+			}
+		}
+
+		overlayFrame.add(indicatorPanel);
+
+		updateOverlayLocation();
+		overlayFrame.setVisible(true);
+
+		if (mumbleOverlayEnabled) {
+			mumbleOverlayActive = true;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						QCoreApplication.initialize(new String[1]);
+
+						final MumbleOverlay overlay = new MumbleOverlay(Main.this);
+						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
+								overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+						final Graphics2D graphics = bufferedImage.createGraphics();
+
+						new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								final int interval = 1000 / (int) mumbleOverlayFpsSpinner.getValue();
+
+								while (mumbleOverlayActive) {
+									QCoreApplication.invokeLater(new Runnable() {
+
+										@Override
+										public void run() {
+											QCoreApplication.processEvents();
+
+											if (mumbleOverlayRedraw) {
+												overlayFrame.print(graphics);
+												overlay.render(bufferedImage);
+												mumbleOverlayRedraw = false;
+											}
+										}
+									});
+
+									try {
+										Thread.sleep(interval);
+									} catch (final InterruptedException e) {
+										e.printStackTrace();
+									}
+
+								}
+								graphics.dispose();
+								QCoreApplication.invokeLater(new Runnable() {
+
+									@Override
+									public void run() {
+										if (overlay != null)
+											overlay.deInit();
+
+										QCoreApplication.exit();
+									}
+								});
+							}
+						}).start();
+
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+
+					QCoreApplication.instance().exec();
+				}
+			}).start();
+		}
+	}
+
+	private boolean isMumbleOverlayEnabled() {
+		if (isWindows() && is64Bit() && preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, true))
+			return true;
+		else
+			return false;
 	}
 
 	private boolean loadProfile(File file) {

@@ -66,13 +66,13 @@ public class Input {
 			super("Guide Button", new Component.Identifier.Button("Guide Button"));
 
 			if (dwUserIndex < 0 || dwUserIndex > 3)
-				throw new Exception("dwUserIndex must be a value between 0 and 3");
+				throw new Exception(getClass().getName() + ": dwUserIndex must be a value between 0 and 3");
 			this.dwUserIndex = dwUserIndex;
 
 			final HMODULE hModule = com.sun.jna.platform.win32.Kernel32.INSTANCE
 					.GetModuleHandle(XINPUT_LIBRARY_FILENAME);
 			if (hModule == null)
-				throw new UnsatisfiedLinkError("Could not load " + XINPUT_LIBRARY_FILENAME);
+				throw new UnsatisfiedLinkError(getClass().getName() + ": Could not load " + XINPUT_LIBRARY_FILENAME);
 
 			final Kernel32 kernel32 = (Kernel32) Native.loadLibrary(Kernel32.class);
 			function = Function.getFunction(kernel32.GetProcAddress(hModule, 100));

@@ -104,9 +104,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	public static String getArchFolderName() {
-		final String arch = System.getProperty("sun.arch.data.model");
-
-		if ("64".equals(arch))
+		if (Main.is64Bit())
 			return "x64";
 		else
 			return "x86";

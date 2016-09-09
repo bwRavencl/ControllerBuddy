@@ -26,7 +26,7 @@ import net.brockmatt.util.ResourceBundleUtil;
 
 public abstract class OutputThread extends Thread {
 
-	public static final long DEFAULT_POLL_INTERVAL = 10L;
+	public static final int DEFAULT_POLL_INTERVAL = 10;
 
 	protected final Main main;
 	protected final Input input;
