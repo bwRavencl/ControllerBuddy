@@ -84,13 +84,13 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 ControllerBuddy uses the Gradle build system. 
 The following tasks are supported:
 
-| Task                              | Command              |
-| --------------------------------- | -------------------- |
-| Run ControllerBuddy               | gradlew run          |
-| Create a One-JAR runnable archive | gradlew oneJar       |
-| Generate Eclipse files            | gradlew eclipse      |
-| Clean Eclipse files               | gradlew cleanEclipse |
-| Delete build and gen directories  | gradlew clean        |
+| Task                             | Command              |
+| -------------------------------- | -------------------- |
+| Run ControllerBuddy              | gradlew run          |
+| Create a capsule executable JAR  | gradlew capsule      |
+| Generate Eclipse files           | gradlew eclipse      |
+| Clean Eclipse files              | gradlew cleanEclipse |
+| Delete build and gen directories | gradlew clean        |
 
 Please note that building requires Java JDK 8.
 

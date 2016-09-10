@@ -3,13 +3,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.ajoberstar:grgit:1.6.0-rc.1',
-                  'com.github.rholder:gradle-one-jar:1.0.4' 
+        classpath 'org.ajoberstar:grgit:1.6.0-rc.1'
     }
 }
 
 plugins {
     id 'com.stehno.natives' version '0.2.4'
+    id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
 apply plugin: 'application'
@@ -82,11 +82,13 @@ run {
     systemProperty 'java.library.path', "$buildDir/natives/windows${File.pathSeparatorChar}$buildDir/natives/osx${File.pathSeparatorChar}$buildDir/natives/linux"
 }
 
-apply plugin: 'gradle-one-jar'
-
-task oneJar(type: OneJar, dependsOn: 'unpackNatives') {
-    mainClass = 'de.bwravencl.controllerbuddy.gui.Main'
-    binLib = fileTree(dir: "$buildDir/natives", includes: ['windows/*.dll', 'osx/*.jnilib', 'linux/*.so'])
+task capsule(type: FatCapsule){
+    dependsOn unpackNatives
+    applicationClass 'de.bwravencl.controllerbuddy.gui.Main'
+    baseName 'ControllerBuddy'
+    from fileTree(dir: "$buildDir/natives/windows", includes: ['*.dll'])
+    from fileTree(dir: "$buildDir/natives/osx", includes: ['*.jnilib'])
+    from fileTree(dir: "$buildDir/natives/linux", includes: ['*.so'])
 }
 
 apply plugin: 'eclipse'
