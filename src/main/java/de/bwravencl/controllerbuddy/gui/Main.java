@@ -1648,7 +1648,7 @@ public final class Main {
 				@Override
 				public void run() {
 					try {
-						QCoreApplication.initialize(new String[1]);
+						QCoreApplication.initialize(new String[0]);
 
 						final MumbleOverlay overlay = new MumbleOverlay(Main.this);
 						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
@@ -1696,9 +1696,11 @@ public final class Main {
 								});
 							}
 						}).start();
-
 					} catch (final Exception e) {
 						e.printStackTrace();
+						JOptionPane.showMessageDialog(Main.this.getFrame(),
+								rb.getString("COULD_NOT_INITIALIZE_MUMBLE_OVERLAY_DIALOG_TEXT"),
+								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					}
 
 					QCoreApplication.instance().exec();

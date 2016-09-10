@@ -116,7 +116,6 @@ public class MumbleOverlay extends QObject {
 	}
 
 	private void disconnected() {
-		System.out.println("disconnected()");
 		for (final MumbleOverlayClient c : clients) {
 			if (c.getLocalSocket().equals(QSignalEmitter.signalSender())) {
 				c.deInit();
@@ -128,7 +127,6 @@ public class MumbleOverlay extends QObject {
 
 	@SuppressWarnings("unused")
 	private void error(QLocalSocket.LocalSocketError error) {
-		System.out.println("error(");
 		disconnected();
 	}
 
@@ -149,8 +147,6 @@ public class MumbleOverlay extends QObject {
 
 	@SuppressWarnings("unused")
 	private void onHelperProcessExited() {
-		System.out.println("Helper exited!");
-		System.out.println("Restarting helper!");
 		try {
 			startHelper((QProcess) QSignalEmitter.signalSender());
 		} catch (final Exception e) {
@@ -214,7 +210,6 @@ public class MumbleOverlay extends QObject {
 	public void updateOverlay() {
 		for (final MumbleOverlayClient c : clients) {
 			if (!c.update()) {
-				System.out.println("Overlay: Dead client detected.");
 				clients.remove(c);
 				c.deInit();
 				break;
