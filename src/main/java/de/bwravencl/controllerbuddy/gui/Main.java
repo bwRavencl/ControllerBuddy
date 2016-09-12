@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -866,10 +867,7 @@ public final class Main {
 	}
 
 	public static void setOverlayText(String text) {
-		final int prevTextLength = labelCurrentMode.getText().length();
 		labelCurrentMode.setText(text);
-		if (prevTextLength <= text.length())
-			updateOverlayLocation();
 		mumbleOverlayRedraw = true;
 	}
 
@@ -1601,6 +1599,16 @@ public final class Main {
 	}
 
 	private void initOverlay() {
+		String longestDescription = "";
+		for (final Mode m : Input.getProfile().getModes()) {
+			final String description = m.getDescription();
+			if (description.length() > longestDescription.length())
+				longestDescription = description;
+		}
+
+		final FontMetrics fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
+		labelCurrentMode
+				.setPreferredSize(new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
 		labelCurrentMode.setForeground(Color.RED);
 		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
