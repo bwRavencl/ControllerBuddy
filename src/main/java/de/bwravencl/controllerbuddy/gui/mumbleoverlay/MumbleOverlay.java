@@ -84,14 +84,13 @@ public class MumbleOverlay extends QObject {
 			throw new Exception(getClass().getName() + ": Unable to duplicate handle to the Mumble process.");
 		processHandle = processHandleRef.getValue();
 
+		localServer.newConnection.connect(this, "newConnection()");
 		helper32Process.finished.connect(this, "onHelperProcessExited()");
 		helper64Process.finished.connect(this, "onHelperProcessExited()");
 
 		if (!localServer.listen(PIPE_NAME))
 			throw new Exception(getClass().getName() + ": Failed to create communication with overlay at " + PIPE_NAME
 					+ ": " + localServer.errorString());
-
-		localServer.newConnection.connect(this, "newConnection()");
 
 		startHelper(helper32Process);
 		startHelper(helper64Process);
@@ -123,11 +122,21 @@ public class MumbleOverlay extends QObject {
 				return;
 			}
 		}
+
 	}
 
 	@SuppressWarnings("unused")
 	private void error(QLocalSocket.LocalSocketError error) {
 		disconnected();
+	}
+
+	public boolean hasDirtyClient() {
+		for (final MumbleOverlayClient c : clients) {
+			if (c.isDirty())
+				return true;
+		}
+
+		return false;
 	}
 
 	@SuppressWarnings("unused")
@@ -203,7 +212,7 @@ public class MumbleOverlay extends QObject {
 			if (helperFilePath != null)
 				helper.start(helperFilePath, args);
 			else
-				throw new Exception(getClass().getName() + ": Couldn't find helper binary.");
+				throw new Exception(getClass().getName() + ": Couldn't locate helper binary.");
 		}
 	}
 
@@ -215,7 +224,6 @@ public class MumbleOverlay extends QObject {
 				break;
 			}
 		}
-
 	}
 
 }

@@ -40,6 +40,8 @@ public class MumbleOverlayClient extends QObject {
 	private int width = 0;
 	private int height = 0;
 	private final QTime t = new QTime();
+	private boolean dirty = true;
+	private long lastFpsMessage = 0L;
 
 	public MumbleOverlayClient(MumbleOverlay overlay, QLocalSocket localSocket) {
 		this.overlay = overlay;
@@ -70,6 +72,10 @@ public class MumbleOverlayClient extends QObject {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public boolean isDirty() {
+		return dirty;
 	}
 
 	@SuppressWarnings("unused")
@@ -137,6 +143,7 @@ public class MumbleOverlayClient extends QObject {
 						Kernel32.INSTANCE.CloseHandle(handle);
 					break;
 				case OverlayMsgHeader.OVERLAY_MSGTYPE_FPS:
+					lastFpsMessage = System.currentTimeMillis();
 					QTimer.singleShot(0, overlay, "updateOverlay()");
 					break;
 				}
@@ -178,14 +185,16 @@ public class MumbleOverlayClient extends QObject {
 	}
 
 	public void render(int x, int y, int w, int h) {
-		final OverlayMsgActive messagePart = new OverlayMsgActive(x, y, w, h);
+		if (lastFpsMessage == 0L || System.currentTimeMillis() - lastFpsMessage < 300L) {
+			final OverlayMsgActive messagePart = new OverlayMsgActive(x, y, w, h);
+			final OverlayMsgHeader headerPart = new OverlayMsgHeader(messagePart.getSize(),
+					OverlayMsgHeader.OVERLAY_MSGTYPE_ACTIVE);
+			final OverlayMsg message = new OverlayMsg(headerPart, messagePart);
 
-		final OverlayMsgHeader headerPart = new OverlayMsgHeader(messagePart.getSize(),
-				OverlayMsgHeader.OVERLAY_MSGTYPE_ACTIVE);
-
-		final OverlayMsg message = new OverlayMsg(headerPart, messagePart);
-		localSocket.write(message.getBytes());
-		localSocket.flush();
+			localSocket.write(message.getBytes());
+			localSocket.flush();
+			dirty = false;
+		}
 	}
 
 	public boolean update() {

@@ -808,7 +808,7 @@ public final class Main {
 	private static ServerOutputThread serverThread;
 	private static Dimension prevScreenSize;
 	private static boolean mumbleOverlayActive;
-	private static boolean mumbleOverlayRedraw = true;
+	private static boolean mumbleOverlayRedraw;
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -1658,7 +1658,7 @@ public final class Main {
 					try {
 						QCoreApplication.initialize(new String[0]);
 
-						final MumbleOverlay overlay = new MumbleOverlay(Main.this);
+						final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
 						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
 								overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
 						final Graphics2D graphics = bufferedImage.createGraphics();
@@ -1668,17 +1668,14 @@ public final class Main {
 							@Override
 							public void run() {
 								final int interval = 1000 / (int) mumbleOverlayFpsSpinner.getValue();
-
 								while (mumbleOverlayActive) {
 									QCoreApplication.invokeLater(new Runnable() {
 
 										@Override
 										public void run() {
-											QCoreApplication.processEvents();
-
-											if (mumbleOverlayRedraw) {
+											if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
 												overlayFrame.print(graphics);
-												overlay.render(bufferedImage);
+												mumbleOverlay.render(bufferedImage);
 												mumbleOverlayRedraw = false;
 											}
 										}
@@ -1696,8 +1693,8 @@ public final class Main {
 
 									@Override
 									public void run() {
-										if (overlay != null)
-											overlay.deInit();
+										if (mumbleOverlay != null)
+											mumbleOverlay.deInit();
 
 										QCoreApplication.exit();
 									}
