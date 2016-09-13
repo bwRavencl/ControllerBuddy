@@ -172,7 +172,7 @@ public class MumbleOverlay extends QObject {
 					for (int x = 0; x < c.getWidth(); x++) {
 						final int ix = x - (c.getWidth() - image.getWidth());
 
-						if (ix > 0 && ix < image.getWidth() && y < image.getHeight()) {
+						if (ix >= 0 && ix < image.getWidth() && y < image.getHeight()) {
 							final Color color = new Color(image.getRGB(ix, y), true);
 
 							textureBuffer[(y * c.getWidth()) + x] = (color.getAlpha() << 24)
