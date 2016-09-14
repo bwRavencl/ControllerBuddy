@@ -920,7 +920,6 @@ public final class Main {
 	}
 
 	private Controller selectedController;
-
 	private Input input;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
 	private boolean suspendControllerSettingsUpdate = false;
@@ -943,15 +942,10 @@ public final class Main {
 	private final JScrollPane indicatorsScrollPane;
 	private final JPanel indicatorsListPanel;
 	private JLabel vJoyDirectoryLabel1;
-	private JSpinner vJoyDeviceSpinner;
 	private JTextField hostTextField;
-	private final JSpinner portSpinner;
-	private final JSpinner timeoutSpinner;
-	private final JSpinner pollIntervalSpinner;
 	private JPanel mumbleOverlaySettingsPanel;
 	private JPanel mumbleDirectoryPanel;
 	private JPanel mumbleOverlayFpsPanel;
-	private JSpinner mumbleOverlayFpsSpinner;
 	private JLabel mumbleDirectoryLabel1;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 	private TrayIcon trayIcon;
@@ -1191,7 +1185,7 @@ public final class Main {
 		pollIntervalLabel.setPreferredSize(new Dimension(120, 15));
 		pollIntervalPanel.add(pollIntervalLabel);
 
-		pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
+		final JSpinner pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
 		pollIntervalSpinner.setEditor(new JSpinner.NumberEditor(pollIntervalSpinner, "#"));
 		pollIntervalSpinner.addChangeListener(new ChangeListener() {
@@ -1225,7 +1219,7 @@ public final class Main {
 			vJoyDeviceLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
-			vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
+			final JSpinner vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
 					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
 			vJoyDeviceSpinner.setEditor(new JSpinner.NumberEditor(vJoyDeviceSpinner, "#"));
 			vJoyDeviceSpinner.addChangeListener(new ChangeListener() {
@@ -1258,7 +1252,7 @@ public final class Main {
 		portLabel.setPreferredSize(new Dimension(120, 15));
 		portPanel.add(portLabel);
 
-		portSpinner = new JSpinner(new SpinnerNumberModel(
+		final JSpinner portSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT), 1024, 65535, 1));
 		portSpinner.setEditor(new JSpinner.NumberEditor(portSpinner, "#"));
 		portSpinner.addChangeListener(new ChangeListener() {
@@ -1277,7 +1271,7 @@ public final class Main {
 		timeoutLabel.setPreferredSize(new Dimension(120, 15));
 		timeoutPanel.add(timeoutLabel);
 
-		timeoutSpinner = new JSpinner(new SpinnerNumberModel(
+		final JSpinner timeoutSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
 		timeoutSpinner.setEditor(new JSpinner.NumberEditor(timeoutSpinner, "#"));
 		timeoutSpinner.addChangeListener(new ChangeListener() {
@@ -1356,7 +1350,7 @@ public final class Main {
 				mumbleOverlayFpsLabel.setPreferredSize(new Dimension(120, 15));
 				mumbleOverlayFpsPanel.add(mumbleOverlayFpsLabel);
 
-				mumbleOverlayFpsSpinner = new JSpinner(
+				final JSpinner mumbleOverlayFpsSpinner = new JSpinner(
 						new SpinnerNumberModel(1000 / preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
 								MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL), 1, 20, 1));
 				mumbleOverlayFpsSpinner.setEditor(new JSpinner.NumberEditor(mumbleOverlayFpsSpinner, "#"));
@@ -1667,7 +1661,9 @@ public final class Main {
 
 							@Override
 							public void run() {
-								final int interval = 1000 / (int) mumbleOverlayFpsSpinner.getValue();
+								final int interval = 1000
+										/ preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
+												MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL);
 								while (mumbleOverlayActive) {
 									QCoreApplication.invokeLater(new Runnable() {
 
@@ -1875,10 +1871,11 @@ public final class Main {
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopClientRadioButtonMenuItem.setEnabled(true);
 		clientThread = new ClientVJoyOutputThread(Main.this, input);
-		clientThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
+		clientThread.setvJoyDevice(
+				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
 		clientThread.setHost(hostTextField.getText());
-		clientThread.setPort((int) portSpinner.getValue());
-		clientThread.setTimeout((int) timeoutSpinner.getValue());
+		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
+		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
 		clientThread.start();
 
 		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
@@ -1897,8 +1894,10 @@ public final class Main {
 		setEnabledRecursive(overlayPanel, false);
 		setEnabledRecursive(settingsPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
-		localThread.setvJoyDevice(new UINT((int) vJoyDeviceSpinner.getValue()));
-		localThread.setPollInterval((int) pollIntervalSpinner.getValue());
+		localThread.setvJoyDevice(
+				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
+		localThread
+				.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, VJoyOutputThread.DEFAULT_POLL_INTERVAL));
 		localThread.start();
 
 		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
@@ -1919,9 +1918,10 @@ public final class Main {
 		setEnabledRecursive(overlayPanel, false);
 		setEnabledRecursive(settingsPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
-		serverThread.setPort((int) portSpinner.getValue());
-		serverThread.setTimeout((int) timeoutSpinner.getValue());
-		serverThread.setPollInterval((int) pollIntervalSpinner.getValue());
+		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
+		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
+		serverThread
+				.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, VJoyOutputThread.DEFAULT_POLL_INTERVAL));
 		serverThread.start();
 	}
 
