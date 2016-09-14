@@ -100,6 +100,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultFormatter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -1187,7 +1188,9 @@ public final class Main {
 
 		final JSpinner pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
-		pollIntervalSpinner.setEditor(new JSpinner.NumberEditor(pollIntervalSpinner, "#"));
+		final JSpinner.DefaultEditor pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner, "#");
+		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
 		pollIntervalSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -1221,7 +1224,9 @@ public final class Main {
 
 			final JSpinner vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
 					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
-			vJoyDeviceSpinner.setEditor(new JSpinner.NumberEditor(vJoyDeviceSpinner, "#"));
+			final JSpinner.DefaultEditor vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
+			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
 			vJoyDeviceSpinner.addChangeListener(new ChangeListener() {
 
 				@Override
@@ -1254,7 +1259,9 @@ public final class Main {
 
 		final JSpinner portSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT), 1024, 65535, 1));
-		portSpinner.setEditor(new JSpinner.NumberEditor(portSpinner, "#"));
+		final JSpinner.DefaultEditor portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
+		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		portSpinner.setEditor(portSpinnerEditor);
 		portSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -1273,7 +1280,9 @@ public final class Main {
 
 		final JSpinner timeoutSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
-		timeoutSpinner.setEditor(new JSpinner.NumberEditor(timeoutSpinner, "#"));
+		final JSpinner.DefaultEditor timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner, "#");
+		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		timeoutSpinner.setEditor(timeoutSpinnerEditor);
 		timeoutSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -1352,14 +1361,18 @@ public final class Main {
 
 				final JSpinner mumbleOverlayFpsSpinner = new JSpinner(
 						new SpinnerNumberModel(1000 / preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-								MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL), 1, 20, 1));
-				mumbleOverlayFpsSpinner.setEditor(new JSpinner.NumberEditor(mumbleOverlayFpsSpinner, "#"));
+								MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL), 1, 60, 1));
+				final JSpinner.DefaultEditor mumbleOverlayFpsSpinnerEditor = new JSpinner.NumberEditor(
+						mumbleOverlayFpsSpinner, "#");
+				((DefaultFormatter) mumbleOverlayFpsSpinnerEditor.getTextField().getFormatter())
+						.setCommitsOnValidEdit(true);
+				mumbleOverlayFpsSpinner.setEditor(mumbleOverlayFpsSpinnerEditor);
 				mumbleOverlayFpsSpinner.addChangeListener(new ChangeListener() {
 
 					@Override
 					public void stateChanged(ChangeEvent e) {
 						preferences.putInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-								1000 / (int) ((JSpinner) e.getSource()).getValue());
+								(int) Math.ceil(1000.0 / (int) ((JSpinner) e.getSource()).getValue()));
 					}
 				});
 				mumbleOverlayFpsPanel.add(mumbleOverlayFpsSpinner);
@@ -1661,9 +1674,9 @@ public final class Main {
 
 							@Override
 							public void run() {
-								final int interval = 1000
-										/ preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-												MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL);
+								final int interval = preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
+										MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL);
+
 								while (mumbleOverlayActive) {
 									QCoreApplication.invokeLater(new Runnable() {
 
