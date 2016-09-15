@@ -22,6 +22,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
 
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -34,6 +38,7 @@ import com.trolltech.qt.network.QLocalSocket;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.mumbleoverlay.message.OverlayMsgHeader;
+import net.brockmatt.util.ResourceBundleUtil;
 
 public class MumbleOverlay extends QObject {
 
@@ -67,33 +72,16 @@ public class MumbleOverlay extends QObject {
 	}
 
 	private final Main main;
-	private final HANDLE processHandle;
+	private HANDLE processHandle;
 	private final QProcess helper32Process = new QProcess(this);
 	private final QProcess helper64Process = new QProcess(this);
 	private final QLocalServer localServer = new QLocalServer(this);
-
 	private final List<MumbleOverlayClient> clients = new ArrayList<MumbleOverlayClient>();
+	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
 
-	public MumbleOverlay(Main main) throws Exception {
+	public MumbleOverlay(Main main) {
 		this.main = main;
-
-		final HANDLE currentProcess = Kernel32.INSTANCE.GetCurrentProcess();
-		final HANDLEByReference processHandleRef = new HANDLEByReference();
-		if (!Kernel32.INSTANCE.DuplicateHandle(currentProcess, currentProcess, currentProcess, processHandleRef, 0,
-				true, DUPLICATE_SAME_ACCESS))
-			throw new Exception(getClass().getName() + ": Unable to duplicate handle to the Mumble process.");
-		processHandle = processHandleRef.getValue();
-
-		localServer.newConnection.connect(this, "newConnection()");
-		helper32Process.finished.connect(this, "onHelperProcessExited()");
-		helper64Process.finished.connect(this, "onHelperProcessExited()");
-
-		if (!localServer.listen(PIPE_NAME))
-			throw new Exception(getClass().getName() + ": Failed to create communication with overlay at " + PIPE_NAME
-					+ ": " + localServer.errorString());
-
-		startHelper(helper32Process);
-		startHelper(helper64Process);
 	}
 
 	public void deInit() {
@@ -135,6 +123,47 @@ public class MumbleOverlay extends QObject {
 			if (c.isDirty())
 				return true;
 		}
+
+		return false;
+	}
+
+	public boolean init() throws Exception {
+		final QLocalSocket localSocket = new QLocalSocket(this);
+		localSocket.connectToServer(PIPE_NAME);
+		final boolean pipeExists = localSocket.isValid();
+		localSocket.disconnectFromServer();
+
+		if (!pipeExists) {
+			final HANDLE currentProcess = Kernel32.INSTANCE.GetCurrentProcess();
+			final HANDLEByReference processHandleRef = new HANDLEByReference();
+
+			if (Kernel32.INSTANCE.DuplicateHandle(currentProcess, currentProcess, currentProcess, processHandleRef, 0,
+					true, DUPLICATE_SAME_ACCESS)) {
+				processHandle = processHandleRef.getValue();
+
+				if (localServer.listen(PIPE_NAME)) {
+					localServer.newConnection.connect(this, "newConnection()");
+
+					try {
+						startHelper(helper32Process);
+						startHelper(helper64Process);
+
+						return true;
+					} catch (final Exception e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(main.getFrame(),
+								rb.getString("COULD_NOT_LAUNCH_THE_MUMBLE_OVERLAY_DIALOG_TEXT"),
+								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					}
+				} else
+					throw new Exception(getClass().getName() + ": Failed to establish communication with overlay via "
+							+ PIPE_NAME + ": " + localServer.errorString());
+			} else
+				throw new Exception(getClass().getName() + ": Unable to duplicate Mumble process handle.");
+		} else
+			JOptionPane.showMessageDialog(main.getFrame(),
+					rb.getString("CANNOT_INITIALIZE_THE_MUMBLE_OVERLAY_DIALOG_TEXT"),
+					rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 
 		return false;
 	}
@@ -199,11 +228,13 @@ public class MumbleOverlay extends QObject {
 			args.add(Integer.toString(Integer.decode(processHandle.toString().substring(7))));
 
 			final boolean x64;
-			if (helper == helper32Process)
+			if (helper == helper32Process) {
+				helper32Process.finished.connect(this, "onHelperProcessExited()");
 				x64 = false;
-			else if (helper == helper64Process)
+			} else if (helper == helper64Process) {
+				helper64Process.finished.connect(this, "onHelperProcessExited()");
 				x64 = true;
-			else
+			} else
 				throw new Exception(getClass().getName() + ": Invalid helper passed to startHelper().");
 
 			final String helperFilePath = getMumbleHelperFilePath(main.getPreferences()

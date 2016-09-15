@@ -1657,68 +1657,76 @@ public final class Main {
 		overlayFrame.setVisible(true);
 
 		if (mumbleOverlayEnabled) {
-			mumbleOverlayActive = true;
 			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
+					QCoreApplication.initialize(new String[0]);
+
+					final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
+
 					try {
-						QCoreApplication.initialize(new String[0]);
+						if (mumbleOverlay.init()) {
+							final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
+									overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+							final Graphics2D graphics = bufferedImage.createGraphics();
 
-						final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
-						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
-								overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-						final Graphics2D graphics = bufferedImage.createGraphics();
+							mumbleOverlayActive = true;
 
-						new Thread(new Runnable() {
+							new Thread(new Runnable() {
 
-							@Override
-							public void run() {
-								final int interval = (int) Math
-										.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
-												MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
+								@Override
+								public void run() {
+									final int interval = (int) Math
+											.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
+													MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
 
-								while (mumbleOverlayActive) {
+									while (mumbleOverlayActive) {
+										QCoreApplication.invokeLater(new Runnable() {
+
+											@Override
+											public void run() {
+												if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
+													overlayFrame.print(graphics);
+													mumbleOverlay.render(bufferedImage);
+													mumbleOverlayRedraw = false;
+												}
+											}
+										});
+
+										try {
+											Thread.sleep(interval);
+										} catch (final InterruptedException e) {
+											e.printStackTrace();
+										}
+
+									}
+									graphics.dispose();
 									QCoreApplication.invokeLater(new Runnable() {
 
 										@Override
 										public void run() {
-											if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
-												overlayFrame.print(graphics);
-												mumbleOverlay.render(bufferedImage);
-												mumbleOverlayRedraw = false;
-											}
+											if (mumbleOverlay != null)
+												mumbleOverlay.deInit();
+
+											QCoreApplication.exit();
 										}
 									});
-
-									try {
-										Thread.sleep(interval);
-									} catch (final InterruptedException e) {
-										e.printStackTrace();
-									}
-
 								}
-								graphics.dispose();
-								QCoreApplication.invokeLater(new Runnable() {
+							}).start();
 
-									@Override
-									public void run() {
-										if (mumbleOverlay != null)
-											mumbleOverlay.deInit();
-
-										QCoreApplication.exit();
-									}
-								});
-							}
-						}).start();
+							QCoreApplication.instance().exec();
+						}
 					} catch (final Exception e) {
 						e.printStackTrace();
-						JOptionPane.showMessageDialog(Main.this.getFrame(),
-								rb.getString("COULD_NOT_INITIALIZE_MUMBLE_OVERLAY_DIALOG_TEXT"),
-								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(getFrame(),
+								rb.getString("MUMBLE_OVERLAY_GENERAL_INITIALIZATION_ERROR_DIALOG_TEXT"),
+								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					} finally {
+						final QCoreApplication app = QCoreApplication.instance();
+						if (app != null)
+							app.dispose();
 					}
-
-					QCoreApplication.instance().exec();
 				}
 			}).start();
 		}

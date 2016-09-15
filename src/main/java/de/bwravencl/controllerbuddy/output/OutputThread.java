@@ -35,7 +35,6 @@ public abstract class OutputThread extends Thread {
 	protected int minAxisValue;
 	protected int maxAxisValue;
 	protected int nButtons;
-
 	protected final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
