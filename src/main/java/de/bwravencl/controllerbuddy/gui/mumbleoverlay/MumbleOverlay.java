@@ -37,7 +37,7 @@ import de.bwravencl.controllerbuddy.gui.mumbleoverlay.message.OverlayMsgHeader;
 
 public class MumbleOverlay extends QObject {
 
-	public static final int DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL = 125;
+	public static final double DEFAULT_MUMBLE_OVERLAY_FPS = 8.0f;
 	private static final int DUPLICATE_SAME_ACCESS = 0x02;
 	private static final String PIPE_NAME = "MumbleOverlayPipe";
 	private static final String HELPER_32_BINARY = "mumble_ol_helper.exe";

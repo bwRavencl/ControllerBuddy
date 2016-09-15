@@ -794,7 +794,7 @@ public final class Main {
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
 	private static final String PREFERENCES_USE_MUMBLE_OVERLAY = "use_mumble_overlay";
 	public static final String PREFERENCES_MUMBLE_DIRECTORY = "mumble_directory";
-	private static final String PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL = "mumble_overlay_update_intervall";
+	private static final String PREFERENCES_MUMBLE_OVERLAY_FPS = "mumble_overlay_fps";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
@@ -1359,9 +1359,9 @@ public final class Main {
 				mumbleOverlayFpsLabel.setPreferredSize(new Dimension(120, 15));
 				mumbleOverlayFpsPanel.add(mumbleOverlayFpsLabel);
 
-				final JSpinner mumbleOverlayFpsSpinner = new JSpinner(
-						new SpinnerNumberModel(1000 / preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-								MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL), 1, 60, 1));
+				final JSpinner mumbleOverlayFpsSpinner = new JSpinner(new SpinnerNumberModel(
+						preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS, MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS),
+						1.0, 60.0, 1.0));
 				final JSpinner.DefaultEditor mumbleOverlayFpsSpinnerEditor = new JSpinner.NumberEditor(
 						mumbleOverlayFpsSpinner, "#");
 				((DefaultFormatter) mumbleOverlayFpsSpinnerEditor.getTextField().getFormatter())
@@ -1371,8 +1371,8 @@ public final class Main {
 
 					@Override
 					public void stateChanged(ChangeEvent e) {
-						preferences.putInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-								(int) Math.ceil(1000.0 / (int) ((JSpinner) e.getSource()).getValue()));
+						preferences.putDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
+								(double) ((JSpinner) e.getSource()).getValue());
 					}
 				});
 				mumbleOverlayFpsPanel.add(mumbleOverlayFpsSpinner);
@@ -1674,8 +1674,9 @@ public final class Main {
 
 							@Override
 							public void run() {
-								final int interval = preferences.getInt(PREFERENCES_MUMBLE_OVERLAY_UPDATE_INTERVAL,
-										MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_UPDATE_INTERVAL);
+								final int interval = (int) Math
+										.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
+												MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
 
 								while (mumbleOverlayActive) {
 									QCoreApplication.invokeLater(new Runnable() {
