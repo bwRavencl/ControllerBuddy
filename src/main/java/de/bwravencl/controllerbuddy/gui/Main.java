@@ -1642,7 +1642,7 @@ public final class Main {
 				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
 				progressBar.setPreferredSize(new Dimension(21, 149));
 				progressBar.setBorder(
-						BorderFactory.createDashedBorder(Color.black, (float) progressBar.getPreferredSize().getWidth(),
+						BorderFactory.createDashedBorder(Color.BLACK, (float) progressBar.getPreferredSize().getWidth(),
 								(float) progressBar.getPreferredSize().getWidth()));
 				progressBar.setBackground(Color.LIGHT_GRAY);
 				progressBar.setForeground(virtualAxisToColorMap.get(va));
