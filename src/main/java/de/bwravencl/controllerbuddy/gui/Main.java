@@ -873,7 +873,7 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
-		if (overlayFrame.isAlwaysOnTop()) {
+		if (overlayFrame != null && overlayFrame.isAlwaysOnTop()) {
 			overlayFrame.setAlwaysOnTop(false);
 			overlayFrame.setAlwaysOnTop(true);
 		}
