@@ -1310,10 +1310,7 @@ public final class Main {
 					final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
-
-					setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
-					setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
-					setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
+					updateOverlaySettings();
 				}
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
@@ -1981,6 +1978,7 @@ public final class Main {
 	public void stopLocal(boolean resetLastOutputType) {
 		if (localThread != null)
 			localThread.stopOutput();
+
 		stopLocalRadioButtonMenuItem.setSelected(true);
 		stopLocalRadioButtonMenuItem.setEnabled(false);
 		startLocalRadioButtonMenuItem.setEnabled(true);
@@ -1990,6 +1988,8 @@ public final class Main {
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
 		setEnabledRecursive(settingsPanel, true);
+		updateOverlaySettings();
+
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
@@ -1999,17 +1999,22 @@ public final class Main {
 	public void stopServer(boolean resetLastOutputType) {
 		if (serverThread != null)
 			serverThread.stopOutput();
+
 		stopServerRadioButtonMenuItem.setSelected(true);
 		stopServerRadioButtonMenuItem.setEnabled(false);
+
 		if (isWindows()) {
 			startLocalRadioButtonMenuItem.setEnabled(true);
 			startClientRadioButtonMenuItem.setEnabled(true);
 		}
+
 		startServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
 		setEnabledRecursive(settingsPanel, true);
+		updateOverlaySettings();
+
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 	}
@@ -2106,6 +2111,14 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
+	}
+
+	private void updateOverlaySettings() {
+		final boolean showOverlay = preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true);
+
+		setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
+		setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
+		setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
 	}
 
 }
