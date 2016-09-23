@@ -64,7 +64,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		return super.clone();
 	}
 
-	private boolean componentNotUsedByActiveMode(Input input) {
+	private boolean componentNotUsedByActiveModes(Input input) {
 		final Profile profile = Input.getProfile();
 
 		Component component = null;
@@ -81,12 +81,16 @@ public class ButtonToModeAction implements IButtonToAction {
 		}
 
 		if (component != null) {
-			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
-			final List<IAction> actions = componentToActionMap.get(component.getName());
+			for (final ButtonToModeAction a : buttonToModeActionStack) {
+				final Map<String, List<IAction>> componentToActionMap = a.getMode().getComponentToActionsMap();
+				final List<IAction> actions = componentToActionMap.get(component.getName());
 
-			return actions == null;
-		} else
-			return true;
+				if (actions != null)
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 	private void deactivateMode(Input input, Profile profile) {
@@ -142,12 +146,12 @@ public class ButtonToModeAction implements IButtonToAction {
 				if (up) {
 					if (profile.getActiveMode().getUuid().equals(modeUuid))
 						deactivateMode(input, profile);
-					else if (Profile.isDefaultMode(profile.getActiveMode()) || (componentNotUsedByActiveMode(input)))
+					else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
 						activateMode(profile);
 
 					up = false;
 				}
-			} else if (Profile.isDefaultMode(profile.getActiveMode()) || (componentNotUsedByActiveMode(input)))
+			} else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
 				activateMode(profile);
 		}
 	}
