@@ -45,6 +45,9 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 
 public abstract class VJoyOutputThread extends OutputThread {
 
@@ -329,7 +332,33 @@ public abstract class VJoyOutputThread extends OutputThread {
 			for (final VirtualAxis va : VirtualAxis.values())
 				input.setAxis(va, 0.0f);
 
-			setnButtons(vJoy.GetVJDButtonNumber(vJoyDevice));
+			final int nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
+			int maxButtonId = -1;
+			for (final Mode m : Input.getProfile().getModes()) {
+				for (final List<IAction> actions : m.getComponentToActionsMap().values()) {
+					for (final IAction a : actions) {
+						if (a instanceof ToButtonAction) {
+							final ToButtonAction toButtonAction = (ToButtonAction) a;
+							final int buttonId = toButtonAction.getButtonId();
+							if (buttonId > maxButtonId)
+								maxButtonId = buttonId;
+						}
+					}
+				}
+			}
+			final int requiredButtons = maxButtonId + 1;
+
+			if (nButtons < requiredButtons) {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("TOO_FEW_BUTTONS_DIALOG_TEXT_PART_1") + vJoyDevice.toString()
+								+ rb.getString("TOO_FEW_BUTTONS_DIALOG_TEXT_PART_2") + nButtons
+								+ rb.getString("TOO_FEW_BUTTONS_DIALOG_TEXT_PART_3") + requiredButtons
+								+ rb.getString("TOO_FEW_BUTTONS_DIALOG_TEXT_PART_4"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+
+			setnButtons(nButtons);
 
 			main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
 			return true;
