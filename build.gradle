@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.stehno.natives' version '0.2.4'
+    id 'com.stehno.natives' version '0.3.0'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
@@ -70,30 +70,26 @@ dependencies {
 }
 
 natives {
-    jars = [
-        'jinput-platform-2.0.6-natives-windows',
-        'jinput-platform-2.0.6-natives-osx',
-        'jinput-platform-2.0.6-natives-linux'
-    ]
+    libraries {
+        include = ['jinput-dx8.dll', 'jinput-dx8_64.dll', 'jinput-raw.dll', 'jinput-raw_64.dll', 'jinput-wintab.dll', 'libjinput-linux.so', 'libjinput-linux64.so', 'libjinput-osx.jnilib']
+    }
 }
 
 run {
-    dependsOn unpackNatives
-    systemProperty 'java.library.path', "$buildDir/natives/windows${File.pathSeparatorChar}$buildDir/natives/osx${File.pathSeparatorChar}$buildDir/natives/linux"
+    dependsOn includeNatives
+    systemProperty 'java.library.path', "$buildDir/natives"
 }
 
 task capsule(type: FatCapsule){
-    dependsOn unpackNatives
+    dependsOn includeNatives
     applicationClass 'de.bwravencl.controllerbuddy.gui.Main'
     baseName 'ControllerBuddy'
-    from fileTree(dir: "$buildDir/natives/windows", includes: ['*.dll'])
-    from fileTree(dir: "$buildDir/natives/osx", includes: ['*.jnilib'])
-    from fileTree(dir: "$buildDir/natives/linux", includes: ['*.so'])
+    from fileTree(dir: "$buildDir/natives", includes: ['*.dll', '*.jnilib', '*.so'])
 }
 
 apply plugin: 'eclipse'
 
-tasks.eclipse.dependsOn generateVersion, unpackNatives
+tasks.eclipse.dependsOn generateVersion, includeNatives
 
 eclipse {
     classpath {
@@ -107,8 +103,8 @@ eclipse.classpath { containers "org.springsource.ide.eclipse.gradle.classpathcon
 eclipse.classpath.file {
     withXml { xml ->
         def node = xml.asNode()
-        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-windows.jar') }.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/windows"])
-        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-osx.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/osx"])
-        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-linux.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives/linux"])
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-windows.jar') }.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-osx.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+        node.find { it.@path.endsWith('jinput-platform-2.0.6-natives-linux.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
     }
 }
