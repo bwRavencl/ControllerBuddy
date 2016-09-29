@@ -52,10 +52,10 @@ public class ButtonToModeAction implements IButtonToAction {
 			modeUuid = modes.get(1).getUuid();
 	}
 
-	private void activateMode(Profile profile) {
+	private void activateMode(Input input, Profile profile) {
 		if (!buttonToModeActionStack.contains(this)) {
 			buttonToModeActionStack.push(this);
-			profile.setActiveMode(modeUuid);
+			profile.setActiveMode(input, modeUuid);
 		}
 	}
 
@@ -126,7 +126,7 @@ public class ButtonToModeAction implements IButtonToAction {
 				}
 			}
 
-			profile.setActiveMode(previousMode.getUuid());
+			profile.setActiveMode(input, previousMode.getUuid());
 			input.getDownKeyStrokes().clear();
 		}
 	}
@@ -147,12 +147,12 @@ public class ButtonToModeAction implements IButtonToAction {
 					if (profile.getActiveMode().getUuid().equals(modeUuid))
 						deactivateMode(input, profile);
 					else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
-						activateMode(profile);
+						activateMode(input, profile);
 
 					up = false;
 				}
 			} else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
-				activateMode(profile);
+				activateMode(input, profile);
 		}
 	}
 

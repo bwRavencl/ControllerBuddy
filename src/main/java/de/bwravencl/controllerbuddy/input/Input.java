@@ -343,7 +343,7 @@ public class Input {
 	}
 
 	public void reset() {
-		profile.setActiveMode(0);
+		profile.setActiveMode(this, 0);
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 
 		for (final Mode m : profile.getModes()) {

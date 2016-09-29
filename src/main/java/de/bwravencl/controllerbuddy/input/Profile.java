@@ -28,7 +28,10 @@ import java.util.UUID;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import net.brockmatt.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
@@ -123,17 +126,32 @@ public class Profile implements Cloneable {
 		modes.remove(mode);
 	}
 
-	public void setActiveMode(int index) {
+	public void setActiveMode(Input input, int index) {
 		if (modes.size() > index) {
+			final Mode newMode = modes.get(index);
+
+			for (final String c : newMode.getComponentToActionsMap().keySet()) {
+				final Map<String, List<IAction>> currentComponentToActionsMap = getActiveMode()
+						.getComponentToActionsMap();
+				if (currentComponentToActionsMap.containsKey(c)) {
+					for (final IAction a : currentComponentToActionsMap.get(c)) {
+						if (a instanceof AxisToAxisAction && !(a instanceof AxisToRelativeAxisAction)) {
+							final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) a;
+							input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f);
+						}
+					}
+				}
+			}
+
 			activeModeIndex = index;
-			Main.setOverlayText(modes.get(index).getDescription());
+			Main.setOverlayText(newMode.getDescription());
 		}
 	}
 
-	public void setActiveMode(UUID modeUuid) {
+	public void setActiveMode(Input input, UUID modeUuid) {
 		for (final Mode m : modes) {
 			if (m.getUuid().equals(modeUuid)) {
-				setActiveMode(modes.indexOf(m));
+				setActiveMode(input, modes.indexOf(m));
 				break;
 			}
 		}
