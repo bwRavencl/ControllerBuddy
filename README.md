@@ -77,7 +77,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
  - vJoy 2.1.6 (http://vjoystick.sourceforge.net)
 - Requirements for fullscreen overlay:
  - 64-bit Windows
- - Visual C++ Redistributable Packages für Visual Studio 2013 (https://www.microsoft.com/de-de/download/details.aspx?id=40784)
+ - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
  - Mumble 1.3.x (https://mumble.info)
 
 #####Building:
