@@ -415,9 +415,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 					doMouseButtonInput(b, false);
 				}
 
-				for (final int e : onLockKeys)
-					setLockKeyState(e, true);
-
 				for (final int e : offLockKeys)
 					setLockKeyState(e, false);
 
@@ -432,6 +429,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 				for (final int c : newDownNormalKeys)
 					doKeyboardInput(c, true);
+
+				for (final int e : onLockKeys)
+					setLockKeyState(e, true);
 
 				for (final KeyStroke ks : downUpKeyStrokes) {
 					for (final int c : ks.getModifierCodes())
