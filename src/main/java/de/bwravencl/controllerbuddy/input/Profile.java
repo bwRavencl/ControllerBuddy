@@ -130,14 +130,16 @@ public class Profile implements Cloneable {
 		if (modes.size() > index) {
 			final Mode newMode = modes.get(index);
 
-			for (final String c : newMode.getComponentToActionsMap().keySet()) {
-				final Map<String, List<IAction>> currentComponentToActionsMap = getActiveMode()
-						.getComponentToActionsMap();
-				if (currentComponentToActionsMap.containsKey(c)) {
-					for (final IAction a : currentComponentToActionsMap.get(c)) {
-						if (a instanceof AxisToAxisAction && !(a instanceof AxisToRelativeAxisAction)) {
-							final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) a;
-							input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f);
+			if (input.getOutputThread() != null) {
+				for (final String c : newMode.getComponentToActionsMap().keySet()) {
+					final Map<String, List<IAction>> currentComponentToActionsMap = getActiveMode()
+							.getComponentToActionsMap();
+					if (currentComponentToActionsMap.containsKey(c)) {
+						for (final IAction a : currentComponentToActionsMap.get(c)) {
+							if (a instanceof AxisToAxisAction && !(a instanceof AxisToRelativeAxisAction)) {
+								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) a;
+								input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f);
+							}
 						}
 					}
 				}
