@@ -809,7 +809,7 @@ public final class Main {
 	private static ServerOutputThread serverThread;
 	private static Dimension prevScreenSize;
 	private static boolean mumbleOverlayActive;
-	private static boolean mumbleOverlayRedraw;
+	private static Boolean mumbleOverlayRedraw;
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -1658,6 +1658,13 @@ public final class Main {
 
 				@Override
 				public void run() {
+					while (QCoreApplication.instance() != null) {
+						try {
+							Thread.sleep(100L);
+						} catch (final InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 					QCoreApplication.initialize(new String[0]);
 
 					final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
@@ -1683,10 +1690,12 @@ public final class Main {
 
 											@Override
 											public void run() {
-												if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
-													overlayFrame.print(graphics);
-													mumbleOverlay.render(bufferedImage);
-													mumbleOverlayRedraw = false;
+												synchronized (mumbleOverlayRedraw) {
+													if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
+														overlayFrame.print(graphics);
+														mumbleOverlay.render(bufferedImage);
+														mumbleOverlayRedraw = false;
+													}
 												}
 											}
 										});
