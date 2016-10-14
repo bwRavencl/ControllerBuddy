@@ -1622,12 +1622,12 @@ public final class Main {
 		if (overlayFrame == null) {
 			overlayFrame = new JFrame();
 			overlayFrame.setLayout(new BorderLayout());
-			overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
 			overlayFrame.setBackground(new Color(255, 255, 255, 0));
 			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		}
+		overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);
 
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
