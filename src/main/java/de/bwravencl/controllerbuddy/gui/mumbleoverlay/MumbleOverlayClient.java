@@ -185,6 +185,8 @@ public class MumbleOverlayClient extends QObject {
 	}
 
 	public void render(int x, int y, int w, int h) {
+		dirty = true;
+
 		if (lastFpsMessage == 0L || System.currentTimeMillis() - lastFpsMessage < 300L) {
 			final OverlayMsgActive messagePart = new OverlayMsgActive(x, y, w, h);
 			final OverlayMsgHeader headerPart = new OverlayMsgHeader(messagePart.getSize(),
