@@ -120,7 +120,7 @@ public class ButtonToModeAction implements IButtonToAction {
 					if (defaultComponentToActionsMap.containsKey(c)) {
 						for (final IAction a : defaultComponentToActionsMap.get(c)) {
 							if (a instanceof ISuspendableAction)
-								((ISuspendableAction) a).suspend();
+								((ISuspendableAction) a).suspend(c);
 						}
 					}
 				}

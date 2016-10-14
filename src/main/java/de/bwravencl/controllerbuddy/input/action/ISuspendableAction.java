@@ -17,30 +17,30 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-interface ISuspendableAction extends IAction {
+public interface ISuspendableAction extends IAction {
 
 	static final long SUSPEND_TIME = 500L;
 
-	static final Set<ISuspendableAction> suspendedActions = ConcurrentHashMap.newKeySet();
+	static final Map<ISuspendableAction, String> componentToSuspendedActionsMap = new ConcurrentHashMap<>();
 
 	default boolean isSuspended() {
-		return suspendedActions.contains(this);
+		return componentToSuspendedActionsMap.containsKey(this);
 	}
 
-	default void suspend() {
-		suspendedActions.remove(this);
-		suspendedActions.add(this);
+	default void suspend(String componentName) {
+		componentToSuspendedActionsMap.remove(this);
+		componentToSuspendedActionsMap.put(this, componentName);
 
 		new Timer().schedule(new TimerTask() {
 
 			@Override
 			public void run() {
-				suspendedActions.remove(ISuspendableAction.this);
+				componentToSuspendedActionsMap.remove(ISuspendableAction.this);
 			}
 
 		}, SUSPEND_TIME);

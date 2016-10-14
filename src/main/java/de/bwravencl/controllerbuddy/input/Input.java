@@ -25,8 +25,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.sun.jna.Function;
@@ -36,10 +38,12 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
+import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.input.xinput.XInputState;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import net.java.games.input.AbstractComponent;
@@ -112,6 +116,8 @@ public class Input {
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
+
+	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 
 	private static final String XBOX_360_CONTROLLER_NAME = "XBOX 360 For Windows (Controller)";
 
@@ -318,10 +324,21 @@ public class Input {
 			return false;
 
 		for (final Component c : getComponents(controller)) {
+			final float pollData = c.getPollData();
+
+			if (Math.abs(pollData) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
+				final Iterator<Entry<ISuspendableAction, String>> it = AxisToAxisAction.componentToSuspendedActionsMap
+						.entrySet().iterator();
+				while (it.hasNext()) {
+					if (c.getName().equals(it.next().getValue()))
+						it.remove();
+				}
+			}
+
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
 			if (buttonToModeActions != null) {
 				for (final ButtonToModeAction a : buttonToModeActions)
-					a.doAction(this, c.getPollData());
+					a.doAction(this, pollData);
 			}
 
 			final List<Mode> modes = profile.getModes();
@@ -333,7 +350,7 @@ public class Input {
 
 			if (actions != null) {
 				for (final IAction a : actions)
-					a.doAction(this, c.getPollData());
+					a.doAction(this, pollData);
 			}
 		}
 

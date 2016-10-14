@@ -277,30 +277,30 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final boolean hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
 			if (!(hasAxisX && hasAxisY && hasAxisZ && hasAxisRX && hasAxisRY && hasAxisRZ && hasAxisSL0
 					&& hasAxisSL1)) {
-				final List<String> missingAxis = new ArrayList<String>();
+				final List<String> missingAxes = new ArrayList<String>();
 				if (!hasAxisX)
-					missingAxis.add("X");
+					missingAxes.add("X");
 				if (!hasAxisY)
-					missingAxis.add("Y");
+					missingAxes.add("Y");
 				if (!hasAxisZ)
-					missingAxis.add("Z");
+					missingAxes.add("Z");
 				if (!hasAxisRX)
-					missingAxis.add("Rx");
+					missingAxes.add("Rx");
 				if (!hasAxisRY)
-					missingAxis.add("Ry");
+					missingAxes.add("Ry");
 				if (!hasAxisRZ)
-					missingAxis.add("Rz");
+					missingAxes.add("Rz");
 				if (!hasAxisSL0)
-					missingAxis.add("Slider");
+					missingAxes.add("Slider");
 				if (!hasAxisSL1)
-					missingAxis.add("Dial/Slider2");
+					missingAxes.add("Dial/Slider2");
 
-				final String missingAxisString = missingAxis.toString().replace("[", "").replace("]", "");
+				final String missingAxesString = missingAxes.toString().replace("[", "").replace("]", "");
 
 				JOptionPane.showMessageDialog(main.getFrame(),
-						rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_1") + vJoyDevice.toString()
-								+ rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_2") + missingAxisString
-								+ rb.getString("MISSING_AXIS_DIALOG_TEXT_PART_3"),
+						rb.getString("MISSING_AXES_DIALOG_TEXT_PART_1") + vJoyDevice.toString()
+								+ rb.getString("MISSING_AXES_DIALOG_TEXT_PART_2") + missingAxesString
+								+ rb.getString("MISSING_AXES_DIALOG_TEXT_PART_3"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
