@@ -33,7 +33,7 @@ public class Mode implements Cloneable {
 
 	private UUID uuid;
 	private String description;
-	private Map<String, List<IAction>> componentToActionsMap = new HashMap<String, List<IAction>>();
+	private Map<String, List<IAction>> componentToActionsMap = new HashMap<>();
 
 	public Mode() {
 		uuid = UUID.randomUUID();
@@ -51,14 +51,14 @@ public class Mode implements Cloneable {
 		final Mode mode = new Mode(uuid.toString());
 		mode.setDescription(new String(description));
 
-		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<String, List<IAction>>();
+		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<>();
 		for (final Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet()) {
 			for (final IAction a : e.getValue()) {
 				final String key = new String(e.getKey());
 
 				List<IAction> actions = clonedComponentToActionMap.get(key);
 				if (actions == null) {
-					actions = new ArrayList<IAction>();
+					actions = new ArrayList<>();
 					clonedComponentToActionMap.put(key, actions);
 				}
 

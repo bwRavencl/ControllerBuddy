@@ -31,8 +31,8 @@ public interface IButtonToAction extends IAction {
 	static final long MIN_LONG_PRESS_TIME = 1000L;
 	static final boolean DEFAULT_LONG_PRESS = false;
 	static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
-	static final Set<IButtonToAction> actionToWasDown = new HashSet<IButtonToAction>();
-	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<IButtonToAction, Long>();
+	static final Set<IButtonToAction> actionToWasDown = new HashSet<>();
+	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
 	static boolean isDownUpAction(IAction action) {
 		if (action instanceof ToKeyAction) {

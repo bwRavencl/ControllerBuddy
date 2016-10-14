@@ -42,10 +42,10 @@ public class Profile implements Cloneable {
 		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
 	}
 
-	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
-	private List<Mode> modes = new ArrayList<Mode>();
+	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<>();
+	private List<Mode> modes = new ArrayList<>();
 	private int activeModeIndex = 0;
-	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
+	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<>();
 
 	public Profile() {
 		final Mode defaultMode = new Mode(DEFAULT_MODE_UUID_STRING);
@@ -59,9 +59,9 @@ public class Profile implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		final Profile profile = new Profile();
 
-		final Map<String, List<ButtonToModeAction>> clonedComponentToModeActionMap = new HashMap<String, List<ButtonToModeAction>>();
+		final Map<String, List<ButtonToModeAction>> clonedComponentToModeActionMap = new HashMap<>();
 		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
-			final List<ButtonToModeAction> buttonToModeActions = new ArrayList<ButtonToModeAction>();
+			final List<ButtonToModeAction> buttonToModeActions = new ArrayList<>();
 			for (final ButtonToModeAction a : e.getValue()) {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) a.clone());
@@ -73,7 +73,7 @@ public class Profile implements Cloneable {
 		}
 		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
 
-		final List<Mode> clonedModes = new ArrayList<Mode>();
+		final List<Mode> clonedModes = new ArrayList<>();
 		for (final Mode p : modes) {
 			try {
 				clonedModes.add((Mode) p.clone());
@@ -83,7 +83,7 @@ public class Profile implements Cloneable {
 		}
 		profile.setModes(clonedModes);
 
-		final Map<VirtualAxis, Color> clonedVirtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
+		final Map<VirtualAxis, Color> clonedVirtualAxisToColorMap = new HashMap<>();
 		for (final Map.Entry<VirtualAxis, Color> e : virtualAxisToColorMap.entrySet()) {
 			final Color color = e.getValue();
 			clonedVirtualAxisToColorMap.put(e.getKey(),
@@ -111,7 +111,7 @@ public class Profile implements Cloneable {
 	}
 
 	public void removeMode(Mode mode) {
-		final List<String> actionsToRemove = new ArrayList<String>();
+		final List<String> actionsToRemove = new ArrayList<>();
 
 		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
 			for (final ButtonToModeAction a : e.getValue()) {

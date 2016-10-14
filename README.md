@@ -60,6 +60,9 @@ Physical Controller
  Target Application                 Target Application
 </pre>
 
+#####Example Screenshot:
+![Example Screenshot](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot.png)
+
 #####Command Line Parameters:
 <pre>
 usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]

@@ -76,7 +76,7 @@ public class MumbleOverlay extends QObject {
 	private final QProcess helper32Process = new QProcess(this);
 	private final QProcess helper64Process = new QProcess(this);
 	private final QLocalServer localServer = new QLocalServer(this);
-	private final List<MumbleOverlayClient> clients = new ArrayList<MumbleOverlayClient>();
+	private final List<MumbleOverlayClient> clients = new ArrayList<>();
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
@@ -223,7 +223,7 @@ public class MumbleOverlay extends QObject {
 
 	private void startHelper(QProcess helper) throws Exception {
 		if (helper.state().equals(QProcess.ProcessState.NotRunning)) {
-			final List<String> args = new ArrayList<String>(2);
+			final List<String> args = new ArrayList<>(2);
 			args.add(Integer.toString(OverlayMsgHeader.OVERLAY_MAGIC_NUMBER));
 			args.add(Integer.toString(Integer.decode(processHandle.toString().substring(7))));
 

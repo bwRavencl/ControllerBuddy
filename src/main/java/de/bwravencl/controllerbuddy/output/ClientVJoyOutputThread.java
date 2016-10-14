@@ -191,7 +191,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						cursorDeltaY = Integer.parseInt(messageParts[11 + nButtons]);
 
 						final int nDownMouseButtons = Integer.parseInt(messageParts[12 + nButtons]);
-						final Set<Integer> sourceDownMouseButtons = new HashSet<Integer>(nDownMouseButtons);
+						final Set<Integer> sourceDownMouseButtons = new HashSet<>(nDownMouseButtons);
 						for (int i = 1; i <= nDownMouseButtons; i++)
 							sourceDownMouseButtons.add(Integer.parseInt(messageParts[12 + nButtons + i]));
 						updateOutputSets(sourceDownMouseButtons, oldDownMouseButtons, newUpMouseButtons,
@@ -205,8 +205,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							downUpMouseButtons.add(b);
 						}
 
-						final Set<Integer> sourceModifiers = new HashSet<Integer>();
-						final Set<Integer> sourceNormalKeys = new HashSet<Integer>();
+						final Set<Integer> sourceModifiers = new HashSet<>();
+						final Set<Integer> sourceNormalKeys = new HashSet<>();
 						int nDownKeyStrokes = Integer
 								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
 						for (int i = 1; i <= nDownKeyStrokes; i++) {

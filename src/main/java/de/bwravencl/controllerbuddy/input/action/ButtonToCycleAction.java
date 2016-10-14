@@ -28,13 +28,13 @@ public class ButtonToCycleAction implements IButtonToAction {
 	private int index = 0;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
-	private List<IAction> actions = new ArrayList<IAction>();
+	private List<IAction> actions = new ArrayList<>();
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
 
-		final List<IAction> clonedActions = new ArrayList<IAction>();
+		final List<IAction> clonedActions = new ArrayList<>();
 		for (final IAction a : actions)
 			clonedActions.add((IAction) a.clone());
 		cycleAction.setActions(clonedActions);

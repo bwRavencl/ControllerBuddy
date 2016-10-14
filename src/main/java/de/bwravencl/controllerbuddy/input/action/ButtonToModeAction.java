@@ -31,7 +31,7 @@ import net.java.games.input.Component;
 
 public class ButtonToModeAction implements IButtonToAction {
 
-	private static final Deque<ButtonToModeAction> buttonToModeActionStack = new LinkedList<ButtonToModeAction>();
+	private static final Deque<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
 	public static Deque<ButtonToModeAction> getButtonToModeActionStack() {
 		return buttonToModeActionStack;

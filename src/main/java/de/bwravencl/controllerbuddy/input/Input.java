@@ -131,7 +131,7 @@ public class Input {
 
 	private static Profile profile;
 
-	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<VirtualAxis, Integer>(VirtualAxis.class);
+	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
 
 	public static EnumMap<VirtualAxis, Integer> getAxis() {
 		return axis;
@@ -144,7 +144,7 @@ public class Input {
 
 			if (Main.isWindows() && XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
 
-				final List<Controller> xbox360Controllers = new ArrayList<Controller>();
+				final List<Controller> xbox360Controllers = new ArrayList<>();
 				for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
 					if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
 						xbox360Controllers.add(c);
@@ -255,12 +255,12 @@ public class Input {
 	private int cursorDeltaX = 5;
 	private int cursorDeltaY = 5;
 	private int scrollClicks = 1;
-	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
-	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
-	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
-	private final Set<Integer> onLockKeys = new HashSet<Integer>();
-	private final Set<Integer> offLockKeys = new HashSet<Integer>();
+	private final Set<Integer> downMouseButtons = new HashSet<>();
+	private final Set<Integer> downUpMouseButtons = new HashSet<>();
+	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
+	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
+	private final Set<Integer> onLockKeys = new HashSet<>();
+	private final Set<Integer> offLockKeys = new HashSet<>();
 
 	public Input(Controller controller) {
 		this.controller = controller;

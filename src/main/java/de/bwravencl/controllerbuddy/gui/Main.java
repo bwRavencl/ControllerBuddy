@@ -800,7 +800,7 @@ public final class Main {
 			"/icon_128.png" };
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
-	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<VirtualAxis, JProgressBar>();
+	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private static JFrame overlayFrame;
 	private static JPanel indicatorPanel;
 	private final static JLabel labelCurrentMode = new JLabel();
@@ -1023,7 +1023,7 @@ public final class Main {
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
-		final List<Image> icons = new ArrayList<Image>();
+		final List<Image> icons = new ArrayList<>();
 		for (final String s : ICON_RESOURCE_PATHS) {
 			final ImageIcon icon = new ImageIcon(Main.class.getResource(s));
 			icons.add(icon.getImage());
@@ -1752,8 +1752,7 @@ public final class Main {
 
 		try {
 			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
-					.create();
+			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>()).create();
 
 			try {
 				final Profile profile = gson.fromJson(jsonString, Profile.class);
@@ -1824,7 +1823,7 @@ public final class Main {
 		if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
-		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<IAction>())
+		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>())
 				.setPrettyPrinting().create();
 		final String jsonString = gson.toJson(Input.getProfile());
 

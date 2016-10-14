@@ -140,7 +140,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected static void updateOutputSets(Set<Integer> sourceSet, Set<Integer> oldDownSet, Set<Integer> newUpSet,
 			Set<Integer> newDownSet, boolean keepStillDown) {
-		final Set<Integer> stillDownSet = new HashSet<Integer>();
+		final Set<Integer> stillDownSet = new HashSet<>();
 
 		newUpSet.clear();
 		for (final int o : oldDownSet) {
@@ -199,19 +199,19 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected int cursorDeltaX;
 	protected int cursorDeltaY;
 	protected int scrollClicks;
-	protected final Set<Integer> oldDownMouseButtons = new HashSet<Integer>();
-	protected final Set<Integer> newUpMouseButtons = new HashSet<Integer>();
-	protected final Set<Integer> newDownMouseButtons = new HashSet<Integer>();
-	protected final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
-	protected final Set<Integer> oldDownModifiers = new HashSet<Integer>();
-	protected final Set<Integer> newUpModifiers = new HashSet<Integer>();
-	protected final Set<Integer> newDownModifiers = new HashSet<Integer>();
-	protected final Set<Integer> oldDownNormalKeys = new HashSet<Integer>();
-	protected final Set<Integer> newUpNormalKeys = new HashSet<Integer>();
-	protected final Set<Integer> newDownNormalKeys = new HashSet<Integer>();
-	protected final Set<Integer> onLockKeys = new HashSet<Integer>();
-	protected final Set<Integer> offLockKeys = new HashSet<Integer>();
-	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+	protected final Set<Integer> oldDownMouseButtons = new HashSet<>();
+	protected final Set<Integer> newUpMouseButtons = new HashSet<>();
+	protected final Set<Integer> newDownMouseButtons = new HashSet<>();
+	protected final Set<Integer> downUpMouseButtons = new HashSet<>();
+	protected final Set<Integer> oldDownModifiers = new HashSet<>();
+	protected final Set<Integer> newUpModifiers = new HashSet<>();
+	protected final Set<Integer> newDownModifiers = new HashSet<>();
+	protected final Set<Integer> oldDownNormalKeys = new HashSet<>();
+	protected final Set<Integer> newUpNormalKeys = new HashSet<>();
+	protected final Set<Integer> newDownNormalKeys = new HashSet<>();
+	protected final Set<Integer> onLockKeys = new HashSet<>();
+	protected final Set<Integer> offLockKeys = new HashSet<>();
+	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
 	public VJoyOutputThread(Main main, Input input) {
 		super(main, input);
@@ -277,7 +277,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final boolean hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
 			if (!(hasAxisX && hasAxisY && hasAxisZ && hasAxisRX && hasAxisRY && hasAxisRZ && hasAxisSL0
 					&& hasAxisSL1)) {
-				final List<String> missingAxes = new ArrayList<String>();
+				final List<String> missingAxes = new ArrayList<>();
 				if (!hasAxisX)
 					missingAxes.add("X");
 				if (!hasAxisY)

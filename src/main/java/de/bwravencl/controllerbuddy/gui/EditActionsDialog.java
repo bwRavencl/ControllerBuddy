@@ -98,8 +98,7 @@ public class EditActionsDialog extends JDialog {
 
 				if (action instanceof ButtonToModeAction) {
 					if (unsavedProfile.getComponentToModeActionMap().get(component.getName()) == null)
-						unsavedProfile.getComponentToModeActionMap().put(component.getName(),
-								new ArrayList<ButtonToModeAction>());
+						unsavedProfile.getComponentToModeActionMap().put(component.getName(), new ArrayList<>());
 
 					unsavedProfile.getComponentToModeActionMap().get(component.getName())
 							.add((ButtonToModeAction) action);
@@ -109,7 +108,7 @@ public class EditActionsDialog extends JDialog {
 						final String componentName = component.getName();
 
 						if (componentToActionMap.get(componentName) == null)
-							componentToActionMap.put(componentName, new ArrayList<IAction>());
+							componentToActionMap.put(componentName, new ArrayList<>());
 
 						componentToActionMap.get(componentName).add(action);
 					} else
@@ -273,7 +272,7 @@ public class EditActionsDialog extends JDialog {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			try {
-				final Set<Integer> scanCodes = new HashSet<Integer>();
+				final Set<Integer> scanCodes = new HashSet<>();
 
 				for (final Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
 					scanCodes.add(ScanCode.nameToScanCodeMap.get(o));
@@ -430,14 +429,14 @@ public class EditActionsDialog extends JDialog {
 	private Input input;
 	private Profile unsavedProfile;
 	private ButtonToCycleAction cycleAction;
-	private final List<IAction> cycleActions = new ArrayList<IAction>();
+	private final List<IAction> cycleActions = new ArrayList<>();
 	private Mode selectedMode;
 	private AvailableAction selectedAvailableAction;
 	private IAction selectedAssignedAction;
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
-	private final JList<AvailableAction> availableActionsList = new JList<AvailableAction>();
-	private final JList<IAction> assignedActionsList = new JList<IAction>();
+	private final JList<AvailableAction> availableActionsList = new JList<>();
+	private final JList<IAction> assignedActionsList = new JList<>();
 
 	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
 		this.cycleAction = cycleAction;
@@ -478,7 +477,7 @@ public class EditActionsDialog extends JDialog {
 
 			final List<Mode> modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
-			final JComboBox<Mode> modeComboBox = new JComboBox<Mode>(modes.toArray(new Mode[modes.size()]));
+			final JComboBox<Mode> modeComboBox = new JComboBox<>(modes.toArray(new Mode[modes.size()]));
 			modeComboBox.addActionListener(new AbstractAction() {
 
 				/**
@@ -513,7 +512,7 @@ public class EditActionsDialog extends JDialog {
 		else
 			assignedActions = cycleActions;
 
-		final List<IAction> clonedAssignedActions = new ArrayList<IAction>();
+		final List<IAction> clonedAssignedActions = new ArrayList<>();
 		if (assignedActions != null)
 			clonedAssignedActions.addAll(assignedActions);
 
@@ -718,7 +717,7 @@ public class EditActionsDialog extends JDialog {
 												spinner.setEnabled(false);
 											}
 										} else if (Mode.class == clazz) {
-											final JComboBox<Mode> comboBox = new JComboBox<Mode>();
+											final JComboBox<Mode> comboBox = new JComboBox<>();
 											for (final Mode p : Input.getProfile().getModes())
 												if (!Profile.isDefaultMode(p))
 													comboBox.addItem(p);
@@ -726,20 +725,18 @@ public class EditActionsDialog extends JDialog {
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
 										} else if (VirtualAxis.class == clazz) {
-											final JComboBox<VirtualAxis> comboBox = new JComboBox<VirtualAxis>(
+											final JComboBox<VirtualAxis> comboBox = new JComboBox<>(
 													VirtualAxis.values());
 											comboBox.setAction(new JComboBoxSetPropertyAction(m));
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
 										} else if (MouseAxis.class == clazz) {
-											final JComboBox<MouseAxis> comboBox = new JComboBox<MouseAxis>(
-													MouseAxis.values());
+											final JComboBox<MouseAxis> comboBox = new JComboBox<>(MouseAxis.values());
 											comboBox.setAction(new JComboBoxSetPropertyAction(m));
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
 										} else if (LockKey.class == clazz) {
-											final JComboBox<LockKey> comboBox = new JComboBox<LockKey>(
-													LockKey.LOCK_KEYS);
+											final JComboBox<LockKey> comboBox = new JComboBox<>(LockKey.LOCK_KEYS);
 											comboBox.setAction(new JComboBoxSetPropertyAction(m));
 											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 											propertyPanel.add(comboBox);
@@ -755,12 +752,12 @@ public class EditActionsDialog extends JDialog {
 											modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 											modifiersPanel.add(modifiersLabel);
 											modifiersPanel.add(Box.createVerticalStrut(5));
-											final JList<String> modifierList = new JList<String>(
+											final JList<String> modifierList = new JList<>(
 													availableScanCodes.toArray(new String[availableScanCodes.size()]));
 											modifierList.addListSelectionListener(
 													new JListSetPropertyListSelectionListener(m, keyStroke, true));
 
-											final List<String> addedModifiers = new ArrayList<String>();
+											final List<String> addedModifiers = new ArrayList<>();
 											for (final int c : keyStroke.getModifierCodes())
 												addedModifiers.add(ScanCode.scanCodeToNameMap.get(c));
 											for (final String s : addedModifiers) {
@@ -779,11 +776,11 @@ public class EditActionsDialog extends JDialog {
 											keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 											keysPanel.add(keysLabel);
 											keysPanel.add(Box.createVerticalStrut(5));
-											final JList<String> keyList = new JList<String>(
+											final JList<String> keyList = new JList<>(
 													availableScanCodes.toArray(new String[availableScanCodes.size()]));
 											keyList.addListSelectionListener(
 													new JListSetPropertyListSelectionListener(m, keyStroke, false));
-											final List<String> addedKeys = new ArrayList<String>();
+											final List<String> addedKeys = new ArrayList<>();
 											for (final int c : keyStroke.getKeyCodes())
 												addedKeys.add(ScanCode.scanCodeToNameMap.get(c));
 											for (final String s : addedKeys) {
@@ -855,7 +852,7 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private void updateAvailableActions() {
-		final List<AvailableAction> availableActions = new ArrayList<AvailableAction>();
+		final List<AvailableAction> availableActions = new ArrayList<>();
 
 		String[] actionClasses;
 		if (isComponentEditor()) {
