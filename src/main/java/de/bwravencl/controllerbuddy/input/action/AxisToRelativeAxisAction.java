@@ -26,11 +26,18 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
+	private transient long lastCallTime;
 
 	@Override
 	public void doAction(Input input, float value) {
+		final long currentTime = System.currentTimeMillis();
+		long elapsedTime = input.getOutputThread().getPollInterval();
+		if (lastCallTime > 0L)
+			elapsedTime = currentTime - lastCallTime;
+		lastCallTime = currentTime;
+
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) input.getOutputThread().getPollInterval() / (float) 1000L;
+			final float rateMultiplier = (float) elapsedTime / (float) 1000L;
 
 			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
 					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxRelativeSpeed,
