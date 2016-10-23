@@ -69,6 +69,10 @@ dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
 }
 
+jar {
+    exclude '**/de/bwravencl/controllerbuddy/extras'
+}
+
 natives {
     libraries {
         include = ['jinput-dx8.dll', 'jinput-dx8_64.dll', 'jinput-raw.dll', 'jinput-raw_64.dll', 'jinput-wintab.dll', 'libjinput-linux.so', 'libjinput-linux64.so', 'libjinput-osx.jnilib']

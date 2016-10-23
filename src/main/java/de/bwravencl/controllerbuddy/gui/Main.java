@@ -110,13 +110,6 @@ import org.apache.commons.cli.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.trolltech.qt.core.QCoreApplication;
@@ -128,6 +121,7 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.json.InterfaceAdapter;
 import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
@@ -289,49 +283,6 @@ public final class Main {
 			editComponentDialog.setVisible(true);
 
 			suspendControllerSettingsUpdate = false;
-		}
-
-	}
-
-	private static class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<T> {
-
-		private static final String PROPERTY_TYPE = "type";
-		private static final String PROPERTY_DATA = "data";
-
-		@Override
-		public T deserialize(JsonElement elem, java.lang.reflect.Type interfaceType, JsonDeserializationContext context)
-				throws JsonParseException {
-			final JsonObject wrapper = (JsonObject) elem;
-			final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
-			final JsonElement data = get(wrapper, PROPERTY_DATA);
-			final java.lang.reflect.Type actualType = typeForName(typeName);
-
-			return context.deserialize(data, actualType);
-		}
-
-		private JsonElement get(final JsonObject wrapper, String memberName) {
-			final JsonElement elem = wrapper.get(memberName);
-			if (elem == null)
-				throw new JsonParseException(getClass().getName() + ": No member '" + memberName
-						+ "' found in what was expected to be an interface wrapper");
-			return elem;
-		}
-
-		@Override
-		public JsonElement serialize(T object, java.lang.reflect.Type interfaceType, JsonSerializationContext context) {
-			final JsonObject wrapper = new JsonObject();
-			wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
-			wrapper.add(PROPERTY_DATA, context.serialize(object));
-
-			return wrapper;
-		}
-
-		private java.lang.reflect.Type typeForName(final JsonElement typeElem) {
-			try {
-				return Class.forName(typeElem.getAsString());
-			} catch (final ClassNotFoundException e) {
-				throw new JsonParseException(getClass().getName() + ": " + e);
-			}
 		}
 
 	}
