@@ -8,10 +8,6 @@ Add final modifier to method parameters
 Add final modifier to local variables
 Remove unnecessary parentheses
 Remove unused imports
-Remove unused private constructors
-Remove unused private types
-Remove unused private fields
-Remove unused local variables
 Add missing '@Override' annotations
 Add missing '@Override' annotations to implementations of interface methods
 Add missing '@Deprecated' annotations

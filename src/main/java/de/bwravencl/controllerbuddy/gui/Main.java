@@ -745,6 +745,7 @@ public final class Main {
 	public static final String PREFERENCES_MUMBLE_DIRECTORY = "mumble_directory";
 	private static final String PREFERENCES_MUMBLE_OVERLAY_FPS = "mumble_overlay_fps";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
+	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
@@ -822,18 +823,6 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
-		if (overlayFrame != null && overlayFrame.isAlwaysOnTop()) {
-			overlayFrame.setAlwaysOnTop(false);
-			overlayFrame.setAlwaysOnTop(true);
-		}
-
-		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		if (prevScreenSize == null || screenSize.width != prevScreenSize.width
-				|| screenSize.height != prevScreenSize.height) {
-			prevScreenSize = screenSize;
-			updateOverlayLocation();
-		}
-
 		for (final VirtualAxis va : Input.VirtualAxis.values()) {
 			if (virtualAxisToProgressBarMap.containsKey(va)) {
 				OutputThread outputThread = null;
@@ -1595,6 +1584,24 @@ public final class Main {
 
 		updateOverlayLocation();
 		overlayFrame.setVisible(true);
+
+		new Timer().schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				if (overlayFrame != null && overlayFrame.isAlwaysOnTop()) {
+					overlayFrame.setAlwaysOnTop(false);
+					overlayFrame.setAlwaysOnTop(true);
+				}
+
+				final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+				if (prevScreenSize == null || screenSize.width != prevScreenSize.width
+						|| screenSize.height != prevScreenSize.height) {
+					prevScreenSize = screenSize;
+					updateOverlayLocation();
+				}
+			}
+		}, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 
 		if (mumbleOverlayEnabled) {
 			new Thread(new Runnable() {
