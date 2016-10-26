@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
@@ -32,7 +30,7 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class LocalVJoyOutputThread extends VJoyOutputThread {
 
-	public LocalVJoyOutputThread(Main main, Input input) {
+	public LocalVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -48,11 +46,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	@Override
 	protected boolean readInput() {
 		if (!input.poll()) {
-			JOptionPane.showMessageDialog(main.getFrame(),
-					rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
-							+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			stopOutput();
+			controllerDisconnected();
 
 			return false;
 		}
@@ -81,7 +75,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 				false);
 
 		downUpMouseButtons.clear();
-		downUpMouseButtons.addAll((input.getDownUpMouseButtons()));
+		downUpMouseButtons.addAll(input.getDownUpMouseButtons());
 		input.getDownUpMouseButtons().clear();
 
 		final Set<Integer> sourceModifiers = new HashSet<>();

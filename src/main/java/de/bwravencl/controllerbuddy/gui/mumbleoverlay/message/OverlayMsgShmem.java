@@ -25,11 +25,11 @@ public class OverlayMsgShmem implements IMessagePart {
 
 	public String a_cName;
 
-	public OverlayMsgShmem(byte[] bytes) {
+	public OverlayMsgShmem(final byte[] bytes) {
 		setBytes(bytes);
 	}
 
-	public OverlayMsgShmem(String a_cName) {
+	public OverlayMsgShmem(final String a_cName) {
 		this.a_cName = a_cName;
 	}
 
@@ -44,7 +44,7 @@ public class OverlayMsgShmem implements IMessagePart {
 	}
 
 	@Override
-	public void setBytes(byte[] bytes) {
+	public void setBytes(final byte[] bytes) {
 		a_cName = new String(bytes, StandardCharsets.UTF_8);
 	}
 

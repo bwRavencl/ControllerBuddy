@@ -34,7 +34,7 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, float value) {
 		value = handleLongPress(value);
 
 		if (value == activationValue) {
@@ -68,20 +68,20 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 	}
 
 	@Override
-	public void setActivationValue(Float activationValue) {
+	public void setActivationValue(final Float activationValue) {
 		this.activationValue = activationValue;
 	}
 
-	public void setLockKey(LockKey lockKey) {
+	public void setLockKey(final LockKey lockKey) {
 		virtualKeyCode = LockKey.lockKeyToVirtualKeyCodeMap.get(lockKey);
 	}
 
 	@Override
-	public void setLongPress(Boolean longPress) {
+	public void setLongPress(final Boolean longPress) {
 		this.longPress = longPress;
 	}
 
-	public void setOn(Boolean on) {
+	public void setOn(final Boolean on) {
 		this.on = on;
 	}
 

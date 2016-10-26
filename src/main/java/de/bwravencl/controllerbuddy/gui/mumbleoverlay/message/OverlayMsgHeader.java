@@ -36,16 +36,16 @@ public class OverlayMsgHeader implements IMessagePart {
 	public int iLength;
 	public int uiType;
 
-	public OverlayMsgHeader(byte[] bytes) {
+	public OverlayMsgHeader(final byte[] bytes) {
 		setBytes(bytes);
 	}
 
-	public OverlayMsgHeader(int iLength, int uiType) {
+	public OverlayMsgHeader(final int iLength, final int uiType) {
 		this.iLength = iLength;
 		this.uiType = uiType;
 	}
 
-	public OverlayMsgHeader(int uiMagic, int iLength, int uiType) {
+	public OverlayMsgHeader(final int uiMagic, final int iLength, final int uiType) {
 		this.uiMagic = uiMagic;
 		this.iLength = iLength;
 		this.uiType = uiType;
@@ -69,7 +69,7 @@ public class OverlayMsgHeader implements IMessagePart {
 	}
 
 	@Override
-	public void setBytes(byte[] bytes) {
+	public void setBytes(final byte[] bytes) {
 		final ByteBuffer bb = ByteBuffer.wrap(bytes);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 

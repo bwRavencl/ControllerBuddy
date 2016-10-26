@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction {
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, float value) {
 		if (!isSuspended()) {
 			if (Math.abs(value) <= deadZone)
 				value = 0.0f;

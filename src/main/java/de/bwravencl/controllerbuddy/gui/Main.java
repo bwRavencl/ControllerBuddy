@@ -148,7 +148,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final Mode mode = new Mode();
 			Input.getProfile().getModes().add(mode);
 
@@ -171,7 +171,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final JFileChooser mumbleDirectoryFileChooser = new JFileChooser(
 					preferences.get(PREFERENCES_MUMBLE_DIRECTORY, MumbleOverlay.getDefaultMumbleInstallationPath()));
 			mumbleDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -208,7 +208,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final JFileChooser vJoyDirectoryFileChooser = new JFileChooser(
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -240,7 +240,7 @@ public final class Main {
 
 		private final VirtualAxis virtualAxis;
 
-		public DisplayIndicatorAction(VirtualAxis virtualAxis) {
+		public DisplayIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
 			putValue(NAME, rb.getString("DISPLAY_INDICATOR_ACTION_NAME"));
@@ -248,7 +248,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (((JCheckBox) e.getSource()).isSelected())
 				Input.getProfile().getVirtualAxisToColorMap().put(virtualAxis, new Color(0, 0, 0, 128));
 			else
@@ -269,7 +269,7 @@ public final class Main {
 
 		private final Component component;
 
-		public EditComponentAction(Component component) {
+		public EditComponentAction(final Component component) {
 			this.component = component;
 
 			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
@@ -278,7 +278,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
 			editComponentDialog.setVisible(true);
 
@@ -300,7 +300,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			newProfile();
 		}
 
@@ -319,7 +319,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
 
@@ -344,7 +344,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			stopAll();
 			System.exit(0);
 		}
@@ -360,7 +360,7 @@ public final class Main {
 
 		private final Mode mode;
 
-		public RemoveModeAction(Mode mode) {
+		public RemoveModeAction(final Mode mode) {
 			this.mode = mode;
 
 			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
@@ -369,7 +369,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			Input.getProfile().removeMode(mode);
 			setUnsavedChangesTitle();
 			updateModesPanel();
@@ -390,7 +390,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (currentFile != null)
 				saveProfile(currentFile);
 			else
@@ -412,7 +412,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			saveProfileAs();
 		}
 
@@ -427,7 +427,7 @@ public final class Main {
 
 		private final Controller controller;
 
-		public SelectControllerAction(Controller controller) {
+		public SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
 			final String name = controller.getName();
@@ -437,10 +437,8 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			selectedController = controller;
-			newProfile();
-			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
+		public void actionPerformed(final ActionEvent e) {
+			setSelectedController(controller);
 		}
 
 	}
@@ -454,7 +452,7 @@ public final class Main {
 
 		private final VirtualAxis virtualAxis;
 
-		public SelectIndicatorColorAction(VirtualAxis virtualAxis) {
+		public SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
 			putValue(NAME, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
@@ -462,7 +460,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color",
 					Input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
 			if (newColor != null)
@@ -483,21 +481,21 @@ public final class Main {
 
 		private final JTextField hostTextField;
 
-		public SetHostAction(JTextField hostTextField) {
+		public SetHostAction(final JTextField hostTextField) {
 			this.hostTextField = hostTextField;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			setHost();
 		}
 
 		@Override
-		public void focusGained(FocusEvent e) {
+		public void focusGained(final FocusEvent e) {
 		}
 
 		@Override
-		public void focusLost(FocusEvent e) {
+		public void focusLost(final FocusEvent e) {
 			setHost();
 		}
 
@@ -522,28 +520,28 @@ public final class Main {
 		private final Mode mode;
 		private final JTextField modeDescriptionTextField;
 
-		public SetModeDescriptionAction(Mode mode, JTextField modeDescriptionTextField) {
+		public SetModeDescriptionAction(final Mode mode, final JTextField modeDescriptionTextField) {
 			this.mode = mode;
 			this.modeDescriptionTextField = modeDescriptionTextField;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			setModeDescription();
 		}
 
 		@Override
-		public void changedUpdate(DocumentEvent e) {
+		public void changedUpdate(final DocumentEvent e) {
 			setModeDescription();
 		}
 
 		@Override
-		public void insertUpdate(DocumentEvent e) {
+		public void insertUpdate(final DocumentEvent e) {
 			setModeDescription();
 		}
 
 		@Override
-		public void removeUpdate(DocumentEvent e) {
+		public void removeUpdate(final DocumentEvent e) {
 			setModeDescription();
 		}
 
@@ -571,7 +569,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final ImageIcon icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame,
 					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.getVersion()
@@ -594,7 +592,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final WindowEvent openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
 			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
 			frame.setVisible(true);
@@ -616,7 +614,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			startClient();
 		}
 
@@ -635,7 +633,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			startLocal();
 		}
 
@@ -654,7 +652,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			startServer();
 		}
 
@@ -673,7 +671,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			stopClient(true);
 		}
 
@@ -692,7 +690,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			stopLocal(true);
 		}
 
@@ -711,7 +709,7 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			stopServer(true);
 		}
 
@@ -770,7 +768,7 @@ public final class Main {
 		return System.getProperty("os.name").startsWith("Windows");
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
@@ -809,7 +807,7 @@ public final class Main {
 		});
 	}
 
-	private static void setEnabledRecursive(java.awt.Component component, boolean enabled) {
+	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
 		component.setEnabled(enabled);
 
 		if (component instanceof Container) {
@@ -818,7 +816,7 @@ public final class Main {
 		}
 	}
 
-	public static void setOverlayText(String text) {
+	public static void setOverlayText(final String text) {
 		labelCurrentMode.setText(text);
 		mumbleOverlayRedraw = true;
 	}
@@ -938,7 +936,7 @@ public final class Main {
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				super.windowClosing(e);
 
 				if (showMenuItem != null)
@@ -946,7 +944,7 @@ public final class Main {
 			}
 
 			@Override
-			public void windowDeiconified(WindowEvent e) {
+			public void windowDeiconified(final WindowEvent e) {
 				super.windowDeiconified(e);
 
 				if (showMenuItem != null)
@@ -954,7 +952,7 @@ public final class Main {
 			}
 
 			@Override
-			public void windowIconified(WindowEvent e) {
+			public void windowIconified(final WindowEvent e) {
 				super.windowIconified(e);
 
 				if (showMenuItem != null)
@@ -962,7 +960,7 @@ public final class Main {
 			}
 
 			@Override
-			public void windowOpened(WindowEvent e) {
+			public void windowOpened(final WindowEvent e) {
 				super.windowOpened(e);
 
 				if (showMenuItem != null)
@@ -998,23 +996,19 @@ public final class Main {
 		deviceMenu.addMenuListener(new MenuListener() {
 
 			@Override
-			public void menuCanceled(MenuEvent e) {
+			public void menuCanceled(final MenuEvent e) {
 			}
 
 			@Override
-			public void menuDeselected(MenuEvent e) {
+			public void menuDeselected(final MenuEvent e) {
 			}
 
 			@Override
-			public void menuSelected(MenuEvent e) {
+			public void menuSelected(final MenuEvent e) {
 				deviceMenu.removeAll();
 
-				final Controller[] controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
-
-				for (final Controller c : controllers) {
-					if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
-							&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN
-							&& !c.getName().startsWith("vJoy"))
+				for (final Controller c : Input.getControllers()) {
+					if (c.poll())
 						deviceMenu.add(new SelectControllerAction(c));
 				}
 			}
@@ -1145,7 +1139,7 @@ public final class Main {
 		pollIntervalSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void stateChanged(final ChangeEvent e) {
 				preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
@@ -1181,7 +1175,7 @@ public final class Main {
 			vJoyDeviceSpinner.addChangeListener(new ChangeListener() {
 
 				@Override
-				public void stateChanged(ChangeEvent e) {
+				public void stateChanged(final ChangeEvent e) {
 					preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue());
 				}
 			});
@@ -1216,7 +1210,7 @@ public final class Main {
 		portSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void stateChanged(final ChangeEvent e) {
 				preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
@@ -1237,7 +1231,7 @@ public final class Main {
 		timeoutSpinner.addChangeListener(new ChangeListener() {
 
 			@Override
-			public void stateChanged(ChangeEvent e) {
+			public void stateChanged(final ChangeEvent e) {
 				preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue());
 			}
 		});
@@ -1257,7 +1251,7 @@ public final class Main {
 			showOverlayCheckBox.addChangeListener(new ChangeListener() {
 
 				@Override
-				public void stateChanged(ChangeEvent e) {
+				public void stateChanged(final ChangeEvent e) {
 					final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
@@ -1275,11 +1269,11 @@ public final class Main {
 				mumbleOverlaySettingsPanel.add(mumbleOverlayLabel);
 
 				final JCheckBox useMumbleOverlayCheckBox = new JCheckBox(rb.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
-				useMumbleOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, true));
+				useMumbleOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, false));
 				useMumbleOverlayCheckBox.addChangeListener(new ChangeListener() {
 
 					@Override
-					public void stateChanged(ChangeEvent e) {
+					public void stateChanged(final ChangeEvent e) {
 						preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY,
 								((JCheckBox) e.getSource()).isSelected());
 					}
@@ -1318,7 +1312,7 @@ public final class Main {
 				mumbleOverlayFpsSpinner.addChangeListener(new ChangeListener() {
 
 					@Override
-					public void stateChanged(ChangeEvent e) {
+					public void stateChanged(final ChangeEvent e) {
 						preferences.putDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
 								(double) ((JSpinner) e.getSource()).getValue());
 					}
@@ -1414,9 +1408,7 @@ public final class Main {
 									assignmentsPanel.removeAll();
 
 									final Controller controller = input.getController();
-									if (controller != null) {
-										controller.poll();
-
+									if (controller != null && controller.poll()) {
 										for (final Component c : Input.getComponents(controller)) {
 											final JPanel componentPanel = new JPanel(new GridBagLayout());
 											assignmentsPanel.add(componentPanel,
@@ -1483,24 +1475,24 @@ public final class Main {
 											editButton.addMouseListener(new MouseListener() {
 
 												@Override
-												public void mouseClicked(MouseEvent e) {
+												public void mouseClicked(final MouseEvent e) {
 												}
 
 												@Override
-												public void mouseEntered(MouseEvent e) {
+												public void mouseEntered(final MouseEvent e) {
 												}
 
 												@Override
-												public void mouseExited(MouseEvent e) {
+												public void mouseExited(final MouseEvent e) {
 												}
 
 												@Override
-												public void mousePressed(MouseEvent e) {
+												public void mousePressed(final MouseEvent e) {
 													suspendControllerSettingsUpdate = true;
 												}
 
 												@Override
-												public void mouseReleased(MouseEvent e) {
+												public void mouseReleased(final MouseEvent e) {
 												}
 											});
 											componentPanel.add(editButton,
@@ -1690,13 +1682,13 @@ public final class Main {
 	}
 
 	private boolean isMumbleOverlayEnabled() {
-		if (isWindows() && is64Bit() && preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, true))
+		if (isWindows() && is64Bit() && preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, false))
 			return true;
 		else
 			return false;
 	}
 
-	private boolean loadProfile(File file) {
+	private boolean loadProfile(final File file) {
 		stopAll();
 
 		boolean result = false;
@@ -1762,7 +1754,7 @@ public final class Main {
 		}
 	}
 
-	private void saveLastProfile(File file) {
+	private void saveLastProfile(final File file) {
 		currentFile = file;
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
 	}
@@ -1801,13 +1793,13 @@ public final class Main {
 		}
 	}
 
-	public void scheduleStatusBarText(String text) {
+	public void scheduleStatusBarText(final String text) {
 		class StatusBarTextTimerTask extends TimerTask {
 
 			private final String newText;
 			private final String originalText;
 
-			public StatusBarTextTimerTask(String newText) {
+			public StatusBarTextTimerTask(final String newText) {
 				this.newText = newText;
 				originalText = statusLabel.getText();
 			}
@@ -1822,12 +1814,18 @@ public final class Main {
 		new Timer().schedule(new StatusBarTextTimerTask(text), 5000L);
 	}
 
-	public void setStatusBarText(String text) {
+	public void setSelectedController(final Controller controller) {
+		selectedController = controller;
+		newProfile();
+		preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
+	}
+
+	public void setStatusBarText(final String text) {
 		if (statusLabel != null)
 			statusLabel.setText(text);
 	}
 
-	private void setTitle(String title) {
+	private void setTitle(final String title) {
 		frame.setTitle(title);
 		if (trayIcon != null)
 			trayIcon.setToolTip(title);
@@ -1874,8 +1872,7 @@ public final class Main {
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(
 				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
-		localThread
-				.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, VJoyOutputThread.DEFAULT_POLL_INTERVAL));
+		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
 		localThread.start();
 
 		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
@@ -1898,8 +1895,7 @@ public final class Main {
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
 		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
-		serverThread
-				.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, VJoyOutputThread.DEFAULT_POLL_INTERVAL));
+		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
 		serverThread.start();
 	}
 
@@ -1910,8 +1906,8 @@ public final class Main {
 		}
 		stopServer(false);
 
-		while ((localThread != null && localThread.isAlive()) || (clientThread != null && clientThread.isAlive())
-				|| (serverThread != null && serverThread.isAlive())) {
+		while (localThread != null && localThread.isAlive() || clientThread != null && clientThread.isAlive()
+				|| serverThread != null && serverThread.isAlive()) {
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {
@@ -1920,7 +1916,7 @@ public final class Main {
 		}
 	}
 
-	public void stopClient(boolean resetLastOutputType) {
+	public void stopClient(final boolean resetLastOutputType) {
 		if (clientThread != null)
 			clientThread.stopOutput();
 		stopClientRadioButtonMenuItem.setSelected(true);
@@ -1934,7 +1930,7 @@ public final class Main {
 		deInitOverlay();
 	}
 
-	public void stopLocal(boolean resetLastOutputType) {
+	public void stopLocal(final boolean resetLastOutputType) {
 		if (localThread != null)
 			localThread.stopOutput();
 
@@ -1955,7 +1951,7 @@ public final class Main {
 		deInitOverlay();
 	}
 
-	public void stopServer(boolean resetLastOutputType) {
+	public void stopServer(final boolean resetLastOutputType) {
 		if (serverThread != null)
 			serverThread.stopOutput();
 

@@ -38,7 +38,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -49,6 +48,7 @@ import de.bwravencl.controllerbuddy.output.OutputThread;
 import net.java.games.input.AbstractComponent;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
+import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 
 public class Input {
@@ -66,7 +66,7 @@ public class Input {
 
 		private final Field hasPolledField;
 
-		public GuideButtonComponent(int dwUserIndex) throws UnsatisfiedLinkError, Exception {
+		public GuideButtonComponent(final int dwUserIndex) throws UnsatisfiedLinkError, Exception {
 			super("Guide Button", new Component.Identifier.Button("Guide Button"));
 
 			if (dwUserIndex < 0 || dwUserIndex > 3)
@@ -137,7 +137,7 @@ public class Input {
 		return axis;
 	}
 
-	public static Component[] getComponents(Controller controller) {
+	public static Component[] getComponents(final Controller controller) {
 		if (controller != cachedController) {
 			cachedController = controller;
 			cachedComponents = controller.getComponents();
@@ -168,25 +168,38 @@ public class Input {
 		return cachedComponents;
 	}
 
+	public static List<Controller> getControllers() {
+		final List<Controller> controllers = new ArrayList<>();
+
+		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
+					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy"))
+				controllers.add(c);
+		}
+
+		return controllers;
+	}
+
 	public static Profile getProfile() {
 		return profile;
 	}
 
-	public static float normalize(float value, float inMin, float inMax, float outMin, float outMax) {
+	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
+			final float outMax) {
 		final float newValue;
-		final float oldRange = (inMax - inMin);
+		final float oldRange = inMax - inMin;
 
 		if (oldRange == 0)
 			newValue = outMin;
 		else {
-			final float newRange = (outMax - outMin);
-			newValue = (((value - inMin) * newRange) / oldRange) + outMin;
+			final float newRange = outMax - outMin;
+			newValue = (value - inMin) * newRange / oldRange + outMin;
 		}
 
 		return newValue;
 	}
 
-	public static boolean setProfile(Profile profile, Controller controller) {
+	public static boolean setProfile(final Profile profile, final Controller controller) {
 		if (controller == null)
 			return false;
 		else {
@@ -221,7 +234,7 @@ public class Input {
 
 				class ActionComparator implements Comparator<IAction> {
 					@Override
-					public int compare(IAction o1, IAction o2) {
+					public int compare(final IAction o1, final IAction o2) {
 						if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
 							final IButtonToAction buttonToAction1 = (IButtonToAction) o1;
 							final IButtonToAction buttonToAction2 = (IButtonToAction) o2;
@@ -262,7 +275,7 @@ public class Input {
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
 
-	public Input(Controller controller) {
+	public Input(final Controller controller) {
 		this.controller = controller;
 
 		for (final VirtualAxis va : VirtualAxis.values())
@@ -327,7 +340,7 @@ public class Input {
 			final float pollData = c.getPollData();
 
 			if (Math.abs(pollData) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-				final Iterator<Entry<ISuspendableAction, String>> it = AxisToAxisAction.componentToSuspendedActionsMap
+				final Iterator<Entry<ISuspendableAction, String>> it = ISuspendableAction.componentToSuspendedActionsMap
 						.entrySet().iterator();
 				while (it.hasNext()) {
 					if (c.getName().equals(it.next().getValue()))
@@ -373,7 +386,7 @@ public class Input {
 		}
 	}
 
-	public void setAxis(VirtualAxis virtualAxis, float value) {
+	public void setAxis(final VirtualAxis virtualAxis, float value) {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
@@ -381,42 +394,42 @@ public class Input {
 				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()));
 	}
 
-	public void setAxis(VirtualAxis virtualAxis, int value) {
+	public void setAxis(final VirtualAxis virtualAxis, int value) {
 		value = Math.max(value, outputThread.getMinAxisValue());
 		value = Math.min(value, outputThread.getMaxAxisValue());
 
 		axis.put(virtualAxis, value);
 	}
 
-	public void setButtons(int id, boolean value) {
+	public void setButtons(final int id, final boolean value) {
 		if (id < buttons.length)
 			buttons[id] = value;
 	}
 
-	public void setButtons(int id, float value) {
+	public void setButtons(final int id, final float value) {
 		if (value < 0.5f)
 			setButtons(id, false);
 		else
 			setButtons(id, true);
 	}
 
-	public void setCursorDeltaX(int cursorDeltaX) {
+	public void setCursorDeltaX(final int cursorDeltaX) {
 		this.cursorDeltaX = cursorDeltaX;
 	}
 
-	public void setCursorDeltaY(int cursorDeltaY) {
+	public void setCursorDeltaY(final int cursorDeltaY) {
 		this.cursorDeltaY = cursorDeltaY;
 	}
 
-	public void setnButtons(int nButtons) {
+	public void setnButtons(final int nButtons) {
 		buttons = new boolean[Math.min(outputThread.getnButtons(), MAX_N_BUTTONS)];
 	}
 
-	public void setOutputThread(OutputThread outputThread) {
+	public void setOutputThread(final OutputThread outputThread) {
 		this.outputThread = outputThread;
 	}
 
-	public void setScrollClicks(int scrollClicks) {
+	public void setScrollClicks(final int scrollClicks) {
 		this.scrollClicks = scrollClicks;
 	}
 

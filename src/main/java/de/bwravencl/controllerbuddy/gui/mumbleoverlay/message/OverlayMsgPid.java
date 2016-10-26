@@ -26,11 +26,11 @@ public class OverlayMsgPid implements IMessagePart {
 
 	public int pid;
 
-	public OverlayMsgPid(byte[] bytes) {
+	public OverlayMsgPid(final byte[] bytes) {
 		setBytes(bytes);
 	}
 
-	public OverlayMsgPid(int pid) {
+	public OverlayMsgPid(final int pid) {
 		this.pid = pid;
 	}
 
@@ -50,7 +50,7 @@ public class OverlayMsgPid implements IMessagePart {
 	}
 
 	@Override
-	public void setBytes(byte[] bytes) {
+	public void setBytes(final byte[] bytes) {
 		final ByteBuffer bb = ByteBuffer.wrap(bytes);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 

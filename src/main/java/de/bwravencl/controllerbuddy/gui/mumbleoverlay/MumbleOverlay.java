@@ -52,7 +52,7 @@ public class MumbleOverlay extends QObject {
 		return System.getenv("ProgramFiles") + File.separator + "Mumble";
 	}
 
-	public static String getMumbleHelperFilePath(String mumbleDirectory, boolean x64) {
+	public static String getMumbleHelperFilePath(final String mumbleDirectory, final boolean x64) {
 		final File versionsDirectory = new File(mumbleDirectory + File.separator + "Versions");
 		if (versionsDirectory.exists() && versionsDirectory.isDirectory()) {
 			final File[] files = versionsDirectory.listFiles();
@@ -80,7 +80,7 @@ public class MumbleOverlay extends QObject {
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
-	public MumbleOverlay(Main main) {
+	public MumbleOverlay(final Main main) {
 		this.main = main;
 	}
 
@@ -110,11 +110,10 @@ public class MumbleOverlay extends QObject {
 				return;
 			}
 		}
-
 	}
 
 	@SuppressWarnings("unused")
-	private void error(QLocalSocket.LocalSocketError error) {
+	private void error(final QLocalSocket.LocalSocketError error) {
 		disconnected();
 	}
 
@@ -192,7 +191,7 @@ public class MumbleOverlay extends QObject {
 		}
 	}
 
-	public void render(BufferedImage image) {
+	public void render(final BufferedImage image) {
 		for (final MumbleOverlayClient c : clients) {
 			if (c.getSharedMemory() != null && c.getSharedMemory().getData() != null) {
 				final int[] textureBuffer = new int[c.getWidth() * image.getHeight()];
@@ -204,10 +203,10 @@ public class MumbleOverlay extends QObject {
 						if (ix >= 0 && ix < image.getWidth() && y < image.getHeight()) {
 							final Color color = new Color(image.getRGB(ix, y), true);
 
-							textureBuffer[(y * c.getWidth()) + x] = (color.getAlpha() << 24)
-									| ((color.getRed() * color.getAlpha() / 255) << 16)
-									| ((color.getGreen() * color.getAlpha() / 255) << 8)
-									| (color.getBlue() * color.getAlpha() / 255);
+							textureBuffer[y * c.getWidth() + x] = color.getAlpha() << 24
+									| color.getRed() * color.getAlpha() / 255 << 16
+									| color.getGreen() * color.getAlpha() / 255 << 8
+									| color.getBlue() * color.getAlpha() / 255;
 						}
 					}
 				}
@@ -221,7 +220,7 @@ public class MumbleOverlay extends QObject {
 		}
 	}
 
-	private void startHelper(QProcess helper) throws Exception {
+	private void startHelper(final QProcess helper) throws Exception {
 		if (helper.state().equals(QProcess.ProcessState.NotRunning)) {
 			final List<String> args = new ArrayList<>(2);
 			args.add(Integer.toString(OverlayMsgHeader.OVERLAY_MAGIC_NUMBER));

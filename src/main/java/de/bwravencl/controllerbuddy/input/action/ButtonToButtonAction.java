@@ -25,7 +25,7 @@ public class ButtonToButtonAction extends ToButtonAction implements IButtonToAct
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, float value) {
 		value = handleLongPress(value);
 
 		final boolean down = value == activationValue;
@@ -43,12 +43,12 @@ public class ButtonToButtonAction extends ToButtonAction implements IButtonToAct
 	}
 
 	@Override
-	public void setActivationValue(Float activationValue) {
+	public void setActivationValue(final Float activationValue) {
 		this.activationValue = activationValue;
 	}
 
 	@Override
-	public void setLongPress(Boolean longPress) {
+	public void setLongPress(final Boolean longPress) {
 		this.longPress = longPress;
 	}
 

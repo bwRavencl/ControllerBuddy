@@ -1,0 +1,23 @@
+Remove 'this' qualifier for non static field accesses
+Remove 'this' qualifier for non static method accesses
+Change non static accesses to static members using declaring type
+Change indirect accesses to static members to direct accesses (accesses through subtypes)
+Convert 'for' loops to enhanced 'for' loops
+Add final modifier to private fields
+Add final modifier to method parameters
+Add final modifier to local variables
+Remove unnecessary parentheses
+Remove unused imports
+Remove unused private constructors
+Remove unused private types
+Remove unused private fields
+Remove unused local variables
+Add missing '@Override' annotations
+Add missing '@Override' annotations to implementations of interface methods
+Add missing '@Deprecated' annotations
+Remove unnecessary casts
+Remove unnecessary '$NON-NLS$' tags
+Sort members excluding fields, enum constants, and initializers
+Remove trailing white spaces on all lines
+Correct indentation
+Remove redundant type arguments

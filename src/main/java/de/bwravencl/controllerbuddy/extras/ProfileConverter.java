@@ -50,7 +50,7 @@ import de.bwravencl.controllerbuddy.json.InterfaceAdapter;
 
 public class ProfileConverter {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final Scanner reader = new Scanner(System.in);
 		final File sourceFolder, destinationFolder;
 		final Input input = new Input(null);
@@ -169,7 +169,7 @@ public class ProfileConverter {
 		}
 	}
 
-	private static String mapComponent(String oldComponent) {
+	private static String mapComponent(final String oldComponent) {
 		if (oldComponent.equals("Y-Rotation"))
 			return "Z-Rotation";
 		else if (oldComponent.equals("X-Rotation"))

@@ -29,11 +29,11 @@ public class OverlayMsgActive implements IMessagePart {
 	public int w;
 	public int h;
 
-	public OverlayMsgActive(byte[] bytes) {
+	public OverlayMsgActive(final byte[] bytes) {
 		setBytes(bytes);
 	}
 
-	public OverlayMsgActive(int x, int y, int w, int h) {
+	public OverlayMsgActive(final int x, final int y, final int w, final int h) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -59,7 +59,7 @@ public class OverlayMsgActive implements IMessagePart {
 	}
 
 	@Override
-	public void setBytes(byte[] bytes) {
+	public void setBytes(final byte[] bytes) {
 		final ByteBuffer bb = ByteBuffer.wrap(bytes);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 

@@ -29,7 +29,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private transient long lastCallTime;
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, final float value) {
 		final long currentTime = System.currentTimeMillis();
 		long elapsedTime = input.getOutputThread().getPollInterval();
 		if (lastCallTime > 0L)
@@ -58,11 +58,11 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 		return maxRelativeSpeed;
 	}
 
-	public void setExponent(Float exponent) {
+	public void setExponent(final Float exponent) {
 		this.exponent = exponent;
 	}
 
-	public void setMaxRelativeSpeed(Float maxRelativeSpeed) {
+	public void setMaxRelativeSpeed(final Float maxRelativeSpeed) {
 		this.maxRelativeSpeed = maxRelativeSpeed;
 	}
 

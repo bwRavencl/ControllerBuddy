@@ -31,8 +31,8 @@ public class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<
 	private static final String PROPERTY_DATA = "data";
 
 	@Override
-	public T deserialize(JsonElement elem, java.lang.reflect.Type interfaceType, JsonDeserializationContext context)
-			throws JsonParseException {
+	public T deserialize(final JsonElement elem, final java.lang.reflect.Type interfaceType,
+			final JsonDeserializationContext context) throws JsonParseException {
 		final JsonObject wrapper = (JsonObject) elem;
 		final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
 		final JsonElement data = get(wrapper, PROPERTY_DATA);
@@ -41,7 +41,7 @@ public class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<
 		return context.deserialize(data, actualType);
 	}
 
-	private JsonElement get(final JsonObject wrapper, String memberName) {
+	private JsonElement get(final JsonObject wrapper, final String memberName) {
 		final JsonElement elem = wrapper.get(memberName);
 		if (elem == null)
 			throw new JsonParseException(getClass().getName() + ": No member '" + memberName
@@ -50,7 +50,8 @@ public class InterfaceAdapter<T> implements JsonSerializer<T>, JsonDeserializer<
 	}
 
 	@Override
-	public JsonElement serialize(T object, java.lang.reflect.Type interfaceType, JsonSerializationContext context) {
+	public JsonElement serialize(final T object, final java.lang.reflect.Type interfaceType,
+			final JsonSerializationContext context) {
 		final JsonObject wrapper = new JsonObject();
 		wrapper.addProperty(PROPERTY_TYPE, object.getClass().getName());
 		wrapper.add(PROPERTY_DATA, context.serialize(object));

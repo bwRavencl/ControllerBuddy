@@ -88,7 +88,7 @@ public class ScanCode {
 	public final String name;
 	public final int scanCode;
 
-	public ScanCode(String name, int scanCode) {
+	public ScanCode(final String name, final int scanCode) {
 		this.name = name;
 		this.scanCode = scanCode;
 	}

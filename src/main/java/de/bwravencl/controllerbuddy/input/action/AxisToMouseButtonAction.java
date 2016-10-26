@@ -28,7 +28,7 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction implements ISus
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, final float value) {
 		if (!isSuspended() && value >= minAxisValue && value <= maxAxisValue) {
 			if (downUp) {
 				if (wasUp) {
@@ -54,11 +54,11 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction implements ISus
 		return minAxisValue;
 	}
 
-	public void setMaxAxisValue(Float maxAxisValue) {
+	public void setMaxAxisValue(final Float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	public void setMinAxisValue(Float minAxisValue) {
+	public void setMinAxisValue(final Float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
 

@@ -27,11 +27,11 @@ public class OverlayMsgInit implements IMessagePart {
 	public int uiWidth;
 	public int uiHeight;
 
-	public OverlayMsgInit(byte[] bytes) {
+	public OverlayMsgInit(final byte[] bytes) {
 		setBytes(bytes);
 	}
 
-	public OverlayMsgInit(int uiWidth, int uiHeight) {
+	public OverlayMsgInit(final int uiWidth, final int uiHeight) {
 		this.uiWidth = uiWidth;
 		this.uiHeight = uiHeight;
 	}
@@ -53,7 +53,7 @@ public class OverlayMsgInit implements IMessagePart {
 	}
 
 	@Override
-	public void setBytes(byte[] bytes) {
+	public void setBytes(final byte[] bytes) {
 		final ByteBuffer bb = ByteBuffer.wrap(bytes);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 

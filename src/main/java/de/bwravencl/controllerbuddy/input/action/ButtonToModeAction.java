@@ -52,7 +52,7 @@ public class ButtonToModeAction implements IButtonToAction {
 			modeUuid = modes.get(1).getUuid();
 	}
 
-	private void activateMode(Input input, Profile profile) {
+	private void activateMode(final Input input, final Profile profile) {
 		if (!buttonToModeActionStack.contains(this)) {
 			buttonToModeActionStack.push(this);
 			profile.setActiveMode(input, modeUuid);
@@ -64,7 +64,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		return super.clone();
 	}
 
-	private boolean componentNotUsedByActiveModes(Input input) {
+	private boolean componentNotUsedByActiveModes(final Input input) {
 		final Profile profile = Input.getProfile();
 
 		Component component = null;
@@ -93,7 +93,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		return true;
 	}
 
-	private void deactivateMode(Input input, Profile profile) {
+	private void deactivateMode(final Input input, final Profile profile) {
 		if (buttonToModeActionStack.contains(this)) {
 			while (!buttonToModeActionStack.isEmpty() && !buttonToModeActionStack.peek().equals(this))
 				buttonToModeActionStack.poll().deactivateMode(input, profile);
@@ -132,7 +132,7 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, float value) {
 		value = handleLongPress(value);
 		final Profile profile = Input.getProfile();
 
@@ -179,20 +179,20 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	@Override
-	public void setActivationValue(Float activationValue) {
+	public void setActivationValue(final Float activationValue) {
 		this.activationValue = activationValue;
 	}
 
 	@Override
-	public void setLongPress(Boolean longPress) {
+	public void setLongPress(final Boolean longPress) {
 		this.longPress = longPress;
 	}
 
-	public void setMode(Mode mode) {
+	public void setMode(final Mode mode) {
 		modeUuid = mode.getUuid();
 	}
 
-	public void setToggle(Boolean toggle) {
+	public void setToggle(final Boolean toggle) {
 		this.toggle = toggle;
 	}
 

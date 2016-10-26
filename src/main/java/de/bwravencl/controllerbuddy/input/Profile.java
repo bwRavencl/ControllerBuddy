@@ -38,8 +38,8 @@ public class Profile implements Cloneable {
 
 	public static final String DEFAULT_MODE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
 
-	public static boolean isDefaultMode(Mode mode) {
-		return (mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING)));
+	public static boolean isDefaultMode(final Mode mode) {
+		return mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING));
 	}
 
 	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<>();
@@ -110,7 +110,7 @@ public class Profile implements Cloneable {
 		return virtualAxisToColorMap;
 	}
 
-	public void removeMode(Mode mode) {
+	public void removeMode(final Mode mode) {
 		final List<String> actionsToRemove = new ArrayList<>();
 
 		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
@@ -126,7 +126,7 @@ public class Profile implements Cloneable {
 		modes.remove(mode);
 	}
 
-	public void setActiveMode(Input input, int index) {
+	public void setActiveMode(final Input input, final int index) {
 		if (modes.size() > index) {
 			final Mode newMode = modes.get(index);
 
@@ -150,7 +150,7 @@ public class Profile implements Cloneable {
 		}
 	}
 
-	public void setActiveMode(Input input, UUID modeUuid) {
+	public void setActiveMode(final Input input, final UUID modeUuid) {
 		for (final Mode m : modes) {
 			if (m.getUuid().equals(modeUuid)) {
 				setActiveMode(input, modes.indexOf(m));
@@ -160,15 +160,15 @@ public class Profile implements Cloneable {
 
 	}
 
-	public void setComponentToModeActionMap(Map<String, List<ButtonToModeAction>> componentToModeActionMap) {
+	public void setComponentToModeActionMap(final Map<String, List<ButtonToModeAction>> componentToModeActionMap) {
 		this.componentToModeActionMap = componentToModeActionMap;
 	}
 
-	public void setModes(List<Mode> modes) {
+	public void setModes(final List<Mode> modes) {
 		this.modes = modes;
 	}
 
-	public void setVirtualAxisToColorMap(Map<VirtualAxis, Color> virtualAxisToColorMap) {
+	public void setVirtualAxisToColorMap(final Map<VirtualAxis, Color> virtualAxisToColorMap) {
 		this.virtualAxisToColorMap = virtualAxisToColorMap;
 	}
 

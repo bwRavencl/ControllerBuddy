@@ -46,11 +46,11 @@ public abstract class ToKeyAction implements IAction {
 		wasUp = false;
 	}
 
-	public void setDownUp(Boolean downUp) {
+	public void setDownUp(final Boolean downUp) {
 		this.downUp = downUp;
 	}
 
-	public void setKeystroke(KeyStroke keystroke) {
+	public void setKeystroke(final KeyStroke keystroke) {
 		this.keystroke = keystroke;
 	}
 

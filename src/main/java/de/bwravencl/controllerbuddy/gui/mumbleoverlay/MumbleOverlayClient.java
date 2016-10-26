@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.gui.mumbleoverlay;
 
 import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.trolltech.qt.core.QObject;
 import com.trolltech.qt.core.QTime;
@@ -43,7 +44,7 @@ public class MumbleOverlayClient extends QObject {
 	private boolean dirty = true;
 	private long lastFpsMessage = 0L;
 
-	public MumbleOverlayClient(MumbleOverlay overlay, QLocalSocket localSocket) {
+	public MumbleOverlayClient(final MumbleOverlay overlay, final QLocalSocket localSocket) {
 		this.overlay = overlay;
 		this.localSocket = localSocket;
 		localSocket.setParent(null);
@@ -91,9 +92,9 @@ public class MumbleOverlayClient extends QObject {
 					localSocket.read(headerBytes);
 					overlayMessage.headerPart = new OverlayMsgHeader(headerBytes);
 
-					if ((overlayMessage.headerPart.uiMagic != OverlayMsgHeader.OVERLAY_MAGIC_NUMBER)
-							|| (overlayMessage.headerPart.iLength < 0)
-							|| (overlayMessage.headerPart.iLength > OverlayMsgShmem.SIZE)) {
+					if (overlayMessage.headerPart.uiMagic != OverlayMsgHeader.OVERLAY_MAGIC_NUMBER
+							|| overlayMessage.headerPart.iLength < 0
+							|| overlayMessage.headerPart.iLength > OverlayMsgShmem.SIZE) {
 						disconnect();
 						return;
 					}
@@ -138,7 +139,7 @@ public class MumbleOverlayClient extends QObject {
 					overlayMessage.messagePart = messagePid;
 
 					final HANDLE handle = Kernel32.INSTANCE.OpenProcess(
-							Kernel32.PROCESS_QUERY_INFORMATION | Kernel32.PROCESS_VM_READ, false, messagePid.pid);
+							WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ, false, messagePid.pid);
 					if (handle != null)
 						Kernel32.INSTANCE.CloseHandle(handle);
 					break;
@@ -154,7 +155,7 @@ public class MumbleOverlayClient extends QObject {
 		}
 	}
 
-	private void readyReadMsgInit(long length) throws Exception {
+	private void readyReadMsgInit(final long length) throws Exception {
 		if (length != OverlayMsgInit.SIZE)
 			return;
 
@@ -184,7 +185,7 @@ public class MumbleOverlayClient extends QObject {
 		QTimer.singleShot(0, overlay, "updateOverlay()");
 	}
 
-	public void render(int x, int y, int w, int h) {
+	public void render(final int x, final int y, final int w, final int h) {
 		dirty = true;
 
 		if (lastFpsMessage == 0L || System.currentTimeMillis() - lastFpsMessage < 300L) {

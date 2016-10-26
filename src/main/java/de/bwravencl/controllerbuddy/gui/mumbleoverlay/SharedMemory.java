@@ -47,7 +47,7 @@ public class SharedMemory {
 
 	private HANDLE memory;
 
-	public SharedMemory(int minSize) throws Exception {
+	public SharedMemory(final int minSize) throws Exception {
 		for (int i = 0; i < 100; i++) {
 			index++;
 			name = NAME_PREFIX + index;
@@ -72,7 +72,7 @@ public class SharedMemory {
 				throw new Exception(getClass().getName() + ": Failed to map memory for: " + name);
 			else {
 				final MEMORY_BASIC_INFORMATION mbi = new MEMORY_BASIC_INFORMATION();
-				if ((VirtualQuery(data, mbi, new SIZE_T(mbi.size())) == 0L) || (mbi.regionSize.intValue() < minSize))
+				if (VirtualQuery(data, mbi, new SIZE_T(mbi.size())) == 0L || mbi.regionSize.intValue() < minSize)
 					throw new Exception(getClass().getName() + ": Memory too small for: " + name);
 				else {
 					size = mbi.regionSize.intValue();

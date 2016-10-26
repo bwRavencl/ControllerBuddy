@@ -28,8 +28,8 @@ public class AxisToButtonAction extends ToButtonAction implements ISuspendableAc
 	private float maxAxisValue = 1.0f;
 
 	@Override
-	public void doAction(Input input, float value) {
-		final boolean down = (!isSuspended() && value >= minAxisValue && value <= maxAxisValue);
+	public void doAction(final Input input, final float value) {
+		final boolean down = !isSuspended() && value >= minAxisValue && value <= maxAxisValue;
 
 		input.setButtons(buttonId, down);
 	}
@@ -42,11 +42,11 @@ public class AxisToButtonAction extends ToButtonAction implements ISuspendableAc
 		return minAxisValue;
 	}
 
-	public void setMaxAxisValue(Float maxAxisValue) {
+	public void setMaxAxisValue(final Float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	public void setMinAxisValue(Float minAxisValue) {
+	public void setMinAxisValue(final Float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
 

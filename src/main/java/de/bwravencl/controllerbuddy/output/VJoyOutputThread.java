@@ -70,7 +70,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		Native.register("User32");
 	}
 
-	private static void doKeyboardInput(int scanCode, boolean down) {
+	private static void doKeyboardInput(final int scanCode, final boolean down) {
 		final INPUT input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
 		input.input.setType(KEYBDINPUT.class);
@@ -85,19 +85,19 @@ public abstract class VJoyOutputThread extends OutputThread {
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
 
-	private static void doMouseButtonInput(int button, boolean down) {
+	private static void doMouseButtonInput(final int button, final boolean down) {
 		final INPUT input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_MOUSE);
 		input.input.setType(MOUSEINPUT.class);
 		switch (button) {
 		case 1:
-			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP));
+			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP);
 			break;
 		case 2:
-			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP));
+			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
 			break;
 		case 3:
-			input.input.mi.dwFlags = (down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP));
+			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
 			break;
 		default:
 			break;
@@ -123,11 +123,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	private static native short GetKeyState(int KeyState);
 
-	public static String getLibraryFilePath(String vJoyDirectory) {
+	public static String getLibraryFilePath(final String vJoyDirectory) {
 		return vJoyDirectory + File.separator + getArchFolderName() + File.separator + LIBRARY_FILENAME;
 	}
 
-	private static void setLockKeyState(int virtualKeyCode, boolean on) {
+	private static void setLockKeyState(final int virtualKeyCode, final boolean on) {
 		final boolean state = (GetKeyState(virtualKeyCode) & 0x1) != 0;
 
 		if (state != on) {
@@ -138,8 +138,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	protected static void updateOutputSets(Set<Integer> sourceSet, Set<Integer> oldDownSet, Set<Integer> newUpSet,
-			Set<Integer> newDownSet, boolean keepStillDown) {
+	protected static void updateOutputSets(final Set<Integer> sourceSet, final Set<Integer> oldDownSet,
+			final Set<Integer> newUpSet, final Set<Integer> newDownSet, final boolean keepStillDown) {
 		final Set<Integer> stillDownSet = new HashSet<>();
 
 		newUpSet.clear();
@@ -213,7 +213,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	protected final Set<Integer> offLockKeys = new HashSet<>();
 	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
-	public VJoyOutputThread(Main main, Input input) {
+	public VJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -372,7 +372,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	protected abstract boolean readInput() throws Exception;
 
-	public void setvJoyDevice(UINT vJoyDevice) {
+	public void setvJoyDevice(final UINT vJoyDevice) {
 		this.vJoyDevice = vJoyDevice;
 	}
 

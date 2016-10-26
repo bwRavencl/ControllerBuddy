@@ -27,7 +27,7 @@ public class ButtonToScrollAction extends ToScrollAction implements IButtonToAct
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, float value) {
 		value = handleLongPress(value);
 
 		if (value == activationValue)
@@ -45,12 +45,12 @@ public class ButtonToScrollAction extends ToScrollAction implements IButtonToAct
 	}
 
 	@Override
-	public void setActivationValue(Float activationValue) {
+	public void setActivationValue(final Float activationValue) {
 		this.activationValue = activationValue;
 	}
 
 	@Override
-	public void setLongPress(Boolean longPress) {
+	public void setLongPress(final Boolean longPress) {
 		this.longPress = longPress;
 	}
 

@@ -32,7 +32,7 @@ public interface ISuspendableAction extends IAction {
 		return componentToSuspendedActionsMap.containsKey(this);
 	}
 
-	default void suspend(String componentName) {
+	default void suspend(final String componentName) {
 		componentToSuspendedActionsMap.remove(this);
 		componentToSuspendedActionsMap.put(this, componentName);
 

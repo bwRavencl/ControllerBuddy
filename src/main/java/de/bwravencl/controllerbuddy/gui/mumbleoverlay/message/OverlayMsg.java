@@ -25,7 +25,7 @@ public class OverlayMsg {
 	public OverlayMsgHeader headerPart;
 	public IMessagePart messagePart;
 
-	public OverlayMsg(OverlayMsgHeader headerPart, IMessagePart messagePart) {
+	public OverlayMsg(final OverlayMsgHeader headerPart, final IMessagePart messagePart) {
 		this.headerPart = headerPart;
 		this.messagePart = messagePart;
 	}

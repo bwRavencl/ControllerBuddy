@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.ajoberstar:grgit:1.6.0-rc.1'
+        classpath 'org.ajoberstar:grgit:1.7.0'
     }
 }
 
@@ -51,7 +51,7 @@ ext {
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
 sourceCompatibility = 1.8
-version = "0.3-${git.head().abbreviatedId}"
+version = "0.4-${git.head().abbreviatedId}"
 
 repositories {
     mavenCentral()

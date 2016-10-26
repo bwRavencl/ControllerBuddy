@@ -55,7 +55,7 @@ public class ServerOutputThread extends OutputThread {
 	private DatagramSocket serverSocket;
 	private InetAddress clientIPAddress;
 
-	public ServerOutputThread(Main main, Input input) {
+	public ServerOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -145,14 +145,9 @@ public class ServerOutputThread extends OutputThread {
 						sw.append(PROTOCOL_MESSAGE_UPDATE);
 					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
-					if (!input.poll()) {
-						JOptionPane.showMessageDialog(main.getFrame(),
-								rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX")
-										+ input.getController().getName()
-										+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
-								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-						stopOutput();
-					} else {
+					if (!input.poll())
+						controllerDisconnected();
+					else {
 						for (final int v : Input.getAxis().values())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
@@ -258,11 +253,11 @@ public class ServerOutputThread extends OutputThread {
 		}
 	}
 
-	public void setPort(int port) {
+	public void setPort(final int port) {
 		this.port = port;
 	}
 
-	public void setTimeout(int timeout) {
+	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
 	}
 

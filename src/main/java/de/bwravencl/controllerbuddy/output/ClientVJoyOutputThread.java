@@ -55,7 +55,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	private final byte[] receiveBuf = new byte[1024];
 	private long counter = -1;
 
-	public ClientVJoyOutputThread(Main main, Input input) {
+	public ClientVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -330,15 +330,15 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		}
 	}
 
-	public void setHost(String host) {
+	public void setHost(final String host) {
 		this.host = host;
 	}
 
-	public void setPort(int port) {
+	public void setPort(final int port) {
 		this.port = port;
 	}
 
-	public void setTimeout(int timeout) {
+	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
 	}
 

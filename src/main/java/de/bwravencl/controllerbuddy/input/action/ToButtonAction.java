@@ -30,7 +30,7 @@ public abstract class ToButtonAction implements IAction {
 		return buttonId;
 	}
 
-	public void setButtonId(Integer buttonId) {
+	public void setButtonId(final Integer buttonId) {
 		this.buttonId = buttonId;
 	}
 

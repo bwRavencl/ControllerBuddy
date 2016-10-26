@@ -91,7 +91,7 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			try {
 				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
 				final IAction action = (IAction) clazz.newInstance();
@@ -136,7 +136,7 @@ public class EditActionsDialog extends JDialog {
 
 		private final String className;
 
-		public AvailableAction(String className) {
+		public AvailableAction(final String className) {
 			this.className = className;
 		}
 
@@ -173,7 +173,7 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			closeDialog();
 		}
 
@@ -193,7 +193,7 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(
 					(ButtonToCycleAction) selectedAssignedAction, input);
 			editComponentDialog.setVisible(true);
@@ -210,12 +210,12 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JCheckBoxSetPropertyAction(Method setterMethod) {
+		public JCheckBoxSetPropertyAction(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
 			} catch (final IllegalAccessException e1) {
@@ -238,12 +238,12 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JComboBoxSetPropertyAction(Method setterMethod) {
+		public JComboBoxSetPropertyAction(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
 			} catch (final IllegalAccessException e1) {
@@ -263,14 +263,15 @@ public class EditActionsDialog extends JDialog {
 		private final KeyStroke keyStroke;
 		private final boolean modifiers;
 
-		public JListSetPropertyListSelectionListener(Method setterMethod, KeyStroke keyStroke, boolean modifiers) {
+		public JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
+				final boolean modifiers) {
 			this.setterMethod = setterMethod;
 			this.keyStroke = keyStroke;
 			this.modifiers = modifiers;
 		}
 
 		@Override
-		public void valueChanged(ListSelectionEvent e) {
+		public void valueChanged(final ListSelectionEvent e) {
 			try {
 				final Set<Integer> scanCodes = new HashSet<>();
 
@@ -300,14 +301,14 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JSpinnerSetPropertyChangeListener(Method setterMethod) {
+		public JSpinnerSetPropertyChangeListener(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
 		@Override
-		public void stateChanged(ChangeEvent e) {
+		public void stateChanged(final ChangeEvent e) {
 			try {
-				final Object value = (((JSpinner) e.getSource()).getValue());
+				final Object value = ((JSpinner) e.getSource()).getValue();
 
 				if (value instanceof Double)
 					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
@@ -337,7 +338,7 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (isComponentEditor()) {
 				Input.setProfile(unsavedProfile, input.getController());
 				main.setUnsavedChangesTitle();
@@ -362,7 +363,7 @@ public class EditActionsDialog extends JDialog {
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			if (selectedAssignedAction instanceof ButtonToModeAction) {
 				unsavedProfile.getComponentToModeActionMap().get(component.getName()).remove(selectedAssignedAction);
 				if (unsavedProfile.getComponentToModeActionMap().get(component.getName()).isEmpty())
@@ -410,7 +411,7 @@ public class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_WIDTH = 950;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 
-	public static int getListModelIndex(ListModel<?> model, Object value) {
+	public static int getListModelIndex(final ListModel<?> model, final Object value) {
 		if (value == null)
 			return -1;
 
@@ -438,7 +439,7 @@ public class EditActionsDialog extends JDialog {
 	private final JList<AvailableAction> availableActionsList = new JList<>();
 	private final JList<IAction> assignedActionsList = new JList<>();
 
-	public EditActionsDialog(ButtonToCycleAction cycleAction, Input input) {
+	public EditActionsDialog(final ButtonToCycleAction cycleAction, final Input input) {
 		this.cycleAction = cycleAction;
 
 		try {
@@ -457,7 +458,7 @@ public class EditActionsDialog extends JDialog {
 		}
 	}
 
-	public EditActionsDialog(Main main, Component component, Input input) {
+	public EditActionsDialog(final Main main, final Component component, final Input input) {
 		super(main.getFrame());
 		this.main = main;
 		this.component = component;
@@ -486,7 +487,7 @@ public class EditActionsDialog extends JDialog {
 				private static final long serialVersionUID = -9107064465015662054L;
 
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(final ActionEvent e) {
 					selectedMode = (Mode) modeComboBox.getSelectedItem();
 					updateAssignedActions();
 					updateAvailableActions();
@@ -538,7 +539,7 @@ public class EditActionsDialog extends JDialog {
 		return hasModeAction;
 	}
 
-	private void init(Input input) {
+	private void init(final Input input) {
 		this.input = input;
 
 		final JPanel actionsPanel = new JPanel(new GridBagLayout());
@@ -564,7 +565,7 @@ public class EditActionsDialog extends JDialog {
 		availableActionsList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
+			public void valueChanged(final ListSelectionEvent e) {
 				selectedAvailableAction = availableActionsList.getSelectedValue();
 				if (selectedAvailableAction == null)
 					addButton.setEnabled(false);
@@ -593,7 +594,7 @@ public class EditActionsDialog extends JDialog {
 		assignedActionsList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
+			public void valueChanged(final ListSelectionEvent e) {
 				selectedAssignedAction = assignedActionsList.getSelectedValue();
 				if (selectedAssignedAction == null)
 					removeButton.setEnabled(false);

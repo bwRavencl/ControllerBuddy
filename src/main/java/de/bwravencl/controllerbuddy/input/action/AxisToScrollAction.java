@@ -29,7 +29,7 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 	private transient long lastCallTime;
 
 	@Override
-	public void doAction(Input input, float value) {
+	public void doAction(final Input input, final float value) {
 		final long currentTime = System.currentTimeMillis();
 		long elapsedTime = input.getOutputThread().getPollInterval();
 		if (lastCallTime > 0L)
@@ -56,11 +56,11 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 		return exponent;
 	}
 
-	public void setDeadZone(Float deadZone) {
+	public void setDeadZone(final Float deadZone) {
 		this.deadZone = deadZone;
 	}
 
-	public void setExponent(Float exponent) {
+	public void setExponent(final Float exponent) {
 		this.exponent = exponent;
 	}
 

@@ -39,11 +39,11 @@ public abstract class ToMouseButtonAction implements IAction {
 		return downUp;
 	}
 
-	public void setDownUp(Boolean downUp) {
+	public void setDownUp(final Boolean downUp) {
 		this.downUp = downUp;
 	}
 
-	public void setMouseButton(Integer mouseButton) {
+	public void setMouseButton(final Integer mouseButton) {
 		this.mouseButton = mouseButton;
 	}
 

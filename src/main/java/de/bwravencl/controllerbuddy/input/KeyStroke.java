@@ -47,11 +47,11 @@ public class KeyStroke implements Cloneable {
 		return modifierCodes;
 	}
 
-	public void setKeyCodes(Integer[] keyCodes) {
+	public void setKeyCodes(final Integer[] keyCodes) {
 		this.keyCodes = keyCodes;
 	}
 
-	public void setModifierCodes(Integer[] modifierCodes) {
+	public void setModifierCodes(final Integer[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
 	}
 

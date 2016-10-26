@@ -42,7 +42,7 @@ public class Mode implements Cloneable {
 		description = rb.getString("NEW_MODE_DESCRIPTION");
 	}
 
-	public Mode(String uuid) {
+	public Mode(final String uuid) {
 		this.uuid = UUID.fromString(uuid);
 	}
 
@@ -82,15 +82,15 @@ public class Mode implements Cloneable {
 		return uuid;
 	}
 
-	public void setComponentToActionMap(Map<String, List<IAction>> componentToActionsMap) {
+	public void setComponentToActionMap(final Map<String, List<IAction>> componentToActionsMap) {
 		this.componentToActionsMap = componentToActionsMap;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
-	public void setUuid(UUID uuid) {
+	public void setUuid(final UUID uuid) {
 		this.uuid = uuid;
 	}
 

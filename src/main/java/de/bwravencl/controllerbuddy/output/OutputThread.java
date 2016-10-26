@@ -17,12 +17,16 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import java.awt.EventQueue;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import net.brockmatt.util.ResourceBundleUtil;
+import net.java.games.input.Controller;
 
 public abstract class OutputThread extends Thread {
 
@@ -38,10 +42,31 @@ public abstract class OutputThread extends Thread {
 	protected final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
-	public OutputThread(Main main, Input input) {
+	public OutputThread(final Main main, final Input input) {
 		this.main = main;
 		this.input = input;
 		input.setOutputThread(this);
+	}
+
+	protected void controllerDisconnected() {
+		JOptionPane.showMessageDialog(main.getFrame(),
+				rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
+						+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
+				rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+
+		input.getController();
+
+		for (final Controller c : Input.getControllers()) {
+			if (c.poll()) {
+				EventQueue.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						main.setSelectedController(c);
+					}
+				});
+				break;
+			}
+		}
 	}
 
 	public int getMaxAxisValue() {
@@ -60,20 +85,20 @@ public abstract class OutputThread extends Thread {
 		return pollInterval;
 	}
 
-	public void setMaxAxisValue(int maxAxisValue) {
+	public void setMaxAxisValue(final int maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	public void setMinAxisValue(int minAxisValue) {
+	public void setMinAxisValue(final int minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
 
-	public void setnButtons(int nButtons) {
+	public void setnButtons(final int nButtons) {
 		this.nButtons = nButtons;
 		input.setnButtons(nButtons);
 	}
 
-	public void setPollInterval(long pollInterval) {
+	public void setPollInterval(final long pollInterval) {
 		this.pollInterval = pollInterval;
 	}
 
