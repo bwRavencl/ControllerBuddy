@@ -18,8 +18,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToCursorAction extends InvertableAction implements ISuspendableAction {
+public class AxisToCursorAction extends InvertableAction implements ISuspendableAction, IModeChangeListenerAction {
 
 	public enum MouseAxis {
 		X, Y
@@ -54,7 +55,8 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 				input.setCursorDeltaX((int) (input.getCursorDeltaX() + (invert ? -d : d)));
 			else
 				input.setCursorDeltaY((int) (input.getCursorDeltaY() + (invert ? -d : d)));
-		}
+		} else
+			lastCallTime = 0L;
 	}
 
 	public MouseAxis getAxis() {
@@ -71,6 +73,12 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 
 	public float getMaxCursorSpeed() {
 		return maxCursorSpeed;
+	}
+
+	@Override
+	public void onModeChanged(final Mode newMode) {
+		if (!newMode.getComponentToActionsMap().values().contains(this))
+			lastCallTime = 0L;
 	}
 
 	public void setAxis(final MouseAxis axis) {

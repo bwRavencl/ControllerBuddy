@@ -32,6 +32,7 @@ import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IModeChangeListenerAction;
 import net.brockmatt.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
@@ -139,6 +140,11 @@ public class Profile implements Cloneable {
 							if (a instanceof AxisToAxisAction && !(a instanceof AxisToRelativeAxisAction)) {
 								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) a;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f);
+							}
+
+							if (a instanceof IModeChangeListenerAction) {
+								final IModeChangeListenerAction modeChangeListenerAction = (IModeChangeListenerAction) a;
+								modeChangeListenerAction.onModeChanged(newMode);
 							}
 						}
 					}

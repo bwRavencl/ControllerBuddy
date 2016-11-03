@@ -18,8 +18,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToRelativeAxisAction extends AxisToAxisAction {
+public class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeChangeListenerAction {
 
 	public static final float DEFAULT_EXPONENT = 2.0f;
 	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4.0f;
@@ -47,7 +48,8 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1.0f, 1.0f);
 
 			input.setAxis(virtualAxis, oldValue + (invert ? -d : d));
-		}
+		} else
+			lastCallTime = 0L;
 	}
 
 	public float getExponent() {
@@ -56,6 +58,12 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
+	}
+
+	@Override
+	public void onModeChanged(final Mode newMode) {
+		if (!newMode.getComponentToActionsMap().values().contains(this))
+			lastCallTime = 0L;
 	}
 
 	public void setExponent(final Float exponent) {

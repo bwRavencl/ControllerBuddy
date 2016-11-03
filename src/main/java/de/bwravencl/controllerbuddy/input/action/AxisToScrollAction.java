@@ -18,8 +18,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToScrollAction extends ToScrollAction implements ISuspendableAction {
+public class AxisToScrollAction extends ToScrollAction implements ISuspendableAction, IModeChangeListenerAction {
 
 	public static final float DEFAULT_DEAD_ZONE = 0.15f;
 	public static final float DEFAULT_EXPONENT = 1.0f;
@@ -45,7 +46,8 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
 			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
-		}
+		} else
+			lastCallTime = 0L;
 	}
 
 	public float getDeadZone() {
@@ -54,6 +56,12 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 
 	public float getExponent() {
 		return exponent;
+	}
+
+	@Override
+	public void onModeChanged(final Mode newMode) {
+		if (!newMode.getComponentToActionsMap().values().contains(this))
+			lastCallTime = 0L;
 	}
 
 	public void setDeadZone(final Float deadZone) {
