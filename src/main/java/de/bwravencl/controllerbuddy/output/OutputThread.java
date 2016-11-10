@@ -64,9 +64,14 @@ public abstract class OutputThread extends Thread {
 						main.setSelectedController(c);
 					}
 				});
-				break;
+
+				return;
 			}
 		}
+
+		JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+				rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		System.exit(0);
 	}
 
 	public int getMaxAxisValue() {

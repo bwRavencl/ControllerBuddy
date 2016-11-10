@@ -1735,6 +1735,10 @@ public final class Main {
 		stopAll();
 
 		currentFile = null;
+
+		if (input != null)
+			input.deInit();
+
 		input = new Input(selectedController);
 
 		setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));

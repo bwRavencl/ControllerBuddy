@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.sun.jna.Function;
 import com.sun.jna.Library;
@@ -50,20 +52,20 @@ import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
+import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
+import purejavahidapi.PureJavaHidApi;
 
 public class Input {
 
 	private static class GuideButtonComponent extends AbstractComponent {
 
 		private final Function function;
-
 		@SuppressWarnings("unused")
 		private final Library xInput = (Library) Native.loadLibrary(XINPUT_LIBRARY_FILENAME, Library.class);
-
 		private final int dwUserIndex;
-
 		private final XInputState pState = new XInputState();
-
 		private final Field hasPolledField;
 
 		public GuideButtonComponent(final int dwUserIndex) throws UnsatisfiedLinkError, Exception {
@@ -118,19 +120,15 @@ public class Input {
 	}
 
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-
 	private static final String XBOX_360_CONTROLLER_NAME = "XBOX 360 For Windows (Controller)";
-
+	private static final String DUAL_SHOCK_4_CONTROLLER_NAMES[] = { "Wireless Controller",
+			"DUALSHOCK\u00AE4 USB Wireless Adapto" };
 	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
 	private static Controller cachedController;
-
 	private static Component[] cachedComponents;
-
 	public static final int MAX_N_BUTTONS = 128;
-
 	private static Profile profile;
-
 	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
 
 	public static EnumMap<VirtualAxis, Integer> getAxis() {
@@ -142,25 +140,31 @@ public class Input {
 			cachedController = controller;
 			cachedComponents = controller.getComponents();
 
-			if (Main.isWindows() && XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
+			if (Main.isWindows()) {
+				if (XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
 
-				final List<Controller> xbox360Controllers = new ArrayList<>();
-				for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
-					if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
-						xbox360Controllers.add(c);
-				}
-				final int dwUserIndex = xbox360Controllers.indexOf(controller);
-
-				if (dwUserIndex <= 3) {
-					try {
-						final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
-						cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
-						cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
-					} catch (final UnsatisfiedLinkError e) {
-						e.printStackTrace();
-					} catch (final Exception e) {
-						e.printStackTrace();
+					final List<Controller> xbox360Controllers = new ArrayList<>();
+					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+						if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
+							xbox360Controllers.add(c);
 					}
+					final int dwUserIndex = xbox360Controllers.indexOf(controller);
+
+					if (dwUserIndex <= 3) {
+						try {
+							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
+							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
+							cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
+						} catch (final UnsatisfiedLinkError e) {
+							e.printStackTrace();
+						} catch (final Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} else if (isDualShock4Controller(controller)) {
+					final int touchpadButtonIndex = 18;
+					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, cachedComponents, touchpadButtonIndex,
+							cachedComponents.length - 1 - touchpadButtonIndex);
 				}
 			}
 		}
@@ -182,6 +186,15 @@ public class Input {
 
 	public static Profile getProfile() {
 		return profile;
+	}
+
+	private static boolean isDualShock4Controller(final Controller controller) {
+		for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES) {
+			if (s.equals(controller.getName()))
+				return true;
+		}
+
+		return false;
 	}
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
@@ -265,15 +278,16 @@ public class Input {
 	private final Controller controller;
 	private OutputThread outputThread;
 	private boolean[] buttons;
-	private int cursorDeltaX = 5;
-	private int cursorDeltaY = 5;
-	private int scrollClicks = 1;
-	private final Set<Integer> downMouseButtons = new HashSet<>();
+	private volatile int cursorDeltaX = 5;
+	private volatile int cursorDeltaY = 5;
+	private volatile int scrollClicks = 1;
+	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
+	private HidDevice hidDevice;
 
 	public Input(final Controller controller) {
 		this.controller = controller;
@@ -282,6 +296,95 @@ public class Input {
 			axis.put(va, 0);
 
 		profile = new Profile();
+
+		if (Main.isWindows() && isDualShock4Controller(controller)) {
+			final List<HidDeviceInfo> devices = PureJavaHidApi.enumerateDevices();
+			HidDeviceInfo hidDeviceInfo = null;
+			for (final HidDeviceInfo hi : devices) {
+				final short productId = hi.getProductId();
+				if (hi.getVendorId() == (short) 0x54C
+						&& (productId == (short) 0x5C4 || productId == (short) 0x9CC || productId == (short) 0xBA0)) {
+					hidDeviceInfo = hi;
+					break;
+				}
+			}
+			if (hidDeviceInfo != null) {
+				try {
+					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
+					hidDevice.setInputReportListener(new InputReportListener() {
+
+						private static final int TOUCHPAD_DATA_OFFSET = 34;
+						private static final int TOUCHPAD_MAX_DELTA = 150;
+						private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.5f;
+						private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
+
+						private boolean prevTouchpadButtonDown;
+						private boolean prevDown1;
+						private boolean prevDown2;
+						private int prevX1;
+						private int prevY1;
+
+						@Override
+						public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
+								final int len) {
+							final boolean touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
+							final boolean down1 = data[0 + TOUCHPAD_DATA_OFFSET] >> 7 != 0 ? false : true;
+							final boolean down2 = data[4 + TOUCHPAD_DATA_OFFSET] >> 7 != 0 ? false : true;
+							final int x1 = data[1 + TOUCHPAD_DATA_OFFSET]
+									+ (data[2 + TOUCHPAD_DATA_OFFSET] & 0xF) * 255;
+							final int y1 = ((data[2 + TOUCHPAD_DATA_OFFSET] & 0xF0) >> 4)
+									+ data[3 + TOUCHPAD_DATA_OFFSET] * 16;
+							final int dX1 = x1 - prevX1;
+							final int dY1 = y1 - prevY1;
+
+							if (touchpadButtonDown)
+								downMouseButtons.add(down2 ? 2 : 1);
+							else {
+								if (prevTouchpadButtonDown)
+									downMouseButtons.clear();
+							}
+
+							if (down1 && !prevDown1) {
+								prevX1 = -1;
+								prevY1 = -1;
+							}
+
+							if (!prevDown2 || touchpadButtonDown) {
+								if (prevX1 > 0) {
+									if (Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+										cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
+								}
+
+								if (prevY1 > 0) {
+									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+										cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
+								}
+							} else {
+								if (prevY1 > 0) {
+									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+										scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
+								}
+							}
+
+							prevTouchpadButtonDown = touchpadButtonDown;
+							prevDown1 = down1;
+							prevDown2 = down2;
+							prevX1 = x1;
+							prevY1 = y1;
+						}
+
+					});
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	public void deInit() {
+		if (hidDevice != null)
+			hidDevice.close();
 	}
 
 	public boolean[] getButtons() {
