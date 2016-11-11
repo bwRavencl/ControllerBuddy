@@ -1549,6 +1549,7 @@ public final class Main {
 
 		if (overlayFrame == null) {
 			overlayFrame = new JFrame();
+			overlayFrame.setType(JFrame.Type.UTILITY);
 			overlayFrame.setLayout(new BorderLayout());
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
