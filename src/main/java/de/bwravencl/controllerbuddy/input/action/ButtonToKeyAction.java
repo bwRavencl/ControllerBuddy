@@ -33,15 +33,13 @@ public class ButtonToKeyAction extends ToKeyAction implements IButtonToAction {
 				wasUp = true;
 			else
 				input.getDownKeyStrokes().remove(keystroke);
-		} else {
-			if (downUp) {
-				if (wasUp) {
-					input.getDownUpKeyStrokes().add(keystroke);
-					wasUp = false;
-				}
-			} else
-				input.getDownKeyStrokes().add(keystroke);
-		}
+		} else if (downUp) {
+			if (wasUp) {
+				input.getDownUpKeyStrokes().add(keystroke);
+				wasUp = false;
+			}
+		} else
+			input.getDownKeyStrokes().add(keystroke);
 	}
 
 	@Override

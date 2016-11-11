@@ -84,7 +84,7 @@ public class MumbleOverlayClient extends QObject {
 		while (true) {
 			long ready = localSocket.bytesAvailable();
 
-			if (overlayMessage.headerPart.iLength == -1) {
+			if (overlayMessage.headerPart.iLength == -1)
 				if (ready < OverlayMsgHeader.SIZE)
 					break;
 				else {
@@ -101,7 +101,6 @@ public class MumbleOverlayClient extends QObject {
 
 					ready -= OverlayMsgHeader.SIZE;
 				}
-			}
 
 			if (ready >= overlayMessage.headerPart.iLength) {
 				byte[] msgBuffer;

@@ -52,7 +52,7 @@ public class Mode implements Cloneable {
 		mode.setDescription(new String(description));
 
 		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<>();
-		for (final Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet()) {
+		for (final Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet())
 			for (final IAction a : e.getValue()) {
 				final String key = new String(e.getKey());
 
@@ -64,7 +64,6 @@ public class Mode implements Cloneable {
 
 				actions.add((IAction) a.clone());
 			}
-		}
 		mode.setComponentToActionMap(clonedComponentToActionMap);
 
 		return mode;

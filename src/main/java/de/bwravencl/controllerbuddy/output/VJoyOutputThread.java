@@ -146,12 +146,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 		for (final int o : oldDownSet) {
 			boolean stillDown = false;
 
-			for (final int n : sourceSet) {
+			for (final int n : sourceSet)
 				if (n == o) {
 					stillDown = true;
 					break;
 				}
-			}
 
 			if (stillDown)
 				stillDownSet.add(o);
@@ -167,12 +166,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 		for (final int n : sourceSet) {
 			boolean alreadyDown = false;
 
-			for (final int o : oldDownSet) {
+			for (final int o : oldDownSet)
 				if (o == n) {
 					alreadyDown = true;
 					break;
 				}
-			}
 
 			if (!alreadyDown)
 				newDownSet.add(n);
@@ -334,18 +332,15 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			final int nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
 			int maxButtonId = -1;
-			for (final Mode m : Input.getProfile().getModes()) {
-				for (final List<IAction> actions : m.getComponentToActionsMap().values()) {
-					for (final IAction a : actions) {
+			for (final Mode m : Input.getProfile().getModes())
+				for (final List<IAction> actions : m.getComponentToActionsMap().values())
+					for (final IAction a : actions)
 						if (a instanceof ToButtonAction) {
 							final ToButtonAction toButtonAction = (ToButtonAction) a;
 							final int buttonId = toButtonAction.getButtonId();
 							if (buttonId > maxButtonId)
 								maxButtonId = buttonId;
 						}
-					}
-				}
-			}
 			final int requiredButtons = maxButtonId + 1;
 
 			if (nButtons < requiredButtons) {

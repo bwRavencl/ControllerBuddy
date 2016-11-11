@@ -102,18 +102,16 @@ public class EditActionsDialog extends JDialog {
 
 					unsavedProfile.getComponentToModeActionMap().get(component.getName())
 							.add((ButtonToModeAction) action);
-				} else {
-					if (isComponentEditor()) {
-						final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
-						final String componentName = component.getName();
+				} else if (isComponentEditor()) {
+					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
+					final String componentName = component.getName();
 
-						if (componentToActionMap.get(componentName) == null)
-							componentToActionMap.put(componentName, new ArrayList<>());
+					if (componentToActionMap.get(componentName) == null)
+						componentToActionMap.put(componentName, new ArrayList<>());
 
-						componentToActionMap.get(componentName).add(action);
-					} else
-						cycleActions.add(action);
-				}
+					componentToActionMap.get(componentName).add(action);
+				} else
+					cycleActions.add(action);
 
 				updateAvailableActions();
 				updateAssignedActions();
@@ -368,17 +366,15 @@ public class EditActionsDialog extends JDialog {
 				unsavedProfile.getComponentToModeActionMap().get(component.getName()).remove(selectedAssignedAction);
 				if (unsavedProfile.getComponentToModeActionMap().get(component.getName()).isEmpty())
 					unsavedProfile.getComponentToModeActionMap().remove(component.getName());
-			} else {
-				if (isComponentEditor()) {
-					final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
-					final List<IAction> actions = componentToActionMap.get(component.getName());
-					actions.remove(selectedAssignedAction);
+			} else if (isComponentEditor()) {
+				final Map<String, List<IAction>> componentToActionMap = selectedMode.getComponentToActionsMap();
+				final List<IAction> actions = componentToActionMap.get(component.getName());
+				actions.remove(selectedAssignedAction);
 
-					if (actions.size() == 0)
-						componentToActionMap.remove(component.getName());
-				} else
-					cycleActions.remove(selectedAssignedAction);
-			}
+				if (actions.size() == 0)
+					componentToActionMap.remove(component.getName());
+			} else
+				cycleActions.remove(selectedAssignedAction);
 
 			updateAvailableActions();
 			updateAssignedActions();
@@ -520,10 +516,9 @@ public class EditActionsDialog extends JDialog {
 		if (isComponentEditor() && Profile.isDefaultMode(selectedMode)) {
 			final List<ButtonToModeAction> buttonToModeActions = unsavedProfile.getComponentToModeActionMap()
 					.get(component.getName());
-			if (buttonToModeActions != null) {
+			if (buttonToModeActions != null)
 				for (final ButtonToModeAction a : buttonToModeActions)
 					clonedAssignedActions.add(a);
-			}
 		}
 
 		return clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
@@ -867,11 +862,10 @@ public class EditActionsDialog extends JDialog {
 		for (final String s : actionClasses) {
 			final AvailableAction availableAction = new AvailableAction(s);
 			if (ButtonToModeAction.class.getName().equals(availableAction.className)) {
-				if (unsavedProfile.getModes().size() > 1) {
+				if (unsavedProfile.getModes().size() > 1)
 					if (Profile.isDefaultMode(selectedMode)
 							|| !availableAction.className.endsWith(ButtonToModeAction.class.getName()))
 						availableActions.add(availableAction);
-				}
 			} else
 				availableActions.add(availableAction);
 		}

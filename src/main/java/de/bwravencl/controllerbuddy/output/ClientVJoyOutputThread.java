@@ -308,10 +308,9 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				clientSocket = new DatagramSocket(port + 1);
 				clientSocket.setSoTimeout(timeout);
 
-				while (run) {
+				while (run)
 					if (readInput())
 						writeOutput();
-				}
 			}
 		} catch (final UnknownHostException e) {
 			e.printStackTrace();

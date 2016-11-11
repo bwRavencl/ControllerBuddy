@@ -56,7 +56,7 @@ public abstract class OutputThread extends Thread {
 
 		input.getController();
 
-		for (final Controller c : Input.getControllers()) {
+		for (final Controller c : Input.getControllers())
 			if (c.poll()) {
 				EventQueue.invokeLater(new Runnable() {
 					@Override
@@ -67,7 +67,6 @@ public abstract class OutputThread extends Thread {
 
 				return;
 			}
-		}
 
 		JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 				rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

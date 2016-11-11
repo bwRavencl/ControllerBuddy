@@ -56,16 +56,14 @@ public class MumbleOverlay extends QObject {
 		final File versionsDirectory = new File(mumbleDirectory + File.separator + "Versions");
 		if (versionsDirectory.exists() && versionsDirectory.isDirectory()) {
 			final File[] files = versionsDirectory.listFiles();
-			if (files != null) {
-				for (final File f : files) {
+			if (files != null)
+				for (final File f : files)
 					if (f.isDirectory()) {
 						final File helper = new File(
 								f.getAbsolutePath() + File.separator + (x64 ? HELPER_64_BINARY : HELPER_32_BINARY));
 						if (helper.exists() && helper.isFile())
 							return helper.getAbsolutePath();
 					}
-				}
-			}
 		}
 
 		return null;
@@ -103,13 +101,12 @@ public class MumbleOverlay extends QObject {
 	}
 
 	private void disconnected() {
-		for (final MumbleOverlayClient c : clients) {
+		for (final MumbleOverlayClient c : clients)
 			if (c.getLocalSocket().equals(QSignalEmitter.signalSender())) {
 				c.deInit();
 				clients.remove(c);
 				return;
 			}
-		}
 	}
 
 	@SuppressWarnings("unused")
@@ -118,10 +115,9 @@ public class MumbleOverlay extends QObject {
 	}
 
 	public boolean hasDirtyClient() {
-		for (final MumbleOverlayClient c : clients) {
+		for (final MumbleOverlayClient c : clients)
 			if (c.isDirty())
 				return true;
-		}
 
 		return false;
 	}
@@ -192,11 +188,11 @@ public class MumbleOverlay extends QObject {
 	}
 
 	public void render(final BufferedImage image) {
-		for (final MumbleOverlayClient c : clients) {
+		for (final MumbleOverlayClient c : clients)
 			if (c.getSharedMemory() != null && c.getSharedMemory().getData() != null) {
 				final int[] textureBuffer = new int[c.getWidth() * image.getHeight()];
 
-				for (int y = 0; y < image.getHeight(); y++) {
+				for (int y = 0; y < image.getHeight(); y++)
 					for (int x = 0; x < c.getWidth(); x++) {
 						final int ix = x - (c.getWidth() - image.getWidth());
 
@@ -209,7 +205,6 @@ public class MumbleOverlay extends QObject {
 									| color.getBlue() * color.getAlpha() / 255;
 						}
 					}
-				}
 
 				c.getSharedMemory().getData().write((c.getWidth() * c.getHeight() - textureBuffer.length) * 4,
 						textureBuffer, 0, textureBuffer.length);
@@ -217,7 +212,6 @@ public class MumbleOverlay extends QObject {
 				c.render(c.getWidth() - image.getWidth(), c.getHeight() - image.getHeight(), c.getWidth(),
 						c.getHeight());
 			}
-		}
 	}
 
 	private void startHelper(final QProcess helper) throws Exception {
@@ -247,13 +241,12 @@ public class MumbleOverlay extends QObject {
 	}
 
 	public void updateOverlay() {
-		for (final MumbleOverlayClient c : clients) {
+		for (final MumbleOverlayClient c : clients)
 			if (!c.update()) {
 				clients.remove(c);
 				c.deInit();
 				break;
 			}
-		}
 	}
 
 }

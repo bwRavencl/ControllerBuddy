@@ -70,17 +70,15 @@ public class ButtonToModeAction implements IButtonToAction {
 		Component component = null;
 		componentLoop: for (final Component c : Input.getComponents(input.getController())) {
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
-			if (buttonToModeActions != null) {
-				for (final ButtonToModeAction a : buttonToModeActions) {
+			if (buttonToModeActions != null)
+				for (final ButtonToModeAction a : buttonToModeActions)
 					if (a.equals(this)) {
 						component = c;
 						break componentLoop;
 					}
-				}
-			}
 		}
 
-		if (component != null) {
+		if (component != null)
 			for (final ButtonToModeAction a : buttonToModeActionStack) {
 				final Map<String, List<IAction>> componentToActionMap = a.getMode().getComponentToActionsMap();
 				final List<IAction> actions = componentToActionMap.get(component.getName());
@@ -88,7 +86,6 @@ public class ButtonToModeAction implements IButtonToAction {
 				if (actions != null)
 					return false;
 			}
-		}
 
 		return true;
 	}
@@ -106,25 +103,19 @@ public class ButtonToModeAction implements IButtonToAction {
 			}
 
 			final Map<String, List<IAction>> componentToActionsMap = profile.getActiveMode().getComponentToActionsMap();
-			for (final List<IAction> actions : componentToActionsMap.values()) {
-				for (final IAction a : actions) {
+			for (final List<IAction> actions : componentToActionsMap.values())
+				for (final IAction a : actions)
 					if (a instanceof ToKeyAction)
 						((ToKeyAction) a).resetWasUp();
-				}
-			}
 
 			final Set<String> components = componentToActionsMap.keySet();
 			final Map<String, List<IAction>> defaultComponentToActionsMap = previousMode.getComponentToActionsMap();
-			if (defaultComponentToActionsMap != null) {
-				for (final String c : components) {
-					if (defaultComponentToActionsMap.containsKey(c)) {
-						for (final IAction a : defaultComponentToActionsMap.get(c)) {
+			if (defaultComponentToActionsMap != null)
+				for (final String c : components)
+					if (defaultComponentToActionsMap.containsKey(c))
+						for (final IAction a : defaultComponentToActionsMap.get(c))
 							if (a instanceof ISuspendableAction)
 								((ISuspendableAction) a).suspend(c);
-						}
-					}
-				}
-			}
 
 			profile.setActiveMode(input, previousMode.getUuid());
 			input.getDownKeyStrokes().clear();
@@ -141,19 +132,17 @@ public class ButtonToModeAction implements IButtonToAction {
 				up = true;
 			else
 				deactivateMode(input, profile);
-		} else {
-			if (toggle) {
-				if (up) {
-					if (profile.getActiveMode().getUuid().equals(modeUuid))
-						deactivateMode(input, profile);
-					else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
-						activateMode(input, profile);
+		} else if (toggle) {
+			if (up) {
+				if (profile.getActiveMode().getUuid().equals(modeUuid))
+					deactivateMode(input, profile);
+				else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
+					activateMode(input, profile);
 
-					up = false;
-				}
-			} else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
-				activateMode(input, profile);
-		}
+				up = false;
+			}
+		} else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
+			activateMode(input, profile);
 	}
 
 	@Override

@@ -89,7 +89,7 @@ public class ServerOutputThread extends OutputThread {
 
 			main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
 
-			while (run) {
+			while (run)
 				switch (serverState) {
 				case Listening:
 					counter = 0;
@@ -235,7 +235,6 @@ public class ServerOutputThread extends OutputThread {
 
 					break;
 				}
-			}
 		} catch (final BindException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(main.getFrame(),

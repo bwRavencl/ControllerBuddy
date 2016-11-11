@@ -35,15 +35,12 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction implements ISus
 					input.getDownUpMouseButtons().add(mouseButton);
 					wasUp = false;
 				}
-			} else {
+			} else
 				input.getDownMouseButtons().add(mouseButton);
-			}
-		} else {
-			if (downUp)
-				wasUp = true;
-			else
-				input.getDownMouseButtons().remove(mouseButton);
-		}
+		} else if (downUp)
+			wasUp = true;
+		else
+			input.getDownMouseButtons().remove(mouseButton);
 	}
 
 	public float getMaxAxisValue() {

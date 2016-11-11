@@ -35,4 +35,5 @@ public class XInputGamepad extends Structure {
 		return Arrays.asList(new String[] { "wButtons", "bLeftTrigger", "bRightTrigger", "sThumbLX", "sThumbLY",
 				"sThumbRX", "sThumbRY" });
 	}
+
 }

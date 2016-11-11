@@ -1,7 +1,10 @@
+Format all lines
+Organize imports
 Remove 'this' qualifier for non static field accesses
 Remove 'this' qualifier for non static method accesses
 Change non static accesses to static members using declaring type
 Change indirect accesses to static members to direct accesses (accesses through subtypes)
+Remove unnecessary blocks
 Convert 'for' loops to enhanced 'for' loops
 Add final modifier to private fields
 Add final modifier to method parameters

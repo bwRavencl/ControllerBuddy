@@ -140,17 +140,16 @@ public class Input {
 			cachedController = controller;
 			cachedComponents = controller.getComponents();
 
-			if (Main.isWindows()) {
+			if (Main.isWindows())
 				if (XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
 
 					final List<Controller> xbox360Controllers = new ArrayList<>();
-					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
 						if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
 							xbox360Controllers.add(c);
-					}
 					final int dwUserIndex = xbox360Controllers.indexOf(controller);
 
-					if (dwUserIndex <= 3) {
+					if (dwUserIndex <= 3)
 						try {
 							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
 							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
@@ -160,13 +159,11 @@ public class Input {
 						} catch (final Exception e) {
 							e.printStackTrace();
 						}
-					}
 				} else if (isDualShock4Controller(controller)) {
 					final int touchpadButtonIndex = 18;
 					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, cachedComponents, touchpadButtonIndex,
 							cachedComponents.length - 1 - touchpadButtonIndex);
 				}
-			}
 		}
 
 		return cachedComponents;
@@ -175,11 +172,10 @@ public class Input {
 	public static List<Controller> getControllers() {
 		final List<Controller> controllers = new ArrayList<>();
 
-		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
+		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
 			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
 					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy"))
 				controllers.add(c);
-		}
 
 		return controllers;
 	}
@@ -189,10 +185,9 @@ public class Input {
 	}
 
 	private static boolean isDualShock4Controller(final Controller controller) {
-		for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES) {
+		for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES)
 			if (s.equals(controller.getName()))
 				return true;
-		}
 
 		return false;
 	}
@@ -219,12 +214,11 @@ public class Input {
 			for (final String s : profile.getComponentToModeActionMap().keySet()) {
 				boolean componentFound = false;
 
-				for (final Component c : getComponents(controller)) {
+				for (final Component c : getComponents(controller))
 					if (s.equals(c.getName())) {
 						componentFound = true;
 						break;
 					}
-				}
 
 				if (!componentFound)
 					return false;
@@ -234,12 +228,11 @@ public class Input {
 				for (final String s : m.getComponentToActionsMap().keySet()) {
 					boolean componentFound = false;
 
-					for (final Component c : getComponents(controller)) {
+					for (final Component c : getComponents(controller))
 						if (s.equals(c.getName())) {
 							componentFound = true;
 							break;
 						}
-					}
 
 					if (!componentFound)
 						return false;
@@ -308,7 +301,7 @@ public class Input {
 					break;
 				}
 			}
-			if (hidDeviceInfo != null) {
+			if (hidDeviceInfo != null)
 				try {
 					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
 					hidDevice.setInputReportListener(new InputReportListener() {
@@ -339,10 +332,8 @@ public class Input {
 
 							if (touchpadButtonDown)
 								downMouseButtons.add(down2 ? 2 : 1);
-							else {
-								if (prevTouchpadButtonDown)
-									downMouseButtons.clear();
-							}
+							else if (prevTouchpadButtonDown)
+								downMouseButtons.clear();
 
 							if (down1 && !prevDown1) {
 								prevX1 = -1;
@@ -350,21 +341,16 @@ public class Input {
 							}
 
 							if (!prevDown2 || touchpadButtonDown) {
-								if (prevX1 > 0) {
+								if (prevX1 > 0)
 									if (Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
 										cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
-								}
 
-								if (prevY1 > 0) {
+								if (prevY1 > 0)
 									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
 										cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
-								}
-							} else {
-								if (prevY1 > 0) {
-									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-										scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
-								}
-							}
+							} else if (prevY1 > 0)
+								if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+									scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
 
 							prevTouchpadButtonDown = touchpadButtonDown;
 							prevDown1 = down1;
@@ -377,7 +363,6 @@ public class Input {
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
-			}
 		}
 
 	}
@@ -445,17 +430,15 @@ public class Input {
 			if (Math.abs(pollData) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
 				final Iterator<Entry<ISuspendableAction, String>> it = ISuspendableAction.componentToSuspendedActionsMap
 						.entrySet().iterator();
-				while (it.hasNext()) {
+				while (it.hasNext())
 					if (c.getName().equals(it.next().getValue()))
 						it.remove();
-				}
 			}
 
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
-			if (buttonToModeActions != null) {
+			if (buttonToModeActions != null)
 				for (final ButtonToModeAction a : buttonToModeActions)
 					a.doAction(this, pollData);
-			}
 
 			final List<Mode> modes = profile.getModes();
 			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
@@ -464,10 +447,9 @@ public class Input {
 			if (actions == null)
 				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
 
-			if (actions != null) {
+			if (actions != null)
 				for (final IAction a : actions)
 					a.doAction(this, pollData);
-			}
 		}
 
 		Main.updateOverlayAxisIndicators();
@@ -479,14 +461,11 @@ public class Input {
 		profile.setActiveMode(this, 0);
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 
-		for (final Mode m : profile.getModes()) {
-			for (final List<IAction> actions : m.getComponentToActionsMap().values()) {
-				for (final IAction a : actions) {
+		for (final Mode m : profile.getModes())
+			for (final List<IAction> actions : m.getComponentToActionsMap().values())
+				for (final IAction a : actions)
 					if (a instanceof ButtonToCycleAction)
 						((ButtonToCycleAction) a).reset();
-				}
-			}
-		}
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value) {

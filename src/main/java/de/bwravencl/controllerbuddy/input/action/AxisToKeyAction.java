@@ -37,12 +37,10 @@ public class AxisToKeyAction extends ToKeyAction implements ISuspendableAction {
 				}
 			} else
 				input.getDownKeyStrokes().add(keystroke);
-		} else {
-			if (downUp)
-				wasUp = true;
-			else
-				input.getDownKeyStrokes().remove(keystroke);
-		}
+		} else if (downUp)
+			wasUp = true;
+		else
+			input.getDownKeyStrokes().remove(keystroke);
 	}
 
 	public float getMaxAxisValue() {

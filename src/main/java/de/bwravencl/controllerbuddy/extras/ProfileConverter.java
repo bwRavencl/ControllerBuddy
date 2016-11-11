@@ -103,7 +103,7 @@ public class ProfileConverter {
 								final List<IAction> l2Actions = new ArrayList<>();
 								final List<IAction> r2Actions = new ArrayList<>();
 
-								for (final IAction action : e.getValue()) {
+								for (final IAction action : e.getValue())
 									if (action instanceof AxisToButtonAction) {
 										final AxisToButtonAction axisToButtonAction = (AxisToButtonAction) action;
 
@@ -132,7 +132,6 @@ public class ProfileConverter {
 									} else
 										System.out.println(
 												"\nWarning " + oldComponent + " is mapped to a non-convertable action");
-								}
 
 								newComponentToModeActionsMap.put("Taste 6", l2Actions);
 								newComponentToModeActionsMap.put("Taste 7", r2Actions);

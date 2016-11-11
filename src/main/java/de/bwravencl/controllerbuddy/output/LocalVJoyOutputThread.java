@@ -107,7 +107,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	public void run() {
-		if (init()) {
+		if (init())
 			while (run) {
 				if (readInput())
 					writeOutput();
@@ -118,7 +118,6 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 					e.printStackTrace();
 				}
 			}
-		}
 
 		deInit();
 	}

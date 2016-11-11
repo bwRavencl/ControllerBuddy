@@ -811,10 +811,9 @@ public final class Main {
 	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
 		component.setEnabled(enabled);
 
-		if (component instanceof Container) {
+		if (component instanceof Container)
 			for (final java.awt.Component child : ((Container) component).getComponents())
 				setEnabledRecursive(child, enabled);
-		}
 	}
 
 	public static void setOverlayText(final String text) {
@@ -823,7 +822,7 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
-		for (final VirtualAxis va : Input.VirtualAxis.values()) {
+		for (final VirtualAxis va : Input.VirtualAxis.values())
 			if (virtualAxisToProgressBarMap.containsKey(va)) {
 				OutputThread outputThread = null;
 				if (localThread != null && localThread.isAlive())
@@ -845,7 +844,6 @@ public final class Main {
 					}
 				}
 			}
-		}
 	}
 
 	private static void updateOverlayLocation() {
@@ -996,10 +994,9 @@ public final class Main {
 			public void menuSelected(final MenuEvent e) {
 				deviceMenu.removeAll();
 
-				for (final Controller c : Input.getControllers()) {
+				for (final Controller c : Input.getControllers())
 					if (c.poll())
 						deviceMenu.add(new SelectControllerAction(c));
-				}
 			}
 		});
 		deviceMenu.setEnabled(true);
@@ -1376,11 +1373,10 @@ public final class Main {
 			newProfile();
 
 			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-			if (path != null) {
+			if (path != null)
 				if (!loadProfile(new File(path)))
 					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
 
 			final Thread updateAssignmentsPanelThread = new Thread() {
 
@@ -1603,18 +1599,17 @@ public final class Main {
 			}
 		}, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 
-		if (mumbleOverlayEnabled) {
+		if (mumbleOverlayEnabled)
 			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
-					while (QCoreApplication.instance() != null) {
+					while (QCoreApplication.instance() != null)
 						try {
 							Thread.sleep(100L);
 						} catch (final InterruptedException e) {
 							e.printStackTrace();
 						}
-					}
 					QCoreApplication.initialize(new String[0]);
 
 					final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
@@ -1685,7 +1680,6 @@ public final class Main {
 					}
 				}
 			}).start();
-		}
 	}
 
 	private boolean isMumbleOverlayEnabled() {
@@ -1799,9 +1793,8 @@ public final class Main {
 
 	private void saveProfileAs() {
 		fileChooser.setSelectedFile(currentFile);
-		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
 			saveProfile(fileChooser.getSelectedFile());
-		}
 	}
 
 	public void scheduleStatusBarText(final String text) {
@@ -1918,13 +1911,12 @@ public final class Main {
 		stopServer(false);
 
 		while (localThread != null && localThread.isAlive() || clientThread != null && clientThread.isAlive()
-				|| serverThread != null && serverThread.isAlive()) {
+				|| serverThread != null && serverThread.isAlive())
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
 	}
 
 	public void stopClient(final boolean resetLastOutputType) {

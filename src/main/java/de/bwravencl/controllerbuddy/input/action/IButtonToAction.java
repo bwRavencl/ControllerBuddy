@@ -63,40 +63,35 @@ public interface IButtonToAction extends IAction {
 			} else if (actionToDownSinceMap.containsKey(this)) {
 				if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
 					for (final List<IAction> actions : Input.getProfile().getActiveMode().getComponentToActionsMap()
-							.values()) {
+							.values())
 						if (actions.contains(this)) {
 							actionToWasDown.removeAll(actions);
 							break;
 						}
-					}
 
-					if (!Profile.isDefaultMode(Input.getProfile().getActiveMode())) {
+					if (!Profile.isDefaultMode(Input.getProfile().getActiveMode()))
 						for (final List<IAction> actions : Input.getProfile().getModes().get(0)
-								.getComponentToActionsMap().values()) {
+								.getComponentToActionsMap().values())
 							if (actions.contains(this)) {
 								actionToWasDown.removeAll(actions);
 								break;
 							}
-						}
-					}
 				}
 				actionToDownSinceMap.remove(this);
 			}
 
 			return activationValue - 1.0f;
-		} else {
-			if (isDownUpAction(this)) {
-				if (value == activationValue)
-					actionToWasDown.add(this);
-				else if (actionToWasDown.contains(this)) {
-					actionToWasDown.remove(this);
-					return activationValue;
-				}
+		} else if (isDownUpAction(this)) {
+			if (value == activationValue)
+				actionToWasDown.add(this);
+			else if (actionToWasDown.contains(this)) {
+				actionToWasDown.remove(this);
+				return activationValue;
+			}
 
-				return activationValue - 1.0f;
-			} else
-				return value;
-		}
+			return activationValue - 1.0f;
+		} else
+			return value;
 	}
 
 	boolean isLongPress();
