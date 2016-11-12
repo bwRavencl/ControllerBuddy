@@ -161,8 +161,11 @@ public class Input {
 						}
 				} else if (isDualShock4Controller(controller)) {
 					final int touchpadButtonIndex = 18;
-					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, cachedComponents, touchpadButtonIndex,
-							cachedComponents.length - 1 - touchpadButtonIndex);
+					final Component[] newCachedComponents = new Component[cachedComponents.length - 1];
+					System.arraycopy(cachedComponents, 0, newCachedComponents, 0, touchpadButtonIndex);
+					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, newCachedComponents,
+							touchpadButtonIndex, cachedComponents.length - touchpadButtonIndex - 1);
+					cachedComponents = newCachedComponents;
 				}
 		}
 
