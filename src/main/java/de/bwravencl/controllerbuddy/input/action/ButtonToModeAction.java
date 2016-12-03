@@ -17,7 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,18 +30,16 @@ import net.java.games.input.Component;
 
 public class ButtonToModeAction implements IButtonToAction {
 
-	private static final Deque<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
+	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
-	public static Deque<ButtonToModeAction> getButtonToModeActionStack() {
+	public static LinkedList<ButtonToModeAction> getButtonToModeActionStack() {
 		return buttonToModeActionStack;
 	}
 
 	private boolean toggle = false;
 	private transient boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
-
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
-
 	private UUID modeUuid;
 
 	public ButtonToModeAction() {

@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -427,6 +428,9 @@ public class Input {
 		if (!controller.poll())
 			return false;
 
+		final List<Mode> modes = profile.getModes();
+		final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
+
 		for (final Component c : getComponents(controller)) {
 			final float pollData = c.getPollData();
 
@@ -443,10 +447,18 @@ public class Input {
 				for (final ButtonToModeAction a : buttonToModeActions)
 					a.doAction(this, pollData);
 
-			final List<Mode> modes = profile.getModes();
-			final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
-
 			List<IAction> actions = componentToActionMap.get(c.getName());
+			if (actions == null) {
+				final LinkedList<ButtonToModeAction> buttonToModeActionStack = ButtonToModeAction
+						.getButtonToModeActionStack();
+				for (int i = 1; i < buttonToModeActionStack.size(); i++) {
+					actions = buttonToModeActionStack.get(i).getMode().getComponentToActionsMap().get(c.getName());
+
+					if (actions != null)
+						break;
+				}
+			}
+
 			if (actions == null)
 				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
 
