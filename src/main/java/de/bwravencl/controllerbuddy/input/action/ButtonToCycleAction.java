@@ -24,8 +24,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class ButtonToCycleAction implements IButtonToAction {
 
-	private boolean wasUp = true;
-	private int index = 0;
+	private transient boolean wasUp = true;
+	private transient int index = 0;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private List<IAction> actions = new ArrayList<>();

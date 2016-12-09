@@ -31,16 +31,20 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction implements IB
 		if (value != activationValue) {
 			if (downUp)
 				wasUp = true;
-			else
+			else if (initiator) {
 				input.getDownMouseButtons().remove(mouseButton);
+				initiator = false;
+			}
 		} else if (downUp) {
 			if (wasUp) {
 				input.getDownUpMouseButtons().add(mouseButton);
+				initiator = true;
 				wasUp = false;
 			}
-		} else
+		} else {
 			input.getDownMouseButtons().add(mouseButton);
-
+			initiator = true;
+		}
 	}
 
 	@Override

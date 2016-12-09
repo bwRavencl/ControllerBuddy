@@ -22,7 +22,8 @@ public abstract class ToMouseButtonAction implements IAction {
 	public static final int DEFAULT_MOUSE_BUTTON = 1;
 
 	protected boolean downUp = false;
-	protected boolean wasUp = true;
+	protected transient boolean wasUp = true;
+	protected transient boolean initiator = false;
 
 	protected int mouseButton = DEFAULT_MOUSE_BUTTON;
 
