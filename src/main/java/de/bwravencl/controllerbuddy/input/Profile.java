@@ -125,6 +125,12 @@ public class Profile implements Cloneable {
 
 	public void setActiveMode(final Input input, final int index) {
 		if (modes.size() > index) {
+			input.getDownKeyStrokes().clear();
+			input.getDownMouseButtons().clear();
+			final boolean[] buttons = input.getButtons();
+			for (int i = 0; i < buttons.length; i++)
+				buttons[i] = false;
+
 			final Mode newMode = modes.get(index);
 
 			if (input.getOutputThread() != null)

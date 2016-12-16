@@ -442,11 +442,6 @@ public class Input {
 						it.remove();
 			}
 
-			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
-			if (buttonToModeActions != null)
-				for (final ButtonToModeAction a : buttonToModeActions)
-					a.doAction(this, pollData);
-
 			List<IAction> actions = componentToActionMap.get(c.getName());
 			if (actions == null) {
 				final LinkedList<ButtonToModeAction> buttonToModeActionStack = ButtonToModeAction
@@ -465,6 +460,13 @@ public class Input {
 			if (actions != null)
 				for (final IAction a : actions)
 					a.doAction(this, pollData);
+		}
+
+		for (final Component c : getComponents(controller)) {
+			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
+			if (buttonToModeActions != null)
+				for (final ButtonToModeAction a : buttonToModeActions)
+					a.doAction(this, c.getPollData());
 		}
 
 		Main.updateOverlayAxisIndicators();
