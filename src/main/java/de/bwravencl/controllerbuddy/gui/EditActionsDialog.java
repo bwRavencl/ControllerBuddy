@@ -339,7 +339,7 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			if (isComponentEditor()) {
 				Input.setProfile(unsavedProfile, input.getController());
-				main.setUnsavedChangesTitle();
+				main.setUnsavedChanges(true);
 			} else
 				cycleAction.setActions(cycleActions);
 

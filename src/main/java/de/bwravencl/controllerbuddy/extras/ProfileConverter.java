@@ -53,7 +53,7 @@ public class ProfileConverter {
 	public static void main(final String[] args) {
 		final Scanner reader = new Scanner(System.in);
 		final File sourceFolder, destinationFolder;
-		final Input input = new Input(null);
+		final Input input = new Input(null, null);
 
 		System.out.print("Xbox 360 Controller profiles folder: ");
 		try {

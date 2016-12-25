@@ -38,6 +38,7 @@ import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -152,7 +153,7 @@ public final class Main {
 			final Mode mode = new Mode();
 			Input.getProfile().getModes().add(mode);
 
-			setUnsavedChangesTitle();
+			setUnsavedChanges(true);
 			updateModesPanel();
 		}
 
@@ -254,7 +255,7 @@ public final class Main {
 			else
 				Input.getProfile().getVirtualAxisToColorMap().remove(virtualAxis);
 
-			setUnsavedChangesTitle();
+			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
 
@@ -371,7 +372,7 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			Input.getProfile().removeMode(mode);
-			setUnsavedChangesTitle();
+			setUnsavedChanges(true);
 			updateModesPanel();
 		}
 
@@ -466,7 +467,7 @@ public final class Main {
 			if (newColor != null)
 				Input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
 
-			setUnsavedChangesTitle();
+			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
 
@@ -550,7 +551,7 @@ public final class Main {
 
 			if (description != null && description.length() > 0) {
 				mode.setDescription(description);
-				setUnsavedChangesTitle();
+				setUnsavedChanges(true);
 			}
 		}
 
@@ -886,6 +887,8 @@ public final class Main {
 	private JLabel mumbleDirectoryLabel1;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 	private TrayIcon trayIcon;
+	private boolean unsavedChanges = false;
+	private String loadedProfile = null;
 
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
@@ -955,7 +958,7 @@ public final class Main {
 			}
 
 		});
-		setTitle(rb.getString("APPLICATION_NAME"));
+
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
@@ -1328,7 +1331,6 @@ public final class Main {
 			popupMenu.add(quitMenuItem);
 
 			trayIcon = new TrayIcon(frame.getIconImage());
-			trayIcon.setToolTip(rb.getString("APPLICATION_NAME"));
 			trayIcon.addActionListener(showAction);
 			trayIcon.setPopupMenu(popupMenu);
 			try {
@@ -1337,6 +1339,8 @@ public final class Main {
 				e.printStackTrace();
 			}
 		}
+
+		updateTitleAndTooltip();
 
 		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1520,6 +1524,20 @@ public final class Main {
 			mumbleOverlayActive = false;
 			mumbleOverlayRedraw = true;
 		}
+	}
+
+	public void displayLowBatteryWarning(final int batteryCharge) {
+		if (trayIcon != null)
+			trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
+	}
+
+	public void displayChargingStateInfo(final boolean charging) {
+		if (trayIcon != null && input != null)
+			trayIcon.displayMessage(rb.getString("CHARGING_STATE_CAPTION"),
+					(charging ? rb.getString("CHARGING_STATE_CHARGING_PREFIX")
+							: rb.getString("CHARGING_STATE_DISCHARGING_PREFIX")) + input.getBatteryState()
+							+ rb.getString("CHARGING_STATE_SUFFIX"),
+					MessageType.INFO);
 	}
 
 	public JFrame getFrame() {
@@ -1707,7 +1725,8 @@ public final class Main {
 					saveLastProfile(file);
 					updateModesPanel();
 					updateOverlayPanel();
-					setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+					loadedProfile = file.getName();
+					setUnsavedChanges(false);
 					setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
 					scheduleStatusBarText(rb.getString("STATUS_READY"));
 					fileChooser.setSelectedFile(file);
@@ -1734,9 +1753,10 @@ public final class Main {
 		if (input != null)
 			input.deInit();
 
-		input = new Input(selectedController);
+		input = new Input(this, selectedController);
 
-		setTitle(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+		loadedProfile = null;
+		updateTitleAndTooltip();
 		updateModesPanel();
 		updateOverlayPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
@@ -1784,7 +1804,7 @@ public final class Main {
 			fos.close();
 
 			saveLastProfile(file);
-			setTitle(file.getName() + rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			setUnsavedChanges(false);
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e1) {
@@ -1830,18 +1850,9 @@ public final class Main {
 			statusLabel.setText(text);
 	}
 
-	private void setTitle(final String title) {
-		frame.setTitle(title);
-		if (trayIcon != null)
-			trayIcon.setToolTip(title);
-	}
-
-	public void setUnsavedChangesTitle() {
-		final String title = frame.getTitle();
-
-		if (!title.startsWith(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"))
-				&& !title.startsWith(rb.getString("MAIN_FRAME_TITLE_PREFIX")))
-			setTitle(rb.getString("MAIN_FRAME_TITLE_PREFIX") + title);
+	public void setUnsavedChanges(final boolean unsavedChanges) {
+		this.unsavedChanges = unsavedChanges;
+		updateTitleAndTooltip();
 	}
 
 	public void startClient() {
@@ -2078,6 +2089,31 @@ public final class Main {
 		setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
 		setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
 		setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
+	}
+
+	public void updateTitleAndTooltip() {
+		final StringBuilder sb = new StringBuilder();
+
+		if (loadedProfile == null)
+			sb.append(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+		else {
+			if (unsavedChanges)
+				sb.append(rb.getString("MAIN_FRAME_TITLE_PREFIX"));
+
+			sb.append(loadedProfile);
+			sb.append(rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+		}
+
+		frame.setTitle(sb.toString());
+
+		if (trayIcon != null && input != null) {
+			if (input != null && Main.isWindows() && Input.isDualShock4Controller(input.getController()))
+				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
+						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
+								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));
+
+			trayIcon.setToolTip(sb.toString());
+		}
 	}
 
 }

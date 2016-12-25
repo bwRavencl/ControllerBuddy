@@ -120,6 +120,7 @@ public class Input {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
+	private static final int LOW_BATTERY_WARNING = 10;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 	private static final String XBOX_360_CONTROLLER_NAME = "XBOX 360 For Windows (Controller)";
 	private static final String DUAL_SHOCK_4_CONTROLLER_NAMES[] = { "Wireless Controller",
@@ -188,10 +189,11 @@ public class Input {
 		return profile;
 	}
 
-	private static boolean isDualShock4Controller(final Controller controller) {
-		for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES)
-			if (s.equals(controller.getName()))
-				return true;
+	public static boolean isDualShock4Controller(final Controller controller) {
+		if (controller != null)
+			for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES)
+				if (s.equals(controller.getName()))
+					return true;
 
 		return false;
 	}
@@ -272,6 +274,7 @@ public class Input {
 		}
 	}
 
+	private final Main main;
 	private final Controller controller;
 	private OutputThread outputThread;
 	private boolean[] buttons;
@@ -285,8 +288,11 @@ public class Input {
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
 	private HidDevice hidDevice;
+	private boolean charging = true;
+	private int batteryState;
 
-	public Input(final Controller controller) {
+	public Input(final Main main, final Controller controller) {
+		this.main = main;
 		this.controller = controller;
 
 		for (final VirtualAxis va : VirtualAxis.values())
@@ -361,6 +367,12 @@ public class Input {
 							prevDown2 = down2;
 							prevX1 = x1;
 							prevY1 = y1;
+
+							final boolean charging = (data[29] & 0x10) != 0;
+							final int battery = (data[29] & 0x0F) * 10 - (charging ? 10 : 0);
+
+							setBatteryState(battery);
+							setCharging(charging);
 						}
 
 					});
@@ -374,6 +386,10 @@ public class Input {
 	public void deInit() {
 		if (hidDevice != null)
 			hidDevice.close();
+	}
+
+	public int getBatteryState() {
+		return batteryState;
 	}
 
 	public boolean[] getButtons() {
@@ -422,6 +438,10 @@ public class Input {
 
 	public int getScrollClicks() {
 		return scrollClicks;
+	}
+
+	public boolean isCharging() {
+		return charging;
 	}
 
 	public boolean poll() {
@@ -500,6 +520,18 @@ public class Input {
 		axis.put(virtualAxis, value);
 	}
 
+	public void setBatteryState(final int batteryState) {
+		if (this.batteryState != batteryState) {
+			this.batteryState = batteryState;
+			if (main != null) {
+				main.updateTitleAndTooltip();
+
+				if (batteryState == LOW_BATTERY_WARNING)
+					main.displayLowBatteryWarning(batteryState);
+			}
+		}
+	}
+
 	public void setButtons(final int id, final boolean value) {
 		if (id < buttons.length)
 			buttons[id] = value;
@@ -510,6 +542,14 @@ public class Input {
 			setButtons(id, false);
 		else
 			setButtons(id, true);
+	}
+
+	public void setCharging(final boolean charging) {
+		if (this.charging != charging) {
+			this.charging = charging;
+			main.updateTitleAndTooltip();
+			main.displayChargingStateInfo(charging);
+		}
 	}
 
 	public void setCursorDeltaX(final int cursorDeltaX) {
