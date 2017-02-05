@@ -1526,11 +1526,6 @@ public final class Main {
 		}
 	}
 
-	public void displayLowBatteryWarning(final int batteryCharge) {
-		if (trayIcon != null)
-			trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
-	}
-
 	public void displayChargingStateInfo(final boolean charging) {
 		if (trayIcon != null && input != null)
 			trayIcon.displayMessage(rb.getString("CHARGING_STATE_CAPTION"),
@@ -1538,6 +1533,11 @@ public final class Main {
 							: rb.getString("CHARGING_STATE_DISCHARGING_PREFIX")) + input.getBatteryState()
 							+ rb.getString("CHARGING_STATE_SUFFIX"),
 					MessageType.INFO);
+	}
+
+	public void displayLowBatteryWarning(final int batteryCharge) {
+		if (trayIcon != null)
+			trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
 	}
 
 	public JFrame getFrame() {
@@ -2086,9 +2086,11 @@ public final class Main {
 	private void updateOverlaySettings() {
 		final boolean showOverlay = preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true);
 
-		setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
-		setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
-		setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
+		if (isWindows()) {
+			setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
+			setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
+			setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
+		}
 	}
 
 	public void updateTitleAndTooltip() {
