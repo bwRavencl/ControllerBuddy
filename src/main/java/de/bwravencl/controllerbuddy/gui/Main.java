@@ -1804,11 +1804,12 @@ public final class Main {
 			fos.close();
 
 			saveLastProfile(file);
+			loadedProfile = file.getName();
 			setUnsavedChanges(false);
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
-		} catch (final IOException e1) {
-			e1.printStackTrace();
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
 	}
 
