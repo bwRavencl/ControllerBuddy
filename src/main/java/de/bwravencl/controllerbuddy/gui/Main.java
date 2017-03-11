@@ -1,4 +1,4 @@
-/* Copyright (C) 2016  Matteo Hausner
+/* Copyright (C) 2017  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,8 +94,6 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
@@ -771,40 +769,36 @@ public final class Main {
 	}
 
 	public static void main(final String[] args) {
-		EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(() -> {
+			final Options options = new Options();
+			options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
+			options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
+			options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
 
-			@Override
-			public void run() {
-				final Options options = new Options();
-				options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
-				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
-				options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
+			try {
+				final CommandLine commandLine = new DefaultParser().parse(options, args);
+				if (commandLine.hasOption(OPTION_VERSION))
+					System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
+				else {
+					final Main main = new Main();
+					if (!commandLine.hasOption(OPTION_TRAY))
+						main.frame.setVisible(true);
+					if (commandLine.hasOption(OPTION_AUTOSTART)) {
+						final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 
-				try {
-					final CommandLine commandLine = new DefaultParser().parse(options, args);
-					if (commandLine.hasOption(OPTION_VERSION))
-						System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
-					else {
-						final Main main = new Main();
-						if (!commandLine.hasOption(OPTION_TRAY))
-							main.frame.setVisible(true);
-						if (commandLine.hasOption(OPTION_AUTOSTART)) {
-							final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
-
-							if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
-								main.startLocal();
-							else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
-								main.startClient();
-							else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
-								main.startServer();
-						}
+						if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
+							main.startLocal();
+						else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
+							main.startClient();
+						else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+							main.startServer();
 					}
-				} catch (final ParseException e) {
-					final HelpFormatter helpFormatter = new HelpFormatter();
-					helpFormatter.printHelp("ControllerBuddy", options, true);
-				} catch (final Exception e) {
-					e.printStackTrace();
 				}
+			} catch (final ParseException e1) {
+				final HelpFormatter helpFormatter = new HelpFormatter();
+				helpFormatter.printHelp("ControllerBuddy", options, true);
+			} catch (final Exception e2) {
+				e2.printStackTrace();
 			}
 		});
 	}
@@ -1125,13 +1119,8 @@ public final class Main {
 		final JSpinner.DefaultEditor pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner, "#");
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
-		pollIntervalSpinner.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(final ChangeEvent e) {
-				preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
+		pollIntervalSpinner.addChangeListener(
+				e -> preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (isWindows()) {
@@ -1161,13 +1150,8 @@ public final class Main {
 			final JSpinner.DefaultEditor vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
-			vJoyDeviceSpinner.addChangeListener(new ChangeListener() {
-
-				@Override
-				public void stateChanged(final ChangeEvent e) {
-					preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue());
-				}
-			});
+			vJoyDeviceSpinner.addChangeListener(
+					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
 			final JPanel hostPanel = new JPanel(panelFlowLayout);
@@ -1196,13 +1180,8 @@ public final class Main {
 		final JSpinner.DefaultEditor portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		portSpinner.setEditor(portSpinnerEditor);
-		portSpinner.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(final ChangeEvent e) {
-				preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
+		portSpinner.addChangeListener(
+				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
 		final JPanel timeoutPanel = new JPanel(panelFlowLayout);
@@ -1217,13 +1196,8 @@ public final class Main {
 		final JSpinner.DefaultEditor timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner, "#");
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		timeoutSpinner.setEditor(timeoutSpinnerEditor);
-		timeoutSpinner.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(final ChangeEvent e) {
-				preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue());
-			}
-		});
+		timeoutSpinner.addChangeListener(
+				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
 		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
@@ -1237,15 +1211,11 @@ public final class Main {
 
 			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
-			showOverlayCheckBox.addChangeListener(new ChangeListener() {
+			showOverlayCheckBox.addChangeListener(e -> {
+				final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
 
-				@Override
-				public void stateChanged(final ChangeEvent e) {
-					final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
-
-					preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
-					updateOverlaySettings();
-				}
+				preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
+				updateOverlaySettings();
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
 
@@ -1259,14 +1229,8 @@ public final class Main {
 
 				final JCheckBox useMumbleOverlayCheckBox = new JCheckBox(rb.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
 				useMumbleOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, false));
-				useMumbleOverlayCheckBox.addChangeListener(new ChangeListener() {
-
-					@Override
-					public void stateChanged(final ChangeEvent e) {
-						preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY,
-								((JCheckBox) e.getSource()).isSelected());
-					}
-				});
+				useMumbleOverlayCheckBox.addChangeListener(e -> preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY,
+						((JCheckBox) e.getSource()).isSelected()));
 				mumbleOverlaySettingsPanel.add(useMumbleOverlayCheckBox);
 
 				mumbleDirectoryPanel = new JPanel(panelFlowLayout);
@@ -1298,14 +1262,8 @@ public final class Main {
 				((DefaultFormatter) mumbleOverlayFpsSpinnerEditor.getTextField().getFormatter())
 						.setCommitsOnValidEdit(true);
 				mumbleOverlayFpsSpinner.setEditor(mumbleOverlayFpsSpinnerEditor);
-				mumbleOverlayFpsSpinner.addChangeListener(new ChangeListener() {
-
-					@Override
-					public void stateChanged(final ChangeEvent e) {
-						preferences.putDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
-								(double) ((JSpinner) e.getSource()).getValue());
-					}
-				});
+				mumbleOverlayFpsSpinner.addChangeListener(e -> preferences.putDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
+						(double) ((JSpinner) e.getSource()).getValue()));
 				mumbleOverlayFpsPanel.add(mumbleOverlayFpsSpinner);
 			}
 		}
@@ -1390,115 +1348,110 @@ public final class Main {
 						if (!suspendControllerSettingsUpdate
 								&& assignmentsScrollPane.equals(tabbedPane.getSelectedComponent())
 								&& frame.getState() != Frame.ICONIFIED)
-							EventQueue.invokeLater(new Runnable() {
+							EventQueue.invokeLater(() -> {
+								assignmentsPanel.removeAll();
 
-								@Override
-								public void run() {
-									assignmentsPanel.removeAll();
+								final Controller controller = input.getController();
+								if (controller != null && controller.poll()) {
+									for (final Component c : Input.getComponents(controller)) {
+										final JPanel componentPanel = new JPanel(new GridBagLayout());
+										assignmentsPanel.add(componentPanel,
+												new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+														GridBagConstraints.FIRST_LINE_START,
+														GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 5, 5));
 
-									final Controller controller = input.getController();
-									if (controller != null && controller.poll()) {
-										for (final Component c : Input.getComponents(controller)) {
-											final JPanel componentPanel = new JPanel(new GridBagLayout());
-											assignmentsPanel.add(componentPanel,
-													new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0,
-															0.0, GridBagConstraints.FIRST_LINE_START,
-															GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 5,
-															5));
+										final String name = c.getName();
+										final float value = c.getPollData();
 
-											final String name = c.getName();
-											final float value = c.getPollData();
+										final JLabel nameLabel = new JLabel();
+										nameLabel.setPreferredSize(new Dimension(100, 15));
 
-											final JLabel nameLabel = new JLabel();
-											nameLabel.setPreferredSize(new Dimension(100, 15));
+										final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0,
+												1, 1, 0.0, 0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 0);
 
-											final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0,
-													0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
-													GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+										final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0,
+												1, 1, 1.0, 1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 0);
 
-											final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2,
-													0, 1, 1, 1.0, 1.0, GridBagConstraints.BASELINE,
-													GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-
-											if (c.isAnalog()) {
-												nameLabel.setText(rb.getString("AXIS_LABEL") + name);
-												componentPanel.add(nameLabel, nameGridBagConstraints);
-
-												componentPanel.add(Box.createGlue(),
-														new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1,
-																0.0, 0.0, GridBagConstraints.BASELINE,
-																GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
-												final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
-												valueProgressBar.setValue((int) (value * 100.0f));
-												componentPanel.add(valueProgressBar, valueGridBagConstraints);
-											} else {
-												nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
-												componentPanel.add(nameLabel, nameGridBagConstraints);
-
-												componentPanel.add(Box.createGlue(),
-														new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1,
-																0.0, 0.0, GridBagConstraints.BASELINE,
-																GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
-												final JLabel valueLabel = new JLabel();
-												final StringWriter sw = new StringWriter();
-												if (value > 0.0f)
-													sw.append(rb.getString("BUTTON_DOWN_LABEL"));
-												else {
-													sw.append(rb.getString("BUTTON_UP_LABEL"));
-													valueLabel.setForeground(Color.LIGHT_GRAY);
-												}
-												sw.append(" (" + String.valueOf(value) + ')');
-												valueLabel.setText(sw.toString());
-												componentPanel.add(valueLabel, valueGridBagConstraints);
-											}
+										if (c.isAnalog()) {
+											nameLabel.setText(rb.getString("AXIS_LABEL") + name);
+											componentPanel.add(nameLabel, nameGridBagConstraints);
 
 											componentPanel.add(Box.createGlue(),
-													new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0,
+													new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0,
 															0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 															new Insets(0, 0, 0, 0), 0, 0));
 
-											final JButton editButton = new JButton(new EditComponentAction(c));
-											editButton.setPreferredSize(BUTTON_DIMENSION);
-											editButton.addMouseListener(new MouseListener() {
+											final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
+											valueProgressBar.setValue((int) (value * 100.0f));
+											componentPanel.add(valueProgressBar, valueGridBagConstraints);
+										} else {
+											nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
+											componentPanel.add(nameLabel, nameGridBagConstraints);
 
-												@Override
-												public void mouseClicked(final MouseEvent e) {
-												}
-
-												@Override
-												public void mouseEntered(final MouseEvent e) {
-												}
-
-												@Override
-												public void mouseExited(final MouseEvent e) {
-												}
-
-												@Override
-												public void mousePressed(final MouseEvent e) {
-													suspendControllerSettingsUpdate = true;
-												}
-
-												@Override
-												public void mouseReleased(final MouseEvent e) {
-												}
-											});
-											componentPanel.add(editButton,
-													new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0,
+											componentPanel.add(Box.createGlue(),
+													new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0,
 															0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 															new Insets(0, 0, 0, 0), 0, 0));
+
+											final JLabel valueLabel = new JLabel();
+											final StringWriter sw = new StringWriter();
+											if (value > 0.0f)
+												sw.append(rb.getString("BUTTON_DOWN_LABEL"));
+											else {
+												sw.append(rb.getString("BUTTON_UP_LABEL"));
+												valueLabel.setForeground(Color.LIGHT_GRAY);
+											}
+											sw.append(" (" + String.valueOf(value) + ')');
+											valueLabel.setText(sw.toString());
+											componentPanel.add(valueLabel, valueGridBagConstraints);
 										}
 
-										assignmentsPanel.add(Box.createGlue(),
-												new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-														GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+										componentPanel.add(Box.createGlue(),
+												new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+														GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+														new Insets(0, 0, 0, 0), 0, 0));
+
+										final JButton editButton = new JButton(new EditComponentAction(c));
+										editButton.setPreferredSize(BUTTON_DIMENSION);
+										editButton.addMouseListener(new MouseListener() {
+
+											@Override
+											public void mouseClicked(final MouseEvent e) {
+											}
+
+											@Override
+											public void mouseEntered(final MouseEvent e) {
+											}
+
+											@Override
+											public void mouseExited(final MouseEvent e) {
+											}
+
+											@Override
+											public void mousePressed(final MouseEvent e) {
+												suspendControllerSettingsUpdate = true;
+											}
+
+											@Override
+											public void mouseReleased(final MouseEvent e) {
+											}
+										});
+										componentPanel.add(editButton,
+												new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+														GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 														new Insets(0, 0, 0, 0), 0, 0));
 									}
 
-									setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
-									assignmentsScrollPane.setViewportView(assignmentsPanel);
+									assignmentsPanel.add(Box.createGlue(),
+											new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+													GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0, 0));
 								}
+
+								setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
+								assignmentsScrollPane.setViewportView(assignmentsPanel);
 							});
 
 						try {
@@ -1619,84 +1572,68 @@ public final class Main {
 		}, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 
 		if (mumbleOverlayEnabled)
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					while (QCoreApplication.instance() != null)
-						try {
-							Thread.sleep(100L);
-						} catch (final InterruptedException e) {
-							e.printStackTrace();
-						}
-					QCoreApplication.initialize(new String[0]);
-
-					final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
-
+			new Thread(() -> {
+				while (QCoreApplication.instance() != null)
 					try {
-						if (mumbleOverlay.init()) {
-							final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
-									overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-							final Graphics2D graphics = bufferedImage.createGraphics();
-
-							mumbleOverlayActive = true;
-
-							new Thread(new Runnable() {
-
-								@Override
-								public void run() {
-									final int interval = (int) Math
-											.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
-													MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
-
-									while (mumbleOverlayActive) {
-										QCoreApplication.invokeLater(new Runnable() {
-
-											@Override
-											public void run() {
-												synchronized (mumbleOverlayRedraw) {
-													if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
-														overlayFrame.print(graphics);
-														mumbleOverlay.render(bufferedImage);
-														mumbleOverlayRedraw = false;
-													}
-												}
-											}
-										});
-
-										try {
-											Thread.sleep(interval);
-										} catch (final InterruptedException e) {
-											e.printStackTrace();
-										}
-
-									}
-									graphics.dispose();
-									QCoreApplication.invokeLater(new Runnable() {
-
-										@Override
-										public void run() {
-											if (mumbleOverlay != null)
-												mumbleOverlay.deInit();
-
-											QCoreApplication.exit();
-										}
-									});
-								}
-							}).start();
-
-							QCoreApplication.instance().exec();
-						}
-					} catch (final Exception e) {
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(getFrame(),
-								rb.getString("MUMBLE_OVERLAY_GENERAL_INITIALIZATION_ERROR_DIALOG_TEXT"),
-								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-					} finally {
-						final QCoreApplication app = QCoreApplication.instance();
-						if (app != null)
-							app.dispose();
+						Thread.sleep(100L);
+					} catch (final InterruptedException e1) {
+						e1.printStackTrace();
 					}
+				QCoreApplication.initialize(new String[0]);
+
+				final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
+
+				try {
+					if (mumbleOverlay.init()) {
+						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
+								overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+						final Graphics2D graphics = bufferedImage.createGraphics();
+
+						mumbleOverlayActive = true;
+
+						new Thread(() -> {
+							final int interval = (int) Math
+									.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
+											MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
+
+							while (mumbleOverlayActive) {
+								QCoreApplication.invokeLater(() -> {
+									synchronized (mumbleOverlayRedraw) {
+										if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
+											overlayFrame.print(graphics);
+											mumbleOverlay.render(bufferedImage);
+											mumbleOverlayRedraw = false;
+										}
+									}
+								});
+
+								try {
+									Thread.sleep(interval);
+								} catch (final InterruptedException e) {
+									e.printStackTrace();
+								}
+
+							}
+							graphics.dispose();
+							QCoreApplication.invokeLater(() -> {
+								if (mumbleOverlay != null)
+									mumbleOverlay.deInit();
+
+								QCoreApplication.exit();
+							});
+						}).start();
+
+						QCoreApplication.instance().exec();
+					}
+				} catch (final Exception e2) {
+					e2.printStackTrace();
+					JOptionPane.showMessageDialog(getFrame(),
+							rb.getString("MUMBLE_OVERLAY_GENERAL_INITIALIZATION_ERROR_DIALOG_TEXT"),
+							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+				} finally {
+					final QCoreApplication app = QCoreApplication.instance();
+					if (app != null)
+						app.dispose();
 				}
 			}).start();
 	}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016  Matteo Hausner
+/* Copyright (C) 2017  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,16 +557,12 @@ public class EditActionsDialog extends JDialog {
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		availableActionsList.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(final ListSelectionEvent e) {
-				selectedAvailableAction = availableActionsList.getSelectedValue();
-				if (selectedAvailableAction == null)
-					addButton.setEnabled(false);
-				else
-					addButton.setEnabled(true);
-			}
+		availableActionsList.addListSelectionListener(e -> {
+			selectedAvailableAction = availableActionsList.getSelectedValue();
+			if (selectedAvailableAction == null)
+				addButton.setEnabled(false);
+			else
+				addButton.setEnabled(true);
 		});
 		updateAvailableActions();
 		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, 0.25, 1.0,
@@ -586,234 +582,216 @@ public class EditActionsDialog extends JDialog {
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		assignedActionsList.addListSelectionListener(new ListSelectionListener() {
+		assignedActionsList.addListSelectionListener(e -> {
+			selectedAssignedAction = assignedActionsList.getSelectedValue();
+			if (selectedAssignedAction == null)
+				removeButton.setEnabled(false);
+			else
+				removeButton.setEnabled(true);
 
-			@Override
-			public void valueChanged(final ListSelectionEvent e) {
-				selectedAssignedAction = assignedActionsList.getSelectedValue();
-				if (selectedAssignedAction == null)
-					removeButton.setEnabled(false);
-				else
-					removeButton.setEnabled(true);
+			EventQueue.invokeLater(() -> {
+				if (selectedAssignedAction == null) {
+					propertiesLabel.setVisible(false);
+					propertiesScrollPane.setVisible(false);
+				} else {
+					propertiesLabel.setVisible(true);
 
-				EventQueue.invokeLater(new Runnable() {
+					final JPanel propertiesPanel = new JPanel(new GridBagLayout());
 
-					@Override
-					public void run() {
-						if (selectedAssignedAction == null) {
-							propertiesLabel.setVisible(false);
-							propertiesScrollPane.setVisible(false);
-						} else {
-							propertiesLabel.setVisible(true);
+					for (final Method m : selectedAssignedAction.getClass().getMethods()) {
+						final String methodDescription = m.toGenericString();
+						String methodName = methodDescription.substring(0, methodDescription.indexOf('('));
+						methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
-							final JPanel propertiesPanel = new JPanel(new GridBagLayout());
+						if (methodName.startsWith(ACTION_PROPERTY_SETTER_PREFIX)) {
+							final String propertyName = methodName
+									.substring(methodName.indexOf(ACTION_PROPERTY_SETTER_PREFIX)
+											+ ACTION_PROPERTY_SETTER_PREFIX.length());
+							String parameterType = methodDescription.substring(methodDescription.indexOf('(') + 1,
+									methodDescription.indexOf(')'));
+							if (parameterType.contains("<"))
+								parameterType = parameterType.substring(0, parameterType.indexOf('<'));
 
-							for (final Method m : selectedAssignedAction.getClass().getMethods()) {
-								final String methodDescription = m.toGenericString();
-								String methodName = methodDescription.substring(0, methodDescription.indexOf('('));
-								methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
+							final Class<?> clazz;
+							try {
+								clazz = Class.forName(parameterType);
 
-								if (methodName.startsWith(ACTION_PROPERTY_SETTER_PREFIX)) {
-									final String propertyName = methodName
-											.substring(methodName.indexOf(ACTION_PROPERTY_SETTER_PREFIX)
-													+ ACTION_PROPERTY_SETTER_PREFIX.length());
-									String parameterType = methodDescription.substring(
-											methodDescription.indexOf('(') + 1, methodDescription.indexOf(')'));
-									if (parameterType.contains("<"))
-										parameterType = parameterType.substring(0, parameterType.indexOf('<'));
+								final Method getterMethod = selectedAssignedAction.getClass()
+										.getMethod((clazz == Boolean.class ? ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN
+												: ACTION_PROPERTY_GETTER_PREFIX_DEFAULT) + propertyName);
 
-									final Class<?> clazz;
-									try {
-										clazz = Class.forName(parameterType);
+								final JPanel propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
+								propertiesPanel.add(propertyPanel,
+										new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+												GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 10));
 
-										final Method getterMethod = selectedAssignedAction.getClass().getMethod(
-												(clazz == Boolean.class ? ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN
-														: ACTION_PROPERTY_GETTER_PREFIX_DEFAULT) + propertyName);
+								final JLabel propertyNameLabel = new JLabel(propertyName);
+								propertyNameLabel.setPreferredSize(new Dimension(100, 15));
+								propertyPanel.add(propertyNameLabel);
 
-										final JPanel propertyPanel = new JPanel(
-												new FlowLayout(FlowLayout.LEADING, 10, 0));
-										propertiesPanel.add(propertyPanel,
-												new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-														GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-														new Insets(0, 0, 0, 0), 0, 10));
+								if (Boolean.class == clazz) {
+									final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
+									if (!isComponentEditor() && "LongPress".equals(propertyName)) {
+										m.invoke(selectedAssignedAction, false);
+										checkBox.setSelected(false);
+										checkBox.setEnabled(false);
+									} else if (!isComponentEditor() && "DownUp".equals(propertyName)) {
+										m.invoke(selectedAssignedAction, true);
+										checkBox.setSelected(true);
+										checkBox.setEnabled(false);
+									} else
+										checkBox.setSelected((boolean) getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(checkBox);
+								} else if (Integer.class == clazz) {
+									final int value1 = (int) getterMethod.invoke(selectedAssignedAction);
 
-										final JLabel propertyNameLabel = new JLabel(propertyName);
-										propertyNameLabel.setPreferredSize(new Dimension(100, 15));
-										propertyPanel.add(propertyNameLabel);
+									final SpinnerNumberModel model1;
+									if ("Clicks".equals(propertyName))
+										model1 = new SpinnerNumberModel(value1, 1, 20, 1);
+									else if ("MouseButton".equals(propertyName))
+										model1 = new SpinnerNumberModel(value1, 1, 3, 1);
+									else
+										model1 = new SpinnerNumberModel(value1, 0, Input.MAX_N_BUTTONS, 1);
 
-										if (Boolean.class == clazz) {
-											final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
-											if (!isComponentEditor() && "LongPress".equals(propertyName)) {
-												m.invoke(selectedAssignedAction, false);
-												checkBox.setSelected(false);
-												checkBox.setEnabled(false);
-											} else if (!isComponentEditor() && "DownUp".equals(propertyName)) {
-												m.invoke(selectedAssignedAction, true);
-												checkBox.setSelected(true);
-												checkBox.setEnabled(false);
-											} else
-												checkBox.setSelected(
-														(boolean) getterMethod.invoke(selectedAssignedAction));
-											propertyPanel.add(checkBox);
-										} else if (Integer.class == clazz) {
-											final int value = (int) getterMethod.invoke(selectedAssignedAction);
+									final JSpinner spinner1 = new JSpinner(model1);
+									final JComponent editor1 = spinner1.getEditor();
+									final JFormattedTextField textField1 = ((JSpinner.DefaultEditor) editor1)
+											.getTextField();
+									textField1.setColumns(2);
+									final DefaultFormatter formatter1 = (DefaultFormatter) textField1.getFormatter();
+									formatter1.setCommitsOnValidEdit(true);
+									spinner1.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+									propertyPanel.add(spinner1);
+								} else if (Float.class == clazz) {
+									final float value2 = (float) getterMethod.invoke(selectedAssignedAction);
 
-											final SpinnerNumberModel model;
-											if ("Clicks".equals(propertyName))
-												model = new SpinnerNumberModel(value, 1, 20, 1);
-											else if ("MouseButton".equals(propertyName))
-												model = new SpinnerNumberModel(value, 1, 3, 1);
-											else
-												model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS, 1);
+									final SpinnerNumberModel model2;
+									if ("ActivationValue".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, 0.0, 1.0, 0.01);
+									else if ("DeadZone".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, 0.0, 1.0, 0.01);
+									else if ("Exponent".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, 1.0, 5.0, 0.1);
+									else if ("MinAxisValue".equals(propertyName) || "MaxAxisValue".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, -1.0, 1.0, 0.01);
+									else if ("MaxCursorSpeed".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, 100.0, 10000.0, 1.0);
+									else if ("MaxRelativeSpeed".equals(propertyName))
+										model2 = new SpinnerNumberModel(value2, 0.1, 100.0, 0.01);
+									else
+										model2 = new SpinnerNumberModel(value2, -1.0, 1.0, 0.05);
 
-											final JSpinner spinner = new JSpinner(model);
-											final JComponent editor = spinner.getEditor();
-											final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
-													.getTextField();
-											textField.setColumns(2);
-											final DefaultFormatter formatter = (DefaultFormatter) textField
-													.getFormatter();
-											formatter.setCommitsOnValidEdit(true);
-											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
-											propertyPanel.add(spinner);
-										} else if (Float.class == clazz) {
-											final float value = (float) getterMethod.invoke(selectedAssignedAction);
-
-											final SpinnerNumberModel model;
-											if ("ActivationValue".equals(propertyName))
-												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
-											else if ("DeadZone".equals(propertyName))
-												model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
-											else if ("Exponent".equals(propertyName))
-												model = new SpinnerNumberModel(value, 1.0, 5.0, 0.1);
-											else if ("MinAxisValue".equals(propertyName)
-													|| "MaxAxisValue".equals(propertyName))
-												model = new SpinnerNumberModel(value, -1.0, 1.0, 0.01);
-											else if ("MaxCursorSpeed".equals(propertyName))
-												model = new SpinnerNumberModel(value, 100.0, 10000.0, 1.0);
-											else if ("MaxRelativeSpeed".equals(propertyName))
-												model = new SpinnerNumberModel(value, 0.1, 100.0, 0.01);
-											else
-												model = new SpinnerNumberModel(value, -1.0, 1.0, 0.05);
-
-											final JSpinner spinner = new JSpinner(model);
-											final JComponent editor = spinner.getEditor();
-											final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
-													.getTextField();
-											textField.setColumns(4);
-											final DefaultFormatter formatter = (DefaultFormatter) textField
-													.getFormatter();
-											formatter.setCommitsOnValidEdit(true);
-											spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
-											propertyPanel.add(spinner);
-											if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
-												final float parentActivationValue = cycleAction.getActivationValue();
-												m.invoke(selectedAssignedAction, parentActivationValue);
-												spinner.setValue(parentActivationValue);
-												spinner.setEnabled(false);
-											}
-										} else if (Mode.class == clazz) {
-											final JComboBox<Mode> comboBox = new JComboBox<>();
-											for (final Mode p : Input.getProfile().getModes())
-												if (!Profile.isDefaultMode(p))
-													comboBox.addItem(p);
-											comboBox.setAction(new JComboBoxSetPropertyAction(m));
-											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-											propertyPanel.add(comboBox);
-										} else if (VirtualAxis.class == clazz) {
-											final JComboBox<VirtualAxis> comboBox = new JComboBox<>(
-													VirtualAxis.values());
-											comboBox.setAction(new JComboBoxSetPropertyAction(m));
-											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-											propertyPanel.add(comboBox);
-										} else if (MouseAxis.class == clazz) {
-											final JComboBox<MouseAxis> comboBox = new JComboBox<>(MouseAxis.values());
-											comboBox.setAction(new JComboBoxSetPropertyAction(m));
-											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-											propertyPanel.add(comboBox);
-										} else if (LockKey.class == clazz) {
-											final JComboBox<LockKey> comboBox = new JComboBox<>(LockKey.LOCK_KEYS);
-											comboBox.setAction(new JComboBoxSetPropertyAction(m));
-											comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-											propertyPanel.add(comboBox);
-										} else if (KeyStroke.class == clazz) {
-											final KeyStroke keyStroke = (KeyStroke) getterMethod
-													.invoke(selectedAssignedAction);
-											final Set<String> availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
-
-											final JPanel modifiersPanel = new JPanel();
-											modifiersPanel
-													.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
-											final JLabel modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
-											modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-											modifiersPanel.add(modifiersLabel);
-											modifiersPanel.add(Box.createVerticalStrut(5));
-											final JList<String> modifierList = new JList<>(
-													availableScanCodes.toArray(new String[availableScanCodes.size()]));
-											modifierList.addListSelectionListener(
-													new JListSetPropertyListSelectionListener(m, keyStroke, true));
-
-											final List<String> addedModifiers = new ArrayList<>();
-											for (final int c : keyStroke.getModifierCodes())
-												addedModifiers.add(ScanCode.scanCodeToNameMap.get(c));
-											for (final String s : addedModifiers) {
-												final int index = getListModelIndex(modifierList.getModel(), s);
-												if (index >= 0)
-													modifierList.addSelectionInterval(index, index);
-											}
-											final JScrollPane modifiersScrollPane = new JScrollPane(modifierList);
-											modifiersScrollPane.setPreferredSize(new Dimension(175, 200));
-											modifiersPanel.add(modifiersScrollPane);
-											propertyPanel.add(modifiersPanel);
-
-											final JPanel keysPanel = new JPanel();
-											keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
-											final JLabel keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
-											keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-											keysPanel.add(keysLabel);
-											keysPanel.add(Box.createVerticalStrut(5));
-											final JList<String> keyList = new JList<>(
-													availableScanCodes.toArray(new String[availableScanCodes.size()]));
-											keyList.addListSelectionListener(
-													new JListSetPropertyListSelectionListener(m, keyStroke, false));
-											final List<String> addedKeys = new ArrayList<>();
-											for (final int c : keyStroke.getKeyCodes())
-												addedKeys.add(ScanCode.scanCodeToNameMap.get(c));
-											for (final String s : addedKeys) {
-												final int index = getListModelIndex(keyList.getModel(), s);
-												if (index >= 0)
-													keyList.addSelectionInterval(index, index);
-											}
-											final JScrollPane keysScrollPane = new JScrollPane(keyList);
-											keysScrollPane.setPreferredSize(new Dimension(175, 200));
-											keysPanel.add(keysScrollPane);
-											propertyPanel.add(keysPanel);
-
-										} else if (List.class == clazz) {
-											final JButton editActionsButton = new JButton(new EditActionsAction());
-											editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
-											propertyPanel.add(editActionsButton);
-										} else
-											throw new Exception(getClass().getName()
-													+ ": GUI representation implementation missing for "
-													+ clazz.getName());
-									} catch (final Exception e) {
-										e.printStackTrace();
+									final JSpinner spinner2 = new JSpinner(model2);
+									final JComponent editor2 = spinner2.getEditor();
+									final JFormattedTextField textField2 = ((JSpinner.DefaultEditor) editor2)
+											.getTextField();
+									textField2.setColumns(4);
+									final DefaultFormatter formatter2 = (DefaultFormatter) textField2.getFormatter();
+									formatter2.setCommitsOnValidEdit(true);
+									spinner2.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+									propertyPanel.add(spinner2);
+									if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
+										final float parentActivationValue = cycleAction.getActivationValue();
+										m.invoke(selectedAssignedAction, parentActivationValue);
+										spinner2.setValue(parentActivationValue);
+										spinner2.setEnabled(false);
 									}
-								}
+								} else if (Mode.class == clazz) {
+									final JComboBox<Mode> comboBox1 = new JComboBox<>();
+									for (final Mode p : Input.getProfile().getModes())
+										if (!Profile.isDefaultMode(p))
+											comboBox1.addItem(p);
+									comboBox1.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox1.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox1);
+								} else if (VirtualAxis.class == clazz) {
+									final JComboBox<VirtualAxis> comboBox2 = new JComboBox<>(VirtualAxis.values());
+									comboBox2.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox2.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox2);
+								} else if (MouseAxis.class == clazz) {
+									final JComboBox<MouseAxis> comboBox3 = new JComboBox<>(MouseAxis.values());
+									comboBox3.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox3.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox3);
+								} else if (LockKey.class == clazz) {
+									final JComboBox<LockKey> comboBox4 = new JComboBox<>(LockKey.LOCK_KEYS);
+									comboBox4.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox4.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox4);
+								} else if (KeyStroke.class == clazz) {
+									final KeyStroke keyStroke = (KeyStroke) getterMethod.invoke(selectedAssignedAction);
+									final Set<String> availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
+
+									final JPanel modifiersPanel = new JPanel();
+									modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
+									final JLabel modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
+									modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+									modifiersPanel.add(modifiersLabel);
+									modifiersPanel.add(Box.createVerticalStrut(5));
+									final JList<String> modifierList = new JList<>(
+											availableScanCodes.toArray(new String[availableScanCodes.size()]));
+									modifierList.addListSelectionListener(
+											new JListSetPropertyListSelectionListener(m, keyStroke, true));
+
+									final List<String> addedModifiers = new ArrayList<>();
+									for (final int c1 : keyStroke.getModifierCodes())
+										addedModifiers.add(ScanCode.scanCodeToNameMap.get(c1));
+									for (final String s1 : addedModifiers) {
+										final int index1 = getListModelIndex(modifierList.getModel(), s1);
+										if (index1 >= 0)
+											modifierList.addSelectionInterval(index1, index1);
+									}
+									final JScrollPane modifiersScrollPane = new JScrollPane(modifierList);
+									modifiersScrollPane.setPreferredSize(new Dimension(175, 200));
+									modifiersPanel.add(modifiersScrollPane);
+									propertyPanel.add(modifiersPanel);
+
+									final JPanel keysPanel = new JPanel();
+									keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
+									final JLabel keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
+									keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+									keysPanel.add(keysLabel);
+									keysPanel.add(Box.createVerticalStrut(5));
+									final JList<String> keyList = new JList<>(
+											availableScanCodes.toArray(new String[availableScanCodes.size()]));
+									keyList.addListSelectionListener(
+											new JListSetPropertyListSelectionListener(m, keyStroke, false));
+									final List<String> addedKeys = new ArrayList<>();
+									for (final int c2 : keyStroke.getKeyCodes())
+										addedKeys.add(ScanCode.scanCodeToNameMap.get(c2));
+									for (final String s2 : addedKeys) {
+										final int index2 = getListModelIndex(keyList.getModel(), s2);
+										if (index2 >= 0)
+											keyList.addSelectionInterval(index2, index2);
+									}
+									final JScrollPane keysScrollPane = new JScrollPane(keyList);
+									keysScrollPane.setPreferredSize(new Dimension(175, 200));
+									keysPanel.add(keysScrollPane);
+									propertyPanel.add(keysPanel);
+
+								} else if (List.class == clazz) {
+									final JButton editActionsButton = new JButton(new EditActionsAction());
+									editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
+									propertyPanel.add(editActionsButton);
+								} else
+									throw new Exception(getClass().getName()
+											+ ": GUI representation implementation missing for " + clazz.getName());
+							} catch (final Exception e1) {
+								e1.printStackTrace();
 							}
-
-							propertiesPanel.add(Box.createGlue(),
-									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-											GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
-											0, 0));
-
-							propertiesScrollPane.setViewportView(propertiesPanel);
-							propertiesScrollPane.setVisible(true);
 						}
 					}
-				});
-			}
+
+					propertiesPanel.add(Box.createGlue(),
+							new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+									GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+					propertiesScrollPane.setViewportView(propertiesPanel);
+					propertiesScrollPane.setVisible(true);
+				}
+			});
 		});
 		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, 0.25, 1.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));

@@ -1,4 +1,4 @@
-/* Copyright (C) 2016  Matteo Hausner
+/* Copyright (C) 2017  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +58,7 @@ public abstract class OutputThread extends Thread {
 
 		for (final Controller c : Input.getControllers())
 			if (c.poll()) {
-				EventQueue.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						main.setSelectedController(c);
-					}
-				});
+				EventQueue.invokeLater(() -> main.setSelectedController(c));
 
 				return;
 			}

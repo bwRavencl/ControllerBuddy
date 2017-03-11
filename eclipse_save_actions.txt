@@ -1,5 +1,3 @@
-Format all lines
-Organize imports
 Remove 'this' qualifier for non static field accesses
 Remove 'this' qualifier for non static method accesses
 Change non static accesses to static members using declaring type
@@ -9,6 +7,7 @@ Convert 'for' loops to enhanced 'for' loops
 Add final modifier to private fields
 Add final modifier to method parameters
 Add final modifier to local variables
+Use lambda where possible
 Remove unnecessary parentheses
 Remove unused imports
 Add missing '@Override' annotations
