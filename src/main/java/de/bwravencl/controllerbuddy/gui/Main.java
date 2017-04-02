@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -344,8 +345,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			stopAll();
-			System.exit(0);
+			quit();
 		}
 
 	}
@@ -714,6 +714,7 @@ public final class Main {
 
 	}
 
+	private static final int SINGLE_INSTANCE_PORT = 28789;
 	private static final int OUTPUT_TYPE_NONE = 0;
 	private static final int OUTPUT_TYPE_LOCAL = 1;
 	private static final int OUTPUT_TYPE_CLIENT = 2;
@@ -804,6 +805,9 @@ public final class Main {
 	}
 
 	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
+		if (component == null)
+			return;
+
 		component.setEnabled(enabled);
 
 		if (component instanceof Container)
@@ -883,6 +887,8 @@ public final class Main {
 	private TrayIcon trayIcon;
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
+	private File currentFile;
+	private ServerSocket serverSocket;
 
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
@@ -913,10 +919,17 @@ public final class Main {
 		}
 	};
 
-	private File currentFile;
-
 	public Main() {
 		frame = new JFrame();
+
+		try {
+			serverSocket = new ServerSocket(SINGLE_INSTANCE_PORT);
+		} catch (final IOException e) {
+			JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			quit();
+		}
+
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -1330,7 +1343,7 @@ public final class Main {
 		if (selectedController == null) {
 			JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			quit();
 		} else {
 			newProfile();
 
@@ -1700,6 +1713,18 @@ public final class Main {
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 	}
 
+	public void quit() {
+		if (serverSocket != null)
+			try {
+				serverSocket.close();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+
+		stopAll();
+		System.exit(0);
+	}
+
 	public void restartLast() {
 		switch (lastOutputType) {
 		case OUTPUT_TYPE_LOCAL:
@@ -1872,11 +1897,21 @@ public final class Main {
 	public void stopClient(final boolean resetLastOutputType) {
 		if (clientThread != null)
 			clientThread.stopOutput();
-		stopClientRadioButtonMenuItem.setSelected(true);
-		stopClientRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
-		startServerRadioButtonMenuItem.setEnabled(true);
+
+		if (stopClientRadioButtonMenuItem != null) {
+			stopClientRadioButtonMenuItem.setSelected(true);
+			stopClientRadioButtonMenuItem.setEnabled(false);
+		}
+
+		if (startLocalRadioButtonMenuItem != null)
+			startLocalRadioButtonMenuItem.setEnabled(true);
+
+		if (startClientRadioButtonMenuItem != null)
+			startClientRadioButtonMenuItem.setEnabled(true);
+
+		if (startServerRadioButtonMenuItem != null)
+			startServerRadioButtonMenuItem.setEnabled(true);
+
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
@@ -1887,11 +1922,20 @@ public final class Main {
 		if (localThread != null)
 			localThread.stopOutput();
 
-		stopLocalRadioButtonMenuItem.setSelected(true);
-		stopLocalRadioButtonMenuItem.setEnabled(false);
-		startLocalRadioButtonMenuItem.setEnabled(true);
-		startClientRadioButtonMenuItem.setEnabled(true);
-		startServerRadioButtonMenuItem.setEnabled(true);
+		if (stopLocalRadioButtonMenuItem != null) {
+			stopLocalRadioButtonMenuItem.setSelected(true);
+			stopLocalRadioButtonMenuItem.setEnabled(false);
+		}
+
+		if (startLocalRadioButtonMenuItem != null)
+			startLocalRadioButtonMenuItem.setEnabled(true);
+
+		if (startClientRadioButtonMenuItem != null)
+			startClientRadioButtonMenuItem.setEnabled(true);
+
+		if (startServerRadioButtonMenuItem != null)
+			startServerRadioButtonMenuItem.setEnabled(true);
+
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
@@ -1908,15 +1952,22 @@ public final class Main {
 		if (serverThread != null)
 			serverThread.stopOutput();
 
-		stopServerRadioButtonMenuItem.setSelected(true);
-		stopServerRadioButtonMenuItem.setEnabled(false);
-
-		if (isWindows()) {
-			startLocalRadioButtonMenuItem.setEnabled(true);
-			startClientRadioButtonMenuItem.setEnabled(true);
+		if (stopLocalRadioButtonMenuItem != null) {
+			stopLocalRadioButtonMenuItem.setSelected(true);
+			stopLocalRadioButtonMenuItem.setEnabled(false);
 		}
 
-		startServerRadioButtonMenuItem.setEnabled(true);
+		if (isWindows()) {
+			if (startLocalRadioButtonMenuItem != null)
+				startLocalRadioButtonMenuItem.setEnabled(true);
+
+			if (startClientRadioButtonMenuItem != null)
+				startClientRadioButtonMenuItem.setEnabled(true);
+		}
+
+		if (startServerRadioButtonMenuItem != null)
+			startServerRadioButtonMenuItem.setEnabled(true);
+
 		setEnabledRecursive(modesPanel, true);
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
