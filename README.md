@@ -1,11 +1,11 @@
 ![ControllerBuddy Logo](https://github.com/bwRavencl/ControllerBuddy/raw/master/src/main/resources/icon_128.png
 "ControllerBuddy")
-##ControllerBuddy
+## ControllerBuddy
 
-#####License Information:
+#### License Information:
 GNU General Public License v2.0
 
-#####Description:
+#### Description:
 ControllerBuddy allows the feeding of input from a physical game-controller connected to a host computer to a virtual joystick, provided by the vJoy device driver. ControllerBuddy can either feed to a local vJoy device on the host or to one on a second computer.
 
 Consequently ControllerBuddy can operate in three different roles:
@@ -41,7 +41,7 @@ ControllerBuddy offers an overlay, that displays the currently active input mode
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
-#####Architecture:
+#### Architecture:
 <pre>
        Host:                             Client:
 
@@ -60,12 +60,12 @@ Physical Controller
  Target Application                 Target Application
 </pre>
 
-#####Example Screenshots:
+#### Example Screenshots:
 ![Assignments Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_1.png) ![Overlay Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_2.png)
 ![Component Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_3.png)
 
 
-#####Command Line Parameters:
+#### Command Line Parameters:
 <pre>
 usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
  -autostart <arg>   automatically start the:
@@ -76,7 +76,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
  -version           print version and quit
 </pre>
 
-#####Requirements:
+#### Requirements:
 - General requirements:
  - Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
  - vJoy 2.1.6 (http://vjoystick.sourceforge.net)
@@ -85,7 +85,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
  - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
  - Mumble 1.3.x (https://mumble.info)
 
-#####Building:
+#### Building:
 ControllerBuddy uses the Gradle build system. 
 The following tasks are supported:
 
