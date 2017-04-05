@@ -714,7 +714,7 @@ public final class Main {
 
 	}
 
-	private static final int SINGLE_INSTANCE_PORT = 28789;
+	private static final int SINGLE_INSTANCE_PORT = 58008;
 	private static final int OUTPUT_TYPE_NONE = 0;
 	private static final int OUTPUT_TYPE_LOCAL = 1;
 	private static final int OUTPUT_TYPE_CLIENT = 2;
