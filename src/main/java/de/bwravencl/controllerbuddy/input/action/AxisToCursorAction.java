@@ -35,6 +35,7 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
 	private MouseAxis axis = MouseAxis.X;
 	private transient long lastCallTime;
+	private transient float remainingD = 0.0f;
 
 	@Override
 	public void doAction(final Input input, final float value) {
@@ -47,14 +48,23 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 		if (!isSuspended() && Math.abs(value) > deadZone) {
 			final float rateMultiplier = (float) elapsedTime / (float) 1000L;
 
-			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
+			float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
 					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxCursorSpeed,
 					maxCursorSpeed) * rateMultiplier;
 
-			if (axis.equals(MouseAxis.X))
-				input.setCursorDeltaX((int) (input.getCursorDeltaX() + (invert ? -d : d)));
-			else
-				input.setCursorDeltaY((int) (input.getCursorDeltaY() + (invert ? -d : d)));
+			d = invert ? -d : d;
+			d += remainingD;
+
+			if (d >= -1.0f && d <= 1.0f)
+				remainingD = d;
+			else {
+				remainingD = 0.0f;
+
+				if (axis.equals(MouseAxis.X))
+					input.setCursorDeltaX((int) (input.getCursorDeltaX() + d));
+				else
+					input.setCursorDeltaY((int) (input.getCursorDeltaY() + d));
+			}
 		} else
 			lastCallTime = 0L;
 	}
