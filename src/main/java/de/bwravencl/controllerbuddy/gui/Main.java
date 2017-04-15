@@ -21,6 +21,7 @@ import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -39,6 +40,7 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -765,6 +767,16 @@ public final class Main {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
 	}
 
+	private static boolean isModalDialogShowing() {
+		final Window[] windows = Window.getWindows();
+		if (windows != null)
+			for (final Window w : windows)
+				if (w.isShowing() && w instanceof Dialog && ((Dialog) w).isModal())
+					return true;
+
+		return false;
+	}
+
 	public static boolean isWindows() {
 		return System.getProperty("os.name").startsWith("Windows");
 	}
@@ -888,6 +900,7 @@ public final class Main {
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
 	private File currentFile;
+
 	private ServerSocket serverSocket;
 
 	private final JFileChooser fileChooser = new JFileChooser() {
@@ -1570,7 +1583,7 @@ public final class Main {
 
 			@Override
 			public void run() {
-				if (overlayFrame != null && overlayFrame.isAlwaysOnTop()) {
+				if (overlayFrame != null && overlayFrame.isAlwaysOnTop() && !isModalDialogShowing()) {
 					overlayFrame.setAlwaysOnTop(false);
 					overlayFrame.setAlwaysOnTop(true);
 				}
