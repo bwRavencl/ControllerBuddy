@@ -1569,6 +1569,7 @@ public final class Main {
 								(float) progressBar.getPreferredSize().getWidth()));
 				progressBar.setBackground(Color.LIGHT_GRAY);
 				progressBar.setForeground(virtualAxisToColorMap.get(va));
+				progressBar.setValue(1);
 				indicatorPanel.add(progressBar);
 				virtualAxisToProgressBarMap.put(va, progressBar);
 			}
