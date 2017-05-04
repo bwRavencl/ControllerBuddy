@@ -22,7 +22,7 @@ import java.util.List;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToCycleAction implements IButtonToAction {
+public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
 	private transient boolean wasUp = true;
 	private transient int index = 0;
@@ -76,6 +76,7 @@ public class ButtonToCycleAction implements IButtonToAction {
 		return longPress;
 	}
 
+	@Override
 	public void reset() {
 		index = 0;
 	}

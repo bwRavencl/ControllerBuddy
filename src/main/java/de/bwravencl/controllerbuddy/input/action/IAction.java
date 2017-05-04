@@ -31,6 +31,6 @@ public interface IAction extends Cloneable {
 
 	Object clone() throws CloneNotSupportedException;
 
-	void doAction(Input input, float value);
+	void doAction(final Input input, float value);
 
 }

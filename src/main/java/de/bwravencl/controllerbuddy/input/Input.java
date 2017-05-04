@@ -41,10 +41,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
+import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
+import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.input.xinput.XInputState;
 import de.bwravencl.controllerbuddy.output.OutputThread;
@@ -64,7 +65,7 @@ public class Input {
 
 		private final Function function;
 		@SuppressWarnings("unused")
-		private final Library xInput = (Library) Native.loadLibrary(XINPUT_LIBRARY_FILENAME, Library.class);
+		private final Library xInput = Native.loadLibrary(XINPUT_LIBRARY_FILENAME, Library.class);
 		private final int dwUserIndex;
 		private final XInputState pState = new XInputState();
 		private final Field hasPolledField;
@@ -81,7 +82,7 @@ public class Input {
 			if (hModule == null)
 				throw new UnsatisfiedLinkError(getClass().getName() + ": Could not load " + XINPUT_LIBRARY_FILENAME);
 
-			final Kernel32 kernel32 = (Kernel32) Native.loadLibrary(Kernel32.class);
+			final Kernel32 kernel32 = Native.loadLibrary(Kernel32.class);
 			function = Function.getFunction(kernel32.GetProcAddress(hModule, 100));
 
 			hasPolledField = AbstractComponent.class.getDeclaredField("has_polled");
@@ -440,6 +441,14 @@ public class Input {
 		return scrollClicks;
 	}
 
+	public void init() {
+		for (final Mode m : profile.getModes())
+			for (final List<IAction> actions : m.getComponentToActionsMap().values())
+				for (final IAction a : actions)
+					if (a instanceof IInitializationAction)
+						((IInitializationAction) a).init(this);
+	}
+
 	public boolean isCharging() {
 		return charging;
 	}
@@ -501,8 +510,8 @@ public class Input {
 		for (final Mode m : profile.getModes())
 			for (final List<IAction> actions : m.getComponentToActionsMap().values())
 				for (final IAction a : actions)
-					if (a instanceof ButtonToCycleAction)
-						((ButtonToCycleAction) a).reset();
+					if (a instanceof IResetableAction)
+						((IResetableAction) a).reset();
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value) {

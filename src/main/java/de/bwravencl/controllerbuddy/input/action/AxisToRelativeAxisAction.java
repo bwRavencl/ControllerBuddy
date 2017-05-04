@@ -20,19 +20,23 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeChangeListenerAction {
+public class AxisToRelativeAxisAction extends AxisToAxisAction
+		implements IModeChangeListenerAction, IInitializationAction {
 
 	public static final float DEFAULT_EXPONENT = 2.0f;
 	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4.0f;
+	public static final float DEFAULT_INITIAL_VALUE = 0.0f;
 
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
-	private transient long lastCallTime;
+	private float initialValue = DEFAULT_INITIAL_VALUE;
+	private transient long lastCallTime = 0L;
 
 	@Override
 	public void doAction(final Input input, final float value) {
 		final long currentTime = System.currentTimeMillis();
 		long elapsedTime = input.getOutputThread().getPollInterval();
+
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
@@ -56,8 +60,17 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeC
 		return exponent;
 	}
 
+	public float getInitialValue() {
+		return initialValue;
+	}
+
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
+	}
+
+	@Override
+	public void init(final Input input) {
+		input.setAxis(virtualAxis, invert ? -initialValue : initialValue);
 	}
 
 	@Override
@@ -68,6 +81,10 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeC
 
 	public void setExponent(final Float exponent) {
 		this.exponent = exponent;
+	}
+
+	public void setInitialValue(final Float initialValue) {
+		this.initialValue = initialValue;
 	}
 
 	public void setMaxRelativeSpeed(final Float maxRelativeSpeed) {

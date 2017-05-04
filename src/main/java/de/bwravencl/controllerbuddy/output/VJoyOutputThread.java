@@ -239,7 +239,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				Main.PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {
-			vJoy = (IVjoyInterface) Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
+			vJoy = Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
 
 			final Pointer dllVersion = new Memory(WinDef.WORD.SIZE);
 			final Pointer drvVersion = new Memory(WinDef.WORD.SIZE);
@@ -356,6 +356,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 			setnButtons(nButtons);
 
 			main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE") + vJoyDevice.toString());
+
+			input.init();
+
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
 			e.printStackTrace();
