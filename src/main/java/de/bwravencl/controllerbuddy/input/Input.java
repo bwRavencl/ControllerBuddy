@@ -204,7 +204,7 @@ public class Input {
 		final float newValue;
 		final float oldRange = inMax - inMin;
 
-		if (oldRange == 0)
+		if (oldRange == 0.0f)
 			newValue = outMin;
 		else {
 			final float newRange = outMax - outMin;
@@ -317,7 +317,6 @@ public class Input {
 					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
 					hidDevice.setInputReportListener(new InputReportListener() {
 
-						private static final int TOUCHPAD_DATA_OFFSET = 34;
 						private static final int TOUCHPAD_MAX_DELTA = 150;
 						private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.5f;
 						private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
@@ -332,12 +331,10 @@ public class Input {
 						public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
 								final int len) {
 							final boolean touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
-							final boolean down1 = data[0 + TOUCHPAD_DATA_OFFSET] >> 7 != 0 ? false : true;
-							final boolean down2 = data[4 + TOUCHPAD_DATA_OFFSET] >> 7 != 0 ? false : true;
-							final int x1 = data[1 + TOUCHPAD_DATA_OFFSET]
-									+ (data[2 + TOUCHPAD_DATA_OFFSET] & 0xF) * 255;
-							final int y1 = ((data[2 + TOUCHPAD_DATA_OFFSET] & 0xF0) >> 4)
-									+ data[3 + TOUCHPAD_DATA_OFFSET] * 16;
+							final boolean down1 = data[34] >> 7 != 0 ? false : true;
+							final boolean down2 = data[38] >> 7 != 0 ? false : true;
+							final int x1 = data[35] + (data[36] & 0xF) * 255;
+							final int y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
 							final int dX1 = x1 - prevX1;
 							final int dY1 = y1 - prevY1;
 
@@ -369,8 +366,8 @@ public class Input {
 							prevX1 = x1;
 							prevY1 = y1;
 
-							final boolean charging = (data[29] & 0x10) != 0;
-							final int battery = (data[29] & 0x0F) * 10 - (charging ? 10 : 0);
+							final boolean charging = (data[29] & 0x10) > 6;
+							final int battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
 
 							setBatteryState(battery);
 							setCharging(charging);
