@@ -28,12 +28,12 @@ public class KeyStroke implements Cloneable {
 
 		final Integer[] clonedKeyCodes = new Integer[keyCodes.length];
 		for (int i = 0; i < keyCodes.length; i++)
-			clonedKeyCodes[i] = new Integer(keyCodes[i]);
+			clonedKeyCodes[i] = Integer.valueOf(keyCodes[i]);
 		keyStroke.setKeyCodes(clonedKeyCodes);
 
 		final Integer[] clonedModifierCodes = new Integer[modifierCodes.length];
 		for (int i = 0; i < modifierCodes.length; i++)
-			clonedModifierCodes[i] = new Integer(modifierCodes[i]);
+			clonedModifierCodes[i] = Integer.valueOf(modifierCodes[i]);
 		keyStroke.setModifierCodes(clonedModifierCodes);
 
 		return keyStroke;

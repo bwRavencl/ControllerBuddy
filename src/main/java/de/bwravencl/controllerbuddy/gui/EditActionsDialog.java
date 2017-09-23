@@ -94,7 +94,7 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
-				final IAction action = (IAction) clazz.newInstance();
+				final IAction action = (IAction) clazz.getConstructor().newInstance();
 
 				if (action instanceof ButtonToModeAction) {
 					if (unsavedProfile.getComponentToModeActionMap().get(component.getName()) == null)
@@ -118,14 +118,11 @@ public class EditActionsDialog extends JDialog {
 
 				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
-			} catch (final ClassNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (final InstantiationException e1) {
-				e1.printStackTrace();
-			} catch (final IllegalAccessException e1) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException
+					| ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
-
 		}
 
 	}
@@ -144,12 +141,10 @@ public class EditActionsDialog extends JDialog {
 
 			try {
 				final Class<?> clazz = Class.forName(className);
-				description = clazz.newInstance().toString();
-			} catch (final ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (final InstantiationException e) {
-				e.printStackTrace();
-			} catch (final IllegalAccessException e) {
+				description = clazz.getConstructor().newInstance().toString();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException
+					| ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 

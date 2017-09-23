@@ -73,6 +73,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 		input.setAxis(virtualAxis, invert ? -initialValue : initialValue);
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void onModeChanged(final Mode newMode) {
 		if (!newMode.getComponentToActionsMap().values().contains(this))

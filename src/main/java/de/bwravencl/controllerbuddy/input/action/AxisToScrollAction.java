@@ -58,6 +58,7 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 		return exponent;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void onModeChanged(final Mode newMode) {
 		if (!newMode.getComponentToActionsMap().values().contains(this))
