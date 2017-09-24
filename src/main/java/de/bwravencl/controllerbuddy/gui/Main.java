@@ -74,6 +74,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -750,6 +751,8 @@ public final class Main {
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
+	private static final String ON_SCREEN_KEYBOARD_EXECUTABLE = "osk.exe";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
@@ -900,6 +903,7 @@ public final class Main {
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
 	private File currentFile;
+	private Process onScreenKeyboardProcess;
 
 	private ServerSocket serverSocket;
 
@@ -1551,6 +1555,31 @@ public final class Main {
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
 			overlayFrame.setBackground(new Color(255, 255, 255, 0));
+
+			if (isWindows()) {
+				final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
+				final JButton onScreenKeyboardButton = new JButton(icon);
+				onScreenKeyboardButton.addActionListener(e -> {
+					try {
+						if (onScreenKeyboardProcess != null && onScreenKeyboardProcess.isAlive())
+							onScreenKeyboardProcess.destroy();
+						else
+							onScreenKeyboardProcess = new ProcessBuilder(ON_SCREEN_KEYBOARD_EXECUTABLE).start();
+					} catch (final IOException e1) {
+						onScreenKeyboardProcess = null;
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(getFrame(),
+								rb.getString("ON_SCREEN_KEYBOARD_LAUNCH_ERROR_DIALOG_TEXT"),
+								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					}
+				});
+				onScreenKeyboardButton.setBorder(null);
+				onScreenKeyboardButton.setFocusPainted(false);
+				onScreenKeyboardButton.setContentAreaFilled(false);
+				onScreenKeyboardButton.setHorizontalAlignment(SwingConstants.RIGHT);
+				overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
+			}
+
 			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		}
 		overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);

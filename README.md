@@ -80,6 +80,9 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 - General requirements:
  - Java SE Runtime Environment 8 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
  - vJoy 2.1.6 (http://vjoystick.sourceforge.net)
+- Requirements for On-Screen Keyboard:
+ - Windows
+ - Administrator Privileges
 - Requirements for fullscreen overlay:
  - 64-bit Windows
  - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
