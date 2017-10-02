@@ -810,11 +810,11 @@ public final class Main {
 							main.startServer();
 					}
 				}
-			} catch (final ParseException e1) {
+			} catch (final ParseException e) {
 				final HelpFormatter helpFormatter = new HelpFormatter();
 				helpFormatter.printHelp("ControllerBuddy", options, true);
-			} catch (final Exception e2) {
-				e2.printStackTrace();
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -1632,8 +1632,8 @@ public final class Main {
 				while (QCoreApplication.instance() != null)
 					try {
 						Thread.sleep(100L);
-					} catch (final InterruptedException e1) {
-						e1.printStackTrace();
+					} catch (final InterruptedException e) {
+						e.printStackTrace();
 					}
 				QCoreApplication.initialize(new String[0]);
 
@@ -1681,8 +1681,8 @@ public final class Main {
 
 						QCoreApplication.instance().exec();
 					}
-				} catch (final Exception e2) {
-					e2.printStackTrace();
+				} catch (final Exception e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(getFrame(),
 							rb.getString("MUMBLE_OVERLAY_GENERAL_INITIALIZATION_ERROR_DIALOG_TEXT"),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);

@@ -220,11 +220,7 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
-			} catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (final IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (final InvocationTargetException e1) {
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -248,11 +244,7 @@ public class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
-			} catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (final IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (final InvocationTargetException e1) {
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -288,11 +280,7 @@ public class EditActionsDialog extends JDialog {
 					keyStroke.setKeyCodes(scanCodesArray);
 
 				setterMethod.invoke(selectedAssignedAction, keyStroke);
-			} catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (final IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (final InvocationTargetException e1) {
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -312,15 +300,9 @@ public class EditActionsDialog extends JDialog {
 			try {
 				final Object value = ((JSpinner) e.getSource()).getValue();
 
-				if (value instanceof Double)
-					setterMethod.invoke(selectedAssignedAction, ((Double) value).floatValue());
-				else
-					setterMethod.invoke(selectedAssignedAction, value);
-			} catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (final IllegalArgumentException e1) {
-				e1.printStackTrace();
-			} catch (final InvocationTargetException e1) {
+				setterMethod.invoke(selectedAssignedAction,
+						value instanceof Double ? ((Double) value).floatValue() : value);
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				e1.printStackTrace();
 			}
 		}

@@ -100,9 +100,7 @@ public class Input {
 
 			try {
 				hasPolledField.setBoolean(this, false);
-			} catch (final IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (final IllegalAccessException e) {
+			} catch (final IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 
@@ -157,9 +155,7 @@ public class Input {
 							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
 							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
 							cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
-						} catch (final UnsatisfiedLinkError e) {
-							e.printStackTrace();
-						} catch (final Exception e) {
+						} catch (final UnsatisfiedLinkError | Exception e) {
 							e.printStackTrace();
 						}
 				} else if (isDualShock4Controller(controller)) {
