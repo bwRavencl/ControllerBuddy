@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import java.util.List;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
@@ -73,11 +75,13 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 		input.setAxis(virtualAxis, invert ? -initialValue : initialValue);
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void onModeChanged(final Mode newMode) {
-		if (!newMode.getComponentToActionsMap().values().contains(this))
-			lastCallTime = 0L;
+		for (final List<IAction> actions : newMode.getComponentToActionsMap().values())
+			if (actions.contains(this)) {
+				lastCallTime = 0L;
+				break;
+			}
 	}
 
 	public void setExponent(final Float exponent) {

@@ -65,106 +65,112 @@ public class ProfileConverter {
 
 			System.out.print("DualShock 4 Controller profiles folder: ");
 			destinationFolder = new File(reader.next());
-		} finally {
-			reader.close();
-		}
 
-		for (final File inputFile : sourceFolder.listFiles()) {
-			final String fileName = inputFile.getName();
+			final File[] files = sourceFolder.listFiles();
+			if (files != null)
+				for (final File inputFile : files) {
+					final String fileName = inputFile.getName();
 
-			if (fileName.endsWith(".json")) {
-				System.out.print("Converting: " + fileName);
+					if (fileName.endsWith(".json")) {
+						System.out.print("Converting: " + fileName);
 
-				try {
-					String jsonString = new String(Files.readAllBytes(inputFile.toPath()), StandardCharsets.UTF_8);
-					Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>()).create();
-					final Profile profile = gson.fromJson(jsonString, Profile.class);
+						try {
+							String jsonString = new String(Files.readAllBytes(inputFile.toPath()),
+									StandardCharsets.UTF_8);
+							Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>())
+									.create();
+							final Profile profile = gson.fromJson(jsonString, Profile.class);
 
-					final Map<String, List<ButtonToModeAction>> newComponentToModeActionMap = new HashMap<>();
+							final Map<String, List<ButtonToModeAction>> newComponentToModeActionMap = new HashMap<>();
 
-					for (final Entry<String, List<ButtonToModeAction>> e : profile.getComponentToModeActionMap()
-							.entrySet()) {
-						final String oldComponent = e.getKey();
-						final String newComponent = mapComponent(oldComponent);
-
-						newComponentToModeActionMap.put(newComponent, e.getValue());
-					}
-
-					profile.setComponentToModeActionMap(newComponentToModeActionMap);
-
-					final Iterator<Mode> it = profile.getModes().iterator();
-					while (it.hasNext()) {
-						final Mode mode = it.next();
-
-						final Map<String, List<IAction>> newComponentToModeActionsMap = new HashMap<>();
-						for (final Entry<String, List<IAction>> e : mode.getComponentToActionsMap().entrySet()) {
-							final String oldComponent = e.getKey();
-							if (oldComponent.equals("Z-Achse")) {
-								final List<IAction> l2Actions = new ArrayList<>();
-								final List<IAction> r2Actions = new ArrayList<>();
-
-								for (final IAction action : e.getValue())
-									if (action instanceof AxisToButtonAction) {
-										final AxisToButtonAction axisToButtonAction = (AxisToButtonAction) action;
-
-										final ButtonToButtonAction buttonToButtonAction = new ButtonToButtonAction();
-										buttonToButtonAction.setActivationValue(1.0f);
-										buttonToButtonAction.setButtonId(axisToButtonAction.getButtonId());
-										buttonToButtonAction.setLongPress(false);
-
-										if (axisToButtonAction.getMaxAxisValue() < 0.0f)
-											r2Actions.add(buttonToButtonAction);
-										else if (axisToButtonAction.getMinAxisValue() > 0.0f)
-											l2Actions.add(buttonToButtonAction);
-									} else if (action instanceof ToKeyAction) {
-										final AxisToKeyAction axisToKeyAction = (AxisToKeyAction) action;
-
-										final ButtonToKeyAction buttonToKeyAction = new ButtonToKeyAction();
-										buttonToKeyAction.setActivationValue(1.0f);
-										buttonToKeyAction.setDownUp(axisToKeyAction.isDownUp());
-										buttonToKeyAction.setKeystroke(axisToKeyAction.getKeystroke());
-										buttonToKeyAction.setLongPress(false);
-
-										if (axisToKeyAction.getMaxAxisValue() < 0.0f)
-											r2Actions.add(buttonToKeyAction);
-										else if (axisToKeyAction.getMinAxisValue() > 0.0f)
-											l2Actions.add(buttonToKeyAction);
-									} else
-										System.out.println(
-												"\nWarning " + oldComponent + " is mapped to a non-convertable action");
-
-								newComponentToModeActionsMap.put("Taste 6", l2Actions);
-								newComponentToModeActionsMap.put("Taste 7", r2Actions);
-							} else {
+							for (final Entry<String, List<ButtonToModeAction>> e : profile.getComponentToModeActionMap()
+									.entrySet()) {
+								final String oldComponent = e.getKey();
 								final String newComponent = mapComponent(oldComponent);
 
-								newComponentToModeActionsMap.put(newComponent, e.getValue());
+								newComponentToModeActionMap.put(newComponent, e.getValue());
 							}
+
+							profile.setComponentToModeActionMap(newComponentToModeActionMap);
+
+							final Iterator<Mode> it = profile.getModes().iterator();
+							while (it.hasNext()) {
+								final Mode mode = it.next();
+
+								final Map<String, List<IAction>> newComponentToModeActionsMap = new HashMap<>();
+								for (final Entry<String, List<IAction>> e : mode.getComponentToActionsMap()
+										.entrySet()) {
+									final String oldComponent = e.getKey();
+									if (oldComponent.equals("Z-Achse")) {
+										final List<IAction> l2Actions = new ArrayList<>();
+										final List<IAction> r2Actions = new ArrayList<>();
+
+										for (final IAction action : e.getValue())
+											if (action instanceof AxisToButtonAction) {
+												final AxisToButtonAction axisToButtonAction = (AxisToButtonAction) action;
+
+												final ButtonToButtonAction buttonToButtonAction = new ButtonToButtonAction();
+												buttonToButtonAction.setActivationValue(1.0f);
+												buttonToButtonAction.setButtonId(axisToButtonAction.getButtonId());
+												buttonToButtonAction.setLongPress(false);
+
+												if (axisToButtonAction.getMaxAxisValue() < 0.0f)
+													r2Actions.add(buttonToButtonAction);
+												else if (axisToButtonAction.getMinAxisValue() > 0.0f)
+													l2Actions.add(buttonToButtonAction);
+											} else if (action instanceof ToKeyAction) {
+												final AxisToKeyAction axisToKeyAction = (AxisToKeyAction) action;
+
+												final ButtonToKeyAction buttonToKeyAction = new ButtonToKeyAction();
+												buttonToKeyAction.setActivationValue(1.0f);
+												buttonToKeyAction.setDownUp(axisToKeyAction.isDownUp());
+												buttonToKeyAction.setKeystroke(axisToKeyAction.getKeystroke());
+												buttonToKeyAction.setLongPress(false);
+
+												if (axisToKeyAction.getMaxAxisValue() < 0.0f)
+													r2Actions.add(buttonToKeyAction);
+												else if (axisToKeyAction.getMinAxisValue() > 0.0f)
+													l2Actions.add(buttonToKeyAction);
+											} else
+												System.out.println("\nWarning " + oldComponent
+														+ " is mapped to a non-convertable action");
+
+										newComponentToModeActionsMap.put("Taste 6", l2Actions);
+										newComponentToModeActionsMap.put("Taste 7", r2Actions);
+									} else {
+										final String newComponent = mapComponent(oldComponent);
+
+										newComponentToModeActionsMap.put(newComponent, e.getValue());
+									}
+								}
+
+								mode.setComponentToActionMap(newComponentToModeActionsMap);
+							}
+
+							input.reset();
+
+							gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>())
+									.setPrettyPrinting().create();
+							jsonString = gson.toJson(profile);
+
+							final FileOutputStream fos = new FileOutputStream(
+									destinationFolder.getPath() + File.separator + fileName);
+							final Writer writer = new BufferedWriter(
+									new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+							writer.write(jsonString);
+							writer.flush();
+							fos.flush();
+							fos.close();
+
+							System.out.println(" -> Done!");
+
+						} catch (final IOException e) {
+							e.printStackTrace();
 						}
-
-						mode.setComponentToActionMap(newComponentToModeActionsMap);
 					}
-
-					input.reset();
-
-					gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>())
-							.setPrettyPrinting().create();
-					jsonString = gson.toJson(profile);
-
-					final FileOutputStream fos = new FileOutputStream(
-							destinationFolder.getPath() + File.separator + fileName);
-					final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-					writer.write(jsonString);
-					writer.flush();
-					fos.flush();
-					fos.close();
-
-					System.out.println(" -> Done!");
-
-				} catch (final IOException e) {
-					e.printStackTrace();
 				}
-			}
+		} finally {
+			reader.close();
 		}
 	}
 
