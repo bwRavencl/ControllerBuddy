@@ -69,9 +69,22 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToButtonAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction.MouseAxis;
+import de.bwravencl.controllerbuddy.input.action.AxisToKeyAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToMouseButtonAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToScrollAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToKeyAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToLockKeyAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToMouseButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToRelativeAxisReset;
+import de.bwravencl.controllerbuddy.input.action.ButtonToScrollAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import net.brockmatt.util.ResourceBundleUtil;
 import net.java.games.input.Component;
@@ -93,8 +106,7 @@ public class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				final Class<?> clazz = Class.forName(selectedAvailableAction.className);
-				final IAction action = (IAction) clazz.getConstructor().newInstance();
+				final IAction action = (IAction) selectedAvailableAction.clazz.getConstructor().newInstance();
 
 				if (action instanceof ButtonToModeAction) {
 					if (unsavedProfile.getComponentToModeActionMap().get(component.getName()) == null)
@@ -119,8 +131,7 @@ public class EditActionsDialog extends JDialog {
 				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException
-					| ClassNotFoundException e1) {
+					| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -129,10 +140,10 @@ public class EditActionsDialog extends JDialog {
 
 	private static class AvailableAction {
 
-		private final String className;
+		private final Class<?> clazz;
 
-		public AvailableAction(final String className) {
-			this.className = className;
+		public AvailableAction(final Class<?> clazz) {
+			this.clazz = clazz;
 		}
 
 		@Override
@@ -140,11 +151,9 @@ public class EditActionsDialog extends JDialog {
 			String description = "";
 
 			try {
-				final Class<?> clazz = Class.forName(className);
 				description = clazz.getConstructor().newInstance().toString();
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException
-					| ClassNotFoundException e) {
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
 
@@ -381,19 +390,14 @@ public class EditActionsDialog extends JDialog {
 	 *
 	 */
 	private static final long serialVersionUID = 8876286334367723566L;
-	private static final String ACTION_CLASS_PREFIX = "de.bwravencl.controllerbuddy.input.action.";
-	private static final String[] ACTION_CLASSES_AXIS = { ACTION_CLASS_PREFIX + "AxisToAxisAction",
-			ACTION_CLASS_PREFIX + "AxisToButtonAction", ACTION_CLASS_PREFIX + "AxisToCursorAction",
-			ACTION_CLASS_PREFIX + "AxisToKeyAction", ACTION_CLASS_PREFIX + "AxisToMouseButtonAction",
-			ACTION_CLASS_PREFIX + "AxisToRelativeAxisAction", ACTION_CLASS_PREFIX + "AxisToScrollAction" };
-	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
-			ACTION_CLASS_PREFIX + "ButtonToLockKeyAction", ACTION_CLASS_PREFIX + "ButtonToModeAction",
-			ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction", ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset",
-			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
-	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+	private static final Class<?>[] AXIS_ACTION_CLASSES = { AxisToAxisAction.class, AxisToButtonAction.class,
+			AxisToCursorAction.class, AxisToKeyAction.class, AxisToMouseButtonAction.class,
+			AxisToRelativeAxisAction.class, AxisToScrollAction.class };
+	private static final Class<?>[] BUTTON_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToCycleAction.class,
+			ButtonToKeyAction.class, ButtonToLockKeyAction.class, ButtonToModeAction.class,
+			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class };
+	private static final Class<?>[] CYCLE_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToKeyAction.class,
+			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class };
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	private static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
@@ -823,21 +827,20 @@ public class EditActionsDialog extends JDialog {
 	private void updateAvailableActions() {
 		final List<AvailableAction> availableActions = new ArrayList<>();
 
-		String[] actionClasses;
+		Class<?>[] actionClasses;
 		if (isComponentEditor()) {
 			if (component.isAnalog())
-				actionClasses = ACTION_CLASSES_AXIS;
+				actionClasses = AXIS_ACTION_CLASSES;
 			else
-				actionClasses = ACTION_CLASSES_BUTTON;
+				actionClasses = BUTTON_ACTION_CLASSES;
 		} else
-			actionClasses = ACTION_CLASSES_CYCLE_ACTION;
+			actionClasses = CYCLE_ACTION_CLASSES;
 
-		for (final String s : actionClasses) {
-			final AvailableAction availableAction = new AvailableAction(s);
-			if (ButtonToModeAction.class.getName().equals(availableAction.className)) {
+		for (final Class<?> c : actionClasses) {
+			final AvailableAction availableAction = new AvailableAction(c);
+			if (ButtonToModeAction.class.equals(availableAction.clazz)) {
 				if (unsavedProfile.getModes().size() > 1)
-					if (Profile.isDefaultMode(selectedMode)
-							|| !availableAction.className.endsWith(ButtonToModeAction.class.getName()))
+					if (Profile.isDefaultMode(selectedMode) || !ButtonToModeAction.class.equals(availableAction.clazz))
 						availableActions.add(availableAction);
 			} else
 				availableActions.add(availableAction);
