@@ -756,7 +756,7 @@ public final class Main {
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	private static JFrame overlayFrame;
+	private static volatile JFrame overlayFrame;
 	private static JPanel indicatorPanel;
 	private final static JLabel labelCurrentMode = new JLabel();
 	private static LocalVJoyOutputThread localThread;
@@ -1549,7 +1549,7 @@ public final class Main {
 		final boolean mumbleOverlayEnabled = isMumbleOverlayEnabled();
 
 		if (overlayFrame == null) {
-			overlayFrame = new JFrame();
+			final JFrame overlayFrame = new JFrame();
 			overlayFrame.setType(JFrame.Type.UTILITY);
 			overlayFrame.setLayout(new BorderLayout());
 			overlayFrame.setFocusableWindowState(false);
@@ -1581,6 +1581,7 @@ public final class Main {
 			}
 
 			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
+			Main.overlayFrame = overlayFrame;
 		}
 		overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);
 
