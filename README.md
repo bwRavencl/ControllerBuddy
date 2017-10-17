@@ -78,15 +78,15 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 
 #### Requirements:
 - General requirements:
- - Java SE Runtime Environment 9 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
- - vJoy 2.1.8 (http://vjoystick.sourceforge.net)
+  - Java SE Runtime Environment 9 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
+  - vJoy 2.1.8 (http://vjoystick.sourceforge.net)
 - Requirements for On-Screen Keyboard:
- - Windows
- - Administrator Privileges
+  - Windows
+  - Administrator Privileges
 - Requirements for fullscreen overlay:
- - 64-bit Windows
- - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
- - Mumble 1.3.x (https://mumble.info)
+  - 64-bit Windows
+  - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
+  - Mumble 1.3.x (https://mumble.info)
 
 #### Building:
 ControllerBuddy uses the Gradle build system. 
