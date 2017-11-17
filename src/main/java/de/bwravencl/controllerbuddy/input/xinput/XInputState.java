@@ -17,12 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.xinput;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
 
 public class XInputState extends Structure {
+
+	private static List<String> FIELDS = createFieldsOrder("dwPacketNumber", "gamepad");
 
 	public int dwPacketNumber;
 
@@ -30,7 +31,7 @@ public class XInputState extends Structure {
 
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "dwPacketNumber", "gamepad" });
+		return FIELDS;
 	}
 
 }

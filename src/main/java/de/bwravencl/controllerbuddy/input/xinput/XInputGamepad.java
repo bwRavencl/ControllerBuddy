@@ -17,12 +17,14 @@
 
 package de.bwravencl.controllerbuddy.input.xinput;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
 
 public class XInputGamepad extends Structure {
+
+	private static List<String> FIELDS = createFieldsOrder("wButtons", "bLeftTrigger", "bRightTrigger", "sThumbLX",
+			"sThumbLY", "sThumbRX", "sThumbRY");
 
 	public short wButtons;
 
@@ -32,8 +34,7 @@ public class XInputGamepad extends Structure {
 
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "wButtons", "bLeftTrigger", "bRightTrigger", "sThumbLX", "sThumbLY",
-				"sThumbRX", "sThumbRY" });
+		return FIELDS;
 	}
 
 }
