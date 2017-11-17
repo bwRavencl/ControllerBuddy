@@ -903,9 +903,8 @@ public final class Main {
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
 	private File currentFile;
-	private Process onScreenKeyboardProcess;
-
 	private ServerSocket serverSocket;
+	private Process onScreenKeyboardProcess;
 
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
@@ -1559,20 +1558,7 @@ public final class Main {
 			if (isWindows()) {
 				final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
 				final JButton onScreenKeyboardButton = new JButton(icon);
-				onScreenKeyboardButton.addActionListener(e -> {
-					try {
-						if (onScreenKeyboardProcess != null && onScreenKeyboardProcess.isAlive())
-							onScreenKeyboardProcess.destroy();
-						else
-							onScreenKeyboardProcess = new ProcessBuilder(ON_SCREEN_KEYBOARD_EXECUTABLE).start();
-					} catch (final IOException e1) {
-						onScreenKeyboardProcess = null;
-						e1.printStackTrace();
-						JOptionPane.showMessageDialog(getFrame(),
-								rb.getString("ON_SCREEN_KEYBOARD_LAUNCH_ERROR_DIALOG_TEXT"),
-								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-					}
-				});
+				onScreenKeyboardButton.addActionListener(e -> toggleOnScreenKeyboard());
 				onScreenKeyboardButton.setBorder(null);
 				onScreenKeyboardButton.setFocusPainted(false);
 				onScreenKeyboardButton.setContentAreaFilled(false);
@@ -2020,6 +2006,20 @@ public final class Main {
 
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
+	}
+
+	public void toggleOnScreenKeyboard() {
+		try {
+			if (onScreenKeyboardProcess != null && onScreenKeyboardProcess.isAlive())
+				onScreenKeyboardProcess.destroy();
+			else
+				onScreenKeyboardProcess = new ProcessBuilder(ON_SCREEN_KEYBOARD_EXECUTABLE).start();
+		} catch (final IOException e1) {
+			onScreenKeyboardProcess = null;
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame, rb.getString("ON_SCREEN_KEYBOARD_LAUNCH_ERROR_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void updateModesPanel() {

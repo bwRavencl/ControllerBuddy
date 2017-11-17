@@ -83,6 +83,7 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToKeyAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToLockKeyAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToMouseButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToOnScreenKeyboardAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToRelativeAxisReset;
 import de.bwravencl.controllerbuddy.input.action.ButtonToScrollAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -377,7 +378,8 @@ public class EditActionsDialog extends JDialog {
 			AxisToRelativeAxisAction.class, AxisToScrollAction.class };
 	private static final Class<?>[] BUTTON_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToCycleAction.class,
 			ButtonToKeyAction.class, ButtonToLockKeyAction.class, ButtonToModeAction.class,
-			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class };
+			ButtonToOnScreenKeyboardAction.class, ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class,
+			ButtonToScrollAction.class };
 	private static final Class<?>[] CYCLE_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToKeyAction.class,
 			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class };
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";

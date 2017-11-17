@@ -418,6 +418,10 @@ public class Input {
 		return downUpMouseButtons;
 	}
 
+	public Main getMain() {
+		return main;
+	}
+
 	public Set<Integer> getOffLockKeys() {
 		return offLockKeys;
 	}
