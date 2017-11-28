@@ -495,7 +495,7 @@ public class Input {
 					a.doAction(this, c.getPollData());
 		}
 
-		Main.updateOverlayAxisIndicators();
+		main.updateOverlayAxisIndicators();
 
 		return true;
 	}

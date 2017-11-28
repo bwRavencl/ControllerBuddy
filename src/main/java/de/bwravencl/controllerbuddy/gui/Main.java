@@ -759,12 +759,9 @@ public final class Main {
 	private static volatile JFrame overlayFrame;
 	private static JPanel indicatorPanel;
 	private final static JLabel labelCurrentMode = new JLabel();
-	private static LocalVJoyOutputThread localThread;
-	private static ClientVJoyOutputThread clientThread;
-	private static ServerOutputThread serverThread;
 	private static Dimension prevScreenSize;
 	private static boolean mumbleOverlayActive;
-	private static Boolean mumbleOverlayRedraw;
+	private static boolean mumbleOverlayRedraw;
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -835,31 +832,6 @@ public final class Main {
 		mumbleOverlayRedraw = true;
 	}
 
-	public static void updateOverlayAxisIndicators() {
-		for (final VirtualAxis va : Input.VirtualAxis.values())
-			if (virtualAxisToProgressBarMap.containsKey(va)) {
-				OutputThread outputThread = null;
-				if (localThread != null && localThread.isAlive())
-					outputThread = localThread;
-				else if (clientThread != null && clientThread.isAlive())
-					outputThread = clientThread;
-				else if (serverThread != null && serverThread.isAlive())
-					outputThread = serverThread;
-
-				if (outputThread != null) {
-					final JProgressBar progressBar = virtualAxisToProgressBarMap.get(va);
-					progressBar.setMinimum(-outputThread.getMaxAxisValue());
-					progressBar.setMaximum(outputThread.getMinAxisValue());
-
-					final int newValue = -Input.getAxis().get(va);
-					if (progressBar.getValue() != newValue) {
-						progressBar.setValue(newValue);
-						mumbleOverlayRedraw = true;
-					}
-				}
-			}
-	}
-
 	private static void updateOverlayLocation() {
 		if (overlayFrame != null) {
 			overlayFrame.pack();
@@ -870,6 +842,9 @@ public final class Main {
 		}
 	}
 
+	private LocalVJoyOutputThread localThread;
+	private ClientVJoyOutputThread clientThread;
+	private ServerOutputThread serverThread;
 	private Controller selectedController;
 	private Input input;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
@@ -905,7 +880,6 @@ public final class Main {
 	private File currentFile;
 	private ServerSocket serverSocket;
 	private Process onScreenKeyboardProcess;
-
 	private final JFileChooser fileChooser = new JFileChooser() {
 		/**
 		 *
@@ -1641,12 +1615,10 @@ public final class Main {
 
 							while (mumbleOverlayActive) {
 								QCoreApplication.invokeLater(() -> {
-									synchronized (mumbleOverlayRedraw) {
-										if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
-											overlayFrame.print(graphics);
-											mumbleOverlay.render(bufferedImage);
-											mumbleOverlayRedraw = false;
-										}
+									if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
+										overlayFrame.print(graphics);
+										mumbleOverlay.render(bufferedImage);
+										mumbleOverlayRedraw = false;
 									}
 								});
 
@@ -2066,6 +2038,31 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		modesScrollPane.setViewportView(modesListPanel);
+	}
+
+	public void updateOverlayAxisIndicators() {
+		for (final VirtualAxis va : Input.VirtualAxis.values())
+			if (virtualAxisToProgressBarMap.containsKey(va)) {
+				OutputThread outputThread = null;
+				if (localThread != null && localThread.isAlive())
+					outputThread = localThread;
+				else if (clientThread != null && clientThread.isAlive())
+					outputThread = clientThread;
+				else if (serverThread != null && serverThread.isAlive())
+					outputThread = serverThread;
+
+				if (outputThread != null) {
+					final JProgressBar progressBar = virtualAxisToProgressBarMap.get(va);
+					progressBar.setMinimum(-outputThread.getMaxAxisValue());
+					progressBar.setMaximum(outputThread.getMinAxisValue());
+
+					final int newValue = -Input.getAxis().get(va);
+					if (progressBar.getValue() != newValue) {
+						progressBar.setValue(newValue);
+						mumbleOverlayRedraw = true;
+					}
+				}
+			}
 	}
 
 	private void updateOverlayPanel() {
