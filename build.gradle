@@ -96,18 +96,16 @@ tasks.eclipse.dependsOn generateVersion, includeNatives
 
 eclipse {
     classpath {
-        file.whenMerged { cp ->
-            cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
+        file {
+            withXml {
+                def node = it.asNode()
+                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-windows.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-osx.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-linux.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+            }
+            whenMerged { cp ->
+                cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
+            }
         }
-    }
-}
-
-eclipse.classpath { containers "org.springsource.ide.eclipse.gradle.classpathcontainer" }
-eclipse.classpath.file {
-    withXml { xml ->
-        def node = xml.asNode()
-        node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-windows.jar') }.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
-        node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-osx.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
-        node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-linux.jar')}.appendNode('attributes').appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
     }
 }
