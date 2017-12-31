@@ -37,7 +37,7 @@ Mode switching can be done by either holding down a button on the physical contr
 The whole programming of the physical controller can be performed via the graphical user interface of ControllerBuddy.
 The resulting profile can be exported to a simple JSON-based file format.
 
-ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes. The axes displayed by the overlay can be customized on a per-profile basis. The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode. On 64-bit Windows ControllerBuddy can interface with the overlay implementation provided by Mumble, which supports DirectX 9/10/11 and OpenGL applications running in fullscreen.
+ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes. The axes displayed by the overlay can be customized on a per-profile basis. The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
@@ -83,10 +83,6 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 - Requirements for On-Screen Keyboard:
   - Windows
   - Administrator Privileges
-- Requirements for fullscreen overlay:
-  - 64-bit Windows
-  - Visual C++ Redistributable Packages for Visual Studio 2013 (https://www.microsoft.com/download/details.aspx?id=40784)
-  - Mumble 1.3.x (https://mumble.info)
 
 #### Building:
 ControllerBuddy uses the Gradle build system. 

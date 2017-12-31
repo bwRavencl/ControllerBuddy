@@ -27,7 +27,6 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Frame;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,7 +47,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -115,10 +113,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.trolltech.qt.core.QCoreApplication;
 
 import de.bwravencl.controllerbuddy.Version;
-import de.bwravencl.controllerbuddy.gui.mumbleoverlay.MumbleOverlay;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -157,43 +153,6 @@ public final class Main {
 
 			setUnsavedChanges(true);
 			updateModesPanel();
-		}
-
-	}
-
-	private class ChangeMumbleDirectoryAction extends AbstractAction {
-
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 8249400342495050289L;
-
-		public ChangeMumbleDirectoryAction() {
-			putValue(NAME, rb.getString("CHANGE_MUMBLE_DIRECTORY_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_MUMBLE_DIRECTORY_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final JFileChooser mumbleDirectoryFileChooser = new JFileChooser(
-					preferences.get(PREFERENCES_MUMBLE_DIRECTORY, MumbleOverlay.getDefaultMumbleInstallationPath()));
-			mumbleDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-			if (mumbleDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final String path = mumbleDirectoryFileChooser.getSelectedFile().getAbsolutePath();
-				final String helper32 = MumbleOverlay.getMumbleHelperFilePath(path, false);
-				final String helper64 = MumbleOverlay.getMumbleHelperFilePath(path, true);
-
-				if (helper32 != null && helper64 != null) {
-					preferences.put(PREFERENCES_MUMBLE_DIRECTORY, path);
-					mumbleDirectoryLabel1.setText(path);
-				} else
-					JOptionPane.showMessageDialog(frame,
-							rb.getString("INVALID_MUMBLE_DIRECTORY_DIALOG_TEXT_PREFIX")
-									+ MumbleOverlay.getDefaultMumbleInstallationPath()
-									+ rb.getString("INVALID_MUMBLE_DIRECTORY_DIALOG_TEXT_SUFFIX"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
 		}
 
 	}
@@ -744,9 +703,6 @@ public final class Main {
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
-	private static final String PREFERENCES_USE_MUMBLE_OVERLAY = "use_mumble_overlay";
-	public static final String PREFERENCES_MUMBLE_DIRECTORY = "mumble_directory";
-	private static final String PREFERENCES_MUMBLE_OVERLAY_FPS = "mumble_overlay_fps";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
@@ -760,8 +716,6 @@ public final class Main {
 	private static JPanel indicatorPanel;
 	private final static JLabel labelCurrentMode = new JLabel();
 	private static Dimension prevScreenSize;
-	private static boolean mumbleOverlayActive;
-	private static boolean mumbleOverlayRedraw;
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -829,7 +783,6 @@ public final class Main {
 
 	public static void setOverlayText(final String text) {
 		labelCurrentMode.setText(text);
-		mumbleOverlayRedraw = true;
 	}
 
 	private static void updateOverlayLocation() {
@@ -869,10 +822,6 @@ public final class Main {
 	private final JPanel indicatorsListPanel;
 	private JLabel vJoyDirectoryLabel1;
 	private JTextField hostTextField;
-	private JPanel mumbleOverlaySettingsPanel;
-	private JPanel mumbleDirectoryPanel;
-	private JPanel mumbleOverlayFpsPanel;
-	private JLabel mumbleDirectoryLabel1;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
 	private TrayIcon trayIcon;
 	private boolean unsavedChanges = false;
@@ -1218,57 +1167,8 @@ public final class Main {
 				final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 				preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
-				updateOverlaySettings();
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
-
-			if (isWindows() && is64Bit()) {
-				mumbleOverlaySettingsPanel = new JPanel(panelFlowLayout);
-				settingsPanel.add(mumbleOverlaySettingsPanel, panelGridBagConstraints);
-
-				final JLabel mumbleOverlayLabel = new JLabel(rb.getString("MUMBLE_OVERLAY_LABEL"));
-				mumbleOverlayLabel.setPreferredSize(new Dimension(120, 15));
-				mumbleOverlaySettingsPanel.add(mumbleOverlayLabel);
-
-				final JCheckBox useMumbleOverlayCheckBox = new JCheckBox(rb.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
-				useMumbleOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, false));
-				useMumbleOverlayCheckBox.addChangeListener(e -> preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY,
-						((JCheckBox) e.getSource()).isSelected()));
-				mumbleOverlaySettingsPanel.add(useMumbleOverlayCheckBox);
-
-				mumbleDirectoryPanel = new JPanel(panelFlowLayout);
-				settingsPanel.add(mumbleDirectoryPanel, panelGridBagConstraints);
-
-				final JLabel mumbleDirectoryLabel = new JLabel(rb.getString("MUMBLE_DIRECTORY_LABEL"));
-				mumbleDirectoryLabel.setPreferredSize(new Dimension(120, 15));
-				mumbleDirectoryPanel.add(mumbleDirectoryLabel);
-
-				mumbleDirectoryLabel1 = new JLabel(preferences.get(PREFERENCES_MUMBLE_DIRECTORY,
-						MumbleOverlay.getDefaultMumbleInstallationPath()));
-				mumbleDirectoryPanel.add(mumbleDirectoryLabel1);
-
-				final JButton mumbleDirectoryButton = new JButton(new ChangeMumbleDirectoryAction());
-				mumbleDirectoryPanel.add(mumbleDirectoryButton);
-
-				mumbleOverlayFpsPanel = new JPanel(panelFlowLayout);
-				settingsPanel.add(mumbleOverlayFpsPanel, panelGridBagConstraints);
-
-				final JLabel mumbleOverlayFpsLabel = new JLabel(rb.getString("MUMBLE_OVERLAY_FPS_LABEL"));
-				mumbleOverlayFpsLabel.setPreferredSize(new Dimension(120, 15));
-				mumbleOverlayFpsPanel.add(mumbleOverlayFpsLabel);
-
-				final JSpinner mumbleOverlayFpsSpinner = new JSpinner(new SpinnerNumberModel(
-						preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS, MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS),
-						1.0, 60.0, 1.0));
-				final JSpinner.DefaultEditor mumbleOverlayFpsSpinnerEditor = new JSpinner.NumberEditor(
-						mumbleOverlayFpsSpinner, "#");
-				((DefaultFormatter) mumbleOverlayFpsSpinnerEditor.getTextField().getFormatter())
-						.setCommitsOnValidEdit(true);
-				mumbleOverlayFpsSpinner.setEditor(mumbleOverlayFpsSpinnerEditor);
-				mumbleOverlayFpsSpinner.addChangeListener(e -> preferences.putDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
-						(double) ((JSpinner) e.getSource()).getValue()));
-				mumbleOverlayFpsPanel.add(mumbleOverlayFpsSpinner);
-			}
 		}
 
 		if (SystemTray.isSupported()) {
@@ -1476,10 +1376,6 @@ public final class Main {
 		}
 
 		virtualAxisToProgressBarMap.clear();
-		if (isMumbleOverlayEnabled()) {
-			mumbleOverlayActive = false;
-			mumbleOverlayRedraw = true;
-		}
 	}
 
 	public void displayChargingStateInfo(final boolean charging) {
@@ -1519,8 +1415,6 @@ public final class Main {
 		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
 
-		final boolean mumbleOverlayEnabled = isMumbleOverlayEnabled();
-
 		if (overlayFrame == null) {
 			final JFrame overlayFrame = new JFrame();
 			overlayFrame.setType(JFrame.Type.UTILITY);
@@ -1543,7 +1437,7 @@ public final class Main {
 			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 			Main.overlayFrame = overlayFrame;
 		}
-		overlayFrame.setAlwaysOnTop(!mumbleOverlayEnabled);
+		overlayFrame.setAlwaysOnTop(true);
 
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
@@ -1588,76 +1482,6 @@ public final class Main {
 			}
 		}, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 
-		if (mumbleOverlayEnabled)
-			new Thread(() -> {
-				while (QCoreApplication.instance() != null)
-					try {
-						Thread.sleep(100L);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				QCoreApplication.initialize(new String[0]);
-
-				final MumbleOverlay mumbleOverlay = new MumbleOverlay(Main.this);
-
-				try {
-					if (mumbleOverlay.init()) {
-						final BufferedImage bufferedImage = new BufferedImage(overlayFrame.getWidth(),
-								overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-						final Graphics2D graphics = bufferedImage.createGraphics();
-
-						mumbleOverlayActive = true;
-
-						new Thread(() -> {
-							final int interval = (int) Math
-									.round(1000.0 / preferences.getDouble(PREFERENCES_MUMBLE_OVERLAY_FPS,
-											MumbleOverlay.DEFAULT_MUMBLE_OVERLAY_FPS));
-
-							while (mumbleOverlayActive) {
-								QCoreApplication.invokeLater(() -> {
-									if (mumbleOverlayRedraw || mumbleOverlay.hasDirtyClient()) {
-										overlayFrame.print(graphics);
-										mumbleOverlay.render(bufferedImage);
-										mumbleOverlayRedraw = false;
-									}
-								});
-
-								try {
-									Thread.sleep(interval);
-								} catch (final InterruptedException e) {
-									e.printStackTrace();
-								}
-
-							}
-							graphics.dispose();
-							QCoreApplication.invokeLater(() -> {
-								if (mumbleOverlay != null)
-									mumbleOverlay.deInit();
-
-								QCoreApplication.exit();
-							});
-						}).start();
-
-						QCoreApplication.instance().exec();
-					}
-				} catch (final Exception e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(getFrame(),
-							rb.getString("MUMBLE_OVERLAY_GENERAL_INITIALIZATION_ERROR_DIALOG_TEXT"),
-							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-				} finally {
-					final QCoreApplication app = QCoreApplication.instance();
-					if (app != null)
-						app.dispose();
-				}
-			}).start();
-	}
-
-	private boolean isMumbleOverlayEnabled() {
-		if (isWindows() && is64Bit() && preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, false))
-			return true;
-		else
-			return false;
 	}
 
 	private boolean loadProfile(final File file) {
@@ -1942,7 +1766,6 @@ public final class Main {
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
 		setEnabledRecursive(settingsPanel, true);
-		updateOverlaySettings();
 
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
@@ -1974,7 +1797,6 @@ public final class Main {
 		setEnabledRecursive(assignmentsPanel, true);
 		setEnabledRecursive(overlayPanel, true);
 		setEnabledRecursive(settingsPanel, true);
-		updateOverlaySettings();
 
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
@@ -2057,10 +1879,8 @@ public final class Main {
 					progressBar.setMaximum(outputThread.getMinAxisValue());
 
 					final int newValue = -Input.getAxis().get(va);
-					if (progressBar.getValue() != newValue) {
+					if (progressBar.getValue() != newValue)
 						progressBar.setValue(newValue);
-						mumbleOverlayRedraw = true;
-					}
 				}
 			}
 	}
@@ -2111,16 +1931,6 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
-	}
-
-	private void updateOverlaySettings() {
-		final boolean showOverlay = preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true);
-
-		if (isWindows()) {
-			setEnabledRecursive(mumbleOverlaySettingsPanel, showOverlay);
-			setEnabledRecursive(mumbleDirectoryPanel, showOverlay);
-			setEnabledRecursive(mumbleOverlayFpsPanel, showOverlay);
-		}
 	}
 
 	public void updateTitleAndTooltip() {
