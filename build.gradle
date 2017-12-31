@@ -62,8 +62,8 @@ repositories {
 dependencies {
     compile 'commons-cli:commons-cli:1.4',
             'com.google.code.gson:gson:2.8.2',
-            'net.java.dev.jna:jna:4.5.0',
-            'net.java.dev.jna:jna-platform:4.5.0',
+            'net.java.dev.jna:jna:4.5.1',
+            'net.java.dev.jna:jna-platform:4.5.1',
             'net.java.jinput:jinput:2.0.7'
     compile fileTree(dir: 'lib', include: ['*.jar'])
 }
