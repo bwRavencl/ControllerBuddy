@@ -45,7 +45,7 @@ public class Profile implements Cloneable {
 
 	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<>();
 	private List<Mode> modes = new ArrayList<>();
-	private int activeModeIndex = 0;
+	private transient int activeModeIndex = 0;
 	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<>();
 
 	public Profile() {
