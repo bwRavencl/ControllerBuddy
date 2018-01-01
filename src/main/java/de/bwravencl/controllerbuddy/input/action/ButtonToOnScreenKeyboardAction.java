@@ -1,4 +1,4 @@
-/* Copyright (C) 2017  Matteo Hausner
+/* Copyright (C) 2018  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class ButtonToOnScreenKeyboardAction implements IButtonToAction {
 
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
+	private transient boolean wasUp = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
+	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -33,8 +34,13 @@ public class ButtonToOnScreenKeyboardAction implements IButtonToAction {
 	public void doAction(final Input input, float value) {
 		value = handleLongPress(value);
 
-		if (value == activationValue)
-			input.getMain().toggleOnScreenKeyboard();
+		if (value == activationValue) {
+			if (wasUp) {
+				input.getMain().toggleOnScreenKeyboard();
+				wasUp = false;
+			}
+		} else
+			wasUp = true;
 	}
 
 	@Override
