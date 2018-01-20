@@ -1639,7 +1639,7 @@ public final class Main {
 			statusLabel.setText(text);
 	}
 
-	public void setUnsavedChanges(final boolean unsavedChanges) {
+	protected void setUnsavedChanges(final boolean unsavedChanges) {
 		this.unsavedChanges = unsavedChanges;
 		updateTitleAndTooltip();
 	}
@@ -1816,7 +1816,7 @@ public final class Main {
 		}
 	}
 
-	private void updateModesPanel() {
+	protected void updateModesPanel() {
 		modesListPanel.removeAll();
 
 		final List<Mode> modes = Input.getProfile().getModes();
