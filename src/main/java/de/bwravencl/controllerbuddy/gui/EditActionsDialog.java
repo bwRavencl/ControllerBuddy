@@ -628,82 +628,82 @@ public class EditActionsDialog extends JDialog {
 										checkBox.setSelected((boolean) getterMethod.invoke(selectedAssignedAction));
 									propertyPanel.add(checkBox);
 								} else if (Integer.class == clazz) {
-									final int value1 = (int) getterMethod.invoke(selectedAssignedAction);
+									final int value = (int) getterMethod.invoke(selectedAssignedAction);
 
-									final SpinnerNumberModel model1;
+									final SpinnerNumberModel model;
 									if ("Clicks".equals(propertyName))
-										model1 = new SpinnerNumberModel(value1, 1, 20, 1);
+										model = new SpinnerNumberModel(value, 1, 20, 1);
 									else if ("MouseButton".equals(propertyName))
-										model1 = new SpinnerNumberModel(value1, 1, 3, 1);
+										model = new SpinnerNumberModel(value, 1, 3, 1);
 									else
-										model1 = new SpinnerNumberModel(value1, 0, Input.MAX_N_BUTTONS, 1);
+										model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS, 1);
 
-									final JSpinner spinner1 = new JSpinner(model1);
-									final JComponent editor1 = spinner1.getEditor();
-									final JFormattedTextField textField1 = ((JSpinner.DefaultEditor) editor1)
+									final JSpinner spinner = new JSpinner(model);
+									final JComponent editor = spinner.getEditor();
+									final JFormattedTextField textField1 = ((JSpinner.DefaultEditor) editor)
 											.getTextField();
 									textField1.setColumns(2);
 									final DefaultFormatter formatter1 = (DefaultFormatter) textField1.getFormatter();
 									formatter1.setCommitsOnValidEdit(true);
-									spinner1.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
-									propertyPanel.add(spinner1);
+									spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+									propertyPanel.add(spinner);
 								} else if (Float.class == clazz) {
-									final float value2 = (float) getterMethod.invoke(selectedAssignedAction);
+									final float value = (float) getterMethod.invoke(selectedAssignedAction);
 
-									final SpinnerNumberModel model2;
+									final SpinnerNumberModel model;
 									if ("ActivationValue".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, 0.0, 1.0, 0.01);
+										model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 									else if ("DeadZone".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, 0.0, 1.0, 0.01);
+										model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
 									else if ("Exponent".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, 1.0, 5.0, 0.1);
+										model = new SpinnerNumberModel(value, 1.0, 5.0, 0.1);
 									else if ("MinAxisValue".equals(propertyName) || "MaxAxisValue".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, -1.0, 1.0, 0.01);
+										model = new SpinnerNumberModel(value, -1.0, 1.0, 0.01);
 									else if ("MaxCursorSpeed".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, 100.0, 10000.0, 1.0);
+										model = new SpinnerNumberModel(value, 100.0, 10000.0, 1.0);
 									else if ("MaxRelativeSpeed".equals(propertyName))
-										model2 = new SpinnerNumberModel(value2, 0.1, 100.0, 0.01);
+										model = new SpinnerNumberModel(value, 0.1, 100.0, 0.01);
 									else
-										model2 = new SpinnerNumberModel(value2, -1.0, 1.0, 0.05);
+										model = new SpinnerNumberModel(value, -1.0, 1.0, 0.05);
 
-									final JSpinner spinner2 = new JSpinner(model2);
-									final JComponent editor2 = spinner2.getEditor();
-									final JFormattedTextField textField2 = ((JSpinner.DefaultEditor) editor2)
+									final JSpinner spinner = new JSpinner(model);
+									final JComponent editor = spinner.getEditor();
+									final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor)
 											.getTextField();
-									textField2.setColumns(4);
-									final DefaultFormatter formatter2 = (DefaultFormatter) textField2.getFormatter();
-									formatter2.setCommitsOnValidEdit(true);
-									spinner2.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
-									propertyPanel.add(spinner2);
+									textField.setColumns(4);
+									final DefaultFormatter formatter = (DefaultFormatter) textField.getFormatter();
+									formatter.setCommitsOnValidEdit(true);
+									spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+									propertyPanel.add(spinner);
 									if (!isComponentEditor() && "ActivationValue".equals(propertyName)) {
 										final float parentActivationValue = cycleAction.getActivationValue();
 										m.invoke(selectedAssignedAction, parentActivationValue);
-										spinner2.setValue(parentActivationValue);
-										spinner2.setEnabled(false);
+										spinner.setValue(parentActivationValue);
+										spinner.setEnabled(false);
 									}
 								} else if (Mode.class == clazz) {
-									final JComboBox<Mode> comboBox1 = new JComboBox<>();
+									final JComboBox<Mode> comboBox = new JComboBox<>();
 									for (final Mode p : Input.getProfile().getModes())
 										if (!Profile.isDefaultMode(p))
-											comboBox1.addItem(p);
-									comboBox1.setAction(new JComboBoxSetPropertyAction(m));
-									comboBox1.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-									propertyPanel.add(comboBox1);
+											comboBox.addItem(p);
+									comboBox.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox);
 								} else if (VirtualAxis.class == clazz) {
-									final JComboBox<VirtualAxis> comboBox2 = new JComboBox<>(VirtualAxis.values());
-									comboBox2.setAction(new JComboBoxSetPropertyAction(m));
-									comboBox2.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-									propertyPanel.add(comboBox2);
+									final JComboBox<VirtualAxis> comboBox = new JComboBox<>(VirtualAxis.values());
+									comboBox.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox);
 								} else if (MouseAxis.class == clazz) {
-									final JComboBox<MouseAxis> comboBox3 = new JComboBox<>(MouseAxis.values());
-									comboBox3.setAction(new JComboBoxSetPropertyAction(m));
-									comboBox3.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-									propertyPanel.add(comboBox3);
+									final JComboBox<MouseAxis> comboBox = new JComboBox<>(MouseAxis.values());
+									comboBox.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox);
 								} else if (LockKey.class == clazz) {
-									final JComboBox<LockKey> comboBox4 = new JComboBox<>(LockKey.LOCK_KEYS);
-									comboBox4.setAction(new JComboBoxSetPropertyAction(m));
-									comboBox4.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
-									propertyPanel.add(comboBox4);
+									final JComboBox<LockKey> comboBox = new JComboBox<>(LockKey.LOCK_KEYS);
+									comboBox.setAction(new JComboBoxSetPropertyAction(m));
+									comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
+									propertyPanel.add(comboBox);
 								} else if (KeyStroke.class == clazz) {
 									final KeyStroke keyStroke = (KeyStroke) getterMethod.invoke(selectedAssignedAction);
 									final Set<String> availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
@@ -782,6 +782,7 @@ public class EditActionsDialog extends JDialog {
 
 		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
 		final JButton okButton = new JButton(new OKAction());

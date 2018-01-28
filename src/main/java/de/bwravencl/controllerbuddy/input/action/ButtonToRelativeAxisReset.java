@@ -1,4 +1,3 @@
-package de.bwravencl.controllerbuddy.input.action;
 /* Copyright (C) 2018  Matteo Hausner
 *
 * This program is free software; you can redistribute it and/or modify
@@ -15,6 +14,8 @@ package de.bwravencl.controllerbuddy.input.action;
 * with this program; if not, write to the Free Software Foundation, Inc.,
 * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
