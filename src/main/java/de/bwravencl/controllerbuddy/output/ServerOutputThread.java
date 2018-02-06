@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.System.Logger;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,6 +29,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -38,6 +40,8 @@ public class ServerOutputThread extends OutputThread {
 	private enum ServerState {
 		Listening, Connected
 	}
+
+	private static final System.Logger log = System.getLogger(ServerOutputThread.class.getName());
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
@@ -63,8 +67,12 @@ public class ServerOutputThread extends OutputThread {
 		if (serverSocket != null)
 			serverSocket.close();
 
-		main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
-		main.stopServer(false);
+		SwingUtilities.invokeLater(() -> {
+			if (ServerOutputThread.this.isAlive()) {
+				main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
+				main.stopServer(false);
+			}
+		});
 	}
 
 	public int getPort() {
@@ -87,7 +95,9 @@ public class ServerOutputThread extends OutputThread {
 			serverSocket = new DatagramSocket(port);
 			final byte[] receiveBuf = new byte[1024];
 
-			main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
+			SwingUtilities.invokeLater(() -> {
+				main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
+			});
 
 			while (run)
 				switch (serverState) {
@@ -121,11 +131,13 @@ public class ServerOutputThread extends OutputThread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
-							main.setStatusBarText(
-									rb.getString("STATUS_CONNECTED_TO_PART_1") + clientIPAddress.getCanonicalHostName()
-											+ rb.getString("STATUS_CONNECTED_TO_PART_2") + clientPort
-											+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
-											+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
+							SwingUtilities.invokeLater(() -> {
+								main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1")
+										+ clientIPAddress.getCanonicalHostName()
+										+ rb.getString("STATUS_CONNECTED_TO_PART_2") + clientPort
+										+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
+										+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
+							});
 						}
 					}
 					break;
@@ -133,7 +145,7 @@ public class ServerOutputThread extends OutputThread {
 					try {
 						Thread.sleep(pollInterval);
 					} catch (final InterruptedException e) {
-						e.printStackTrace();
+						log.log(Logger.Level.ERROR, e.getMessage(), e);
 					}
 
 					final StringWriter sw = new StringWriter();
@@ -236,17 +248,20 @@ public class ServerOutputThread extends OutputThread {
 					break;
 				}
 		} catch (final BindException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(),
-					rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_PREFIX") + port
-							+ rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_SUFFIX"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_PREFIX") + port
+								+ rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
 		} catch (final SocketException e) {
-			e.printStackTrace();
+			log.log(Logger.Level.INFO, e.getMessage(), e);
 		} catch (final IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
 		} finally {
 			deInit();
 		}

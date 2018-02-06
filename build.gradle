@@ -50,7 +50,7 @@ ext {
 }
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
-version = "0.5-${git.head().abbreviatedId}"
+version = "0.6-${git.head().abbreviatedId}"
 
 repositories {
     mavenCentral()
@@ -64,10 +64,6 @@ dependencies {
             'net.java.dev.jna:jna:4.5.1',
             'net.java.dev.jna:jna-platform:4.5.1',
             'net.java.jinput:jinput:2.0.7'
-}
-
-jar {
-    exclude '**/de/bwravencl/controllerbuddy/extras'
 }
 
 natives {

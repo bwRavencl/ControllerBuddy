@@ -26,9 +26,9 @@ public class ButtonToKeyAction extends ToKeyAction implements IButtonToAction {
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
+		value = handleLongPress(input, value);
 
-		if (value != activationValue) {
+		if (!IButtonToAction.floatEquals(value, activationValue)) {
 			if (downUp)
 				wasUp = true;
 			else

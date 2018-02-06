@@ -17,11 +17,13 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.awt.EventQueue;
+import java.lang.System.Logger;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -30,11 +32,13 @@ import net.java.games.input.Controller;
 
 public abstract class OutputThread extends Thread {
 
+	private static final System.Logger log = System.getLogger(OutputThread.class.getName());
+
 	public static final int DEFAULT_POLL_INTERVAL = 10;
 
 	protected final Main main;
 	protected final Input input;
-	protected boolean run = true;
+	protected volatile boolean run = true;
 	protected long pollInterval = DEFAULT_POLL_INTERVAL;
 	protected int minAxisValue;
 	protected int maxAxisValue;
@@ -49,22 +53,32 @@ public abstract class OutputThread extends Thread {
 	}
 
 	protected void controllerDisconnected() {
-		JOptionPane.showMessageDialog(main.getFrame(),
-				rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
-						+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
-				rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-
-		input.getController();
+		try {
+			SwingUtilities.invokeAndWait(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
+								+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
+		}
 
 		for (final Controller c : Input.getControllers())
 			if (c.poll()) {
-				EventQueue.invokeLater(() -> main.setSelectedController(c));
+				main.setSelectedController(c);
 
 				return;
 			}
 
-		JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-				rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		try {
+			SwingUtilities.invokeAndWait(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
+		}
 
 		new Thread() {
 

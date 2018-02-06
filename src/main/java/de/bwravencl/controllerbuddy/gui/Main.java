@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -43,8 +42,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -54,6 +51,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.System.Logger;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -63,6 +61,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -93,6 +92,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -111,7 +111,7 @@ import org.apache.commons.cli.ParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.Version;
@@ -119,8 +119,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.json.InterfaceAdapter;
+import de.bwravencl.controllerbuddy.json.ActionAdapter;
 import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
@@ -136,9 +137,6 @@ public final class Main {
 
 	private class AddModeAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -4881923833724315489L;
 
 		public AddModeAction() {
@@ -149,7 +147,7 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final Mode mode = new Mode();
-			Input.getProfile().getModes().add(mode);
+			input.getProfile().getModes().add(mode);
 
 			setUnsavedChanges(true);
 			updateModesPanel();
@@ -159,9 +157,6 @@ public final class Main {
 
 	private class ChangeVJoyDirectoryAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -7672382299595684105L;
 
 		public ChangeVJoyDirectoryAction() {
@@ -195,9 +190,6 @@ public final class Main {
 
 	private class DisplayIndicatorAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 3316770144012465987L;
 
 		private final VirtualAxis virtualAxis;
@@ -212,9 +204,9 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (((JCheckBox) e.getSource()).isSelected())
-				Input.getProfile().getVirtualAxisToColorMap().put(virtualAxis, new Color(0, 0, 0, 128));
+				input.getProfile().getVirtualAxisToColorMap().put(virtualAxis, new Color(0, 0, 0, 128));
 			else
-				Input.getProfile().getVirtualAxisToColorMap().remove(virtualAxis);
+				input.getProfile().getVirtualAxisToColorMap().remove(virtualAxis);
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -224,9 +216,6 @@ public final class Main {
 
 	private class EditComponentAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 8811608785278071903L;
 
 		private final Component component;
@@ -243,17 +232,12 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
 			editComponentDialog.setVisible(true);
-
-			suspendControllerSettingsUpdate = false;
 		}
 
 	}
 
 	private class NewAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 5703987691203427504L;
 
 		public NewAction() {
@@ -270,9 +254,6 @@ public final class Main {
 
 	private class OpenAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -8932510785275935297L;
 
 		public OpenAction() {
@@ -293,11 +274,41 @@ public final class Main {
 
 	}
 
+	private static final class ProfileFileChooser extends JFileChooser {
+
+		private static final long serialVersionUID = -4669170626378955605L;
+
+		public ProfileFileChooser() {
+			setFileFilter(new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"),
+					rb.getString("PROFILE_FILE_EXTENSION")));
+			setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
+		}
+
+		@Override
+		public void approveSelection() {
+			final File file = getSelectedFile();
+			if (file.exists() && getDialogType() == SAVE_DIALOG) {
+				final int result = JOptionPane.showConfirmDialog(this,
+						file.getName() + rb.getString("FILE_EXISTS_DIALOG_TEXT"),
+						rb.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+				switch (result) {
+				case JOptionPane.NO_OPTION:
+					return;
+				case JOptionPane.CLOSED_OPTION:
+					return;
+				case JOptionPane.CANCEL_OPTION:
+					cancelSelection();
+					return;
+				default:
+					break;
+				}
+			}
+			super.approveSelection();
+		}
+	}
+
 	private class QuitAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 8952460723177800923L;
 
 		public QuitAction() {
@@ -314,9 +325,6 @@ public final class Main {
 
 	private class RemoveModeAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -1056071724769862582L;
 
 		private final Mode mode;
@@ -331,7 +339,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			Input.getProfile().removeMode(mode);
+			input.getProfile().removeMode(input, mode);
 			setUnsavedChanges(true);
 			updateModesPanel();
 		}
@@ -340,9 +348,6 @@ public final class Main {
 
 	private class SaveAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		public SaveAction() {
@@ -362,9 +367,6 @@ public final class Main {
 
 	private class SaveAsAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		public SaveAsAction() {
@@ -381,9 +383,6 @@ public final class Main {
 
 	private class SelectControllerAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -2043467156713598592L;
 
 		private final Controller controller;
@@ -406,9 +405,6 @@ public final class Main {
 
 	private class SelectIndicatorColorAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 3316770144012465987L;
 
 		private final VirtualAxis virtualAxis;
@@ -423,9 +419,9 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color",
-					Input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
+					input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
 			if (newColor != null)
-				Input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
+				input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -435,9 +431,6 @@ public final class Main {
 
 	private class SetHostAction extends AbstractAction implements FocusListener {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -7674562782751876814L;
 
 		private final JTextField hostTextField;
@@ -473,9 +466,6 @@ public final class Main {
 
 	private class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -6706537047137827688L;
 
 		private final Mode mode;
@@ -519,9 +509,6 @@ public final class Main {
 
 	private class ShowAboutDialogAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -2578971543384483382L;
 
 		public ShowAboutDialogAction() {
@@ -542,9 +529,6 @@ public final class Main {
 
 	private class ShowAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 8578159622754054457L;
 
 		public ShowAction() {
@@ -564,9 +548,6 @@ public final class Main {
 
 	private class StartClientAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 3975574941559749481L;
 
 		public StartClientAction() {
@@ -583,9 +564,6 @@ public final class Main {
 
 	private class StartLocalAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -2003502124995392039L;
 
 		public StartLocalAction() {
@@ -602,9 +580,6 @@ public final class Main {
 
 	private class StartServerAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 1758447420975631146L;
 
 		public StartServerAction() {
@@ -621,9 +596,6 @@ public final class Main {
 
 	private class StopClientAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -2863419586328503426L;
 
 		public StopClientAction() {
@@ -640,9 +612,6 @@ public final class Main {
 
 	private class StopLocalAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = -4859431944733030332L;
 
 		public StopLocalAction() {
@@ -659,9 +628,6 @@ public final class Main {
 
 	private class StopServerAction extends AbstractAction {
 
-		/**
-		 *
-		 */
 		private static final long serialVersionUID = 6023207463370122769L;
 
 		public StopServerAction() {
@@ -675,6 +641,8 @@ public final class Main {
 		}
 
 	}
+
+	private static final System.Logger log = System.getLogger(Main.class.getName());
 
 	private static final int SINGLE_INSTANCE_PORT = 58008;
 	private static final int OUTPUT_TYPE_NONE = 0;
@@ -708,14 +676,25 @@ public final class Main {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
-	private static final String ON_SCREEN_KEYBOARD_EXECUTABLE = "osk.exe";
+	protected static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private static volatile JFrame overlayFrame;
 	private static JPanel indicatorPanel;
-	private final static JLabel labelCurrentMode = new JLabel();
-	private static Dimension prevScreenSize;
+	private static Dimension prevScreenSize;;
+	private static final Timer timer = new Timer();
+
+	public static Timer getTimer() {
+		return timer;
+	}
+
+	public static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
+		if (SwingUtilities.isEventDispatchThread())
+			runnable.run();
+		else
+			SwingUtilities.invokeLater(runnable);
+	}
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -736,7 +715,7 @@ public final class Main {
 	}
 
 	public static void main(final String[] args) {
-		EventQueue.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
 			final Options options = new Options();
 			options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
 			options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
@@ -764,8 +743,6 @@ public final class Main {
 			} catch (final ParseException e) {
 				final HelpFormatter helpFormatter = new HelpFormatter();
 				helpFormatter.printHelp("ControllerBuddy", options, true);
-			} catch (final Exception e) {
-				e.printStackTrace();
 			}
 		});
 	}
@@ -779,10 +756,6 @@ public final class Main {
 		if (component instanceof Container)
 			for (final java.awt.Component child : ((Container) component).getComponents())
 				setEnabledRecursive(child, enabled);
-	}
-
-	public static void setOverlayText(final String text) {
-		labelCurrentMode.setText(text);
 	}
 
 	private static void updateOverlayLocation() {
@@ -801,7 +774,6 @@ public final class Main {
 	private Controller selectedController;
 	private Input input;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
-	private boolean suspendControllerSettingsUpdate = false;
 	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
@@ -820,6 +792,8 @@ public final class Main {
 	private final JPanel settingsPanel;
 	private final JScrollPane indicatorsScrollPane;
 	private final JPanel indicatorsListPanel;
+	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
+	private TimerTask overlayTimerTask;
 	private JLabel vJoyDirectoryLabel1;
 	private JTextField hostTextField;
 	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
@@ -828,35 +802,10 @@ public final class Main {
 	private String loadedProfile = null;
 	private File currentFile;
 	private ServerSocket serverSocket;
-	private Process onScreenKeyboardProcess;
-	private final JFileChooser fileChooser = new JFileChooser() {
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = -4669170626378955605L;
+	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
+	private final JLabel labelCurrentMode = new JLabel();
 
-		@Override
-		public void approveSelection() {
-			final File file = getSelectedFile();
-			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final int result = JOptionPane.showConfirmDialog(this,
-						file.getName() + rb.getString("FILE_EXISTS_DIALOG_TEXT"),
-						rb.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-				switch (result) {
-				case JOptionPane.NO_OPTION:
-					return;
-				case JOptionPane.CLOSED_OPTION:
-					return;
-				case JOptionPane.CANCEL_OPTION:
-					cancelSelection();
-					return;
-				default:
-					break;
-				}
-			}
-			super.approveSelection();
-		}
-	};
+	private final JFileChooser fileChooser = new ProfileFileChooser();
 
 	public Main() {
 		frame = new JFrame();
@@ -1197,7 +1146,7 @@ public final class Main {
 			try {
 				SystemTray.getSystemTray().add(trayIcon);
 			} catch (final AWTException e) {
-				e.printStackTrace();
+				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
 		}
 
@@ -1210,11 +1159,6 @@ public final class Main {
 		final Border insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
 		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
 		frame.add(statusLabel, BorderLayout.SOUTH);
-
-		final FileNameExtensionFilter filter = new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"),
-				rb.getString("PROFILE_FILE_EXTENSION"));
-		fileChooser.setFileFilter(filter);
-		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 
 		final String lastControllerName = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 
@@ -1243,129 +1187,98 @@ public final class Main {
 					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
-			final Thread updateAssignmentsPanelThread = new Thread() {
+			timer.scheduleAtFixedRate(new TimerTask() {
 
 				@Override
 				public void run() {
-					while (true) {
-						if (!suspendControllerSettingsUpdate
-								&& assignmentsScrollPane.equals(tabbedPane.getSelectedComponent())
-								&& frame.getState() != Frame.ICONIFIED)
-							EventQueue.invokeLater(() -> {
-								assignmentsPanel.removeAll();
+					SwingUtilities.invokeLater(() -> {
+						if (frame.getState() == Frame.ICONIFIED
+								|| !assignmentsScrollPane.equals(tabbedPane.getSelectedComponent()))
+							return;
 
-								final Controller controller = input.getController();
-								if (controller != null && controller.poll()) {
-									for (final Component c : Input.getComponents(controller)) {
-										final JPanel componentPanel = new JPanel(new GridBagLayout());
-										assignmentsPanel.add(componentPanel,
-												new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-														GridBagConstraints.FIRST_LINE_START,
-														GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 5, 5));
+						assignmentsPanel.removeAll();
 
-										final String name = c.getName();
-										final float value = c.getPollData();
+						final Controller controller = input.getController();
+						if (controller != null && controller.poll()) {
+							for (final Component c : Input.getComponents(controller)) {
+								final JPanel componentPanel = new JPanel(new GridBagLayout());
+								assignmentsPanel.add(componentPanel,
+										new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+												GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
+												new Insets(0, 0, 0, 0), 5, 5));
 
-										final JLabel nameLabel = new JLabel();
-										nameLabel.setPreferredSize(new Dimension(100, 15));
+								final String name = c.getName();
+								final float value = c.getPollData();
 
-										final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0,
-												1, 1, 0.0, 0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-												new Insets(0, 0, 0, 0), 0, 0);
+								final JLabel nameLabel = new JLabel();
+								nameLabel.setPreferredSize(new Dimension(100, 15));
 
-										final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0,
-												1, 1, 1.0, 1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-												new Insets(0, 0, 0, 0), 0, 0);
+								final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0, 1, 1,
+										0.0, 0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+										new Insets(0, 0, 0, 0), 0, 0);
 
-										if (c.isAnalog()) {
-											nameLabel.setText(rb.getString("AXIS_LABEL") + name);
-											componentPanel.add(nameLabel, nameGridBagConstraints);
+								final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0, 1, 1,
+										1.0, 1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+										new Insets(0, 0, 0, 0), 0, 0);
 
-											componentPanel.add(Box.createGlue(),
-													new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0,
-															0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-															new Insets(0, 0, 0, 0), 0, 0));
+								if (c.isAnalog()) {
+									nameLabel.setText(rb.getString("AXIS_LABEL") + name);
+									componentPanel.add(nameLabel, nameGridBagConstraints);
 
-											final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
-											valueProgressBar.setValue((int) (value * 100.0f));
-											componentPanel.add(valueProgressBar, valueGridBagConstraints);
-										} else {
-											nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
-											componentPanel.add(nameLabel, nameGridBagConstraints);
-
-											componentPanel.add(Box.createGlue(),
-													new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0,
-															0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-															new Insets(0, 0, 0, 0), 0, 0));
-
-											final JLabel valueLabel = new JLabel();
-											final StringWriter sw = new StringWriter();
-											if (value > 0.0f)
-												sw.append(rb.getString("BUTTON_DOWN_LABEL"));
-											else {
-												sw.append(rb.getString("BUTTON_UP_LABEL"));
-												valueLabel.setForeground(Color.LIGHT_GRAY);
-											}
-											sw.append(" (" + String.valueOf(value) + ')');
-											valueLabel.setText(sw.toString());
-											componentPanel.add(valueLabel, valueGridBagConstraints);
-										}
-
-										componentPanel.add(Box.createGlue(),
-												new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-														GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-														new Insets(0, 0, 0, 0), 0, 0));
-
-										final JButton editButton = new JButton(new EditComponentAction(c));
-										editButton.setPreferredSize(BUTTON_DIMENSION);
-										editButton.addMouseListener(new MouseListener() {
-
-											@Override
-											public void mouseClicked(final MouseEvent e) {
-											}
-
-											@Override
-											public void mouseEntered(final MouseEvent e) {
-											}
-
-											@Override
-											public void mouseExited(final MouseEvent e) {
-											}
-
-											@Override
-											public void mousePressed(final MouseEvent e) {
-												suspendControllerSettingsUpdate = true;
-											}
-
-											@Override
-											public void mouseReleased(final MouseEvent e) {
-											}
-										});
-										componentPanel.add(editButton,
-												new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-														GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-														new Insets(0, 0, 0, 0), 0, 0));
-									}
-
-									assignmentsPanel.add(Box.createGlue(),
-											new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-													GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+									componentPanel.add(Box.createGlue(),
+											new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+													GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 													new Insets(0, 0, 0, 0), 0, 0));
+
+									final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
+									valueProgressBar.setValue((int) (value * 100.0f));
+									componentPanel.add(valueProgressBar, valueGridBagConstraints);
+								} else {
+									nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
+									componentPanel.add(nameLabel, nameGridBagConstraints);
+
+									componentPanel.add(Box.createGlue(),
+											new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+													GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+													new Insets(0, 0, 0, 0), 0, 0));
+
+									final JLabel valueLabel = new JLabel();
+									final StringWriter sw = new StringWriter();
+									if (value > 0.0f)
+										sw.append(rb.getString("BUTTON_DOWN_LABEL"));
+									else {
+										sw.append(rb.getString("BUTTON_UP_LABEL"));
+										valueLabel.setForeground(Color.LIGHT_GRAY);
+									}
+									sw.append(" (" + String.valueOf(value) + ')');
+									valueLabel.setText(sw.toString());
+									componentPanel.add(valueLabel, valueGridBagConstraints);
 								}
 
-								setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
-								assignmentsScrollPane.setViewportView(assignmentsPanel);
-							});
+								componentPanel.add(Box.createGlue(),
+										new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 0));
 
-						try {
-							Thread.sleep(ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
-						} catch (final InterruptedException e) {
-							e.printStackTrace();
+								final JButton editButton = new JButton(new EditComponentAction(c));
+								editButton.setPreferredSize(BUTTON_DIMENSION);
+								componentPanel.add(editButton,
+										new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+												new Insets(0, 0, 0, 0), 0, 0));
+							}
+
+							assignmentsPanel.add(Box.createGlue(),
+									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+											GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+											new Insets(0, 0, 0, 0), 0, 0));
 						}
-					}
+
+						setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
+						assignmentsScrollPane.setViewportView(assignmentsPanel);
+					});
 				}
-			};
-			updateAssignmentsPanelThread.start();
+			}, 0L, ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
 		}
 	}
 
@@ -1376,6 +1289,8 @@ public final class Main {
 		}
 
 		virtualAxisToProgressBarMap.clear();
+
+		onScreenKeyboard.setVisible(false);
 	}
 
 	public void displayChargingStateInfo(final boolean charging) {
@@ -1388,21 +1303,41 @@ public final class Main {
 	}
 
 	public void displayLowBatteryWarning(final int batteryCharge) {
-		if (trayIcon != null)
-			trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
+		SwingUtilities.invokeLater(() -> {
+			if (trayIcon != null)
+				trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
+		});
 	}
 
 	public JFrame getFrame() {
 		return frame;
 	}
 
+	public OnScreenKeyboard getOnScreenKeyboard() {
+		return onScreenKeyboard;
+	}
+
 	public Preferences getPreferences() {
 		return preferences;
 	}
 
+	public void handleOnScreenKeyboardModeChange() {
+		if (scheduleOnScreenKeyboardModeSwitch) {
+			for (final List<ButtonToModeAction> buttonToModeActions : input.getProfile().getComponentToModeActionMap()
+					.values())
+				for (final ButtonToModeAction buttonToModeAction : buttonToModeActions)
+					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
+						buttonToModeAction.doAction(input, buttonToModeAction.getActivationValue());
+						break;
+					}
+
+			scheduleOnScreenKeyboardModeSwitch = false;
+		}
+	}
+
 	private void initOverlay() {
 		String longestDescription = "";
-		for (final Mode m : Input.getProfile().getModes()) {
+		for (final Mode m : input.getProfile().getModes()) {
 			final String description = m.getDescription();
 			if (description.length() > longestDescription.length())
 				longestDescription = description;
@@ -1413,7 +1348,7 @@ public final class Main {
 				.setPreferredSize(new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
 		labelCurrentMode.setForeground(Color.RED);
 		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
-		labelCurrentMode.setText(Input.getProfile().getActiveMode().getDescription());
+		labelCurrentMode.setText(input.getProfile().getActiveMode().getDescription());
 
 		if (overlayFrame == null) {
 			final JFrame overlayFrame = new JFrame();
@@ -1421,18 +1356,18 @@ public final class Main {
 			overlayFrame.setLayout(new BorderLayout());
 			overlayFrame.setFocusableWindowState(false);
 			overlayFrame.setUndecorated(true);
-			overlayFrame.setBackground(new Color(255, 255, 255, 0));
+			overlayFrame.setBackground(TRANSPARENT);
 
-			if (isWindows()) {
-				final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
-				final JButton onScreenKeyboardButton = new JButton(icon);
-				onScreenKeyboardButton.addActionListener(e -> toggleOnScreenKeyboard());
-				onScreenKeyboardButton.setBorder(null);
-				onScreenKeyboardButton.setFocusPainted(false);
-				onScreenKeyboardButton.setContentAreaFilled(false);
-				onScreenKeyboardButton.setHorizontalAlignment(SwingConstants.RIGHT);
-				overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
-			}
+			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
+			final JButton onScreenKeyboardButton = new JButton(icon);
+			onScreenKeyboardButton.addActionListener(e -> {
+				scheduleOnScreenKeyboardModeSwitch = true;
+			});
+			onScreenKeyboardButton.setBorder(null);
+			onScreenKeyboardButton.setFocusPainted(false);
+			onScreenKeyboardButton.setContentAreaFilled(false);
+			onScreenKeyboardButton.setHorizontalAlignment(SwingConstants.RIGHT);
+			overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
 
 			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 			Main.overlayFrame = overlayFrame;
@@ -1440,10 +1375,10 @@ public final class Main {
 		overlayFrame.setAlwaysOnTop(true);
 
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		indicatorPanel.setBackground(new Color(255, 255, 255, 0));
+		indicatorPanel.setBackground(TRANSPARENT);
 
 		for (final VirtualAxis va : Input.VirtualAxis.values()) {
-			final Map<VirtualAxis, Color> virtualAxisToColorMap = Input.getProfile().getVirtualAxisToColorMap();
+			final Map<VirtualAxis, Color> virtualAxisToColorMap = input.getProfile().getVirtualAxisToColorMap();
 
 			if (virtualAxisToColorMap.containsKey(va)) {
 				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
@@ -1463,25 +1398,6 @@ public final class Main {
 
 		updateOverlayLocation();
 		overlayFrame.setVisible(true);
-
-		new Timer().schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				if (overlayFrame != null && overlayFrame.isAlwaysOnTop() && !isModalDialogShowing()) {
-					overlayFrame.setAlwaysOnTop(false);
-					overlayFrame.setAlwaysOnTop(true);
-				}
-
-				final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				if (prevScreenSize == null || screenSize.width != prevScreenSize.width
-						|| screenSize.height != prevScreenSize.height) {
-					prevScreenSize = screenSize;
-					updateOverlayLocation();
-				}
-			}
-		}, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
-
 	}
 
 	private boolean loadProfile(final File file) {
@@ -1491,12 +1407,19 @@ public final class Main {
 
 		try {
 			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>()).create();
+			final ActionAdapter actionAdapter = new ActionAdapter();
+			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, actionAdapter).create();
 
 			try {
 				final Profile profile = gson.fromJson(jsonString, Profile.class);
 
-				result = Input.setProfile(profile, input.getController());
+				final Set<String> unknownActionClasses = actionAdapter.getUnknownActionClasses();
+				if (!unknownActionClasses.isEmpty())
+					JOptionPane.showMessageDialog(frame,
+							rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT") + String.join("\n", unknownActionClasses),
+							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+
+				result = input.setProfile(profile, input.getController());
 				if (result) {
 					saveLastProfile(file);
 					updateModesPanel();
@@ -1509,13 +1432,13 @@ public final class Main {
 
 					restartLast();
 				}
-			} catch (final JsonSyntaxException e) {
-				e.printStackTrace();
+			} catch (final JsonParseException e) {
+				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
 
 			return result;
 		} catch (final IOException e) {
-			e.printStackTrace();
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		}
 
 		return result;
@@ -1544,7 +1467,7 @@ public final class Main {
 			try {
 				serverSocket.close();
 			} catch (final IOException e) {
-				e.printStackTrace();
+				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
 
 		stopAll();
@@ -1577,19 +1500,23 @@ public final class Main {
 		input.reset();
 
 		final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
-		if (!file.getName().toLowerCase().endsWith(profileFileSuffix))
+		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
-		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new InterfaceAdapter<>())
-				.setPrettyPrinting().create();
-		final String jsonString = gson.toJson(Input.getProfile());
+		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new ActionAdapter()).setPrettyPrinting()
+				.create();
+		final String jsonString = gson.toJson(input.getProfile());
 
 		try (FileOutputStream fos = new FileOutputStream(file)) {
 			final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-			writer.write(jsonString);
-			writer.flush();
-			fos.flush();
-			fos.close();
+			try {
+				writer.write(jsonString);
+				writer.flush();
+				fos.flush();
+				fos.close();
+			} finally {
+				writer.close();
+			}
 
 			saveLastProfile(file);
 			loadedProfile = file.getName();
@@ -1597,7 +1524,7 @@ public final class Main {
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e) {
-			e.printStackTrace();
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		}
 	}
 
@@ -1620,12 +1547,18 @@ public final class Main {
 
 			@Override
 			public void run() {
-				if (statusLabel.getText().equals(originalText))
-					setStatusBarText(newText);
+				SwingUtilities.invokeLater(() -> {
+					if (statusLabel.getText().equals(originalText))
+						setStatusBarText(newText);
+				});
 			}
 		}
 
-		new Timer().schedule(new StatusBarTextTimerTask(text), 5000L);
+		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
+	}
+
+	public void setOverlayText(final String text) {
+		invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
 	}
 
 	public void setSelectedController(final Controller controller) {
@@ -1661,6 +1594,8 @@ public final class Main {
 
 		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
 			initOverlay();
+
+		startOverlayTimerTask();
 	}
 
 	public void startLocal() {
@@ -1682,6 +1617,43 @@ public final class Main {
 
 		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
 			initOverlay();
+
+		startOverlayTimerTask();
+	}
+
+	private void startOverlayTimerTask() {
+		stopOverlayTimerTask();
+
+		overlayTimerTask = new TimerTask() {
+
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(() -> {
+					if (isModalDialogShowing()) {
+						if (overlayFrame != null) {
+							overlayFrame.setAlwaysOnTop(false);
+							overlayFrame.setAlwaysOnTop(true);
+						}
+
+						if (onScreenKeyboard.isVisible()) {
+							onScreenKeyboard.setAlwaysOnTop(false);
+							onScreenKeyboard.setAlwaysOnTop(true);
+						}
+					}
+
+					final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+					if (prevScreenSize == null || screenSize.width != prevScreenSize.width
+							|| screenSize.height != prevScreenSize.height) {
+						prevScreenSize = screenSize;
+
+						updateOverlayLocation();
+						onScreenKeyboard.updateLocation();
+					}
+				});
+			}
+		};
+
+		timer.schedule(overlayTimerTask, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 	}
 
 	public void startServer() {
@@ -1716,8 +1688,10 @@ public final class Main {
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
+
+		System.gc();
 	}
 
 	public void stopClient(final boolean resetLastOutputType) {
@@ -1741,6 +1715,7 @@ public final class Main {
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
+		stopOverlayTimerTask();
 		deInitOverlay();
 	}
 
@@ -1770,7 +1745,13 @@ public final class Main {
 		if (resetLastOutputType)
 			lastOutputType = OUTPUT_TYPE_NONE;
 
+		stopOverlayTimerTask();
 		deInitOverlay();
+	}
+
+	private void stopOverlayTimerTask() {
+		if (overlayTimerTask != null)
+			overlayTimerTask.cancel();
 	}
 
 	public void stopServer(final boolean resetLastOutputType) {
@@ -1803,29 +1784,23 @@ public final class Main {
 	}
 
 	public void toggleOnScreenKeyboard() {
-		try {
-			if (onScreenKeyboardProcess != null && onScreenKeyboardProcess.isAlive())
-				onScreenKeyboardProcess.destroy();
-			else
-				onScreenKeyboardProcess = new ProcessBuilder(ON_SCREEN_KEYBOARD_EXECUTABLE).start();
-		} catch (final IOException e1) {
-			onScreenKeyboardProcess = null;
-			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, rb.getString("ON_SCREEN_KEYBOARD_LAUNCH_ERROR_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		}
+		if (localThread != null && localThread.isAlive() || clientThread != null && clientThread.isAlive()
+				|| serverThread != null && serverThread.isAlive())
+			SwingUtilities.invokeLater(() -> {
+				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
+			});
 	}
 
 	protected void updateModesPanel() {
 		modesListPanel.removeAll();
 
-		final List<Mode> modes = Input.getProfile().getModes();
-		for (final Mode p : modes) {
+		final List<Mode> modes = input.getProfile().getModes();
+		for (final Mode m : modes) {
 			final JPanel modePanel = new JPanel(new GridBagLayout());
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final JLabel modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(p));
+			final JLabel modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(m));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1833,11 +1808,11 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final JTextField descriptionTextField = new JTextField(p.getDescription(), 20);
+			final JTextField descriptionTextField = new JTextField(m.getDescription(), 20);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(p,
+			final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(m,
 					descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
@@ -1845,11 +1820,11 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			if (Profile.isDefaultMode(p)) {
+			if (Profile.defaultMode.equals(m) || OnScreenKeyboard.onScreenKeyboardMode.equals(m)) {
 				descriptionTextField.setEditable(false);
 				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width));
 			} else {
-				final JButton deleteButton = new JButton(new RemoveModeAction(p));
+				final JButton deleteButton = new JButton(new RemoveModeAction(m));
 				deleteButton.setPreferredSize(BUTTON_DIMENSION);
 				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1900,12 +1875,12 @@ public final class Main {
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final boolean enabled = Input.getProfile().getVirtualAxisToColorMap().containsKey(va);
+			final boolean enabled = input.getProfile().getVirtualAxisToColorMap().containsKey(va);
 
 			final JLabel colorLabel = new JLabel();
 			if (enabled) {
 				colorLabel.setOpaque(true);
-				colorLabel.setBackground(Input.getProfile().getVirtualAxisToColorMap().get(va));
+				colorLabel.setBackground(input.getProfile().getVirtualAxisToColorMap().get(va));
 			} else
 				colorLabel.setText(rb.getString("INDICATOR_DISABLED_LABEL"));
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1949,7 +1924,7 @@ public final class Main {
 		frame.setTitle(sb.toString());
 
 		if (trayIcon != null && input != null) {
-			if (input != null && Main.isWindows() && Input.isDualShock4Controller(input.getController()))
+			if (Main.isWindows() && Input.isDualShock4Controller(input.getController()))
 				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
 						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
 								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));

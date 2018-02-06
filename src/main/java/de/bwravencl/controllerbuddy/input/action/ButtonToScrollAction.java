@@ -28,9 +28,9 @@ public class ButtonToScrollAction extends ToScrollAction implements IButtonToAct
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
+		value = handleLongPress(input, value);
 
-		if (value == activationValue)
+		if (IButtonToAction.floatEquals(value, activationValue))
 			input.setScrollClicks(input.getScrollClicks() + (invert ? -clicks : clicks));
 	}
 

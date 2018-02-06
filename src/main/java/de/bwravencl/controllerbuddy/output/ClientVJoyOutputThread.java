@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.System.Logger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -42,6 +44,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	private enum ClientState {
 		Connecting, Connected
 	}
+
+	private static final System.Logger log = System.getLogger(ClientVJoyOutputThread.class.getName());
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	private static final int N_CONNECTION_RETRIES = 10;
@@ -62,7 +66,11 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	@Override
 	protected void deInit() {
 		super.deInit();
-		main.stopClient(false);
+
+		SwingUtilities.invokeLater(() -> {
+			if (ClientVJoyOutputThread.this.isAlive())
+				main.stopClient(false);
+		});
 
 		if (restart)
 			main.restartLast();
@@ -86,9 +94,11 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 		switch (clientState) {
 		case Connecting:
-			main.setStatusBarText(rb.getString("STATUS_CONNECTING_TO_HOST_PART_1") + host
-					+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_2") + port
-					+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_3"));
+			SwingUtilities.invokeLater(() -> {
+				main.setStatusBarText(rb.getString("STATUS_CONNECTING_TO_HOST_PART_1") + host
+						+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_2") + port
+						+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_3"));
+			});
 
 			final StringWriter sw = new StringWriter();
 			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_HELLO);
@@ -117,13 +127,15 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						final String[] messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
 						final int serverProtocolVersion = Integer.parseInt(messageParts[1]);
 						if (ServerOutputThread.PROTOCOL_VERSION != serverProtocolVersion) {
-							JOptionPane.showMessageDialog(main.getFrame(),
-									rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_1")
-											+ ServerOutputThread.PROTOCOL_VERSION
-											+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_2")
-											+ serverProtocolVersion
-											+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
-									rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							SwingUtilities.invokeLater(() -> {
+								JOptionPane.showMessageDialog(main.getFrame(),
+										rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_1")
+												+ ServerOutputThread.PROTOCOL_VERSION
+												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_2")
+												+ serverProtocolVersion
+												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
+										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							});
 							retry = -1;
 						} else {
 							pollInterval = Long.parseLong(messageParts[2]);
@@ -131,31 +143,42 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						}
 					} else {
 						retry--;
-						main.setStatusBarText(
-								rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_1") + (N_CONNECTION_RETRIES - retry)
-										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_2") + N_CONNECTION_RETRIES
-										+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_3"));
+						final int finalRetry = retry;
+						SwingUtilities.invokeLater(() -> {
+							main.setStatusBarText(rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_1")
+									+ (N_CONNECTION_RETRIES - finalRetry)
+									+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_2") + N_CONNECTION_RETRIES
+									+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_3"));
+						});
 					}
 				} catch (final SocketTimeoutException e) {
-					e.printStackTrace();
+					log.log(Logger.Level.INFO, e.getMessage(), e);
 					retry--;
-					main.setStatusBarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
-							+ (N_CONNECTION_RETRIES - retry) + rb.getString("STATUS_TIMEOUT_RETRYING_PART_2")
-							+ N_CONNECTION_RETRIES + rb.getString("STATUS_TIMEOUT_RETRYING_PART_3"));
+					final int finalRetry = retry;
+					SwingUtilities.invokeLater(() -> {
+						main.setStatusBarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
+								+ (N_CONNECTION_RETRIES - finalRetry) + rb.getString("STATUS_TIMEOUT_RETRYING_PART_2")
+								+ N_CONNECTION_RETRIES + rb.getString("STATUS_TIMEOUT_RETRYING_PART_3"));
+					});
 				}
 			} while (!success && retry > 0 && run);
 
 			if (success) {
 				clientState = ClientState.Connected;
-				main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
-						+ rb.getString("STATUS_CONNECTED_TO_PART_2") + port + rb.getString("STATUS_CONNECTED_TO_PART_3")
-						+ pollInterval + rb.getString("STATUS_CONNECTED_TO_PART_4"));
+				SwingUtilities.invokeLater(() -> {
+					main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
+							+ rb.getString("STATUS_CONNECTED_TO_PART_2") + port
+							+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
+							+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
+				});
 			} else {
 				if (retry != -1 && run)
-					JOptionPane.showMessageDialog(main.getFrame(),
-							rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_PREFIX") + N_CONNECTION_RETRIES
-									+ rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_SUFFIX"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					SwingUtilities.invokeLater(() -> {
+						JOptionPane.showMessageDialog(main.getFrame(),
+								rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_PREFIX") + N_CONNECTION_RETRIES
+										+ rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_SUFFIX"),
+								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					});
 				run = false;
 			}
 
@@ -289,9 +312,11 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					clientSocket.send(sendPacket1);
 				}
 			} catch (final SocketTimeoutException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				log.log(Logger.Level.INFO, e.getMessage(), e);
+				SwingUtilities.invokeLater(() -> {
+					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
+							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				});
 				run = false;
 			}
 			break;
@@ -313,15 +338,18 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						writeOutput();
 			}
 		} catch (final UnknownHostException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(),
-					rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
-							+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(),
+						rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
+								+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
 		} catch (final IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			});
 		} finally {
 			if (clientSocket != null)
 				clientSocket.close();

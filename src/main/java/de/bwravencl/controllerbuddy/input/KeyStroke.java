@@ -19,21 +19,30 @@ package de.bwravencl.controllerbuddy.input;
 
 public class KeyStroke implements Cloneable {
 
-	private Integer[] keyCodes = {};
-	private Integer[] modifierCodes = {};
+	private Integer[] keyCodes;
+	private Integer[] modifierCodes;
+
+	public KeyStroke() {
+		this(new Integer[0], new Integer[0]);
+	}
+
+	public KeyStroke(final Integer[] keyCodes, final Integer[] modifierCodes) {
+		this.keyCodes = keyCodes;
+		this.modifierCodes = modifierCodes;
+	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final KeyStroke keyStroke = new KeyStroke();
+		final KeyStroke keyStroke = (KeyStroke) super.clone();
 
 		final Integer[] clonedKeyCodes = new Integer[keyCodes.length];
 		for (int i = 0; i < keyCodes.length; i++)
-			clonedKeyCodes[i] = Integer.valueOf(keyCodes[i]);
+			clonedKeyCodes[i] = keyCodes[i];
 		keyStroke.setKeyCodes(clonedKeyCodes);
 
 		final Integer[] clonedModifierCodes = new Integer[modifierCodes.length];
 		for (int i = 0; i < modifierCodes.length; i++)
-			clonedModifierCodes[i] = Integer.valueOf(modifierCodes[i]);
+			clonedModifierCodes[i] = modifierCodes[i];
 		keyStroke.setModifierCodes(clonedModifierCodes);
 
 		return keyStroke;

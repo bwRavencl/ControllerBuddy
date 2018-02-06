@@ -23,9 +23,15 @@ import java.util.Map;
 
 public class LockKey {
 
-	public static final LockKey[] LOCK_KEYS = { new LockKey("Caps Lock", KeyEvent.VK_CAPS_LOCK),
-			new LockKey("Num Lock", KeyEvent.VK_NUM_LOCK), new LockKey("Scroll Lock", KeyEvent.VK_SCROLL_LOCK),
-			new LockKey("Kana Lock", KeyEvent.VK_KANA_LOCK), };
+	public static final String LOCK_SUFFIX = " Lock";
+	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
+	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
+	public static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
+	public static final String KANA_LOCK = "Kana" + LOCK_SUFFIX;
+
+	public static final LockKey[] LOCK_KEYS = { new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK),
+			new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK), new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK),
+			new LockKey(KANA_LOCK, KeyEvent.VK_KANA_LOCK), };
 
 	public static final Map<LockKey, Integer> lockKeyToVirtualKeyCodeMap;
 	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;

@@ -44,9 +44,9 @@ public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
+		value = handleLongPress(input, value);
 
-		if (value != activationValue) {
+		if (!IButtonToAction.floatEquals(value, activationValue)) {
 			actions.get(index).doAction(input, value);
 			if (!wasUp) {
 				if (index == actions.size() - 1)

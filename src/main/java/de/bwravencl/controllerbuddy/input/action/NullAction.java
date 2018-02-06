@@ -19,11 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToOnScreenKeyboardAction implements IButtonToAction {
-
-	private transient boolean wasUp = true;
-	private boolean longPress = DEFAULT_LONG_PRESS;
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
+public class NullAction implements IAction {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -31,41 +27,12 @@ public class ButtonToOnScreenKeyboardAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
-
-		if (value == activationValue) {
-			if (wasUp) {
-				input.getMain().toggleOnScreenKeyboard();
-				wasUp = false;
-			}
-		} else
-			wasUp = true;
-	}
-
-	@Override
-	public float getActivationValue() {
-		return activationValue;
-	}
-
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
-	public void setActivationValue(final Float activationValue) {
-		this.activationValue = activationValue;
-	}
-
-	@Override
-	public void setLongPress(final Boolean longPress) {
-		this.longPress = longPress;
+	public void doAction(final Input input, final float value) {
 	}
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_ON_SCREEN_KEYBOARD_ACTION_STRING");
+		return rb.getString("NULL_ACTION_STRING");
 	}
 
 }

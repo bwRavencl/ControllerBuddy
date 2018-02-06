@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 public abstract class ToKeyAction implements IAction {
 
 	protected boolean downUp = false;
+
 	protected transient boolean wasUp = true;
 
 	protected KeyStroke keystroke = new KeyStroke();

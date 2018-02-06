@@ -29,9 +29,9 @@ public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonTo
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
+		value = handleLongPress(input, value);
 
-		if (value == activationValue ^ invert)
+		if (IButtonToAction.floatEquals(value, activationValue) ^ invert)
 			input.setAxis(virtualAxis, resetValue);
 	}
 

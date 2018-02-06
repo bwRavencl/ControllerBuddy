@@ -18,9 +18,10 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import java.util.Map;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+
+import de.bwravencl.controllerbuddy.gui.Main;
 
 public interface ISuspendableAction extends IAction {
 
@@ -36,7 +37,7 @@ public interface ISuspendableAction extends IAction {
 		componentToSuspendedActionsMap.remove(this);
 		componentToSuspendedActionsMap.put(this, componentName);
 
-		new Timer().schedule(new TimerTask() {
+		Main.getTimer().schedule(new TimerTask() {
 
 			@Override
 			public void run() {

@@ -34,6 +34,10 @@ public interface IButtonToAction extends IAction {
 	static final Set<IButtonToAction> actionToWasDown = new HashSet<>();
 	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
+	static boolean floatEquals(final float f1, final float f2) {
+		return Math.abs(f1 - f2) < 0.001f;
+	}
+
 	static boolean isDownUpAction(final IAction action) {
 		if (action instanceof ToKeyAction) {
 			final ToKeyAction toKeyAction = (ToKeyAction) action;
@@ -49,28 +53,28 @@ public interface IButtonToAction extends IAction {
 
 	float getActivationValue();
 
-	default float handleLongPress(final float value) {
+	default float handleLongPress(final Input input, final float value) {
 		final float activationValue = getActivationValue();
 
 		if (isLongPress()) {
 			final long currentTime = System.currentTimeMillis();
 
-			if (value == activationValue) {
+			if (IButtonToAction.floatEquals(value, activationValue)) {
 				if (!actionToDownSinceMap.containsKey(this))
 					actionToDownSinceMap.put(this, currentTime);
 				else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME)
 					return value;
 			} else if (actionToDownSinceMap.containsKey(this)) {
 				if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
-					for (final List<IAction> actions : Input.getProfile().getActiveMode().getComponentToActionsMap()
+					for (final List<IAction> actions : input.getProfile().getActiveMode().getComponentToActionsMap()
 							.values())
 						if (actions.contains(this)) {
 							actionToWasDown.removeAll(actions);
 							break;
 						}
 
-					if (!Profile.isDefaultMode(Input.getProfile().getActiveMode()))
-						for (final List<IAction> actions : Input.getProfile().getModes().get(0)
+					if (!Profile.defaultMode.equals(input.getProfile().getActiveMode()))
+						for (final List<IAction> actions : input.getProfile().getModes().get(0)
 								.getComponentToActionsMap().values())
 							if (actions.contains(this)) {
 								actionToWasDown.removeAll(actions);
@@ -82,7 +86,7 @@ public interface IButtonToAction extends IAction {
 
 			return activationValue - 1.0f;
 		} else if (isDownUpAction(this)) {
-			if (value == activationValue)
+			if (floatEquals(value, activationValue))
 				actionToWasDown.add(this);
 			else if (actionToWasDown.contains(this)) {
 				actionToWasDown.remove(this);

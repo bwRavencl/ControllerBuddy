@@ -17,9 +17,12 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import java.lang.System.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.SwingUtilities;
 
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -30,6 +33,8 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class LocalVJoyOutputThread extends VJoyOutputThread {
 
+	private static final System.Logger log = System.getLogger(LocalVJoyOutputThread.class.getName());
+
 	public LocalVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
@@ -37,7 +42,11 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	@Override
 	protected void deInit() {
 		super.deInit();
-		main.stopLocal(false);
+
+		SwingUtilities.invokeLater(() -> {
+			if (LocalVJoyOutputThread.this.isAlive())
+				main.stopLocal(false);
+		});
 
 		if (restart)
 			main.restartLast();
@@ -115,7 +124,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 				try {
 					Thread.sleep(pollInterval);
 				} catch (final InterruptedException e) {
-					e.printStackTrace();
+					log.log(Logger.Level.ERROR, e.getMessage(), e);
 				}
 			}
 

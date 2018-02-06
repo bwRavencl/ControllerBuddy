@@ -26,9 +26,9 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction implements IB
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
+		value = handleLongPress(input, value);
 
-		if (value != activationValue) {
+		if (!IButtonToAction.floatEquals(value, activationValue)) {
 			if (downUp)
 				wasUp = true;
 			else if (initiator) {

@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import java.awt.Color;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,10 +38,17 @@ import net.brockmatt.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
 
-	public static final String DEFAULT_MODE_UUID_STRING = "067e6162-3b6f-4ae2-a171-2470b63dff00";
+	private static final System.Logger log = System.getLogger(Profile.class.getName());
 
-	public static boolean isDefaultMode(final Mode mode) {
-		return mode.getUuid().equals(UUID.fromString(DEFAULT_MODE_UUID_STRING));
+	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
+
+	public static final Mode defaultMode;
+
+	static {
+		defaultMode = new Mode(DEFAULT_MODE_UUID);
+		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+				Locale.getDefault());
+		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	private Map<String, List<ButtonToModeAction>> componentToModeActionMap = new HashMap<>();
@@ -49,16 +57,12 @@ public class Profile implements Cloneable {
 	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<>();
 
 	public Profile() {
-		final Mode defaultMode = new Mode(DEFAULT_MODE_UUID_STRING);
-		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
-				Locale.getDefault());
-		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
 		modes.add(defaultMode);
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final Profile profile = new Profile();
+		final Profile profile = (Profile) super.clone();
 
 		final Map<String, List<ButtonToModeAction>> clonedComponentToModeActionMap = new HashMap<>();
 		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet()) {
@@ -67,9 +71,9 @@ public class Profile implements Cloneable {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) a.clone());
 				} catch (final CloneNotSupportedException e1) {
-					e1.printStackTrace();
+					log.log(Logger.Level.ERROR, e1.getMessage(), e1);
 				}
-			clonedComponentToModeActionMap.put(new String(e.getKey()), buttonToModeActions);
+			clonedComponentToModeActionMap.put(e.getKey(), buttonToModeActions);
 		}
 		profile.setComponentToModeActionMap(clonedComponentToModeActionMap);
 
@@ -78,7 +82,7 @@ public class Profile implements Cloneable {
 			try {
 				clonedModes.add((Mode) p.clone());
 			} catch (final CloneNotSupportedException e) {
-				e.printStackTrace();
+				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
 		profile.setModes(clonedModes);
 
@@ -109,12 +113,12 @@ public class Profile implements Cloneable {
 		return virtualAxisToColorMap;
 	}
 
-	public void removeMode(final Mode mode) {
+	public void removeMode(final Input input, final Mode mode) {
 		final List<String> actionsToRemove = new ArrayList<>();
 
 		for (final Map.Entry<String, List<ButtonToModeAction>> e : componentToModeActionMap.entrySet())
 			for (final ButtonToModeAction a : e.getValue())
-				if (a.getMode().equals(mode))
+				if (a.getMode(input).equals(mode))
 					actionsToRemove.add(e.getKey());
 
 		for (final String s : actionsToRemove)
@@ -153,7 +157,7 @@ public class Profile implements Cloneable {
 				}
 
 			activeModeIndex = index;
-			Main.setOverlayText(newMode.getDescription());
+			input.getMain().setOverlayText(newMode.getDescription());
 		}
 	}
 

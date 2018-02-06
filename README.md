@@ -17,7 +17,7 @@ When using ControllerBuddy in Client-Server mode, both instances communicate ove
 
 In order to support complex input profiles, ControllerBuddy provides very flexible programming of the physical controller. Each axis or button present on the device can be mapped to one or multiple actions invoked on the target host.
 
-Currently the following actions are supported:
+Currently among the following actions are supported:
 - Axis movements
 - Relative axis movements
 - Button presses
@@ -38,6 +38,8 @@ The whole programming of the physical controller can be performed via the graphi
 The resulting profile can be exported to a simple JSON-based file format.
 
 ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes. The axes displayed by the overlay can be customized on a per-profile basis. The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
+
+In addition a built-in On-Screen Keyboard is provided, that can either be controlled via special actions bound to controller buttons or via the mouse cursor.
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
@@ -80,9 +82,6 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 - General requirements:
   - Java SE Runtime Environment 9 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
   - vJoy 2.1.8 (http://vjoystick.sourceforge.net)
-- Requirements for On-Screen Keyboard:
-  - Windows
-  - Administrator Privileges
 
 #### Building:
 ControllerBuddy uses the Gradle build system. 

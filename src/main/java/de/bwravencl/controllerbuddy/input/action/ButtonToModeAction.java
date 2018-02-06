@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -36,23 +37,24 @@ public class ButtonToModeAction implements IButtonToAction {
 		return buttonToModeActionStack;
 	}
 
-	private boolean toggle = false;
+	protected boolean toggle = false;
 	private transient boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private UUID modeUuid;
 
-	public ButtonToModeAction() {
-		final List<Mode> modes = Input.getProfile().getModes();
-
-		if (modes.size() > 1)
-			modeUuid = modes.get(1).getUuid();
+	public ButtonToModeAction(final Input input) {
+		final List<Mode> modes = input.getProfile().getModes();
+		setMode(modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode);
 	}
 
 	private void activateMode(final Input input, final Profile profile) {
 		if (!buttonToModeActionStack.contains(this)) {
 			buttonToModeActionStack.push(this);
 			profile.setActiveMode(input, modeUuid);
+
+			if (targetsOnScreenKeyboardMode())
+				input.getMain().toggleOnScreenKeyboard();
 		}
 	}
 
@@ -62,7 +64,7 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	private boolean componentNotUsedByActiveModes(final Input input) {
-		final Profile profile = Input.getProfile();
+		final Profile profile = input.getProfile();
 
 		Component component = null;
 		componentLoop: for (final Component c : Input.getComponents(input.getController())) {
@@ -77,7 +79,7 @@ public class ButtonToModeAction implements IButtonToAction {
 
 		if (component != null)
 			for (final ButtonToModeAction a : buttonToModeActionStack) {
-				final Map<String, List<IAction>> componentToActionMap = a.getMode().getComponentToActionsMap();
+				final Map<String, List<IAction>> componentToActionMap = a.getMode(input).getComponentToActionsMap();
 				final List<IAction> actions = componentToActionMap.get(component.getName());
 
 				if (actions != null)
@@ -96,7 +98,7 @@ public class ButtonToModeAction implements IButtonToAction {
 			if (!buttonToModeActionStack.isEmpty()) {
 				buttonToModeActionStack.pop();
 				if (!buttonToModeActionStack.isEmpty())
-					previousMode = buttonToModeActionStack.peek().getMode();
+					previousMode = buttonToModeActionStack.peek().getMode(input);
 			}
 
 			final Map<String, List<IAction>> componentToActionsMap = profile.getActiveMode().getComponentToActionsMap();
@@ -116,15 +118,18 @@ public class ButtonToModeAction implements IButtonToAction {
 
 			profile.setActiveMode(input, previousMode.getUuid());
 			input.getDownKeyStrokes().clear();
+
+			if (targetsOnScreenKeyboardMode())
+				input.getMain().toggleOnScreenKeyboard();
 		}
 	}
 
 	@Override
 	public void doAction(final Input input, float value) {
-		value = handleLongPress(value);
-		final Profile profile = Input.getProfile();
+		value = handleLongPress(input, value);
+		final Profile profile = input.getProfile();
 
-		if (value != activationValue) {
+		if (!IButtonToAction.floatEquals(value, activationValue)) {
 			if (toggle)
 				up = true;
 			else
@@ -133,12 +138,12 @@ public class ButtonToModeAction implements IButtonToAction {
 			if (up) {
 				if (profile.getActiveMode().getUuid().equals(modeUuid))
 					deactivateMode(input, profile);
-				else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
+				else if (Profile.defaultMode.equals(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
 					activateMode(input, profile);
 
 				up = false;
 			}
-		} else if (Profile.isDefaultMode(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
+		} else if (Profile.defaultMode.equals(profile.getActiveMode()) || componentNotUsedByActiveModes(input))
 			activateMode(input, profile);
 	}
 
@@ -147,10 +152,13 @@ public class ButtonToModeAction implements IButtonToAction {
 		return activationValue;
 	}
 
-	public Mode getMode() {
-		for (final Mode m : Input.getProfile().getModes())
-			if (modeUuid.equals(m.getUuid()))
+	public Mode getMode(final Input input) {
+		for (final Mode m : input.getProfile().getModes())
+			if (m.getUuid().equals(modeUuid))
 				return m;
+
+		if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid))
+			return OnScreenKeyboard.onScreenKeyboardMode;
 
 		return null;
 	}
@@ -180,6 +188,10 @@ public class ButtonToModeAction implements IButtonToAction {
 
 	public void setToggle(final Boolean toggle) {
 		this.toggle = toggle;
+	}
+
+	public boolean targetsOnScreenKeyboardMode() {
+		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
 	}
 
 	@Override
