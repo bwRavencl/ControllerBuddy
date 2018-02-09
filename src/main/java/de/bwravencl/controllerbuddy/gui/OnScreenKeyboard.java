@@ -152,11 +152,9 @@ public class OnScreenKeyboard extends JFrame {
 							};
 							Main.getTimer().schedule(lockTimerTask, MIN_REPEAT_PRESS_TIME);
 						} else {
-							if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME) {
+							if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
 								release();
-								releaseAllAfterPoll = true;
-
-							} else
+							else
 								DefaultKeyboardButton.this.setForeground(KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
 
 							lockTimerTask.cancel();
@@ -471,10 +469,9 @@ public class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(DirectInputKeyCode.DIK_NUMPADENTER) } };
 
 	private volatile boolean anyChanges;
-	private volatile boolean releaseAllAfterPoll;
 
-	private int selectedRow;
-	private int selectedColumn;
+	private int selectedRow = keyboardButtons.length / 2;
+	private int selectedColumn = keyboardButtons[selectedRow].length / 2;
 
 	public OnScreenKeyboard() {
 		setType(JFrame.Type.UTILITY);
@@ -571,11 +568,6 @@ public class OnScreenKeyboard extends JFrame {
 				for (final AbstractKeyboardButton kb : row)
 					kb.poll(input);
 		}
-
-		if (releaseAllAfterPoll) {
-			releaseAll();
-			releaseAllAfterPoll = false;
-		}
 	}
 
 	public void pressSelected() {
@@ -590,7 +582,6 @@ public class OnScreenKeyboard extends JFrame {
 
 	public void releaseSelected() {
 		keyboardButtons[selectedRow][selectedColumn].release();
-		releaseAllAfterPoll = true;
 	}
 
 	private void selectButtonByX(final int targetX) {
