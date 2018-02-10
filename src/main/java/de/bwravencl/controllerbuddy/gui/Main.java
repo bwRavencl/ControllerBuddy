@@ -1629,7 +1629,7 @@ public final class Main {
 			@Override
 			public void run() {
 				SwingUtilities.invokeLater(() -> {
-					if (isModalDialogShowing()) {
+					if (!isModalDialogShowing()) {
 						if (overlayFrame != null) {
 							overlayFrame.setAlwaysOnTop(false);
 							overlayFrame.setAlwaysOnTop(true);
@@ -1648,6 +1648,13 @@ public final class Main {
 
 						updateOverlayLocation();
 						onScreenKeyboard.updateLocation();
+					}
+
+					overlayFrame.getContentPane().validate();
+					overlayFrame.getContentPane().repaint();
+					if (onScreenKeyboard.isVisible()) {
+						onScreenKeyboard.getContentPane().validate();
+						onScreenKeyboard.getContentPane().repaint();
 					}
 				});
 			}
