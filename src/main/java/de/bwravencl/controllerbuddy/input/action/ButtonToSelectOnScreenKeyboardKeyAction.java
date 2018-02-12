@@ -70,7 +70,7 @@ public class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction 
 	}
 
 	@Override
-	public void setActivationValue(final Float activationValue) {
+	public void setActivationValue(final float activationValue) {
 		this.activationValue = activationValue;
 	}
 
@@ -79,7 +79,7 @@ public class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction 
 	}
 
 	@Override
-	public void setLongPress(final Boolean longPress) {
+	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
 

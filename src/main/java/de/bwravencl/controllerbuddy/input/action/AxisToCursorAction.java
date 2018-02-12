@@ -100,15 +100,15 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 		this.axis = axis;
 	}
 
-	public void setDeadZone(final Float deadZone) {
+	public void setDeadZone(final float deadZone) {
 		this.deadZone = deadZone;
 	}
 
-	public void setExponent(final Float exponent) {
+	public void setExponent(final float exponent) {
 		this.exponent = exponent;
 	}
 
-	public void setMaxCursorSpeed(final Float maxCursorSpeed) {
+	public void setMaxCursorSpeed(final float maxCursorSpeed) {
 		this.maxCursorSpeed = maxCursorSpeed;
 	}
 

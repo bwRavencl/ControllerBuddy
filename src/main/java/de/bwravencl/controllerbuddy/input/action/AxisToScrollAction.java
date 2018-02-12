@@ -69,11 +69,11 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 			}
 	}
 
-	public void setDeadZone(final Float deadZone) {
+	public void setDeadZone(final float deadZone) {
 		this.deadZone = deadZone;
 	}
 
-	public void setExponent(final Float exponent) {
+	public void setExponent(final float exponent) {
 		this.exponent = exponent;
 	}
 

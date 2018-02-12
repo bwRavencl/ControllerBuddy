@@ -35,7 +35,7 @@ public abstract class ToAxisAction extends InvertableAction {
 		return virtualAxis;
 	}
 
-	public void setDeadZone(final Float deadZone) {
+	public void setDeadZone(final float deadZone) {
 		this.deadZone = deadZone;
 	}
 

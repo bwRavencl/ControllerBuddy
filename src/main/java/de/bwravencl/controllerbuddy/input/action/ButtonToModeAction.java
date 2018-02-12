@@ -173,12 +173,12 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	@Override
-	public void setActivationValue(final Float activationValue) {
+	public void setActivationValue(final float activationValue) {
 		this.activationValue = activationValue;
 	}
 
 	@Override
-	public void setLongPress(final Boolean longPress) {
+	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
 
@@ -186,7 +186,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		modeUuid = mode.getUuid();
 	}
 
-	public void setToggle(final Boolean toggle) {
+	public void setToggle(final boolean toggle) {
 		this.toggle = toggle;
 	}
 

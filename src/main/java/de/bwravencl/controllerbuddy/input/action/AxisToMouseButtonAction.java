@@ -56,11 +56,11 @@ public class AxisToMouseButtonAction extends ToMouseButtonAction implements ISus
 		return minAxisValue;
 	}
 
-	public void setMaxAxisValue(final Float maxAxisValue) {
+	public void setMaxAxisValue(final float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
-	public void setMinAxisValue(final Float minAxisValue) {
+	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
 

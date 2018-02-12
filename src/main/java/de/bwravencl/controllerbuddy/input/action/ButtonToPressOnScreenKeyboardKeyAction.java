@@ -57,16 +57,16 @@ public class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
 	}
 
 	@Override
-	public void setActivationValue(final Float activationValue) {
+	public void setActivationValue(final float activationValue) {
 		this.activationValue = activationValue;
 	}
 
-	public void setLockKey(final Boolean lockKey) {
+	public void setLockKey(final boolean lockKey) {
 		this.lockKey = lockKey;
 	}
 
 	@Override
-	public void setLongPress(final Boolean longPress) {
+	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
 

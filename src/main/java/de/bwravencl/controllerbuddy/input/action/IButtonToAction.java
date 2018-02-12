@@ -100,7 +100,7 @@ public interface IButtonToAction extends IAction {
 
 	boolean isLongPress();
 
-	void setActivationValue(Float activationValue);
+	void setActivationValue(float activationValue);
 
-	void setLongPress(Boolean longPress);
+	void setLongPress(boolean longPress);
 }

@@ -58,12 +58,12 @@ public class ButtonToMouseButtonAction extends ToMouseButtonAction implements IB
 	}
 
 	@Override
-	public void setActivationValue(final Float activationValue) {
+	public void setActivationValue(final float activationValue) {
 		this.activationValue = activationValue;
 	}
 
 	@Override
-	public void setLongPress(final Boolean longPress) {
+	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
 

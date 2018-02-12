@@ -30,7 +30,7 @@ public abstract class InvertableAction implements IAction {
 		return invert;
 	}
 
-	public void setInvert(final Boolean invert) {
+	public void setInvert(final boolean invert) {
 		this.invert = invert;
 	}
 

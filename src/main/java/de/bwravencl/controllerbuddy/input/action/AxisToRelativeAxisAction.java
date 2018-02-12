@@ -84,15 +84,15 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 			}
 	}
 
-	public void setExponent(final Float exponent) {
+	public void setExponent(final float exponent) {
 		this.exponent = exponent;
 	}
 
-	public void setInitialValue(final Float initialValue) {
+	public void setInitialValue(final float initialValue) {
 		this.initialValue = initialValue;
 	}
 
-	public void setMaxRelativeSpeed(final Float maxRelativeSpeed) {
+	public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
 		this.maxRelativeSpeed = maxRelativeSpeed;
 	}
 
