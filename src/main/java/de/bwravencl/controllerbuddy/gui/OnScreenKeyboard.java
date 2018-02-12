@@ -518,45 +518,49 @@ public class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorDown() {
 		SwingUtilities.invokeLater(() -> {
-			if (selectedRow < keyboardButtons.length - 1) {
-				unfocusCurrentButton();
+			unfocusCurrentButton();
 
-				final int x = getCurrentButtonX();
+			final int x = getCurrentButtonX();
+			if (selectedRow < keyboardButtons.length - 1)
 				selectedRow++;
-				selectButtonByX(x);
-			}
+			else
+				selectedRow = 0;
+			selectButtonByX(x);
 		});
 	}
 
 	public void moveSelectorLeft() {
 		SwingUtilities.invokeLater(() -> {
-			if (selectedColumn > 0) {
-				unfocusCurrentButton();
+			unfocusCurrentButton();
+			if (selectedColumn > 0)
 				selectedColumn--;
-				focusCurrentButton();
-			}
+			else
+				selectedColumn = keyboardButtons[selectedRow].length - 1;
+			focusCurrentButton();
 		});
 	}
 
 	public void moveSelectorRight() {
 		SwingUtilities.invokeLater(() -> {
-			if (selectedColumn < keyboardButtons[selectedRow].length - 1) {
-				unfocusCurrentButton();
+			unfocusCurrentButton();
+			if (selectedColumn < keyboardButtons[selectedRow].length - 1)
 				selectedColumn++;
-				focusCurrentButton();
-			}
+			else
+				selectedColumn = 0;
+			focusCurrentButton();
 		});
 	}
 
 	public void moveSelectorUp() {
 		SwingUtilities.invokeLater(() -> {
-			if (selectedRow > 0) {
-				unfocusCurrentButton();
+			unfocusCurrentButton();
 
-				final int x = getCurrentButtonX();
+			final int x = getCurrentButtonX();
+			if (selectedRow > 0)
 				selectedRow--;
-				selectButtonByX(x);
-			}
+			else
+				selectedRow = keyboardButtons.length - 1;
+			selectButtonByX(x);
 		});
 	}
 
