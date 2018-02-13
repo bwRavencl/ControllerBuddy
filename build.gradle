@@ -1,14 +1,6 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.ajoberstar:grgit:2.1.0'
-    }
-}
-
 plugins {
     id 'com.stehno.natives' version '0.3.1'
+    id 'org.ajoberstar.grgit' version '2.1.0'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
