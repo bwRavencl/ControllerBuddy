@@ -747,6 +747,14 @@ public final class Main {
 		});
 	}
 
+	private static void repaintOverlay() {
+		if (overlayFrame == null)
+			return;
+
+		overlayFrame.getContentPane().validate();
+		overlayFrame.getContentPane().repaint();
+	}
+
 	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
 		if (component == null)
 			return;
@@ -803,6 +811,7 @@ public final class Main {
 	private File currentFile;
 	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
+
 	private final JLabel labelCurrentMode = new JLabel();
 
 	private final JFileChooser fileChooser = new ProfileFileChooser();
@@ -1568,8 +1577,10 @@ public final class Main {
 	}
 
 	public void setStatusBarText(final String text) {
-		if (statusLabel != null)
+		if (statusLabel != null) {
 			statusLabel.setText(text);
+			repaintOverlay();
+		}
 	}
 
 	protected void setUnsavedChanges(final boolean unsavedChanges) {
@@ -1650,8 +1661,7 @@ public final class Main {
 						onScreenKeyboard.updateLocation();
 					}
 
-					overlayFrame.getContentPane().validate();
-					overlayFrame.getContentPane().repaint();
+					repaintOverlay();
 					if (onScreenKeyboard.isVisible()) {
 						onScreenKeyboard.getContentPane().validate();
 						onScreenKeyboard.getContentPane().repaint();
