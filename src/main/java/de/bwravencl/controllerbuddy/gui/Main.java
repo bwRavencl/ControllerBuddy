@@ -1293,8 +1293,8 @@ public final class Main {
 
 	private void deInitOverlay() {
 		if (overlayFrame != null) {
-			overlayFrame.setVisible(false);
-			overlayFrame.remove(indicatorPanel);
+			overlayFrame.dispose();
+			overlayFrame = null;
 		}
 
 		virtualAxisToProgressBarMap.clear();
@@ -1359,14 +1359,14 @@ public final class Main {
 		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(input.getProfile().getActiveMode().getDescription());
 
-		if (overlayFrame == null) {
-			final JFrame overlayFrame = new JFrame();
-			overlayFrame.setType(JFrame.Type.UTILITY);
-			overlayFrame.setLayout(new BorderLayout());
-			overlayFrame.setFocusableWindowState(false);
-			overlayFrame.setUndecorated(true);
-			overlayFrame.setBackground(TRANSPARENT);
+		overlayFrame = new JFrame();
+		overlayFrame.setType(JFrame.Type.UTILITY);
+		overlayFrame.setLayout(new BorderLayout());
+		overlayFrame.setFocusableWindowState(false);
+		overlayFrame.setUndecorated(true);
+		overlayFrame.setBackground(TRANSPARENT);
 
+		if (input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
 			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
 			final JButton onScreenKeyboardButton = new JButton(icon);
 			onScreenKeyboardButton.addActionListener(e -> {
@@ -1377,10 +1377,9 @@ public final class Main {
 			onScreenKeyboardButton.setContentAreaFilled(false);
 			onScreenKeyboardButton.setHorizontalAlignment(SwingConstants.RIGHT);
 			overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
-
-			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
-			Main.overlayFrame = overlayFrame;
 		}
+
+		overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		overlayFrame.setAlwaysOnTop(true);
 
 		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
