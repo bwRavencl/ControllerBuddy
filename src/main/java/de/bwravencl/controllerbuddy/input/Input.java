@@ -224,6 +224,7 @@ public class Input {
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
+	private boolean clearOnNextPoll = false;
 	private HidDevice hidDevice;
 	private boolean charging = true;
 	private int batteryState;
@@ -398,6 +399,16 @@ public class Input {
 		if (!controller.poll())
 			return false;
 
+		if (clearOnNextPoll) {
+			for (int i = 0; i < buttons.length; i++)
+				buttons[i] = false;
+
+			downKeyStrokes.clear();
+			downMouseButtons.clear();
+
+			clearOnNextPoll = false;
+		}
+
 		final OnScreenKeyboard onScreenKeyboard = main.getOnScreenKeyboard();
 		if (onScreenKeyboard.isVisible())
 			onScreenKeyboard.poll(this);
@@ -460,6 +471,10 @@ public class Input {
 				for (final IAction a : actions)
 					if (a instanceof IResetableAction)
 						((IResetableAction) a).reset();
+	}
+
+	protected void scheduleClearOnNextPoll() {
+		clearOnNextPoll = true;
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value) {

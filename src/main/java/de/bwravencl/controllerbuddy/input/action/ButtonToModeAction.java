@@ -117,7 +117,6 @@ public class ButtonToModeAction implements IButtonToAction {
 								((ISuspendableAction) a).suspend(c);
 
 			profile.setActiveMode(input, previousMode.getUuid());
-			input.getDownKeyStrokes().clear();
 
 			if (targetsOnScreenKeyboardMode())
 				input.getMain().toggleOnScreenKeyboard();
