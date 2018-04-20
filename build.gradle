@@ -1,6 +1,6 @@
 plugins {
     id 'com.stehno.natives' version '0.3.1'
-    id 'org.ajoberstar.grgit' version '2.1.1'
+    id 'org.ajoberstar.grgit' version '2.2.0-beta.2'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
