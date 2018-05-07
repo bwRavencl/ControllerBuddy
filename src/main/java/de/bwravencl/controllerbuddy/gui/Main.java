@@ -1704,7 +1704,7 @@ public final class Main {
 			try {
 				Thread.sleep(100L);
 			} catch (final InterruptedException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				Thread.currentThread().interrupt();
 			}
 
 		System.gc();

@@ -99,7 +99,7 @@ public class ServerOutputThread extends OutputThread {
 				main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
 			});
 
-			while (run)
+			while (!Thread.currentThread().isInterrupted())
 				switch (serverState) {
 				case Listening:
 					counter = 0;
@@ -142,11 +142,7 @@ public class ServerOutputThread extends OutputThread {
 					}
 					break;
 				case Connected:
-					try {
-						Thread.sleep(pollInterval);
-					} catch (final InterruptedException e) {
-						log.log(Logger.Level.ERROR, e.getMessage(), e);
-					}
+					Thread.sleep(pollInterval);
 
 					final StringWriter sw = new StringWriter();
 					boolean doAliveCheck = false;
@@ -262,6 +258,7 @@ public class ServerOutputThread extends OutputThread {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
+		} catch (final InterruptedException e) {
 		} finally {
 			deInit();
 		}

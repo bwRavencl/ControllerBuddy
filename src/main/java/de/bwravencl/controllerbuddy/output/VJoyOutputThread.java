@@ -401,8 +401,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 		this.vJoyDevice = vJoyDevice;
 	}
 
-	protected void writeOutput() {
-		if (run) {
+	protected void writeOutput() throws InterruptedException {
+		if (!Thread.currentThread().isInterrupted()) {
 			boolean res = true;
 
 			res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
@@ -488,7 +488,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				try {
 					if (confirmDialogTask.get() == JOptionPane.YES_OPTION)
 						restart = true;
-				} catch (InterruptedException | ExecutionException e) {
+				} catch (final ExecutionException e) {
 					log.log(Logger.Level.ERROR, e.getMessage(), e);
 				}
 

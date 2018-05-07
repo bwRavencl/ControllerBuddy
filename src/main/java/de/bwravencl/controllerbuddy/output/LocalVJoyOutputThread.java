@@ -17,7 +17,6 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.lang.System.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,8 +31,6 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class LocalVJoyOutputThread extends VJoyOutputThread {
-
-	private static final System.Logger log = System.getLogger(LocalVJoyOutputThread.class.getName());
 
 	public LocalVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
@@ -53,7 +50,7 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	protected boolean readInput() {
+	protected boolean readInput() throws InterruptedException {
 		if (!input.poll()) {
 			controllerDisconnected();
 
@@ -116,19 +113,17 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	public void run() {
-		if (init())
-			while (run) {
-				if (readInput())
-					writeOutput();
-
-				try {
+		try {
+			if (init())
+				while (!Thread.currentThread().isInterrupted()) {
+					if (readInput())
+						writeOutput();
 					Thread.sleep(pollInterval);
-				} catch (final InterruptedException e) {
-					log.log(Logger.Level.ERROR, e.getMessage(), e);
 				}
-			}
-
-		deInit();
+		} catch (final InterruptedException e) {
+		} finally {
+			deInit();
+		}
 	}
 
 }

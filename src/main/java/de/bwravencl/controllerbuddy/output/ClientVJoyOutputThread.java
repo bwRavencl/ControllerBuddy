@@ -161,7 +161,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 								+ N_CONNECTION_RETRIES + rb.getString("STATUS_TIMEOUT_RETRYING_PART_3"));
 					});
 				}
-			} while (!success && retry > 0 && run);
+			} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
 			if (success) {
 				clientState = ClientState.Connected;
@@ -172,14 +172,14 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 							+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
 				});
 			} else {
-				if (retry != -1 && run)
+				if (retry != -1 && !Thread.currentThread().isInterrupted())
 					SwingUtilities.invokeLater(() -> {
 						JOptionPane.showMessageDialog(main.getFrame(),
 								rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_PREFIX") + N_CONNECTION_RETRIES
 										+ rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_SUFFIX"),
 								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
-				run = false;
+				interrupt();
 			}
 
 			break;
@@ -317,7 +317,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
-				run = false;
+				interrupt();
 			}
 			break;
 		}
@@ -333,7 +333,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				clientSocket = new DatagramSocket(port + 1);
 				clientSocket.setSoTimeout(timeout);
 
-				while (run)
+				while (!Thread.currentThread().isInterrupted())
 					if (readInput())
 						writeOutput();
 			}
@@ -350,6 +350,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
+		} catch (final InterruptedException e) {
 		} finally {
 			if (clientSocket != null)
 				clientSocket.close();

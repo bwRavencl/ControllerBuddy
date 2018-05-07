@@ -38,7 +38,6 @@ public abstract class OutputThread extends Thread {
 
 	protected final Main main;
 	protected final Input input;
-	protected volatile boolean run = true;
 	protected long pollInterval = DEFAULT_POLL_INTERVAL;
 	protected int minAxisValue;
 	protected int maxAxisValue;
@@ -52,7 +51,7 @@ public abstract class OutputThread extends Thread {
 		input.setOutputThread(this);
 	}
 
-	protected void controllerDisconnected() {
+	protected void controllerDisconnected() throws InterruptedException {
 		try {
 			SwingUtilities.invokeAndWait(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
@@ -60,7 +59,7 @@ public abstract class OutputThread extends Thread {
 								+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
-		} catch (InvocationTargetException | InterruptedException e) {
+		} catch (final InvocationTargetException e) {
 			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		}
 
@@ -76,7 +75,7 @@ public abstract class OutputThread extends Thread {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
-		} catch (InvocationTargetException | InterruptedException e) {
+		} catch (final InvocationTargetException e) {
 			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		}
 
@@ -123,8 +122,8 @@ public abstract class OutputThread extends Thread {
 	}
 
 	public void stopOutput() {
-		run = false;
 		input.reset();
+		interrupt();
 	}
 
 }
