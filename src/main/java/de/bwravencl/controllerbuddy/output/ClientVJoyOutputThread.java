@@ -63,19 +63,6 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		super(main, input);
 	}
 
-	@Override
-	protected void deInit() {
-		super.deInit();
-
-		SwingUtilities.invokeLater(() -> {
-			if (ClientVJoyOutputThread.this.isAlive())
-				main.stopClient(false);
-		});
-
-		if (restart)
-			main.restartLast();
-	}
-
 	public String getHost() {
 		return host;
 	}

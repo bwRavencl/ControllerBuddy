@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.SwingUtilities;
-
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
@@ -34,19 +32,6 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	public LocalVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
-	}
-
-	@Override
-	protected void deInit() {
-		super.deInit();
-
-		SwingUtilities.invokeLater(() -> {
-			if (LocalVJoyOutputThread.this.isAlive())
-				main.stopLocal(false);
-		});
-
-		if (restart)
-			main.restartLast();
 	}
 
 	@Override

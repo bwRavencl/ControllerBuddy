@@ -188,8 +188,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		oldDownSet.addAll(newDownSet);
 	}
 
-	protected boolean restart = false;
-
+	private boolean restart = false;
 	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	protected IVjoyInterface vJoy;
 	protected LONG axisX;
@@ -237,6 +236,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 				main.setStatusBarText(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE") + vJoyDevice);
 			});
 		}
+
+		SwingUtilities.invokeLater(() -> {
+			if (VJoyOutputThread.this.isAlive())
+				main.stopLocal(false);
+
+			if (restart)
+				main.restartLast();
+		});
 	}
 
 	public UINT getvJoyDevice() {
