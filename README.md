@@ -63,7 +63,10 @@ Physical Controller
 </pre>
 
 #### Example Screenshots:
-![Assignments Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_1.png) ![Overlay Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_2.png)
+![Assignments Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_1.png)
+
+![Overlay Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_2.png)
+
 ![Component Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_3.png)
 
 
