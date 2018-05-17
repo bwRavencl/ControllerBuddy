@@ -1533,6 +1533,8 @@ public final class Main {
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_SAVE_PROFILE"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
