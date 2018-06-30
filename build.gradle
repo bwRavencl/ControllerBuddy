@@ -1,6 +1,6 @@
 plugins {
     id 'com.stehno.natives' version '0.3.1'
-    id 'org.ajoberstar.grgit' version '2.2.0-beta.2'
+    id 'org.ajoberstar.grgit' version '2.2.1'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
@@ -50,17 +50,19 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-cli:commons-cli:1.4',
-            'com.github.nyholku:purejavahidapi:55fcca51a2',
-            'com.google.code.gson:gson:2.8.2',
-            'net.java.dev.jna:jna:4.5.1',
-            'net.java.dev.jna:jna-platform:4.5.1',
-            'net.java.jinput:jinput:2.0.7'
+    compile     'commons-cli:commons-cli:1.4',
+                'com.github.nyholku:purejavahidapi:55fcca51a2',
+                'com.google.code.gson:gson:2.8.5',
+                'net.java.dev.jna:jna:4.5.1',
+                'net.java.dev.jna:jna-platform:4.5.1',
+                'net.java.jinput:jinput:2.0.9'
+    compileOnly 'net.java.jinput:jinput:2.0.9:natives-all'
 }
 
 natives {
+    configurations = ['compileOnly']
     libraries {
-        include = ['jinput-dx8.dll', 'jinput-dx8_64.dll', 'jinput-raw.dll', 'jinput-raw_64.dll', 'jinput-wintab.dll', 'libjinput-linux.so', 'libjinput-linux64.so', 'libjinput-osx.jnilib']
+        include = ['jinput-dx8_64.dll', 'jinput-raw_64.dll', 'jinput-wintab.dll', 'libjinput-linux64.so', 'libjinput-osx.jnilib']
     }
 }
 
@@ -85,9 +87,7 @@ eclipse {
         file {
             withXml {
                 def node = it.asNode()
-                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-windows.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
-                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-osx.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
-                node.find { it.@path.endsWith('jinput-platform-2.0.7-natives-linux.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
+                node.find { it.@path.endsWith('jinput-2.0.9-natives-all.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
             }
             whenMerged { cp ->
                 cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
