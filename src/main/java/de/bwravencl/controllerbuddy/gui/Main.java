@@ -671,6 +671,7 @@ public final class Main {
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
+	public static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
@@ -1129,6 +1130,25 @@ public final class Main {
 			overlaySettingsPanel.add(showOverlayCheckBox);
 		}
 
+		if (isWindows()) {
+			final JPanel preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
+			settingsPanel.add(preventPowerSaveModeSettingsPanel, panelGridBagConstraints);
+
+			final JLabel preventPowerSaveModeLabel = new JLabel(rb.getString("POWER_SAVE_MODE_LABEL"));
+			preventPowerSaveModeLabel.setPreferredSize(new Dimension(120, 15));
+			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
+
+			final JCheckBox preventPowerSaveModeCheckBox = new JCheckBox(
+					rb.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
+			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
+			preventPowerSaveModeCheckBox.addChangeListener(e -> {
+				final boolean preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
+
+				preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
+			});
+			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
+		}
+
 		if (SystemTray.isSupported()) {
 			final PopupMenu popupMenu = new PopupMenu();
 
@@ -1468,6 +1488,13 @@ public final class Main {
 		updateOverlayPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
+	}
+
+	public boolean preventPowerSaveMode() {
+		if (!isWindows())
+			return false;
+
+		return preferences.getBoolean(Main.PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
 	public void quit() {

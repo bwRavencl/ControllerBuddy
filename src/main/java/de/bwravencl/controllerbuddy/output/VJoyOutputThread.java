@@ -33,7 +33,9 @@ import javax.swing.SwingUtilities;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -222,6 +224,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	protected void deInit() {
+		if (main.preventPowerSaveMode())
+			Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
+
 		if (vJoy != null) {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
@@ -390,6 +395,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 			});
 
 			input.init();
+
+			if (main.preventPowerSaveMode())
+				Kernel32.INSTANCE.SetThreadExecutionState(
+						WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_DISPLAY_REQUIRED);
 
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
