@@ -790,8 +790,8 @@ public final class Main {
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
 	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
-	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
-	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+	private JRadioButtonMenuItem startServerRadioButtonMenuItem;
+	private JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private MenuItem showMenuItem;
 	private final JPanel modesPanel;
 	private final JScrollPane modesScrollPane;
@@ -887,46 +887,52 @@ public final class Main {
 		final QuitAction quitAction = new QuitAction();
 		fileMenu.add(quitAction);
 
-		final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
-		deviceMenu.addMenuListener(new MenuListener() {
+		final List<Controller> controllers = Input.getControllers();
+		final boolean controllerConnected = !controllers.isEmpty();
+		if (controllerConnected) {
+			final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
+			menuBar.add(deviceMenu);
+			deviceMenu.addMenuListener(new MenuListener() {
 
-			@Override
-			public void menuCanceled(final MenuEvent e) {
-			}
+				@Override
+				public void menuCanceled(final MenuEvent e) {
+				}
 
-			@Override
-			public void menuDeselected(final MenuEvent e) {
-			}
+				@Override
+				public void menuDeselected(final MenuEvent e) {
+				}
 
-			@Override
-			public void menuSelected(final MenuEvent e) {
-				deviceMenu.removeAll();
+				@Override
+				public void menuSelected(final MenuEvent e) {
+					deviceMenu.removeAll();
 
-				for (final Controller c : Input.getControllers())
-					if (c.poll())
-						deviceMenu.add(new SelectControllerAction(c));
-			}
-		});
-		deviceMenu.setEnabled(true);
-		menuBar.add(deviceMenu);
+					for (final Controller c : controllers)
+						if (c.poll())
+							deviceMenu.add(new SelectControllerAction(c));
+				}
+			});
+			deviceMenu.setEnabled(true);
+		}
 
 		if (isWindows()) {
-			final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
-			menuBar.add(localMenu);
+			if (controllerConnected) {
+				final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
+				menuBar.add(localMenu);
 
-			final ButtonGroup buttonGroupLocalState = new ButtonGroup();
+				final ButtonGroup buttonGroupLocalState = new ButtonGroup();
 
-			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
-			startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
-			buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
-			localMenu.add(startLocalRadioButtonMenuItem);
+				startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+				startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
+				buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
+				localMenu.add(startLocalRadioButtonMenuItem);
 
-			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
-			stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
-			stopLocalRadioButtonMenuItem.setSelected(true);
-			stopLocalRadioButtonMenuItem.setEnabled(false);
-			buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
-			localMenu.add(stopLocalRadioButtonMenuItem);
+				stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+				stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
+				stopLocalRadioButtonMenuItem.setSelected(true);
+				stopLocalRadioButtonMenuItem.setEnabled(false);
+				buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
+				localMenu.add(stopLocalRadioButtonMenuItem);
+			}
 
 			final JMenu clientMenu = new JMenu(rb.getString("CLIENT_MENU"));
 			menuBar.add(clientMenu);
@@ -946,22 +952,24 @@ public final class Main {
 			clientMenu.add(stopClientRadioButtonMenuItem);
 		}
 
-		final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
-		menuBar.add(serverMenu);
+		if (controllerConnected) {
+			final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
+			menuBar.add(serverMenu);
 
-		final ButtonGroup buttonGroupServerState = new ButtonGroup();
+			final ButtonGroup buttonGroupServerState = new ButtonGroup();
 
-		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
-		startServerRadioButtonMenuItem.setAction(new StartServerAction());
-		buttonGroupServerState.add(startServerRadioButtonMenuItem);
-		serverMenu.add(startServerRadioButtonMenuItem);
+			startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+			startServerRadioButtonMenuItem.setAction(new StartServerAction());
+			buttonGroupServerState.add(startServerRadioButtonMenuItem);
+			serverMenu.add(startServerRadioButtonMenuItem);
 
-		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
-		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
-		stopServerRadioButtonMenuItem.setSelected(true);
-		stopServerRadioButtonMenuItem.setEnabled(false);
-		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
-		serverMenu.add(stopServerRadioButtonMenuItem);
+			stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+			stopServerRadioButtonMenuItem.setAction(new StopServerAction());
+			stopServerRadioButtonMenuItem.setSelected(true);
+			stopServerRadioButtonMenuItem.setEnabled(false);
+			buttonGroupServerState.add(stopServerRadioButtonMenuItem);
+			serverMenu.add(stopServerRadioButtonMenuItem);
+		}
 
 		final JMenu helpMenu = new JMenu(rb.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
@@ -1203,112 +1211,106 @@ public final class Main {
 					break;
 			}
 
-		if (selectedController == null) {
-			JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			quit();
-		} else {
-			newProfile();
+		newProfile();
 
-			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-			if (path != null)
-				if (!loadProfile(new File(path)))
-					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
+		if (path != null)
+			if (!loadProfile(new File(path)))
+				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
-			timer.scheduleAtFixedRate(new TimerTask() {
+		timer.scheduleAtFixedRate(new TimerTask() {
 
-				@Override
-				public void run() {
-					SwingUtilities.invokeLater(() -> {
-						if (frame.getState() == Frame.ICONIFIED
-								|| !assignmentsScrollPane.equals(tabbedPane.getSelectedComponent()))
-							return;
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(() -> {
+					if (frame.getState() == Frame.ICONIFIED
+							|| !assignmentsScrollPane.equals(tabbedPane.getSelectedComponent()))
+						return;
 
-						assignmentsPanel.removeAll();
+					assignmentsPanel.removeAll();
 
-						final Controller controller = input.getController();
-						if (controller != null && controller.poll()) {
-							for (final Component c : Input.getComponents(controller)) {
-								final JPanel componentPanel = new JPanel(new GridBagLayout());
-								assignmentsPanel.add(componentPanel,
-										new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-												GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-												new Insets(0, 0, 0, 0), 5, 5));
+					final Controller controller = input.getController();
+					if (controller != null && controller.poll()) {
+						for (final Component c : Input.getComponents(controller)) {
+							final JPanel componentPanel = new JPanel(new GridBagLayout());
+							assignmentsPanel.add(componentPanel,
+									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+											GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
+											new Insets(0, 0, 0, 0), 5, 5));
 
-								final String name = c.getName();
-								final float value = c.getPollData();
+							final String name = c.getName();
+							final float value = c.getPollData();
 
-								final JLabel nameLabel = new JLabel();
-								nameLabel.setPreferredSize(new Dimension(100, 15));
+							final JLabel nameLabel = new JLabel();
+							nameLabel.setPreferredSize(new Dimension(100, 15));
 
-								final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0, 1, 1,
-										0.0, 0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-										new Insets(0, 0, 0, 0), 0, 0);
+							final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0,
+									0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
+									0, 0);
 
-								final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0, 1, 1,
-										1.0, 1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-										new Insets(0, 0, 0, 0), 0, 0);
+							final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0, 1, 1, 1.0,
+									1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
+									0, 0);
 
-								if (c.isAnalog()) {
-									nameLabel.setText(rb.getString("AXIS_LABEL") + name);
-									componentPanel.add(nameLabel, nameGridBagConstraints);
-
-									componentPanel.add(Box.createGlue(),
-											new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-													GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-													new Insets(0, 0, 0, 0), 0, 0));
-
-									final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
-									valueProgressBar.setValue((int) (value * 100.0f));
-									componentPanel.add(valueProgressBar, valueGridBagConstraints);
-								} else {
-									nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
-									componentPanel.add(nameLabel, nameGridBagConstraints);
-
-									componentPanel.add(Box.createGlue(),
-											new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-													GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-													new Insets(0, 0, 0, 0), 0, 0));
-
-									final JLabel valueLabel = new JLabel();
-									final StringWriter sw = new StringWriter();
-									if (value > 0.0f)
-										sw.append(rb.getString("BUTTON_DOWN_LABEL"));
-									else {
-										sw.append(rb.getString("BUTTON_UP_LABEL"));
-										valueLabel.setForeground(Color.LIGHT_GRAY);
-									}
-									sw.append(" (" + String.valueOf(value) + ')');
-									valueLabel.setText(sw.toString());
-									componentPanel.add(valueLabel, valueGridBagConstraints);
-								}
+							if (c.isAnalog()) {
+								nameLabel.setText(rb.getString("AXIS_LABEL") + name);
+								componentPanel.add(nameLabel, nameGridBagConstraints);
 
 								componentPanel.add(Box.createGlue(),
-										new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+										new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 												new Insets(0, 0, 0, 0), 0, 0));
 
-								final JButton editButton = new JButton(new EditComponentAction(c));
-								editButton.setPreferredSize(BUTTON_DIMENSION);
-								componentPanel.add(editButton,
-										new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+								final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
+								valueProgressBar.setValue((int) (value * 100.0f));
+								componentPanel.add(valueProgressBar, valueGridBagConstraints);
+							} else {
+								nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
+								componentPanel.add(nameLabel, nameGridBagConstraints);
+
+								componentPanel.add(Box.createGlue(),
+										new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 												new Insets(0, 0, 0, 0), 0, 0));
+
+								final JLabel valueLabel = new JLabel();
+								final StringWriter sw = new StringWriter();
+								if (value > 0.0f)
+									sw.append(rb.getString("BUTTON_DOWN_LABEL"));
+								else {
+									sw.append(rb.getString("BUTTON_UP_LABEL"));
+									valueLabel.setForeground(Color.LIGHT_GRAY);
+								}
+								sw.append(" (" + String.valueOf(value) + ')');
+								valueLabel.setText(sw.toString());
+								componentPanel.add(valueLabel, valueGridBagConstraints);
 							}
 
-							assignmentsPanel.add(Box.createGlue(),
-									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-											GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+							componentPanel.add(Box.createGlue(),
+									new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+											GridBagConstraints.BASELINE, GridBagConstraints.NONE,
+											new Insets(0, 0, 0, 0), 0, 0));
+
+							final JButton editButton = new JButton(new EditComponentAction(c));
+							editButton.setPreferredSize(BUTTON_DIMENSION);
+							componentPanel.add(editButton,
+									new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+											GridBagConstraints.BASELINE, GridBagConstraints.NONE,
 											new Insets(0, 0, 0, 0), 0, 0));
 						}
 
-						setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
-						assignmentsScrollPane.setViewportView(assignmentsPanel);
-					});
-				}
-			}, 0L, ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
-		}
+						assignmentsPanel.add(Box.createGlue(),
+								new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+										GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+										new Insets(0, 0, 0, 0), 0, 0));
+					}
+
+					setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
+					assignmentsScrollPane.setViewportView(assignmentsPanel);
+				});
+			}
+		}, 0L, ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
 	}
 
 	private void deInitOverlay() {
@@ -1619,9 +1621,11 @@ public final class Main {
 	public void startClient() {
 		lastOutputType = OUTPUT_TYPE_CLIENT;
 		startClientRadioButtonMenuItem.setSelected(true);
-		startLocalRadioButtonMenuItem.setEnabled(false);
+		if (startLocalRadioButtonMenuItem != null)
+			startLocalRadioButtonMenuItem.setEnabled(false);
 		startClientRadioButtonMenuItem.setEnabled(false);
-		startServerRadioButtonMenuItem.setEnabled(false);
+		if (startServerRadioButtonMenuItem != null)
+			startServerRadioButtonMenuItem.setEnabled(false);
 		stopClientRadioButtonMenuItem.setEnabled(true);
 		clientThread = new ClientVJoyOutputThread(Main.this, input);
 		clientThread.setvJoyDevice(
@@ -1704,10 +1708,10 @@ public final class Main {
 	public void startServer() {
 		lastOutputType = OUTPUT_TYPE_SERVER;
 		startServerRadioButtonMenuItem.setSelected(true);
-		if (isWindows()) {
+		if (startLocalRadioButtonMenuItem != null)
 			startLocalRadioButtonMenuItem.setEnabled(false);
+		if (startClientRadioButtonMenuItem != null)
 			startClientRadioButtonMenuItem.setEnabled(false);
-		}
 		startServerRadioButtonMenuItem.setEnabled(false);
 		stopServerRadioButtonMenuItem.setEnabled(true);
 		setEnabledRecursive(modesPanel, false);
