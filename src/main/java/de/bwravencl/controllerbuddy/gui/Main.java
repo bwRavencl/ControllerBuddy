@@ -743,7 +743,7 @@ public final class Main {
 				}
 			} catch (final ParseException e) {
 				final HelpFormatter helpFormatter = new HelpFormatter();
-				helpFormatter.printHelp("ControllerBuddy", options, true);
+				helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
 			}
 		});
 	}
