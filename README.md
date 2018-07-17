@@ -83,7 +83,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 
 #### Requirements:
 - General requirements:
-  - Java SE Runtime Environment 9 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
+  - Java SE Runtime Environment 10 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
   - vJoy 2.1.8 (http://vjoystick.sourceforge.net)
 
 #### Building:
@@ -98,6 +98,6 @@ The following tasks are supported:
 | Clean Eclipse files              | gradlew cleanEclipse |
 | Delete build and gen directories | gradlew clean        |
 
-Please note that building requires Java JDK 9.
+Please note that building requires Java JDK 10.
 
 [![Build Status](https://travis-ci.org/bwRavencl/ControllerBuddy.svg?branch=master)](https://travis-ci.org/bwRavencl/ControllerBuddy)
