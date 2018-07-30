@@ -21,6 +21,10 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction {
 
+	public static final float DEFAULT_DEAD_ZONE = 0.0f;
+
+	protected float deadZone = DEFAULT_DEAD_ZONE;
+
 	@Override
 	public void doAction(final Input input, float value) {
 		if (!isSuspended()) {
@@ -33,6 +37,14 @@ public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction
 
 			input.setAxis(virtualAxis, invert ? -value : value);
 		}
+	}
+
+	public float getDeadZone() {
+		return deadZone;
+	}
+
+	public void setDeadZone(final float deadZone) {
+		this.deadZone = deadZone;
 	}
 
 }
