@@ -682,6 +682,7 @@ public final class Main {
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private static volatile JFrame overlayFrame;
+	private static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
 	private static JPanel indicatorPanel;
 	private static Dimension prevScreenSize;;
 	private static final Timer timer = new Timer();
@@ -754,6 +755,11 @@ public final class Main {
 
 		overlayFrame.getContentPane().validate();
 		overlayFrame.getContentPane().repaint();
+
+		if (onScreenKeyboard.isVisible()) {
+			onScreenKeyboard.getContentPane().validate();
+			onScreenKeyboard.getContentPane().repaint();
+		}
 	}
 
 	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
@@ -801,7 +807,6 @@ public final class Main {
 	private final JPanel settingsPanel;
 	private final JScrollPane indicatorsScrollPane;
 	private final JPanel indicatorsListPanel;
-	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
 	private TimerTask overlayTimerTask;
 	private JLabel vJoyDirectoryLabel1;
 	private JTextField hostTextField;
@@ -1694,10 +1699,6 @@ public final class Main {
 					}
 
 					repaintOverlay();
-					if (onScreenKeyboard.isVisible()) {
-						onScreenKeyboard.getContentPane().validate();
-						onScreenKeyboard.getContentPane().repaint();
-					}
 				});
 			}
 		};
@@ -1837,6 +1838,7 @@ public final class Main {
 				|| serverThread != null && serverThread.isAlive())
 			SwingUtilities.invokeLater(() -> {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
+				repaintOverlay();
 			});
 	}
 
