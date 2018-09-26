@@ -1,6 +1,6 @@
 plugins {
     id 'com.stehno.natives' version '0.3.1'
-    id 'org.ajoberstar.grgit' version '2.2.1'
+    id 'org.ajoberstar.grgit' version '3.0.0-beta.1'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
@@ -38,7 +38,7 @@ compileJava {
 }
 
 ext {
-    git = org.ajoberstar.grgit.Grgit.open()
+    git = org.ajoberstar.grgit.Grgit.open(dir: "$projectDir")
 }
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
@@ -53,8 +53,8 @@ dependencies {
     compile     'commons-cli:commons-cli:1.4',
                 'com.github.nyholku:purejavahidapi:55fcca51a2',
                 'com.google.code.gson:gson:2.8.5',
-                'net.java.dev.jna:jna:4.5.1',
-                'net.java.dev.jna:jna-platform:4.5.1',
+                'net.java.dev.jna:jna:4.5.2',
+                'net.java.dev.jna:jna-platform:4.5.2',
                 'net.java.jinput:jinput:2.0.9'
     compileOnly 'net.java.jinput:jinput:2.0.9:natives-all'
 }
