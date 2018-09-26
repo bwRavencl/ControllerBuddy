@@ -1,5 +1,5 @@
 language: java
-jdk: oraclejdk10
+jdk: openjdk11
 script: "./gradlew capsule"
 deploy:
   provider: releases
