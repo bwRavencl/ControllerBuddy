@@ -51,7 +51,7 @@ repositories {
 
 dependencies {
     compile     'commons-cli:commons-cli:1.4',
-                'com.github.nyholku:purejavahidapi:55fcca51a2',
+                'com.github.nyholku:purejavahidapi:322fdb03b7',
                 'com.google.code.gson:gson:2.8.5',
                 'net.java.dev.jna:jna:4.5.2',
                 'net.java.dev.jna:jna-platform:4.5.2',
