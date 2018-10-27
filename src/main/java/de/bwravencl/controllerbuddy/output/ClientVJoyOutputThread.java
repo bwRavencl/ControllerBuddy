@@ -76,7 +76,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	protected boolean readInput() throws IOException {
+	boolean readInput() throws IOException {
 		boolean retVal = false;
 
 		switch (clientState) {

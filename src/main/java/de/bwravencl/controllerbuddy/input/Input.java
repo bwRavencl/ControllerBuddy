@@ -114,7 +114,7 @@ public class Input {
 
 	private interface Kernel32 extends Library {
 
-		public Pointer GetProcAddress(HMODULE hModule, long lpProcName);
+		Pointer GetProcAddress(HMODULE hModule, long lpProcName);
 
 	}
 
@@ -473,7 +473,7 @@ public class Input {
 						((IResetableAction) a).reset();
 	}
 
-	protected void scheduleClearOnNextPoll() {
+	void scheduleClearOnNextPoll() {
 		clearOnNextPoll = true;
 	}
 

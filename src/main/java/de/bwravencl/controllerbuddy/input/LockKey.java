@@ -49,7 +49,7 @@ public class LockKey {
 	public final String name;
 	public final int virtualKeyCode;
 
-	public LockKey(final String name, final int virtualKeyCode) {
+	private LockKey(final String name, final int virtualKeyCode) {
 		this.name = name;
 		this.virtualKeyCode = virtualKeyCode;
 	}

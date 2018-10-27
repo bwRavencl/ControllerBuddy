@@ -36,13 +36,13 @@ public abstract class OutputThread extends Thread {
 
 	public static final int DEFAULT_POLL_INTERVAL = 10;
 
-	protected final Main main;
-	protected final Input input;
-	protected long pollInterval = DEFAULT_POLL_INTERVAL;
-	protected int minAxisValue;
-	protected int maxAxisValue;
-	protected int nButtons;
-	protected final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+	final Main main;
+	final Input input;
+	long pollInterval = DEFAULT_POLL_INTERVAL;
+	int minAxisValue;
+	int maxAxisValue;
+	int nButtons;
+	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
 	public OutputThread(final Main main, final Input input) {
@@ -51,7 +51,7 @@ public abstract class OutputThread extends Thread {
 		input.setOutputThread(this);
 	}
 
-	protected void controllerDisconnected() throws InterruptedException {
+	void controllerDisconnected() throws InterruptedException {
 		try {
 			SwingUtilities.invokeAndWait(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),

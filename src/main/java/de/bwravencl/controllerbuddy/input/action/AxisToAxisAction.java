@@ -23,7 +23,7 @@ public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction
 
 	public static final float DEFAULT_DEAD_ZONE = 0.0f;
 
-	protected float deadZone = DEFAULT_DEAD_ZONE;
+	float deadZone = DEFAULT_DEAD_ZONE;
 
 	@Override
 	public void doAction(final Input input, float value) {

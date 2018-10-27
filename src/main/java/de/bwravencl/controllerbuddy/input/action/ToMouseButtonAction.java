@@ -21,11 +21,11 @@ public abstract class ToMouseButtonAction implements IAction {
 
 	public static final int DEFAULT_MOUSE_BUTTON = 1;
 
-	protected boolean downUp = false;
-	protected transient boolean wasUp = true;
-	protected transient boolean initiator = false;
+	boolean downUp = false;
+	transient boolean wasUp = true;
+	transient boolean initiator = false;
 
-	protected int mouseButton = DEFAULT_MOUSE_BUTTON;
+	int mouseButton = DEFAULT_MOUSE_BUTTON;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

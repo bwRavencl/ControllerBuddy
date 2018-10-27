@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 public abstract class InvertableAction implements IAction {
 
-	protected boolean invert = false;
+	boolean invert = false;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

@@ -32,6 +32,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.SystemTray;
@@ -42,6 +43,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -65,6 +68,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -139,7 +143,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -4881923833724315489L;
 
-		public AddModeAction() {
+		private AddModeAction() {
 			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
 		}
@@ -159,7 +163,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -7672382299595684105L;
 
-		public ChangeVJoyDirectoryAction() {
+		private ChangeVJoyDirectoryAction() {
 			putValue(NAME, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
 		}
@@ -194,7 +198,7 @@ public final class Main {
 
 		private final VirtualAxis virtualAxis;
 
-		public DisplayIndicatorAction(final VirtualAxis virtualAxis) {
+		private DisplayIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
 			putValue(NAME, rb.getString("DISPLAY_INDICATOR_ACTION_NAME"));
@@ -220,7 +224,7 @@ public final class Main {
 
 		private final Component component;
 
-		public EditComponentAction(final Component component) {
+		private EditComponentAction(final Component component) {
 			this.component = component;
 
 			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
@@ -236,11 +240,51 @@ public final class Main {
 
 	}
 
+	static class FrameDragListener extends MouseAdapter {
+
+		private final JFrame frame;
+
+		private Point mouseDownLocation = null;
+
+		FrameDragListener(final JFrame frame) {
+			this.frame = frame;
+		}
+
+		boolean isDragging() {
+			return mouseDownLocation != null;
+		}
+
+		@Override
+		public void mouseDragged(final MouseEvent e) {
+			final Point currentMouseLocation = e.getLocationOnScreen();
+			final Point newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
+					currentMouseLocation.y - mouseDownLocation.y);
+
+			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					.getMaximumWindowBounds();
+			setFrameLocationRespectingBounds(frame, newFrameLocation, maxWindowBounds);
+		}
+
+		@Override
+		public void mousePressed(final MouseEvent e) {
+			mouseDownLocation = e.getPoint();
+		}
+
+		@Override
+		public void mouseReleased(final MouseEvent e) {
+			mouseDownLocation = null;
+
+			final Point frameLocation = frame.getLocation();
+			preferences.put(getFrameLocationPreferencesKey(frame), frameLocation.x + "," + frameLocation.y);
+		}
+
+	}
+
 	private class NewAction extends AbstractAction {
 
 		private static final long serialVersionUID = 5703987691203427504L;
 
-		public NewAction() {
+		private NewAction() {
 			putValue(NAME, rb.getString("NEW_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("NEW_ACTION_DESCRIPTION"));
 		}
@@ -256,7 +300,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -8932510785275935297L;
 
-		public OpenAction() {
+		private OpenAction() {
 			putValue(NAME, rb.getString("OPEN_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_ACTION_DESCRIPTION"));
 		}
@@ -278,7 +322,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -4669170626378955605L;
 
-		public ProfileFileChooser() {
+		private ProfileFileChooser() {
 			setFileFilter(new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"),
 					rb.getString("PROFILE_FILE_EXTENSION")));
 			setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
@@ -311,7 +355,7 @@ public final class Main {
 
 		private static final long serialVersionUID = 8952460723177800923L;
 
-		public QuitAction() {
+		private QuitAction() {
 			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
 		}
@@ -329,7 +373,7 @@ public final class Main {
 
 		private final Mode mode;
 
-		public RemoveModeAction(final Mode mode) {
+		private RemoveModeAction(final Mode mode) {
 			this.mode = mode;
 
 			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
@@ -350,7 +394,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -8469921697479550983L;
 
-		public SaveAction() {
+		private SaveAction() {
 			putValue(NAME, rb.getString("SAVE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_ACTION_DESCRIPTION"));
 		}
@@ -369,7 +413,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -8469921697479550983L;
 
-		public SaveAsAction() {
+		private SaveAsAction() {
 			putValue(NAME, rb.getString("SAVE_AS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_AS_ACTION_DESCRIPTION"));
 		}
@@ -387,7 +431,7 @@ public final class Main {
 
 		private final Controller controller;
 
-		public SelectControllerAction(final Controller controller) {
+		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
 			final String name = controller.getName();
@@ -409,7 +453,7 @@ public final class Main {
 
 		private final VirtualAxis virtualAxis;
 
-		public SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
+		private SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
 			putValue(NAME, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
@@ -429,13 +473,13 @@ public final class Main {
 
 	}
 
-	private class SetHostAction extends AbstractAction implements FocusListener {
+	private static class SetHostAction extends AbstractAction implements FocusListener {
 
 		private static final long serialVersionUID = -7674562782751876814L;
 
 		private final JTextField hostTextField;
 
-		public SetHostAction(final JTextField hostTextField) {
+		private SetHostAction(final JTextField hostTextField) {
 			this.hostTextField = hostTextField;
 		}
 
@@ -471,7 +515,7 @@ public final class Main {
 		private final Mode mode;
 		private final JTextField modeDescriptionTextField;
 
-		public SetModeDescriptionAction(final Mode mode, final JTextField modeDescriptionTextField) {
+		private SetModeDescriptionAction(final Mode mode, final JTextField modeDescriptionTextField) {
 			this.mode = mode;
 			this.modeDescriptionTextField = modeDescriptionTextField;
 		}
@@ -511,7 +555,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -2578971543384483382L;
 
-		public ShowAboutDialogAction() {
+		private ShowAboutDialogAction() {
 			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
 		}
@@ -531,7 +575,7 @@ public final class Main {
 
 		private static final long serialVersionUID = 8578159622754054457L;
 
-		public ShowAction() {
+		private ShowAction() {
 			putValue(NAME, rb.getString("SHOW_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ACTION_DESCRIPTION"));
 		}
@@ -550,7 +594,7 @@ public final class Main {
 
 		private static final long serialVersionUID = 3975574941559749481L;
 
-		public StartClientAction() {
+		private StartClientAction() {
 			putValue(NAME, rb.getString("START_CLIENT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("START_CLIENT_ACTION_DESCRIPTION"));
 		}
@@ -566,7 +610,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -2003502124995392039L;
 
-		public StartLocalAction() {
+		private StartLocalAction() {
 			putValue(NAME, rb.getString("START_LOCAL_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("START_LOCAL_ACTION_DESCRIPTION"));
 		}
@@ -582,7 +626,7 @@ public final class Main {
 
 		private static final long serialVersionUID = 1758447420975631146L;
 
-		public StartServerAction() {
+		private StartServerAction() {
 			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
@@ -598,7 +642,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -2863419586328503426L;
 
-		public StopClientAction() {
+		private StopClientAction() {
 			putValue(NAME, rb.getString("STOP_CLIENT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
 		}
@@ -614,7 +658,7 @@ public final class Main {
 
 		private static final long serialVersionUID = -4859431944733030332L;
 
-		public StopLocalAction() {
+		private StopLocalAction() {
 			putValue(NAME, rb.getString("STOP_LOCAL_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
 		}
@@ -630,7 +674,7 @@ public final class Main {
 
 		private static final long serialVersionUID = 6023207463370122769L;
 
-		public StopServerAction() {
+		private StopServerAction() {
 			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
 		}
@@ -642,8 +686,8 @@ public final class Main {
 
 	}
 
+	public static final Preferences preferences = Preferences.userNodeForPackage(Main.class);
 	private static final System.Logger log = System.getLogger(Main.class.getName());
-
 	private static final int SINGLE_INSTANCE_PORT = 58008;
 	private static final int OUTPUT_TYPE_NONE = 0;
 	private static final int OUTPUT_TYPE_LOCAL = 1;
@@ -677,15 +721,31 @@ public final class Main {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
-	protected static final Color TRANSPARENT = new Color(255, 255, 255, 0);
+	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private static volatile JFrame overlayFrame;
-	private static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
+	private static volatile FrameDragListener overlayFrameDragListener;
 	private static JPanel indicatorPanel;
-	private static Dimension prevScreenSize;;
+	private static Dimension prevScreenSize;
 	private static final Timer timer = new Timer();
+	private static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
+
+	private static String getFrameLocationPreferencesKey(final JFrame frame) {
+		final String title = frame.getTitle();
+		if (title == null || title.isBlank())
+			return null;
+
+		String underscoreTitle = title.codePoints().mapToObj((c) -> {
+			if (c == ' ')
+				return "_";
+			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
+		}).collect(Collectors.joining());
+		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
+
+		return underscoreTitle + "_location";
+	}
 
 	public static Timer getTimer() {
 		return timer;
@@ -714,6 +774,25 @@ public final class Main {
 
 	public static boolean isWindows() {
 		return System.getProperty("os.name").startsWith("Windows");
+	}
+
+	static void loadFrameLocation(final JFrame frame, final Point defaultLocation, final Rectangle maxWindowBounds) {
+		final Point location = defaultLocation;
+
+		final String locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
+		if (locationString != null) {
+			final String[] parts = locationString.split(",");
+			if (parts.length == 2)
+				try {
+					final int x = Integer.parseInt(parts[0]);
+					final int y = Integer.parseInt(parts[1]);
+					location.x = x;
+					location.y = y;
+				} catch (final NumberFormatException e) {
+				}
+		}
+
+		setFrameLocationRespectingBounds(frame, location, maxWindowBounds);
 	}
 
 	public static void main(final String[] args) {
@@ -773,13 +852,22 @@ public final class Main {
 				setEnabledRecursive(child, enabled);
 	}
 
+	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
+			final Rectangle maxWindowBounds) {
+		location.x = Math.max(0, Math.min(maxWindowBounds.width - frame.getWidth(), location.x));
+		location.y = Math.max(0, Math.min(maxWindowBounds.height - frame.getHeight(), location.y));
+		frame.setLocation(location);
+	}
+
 	private static void updateOverlayLocation() {
-		if (overlayFrame != null) {
+		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
 			overlayFrame.pack();
-			final Rectangle rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-			final int x = (int) rectangle.getMaxX() - overlayFrame.getWidth();
-			final int y = (int) rectangle.getMaxY() - overlayFrame.getHeight();
-			overlayFrame.setLocation(x, y);
+			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					.getMaximumWindowBounds();
+			final int x = maxWindowBounds.width - overlayFrame.getWidth();
+			final int y = maxWindowBounds.height - overlayFrame.getHeight();
+			final Point defaultLocation = new Point(x, y);
+			loadFrameLocation(overlayFrame, defaultLocation, maxWindowBounds);
 		}
 	}
 
@@ -789,7 +877,6 @@ public final class Main {
 	private Controller selectedController;
 	private Input input;
 	private int lastOutputType = OUTPUT_TYPE_NONE;
-	private final Preferences preferences = Preferences.userNodeForPackage(getClass());
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
@@ -822,7 +909,7 @@ public final class Main {
 
 	private final JFileChooser fileChooser = new ProfileFileChooser();
 
-	public Main() {
+	private Main() {
 		frame = new JFrame();
 
 		try {
@@ -1353,10 +1440,6 @@ public final class Main {
 		return onScreenKeyboard;
 	}
 
-	public Preferences getPreferences() {
-		return preferences;
-	}
-
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final List<ButtonToModeAction> buttonToModeActions : input.getProfile().getComponentToModeActionMap()
@@ -1386,12 +1469,15 @@ public final class Main {
 		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(input.getProfile().getActiveMode().getDescription());
 
-		overlayFrame = new JFrame();
+		overlayFrame = new JFrame("Overlay");
 		overlayFrame.setType(JFrame.Type.UTILITY);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
+		overlayFrameDragListener = new FrameDragListener(overlayFrame);
+		overlayFrame.addMouseListener(overlayFrameDragListener);
+		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
 
 		if (input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
 			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
@@ -1618,7 +1704,7 @@ public final class Main {
 		}
 	}
 
-	protected void setUnsavedChanges(final boolean unsavedChanges) {
+	void setUnsavedChanges(final boolean unsavedChanges) {
 		this.unsavedChanges = unsavedChanges;
 		updateTitleAndTooltip();
 	}
@@ -1842,7 +1928,7 @@ public final class Main {
 			});
 	}
 
-	protected void updateModesPanel() {
+	void updateModesPanel() {
 		modesListPanel.removeAll();
 
 		final List<Mode> modes = input.getProfile().getModes();

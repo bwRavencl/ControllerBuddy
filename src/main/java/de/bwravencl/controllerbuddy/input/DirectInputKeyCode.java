@@ -253,7 +253,7 @@ public class DirectInputKeyCode {
 	public final int DirectInputKeyCode;
 	public final String name;
 
-	public DirectInputKeyCode(final String name, final int DirectInputKeyCode) {
+	private DirectInputKeyCode(final String name, final int DirectInputKeyCode) {
 		this.name = name;
 		this.DirectInputKeyCode = DirectInputKeyCode;
 	}

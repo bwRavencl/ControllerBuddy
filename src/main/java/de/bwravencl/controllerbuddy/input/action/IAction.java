@@ -26,7 +26,7 @@ import net.brockmatt.util.ResourceBundleUtil;
 
 public interface IAction extends Cloneable {
 
-	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+	ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
 	Object clone() throws CloneNotSupportedException;

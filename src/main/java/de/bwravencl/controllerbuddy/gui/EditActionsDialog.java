@@ -100,7 +100,7 @@ public class EditActionsDialog extends JDialog {
 
 		private static final long serialVersionUID = -7713175853948284887L;
 
-		public AddActionAction() {
+		private AddActionAction() {
 			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
@@ -144,7 +144,7 @@ public class EditActionsDialog extends JDialog {
 
 		private final Class<?> clazz;
 
-		public AvailableAction(final Class<?> clazz) {
+		private AvailableAction(final Class<?> clazz) {
 			this.clazz = clazz;
 		}
 
@@ -169,7 +169,7 @@ public class EditActionsDialog extends JDialog {
 
 		private static final long serialVersionUID = 8086810563127997199L;
 
-		public CancelAction() {
+		private CancelAction() {
 			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText"));
 			putValue(SHORT_DESCRIPTION, rb.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
@@ -185,7 +185,7 @@ public class EditActionsDialog extends JDialog {
 
 		private static final long serialVersionUID = -6538021954760621595L;
 
-		public EditActionsAction() {
+		private EditActionsAction() {
 			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_PREFIX")
 					+ selectedAssignedAction.toString() + rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
@@ -206,7 +206,7 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JCheckBoxSetPropertyAction(final Method setterMethod) {
+		private JCheckBoxSetPropertyAction(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
@@ -227,7 +227,7 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JComboBoxSetPropertyAction(final Method setterMethod) {
+		private JComboBoxSetPropertyAction(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
@@ -248,7 +248,7 @@ public class EditActionsDialog extends JDialog {
 		private final KeyStroke keyStroke;
 		private final boolean modifiers;
 
-		public JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
+		private JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
 				final boolean modifiers) {
 			this.setterMethod = setterMethod;
 			this.keyStroke = keyStroke;
@@ -282,7 +282,7 @@ public class EditActionsDialog extends JDialog {
 
 		private final Method setterMethod;
 
-		public JSpinnerSetPropertyChangeListener(final Method setterMethod) {
+		private JSpinnerSetPropertyChangeListener(final Method setterMethod) {
 			this.setterMethod = setterMethod;
 		}
 
@@ -304,7 +304,7 @@ public class EditActionsDialog extends JDialog {
 
 		private static final long serialVersionUID = -6947022759101822700L;
 
-		public OKAction() {
+		private OKAction() {
 			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText"));
 			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
 		}
@@ -344,7 +344,7 @@ public class EditActionsDialog extends JDialog {
 
 		private static final long serialVersionUID = -5681740772832902238L;
 
-		public RemoveActionAction() {
+		private RemoveActionAction() {
 			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
@@ -424,7 +424,7 @@ public class EditActionsDialog extends JDialog {
 	private final JList<AvailableAction> availableActionsList = new JList<>();
 	private final JList<IAction> assignedActionsList = new JList<>();
 
-	public EditActionsDialog(final ButtonToCycleAction cycleAction, final Input input) {
+	private EditActionsDialog(final ButtonToCycleAction cycleAction, final Input input) {
 		this.cycleAction = cycleAction;
 
 		try {
@@ -443,7 +443,7 @@ public class EditActionsDialog extends JDialog {
 		}
 	}
 
-	public EditActionsDialog(final Main main, final Component component, final Input input) {
+	EditActionsDialog(final Main main, final Component component, final Input input) {
 		super(main.getFrame());
 		this.main = main;
 		this.component = component;

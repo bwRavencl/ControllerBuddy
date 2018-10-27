@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 public abstract class ToButtonAction implements IAction {
 
-	protected int buttonId = 0;
+	int buttonId = 0;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

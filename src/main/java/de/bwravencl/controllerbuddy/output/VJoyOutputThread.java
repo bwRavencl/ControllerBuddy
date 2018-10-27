@@ -147,7 +147,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	protected static void updateOutputSets(final Set<Integer> sourceSet, final Set<Integer> oldDownSet,
+	static void updateOutputSets(final Set<Integer> sourceSet, final Set<Integer> oldDownSet,
 			final Set<Integer> newUpSet, final Set<Integer> newDownSet, final boolean keepStillDown) {
 		final Set<Integer> stillDownSet = new HashSet<>();
 
@@ -191,39 +191,39 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private boolean restart = false;
-	protected UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
-	protected IVjoyInterface vJoy;
-	protected LONG axisX;
-	protected LONG axisY;
-	protected LONG axisZ;
-	protected LONG axisRX;
-	protected LONG axisRY;
-	protected LONG axisRZ;
-	protected LONG axisS0;
-	protected LONG axisS1;
-	protected BOOL[] buttons;
-	protected int cursorDeltaX;
-	protected int cursorDeltaY;
-	protected int scrollClicks;
-	protected final Set<Integer> oldDownMouseButtons = new HashSet<>();
-	protected final Set<Integer> newUpMouseButtons = new HashSet<>();
-	protected final Set<Integer> newDownMouseButtons = new HashSet<>();
-	protected final Set<Integer> downUpMouseButtons = new HashSet<>();
-	protected final Set<Integer> oldDownModifiers = new HashSet<>();
-	protected final Set<Integer> newUpModifiers = new HashSet<>();
-	protected final Set<Integer> newDownModifiers = new HashSet<>();
-	protected final Set<Integer> oldDownNormalKeys = new HashSet<>();
-	protected final Set<Integer> newUpNormalKeys = new HashSet<>();
-	protected final Set<Integer> newDownNormalKeys = new HashSet<>();
-	protected final Set<Integer> onLockKeys = new HashSet<>();
-	protected final Set<Integer> offLockKeys = new HashSet<>();
-	protected final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
+	UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
+	IVjoyInterface vJoy;
+	LONG axisX;
+	LONG axisY;
+	LONG axisZ;
+	LONG axisRX;
+	LONG axisRY;
+	LONG axisRZ;
+	LONG axisS0;
+	LONG axisS1;
+	BOOL[] buttons;
+	int cursorDeltaX;
+	int cursorDeltaY;
+	int scrollClicks;
+	final Set<Integer> oldDownMouseButtons = new HashSet<>();
+	final Set<Integer> newUpMouseButtons = new HashSet<>();
+	final Set<Integer> newDownMouseButtons = new HashSet<>();
+	final Set<Integer> downUpMouseButtons = new HashSet<>();
+	final Set<Integer> oldDownModifiers = new HashSet<>();
+	final Set<Integer> newUpModifiers = new HashSet<>();
+	final Set<Integer> newDownModifiers = new HashSet<>();
+	final Set<Integer> oldDownNormalKeys = new HashSet<>();
+	final Set<Integer> newUpNormalKeys = new HashSet<>();
+	final Set<Integer> newDownNormalKeys = new HashSet<>();
+	final Set<Integer> onLockKeys = new HashSet<>();
+	final Set<Integer> offLockKeys = new HashSet<>();
+	final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
 	public VJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
-	protected void deInit() {
+	void deInit() {
 		if (main.preventPowerSaveMode())
 			Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
 
@@ -255,8 +255,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 		return vJoyDevice;
 	}
 
-	protected boolean init() {
-		System.setProperty("jna.library.path", main.getPreferences().get(
+	boolean init() {
+		System.setProperty("jna.library.path", Main.preferences.get(
 				Main.PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {
@@ -411,13 +411,13 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	protected abstract boolean readInput() throws Exception;
+	abstract boolean readInput() throws Exception;
 
 	public void setvJoyDevice(final UINT vJoyDevice) {
 		this.vJoyDevice = vJoyDevice;
 	}
 
-	protected void writeOutput() throws InterruptedException {
+	void writeOutput() throws InterruptedException {
 		if (!Thread.currentThread().isInterrupted()) {
 			boolean res = true;
 

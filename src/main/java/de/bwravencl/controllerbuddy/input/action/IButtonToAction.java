@@ -28,11 +28,11 @@ import de.bwravencl.controllerbuddy.input.Profile;
 
 public interface IButtonToAction extends IAction {
 
-	static final long MIN_LONG_PRESS_TIME = 1000L;
-	static final boolean DEFAULT_LONG_PRESS = false;
-	static final float DEFAULT_ACTIVATION_VALUE = 1.0f;
-	static final Set<IButtonToAction> actionToWasDown = new HashSet<>();
-	static final Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+	long MIN_LONG_PRESS_TIME = 1000L;
+	boolean DEFAULT_LONG_PRESS = false;
+	float DEFAULT_ACTIVATION_VALUE = 1.0f;
+	Set<IButtonToAction> actionToWasDown = new HashSet<>();
+	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
 	static boolean floatEquals(final float f1, final float f2) {
 		return Math.abs(f1 - f2) < 0.001f;

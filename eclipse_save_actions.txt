@@ -14,6 +14,8 @@ Add missing '@Override' annotations
 Add missing '@Override' annotations to implementations of interface methods
 Add missing '@Deprecated' annotations
 Remove unnecessary casts
+Remove redundant modifiers
+Remove redundant semicolons
 Remove unnecessary '$NON-NLS$' tags
 Sort members excluding fields, enum constants, and initializers
 Remove trailing white spaces on all lines

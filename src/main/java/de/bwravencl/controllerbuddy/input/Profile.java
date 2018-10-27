@@ -56,7 +56,7 @@ public class Profile implements Cloneable {
 	private transient int activeModeIndex = 0;
 	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<>();
 
-	public Profile() {
+	Profile() {
 		modes.add(defaultMode);
 	}
 

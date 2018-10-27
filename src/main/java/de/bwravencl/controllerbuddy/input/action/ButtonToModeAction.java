@@ -37,7 +37,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		return buttonToModeActionStack;
 	}
 
-	protected boolean toggle = false;
+	boolean toggle = false;
 	private transient boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private float activationValue = DEFAULT_ACTIVATION_VALUE;

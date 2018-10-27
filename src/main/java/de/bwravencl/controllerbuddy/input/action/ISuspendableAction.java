@@ -25,9 +25,9 @@ import de.bwravencl.controllerbuddy.gui.Main;
 
 public interface ISuspendableAction extends IAction {
 
-	static final long SUSPEND_TIME = 500L;
+	long SUSPEND_TIME = 500L;
 
-	static final Map<ISuspendableAction, String> componentToSuspendedActionsMap = new ConcurrentHashMap<>();
+	Map<ISuspendableAction, String> componentToSuspendedActionsMap = new ConcurrentHashMap<>();
 
 	default boolean isSuspended() {
 		return componentToSuspendedActionsMap.containsKey(this);

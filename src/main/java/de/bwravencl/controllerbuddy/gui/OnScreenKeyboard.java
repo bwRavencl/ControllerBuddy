@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
@@ -44,6 +45,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.bwravencl.controllerbuddy.gui.Main.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -59,7 +61,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		private static final int BASE_BUTTON_SIZE = 55;
 
-		public AbstractKeyboardButton(final String text) {
+		private AbstractKeyboardButton(final String text) {
 			super(text);
 
 			setMargin(new Insets(1, 1, 1, 1));
@@ -70,13 +72,13 @@ public class OnScreenKeyboard extends JFrame {
 			return new Dimension(BASE_BUTTON_SIZE, BASE_BUTTON_SIZE);
 		}
 
-		protected abstract void poll(final Input input);
+		abstract void poll(final Input input);
 
-		protected abstract void press();
+		abstract void press();
 
-		protected abstract void release();
+		abstract void release();
 
-		protected abstract void toggleLock();
+		abstract void toggleLock();
 
 	}
 
@@ -98,7 +100,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		private TimerTask lockTimerTask;
 
-		public DefaultKeyboardButton(final String directInputKeyCodeName) {
+		private DefaultKeyboardButton(final String directInputKeyCodeName) {
 			super(getShortDefaultKeyName(directInputKeyCodeName));
 
 			this.directInputKeyCodeName = directInputKeyCodeName;
@@ -193,7 +195,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void poll(final Input input) {
+		void poll(final Input input) {
 			if (!changed)
 				return;
 
@@ -214,7 +216,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void press() {
+		void press() {
 			Main.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this))
@@ -225,7 +227,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void release() {
+		void release() {
 			Main.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
 
 			if (heldButtons.remove(this)) {
@@ -239,7 +241,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void toggleLock() {
+		void toggleLock() {
 			if (heldButtons.contains(this))
 				release();
 			else {
@@ -262,7 +264,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		private boolean wasUp = true;
 
-		public LockKeyButton(final int virtualKeyCode) {
+		private LockKeyButton(final int virtualKeyCode) {
 			super(getShortLockKeyName(LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode).name));
 			this.virtualKeyCode = virtualKeyCode;
 
@@ -282,7 +284,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void poll(final Input input) {
+		void poll(final Input input) {
 			if (!changed)
 				return;
 
@@ -295,7 +297,7 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void press() {
+		void press() {
 			if (wasUp) {
 				toggleLock();
 				wasUp = false;
@@ -303,12 +305,12 @@ public class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		protected void release() {
+		void release() {
 			wasUp = true;
 		}
 
 		@Override
-		protected void toggleLock() {
+		void toggleLock() {
 			locked = !locked;
 			Main.invokeOnEventDispatchThreadIfRequired(() -> {
 				setForeground(locked ? Color.GREEN : KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
@@ -329,11 +331,11 @@ public class OnScreenKeyboard extends JFrame {
 
 	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
 
-	protected static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
+	static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 
 	public static final Mode onScreenKeyboardMode;
 
-	private static final int ROW_BORDER_WIDTH = 10;
+	private static final int ROW_BORDER_WIDTH = 15;
 
 	private static final Color ROW_BACKGROUND = new Color(128, 128, 128, 64);
 
@@ -473,12 +475,18 @@ public class OnScreenKeyboard extends JFrame {
 	private int selectedRow = keyboardButtons.length / 2;
 	private int selectedColumn = keyboardButtons[selectedRow].length / 2;
 
-	public OnScreenKeyboard() {
+	private volatile FrameDragListener frameDragListener = new FrameDragListener(this);
+
+	OnScreenKeyboard() {
+		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
 		setUndecorated(true);
 		setBackground(Main.TRANSPARENT);
 		setAlwaysOnTop(true);
+
+		addMouseListener(frameDragListener);
+		addMouseMotionListener(frameDragListener);
 
 		final JPanel parentPanel = new JPanel();
 		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
@@ -626,13 +634,17 @@ public class OnScreenKeyboard extends JFrame {
 		keyboardButtons[selectedRow][selectedColumn].setBorder(defaultButtonBorder);
 	}
 
-	protected void updateLocation() {
+	void updateLocation() {
+		if (frameDragListener.isDragging())
+			return;
+
 		pack();
 
-		final Rectangle rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		final int x = (int) rectangle.getMaxX() / 2 - getWidth() / 2;
-		final int y = (int) rectangle.getMaxY() - getHeight();
-		setLocation(x, y);
+		final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		final int x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
+		final int y = (int) maxWindowBounds.getMaxY() - getHeight();
+		final Point defaultLocation = new Point(x, y);
+		Main.loadFrameLocation(this, defaultLocation, maxWindowBounds);
 	}
 
 }
