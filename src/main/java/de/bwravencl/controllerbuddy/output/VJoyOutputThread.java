@@ -361,7 +361,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			maxAxisValue = Max.getInt(0L);
 
 			for (final VirtualAxis va : VirtualAxis.values())
-				input.setAxis(va, 0.0f);
+				input.setAxis(va, 0.0f, false);
 
 			final int nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
 			int maxButtonId = -1;

@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
@@ -136,6 +138,10 @@ public class Input {
 	public static final int MAX_N_BUTTONS = 128;
 	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
 
+	private static final byte[] DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00,
+			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
 	public static EnumMap<VirtualAxis, Integer> getAxis() {
 		return axis;
 	}
@@ -210,6 +216,7 @@ public class Input {
 		return newValue;
 	}
 
+	private volatile byte[] dualShock4HidReport;
 	private final Main main;
 	private final Controller controller;
 	private Profile profile;
@@ -226,8 +233,8 @@ public class Input {
 	private final Set<Integer> offLockKeys = new HashSet<>();
 	private boolean clearOnNextPoll = false;
 	private HidDevice hidDevice;
-	private boolean charging = true;
-	private int batteryState;
+	private volatile boolean charging = true;
+	private volatile int batteryState;
 
 	public Input(final Main main, final Controller controller) {
 		this.main = main;
@@ -252,6 +259,8 @@ public class Input {
 			if (hidDeviceInfo != null)
 				try {
 					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
+					resetDualShock4();
+
 					hidDevice.setInputReportListener(new InputReportListener() {
 
 						private static final int TOUCHPAD_MAX_DELTA = 150;
@@ -306,8 +315,8 @@ public class Input {
 							final boolean charging = (data[29] & 0x10) > 6;
 							final int battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
 
-							setBatteryState(battery);
 							setCharging(charging);
+							setBatteryState(battery);
 						}
 
 					});
@@ -319,8 +328,10 @@ public class Input {
 	}
 
 	public void deInit() {
-		if (hidDevice != null)
+		if (hidDevice != null) {
+			resetDualShock4();
 			hidDevice.close();
+		}
 	}
 
 	public int getBatteryState() {
@@ -473,28 +484,72 @@ public class Input {
 						((IResetableAction) a).reset();
 	}
 
+	private void resetDualShock4() {
+		dualShock4HidReport = Arrays.copyOf(DUAL_SHOCK_4_HID_REPORT, DUAL_SHOCK_4_HID_REPORT.length);
+		sendDualShock4HidReport();
+	}
+
+	private void rumbleDualShock4(final long duration, final byte strength) {
+		if (dualShock4HidReport[5] != 0)
+			return;
+
+		dualShock4HidReport[5] = strength;
+		if (sendDualShock4HidReport())
+			new Timer().schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					dualShock4HidReport[5] = 0;
+					sendDualShock4HidReport();
+				}
+			}, duration);
+
+	}
+
 	void scheduleClearOnNextPoll() {
 		clearOnNextPoll = true;
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, float value) {
+	private boolean sendDualShock4HidReport() {
+		return hidDevice.setOutputReport(dualShock4HidReport[0],
+				Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length),
+				dualShock4HidReport.length - 1) > -1;
+	}
+
+	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback) {
 		value = Math.max(value, -1.0f);
 		value = Math.min(value, 1.0f);
 
 		setAxis(virtualAxis,
-				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()));
+				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()),
+				hapticFeedback);
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, int value) {
-		value = Math.max(value, outputThread.getMinAxisValue());
-		value = Math.min(value, outputThread.getMaxAxisValue());
+	public void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback) {
+		final int minAxisValue = outputThread.getMinAxisValue();
+		final int maxAxisValue = outputThread.getMaxAxisValue();
 
-		axis.put(virtualAxis, value);
+		value = Math.max(value, minAxisValue);
+		value = Math.min(value, maxAxisValue);
+
+		final int prevValue = axis.put(virtualAxis, value);
+
+		if (hapticFeedback && hidDevice != null && prevValue != value) {
+			final int midpoint = (maxAxisValue - minAxisValue) / 2;
+
+			if (value == minAxisValue || value == maxAxisValue)
+				rumbleDualShock4(80L, (byte) 128);
+			else if (prevValue > midpoint && value < midpoint || prevValue < midpoint && value > midpoint)
+				rumbleDualShock4(20L, (byte) 1);
+		}
 	}
 
 	public void setBatteryState(final int batteryState) {
 		if (this.batteryState != batteryState) {
 			this.batteryState = batteryState;
+
+			updateDualShock4LightbarColor();
+
 			if (main != null)
 				SwingUtilities.invokeLater(() -> {
 					main.updateTitleAndTooltip();
@@ -520,6 +575,8 @@ public class Input {
 	public void setCharging(final boolean charging) {
 		if (this.charging != charging) {
 			this.charging = charging;
+
+			updateDualShock4LightbarColor();
 
 			SwingUtilities.invokeLater(() -> {
 				main.updateTitleAndTooltip();
@@ -603,6 +660,20 @@ public class Input {
 
 	public void setScrollClicks(final int scrollClicks) {
 		this.scrollClicks = scrollClicks;
+	}
+
+	private void updateDualShock4LightbarColor() {
+		if (charging) {
+			dualShock4HidReport[6] = (byte) (batteryState == 100 ? 0 : 128);
+			dualShock4HidReport[7] = (byte) 128;
+			dualShock4HidReport[8] = 0;
+		} else {
+			dualShock4HidReport[6] = (byte) (batteryState == LOW_BATTERY_WARNING ? 128 : 0);
+			dualShock4HidReport[7] = 0;
+			dualShock4HidReport[8] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0 : 128);
+		}
+
+		sendDualShock4HidReport();
 	}
 
 }

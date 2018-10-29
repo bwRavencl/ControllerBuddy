@@ -141,7 +141,7 @@ public class Profile implements Cloneable {
 						for (final IAction a : currentComponentToActionsMap.get(c)) {
 							if (a instanceof AxisToAxisAction && !(a instanceof AxisToRelativeAxisAction)) {
 								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) a;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f);
+								input.setAxis(axisToAxisAction.getVirtualAxis(), 0.0f, false);
 							}
 
 							if (a instanceof IModeChangeListenerAction) {

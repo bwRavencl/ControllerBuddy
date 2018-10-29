@@ -32,7 +32,7 @@ public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonTo
 		value = handleLongPress(input, value);
 
 		if (IButtonToAction.floatEquals(value, activationValue) ^ invert)
-			input.setAxis(virtualAxis, resetValue);
+			input.setAxis(virtualAxis, resetValue, false);
 	}
 
 	@Override

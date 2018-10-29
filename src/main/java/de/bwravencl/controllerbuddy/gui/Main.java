@@ -1598,6 +1598,9 @@ public final class Main {
 				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
 
+		if (input != null)
+			input.deInit();
+
 		stopAll();
 		System.exit(0);
 	}
