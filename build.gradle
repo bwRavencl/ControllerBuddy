@@ -1,6 +1,6 @@
 plugins {
     id 'com.stehno.natives' version '0.3.1'
-    id 'org.ajoberstar.grgit' version '3.0.0-beta.1'
+    id 'org.ajoberstar.grgit' version '3.0.0-rc.2'
     id 'us.kirchmeier.capsule' version '1.0.2'
 }
 
@@ -42,21 +42,44 @@ ext {
 }
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
-version = "0.6-${git.head().abbreviatedId}"
+version = "0.7-${git.head().abbreviatedId}"
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
+ext {
+    jinputVersion = '2.0.9'
+    jnaVersion = '4.5.2'
+    joglVersion = '2.3.2'
+}
+
 dependencies {
-    compile     'commons-cli:commons-cli:1.4',
-                'com.github.nyholku:purejavahidapi:322fdb03b7',
-                'com.google.code.gson:gson:2.8.5',
-                'net.java.dev.jna:jna:4.5.2',
-                'net.java.dev.jna:jna-platform:4.5.2',
-                'net.java.jinput:jinput:2.0.9'
-    compileOnly 'net.java.jinput:jinput:2.0.9:natives-all'
+    compile     "commons-cli:commons-cli:1.4",
+                "com.github.kotlin-graphics:openvr:v1.0.14-beta-01",
+                "com.github.nyholku:purejavahidapi:322fdb03b7",
+                "com.google.code.gson:gson:2.8.5",
+                "net.java.dev.jna:jna:$jnaVersion",
+                "net.java.dev.jna:jna-platform:$jnaVersion",
+                "net.java.jinput:jinput:$jinputVersion",
+                "org.jogamp.gluegen:gluegen-rt:$joglVersion",
+                "org.jogamp.gluegen:gluegen-rt:$joglVersion:natives-windows-amd64",
+                "org.jogamp.gluegen:gluegen-rt:$joglVersion:natives-windows-i586",
+                "org.jogamp.jogl:jogl:$joglVersion",
+                "org.jogamp.jogl:jogl:$joglVersion:awt",
+                "org.jogamp.jogl:jogl:$joglVersion:gldesktop",
+                "org.jogamp.jogl:jogl:$joglVersion:natives-windows-amd64",
+                "org.jogamp.jogl:jogl:$joglVersion:natives-windows-i586",
+                "org.jogamp.jogl:jogl:$joglVersion:os-win",
+                "org.jogamp.jogl:jogl:$joglVersion:util",
+                "org.jogamp.jogl:jogl:$joglVersion:util-awt",
+                "org.jogamp.jogl:nativewindow:$joglVersion",
+                "org.jogamp.jogl:nativewindow:$joglVersion:awt",
+                "org.jogamp.jogl:nativewindow:$joglVersion:os-win",
+                "org.jogamp.jogl:nativewindow:$joglVersion:natives-windows-amd64",
+                "org.jogamp.jogl:nativewindow:$joglVersion:natives-windows-i586"
+    compileOnly "net.java.jinput:jinput:$jinputVersion:natives-all"
 }
 
 natives {

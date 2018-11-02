@@ -471,11 +471,9 @@ public class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(DirectInputKeyCode.DIK_NUMPADENTER) } };
 
 	private volatile boolean anyChanges;
-
 	private int selectedRow = keyboardButtons.length / 2;
 	private int selectedColumn = keyboardButtons[selectedRow].length / 2;
-
-	private volatile FrameDragListener frameDragListener = new FrameDragListener(this);
+	private final FrameDragListener frameDragListener = new FrameDragListener(this);
 
 	OnScreenKeyboard() {
 		setTitle(OnScreenKeyboard.class.getSimpleName());

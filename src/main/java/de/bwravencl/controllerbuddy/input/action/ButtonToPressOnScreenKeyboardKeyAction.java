@@ -1,5 +1,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
 public class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
@@ -27,17 +28,17 @@ public class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
 			if (lockKey)
 				wasUp = true;
 			else if (wasDown) {
-				input.getMain().getOnScreenKeyboard().releaseSelected();
+				Main.onScreenKeyboard.releaseSelected();
 				wasDown = false;
 			} else
 				wasDown = false;
 		} else if (lockKey) {
 			if (wasUp) {
-				input.getMain().getOnScreenKeyboard().toggleLock();
+				Main.onScreenKeyboard.toggleLock();
 				wasUp = false;
 			}
 		} else {
-			input.getMain().getOnScreenKeyboard().pressSelected();
+			Main.onScreenKeyboard.pressSelected();
 			wasDown = true;
 		}
 	}

@@ -715,6 +715,7 @@ public final class Main {
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
+	private static final String PREFERENCES_SHOW_VR_OVERLAY = "show_vr_overlay";
 	public static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
@@ -725,12 +726,13 @@ public final class Main {
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	private static volatile JFrame overlayFrame;
-	private static volatile FrameDragListener overlayFrameDragListener;
+	static volatile JFrame overlayFrame;
+	private static volatile OpenVrOverlay openVrOverlay;
+	private static FrameDragListener overlayFrameDragListener;
 	private static JPanel indicatorPanel;
 	private static Dimension prevScreenSize;
 	private static final Timer timer = new Timer();
-	private static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
+	public static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
 
 	private static String getFrameLocationPreferencesKey(final JFrame frame) {
 		final String title = frame.getTitle();
@@ -1211,8 +1213,8 @@ public final class Main {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
-		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
-				|| preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true)) {
+		final boolean alwaysOnTopSupported = Toolkit.getDefaultToolkit().isAlwaysOnTopSupported();
+		if (alwaysOnTopSupported || preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, alwaysOnTopSupported)) {
 			final JPanel overlaySettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
@@ -1231,6 +1233,24 @@ public final class Main {
 		}
 
 		if (isWindows()) {
+			if (preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true)) {
+				final JPanel vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
+				settingsPanel.add(vrOverlaySettingsPanel, panelGridBagConstraints);
+
+				final JLabel vrOverlayLabel = new JLabel(rb.getString("VR_OVERLAY_LABEL"));
+				vrOverlayLabel.setPreferredSize(new Dimension(120, 15));
+				vrOverlaySettingsPanel.add(vrOverlayLabel);
+
+				final JCheckBox showVrOverlayCheckBox = new JCheckBox(rb.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
+				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
+				showVrOverlayCheckBox.addChangeListener(e -> {
+					final boolean showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
+
+					preferences.putBoolean(PREFERENCES_SHOW_VR_OVERLAY, showVrOverlay);
+				});
+				vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
+			}
+
 			final JPanel preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(preventPowerSaveModeSettingsPanel, panelGridBagConstraints);
 
@@ -1406,6 +1426,11 @@ public final class Main {
 	}
 
 	private void deInitOverlay() {
+		if (openVrOverlay != null) {
+			openVrOverlay.stopOverlay();
+			openVrOverlay = null;
+		}
+
 		if (overlayFrame != null) {
 			overlayFrame.dispose();
 			overlayFrame = null;
@@ -1436,10 +1461,6 @@ public final class Main {
 		return frame;
 	}
 
-	public OnScreenKeyboard getOnScreenKeyboard() {
-		return onScreenKeyboard;
-	}
-
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final List<ButtonToModeAction> buttonToModeActions : input.getProfile().getComponentToModeActionMap()
@@ -1455,6 +1476,9 @@ public final class Main {
 	}
 
 	private void initOverlay() {
+		if (!preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()))
+			return;
+
 		String longestDescription = "";
 		for (final Mode m : input.getProfile().getModes()) {
 			final String description = m.getDescription();
@@ -1519,6 +1543,18 @@ public final class Main {
 
 		updateOverlayLocation();
 		overlayFrame.setVisible(true);
+	}
+
+	private void initVrOverlay() {
+		if (!isWindows() || !preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true))
+			return;
+
+		try {
+			openVrOverlay = new OpenVrOverlay();
+			openVrOverlay.start();
+		} catch (final Exception e) {
+			openVrOverlay = null;
+		}
 	}
 
 	private boolean loadProfile(final File file) {
@@ -1729,8 +1765,8 @@ public final class Main {
 		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
 		clientThread.start();
 
-		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
-			initOverlay();
+		initOverlay();
+		initVrOverlay();
 
 		startOverlayTimerTask();
 	}
@@ -1752,8 +1788,8 @@ public final class Main {
 		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
 		localThread.start();
 
-		if (preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true))
-			initOverlay();
+		initOverlay();
+		initVrOverlay();
 
 		startOverlayTimerTask();
 	}

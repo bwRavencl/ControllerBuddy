@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
@@ -45,7 +43,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
@@ -216,7 +213,6 @@ public class Input {
 		return newValue;
 	}
 
-	private volatile byte[] dualShock4HidReport;
 	private final Main main;
 	private final Controller controller;
 	private Profile profile;
@@ -235,6 +231,7 @@ public class Input {
 	private HidDevice hidDevice;
 	private volatile boolean charging = true;
 	private volatile int batteryState;
+	private byte[] dualShock4HidReport;
 
 	public Input(final Main main, final Controller controller) {
 		this.main = main;
@@ -420,9 +417,8 @@ public class Input {
 			clearOnNextPoll = false;
 		}
 
-		final OnScreenKeyboard onScreenKeyboard = main.getOnScreenKeyboard();
-		if (onScreenKeyboard.isVisible())
-			onScreenKeyboard.poll(this);
+		if (Main.onScreenKeyboard.isVisible())
+			Main.onScreenKeyboard.poll(this);
 
 		final List<Mode> modes = profile.getModes();
 		final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
@@ -490,20 +486,21 @@ public class Input {
 	}
 
 	private void rumbleDualShock4(final long duration, final byte strength) {
-		if (dualShock4HidReport[5] != 0)
-			return;
-
-		dualShock4HidReport[5] = strength;
-		if (sendDualShock4HidReport())
-			new Timer().schedule(new TimerTask() {
-
-				@Override
-				public void run() {
+		new Thread(() -> {
+			synchronized (dualShock4HidReport) {
+				dualShock4HidReport[5] = strength;
+				if (sendDualShock4HidReport()) {
+					try {
+						Thread.sleep(duration);
+					} catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
 					dualShock4HidReport[5] = 0;
 					sendDualShock4HidReport();
+					sendDualShock4HidReport();
 				}
-			}, duration);
-
+			}
+		}).start();
 	}
 
 	void scheduleClearOnNextPoll() {
@@ -511,9 +508,11 @@ public class Input {
 	}
 
 	private boolean sendDualShock4HidReport() {
-		return hidDevice.setOutputReport(dualShock4HidReport[0],
-				Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length),
-				dualShock4HidReport.length - 1) > -1;
+		final int dataLength = dualShock4HidReport.length - 1;
+		final int dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
+				Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length), dataLength);
+
+		return dataSent == dataLength;
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback) {
@@ -663,17 +662,19 @@ public class Input {
 	}
 
 	private void updateDualShock4LightbarColor() {
-		if (charging) {
-			dualShock4HidReport[6] = (byte) (batteryState == 100 ? 0 : 128);
-			dualShock4HidReport[7] = (byte) 128;
-			dualShock4HidReport[8] = 0;
-		} else {
-			dualShock4HidReport[6] = (byte) (batteryState == LOW_BATTERY_WARNING ? 128 : 0);
-			dualShock4HidReport[7] = 0;
-			dualShock4HidReport[8] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0 : 128);
-		}
+		synchronized (dualShock4HidReport) {
+			if (charging) {
+				dualShock4HidReport[6] = (byte) (batteryState == 100 ? 0 : 128);
+				dualShock4HidReport[7] = (byte) 128;
+				dualShock4HidReport[8] = 0;
+			} else {
+				dualShock4HidReport[6] = (byte) (batteryState == LOW_BATTERY_WARNING ? 128 : 0);
+				dualShock4HidReport[7] = 0;
+				dualShock4HidReport[8] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0 : 128);
+			}
 
-		sendDualShock4HidReport();
+			sendDualShock4HidReport();
+		}
 	}
 
 }

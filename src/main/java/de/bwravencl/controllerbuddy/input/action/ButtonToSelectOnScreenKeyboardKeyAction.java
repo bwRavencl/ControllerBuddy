@@ -1,5 +1,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 
@@ -31,7 +32,7 @@ public class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction 
 		if (IButtonToAction.floatEquals(value, activationValue)) {
 			final long currentTime = System.currentTimeMillis();
 			if (currentTime - lastPressTime >= MIN_ELAPSE_TIME) {
-				final OnScreenKeyboard onScreenKeyboard = input.getMain().getOnScreenKeyboard();
+				final OnScreenKeyboard onScreenKeyboard = Main.onScreenKeyboard;
 
 				switch (direction) {
 				case UP:

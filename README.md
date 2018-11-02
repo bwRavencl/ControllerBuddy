@@ -41,6 +41,8 @@ ControllerBuddy offers an overlay, that displays the currently active input mode
 
 In addition a built-in On-Screen Keyboard is provided, that can either be controlled via special actions bound to controller buttons or via the mouse cursor.
 
+Both the status overlay and the On-Screen Keyboard can be displayed as overlays inside OpenVR-based applications. (Windows only)
+
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
 
 #### Architecture:
