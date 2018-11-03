@@ -45,7 +45,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.bwravencl.controllerbuddy.gui.FrameUtils.FrameDragListener;
+import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -217,7 +217,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void press() {
-			Main.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this))
 				beginPress = System.currentTimeMillis();
@@ -228,7 +228,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void release() {
-			Main.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
 
 			if (heldButtons.remove(this)) {
 				if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
@@ -312,7 +312,7 @@ public class OnScreenKeyboard extends JFrame {
 		@Override
 		void toggleLock() {
 			locked = !locked;
-			Main.invokeOnEventDispatchThreadIfRequired(() -> {
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 				setForeground(locked ? Color.GREEN : KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
 			});
 			changed = true;
@@ -646,7 +646,7 @@ public class OnScreenKeyboard extends JFrame {
 		final int x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
 		final int y = (int) maxWindowBounds.getMaxY() - getHeight();
 		final Point defaultLocation = new Point(x, y);
-		FrameUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
+		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
 	}
 
 }

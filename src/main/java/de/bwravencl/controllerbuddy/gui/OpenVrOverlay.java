@@ -2,6 +2,10 @@ package de.bwravencl.controllerbuddy.gui;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.lang.System.Logger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -20,18 +24,38 @@ import openvr.lib.EColorSpace;
 import openvr.lib.ETextureType;
 import openvr.lib.ETrackingUniverseOrigin;
 import openvr.lib.EVRApplicationType;
+import openvr.lib.EVREventType;
 import openvr.lib.EVRInitError;
 import openvr.lib.EVRInitError_ByReference;
 import openvr.lib.EVROverlayError;
 import openvr.lib.HmdMat34;
 import openvr.lib.IVROverlay;
 import openvr.lib.OpenvrKt;
+import openvr.lib.VREvent;
 import openvr.lib.VRTextureBounds;
-import openvr.lib.VRTextureBounds.ByReference;
 
-class OpenVrOverlay extends Thread {
+class OpenVrOverlay {
+
+	private static final System.Logger log = System.getLogger(OpenVrOverlay.class.getName());
 
 	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
+
+	private static final long OVERLAY_FPS = 25L;
+
+	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
+	private static final float STATUS_OVERLAY_POSITION_X = 0.2f;
+	private static final float STATUS_OVERLAY_POSITION_Y = -0.1f;
+	private static final float STATUS_OVERLAY_POSITION_Z = -0.4f;
+
+	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0.0f;
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z = -0.4f;
+
+	private static final void makeTransformFacing(final Mat4 mat4) {
+		mat4.rotateAssign((float) Math.atan(mat4.v30() / mat4.v32()), 0.0f, 1.0f, 0.0f);
+		mat4.rotateAssign((float) -Math.atan(mat4.v31() / mat4.v32()), 1.0f, 0.0f, 0.0f);
+	}
 
 	private static final HmdMat34.ByReference mat4ToHmdMat34ByReference(final Mat4 mat4) {
 		final HmdMat34.ByReference hmdMat34 = new HmdMat34.ByReference();
@@ -54,7 +78,6 @@ class OpenVrOverlay extends Thread {
 
 	private final Main main;
 	private final OnScreenKeyboard onScreenKeyboard;
-	private volatile boolean run = true;
 	private final IVROverlay vrOverlay;
 	private long statusOverlayHandle;
 	private final long onScreenKeyboardOverlayHandle;
@@ -66,13 +89,14 @@ class OpenVrOverlay extends Thread {
 	private Texture onScreenKeyboardOverlayTexture;
 	private final GLProfile glProfile;
 	private final GLContext glContext;
+	private final ScheduledExecutorService executorService;
 
 	OpenVrOverlay(final Main main) throws Exception {
 		this.main = main;
 		onScreenKeyboard = main.getOnScreenKeyboard();
 
 		final EVRInitError_ByReference initError = new EVRInitError_ByReference();
-		OpenvrKt.vrInit(initError, EVRApplicationType.Overlay, "test");
+		OpenvrKt.vrInit(initError, EVRApplicationType.Background, null);
 		if (initError.value != EVRInitError.None)
 			throw new Exception(
 					getClass().getName() + ": " + OpenvrKt.vrGetVRInitErrorAsEnglishDescription(initError.value));
@@ -82,7 +106,7 @@ class OpenVrOverlay extends Thread {
 			if (vrOverlay == null)
 				throw new Exception(getClass().getName() + ": could not acquire vrOverlay");
 
-			final ByReference overlayTextureBounds = new VRTextureBounds.ByReference();
+			final VRTextureBounds.ByReference overlayTextureBounds = new VRTextureBounds.ByReference();
 			overlayTextureBounds.uMax = 1.0f;
 			overlayTextureBounds.uMin = 0.0f;
 			overlayTextureBounds.vMax = 0.0f;
@@ -90,20 +114,20 @@ class OpenVrOverlay extends Thread {
 
 			final JFrame overlayFrame = main.getOverlayFrame();
 			if (overlayFrame != null) {
-				SwingUtilities.invokeLater(() -> main.setOnScreenKeyboardButtonVisible(false));
+				main.setOnScreenKeyboardButtonVisible(false);
 
 				final LongByReference statusOverlayHandleReference = new LongByReference();
 				checkOverlayError(vrOverlay.createOverlay(OVERLAY_KEY_PREFIX + overlayFrame.getTitle(),
 						overlayFrame.getTitle(), statusOverlayHandleReference));
 				statusOverlayHandle = statusOverlayHandleReference.getValue();
 
-				checkOverlayError(vrOverlay.setOverlayWidthInMeters(statusOverlayHandle, 0.2f));
+				checkOverlayError(vrOverlay.setOverlayWidthInMeters(statusOverlayHandle, STATUS_OVERLAY_WIDTH));
 
 				final Mat4 statusOverlayTransform = new Mat4();
-				statusOverlayTransform.translateAssign(0.5f, -0.3f, -1.5f);
-				statusOverlayTransform.rotateAssign(
-						(float) Math.atan(statusOverlayTransform.v30() / statusOverlayTransform.v32()), 0.0f, 1.0f,
-						0.0f);
+				statusOverlayTransform.translateAssign(STATUS_OVERLAY_POSITION_X, STATUS_OVERLAY_POSITION_Y,
+						STATUS_OVERLAY_POSITION_Z);
+				makeTransformFacing(statusOverlayTransform);
+
 				checkOverlayError(vrOverlay.setOverlayTransformAbsolute(statusOverlayHandle,
 						ETrackingUniverseOrigin.Seated, mat4ToHmdMat34ByReference(statusOverlayTransform)));
 
@@ -117,11 +141,14 @@ class OpenVrOverlay extends Thread {
 					onScreenKeyboard.getTitle(), onScreenKeyboardOverlayHandleReference));
 			onScreenKeyboardOverlayHandle = onScreenKeyboardOverlayHandleReference.getValue();
 
-			checkOverlayError(vrOverlay.setOverlayWidthInMeters(onScreenKeyboardOverlayHandle, 1.0f));
+			checkOverlayError(
+					vrOverlay.setOverlayWidthInMeters(onScreenKeyboardOverlayHandle, ON_SCREEN_KEYBOARD_WIDTH));
 
 			final Mat4 onScreenKeyboardOverlayTransform = new Mat4();
-			onScreenKeyboardOverlayTransform.translateAssign(0.0f, -0.5f, -1.0f);
-			onScreenKeyboardOverlayTransform.rotateAssign((float) Math.toRadians(-45.0), 1.0f, 0.0f, 0.0f);
+			onScreenKeyboardOverlayTransform.translateAssign(ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X,
+					ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y, ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z);
+			makeTransformFacing(onScreenKeyboardOverlayTransform);
+
 			checkOverlayError(vrOverlay.setOverlayTransformAbsolute(onScreenKeyboardOverlayHandle,
 					ETrackingUniverseOrigin.Seated, mat4ToHmdMat34ByReference(onScreenKeyboardOverlayTransform)));
 
@@ -132,9 +159,13 @@ class OpenVrOverlay extends Thread {
 			glCapabilities.setDoubleBuffered(false);
 			glCapabilities.setOnscreen(false);
 
-			final GLDrawable dummyDrawable = GLDrawableFactory.getDesktopFactory().createDummyAutoDrawable(null, true,
+			final GLDrawable dummyDrawable = GLDrawableFactory.getDesktopFactory().createDummyDrawable(null, true,
 					glCapabilities, null);
+			dummyDrawable.setRealized(true);
 			glContext = dummyDrawable.createContext(null);
+
+			executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 		} catch (final Throwable t) {
 			deInit();
 			throw t;
@@ -148,102 +179,101 @@ class OpenVrOverlay extends Thread {
 
 	private void deInit() {
 		OpenvrKt.vrShutdown();
+
 		if (glContext != null)
 			glContext.destroy();
 
-		SwingUtilities.invokeLater(() -> main.setOnScreenKeyboardButtonVisible(true));
+		main.setOnScreenKeyboardButtonVisible(true);
 	}
 
-	@Override
-	public void run() {
+	private void render() {
 		try {
-			while (run) {
-				try {
-					final JFrame overlayFrame = main.getOverlayFrame();
-					if (overlayFrame != null)
-						if (overlayFrame.isVisible()) {
-							checkOverlayError(vrOverlay.showOverlay(statusOverlayHandle));
+			final VREvent.ByReference vrEvent = new openvr.lib.VREvent.ByReference();
+			while (vrOverlay.pollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent, vrEvent.size()))
+				if (vrEvent.eEventType == EVREventType.Quit.i)
+					SwingUtilities.invokeLater(() -> stop());
 
-							if (vrOverlay.isOverlayVisible(statusOverlayHandle)) {
-								final boolean freshImage = statusOverlayImage == null
-										|| statusOverlayImage.getWidth() != overlayFrame.getWidth()
-										|| statusOverlayImage.getHeight() != overlayFrame.getHeight();
+			final JFrame overlayFrame = main.getOverlayFrame();
+			if (overlayFrame != null)
+				if (overlayFrame.isVisible()) {
+					checkOverlayError(vrOverlay.showOverlay(statusOverlayHandle));
 
-								if (freshImage) {
-									statusOverlayImage = new BufferedImage(overlayFrame.getWidth(),
-											overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-									statusOverlayGraphics2d = statusOverlayImage.createGraphics();
-								}
+					if (vrOverlay.isOverlayVisible(statusOverlayHandle)) {
+						final boolean freshImage = statusOverlayImage == null
+								|| statusOverlayImage.getWidth() != overlayFrame.getWidth()
+								|| statusOverlayImage.getHeight() != overlayFrame.getHeight();
 
-								overlayFrame.paint(statusOverlayGraphics2d);
-
-								if (glContext.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT)
-									break;
-
-								if (freshImage)
-									statusOverlayTexture = AWTTextureIO.newTexture(glProfile, statusOverlayImage,
-											false);
-								else
-									statusOverlayTexture.updateImage(glContext.getGL(),
-											AWTTextureIO.newTextureData(glProfile, statusOverlayImage, false));
-
-								final openvr.lib.Texture.ByReference textureReference = new openvr.lib.Texture.ByReference(
-										statusOverlayTexture.getTextureObject(), ETextureType.OpenGL, EColorSpace.Auto);
-								checkOverlayError(vrOverlay.setOverlayTexture(statusOverlayHandle, textureReference));
-							}
-						} else
-							checkOverlayError(vrOverlay.hideOverlay(statusOverlayHandle));
-
-					if (onScreenKeyboard.isVisible()) {
-						checkOverlayError(vrOverlay.showOverlay(onScreenKeyboardOverlayHandle));
-
-						if (vrOverlay.isOverlayVisible(onScreenKeyboardOverlayHandle)) {
-							final boolean freshImage = onScreenKeyboardOverlayImage == null
-									|| onScreenKeyboardOverlayImage.getWidth() != onScreenKeyboard.getWidth()
-									|| onScreenKeyboardOverlayImage.getHeight() != onScreenKeyboard.getHeight();
-
-							if (freshImage) {
-								onScreenKeyboardOverlayImage = new BufferedImage(onScreenKeyboard.getWidth(),
-										onScreenKeyboard.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-								onScreenKeyboardOverlayGraphics2d = onScreenKeyboardOverlayImage.createGraphics();
-							}
-
-							onScreenKeyboard.paint(onScreenKeyboardOverlayGraphics2d);
-
-							if (glContext.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT)
-								break;
-
-							if (freshImage)
-								onScreenKeyboardOverlayTexture = AWTTextureIO.newTexture(glProfile,
-										onScreenKeyboardOverlayImage, false);
-							else
-								onScreenKeyboardOverlayTexture.updateImage(glContext.getGL(),
-										AWTTextureIO.newTextureData(glProfile, onScreenKeyboardOverlayImage, false));
-
-							final openvr.lib.Texture.ByReference textureReference = new openvr.lib.Texture.ByReference(
-									onScreenKeyboardOverlayTexture.getTextureObject(), ETextureType.OpenGL,
-									EColorSpace.Auto);
-							checkOverlayError(
-									vrOverlay.setOverlayTexture(onScreenKeyboardOverlayHandle, textureReference));
+						if (freshImage) {
+							statusOverlayImage = new BufferedImage(overlayFrame.getWidth(), overlayFrame.getHeight(),
+									BufferedImage.TYPE_INT_ARGB_PRE);
+							statusOverlayGraphics2d = statusOverlayImage.createGraphics();
 						}
-					} else
-						checkOverlayError(vrOverlay.hideOverlay(onScreenKeyboardOverlayHandle));
-				} catch (final Exception e) {
-				}
 
-				try {
-					Thread.sleep(17L);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
+						overlayFrame.paint(statusOverlayGraphics2d);
+
+						glContext.makeCurrent();
+
+						if (freshImage)
+							statusOverlayTexture = AWTTextureIO.newTexture(glProfile, statusOverlayImage, false);
+						else
+							statusOverlayTexture.updateImage(glContext.getGL(),
+									AWTTextureIO.newTextureData(glProfile, statusOverlayImage, false));
+
+						final openvr.lib.Texture.ByReference textureReference = new openvr.lib.Texture.ByReference(
+								statusOverlayTexture.getTextureObject(), ETextureType.OpenGL, EColorSpace.Auto);
+						checkOverlayError(vrOverlay.setOverlayTexture(statusOverlayHandle, textureReference));
+					}
+				} else
+					checkOverlayError(vrOverlay.hideOverlay(statusOverlayHandle));
+
+			if (onScreenKeyboard.isVisible()) {
+				checkOverlayError(vrOverlay.showOverlay(onScreenKeyboardOverlayHandle));
+
+				if (vrOverlay.isOverlayVisible(onScreenKeyboardOverlayHandle)) {
+					final boolean freshImage = onScreenKeyboardOverlayImage == null
+							|| onScreenKeyboardOverlayImage.getWidth() != onScreenKeyboard.getWidth()
+							|| onScreenKeyboardOverlayImage.getHeight() != onScreenKeyboard.getHeight();
+
+					if (freshImage) {
+						onScreenKeyboardOverlayImage = new BufferedImage(onScreenKeyboard.getWidth(),
+								onScreenKeyboard.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+						onScreenKeyboardOverlayGraphics2d = onScreenKeyboardOverlayImage.createGraphics();
+					}
+
+					onScreenKeyboard.paint(onScreenKeyboardOverlayGraphics2d);
+
+					if (!glContext.isCurrent())
+						glContext.makeCurrent();
+
+					if (freshImage)
+						onScreenKeyboardOverlayTexture = AWTTextureIO.newTexture(glProfile,
+								onScreenKeyboardOverlayImage, false);
+					else
+						onScreenKeyboardOverlayTexture.updateImage(glContext.getGL(),
+								AWTTextureIO.newTextureData(glProfile, onScreenKeyboardOverlayImage, false));
+
+					final openvr.lib.Texture.ByReference textureReference = new openvr.lib.Texture.ByReference(
+							onScreenKeyboardOverlayTexture.getTextureObject(), ETextureType.OpenGL, EColorSpace.Auto);
+					checkOverlayError(vrOverlay.setOverlayTexture(onScreenKeyboardOverlayHandle, textureReference));
 				}
-			}
+			} else
+				checkOverlayError(vrOverlay.hideOverlay(onScreenKeyboardOverlayHandle));
+		} catch (final Exception e) {
+			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		} finally {
-			deInit();
+			if (glContext.isCurrent())
+				glContext.release();
 		}
 	}
 
-	void stopOverlay() {
-		run = false;
+	void stop() {
+		executorService.shutdown();
+		try {
+			if (executorService.awaitTermination(2L, TimeUnit.SECONDS))
+				deInit();
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 }

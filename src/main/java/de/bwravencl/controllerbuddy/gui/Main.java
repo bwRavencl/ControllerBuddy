@@ -116,7 +116,7 @@ import com.google.gson.JsonParseException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.Version;
-import de.bwravencl.controllerbuddy.gui.FrameUtils.FrameDragListener;
+import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -682,13 +682,6 @@ public final class Main {
 			"/icon_128.png" };
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
-
-	public static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
-		if (SwingUtilities.isEventDispatchThread())
-			runnable.run();
-		else
-			SwingUtilities.invokeLater(runnable);
-	}
 
 	public static boolean is64Bit() {
 		return "64".equals(System.getProperty("sun.arch.data.model"));
@@ -1314,7 +1307,7 @@ public final class Main {
 
 	private void deInitOverlay() {
 		if (openVrOverlay != null) {
-			openVrOverlay.stopOverlay();
+			openVrOverlay.stop();
 			openVrOverlay = null;
 		}
 
@@ -1459,7 +1452,6 @@ public final class Main {
 
 		try {
 			openVrOverlay = new OpenVrOverlay(this);
-			openVrOverlay.start();
 		} catch (final Exception e) {
 			openVrOverlay = null;
 		}
@@ -1656,7 +1648,7 @@ public final class Main {
 	}
 
 	public void setOverlayText(final String text) {
-		invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
+		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
 	}
 
 	public void setSelectedController(final Controller controller) {
@@ -1973,7 +1965,7 @@ public final class Main {
 			final int x = maxWindowBounds.width - overlayFrame.getWidth();
 			final int y = maxWindowBounds.height - overlayFrame.getHeight();
 			final Point defaultLocation = new Point(x, y);
-			FrameUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
+			GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
 		}
 	}
 

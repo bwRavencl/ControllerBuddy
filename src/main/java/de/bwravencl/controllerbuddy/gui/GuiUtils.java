@@ -10,8 +10,9 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-class FrameUtils {
+class GuiUtils {
 
 	static class FrameDragListener extends MouseAdapter {
 		private final Main main;
@@ -65,6 +66,13 @@ class FrameUtils {
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return underscoreTitle + "_location";
+	}
+
+	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
+		if (SwingUtilities.isEventDispatchThread())
+			runnable.run();
+		else
+			SwingUtilities.invokeLater(runnable);
 	}
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
