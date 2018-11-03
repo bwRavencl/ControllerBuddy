@@ -410,7 +410,6 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private Main main;
-
 	private Component component;
 	private Input input;
 	private Profile unsavedProfile;
