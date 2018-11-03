@@ -45,7 +45,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import de.bwravencl.controllerbuddy.gui.Main.FrameDragListener;
+import de.bwravencl.controllerbuddy.gui.FrameUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -152,7 +152,7 @@ public class OnScreenKeyboard extends JFrame {
 								}
 
 							};
-							Main.getTimer().schedule(lockTimerTask, MIN_REPEAT_PRESS_TIME);
+							main.getTimer().schedule(lockTimerTask, MIN_REPEAT_PRESS_TIME);
 						} else {
 							if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
 								release();
@@ -470,12 +470,16 @@ public class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(DirectInputKeyCode.DIK_NUMPADCOMMA),
 					new DefaultKeyboardButton(DirectInputKeyCode.DIK_NUMPADENTER) } };
 
+	private final Main main;
+	private final FrameDragListener frameDragListener;
 	private volatile boolean anyChanges;
 	private int selectedRow = keyboardButtons.length / 2;
 	private int selectedColumn = keyboardButtons[selectedRow].length / 2;
-	private final FrameDragListener frameDragListener = new FrameDragListener(this);
 
-	OnScreenKeyboard() {
+	OnScreenKeyboard(final Main main) {
+		this.main = main;
+		frameDragListener = new FrameDragListener(main, this);
+
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
@@ -642,7 +646,7 @@ public class OnScreenKeyboard extends JFrame {
 		final int x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
 		final int y = (int) maxWindowBounds.getMaxY() - getHeight();
 		final Point defaultLocation = new Point(x, y);
-		Main.loadFrameLocation(this, defaultLocation, maxWindowBounds);
+		FrameUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
 	}
 
 }

@@ -3,6 +3,9 @@ package de.bwravencl.controllerbuddy.gui;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLDrawable;
@@ -49,6 +52,8 @@ class OpenVrOverlay extends Thread {
 		return hmdMat34;
 	}
 
+	private final Main main;
+	private final OnScreenKeyboard onScreenKeyboard;
 	private volatile boolean run = true;
 	private final IVROverlay vrOverlay;
 	private long statusOverlayHandle;
@@ -62,7 +67,10 @@ class OpenVrOverlay extends Thread {
 	private final GLProfile glProfile;
 	private final GLContext glContext;
 
-	OpenVrOverlay() throws Exception {
+	OpenVrOverlay(final Main main) throws Exception {
+		this.main = main;
+		onScreenKeyboard = main.getOnScreenKeyboard();
+
 		final EVRInitError_ByReference initError = new EVRInitError_ByReference();
 		OpenvrKt.vrInit(initError, EVRApplicationType.Overlay, "test");
 		if (initError.value != EVRInitError.None)
@@ -80,10 +88,13 @@ class OpenVrOverlay extends Thread {
 			overlayTextureBounds.vMax = 0.0f;
 			overlayTextureBounds.vMin = 1.0f;
 
-			if (Main.overlayFrame != null) {
+			final JFrame overlayFrame = main.getOverlayFrame();
+			if (overlayFrame != null) {
+				SwingUtilities.invokeLater(() -> main.setOnScreenKeyboardButtonVisible(false));
+
 				final LongByReference statusOverlayHandleReference = new LongByReference();
-				checkOverlayError(vrOverlay.createOverlay(OVERLAY_KEY_PREFIX + Main.overlayFrame.getTitle(),
-						Main.overlayFrame.getTitle(), statusOverlayHandleReference));
+				checkOverlayError(vrOverlay.createOverlay(OVERLAY_KEY_PREFIX + overlayFrame.getTitle(),
+						overlayFrame.getTitle(), statusOverlayHandleReference));
 				statusOverlayHandle = statusOverlayHandleReference.getValue();
 
 				checkOverlayError(vrOverlay.setOverlayWidthInMeters(statusOverlayHandle, 0.2f));
@@ -102,8 +113,8 @@ class OpenVrOverlay extends Thread {
 			}
 
 			final LongByReference onScreenKeyboardOverlayHandleReference = new LongByReference();
-			checkOverlayError(vrOverlay.createOverlay(OVERLAY_KEY_PREFIX + Main.onScreenKeyboard.getTitle(),
-					Main.onScreenKeyboard.getTitle(), onScreenKeyboardOverlayHandleReference));
+			checkOverlayError(vrOverlay.createOverlay(OVERLAY_KEY_PREFIX + onScreenKeyboard.getTitle(),
+					onScreenKeyboard.getTitle(), onScreenKeyboardOverlayHandleReference));
 			onScreenKeyboardOverlayHandle = onScreenKeyboardOverlayHandleReference.getValue();
 
 			checkOverlayError(vrOverlay.setOverlayWidthInMeters(onScreenKeyboardOverlayHandle, 1.0f));
@@ -139,6 +150,8 @@ class OpenVrOverlay extends Thread {
 		OpenvrKt.vrShutdown();
 		if (glContext != null)
 			glContext.destroy();
+
+		SwingUtilities.invokeLater(() -> main.setOnScreenKeyboardButtonVisible(true));
 	}
 
 	@Override
@@ -146,22 +159,23 @@ class OpenVrOverlay extends Thread {
 		try {
 			while (run) {
 				try {
-					if (Main.overlayFrame != null)
-						if (Main.overlayFrame.isVisible()) {
+					final JFrame overlayFrame = main.getOverlayFrame();
+					if (overlayFrame != null)
+						if (overlayFrame.isVisible()) {
 							checkOverlayError(vrOverlay.showOverlay(statusOverlayHandle));
 
 							if (vrOverlay.isOverlayVisible(statusOverlayHandle)) {
 								final boolean freshImage = statusOverlayImage == null
-										|| statusOverlayImage.getWidth() != Main.overlayFrame.getWidth()
-										|| statusOverlayImage.getHeight() != Main.overlayFrame.getHeight();
+										|| statusOverlayImage.getWidth() != overlayFrame.getWidth()
+										|| statusOverlayImage.getHeight() != overlayFrame.getHeight();
 
 								if (freshImage) {
-									statusOverlayImage = new BufferedImage(Main.overlayFrame.getWidth(),
-											Main.overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+									statusOverlayImage = new BufferedImage(overlayFrame.getWidth(),
+											overlayFrame.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
 									statusOverlayGraphics2d = statusOverlayImage.createGraphics();
 								}
 
-								Main.overlayFrame.paint(statusOverlayGraphics2d);
+								overlayFrame.paint(statusOverlayGraphics2d);
 
 								if (glContext.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT)
 									break;
@@ -180,21 +194,21 @@ class OpenVrOverlay extends Thread {
 						} else
 							checkOverlayError(vrOverlay.hideOverlay(statusOverlayHandle));
 
-					if (Main.onScreenKeyboard.isVisible()) {
+					if (onScreenKeyboard.isVisible()) {
 						checkOverlayError(vrOverlay.showOverlay(onScreenKeyboardOverlayHandle));
 
 						if (vrOverlay.isOverlayVisible(onScreenKeyboardOverlayHandle)) {
 							final boolean freshImage = onScreenKeyboardOverlayImage == null
-									|| onScreenKeyboardOverlayImage.getWidth() != Main.onScreenKeyboard.getWidth()
-									|| onScreenKeyboardOverlayImage.getHeight() != Main.onScreenKeyboard.getHeight();
+									|| onScreenKeyboardOverlayImage.getWidth() != onScreenKeyboard.getWidth()
+									|| onScreenKeyboardOverlayImage.getHeight() != onScreenKeyboard.getHeight();
 
 							if (freshImage) {
-								onScreenKeyboardOverlayImage = new BufferedImage(Main.onScreenKeyboard.getWidth(),
-										Main.onScreenKeyboard.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+								onScreenKeyboardOverlayImage = new BufferedImage(onScreenKeyboard.getWidth(),
+										onScreenKeyboard.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
 								onScreenKeyboardOverlayGraphics2d = onScreenKeyboardOverlayImage.createGraphics();
 							}
 
-							Main.onScreenKeyboard.paint(onScreenKeyboardOverlayGraphics2d);
+							onScreenKeyboard.paint(onScreenKeyboardOverlayGraphics2d);
 
 							if (glContext.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT)
 								break;

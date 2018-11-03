@@ -256,7 +256,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	boolean init() {
-		System.setProperty("jna.library.path", Main.preferences.get(
+		System.setProperty("jna.library.path", main.getPreferences().get(
 				Main.PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {

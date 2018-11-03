@@ -43,8 +43,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -68,7 +66,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -119,6 +116,7 @@ import com.google.gson.JsonParseException;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.Version;
+import de.bwravencl.controllerbuddy.gui.FrameUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -236,46 +234,6 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
 			editComponentDialog.setVisible(true);
-		}
-
-	}
-
-	static class FrameDragListener extends MouseAdapter {
-
-		private final JFrame frame;
-
-		private Point mouseDownLocation = null;
-
-		FrameDragListener(final JFrame frame) {
-			this.frame = frame;
-		}
-
-		boolean isDragging() {
-			return mouseDownLocation != null;
-		}
-
-		@Override
-		public void mouseDragged(final MouseEvent e) {
-			final Point currentMouseLocation = e.getLocationOnScreen();
-			final Point newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
-					currentMouseLocation.y - mouseDownLocation.y);
-
-			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
-					.getMaximumWindowBounds();
-			setFrameLocationRespectingBounds(frame, newFrameLocation, maxWindowBounds);
-		}
-
-		@Override
-		public void mousePressed(final MouseEvent e) {
-			mouseDownLocation = e.getPoint();
-		}
-
-		@Override
-		public void mouseReleased(final MouseEvent e) {
-			mouseDownLocation = null;
-
-			final Point frameLocation = frame.getLocation();
-			preferences.put(getFrameLocationPreferencesKey(frame), frameLocation.x + "," + frameLocation.y);
 		}
 
 	}
@@ -473,7 +431,7 @@ public final class Main {
 
 	}
 
-	private static class SetHostAction extends AbstractAction implements FocusListener {
+	private class SetHostAction extends AbstractAction implements FocusListener {
 
 		private static final long serialVersionUID = -7674562782751876814L;
 
@@ -686,26 +644,27 @@ public final class Main {
 
 	}
 
-	public static final Preferences preferences = Preferences.userNodeForPackage(Main.class);
 	private static final System.Logger log = System.getLogger(Main.class.getName());
+	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
+	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
 	private static final int SINGLE_INSTANCE_PORT = 58008;
 	private static final int OUTPUT_TYPE_NONE = 0;
 	private static final int OUTPUT_TYPE_LOCAL = 1;
 	private static final int OUTPUT_TYPE_CLIENT = 2;
 	private static final int OUTPUT_TYPE_SERVER = 3;
-	public static final int DIALOG_BOUNDS_X = 100;
-	public static final int DIALOG_BOUNDS_Y = 100;
-	public static final int DIALOG_BOUNDS_WIDTH = 580;
-	public static final int DIALOG_BOUNDS_HEIGHT = 640;
-	public static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
-	public static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
+	static final int DIALOG_BOUNDS_X = 100;
+	static final int DIALOG_BOUNDS_Y = 100;
+	static final int DIALOG_BOUNDS_WIDTH = 580;
+	static final int DIALOG_BOUNDS_HEIGHT = 640;
+	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
+	static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_TRAY = "tray";
 	private static final String OPTION_VERSION = "version";
 	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
 	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
 	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
-	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
@@ -716,42 +675,13 @@ public final class Main {
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
 	private static final String PREFERENCES_SHOW_VR_OVERLAY = "show_vr_overlay";
-	public static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
+	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
-	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
-	private static final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	static volatile JFrame overlayFrame;
-	private static volatile OpenVrOverlay openVrOverlay;
-	private static FrameDragListener overlayFrameDragListener;
-	private static JPanel indicatorPanel;
-	private static Dimension prevScreenSize;
-	private static final Timer timer = new Timer();
-	public static final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard();
-
-	private static String getFrameLocationPreferencesKey(final JFrame frame) {
-		final String title = frame.getTitle();
-		if (title == null || title.isBlank())
-			return null;
-
-		String underscoreTitle = title.codePoints().mapToObj((c) -> {
-			if (c == ' ')
-				return "_";
-			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
-		}).collect(Collectors.joining());
-		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
-
-		return underscoreTitle + "_location";
-	}
-
-	public static Timer getTimer() {
-		return timer;
-	}
 
 	public static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
 		if (SwingUtilities.isEventDispatchThread())
@@ -776,25 +706,6 @@ public final class Main {
 
 	public static boolean isWindows() {
 		return System.getProperty("os.name").startsWith("Windows");
-	}
-
-	static void loadFrameLocation(final JFrame frame, final Point defaultLocation, final Rectangle maxWindowBounds) {
-		final Point location = defaultLocation;
-
-		final String locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
-		if (locationString != null) {
-			final String[] parts = locationString.split(",");
-			if (parts.length == 2)
-				try {
-					final int x = Integer.parseInt(parts[0]);
-					final int y = Integer.parseInt(parts[1]);
-					location.x = x;
-					location.y = y;
-				} catch (final NumberFormatException e) {
-				}
-		}
-
-		setFrameLocationRespectingBounds(frame, location, maxWindowBounds);
 	}
 
 	public static void main(final String[] args) {
@@ -830,19 +741,6 @@ public final class Main {
 		});
 	}
 
-	private static void repaintOverlay() {
-		if (overlayFrame == null)
-			return;
-
-		overlayFrame.getContentPane().validate();
-		overlayFrame.getContentPane().repaint();
-
-		if (onScreenKeyboard.isVisible()) {
-			onScreenKeyboard.getContentPane().validate();
-			onScreenKeyboard.getContentPane().repaint();
-		}
-	}
-
 	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
 		if (component == null)
 			return;
@@ -854,25 +752,8 @@ public final class Main {
 				setEnabledRecursive(child, enabled);
 	}
 
-	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
-			final Rectangle maxWindowBounds) {
-		location.x = Math.max(0, Math.min(maxWindowBounds.width - frame.getWidth(), location.x));
-		location.y = Math.max(0, Math.min(maxWindowBounds.height - frame.getHeight(), location.y));
-		frame.setLocation(location);
-	}
-
-	private static void updateOverlayLocation() {
-		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
-			overlayFrame.pack();
-			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
-					.getMaximumWindowBounds();
-			final int x = maxWindowBounds.width - overlayFrame.getWidth();
-			final int y = maxWindowBounds.height - overlayFrame.getHeight();
-			final Point defaultLocation = new Point(x, y);
-			loadFrameLocation(overlayFrame, defaultLocation, maxWindowBounds);
-		}
-	}
-
+	private final Preferences preferences = Preferences.userNodeForPackage(Main.class);
+	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private LocalVJoyOutputThread localThread;
 	private ClientVJoyOutputThread clientThread;
 	private ServerOutputThread serverThread;
@@ -906,10 +787,16 @@ public final class Main {
 	private File currentFile;
 	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-
 	private final JLabel labelCurrentMode = new JLabel();
-
 	private final JFileChooser fileChooser = new ProfileFileChooser();
+	private final Timer timer = new Timer();
+	private volatile OpenVrOverlay openVrOverlay;
+	private FrameDragListener overlayFrameDragListener;
+	private JPanel indicatorPanel;
+	private Dimension prevScreenSize;
+	private volatile JFrame overlayFrame;
+	private volatile JButton onScreenKeyboardButton;
+	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
 		frame = new JFrame();
@@ -1434,6 +1321,7 @@ public final class Main {
 		if (overlayFrame != null) {
 			overlayFrame.dispose();
 			overlayFrame = null;
+			onScreenKeyboardButton = null;
 		}
 
 		virtualAxisToProgressBarMap.clear();
@@ -1459,6 +1347,26 @@ public final class Main {
 
 	public JFrame getFrame() {
 		return frame;
+	}
+
+	public OnScreenKeyboard getOnScreenKeyboard() {
+		return onScreenKeyboard;
+	}
+
+	JButton getOnScreenKeyboardButton() {
+		return onScreenKeyboardButton;
+	}
+
+	JFrame getOverlayFrame() {
+		return overlayFrame;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	public Timer getTimer() {
+		return timer;
 	}
 
 	public void handleOnScreenKeyboardModeChange() {
@@ -1499,13 +1407,13 @@ public final class Main {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
-		overlayFrameDragListener = new FrameDragListener(overlayFrame);
+		overlayFrameDragListener = new FrameDragListener(this, overlayFrame);
 		overlayFrame.addMouseListener(overlayFrameDragListener);
 		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
 
 		if (input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
 			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
-			final JButton onScreenKeyboardButton = new JButton(icon);
+			onScreenKeyboardButton = new JButton(icon);
 			onScreenKeyboardButton.addActionListener(e -> {
 				scheduleOnScreenKeyboardModeSwitch = true;
 			});
@@ -1550,7 +1458,7 @@ public final class Main {
 			return;
 
 		try {
-			openVrOverlay = new OpenVrOverlay();
+			openVrOverlay = new OpenVrOverlay(this);
 			openVrOverlay.start();
 		} catch (final Exception e) {
 			openVrOverlay = null;
@@ -1641,6 +1549,19 @@ public final class Main {
 		System.exit(0);
 	}
 
+	private void repaintOverlay() {
+		if (overlayFrame == null)
+			return;
+
+		overlayFrame.getContentPane().validate();
+		overlayFrame.getContentPane().repaint();
+
+		if (onScreenKeyboard.isVisible()) {
+			onScreenKeyboard.getContentPane().validate();
+			onScreenKeyboard.getContentPane().repaint();
+		}
+	}
+
 	public void restartLast() {
 		switch (lastOutputType) {
 		case OUTPUT_TYPE_LOCAL:
@@ -1724,6 +1645,14 @@ public final class Main {
 		}
 
 		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
+	}
+
+	void setOnScreenKeyboardButtonVisible(final boolean visible) {
+		if (onScreenKeyboardButton == null)
+			return;
+
+		onScreenKeyboardButton.setVisible(visible);
+		updateOverlayLocation();
 	}
 
 	public void setOverlayText(final String text) {
@@ -2034,6 +1963,18 @@ public final class Main {
 						progressBar.setValue(newValue);
 				}
 			}
+	}
+
+	private void updateOverlayLocation() {
+		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
+			overlayFrame.pack();
+			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					.getMaximumWindowBounds();
+			final int x = maxWindowBounds.width - overlayFrame.getWidth();
+			final int y = maxWindowBounds.height - overlayFrame.getHeight();
+			final Point defaultLocation = new Point(x, y);
+			FrameUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
+		}
 	}
 
 	private void updateOverlayPanel() {

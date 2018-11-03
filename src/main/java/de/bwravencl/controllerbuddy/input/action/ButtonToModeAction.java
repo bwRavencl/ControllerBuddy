@@ -21,8 +21,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 import java.util.UUID;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -109,17 +111,19 @@ public class ButtonToModeAction implements IButtonToAction {
 
 			final Set<String> components = componentToActionsMap.keySet();
 			final Map<String, List<IAction>> defaultComponentToActionsMap = previousMode.getComponentToActionsMap();
+			final Main main = input.getMain();
+			final Timer timer = main.getTimer();
 			if (defaultComponentToActionsMap != null)
 				for (final String c : components)
 					if (defaultComponentToActionsMap.containsKey(c))
 						for (final IAction a : defaultComponentToActionsMap.get(c))
 							if (a instanceof ISuspendableAction)
-								((ISuspendableAction) a).suspend(c);
+								((ISuspendableAction) a).suspend(timer, c);
 
 			profile.setActiveMode(input, previousMode.getUuid());
 
 			if (targetsOnScreenKeyboardMode())
-				input.getMain().toggleOnScreenKeyboard();
+				main.toggleOnScreenKeyboard();
 		}
 	}
 
