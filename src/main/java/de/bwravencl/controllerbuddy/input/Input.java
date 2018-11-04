@@ -666,13 +666,13 @@ public class Input {
 	private void updateDualShock4LightbarColor() {
 		synchronized (dualShock4HidReport) {
 			if (charging) {
-				dualShock4HidReport[6] = (byte) (batteryState == 100 ? 0 : 128);
-				dualShock4HidReport[7] = (byte) 128;
-				dualShock4HidReport[8] = 0;
+				dualShock4HidReport[6] = (byte) (batteryState == 100 ? 0x00 : 0x1C);
+				dualShock4HidReport[7] = (byte) 0x1C;
+				dualShock4HidReport[8] = 0x00;
 			} else {
-				dualShock4HidReport[6] = (byte) (batteryState == LOW_BATTERY_WARNING ? 128 : 0);
+				dualShock4HidReport[6] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0x1C : 0x00);
 				dualShock4HidReport[7] = 0;
-				dualShock4HidReport[8] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0 : 128);
+				dualShock4HidReport[8] = (byte) (batteryState == LOW_BATTERY_WARNING ? 0x00 : 0x1C);
 			}
 
 			sendDualShock4HidReport();
