@@ -42,7 +42,7 @@ ext {
 }
 
 mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
-version = "0.7-${git.head().abbreviatedId}"
+version = "${git.describe(tags: true)}-${git.head().abbreviatedId}"
 
 repositories {
     mavenCentral()
