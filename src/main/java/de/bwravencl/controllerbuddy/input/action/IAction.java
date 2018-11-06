@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public interface IAction extends Cloneable {
 

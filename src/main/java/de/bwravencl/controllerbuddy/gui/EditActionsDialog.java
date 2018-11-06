@@ -90,7 +90,7 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardK
 import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction.Direction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import net.java.games.input.Component;
 
 @SuppressWarnings("serial")

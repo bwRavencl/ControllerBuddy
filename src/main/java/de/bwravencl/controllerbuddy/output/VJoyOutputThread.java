@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
@@ -109,14 +110,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
 			break;
 		default:
-			break;
+			throw new IllegalArgumentException();
 		}
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
 
 	public static String getArchFolderName() {
-		if (Main.is64Bit())
+		if (Platform.is64Bit())
 			return "x64";
 		else
 			return "x86";

@@ -34,7 +34,7 @@ import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IModeChangeListenerAction;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
 

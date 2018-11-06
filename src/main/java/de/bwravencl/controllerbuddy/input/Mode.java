@@ -28,7 +28,7 @@ import java.util.UUID;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public class Mode implements Cloneable {
 
@@ -72,13 +72,20 @@ public class Mode implements Cloneable {
 	}
 
 	@Override
-	public boolean equals(final Object arg0) {
-		if (this == arg0)
+	public boolean equals(final Object obj) {
+		if (this == obj)
 			return true;
-		else if (arg0 instanceof Mode)
-			return getUuid().equals(((Mode) arg0).getUuid());
-		else
+		if (obj == null)
 			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Mode other = (Mode) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
 	}
 
 	public Map<String, List<IAction>> getComponentToActionsMap() {

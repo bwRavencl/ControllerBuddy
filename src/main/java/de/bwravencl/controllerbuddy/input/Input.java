@@ -131,53 +131,10 @@ public class Input {
 			"DUALSHOCK\u00AE4 USB Wireless Adapto" };
 	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
-	private static Controller cachedController;
-	private static Component[] cachedComponents;
 	public static final int MAX_N_BUTTONS = 128;
-	private static EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
-
 	private static final byte[] DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00,
 			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-	public static EnumMap<VirtualAxis, Integer> getAxis() {
-		return axis;
-	}
-
-	public static Component[] getComponents(final Controller controller) {
-		if (controller != cachedController) {
-			cachedController = controller;
-			cachedComponents = controller.getComponents();
-
-			if (Main.isWindows())
-				if (XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
-
-					final List<Controller> xbox360Controllers = new ArrayList<>();
-					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
-						if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
-							xbox360Controllers.add(c);
-					final int dwUserIndex = xbox360Controllers.indexOf(controller);
-
-					if (dwUserIndex <= 3)
-						try {
-							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
-							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
-							cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
-						} catch (final UnsatisfiedLinkError | Exception e) {
-							log.log(Logger.Level.ERROR, e.getMessage(), e);
-						}
-				} else if (isDualShock4Controller(controller)) {
-					final int touchpadButtonIndex = 18;
-					final Component[] newCachedComponents = new Component[cachedComponents.length - 1];
-					System.arraycopy(cachedComponents, 0, newCachedComponents, 0, touchpadButtonIndex);
-					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, newCachedComponents,
-							touchpadButtonIndex, cachedComponents.length - touchpadButtonIndex - 1);
-					cachedComponents = newCachedComponents;
-				}
-		}
-
-		return cachedComponents;
-	}
 
 	public static List<Controller> getControllers() {
 		final List<Controller> controllers = new ArrayList<>();
@@ -216,6 +173,9 @@ public class Input {
 
 	private final Main main;
 	private final Controller controller;
+	private Controller cachedController;
+	private Component[] cachedComponents;
+	private final EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
 	private Profile profile;
 	private OutputThread outputThread;
 	private boolean[] buttons;
@@ -243,7 +203,7 @@ public class Input {
 
 		profile = new Profile();
 
-		if (Main.isWindows() && isDualShock4Controller(controller)) {
+		if (main.isWindows() && isDualShock4Controller(controller)) {
 			final List<HidDeviceInfo> devices = PureJavaHidApi.enumerateDevices();
 			HidDeviceInfo hidDeviceInfo = null;
 			for (final HidDeviceInfo hi : devices) {
@@ -332,12 +292,51 @@ public class Input {
 		}
 	}
 
+	public EnumMap<VirtualAxis, Integer> getAxis() {
+		return axis;
+	}
+
 	public int getBatteryState() {
 		return batteryState;
 	}
 
 	public boolean[] getButtons() {
 		return buttons;
+	}
+
+	public Component[] getComponents(final Controller controller) {
+		if (controller != cachedController) {
+			cachedController = controller;
+			cachedComponents = controller.getComponents();
+
+			if (main.isWindows())
+				if (XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
+
+					final List<Controller> xbox360Controllers = new ArrayList<>();
+					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
+						if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
+							xbox360Controllers.add(c);
+					final int dwUserIndex = xbox360Controllers.indexOf(controller);
+
+					if (dwUserIndex <= 3)
+						try {
+							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
+							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
+							cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
+						} catch (final UnsatisfiedLinkError | Exception e) {
+							log.log(Logger.Level.ERROR, e.getMessage(), e);
+						}
+				} else if (isDualShock4Controller(controller)) {
+					final int touchpadButtonIndex = 18;
+					final Component[] newCachedComponents = new Component[cachedComponents.length - 1];
+					System.arraycopy(cachedComponents, 0, newCachedComponents, 0, touchpadButtonIndex);
+					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, newCachedComponents,
+							touchpadButtonIndex, cachedComponents.length - touchpadButtonIndex - 1);
+					cachedComponents = newCachedComponents;
+				}
+		}
+
+		return cachedComponents;
 	}
 
 	public Controller getController() {

@@ -42,14 +42,14 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 			return false;
 		}
 
-		axisX = new LONG(Input.getAxis().get(Input.VirtualAxis.X));
-		axisY = new LONG(Input.getAxis().get(Input.VirtualAxis.Y));
-		axisZ = new LONG(Input.getAxis().get(Input.VirtualAxis.Z));
-		axisRX = new LONG(Input.getAxis().get(Input.VirtualAxis.RX));
-		axisRY = new LONG(Input.getAxis().get(Input.VirtualAxis.RY));
-		axisRZ = new LONG(Input.getAxis().get(Input.VirtualAxis.RZ));
-		axisS0 = new LONG(Input.getAxis().get(Input.VirtualAxis.S0));
-		axisS1 = new LONG(Input.getAxis().get(Input.VirtualAxis.S1));
+		axisX = new LONG(input.getAxis().get(Input.VirtualAxis.X));
+		axisY = new LONG(input.getAxis().get(Input.VirtualAxis.Y));
+		axisZ = new LONG(input.getAxis().get(Input.VirtualAxis.Z));
+		axisRX = new LONG(input.getAxis().get(Input.VirtualAxis.RX));
+		axisRY = new LONG(input.getAxis().get(Input.VirtualAxis.RY));
+		axisRZ = new LONG(input.getAxis().get(Input.VirtualAxis.RZ));
+		axisS0 = new LONG(input.getAxis().get(Input.VirtualAxis.S0));
+		axisS1 = new LONG(input.getAxis().get(Input.VirtualAxis.S1));
 
 		buttons = new BOOL[nButtons];
 		for (int i = 0; i < nButtons; i++) {

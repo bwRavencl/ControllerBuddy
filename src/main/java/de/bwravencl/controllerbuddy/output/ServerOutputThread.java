@@ -156,7 +156,7 @@ public class ServerOutputThread extends OutputThread {
 					if (!input.poll())
 						controllerDisconnected();
 					else {
-						for (final int v : Input.getAxis().values())
+						for (final int v : input.getAxis().values())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 						for (int i = 0; i < nButtons; i++) {

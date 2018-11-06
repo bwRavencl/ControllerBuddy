@@ -113,6 +113,7 @@ import org.apache.commons.cli.ParseException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.Version;
@@ -129,7 +130,7 @@ import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
@@ -274,6 +275,10 @@ public final class Main {
 			}
 		}
 
+	}
+
+	private static enum OutputType {
+		NONE, LOCAL, CLIENT, SERVER
 	}
 
 	private static final class ProfileFileChooser extends JFileChooser {
@@ -649,10 +654,6 @@ public final class Main {
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final int SINGLE_INSTANCE_PORT = 58008;
-	private static final int OUTPUT_TYPE_NONE = 0;
-	private static final int OUTPUT_TYPE_LOCAL = 1;
-	private static final int OUTPUT_TYPE_CLIENT = 2;
-	private static final int OUTPUT_TYPE_SERVER = 3;
 	static final int DIALOG_BOUNDS_X = 100;
 	static final int DIALOG_BOUNDS_Y = 100;
 	static final int DIALOG_BOUNDS_WIDTH = 580;
@@ -683,10 +684,6 @@ public final class Main {
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
-	public static boolean is64Bit() {
-		return "64".equals(System.getProperty("sun.arch.data.model"));
-	}
-
 	private static boolean isModalDialogShowing() {
 		final Window[] windows = Window.getWindows();
 		if (windows != null)
@@ -695,10 +692,6 @@ public final class Main {
 					return true;
 
 		return false;
-	}
-
-	public static boolean isWindows() {
-		return System.getProperty("os.name").startsWith("Windows");
 	}
 
 	public static void main(final String[] args) {
@@ -745,6 +738,7 @@ public final class Main {
 				setEnabledRecursive(child, enabled);
 	}
 
+	private final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
 	private final Preferences preferences = Preferences.userNodeForPackage(Main.class);
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private LocalVJoyOutputThread localThread;
@@ -752,7 +746,7 @@ public final class Main {
 	private ServerOutputThread serverThread;
 	private Controller selectedController;
 	private Input input;
-	private int lastOutputType = OUTPUT_TYPE_NONE;
+	private OutputType lastOutputType = OutputType.NONE;
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
@@ -888,7 +882,7 @@ public final class Main {
 			deviceMenu.setEnabled(true);
 		}
 
-		if (isWindows()) {
+		if (windows) {
 			if (controllerConnected) {
 				final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
 				menuBar.add(localMenu);
@@ -1016,7 +1010,7 @@ public final class Main {
 				e -> preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
-		if (isWindows()) {
+		if (windows) {
 			final JPanel vJoyDirectoryPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
 
@@ -1112,7 +1106,7 @@ public final class Main {
 			overlaySettingsPanel.add(showOverlayCheckBox);
 		}
 
-		if (isWindows()) {
+		if (windows) {
 			if (preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true)) {
 				final JPanel vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
 				settingsPanel.add(vrOverlaySettingsPanel, panelGridBagConstraints);
@@ -1224,7 +1218,7 @@ public final class Main {
 
 					final Controller controller = input.getController();
 					if (controller != null && controller.poll()) {
-						for (final Component c : Input.getComponents(controller)) {
+						for (final Component c : input.getComponents(controller)) {
 							final JPanel componentPanel = new JPanel(new GridBagLayout());
 							assignmentsPanel.add(componentPanel,
 									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
@@ -1447,7 +1441,7 @@ public final class Main {
 	}
 
 	private void initVrOverlay() {
-		if (!isWindows() || !preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true))
+		if (!windows || !preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true))
 			return;
 
 		try {
@@ -1455,6 +1449,10 @@ public final class Main {
 		} catch (final Exception e) {
 			openVrOverlay = null;
 		}
+	}
+
+	public boolean isWindows() {
+		return windows;
 	}
 
 	private boolean loadProfile(final File file) {
@@ -1520,7 +1518,7 @@ public final class Main {
 	}
 
 	public boolean preventPowerSaveMode() {
-		if (!isWindows())
+		if (!windows)
 			return false;
 
 		return preferences.getBoolean(Main.PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
@@ -1556,17 +1554,16 @@ public final class Main {
 
 	public void restartLast() {
 		switch (lastOutputType) {
-		case OUTPUT_TYPE_LOCAL:
+		case LOCAL:
 			startLocal();
 			break;
-		case OUTPUT_TYPE_CLIENT:
+		case CLIENT:
 			startClient();
 			break;
-		case OUTPUT_TYPE_SERVER:
+		case SERVER:
 			startServer();
 			break;
-		case OUTPUT_TYPE_NONE:
-		default:
+		case NONE:
 			break;
 		}
 	}
@@ -1670,7 +1667,7 @@ public final class Main {
 	}
 
 	public void startClient() {
-		lastOutputType = OUTPUT_TYPE_CLIENT;
+		lastOutputType = OutputType.CLIENT;
 		startClientRadioButtonMenuItem.setSelected(true);
 		if (startLocalRadioButtonMenuItem != null)
 			startLocalRadioButtonMenuItem.setEnabled(false);
@@ -1693,7 +1690,7 @@ public final class Main {
 	}
 
 	public void startLocal() {
-		lastOutputType = OUTPUT_TYPE_LOCAL;
+		lastOutputType = OutputType.LOCAL;
 		startLocalRadioButtonMenuItem.setSelected(true);
 		startLocalRadioButtonMenuItem.setEnabled(false);
 		startClientRadioButtonMenuItem.setEnabled(false);
@@ -1753,7 +1750,7 @@ public final class Main {
 	}
 
 	public void startServer() {
-		lastOutputType = OUTPUT_TYPE_SERVER;
+		lastOutputType = OutputType.SERVER;
 		startServerRadioButtonMenuItem.setSelected(true);
 		if (startLocalRadioButtonMenuItem != null)
 			startLocalRadioButtonMenuItem.setEnabled(false);
@@ -1773,7 +1770,7 @@ public final class Main {
 	}
 
 	private void stopAll() {
-		if (isWindows()) {
+		if (windows) {
 			stopLocal(false);
 			stopClient(false);
 		}
@@ -1809,7 +1806,7 @@ public final class Main {
 			startServerRadioButtonMenuItem.setEnabled(true);
 
 		if (resetLastOutputType)
-			lastOutputType = OUTPUT_TYPE_NONE;
+			lastOutputType = OutputType.NONE;
 
 		stopOverlayTimerTask();
 		deInitOverlay();
@@ -1839,7 +1836,7 @@ public final class Main {
 		setEnabledRecursive(settingsPanel, true);
 
 		if (resetLastOutputType)
-			lastOutputType = OUTPUT_TYPE_NONE;
+			lastOutputType = OutputType.NONE;
 
 		stopOverlayTimerTask();
 		deInitOverlay();
@@ -1859,7 +1856,7 @@ public final class Main {
 			stopLocalRadioButtonMenuItem.setEnabled(false);
 		}
 
-		if (isWindows()) {
+		if (windows) {
 			if (startLocalRadioButtonMenuItem != null)
 				startLocalRadioButtonMenuItem.setEnabled(true);
 
@@ -1876,7 +1873,7 @@ public final class Main {
 		setEnabledRecursive(settingsPanel, true);
 
 		if (resetLastOutputType)
-			lastOutputType = OUTPUT_TYPE_NONE;
+			lastOutputType = OutputType.NONE;
 	}
 
 	public void toggleOnScreenKeyboard() {
@@ -1950,7 +1947,7 @@ public final class Main {
 					progressBar.setMinimum(-outputThread.getMaxAxisValue());
 					progressBar.setMaximum(outputThread.getMinAxisValue());
 
-					final int newValue = -Input.getAxis().get(va);
+					final int newValue = -input.getAxis().get(va);
 					if (progressBar.getValue() != newValue)
 						progressBar.setValue(newValue);
 				}
@@ -2033,7 +2030,7 @@ public final class Main {
 		frame.setTitle(sb.toString());
 
 		if (trayIcon != null && input != null) {
-			if (Main.isWindows() && Input.isDualShock4Controller(input.getController()))
+			if (windows && Input.isDualShock4Controller(input.getController()))
 				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
 						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
 								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));

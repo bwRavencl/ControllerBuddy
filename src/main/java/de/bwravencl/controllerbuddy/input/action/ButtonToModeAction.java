@@ -69,7 +69,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		final Profile profile = input.getProfile();
 
 		Component component = null;
-		componentLoop: for (final Component c : Input.getComponents(input.getController())) {
+		componentLoop: for (final Component c : input.getComponents(input.getController())) {
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
 			if (buttonToModeActions != null)
 				for (final ButtonToModeAction a : buttonToModeActions)

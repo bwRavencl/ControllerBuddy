@@ -46,8 +46,6 @@ public class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction 
 				case RIGHT:
 					onScreenKeyboard.moveSelectorRight();
 					break;
-				default:
-					break;
 				}
 
 				lastPressTime = currentTime;

@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import net.brockmatt.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import net.java.games.input.Controller;
 
 public abstract class OutputThread extends Thread {
