@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -616,7 +617,12 @@ public class EditActionsDialog extends JDialog {
 										GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 										new Insets(0, 0, 0, 0), 0, 10));
 
-						final JLabel propertyNameLabel = new JLabel(propertyName);
+						String spacedPropertyName = propertyName.codePoints()
+								.mapToObj((c) -> (Character.isUpperCase(c) ? " " : "") + (char) c)
+								.collect(Collectors.joining());
+						spacedPropertyName = spacedPropertyName.startsWith(" ") ? spacedPropertyName.substring(1)
+								: spacedPropertyName;
+						final JLabel propertyNameLabel = new JLabel(spacedPropertyName);
 						propertyNameLabel.setPreferredSize(new Dimension(100, 15));
 						propertyPanel.add(propertyNameLabel);
 						if (clazz == boolean.class) {
