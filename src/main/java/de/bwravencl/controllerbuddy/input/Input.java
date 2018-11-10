@@ -181,7 +181,7 @@ public class Input {
 	private boolean[] buttons;
 	private volatile int cursorDeltaX = 5;
 	private volatile int cursorDeltaY = 5;
-	private volatile int scrollClicks = 1;
+	private volatile int scrollClicks = 0;
 	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
