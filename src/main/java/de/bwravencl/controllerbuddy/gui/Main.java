@@ -1986,6 +1986,7 @@ public final class Main {
 
 	private void updateOverlayLocation() {
 		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
+			overlayFrame.pack();
 			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
 					.getMaximumWindowBounds();
 			final int x = maxWindowBounds.width - overlayFrame.getWidth();
