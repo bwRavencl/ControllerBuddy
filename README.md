@@ -2,20 +2,26 @@
 "ControllerBuddy")
 ## ControllerBuddy
 
+[![Build Status](https://travis-ci.org/bwRavencl/ControllerBuddy.svg?branch=master)](https://travis-ci.org/bwRavencl/ControllerBuddy)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
 #### License Information:
 GNU General Public License v2.0
 
 #### Description:
-ControllerBuddy allows the feeding of input from a physical game-controller connected to a host computer to a virtual joystick, provided by the vJoy device driver. ControllerBuddy can either feed to a local vJoy device on the host or to one on a second computer.
+ControllerBuddy allows the feeding of input from a physical game-controller connected to a host computer to a virtual joystick, provided by the vJoy device driver.
+ControllerBuddy can either feed to a local vJoy device on the host or to one on a second computer.
 
 Consequently ControllerBuddy can operate in three different roles:
 - Local (Single machine with a physical and a vJoy device)
 - Server (Source machine with the physical device)
 - Client (Target machine with the vJoy device)
 
-When using ControllerBuddy in Client-Server mode, both instances communicate over a lightweight UDP-based protocol.
+When using ControllerBuddy in client-server mode, both instances communicate over a lightweight UDP-based protocol.
+Please note that this mode of operation is currently considered experimental and should only be used in trusted networks!
 
-In order to support complex input profiles, ControllerBuddy provides very flexible programming of the physical controller. Each axis or button present on the device can be mapped to one or multiple actions invoked on the target host.
+In order to support complex input profiles, ControllerBuddy provides very flexible programming of the physical controller.
+Each axis or button present on the device can be mapped to one or multiple actions invoked on the target host.
 
 Currently among the following actions are supported:
 - Axis movements
@@ -37,13 +43,16 @@ Mode switching can be done by either holding down a button on the physical contr
 The whole programming of the physical controller can be performed via the graphical user interface of ControllerBuddy.
 The resulting profile can be exported to a simple JSON-based file format.
 
-ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes. The axes displayed by the overlay can be customized on a per-profile basis. The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
+ControllerBuddy offers an overlay, that displays the currently active input mode and the position of the vJoy axes.
+The axes displayed by the overlay can be customized on a per-profile basis.
+The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
 
 In addition a built-in On-Screen Keyboard is provided, that can either be controlled via special actions bound to controller buttons or via the mouse cursor.
 
 Both the status overlay and the On-Screen Keyboard can be displayed as overlays inside OpenVR-based applications. (Windows only)
 
-For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server. When running as a client currently only Windows is supported.
+For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server.
+When running in client- or local-mode currently only Windows is supported.
 
 #### Architecture:
 <pre>
@@ -84,9 +93,8 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 </pre>
 
 #### Requirements:
-- General requirements:
-  - Java SE Runtime Environment 11 (http://www.oracle.com/technetwork/java/javase/overview/index.html)
-  - vJoy 2.1.8 (http://vjoystick.sourceforge.net)
+- [OpenJDK 11] (https://openjdk.java.net/)
+- [vJoy 2.1.8] (http://vjoystick.sourceforge.net)
 
 #### Building:
 ControllerBuddy uses the Gradle build system. 
@@ -99,7 +107,3 @@ The following tasks are supported:
 | Generate Eclipse files           | gradlew eclipse      |
 | Clean Eclipse files              | gradlew cleanEclipse |
 | Delete build and gen directories | gradlew clean        |
-
-Please note that building requires OpenJDK 11.
-
-[![Build Status](https://travis-ci.org/bwRavencl/ControllerBuddy.svg?branch=master)](https://travis-ci.org/bwRavencl/ControllerBuddy)
