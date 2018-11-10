@@ -53,6 +53,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.System.Logger;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -789,7 +790,7 @@ public final class Main {
 		frame = new JFrame();
 
 		try {
-			serverSocket = new ServerSocket(SINGLE_INSTANCE_PORT);
+			serverSocket = new ServerSocket(SINGLE_INSTANCE_PORT, 10, InetAddress.getLoopbackAddress());
 		} catch (final IOException e) {
 			JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
