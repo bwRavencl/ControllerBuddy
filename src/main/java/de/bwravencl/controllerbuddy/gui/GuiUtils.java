@@ -100,8 +100,10 @@ class GuiUtils {
 
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
 			final Rectangle maxWindowBounds) {
-		location.x = Math.max(0, Math.min(maxWindowBounds.width - frame.getWidth(), location.x));
-		location.y = Math.max(0, Math.min(maxWindowBounds.height - frame.getHeight(), location.y));
+		location.x = Math.max(maxWindowBounds.x,
+				Math.min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
+		location.y = Math.max(maxWindowBounds.y,
+				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
 	}
 

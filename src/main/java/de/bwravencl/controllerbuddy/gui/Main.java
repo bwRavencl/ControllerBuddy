@@ -783,7 +783,7 @@ public final class Main {
 	private FrameDragListener overlayFrameDragListener;
 	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
-	private Dimension prevScreenSize;
+	private Rectangle prevMaxWindowBounds;
 	private volatile JFrame overlayFrame;
 	private volatile JButton onScreenKeyboardButton;
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
@@ -1745,10 +1745,10 @@ public final class Main {
 						}
 					}
 
-					final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-					if (prevScreenSize == null || screenSize.width != prevScreenSize.width
-							|| screenSize.height != prevScreenSize.height) {
-						prevScreenSize = screenSize;
+					final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+							.getMaximumWindowBounds();
+					if (!maxWindowBounds.equals(prevMaxWindowBounds)) {
+						prevMaxWindowBounds = maxWindowBounds;
 
 						updateOverlayLocation();
 						onScreenKeyboard.updateLocation();
