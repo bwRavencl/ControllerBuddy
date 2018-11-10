@@ -741,7 +741,7 @@ public final class Main {
 	}
 
 	private final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
-	private final Preferences preferences = Preferences.userNodeForPackage(Main.class);
+	private final Preferences preferences = Preferences.userNodeForPackage(Version.class);
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private LocalVJoyOutputThread localThread;
 	private ClientVJoyOutputThread clientThread;
@@ -1101,7 +1101,7 @@ public final class Main {
 
 			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
-			showOverlayCheckBox.addChangeListener(e -> {
+			showOverlayCheckBox.addActionListener(e -> {
 				final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 				preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
@@ -1120,7 +1120,7 @@ public final class Main {
 
 				final JCheckBox showVrOverlayCheckBox = new JCheckBox(rb.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
 				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
-				showVrOverlayCheckBox.addChangeListener(e -> {
+				showVrOverlayCheckBox.addActionListener(e -> {
 					final boolean showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 					preferences.putBoolean(PREFERENCES_SHOW_VR_OVERLAY, showVrOverlay);
@@ -1138,7 +1138,7 @@ public final class Main {
 			final JCheckBox preventPowerSaveModeCheckBox = new JCheckBox(
 					rb.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
 			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
-			preventPowerSaveModeCheckBox.addChangeListener(e -> {
+			preventPowerSaveModeCheckBox.addActionListener(e -> {
 				final boolean preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
 
 				preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
