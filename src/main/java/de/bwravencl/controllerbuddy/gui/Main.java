@@ -741,7 +741,7 @@ public final class Main {
 	}
 
 	private final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
-	private final Preferences preferences = Preferences.userNodeForPackage(Main.class);
+	private final Preferences preferences = Preferences.userNodeForPackage(Main.class).parent();
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private LocalVJoyOutputThread localThread;
 	private ClientVJoyOutputThread clientThread;
