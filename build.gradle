@@ -15,10 +15,11 @@ task generateVersion {
     doFirst {
         def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/Version.java")
         srcFile.parentFile.mkdirs()
-        srcFile.write("""
-package de.bwravencl.controllerbuddy;
+        srcFile.write("""package de.bwravencl.controllerbuddy;\n
 public class Version {
-   public static String getVersion() { return "$project.version"; }
+\tpublic static String getVersion() {
+\t\treturn "$project.version";
+\t}
 }
 """)
     }
@@ -37,12 +38,8 @@ compileJava {
     source generateVersion.outputs.files, sourceSets.main.java
 }
 
-ext {
-    git = org.ajoberstar.grgit.Grgit.open(dir: "$projectDir")
-}
-
-mainClassName = "de.bwravencl.controllerbuddy.gui.Main"
-version = "${git.describe()}-${git.head().abbreviatedId}"
+mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
+version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
 repositories {
     mavenCentral()
@@ -56,10 +53,10 @@ ext {
 }
 
 dependencies {
-    compile     "commons-cli:commons-cli:1.4",
-                "com.github.kotlin-graphics:openvr:v1.0.14-beta-01",
-                "com.github.nyholku:purejavahidapi:322fdb03b7",
-                "com.google.code.gson:gson:2.8.5",
+    compile     'commons-cli:commons-cli:1.4',
+                'com.github.kotlin-graphics:openvr:v1.0.14-beta-01',
+                'com.github.nyholku:purejavahidapi:322fdb03b7',
+                'com.google.code.gson:gson:2.8.5',
                 "net.java.dev.jna:jna:$jnaVersion",
                 "net.java.dev.jna:jna-platform:$jnaVersion",
                 "net.java.jinput:jinput:$jinputVersion",
