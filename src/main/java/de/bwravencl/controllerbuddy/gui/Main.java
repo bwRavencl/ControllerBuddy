@@ -43,6 +43,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -780,6 +781,7 @@ public final class Main {
 	private final Timer timer = new Timer();
 	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
+	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Dimension prevScreenSize;
 	private volatile JFrame overlayFrame;
@@ -1386,7 +1388,6 @@ public final class Main {
 		labelCurrentMode
 				.setPreferredSize(new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
 		labelCurrentMode.setForeground(Color.RED);
-		labelCurrentMode.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelCurrentMode.setText(input.getProfile().getActiveMode().getDescription());
 
 		overlayFrame = new JFrame("Overlay");
@@ -1395,9 +1396,6 @@ public final class Main {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
-		overlayFrameDragListener = new FrameDragListener(this, overlayFrame);
-		overlayFrame.addMouseListener(overlayFrameDragListener);
-		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
 
 		if (input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
 			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
@@ -1408,14 +1406,14 @@ public final class Main {
 			onScreenKeyboardButton.setBorder(null);
 			onScreenKeyboardButton.setFocusPainted(false);
 			onScreenKeyboardButton.setContentAreaFilled(false);
-			onScreenKeyboardButton.setHorizontalAlignment(SwingConstants.RIGHT);
 			overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
 		}
 
 		overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		overlayFrame.setAlwaysOnTop(true);
 
-		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		indicatorPanelFlowLayout = new FlowLayout();
+		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
 		for (final VirtualAxis va : Input.VirtualAxis.values()) {
@@ -1436,6 +1434,20 @@ public final class Main {
 		}
 
 		overlayFrame.add(indicatorPanel);
+
+		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
+
+			@Override
+			public void mouseDragged(final MouseEvent e) {
+				super.mouseDragged(e);
+				final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+						.getMaximumWindowBounds();
+				updateOverlayAlignment(maxWindowBounds);
+			}
+
+		};
+		overlayFrame.addMouseListener(overlayFrameDragListener);
+		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
 
 		updateOverlayLocation();
 		overlayFrame.setVisible(true);
@@ -1932,6 +1944,23 @@ public final class Main {
 		modesScrollPane.setViewportView(modesListPanel);
 	}
 
+	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
+		int alignment = SwingConstants.RIGHT;
+		int flowLayoutAlignment = FlowLayout.RIGHT;
+		if (overlayFrame.getX() < maxWindowBounds.width / 2) {
+			alignment = SwingConstants.LEFT;
+			flowLayoutAlignment = FlowLayout.LEFT;
+		}
+
+		labelCurrentMode.setHorizontalAlignment(alignment);
+		onScreenKeyboardButton.setHorizontalAlignment(alignment);
+
+		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
+		indicatorPanel.invalidate();
+
+		overlayFrame.pack();
+	}
+
 	public void updateOverlayAxisIndicators() {
 		for (final VirtualAxis va : Input.VirtualAxis.values())
 			if (virtualAxisToProgressBarMap.containsKey(va)) {
@@ -1957,13 +1986,13 @@ public final class Main {
 
 	private void updateOverlayLocation() {
 		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
-			overlayFrame.pack();
 			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
 					.getMaximumWindowBounds();
 			final int x = maxWindowBounds.width - overlayFrame.getWidth();
 			final int y = maxWindowBounds.height - overlayFrame.getHeight();
 			final Point defaultLocation = new Point(x, y);
 			GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
+			updateOverlayAlignment(maxWindowBounds);
 		}
 	}
 

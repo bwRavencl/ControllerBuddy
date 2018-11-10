@@ -30,6 +30,9 @@ class GuiUtils {
 
 		@Override
 		public void mouseDragged(final MouseEvent e) {
+			if (mouseDownLocation == null)
+				return;
+
 			final Point currentMouseLocation = e.getLocationOnScreen();
 			final Point newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
 					currentMouseLocation.y - mouseDownLocation.y);
