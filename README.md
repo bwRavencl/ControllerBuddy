@@ -93,8 +93,8 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 </pre>
 
 #### Requirements:
-- [OpenJDK 11] (https://openjdk.java.net/)
-- [vJoy 2.1.8] (http://vjoystick.sourceforge.net)
+- [OpenJDK 11](https://openjdk.java.net/)
+- [vJoy 2.1.8](http://vjoystick.sourceforge.net)
 
 #### Building:
 ControllerBuddy uses the Gradle build system. 
