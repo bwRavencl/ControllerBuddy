@@ -41,6 +41,9 @@ compileJava {
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
+sourceCompatibility = 11
+targetCompatibility = 11
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
