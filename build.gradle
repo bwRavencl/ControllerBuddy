@@ -49,33 +49,22 @@ repositories {
 ext {
     jinputVersion = '2.0.9'
     jnaVersion = '4.5.2'
-    joglVersion = '2.3.2'
+    lwjglVersion = '3.2.0'
 }
 
 dependencies {
     compile     'commons-cli:commons-cli:1.4',
-                'com.github.kotlin-graphics:openvr:v1.0.14-beta-01',
                 'com.github.nyholku:purejavahidapi:322fdb03b7',
                 'com.google.code.gson:gson:2.8.5',
                 "net.java.dev.jna:jna:$jnaVersion",
                 "net.java.dev.jna:jna-platform:$jnaVersion",
                 "net.java.jinput:jinput:$jinputVersion",
-                "org.jogamp.gluegen:gluegen-rt:$joglVersion",
-                "org.jogamp.gluegen:gluegen-rt:$joglVersion:natives-windows-amd64",
-                "org.jogamp.gluegen:gluegen-rt:$joglVersion:natives-windows-i586",
-                "org.jogamp.jogl:jogl:$joglVersion",
-                "org.jogamp.jogl:jogl:$joglVersion:awt",
-                "org.jogamp.jogl:jogl:$joglVersion:gldesktop",
-                "org.jogamp.jogl:jogl:$joglVersion:natives-windows-amd64",
-                "org.jogamp.jogl:jogl:$joglVersion:natives-windows-i586",
-                "org.jogamp.jogl:jogl:$joglVersion:os-win",
-                "org.jogamp.jogl:jogl:$joglVersion:util",
-                "org.jogamp.jogl:jogl:$joglVersion:util-awt",
-                "org.jogamp.jogl:nativewindow:$joglVersion",
-                "org.jogamp.jogl:nativewindow:$joglVersion:awt",
-                "org.jogamp.jogl:nativewindow:$joglVersion:os-win",
-                "org.jogamp.jogl:nativewindow:$joglVersion:natives-windows-amd64",
-                "org.jogamp.jogl:nativewindow:$joglVersion:natives-windows-i586"
+                "org.lwjgl:lwjgl:$lwjglVersion",
+                "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
+                "org.lwjgl:lwjgl-opengl:$lwjglVersion",
+                "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
+                "org.lwjgl:lwjgl-openvr:$lwjglVersion",
+                "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
     compileOnly "net.java.jinput:jinput:$jinputVersion:natives-all"
 }
 
