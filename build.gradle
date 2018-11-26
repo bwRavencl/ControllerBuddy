@@ -1,7 +1,7 @@
 plugins {
     id 'com.stehno.natives' version '0.3.1'
-    id 'org.ajoberstar.grgit' version '3.0.0-rc.2'
-    id 'us.kirchmeier.capsule' version '1.0.2'
+    id 'org.ajoberstar.grgit' version '3.0.0'
+    id 'com.jonaslasauskas.capsule' version '0.3.0'
 }
 
 apply plugin: 'application'
@@ -83,9 +83,12 @@ run {
     systemProperty 'java.library.path', "$buildDir/natives"
 }
 
-task capsule(type: FatCapsule){
+capsule {
+    capsuleManifest {
+        applicationId = 'de.bwravencl.controllerbuddy'
+        applicationClass = 'de.bwravencl.controllerbuddy.gui.Main'
+    }
     dependsOn includeNatives
-    applicationClass 'de.bwravencl.controllerbuddy.gui.Main'
     baseName 'ControllerBuddy'
     from fileTree(dir: "$buildDir/natives", includes: ['*.dll', '*.jnilib', '*.so'])
 }
