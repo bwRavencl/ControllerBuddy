@@ -72,7 +72,7 @@ public abstract class OutputThread extends Thread {
 
 		try {
 			SwingUtilities.invokeAndWait(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final InvocationTargetException e) {

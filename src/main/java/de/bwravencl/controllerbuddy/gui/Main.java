@@ -268,13 +268,8 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final File file = fileChooser.getSelectedFile();
-
-				if (!loadProfile(file))
-					JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
+			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+				loadProfile(fileChooser.getSelectedFile());
 		}
 
 	}
@@ -851,15 +846,17 @@ public final class Main {
 		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
 		fileMenu.add(new NewAction());
-		fileMenu.add(openAction);
-		fileMenu.add(new SaveAction());
-		fileMenu.add(new SaveAsAction());
+		final List<Controller> controllers = Input.getControllers();
+		final boolean controllerConnected = !controllers.isEmpty();
+		if (controllerConnected) {
+			fileMenu.add(openAction);
+			fileMenu.add(new SaveAction());
+			fileMenu.add(new SaveAsAction());
+		}
 		fileMenu.add(new JSeparator());
 		final QuitAction quitAction = new QuitAction();
 		fileMenu.add(quitAction);
 
-		final List<Controller> controllers = Input.getControllers();
-		final boolean controllerConnected = !controllers.isEmpty();
 		if (controllerConnected) {
 			final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
 			menuBar.add(deviceMenu);
@@ -1202,11 +1199,14 @@ public final class Main {
 
 		newProfile();
 
-		final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-		if (path != null)
-			if (!loadProfile(new File(path)))
-				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		if (input.getController() == null)
+			JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+					rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+		else {
+			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
+			if (path != null)
+				loadProfile(new File(path));
+		}
 
 		timer.scheduleAtFixedRate(new TimerTask() {
 
@@ -1469,10 +1469,10 @@ public final class Main {
 		return windows;
 	}
 
-	private boolean loadProfile(final File file) {
+	private void loadProfile(final File file) {
 		stopAll();
 
-		boolean result = false;
+		boolean profileLoaded = false;
 
 		try {
 			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
@@ -1488,8 +1488,8 @@ public final class Main {
 							rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT") + String.join("\n", unknownActionClasses),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 
-				result = input.setProfile(profile, input.getController());
-				if (result) {
+				profileLoaded = input.setProfile(profile, input.getController());
+				if (profileLoaded) {
 					saveLastProfile(file);
 					updateModesPanel();
 					updateOverlayPanel();
@@ -1504,13 +1504,13 @@ public final class Main {
 			} catch (final JsonParseException e) {
 				log.log(Logger.Level.ERROR, e.getMessage(), e);
 			}
-
-			return result;
 		} catch (final IOException e) {
 			log.log(Logger.Level.ERROR, e.getMessage(), e);
 		}
 
-		return result;
+		if (!profileLoaded)
+			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void newProfile() {
