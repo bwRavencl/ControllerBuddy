@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 
-public abstract class ToKeyAction implements IAction {
+public abstract class ToKeyAction<V extends Number> implements IAction<V> {
 
 	boolean downUp = false;
 
@@ -29,7 +29,7 @@ public abstract class ToKeyAction implements IAction {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final ToKeyAction toKeyAction = (ToKeyAction) super.clone();
+		final var toKeyAction = (ToKeyAction<?>) super.clone();
 		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
 
 		return toKeyAction;

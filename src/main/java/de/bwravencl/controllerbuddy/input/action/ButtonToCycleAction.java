@@ -25,28 +25,31 @@ import de.bwravencl.controllerbuddy.input.Input;
 public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
 	private transient boolean wasUp = true;
-	private transient int index = 0;
-	private boolean longPress = DEFAULT_LONG_PRESS;
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
-	private List<IAction> actions = new ArrayList<>();
 
+	private transient int index = 0;
+
+	private boolean longPress = DEFAULT_LONG_PRESS;
+
+	private List<IAction<Byte>> actions = new ArrayList<>();
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final ButtonToCycleAction cycleAction = (ButtonToCycleAction) super.clone();
+		final var cycleAction = (ButtonToCycleAction) super.clone();
 
-		final List<IAction> clonedActions = new ArrayList<>();
-		for (final IAction a : actions)
-			clonedActions.add((IAction) a.clone());
+		final var clonedActions = new ArrayList<IAction<Byte>>();
+		for (final var action : actions)
+			clonedActions.add((IAction<Byte>) action.clone());
 		cycleAction.setActions(clonedActions);
 
 		return cycleAction;
 	}
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		if (!IButtonToAction.floatEquals(value, activationValue)) {
+		if (value == 0) {
 			actions.get(index).doAction(input, value);
 			if (!wasUp) {
 				if (index == actions.size() - 1)
@@ -57,18 +60,13 @@ public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 				wasUp = true;
 			}
 		} else if (wasUp) {
-			actions.get(index).doAction(input, activationValue);
+			actions.get(index).doAction(input, Byte.MAX_VALUE);
 			wasUp = false;
 		}
 	}
 
-	public List<IAction> getActions() {
+	public List<IAction<Byte>> getActions() {
 		return actions;
-	}
-
-	@Override
-	public float getActivationValue() {
-		return activationValue;
 	}
 
 	@Override
@@ -81,13 +79,8 @@ public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 		index = 0;
 	}
 
-	public void setActions(final List<IAction> actions) {
+	public void setActions(final List<IAction<Byte>> actions) {
 		this.actions = actions;
-	}
-
-	@Override
-	public void setActivationValue(final float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	@Override

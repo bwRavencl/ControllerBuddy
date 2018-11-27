@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -240,14 +241,20 @@ public class DirectInputKeyCode {
 			new DirectInputKeyCode(DIK_WEBBACK, 0xEA), new DirectInputKeyCode(DIK_MYCOMPUTER, 0xEB),
 			new DirectInputKeyCode(DIK_MAIL, 0xEC), new DirectInputKeyCode(DIK_MEDIASELECT, 0xED) };
 
-	public static final Map<String, Integer> nameToKeyCodeMap = new TreeMap<>();
-	public static final Map<Integer, String> keyCodeToNameMap = new HashMap<>();
+	public static final Map<String, Integer> nameToKeyCodeMap;
+	public static final Map<Integer, String> keyCodeToNameMap;
 
 	static {
+		final var modifiableNameToKeyCodeMap = new TreeMap<String, Integer>();
+		final var modifiableKeyCodeToNameMap = new HashMap<Integer, String>();
+
 		for (final DirectInputKeyCode sc : KEY_CODES) {
-			nameToKeyCodeMap.put(sc.name, sc.DirectInputKeyCode);
-			keyCodeToNameMap.put(sc.DirectInputKeyCode, sc.name);
+			modifiableNameToKeyCodeMap.put(sc.name, sc.DirectInputKeyCode);
+			modifiableKeyCodeToNameMap.put(sc.DirectInputKeyCode, sc.name);
 		}
+
+		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
+		keyCodeToNameMap = Collections.unmodifiableMap(modifiableKeyCodeToNameMap);
 	}
 
 	public final int DirectInputKeyCode;

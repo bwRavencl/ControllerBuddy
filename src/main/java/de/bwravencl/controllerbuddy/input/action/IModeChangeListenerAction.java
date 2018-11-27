@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public interface IModeChangeListenerAction extends IAction {
+public interface IModeChangeListenerAction extends IAction<Float> {
 
 	void onModeChanged(Mode newMode);
 

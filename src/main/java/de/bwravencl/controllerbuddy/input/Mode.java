@@ -17,29 +17,96 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public class Mode implements Cloneable {
 
+	public static class Component {
+
+		public enum ComponentType {
+			AXIS, BUTTON
+		}
+
+		public final ComponentType type;
+
+		public final int index;
+
+		public Component(final ComponentType type, final int index) {
+			this.type = type;
+			this.index = index;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final var other = (Component) obj;
+			if (index != other.index)
+				return false;
+			if (type != other.type)
+				return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			final var prime = 31;
+			var result = 1;
+			result = prime * result + index;
+			result = prime * result + (type == null ? 0 : type.hashCode());
+			return result;
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
+			final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
+		final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
+		for (final var e : actionMap.entrySet())
+			for (final var a : e.getValue()) {
+				final var key = e.getKey();
+
+				var actions = clonedActionMap.get(key);
+				if (actions == null) {
+					actions = new ArrayList<>();
+					clonedActionMap.put(key, actions);
+				}
+
+				actions.add((IAction<V>) a.clone());
+			}
+
+		return clonedActionMap;
+	}
+
 	private UUID uuid;
 	private String description;
-	private Map<String, List<IAction>> componentToActionsMap = new HashMap<>();
+
+	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
+	private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
 
 	public Mode() {
 		uuid = UUID.randomUUID();
-		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
-				Locale.getDefault());
+		final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
 		description = rb.getString("NEW_MODE_DESCRIPTION");
 	}
 
@@ -49,24 +116,12 @@ public class Mode implements Cloneable {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final Mode mode = (Mode) super.clone();
+		final var mode = (Mode) super.clone();
 		mode.setUuid(uuid);
 		mode.setDescription(description);
 
-		final Map<String, List<IAction>> clonedComponentToActionMap = new HashMap<>();
-		for (final Map.Entry<String, List<IAction>> e : componentToActionsMap.entrySet())
-			for (final IAction a : e.getValue()) {
-				final String key = e.getKey();
-
-				List<IAction> actions = clonedComponentToActionMap.get(key);
-				if (actions == null) {
-					actions = new ArrayList<>();
-					clonedComponentToActionMap.put(key, actions);
-				}
-
-				actions.add((IAction) a.clone());
-			}
-		mode.setComponentToActionMap(clonedComponentToActionMap);
+		mode.setAxisToActionsMap(cloneActionMap(axisToActionsMap));
+		mode.setButtonToActionsMap(cloneActionMap(buttonToActionsMap));
 
 		return mode;
 	}
@@ -79,7 +134,7 @@ public class Mode implements Cloneable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Mode other = (Mode) obj;
+		final var other = (Mode) obj;
 		if (uuid == null) {
 			if (other.uuid != null)
 				return false;
@@ -88,8 +143,24 @@ public class Mode implements Cloneable {
 		return true;
 	}
 
-	public Map<String, List<IAction>> getComponentToActionsMap() {
-		return componentToActionsMap;
+	public Set<IAction<?>> getAllActions() {
+		return Stream.concat(axisToActionsMap.values().stream(), buttonToActionsMap.values().stream())
+				.flatMap(List::stream).collect(Collectors.toUnmodifiableSet());
+	}
+
+	public Map<Integer, List<IAction<Float>>> getAxisToActionsMap() {
+		return axisToActionsMap;
+	}
+
+	public Map<Integer, List<IAction<Byte>>> getButtonToActionsMap() {
+		return buttonToActionsMap;
+	}
+
+	public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
+		if (type == ComponentType.AXIS)
+			return axisToActionsMap;
+		else
+			return buttonToActionsMap;
 	}
 
 	public String getDescription() {
@@ -105,8 +176,12 @@ public class Mode implements Cloneable {
 		return Objects.hash(uuid);
 	}
 
-	public void setComponentToActionMap(final Map<String, List<IAction>> componentToActionsMap) {
-		this.componentToActionsMap = componentToActionsMap;
+	public void setAxisToActionsMap(final Map<Integer, List<IAction<Float>>> axisToActionsMap) {
+		this.axisToActionsMap = axisToActionsMap;
+	}
+
+	public void setButtonToActionsMap(final Map<Integer, List<IAction<Byte>>> buttonToActionsMap) {
+		this.buttonToActionsMap = buttonToActionsMap;
 	}
 
 	public void setDescription(final String description) {

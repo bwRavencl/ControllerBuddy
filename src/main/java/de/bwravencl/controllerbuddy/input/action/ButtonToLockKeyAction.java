@@ -22,7 +22,6 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 
 public class ButtonToLockKeyAction implements IButtonToAction {
 
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private int virtualKeyCode = LockKey.LOCK_KEYS[0].virtualKeyCode;
 	private boolean on = true;
@@ -34,10 +33,10 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		if (IButtonToAction.floatEquals(value, activationValue)) {
+		if (value != 0) {
 			if (wasUp) {
 				wasUp = false;
 				if (on)
@@ -47,11 +46,6 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 			}
 		} else
 			wasUp = true;
-	}
-
-	@Override
-	public float getActivationValue() {
-		return activationValue;
 	}
 
 	public LockKey getLockKey() {
@@ -65,11 +59,6 @@ public class ButtonToLockKeyAction implements IButtonToAction {
 
 	public boolean isOn() {
 		return on;
-	}
-
-	@Override
-	public void setActivationValue(final float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	public void setLockKey(final LockKey lockKey) {

@@ -19,32 +19,20 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToButtonAction extends ToButtonAction implements IButtonToAction {
+public class ButtonToButtonAction extends ToButtonAction<Byte> implements IButtonToAction {
 
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		final boolean down = IButtonToAction.floatEquals(value, activationValue);
-		input.setButtons(buttonId, down ? 1.0f : 0.0f);
-	}
-
-	@Override
-	public float getActivationValue() {
-		return activationValue;
+		input.setButtons(buttonId, value != 0);
 	}
 
 	@Override
 	public boolean isLongPress() {
 		return longPress;
-	}
-
-	@Override
-	public void setActivationValue(final float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	@Override

@@ -19,17 +19,17 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToButtonAction extends ToButtonAction implements ISuspendableAction {
+public class AxisToButtonAction extends ToButtonAction<Float> implements ISuspendableAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
-	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;
+	public static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
 	private float minAxisValue = 0.5f;
-	private float maxAxisValue = 1.0f;
+	private float maxAxisValue = 1f;
 
 	@Override
-	public void doAction(final Input input, final float value) {
-		final boolean down = !isSuspended() && value >= minAxisValue && value <= maxAxisValue;
+	public void doAction(final Input input, final Float value) {
+		final var down = !isSuspended() && value >= minAxisValue && value <= maxAxisValue;
 
 		input.setButtons(buttonId, down);
 	}

@@ -17,46 +17,38 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
+import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
+import static org.lwjgl.glfw.GLFW.glfwJoystickIsGamepad;
+import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
+import static org.lwjgl.system.MemoryStack.stackPush;
+
 import java.io.IOException;
 import java.lang.System.Logger;
-import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 
-import com.sun.jna.Function;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinDef.HMODULE;
+import org.lwjgl.glfw.GLFWGamepadState;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
-import de.bwravencl.controllerbuddy.input.xinput.XInputState;
 import de.bwravencl.controllerbuddy.output.OutputThread;
-import net.java.games.input.AbstractComponent;
-import net.java.games.input.Component;
-import net.java.games.input.Controller;
-import net.java.games.input.Controller.Type;
-import net.java.games.input.ControllerEnvironment;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
@@ -64,71 +56,16 @@ import purejavahidapi.PureJavaHidApi;
 
 public class Input {
 
-	private static class GuideButtonComponent extends AbstractComponent {
-
-		private final Function function;
-		@SuppressWarnings("unused")
-		private final Library xInput = Native.loadLibrary(XINPUT_LIBRARY_FILENAME, Library.class);
-		private final int dwUserIndex;
-		private final XInputState pState = new XInputState();
-		private final Field hasPolledField;
-
-		public GuideButtonComponent(final int dwUserIndex) throws UnsatisfiedLinkError, Exception {
-			super("Guide Button", new Component.Identifier.Button("Guide Button"));
-
-			if (dwUserIndex < 0 || dwUserIndex > 3)
-				throw new Exception(getClass().getName() + ": dwUserIndex must be a value between 0 and 3");
-			this.dwUserIndex = dwUserIndex;
-
-			final HMODULE hModule = com.sun.jna.platform.win32.Kernel32.INSTANCE
-					.GetModuleHandle(XINPUT_LIBRARY_FILENAME);
-			if (hModule == null)
-				throw new UnsatisfiedLinkError(getClass().getName() + ": Could not load " + XINPUT_LIBRARY_FILENAME);
-
-			final Kernel32 kernel32 = Native.loadLibrary(Kernel32.class);
-			function = Function.getFunction(kernel32.GetProcAddress(hModule, 100));
-
-			hasPolledField = AbstractComponent.class.getDeclaredField("has_polled");
-			hasPolledField.setAccessible(true);
-		}
-
-		@Override
-		public boolean isRelative() {
-			return false;
-		}
-
-		@Override
-		protected float poll() {
-			function.invokeInt(new Object[] { dwUserIndex, pState });
-
-			try {
-				hasPolledField.setBoolean(this, false);
-			} catch (final IllegalArgumentException | IllegalAccessException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
-			}
-
-			return BigInteger.valueOf(pState.gamepad.wButtons).testBit(10) ? 1.0f : 0.0f;
-		}
-
-	}
-
-	private interface Kernel32 extends Library {
-
-		Pointer GetProcAddress(HMODULE hModule, long lpProcName);
-
-	}
-
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
-	private static final System.Logger log = System.getLogger(Input.class.getName());
+	private static final Logger log = System.getLogger(Input.class.getName());
 
 	private static final int LOW_BATTERY_WARNING = 10;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-	private static final String XBOX_360_CONTROLLER_NAME = "XBOX 360 For Windows (Controller)";
-	private static final String DUAL_SHOCK_4_CONTROLLER_NAMES[] = { "Wireless Controller",
-			"DUALSHOCK\u00AE4 USB Wireless Adapto" };
+	private static final String DUAL_SHOCK_4_CONTROLLER_GUIDS[] = { "030000004c050000c405000000000000",
+			"030000004c050000cc09000000000000", "030000004c050000a00b000000000000" };
 	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
 	public static final int MAX_N_BUTTONS = 128;
@@ -136,35 +73,29 @@ public class Input {
 			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	public static List<Controller> getControllers() {
-		final List<Controller> controllers = new ArrayList<>();
+	public static List<Integer> getPresentControllers() {
+		final var controllers = new ArrayList<Integer>();
 
-		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
-			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
-					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy"))
-				controllers.add(c);
+		for (int i = 0; i <= GLFW_JOYSTICK_LAST; i++)
+			if (glfwJoystickPresent(i) && glfwJoystickIsGamepad(i))
+				controllers.add(i);
 
 		return controllers;
 	}
 
-	public static boolean isDualShock4Controller(final Controller controller) {
-		if (controller != null)
-			for (final String s : DUAL_SHOCK_4_CONTROLLER_NAMES)
-				if (s.equals(controller.getName()))
-					return true;
-
-		return false;
+	private static boolean isValidButton(final int button) {
+		return button >= 0 && button <= GLFW_GAMEPAD_BUTTON_LAST;
 	}
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
 			final float outMax) {
 		final float newValue;
-		final float oldRange = inMax - inMin;
+		final var oldRange = inMax - inMin;
 
-		if (oldRange == 0.0f)
+		if (oldRange == 0f)
 			newValue = outMin;
 		else {
-			final float newRange = outMax - outMin;
+			final var newRange = outMax - outMin;
 			newValue = (value - inMin) * newRange / oldRange + outMin;
 		}
 
@@ -172,10 +103,9 @@ public class Input {
 	}
 
 	private final Main main;
-	private final Controller controller;
-	private Controller cachedController;
-	private Component[] cachedComponents;
-	private final EnumMap<VirtualAxis, Integer> axis = new EnumMap<>(VirtualAxis.class);
+
+	private final int jid;
+	private final EnumMap<VirtualAxis, Integer> axes = new EnumMap<>(VirtualAxis.class);
 	private Profile profile;
 	private OutputThread outputThread;
 	private boolean[] buttons;
@@ -192,18 +122,19 @@ public class Input {
 	private HidDevice hidDevice;
 	private volatile boolean charging = true;
 	private volatile int batteryState;
+
 	private byte[] dualShock4HidReport;
 
-	public Input(final Main main, final Controller controller) {
+	public Input(final Main main, final int jid) {
 		this.main = main;
-		this.controller = controller;
+		this.jid = jid;
 
 		for (final VirtualAxis va : VirtualAxis.values())
-			axis.put(va, 0);
+			axes.put(va, 0);
 
 		profile = new Profile();
 
-		if (main.isWindows() && isDualShock4Controller(controller)) {
+		if (isDualShock4Controller()) {
 			final List<HidDeviceInfo> devices = PureJavaHidApi.enumerateDevices();
 			HidDeviceInfo hidDeviceInfo = null;
 			for (final HidDeviceInfo hi : devices) {
@@ -234,13 +165,13 @@ public class Input {
 						@Override
 						public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
 								final int len) {
-							final boolean touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
-							final boolean down1 = data[34] >> 7 != 0 ? false : true;
-							final boolean down2 = data[38] >> 7 != 0 ? false : true;
-							final int x1 = data[35] + (data[36] & 0xF) * 255;
-							final int y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
-							final int dX1 = x1 - prevX1;
-							final int dY1 = y1 - prevY1;
+							final var touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
+							final var down1 = data[34] >> 7 != 0 ? false : true;
+							final var down2 = data[38] >> 7 != 0 ? false : true;
+							final var x1 = data[35] + (data[36] & 0xF) * 255;
+							final var y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
+							final var dX1 = x1 - prevX1;
+							final var dY1 = y1 - prevY1;
 
 							if (touchpadButtonDown)
 								downMouseButtons.add(down2 ? 2 : 1);
@@ -270,8 +201,8 @@ public class Input {
 							prevX1 = x1;
 							prevY1 = y1;
 
-							final boolean charging = (data[29] & 0x10) > 6;
-							final int battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
+							final var charging = (data[29] & 0x10) > 6;
+							final var battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
 
 							setCharging(charging);
 							setBatteryState(battery);
@@ -292,8 +223,8 @@ public class Input {
 		}
 	}
 
-	public EnumMap<VirtualAxis, Integer> getAxis() {
-		return axis;
+	public EnumMap<VirtualAxis, Integer> getAxes() {
+		return axes;
 	}
 
 	public int getBatteryState() {
@@ -302,45 +233,6 @@ public class Input {
 
 	public boolean[] getButtons() {
 		return buttons;
-	}
-
-	public Component[] getComponents(final Controller controller) {
-		if (controller != cachedController) {
-			cachedController = controller;
-			cachedComponents = controller.getComponents();
-
-			if (main.isWindows())
-				if (XBOX_360_CONTROLLER_NAME.equals(controller.getName())) {
-
-					final List<Controller> xbox360Controllers = new ArrayList<>();
-					for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
-						if (XBOX_360_CONTROLLER_NAME.equals(c.getName()))
-							xbox360Controllers.add(c);
-					final int dwUserIndex = xbox360Controllers.indexOf(controller);
-
-					if (dwUserIndex <= 3)
-						try {
-							final GuideButtonComponent guideButtonComponent = new GuideButtonComponent(dwUserIndex);
-							cachedComponents = Arrays.copyOf(cachedComponents, cachedComponents.length + 1);
-							cachedComponents[cachedComponents.length - 1] = guideButtonComponent;
-						} catch (final UnsatisfiedLinkError | Exception e) {
-							log.log(Logger.Level.ERROR, e.getMessage(), e);
-						}
-				} else if (isDualShock4Controller(controller)) {
-					final int touchpadButtonIndex = 18;
-					final Component[] newCachedComponents = new Component[cachedComponents.length - 1];
-					System.arraycopy(cachedComponents, 0, newCachedComponents, 0, touchpadButtonIndex);
-					System.arraycopy(cachedComponents, touchpadButtonIndex + 1, newCachedComponents,
-							touchpadButtonIndex, cachedComponents.length - touchpadButtonIndex - 1);
-					cachedComponents = newCachedComponents;
-				}
-		}
-
-		return cachedComponents;
-	}
-
-	public Controller getController() {
-		return controller;
 	}
 
 	public int getCursorDeltaX() {
@@ -365,6 +257,10 @@ public class Input {
 
 	public Set<Integer> getDownUpMouseButtons() {
 		return downUpMouseButtons;
+	}
+
+	public int getJid() {
+		return jid;
 	}
 
 	public Main getMain() {
@@ -392,74 +288,109 @@ public class Input {
 	}
 
 	public void init() {
-		for (final Mode m : profile.getModes())
-			for (final List<IAction> actions : m.getComponentToActionsMap().values())
-				for (final IAction a : actions)
-					if (a instanceof IInitializationAction)
-						((IInitializationAction) a).init(this);
+		for (final var mode : profile.getModes())
+			for (final var action : mode.getAllActions())
+				if (action instanceof IInitializationAction)
+					((IInitializationAction) action).init(this);
 	}
 
 	public boolean isCharging() {
 		return charging;
 	}
 
+	public boolean isDualShock4Controller() {
+		if (main.isWindows()) {
+			final var guid = glfwGetJoystickGUID(jid);
+
+			if (guid != null)
+				for (final var s : DUAL_SHOCK_4_CONTROLLER_GUIDS)
+					if (s.equals(guid))
+						return true;
+		}
+
+		return false;
+	}
+
 	public boolean poll() {
-		if (!controller.poll())
-			return false;
+		try (var stack = stackPush()) {
+			final var state = GLFWGamepadState.callocStack(stack);
+			if (!glfwGetGamepadState(jid, state))
+				return false;
 
-		if (clearOnNextPoll) {
-			for (int i = 0; i < buttons.length; i++)
-				buttons[i] = false;
+			if (clearOnNextPoll) {
+				for (var i = 0; i < buttons.length; i++)
+					buttons[i] = false;
 
-			downKeyStrokes.clear();
-			downMouseButtons.clear();
+				downKeyStrokes.clear();
+				downMouseButtons.clear();
 
-			clearOnNextPoll = false;
-		}
-
-		final OnScreenKeyboard onScreenKeyboard = main.getOnScreenKeyboard();
-		if (onScreenKeyboard.isVisible())
-			onScreenKeyboard.poll(this);
-
-		final List<Mode> modes = profile.getModes();
-		final Map<String, List<IAction>> componentToActionMap = profile.getActiveMode().getComponentToActionsMap();
-
-		for (final Component c : getComponents(controller)) {
-			final float pollData = c.getPollData();
-
-			if (Math.abs(pollData) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-				final Iterator<Entry<ISuspendableAction, String>> it = ISuspendableAction.componentToSuspendedActionsMap
-						.entrySet().iterator();
-				while (it.hasNext())
-					if (c.getName().equals(it.next().getValue()))
-						it.remove();
+				clearOnNextPoll = false;
 			}
 
-			List<IAction> actions = componentToActionMap.get(c.getName());
-			if (actions == null) {
-				final LinkedList<ButtonToModeAction> buttonToModeActionStack = ButtonToModeAction
-						.getButtonToModeActionStack();
-				for (int i = 1; i < buttonToModeActionStack.size(); i++) {
-					actions = buttonToModeActionStack.get(i).getMode(this).getComponentToActionsMap().get(c.getName());
+			final var onScreenKeyboard = main.getOnScreenKeyboard();
+			if (onScreenKeyboard.isVisible())
+				onScreenKeyboard.poll(this);
 
-					if (actions != null)
-						break;
+			final var modes = profile.getModes();
+			final var activeMode = profile.getActiveMode();
+			final var axisToActionMap = activeMode.getAxisToActionsMap();
+			final var buttonToActionMap = activeMode.getButtonToActionsMap();
+
+			for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
+				final var axisValue = state.axes(axis);
+
+				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
+					final var it = ISuspendableAction.suspendedActionToAxisMap.entrySet().iterator();
+					while (it.hasNext())
+						if (axis == it.next().getValue())
+							it.remove();
 				}
+
+				var actions = axisToActionMap.get(axis);
+				if (actions == null) {
+					final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
+					for (var i = 1; i < buttonToModeActionStack.size(); i++) {
+						actions = buttonToModeActionStack.get(i).getMode(this).getAxisToActionsMap().get(axis);
+
+						if (actions != null)
+							break;
+					}
+				}
+
+				if (actions == null)
+					actions = modes.get(0).getAxisToActionsMap().get(axis);
+
+				if (actions != null)
+					for (final var action : actions)
+						action.doAction(this, axisValue);
 			}
 
-			if (actions == null)
-				actions = modes.get(0).getComponentToActionsMap().get(c.getName());
+			for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+				var actions = buttonToActionMap.get(button);
+				if (actions == null) {
+					final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
+					for (var i = 1; i < buttonToModeActionStack.size(); i++) {
+						actions = buttonToModeActionStack.get(i).getMode(this).getButtonToActionsMap().get(button);
 
-			if (actions != null)
-				for (final IAction a : actions)
-					a.doAction(this, pollData);
-		}
+						if (actions != null)
+							break;
+					}
+				}
 
-		for (final Component c : getComponents(controller)) {
-			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
-			if (buttonToModeActions != null)
-				for (final ButtonToModeAction a : buttonToModeActions)
-					a.doAction(this, c.getPollData());
+				if (actions == null)
+					actions = modes.get(0).getButtonToActionsMap().get(button);
+
+				if (actions != null)
+					for (final var action : actions)
+						action.doAction(this, state.buttons(button));
+			}
+
+			for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+				final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
+				if (buttonToModeActions != null)
+					for (final ButtonToModeAction action : buttonToModeActions)
+						action.doAction(this, state.buttons(button));
+			}
 		}
 
 		SwingUtilities.invokeLater(() -> {
@@ -474,11 +405,10 @@ public class Input {
 		profile.setActiveMode(this, 0);
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 
-		for (final Mode m : profile.getModes())
-			for (final List<IAction> actions : m.getComponentToActionsMap().values())
-				for (final IAction a : actions)
-					if (a instanceof IResetableAction)
-						((IResetableAction) a).reset();
+		for (final var mode : profile.getModes())
+			for (final var action : mode.getAllActions())
+				if (action instanceof IResetableAction)
+					((IResetableAction) action).reset();
 	}
 
 	private void resetDualShock4() {
@@ -498,7 +428,6 @@ public class Input {
 					}
 					dualShock4HidReport[5] = 0;
 					sendDualShock4HidReport();
-					sendDualShock4HidReport();
 				}
 			}
 		}).start();
@@ -509,36 +438,42 @@ public class Input {
 	}
 
 	private boolean sendDualShock4HidReport() {
-		final int dataLength = dualShock4HidReport.length - 1;
-		final int dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-				Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length), dataLength);
+		var sent = false;
 
-		return dataSent == dataLength;
+		for (int i = 0; i < 2; i++) {
+			final var dataLength = dualShock4HidReport.length - 1;
+			final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
+					Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length), dataLength);
+
+			sent |= dataSent == dataLength;
+		}
+
+		return sent;
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback) {
-		value = Math.max(value, -1.0f);
-		value = Math.min(value, 1.0f);
+		value = Math.max(value, -1f);
+		value = Math.min(value, 1f);
 
 		setAxis(virtualAxis,
-				(int) normalize(value, -1.0f, 1.0f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()),
+				(int) normalize(value, -1f, 1f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()),
 				hapticFeedback);
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback) {
-		final int minAxisValue = outputThread.getMinAxisValue();
-		final int maxAxisValue = outputThread.getMaxAxisValue();
+		final var minAxisValue = outputThread.getMinAxisValue();
+		final var maxAxisValue = outputThread.getMaxAxisValue();
 
 		value = Math.max(value, minAxisValue);
 		value = Math.min(value, maxAxisValue);
 
-		final int prevValue = axis.put(virtualAxis, value);
+		final var prevValue = axes.put(virtualAxis, value);
 
 		if (hapticFeedback && hidDevice != null && prevValue != value) {
-			final int midpoint = (maxAxisValue - minAxisValue) / 2;
+			final var midpoint = (maxAxisValue - minAxisValue) / 2;
 
 			if (value == minAxisValue || value == maxAxisValue)
-				rumbleDualShock4(80L, (byte) 128);
+				rumbleDualShock4(80L, Byte.MAX_VALUE);
 			else if (prevValue > midpoint && value < midpoint || prevValue < midpoint && value > midpoint)
 				rumbleDualShock4(20L, (byte) 1);
 		}
@@ -602,60 +537,45 @@ public class Input {
 		this.outputThread = outputThread;
 	}
 
-	public boolean setProfile(final Profile profile, final Controller controller) {
-		if (controller == null)
-			return false;
-		else {
-			for (final String s : profile.getComponentToModeActionMap().keySet()) {
-				boolean componentFound = false;
+	public boolean setProfile(final Profile profile, final int jid) {
+		if (profile == null)
+			throw new IllegalArgumentException();
 
-				for (final Component c : getComponents(controller))
-					if (s.equals(c.getName())) {
-						componentFound = true;
-						break;
-					}
+		for (final var button : profile.getButtonToModeActionsMap().keySet())
+			if (!isValidButton(button))
+				return false;
 
-				if (!componentFound)
+		for (final var mode : profile.getModes()) {
+			for (final int axis : mode.getAxisToActionsMap().keySet())
+				if (axis < 0 || axis > GLFW_GAMEPAD_AXIS_LAST)
 					return false;
-			}
 
-			for (final Mode m : profile.getModes()) {
-				for (final String s : m.getComponentToActionsMap().keySet()) {
-					boolean componentFound = false;
+			for (final var button : mode.getButtonToActionsMap().keySet())
+				if (!isValidButton(button))
+					return false;
 
-					for (final Component c : getComponents(controller))
-						if (s.equals(c.getName())) {
-							componentFound = true;
-							break;
-						}
+			for (final List<IAction<Byte>> actions : mode.getButtonToActionsMap().values())
+				Collections.sort(actions, (o1, o2) -> {
+					if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
+						final IButtonToAction buttonToAction1 = (IButtonToAction) o1;
+						final IButtonToAction buttonToAction2 = (IButtonToAction) o2;
 
-					if (!componentFound)
-						return false;
-				}
+						final boolean o1IsLongPress = buttonToAction1.isLongPress();
+						final boolean o2IsLongPress = buttonToAction2.isLongPress();
 
-				for (final List<IAction> actions : m.getComponentToActionsMap().values())
-					Collections.sort(actions, (o1, o2) -> {
-						if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
-							final IButtonToAction buttonToAction1 = (IButtonToAction) o1;
-							final IButtonToAction buttonToAction2 = (IButtonToAction) o2;
-
-							final boolean o1IsLongPress = buttonToAction1.isLongPress();
-							final boolean o2IsLongPress = buttonToAction2.isLongPress();
-
-							if (o1IsLongPress && !o2IsLongPress)
-								return -1;
-							else if (!o1IsLongPress && o2IsLongPress)
-								return 1;
-							else
-								return 0;
-						} else
+						if (o1IsLongPress && !o2IsLongPress)
+							return -1;
+						else if (!o1IsLongPress && o2IsLongPress)
+							return 1;
+						else
 							return 0;
-					});
-			}
-
-			this.profile = profile;
-			return true;
+					} else
+						return 0;
+				});
 		}
+
+		this.profile = profile;
+		return true;
 	}
 
 	public void setScrollClicks(final int scrollClicks) {

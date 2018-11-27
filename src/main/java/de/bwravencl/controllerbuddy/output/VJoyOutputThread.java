@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
+
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.System.Logger;
@@ -33,7 +35,6 @@ import javax.swing.SwingUtilities;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinBase;
@@ -52,13 +53,11 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
-import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 
 public abstract class VJoyOutputThread extends OutputThread {
 
-	private static final System.Logger log = System.getLogger(VJoyOutputThread.class.getName());
+	private static final Logger log = System.getLogger(VJoyOutputThread.class.getName());
 
 	public static final int DEFAULT_VJOY_DEVICE = 1;
 	public static final String LIBRARY_NAME = "vJoyInterface";
@@ -81,7 +80,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private static void doKeyboardInput(final int scanCode, final boolean down) {
-		final INPUT input = new INPUT();
+		final var input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wScan = new WORD(scanCode);
@@ -96,7 +95,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private static void doMouseButtonInput(final int button, final boolean down) {
-		final INPUT input = new INPUT();
+		final var input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_MOUSE);
 		input.input.setType(MOUSEINPUT.class);
 		switch (button) {
@@ -138,10 +137,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private static void setLockKeyState(final int virtualKeyCode, final boolean on) {
-		final boolean state = (GetKeyState(virtualKeyCode) & 0x1) != 0;
+		final var state = (GetKeyState(virtualKeyCode) & 0x1) != 0;
 
 		if (state != on) {
-			final Toolkit toolkit = Toolkit.getDefaultToolkit();
+			final var toolkit = Toolkit.getDefaultToolkit();
 
 			toolkit.setLockingKeyState(virtualKeyCode, true);
 			toolkit.setLockingKeyState(virtualKeyCode, false);
@@ -150,14 +149,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	static void updateOutputSets(final Set<Integer> sourceSet, final Set<Integer> oldDownSet,
 			final Set<Integer> newUpSet, final Set<Integer> newDownSet, final boolean keepStillDown) {
-		final Set<Integer> stillDownSet = new HashSet<>();
+		final var stillDownSet = new HashSet<Integer>();
 
 		newUpSet.clear();
-		for (final int o : oldDownSet) {
-			boolean stillDown = false;
+		for (final var o : oldDownSet) {
+			var stillDown = false;
 
-			for (final int n : sourceSet)
-				if (n == o) {
+			for (final var n : sourceSet)
+				if (n.equals(o)) {
 					stillDown = true;
 					break;
 				}
@@ -173,11 +172,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 		if (keepStillDown)
 			newDownSet.addAll(stillDownSet);
 
-		for (final int n : sourceSet) {
-			boolean alreadyDown = false;
+		for (final var n : sourceSet) {
+			var alreadyDown = false;
 
-			for (final int o : oldDownSet)
-				if (o == n) {
+			for (final var o : oldDownSet)
+				if (o.equals(n)) {
 					alreadyDown = true;
 					break;
 				}
@@ -232,10 +231,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
 
-			for (final int b : oldDownMouseButtons)
+			for (final var b : oldDownMouseButtons)
 				doMouseButtonInput(b, false);
 
-			for (final int c : oldDownModifiers)
+			for (final var c : oldDownModifiers)
 				doKeyboardInput(c, false);
 
 			SwingUtilities.invokeLater(() -> {
@@ -245,7 +244,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 		SwingUtilities.invokeLater(() -> {
 			if (VJoyOutputThread.this.isAlive())
-				main.stopLocal(false);
+				main.stopAll();
 
 			if (restart)
 				main.restartLast();
@@ -257,14 +256,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	boolean init() {
-		System.setProperty("jna.library.path", main.getPreferences().get(
-				Main.PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
+		System.setProperty("jna.library.path", main.getPreferences()
+				.get(PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {
 			vJoy = Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
 
-			final Pointer dllVersion = new Memory(WinDef.WORD.SIZE);
-			final Pointer drvVersion = new Memory(WinDef.WORD.SIZE);
+			final var dllVersion = new Memory(WinDef.WORD.SIZE);
+			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.vJoyEnabled().booleanValue()) {
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
@@ -293,14 +292,14 @@ public abstract class VJoyOutputThread extends OutputThread {
 				return false;
 			}
 
-			final boolean hasAxisX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
-			final boolean hasAxisY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
-			final boolean hasAxisZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
-			final boolean hasAxisRX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
-			final boolean hasAxisRY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
-			final boolean hasAxisRZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
-			final boolean hasAxisSL0 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
-			final boolean hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
+			final var hasAxisX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
+			final var hasAxisY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
+			final var hasAxisZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
+			final var hasAxisRX = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
+			final var hasAxisRY = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
+			final var hasAxisRZ = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
+			final var hasAxisSL0 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
+			final var hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
 			if (!(hasAxisX && hasAxisY && hasAxisZ && hasAxisRX && hasAxisRY && hasAxisRZ && hasAxisSL0
 					&& hasAxisSL1)) {
 				final List<String> missingAxes = new ArrayList<>();
@@ -321,7 +320,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				if (!hasAxisSL1)
 					missingAxes.add("Dial/Slider2");
 
-				final String missingAxesString = missingAxes.toString().replace("[", "").replace("]", "");
+				final var missingAxesString = missingAxes.toString().replace("[", "").replace("]", "");
 
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
@@ -353,29 +352,28 @@ public abstract class VJoyOutputThread extends OutputThread {
 				return false;
 			}
 
-			final Pointer Min = new Memory(LONG.SIZE);
+			final var Min = new Memory(LONG.SIZE);
 			vJoy.GetVJDAxisMin(vJoyDevice, IVjoyInterface.HID_USAGE_X, Min);
 			minAxisValue = Min.getInt(0L);
 
-			final Pointer Max = new Memory(LONG.SIZE);
+			final var Max = new Memory(LONG.SIZE);
 			vJoy.GetVJDAxisMax(vJoyDevice, IVjoyInterface.HID_USAGE_X, Max);
 			maxAxisValue = Max.getInt(0L);
 
-			for (final VirtualAxis va : VirtualAxis.values())
-				input.setAxis(va, 0.0f, false);
+			for (final var virtualAxis : VirtualAxis.values())
+				input.setAxis(virtualAxis, 0f, false);
 
-			final int nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
+			final var nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
 			int maxButtonId = -1;
-			for (final Mode m : input.getProfile().getModes())
-				for (final List<IAction> actions : m.getComponentToActionsMap().values())
-					for (final IAction a : actions)
-						if (a instanceof ToButtonAction) {
-							final ToButtonAction toButtonAction = (ToButtonAction) a;
-							final int buttonId = toButtonAction.getButtonId();
-							if (buttonId > maxButtonId)
-								maxButtonId = buttonId;
-						}
-			final int requiredButtons = maxButtonId + 1;
+			for (final var mode : input.getProfile().getModes())
+				for (final var action : mode.getAllActions())
+					if (action instanceof ToButtonAction) {
+						final var toButtonAction = (ToButtonAction<?>) action;
+						final var buttonId = toButtonAction.getButtonId();
+						if (buttonId > maxButtonId)
+							maxButtonId = buttonId;
+					}
+			final var requiredButtons = maxButtonId + 1;
 
 			if (nButtons < requiredButtons) {
 				SwingUtilities.invokeLater(() -> {
@@ -420,7 +418,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	void writeOutput() throws InterruptedException {
 		if (!Thread.currentThread().isInterrupted()) {
-			boolean res = true;
+			var res = true;
 
 			res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
 			res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
@@ -431,12 +429,12 @@ public abstract class VJoyOutputThread extends OutputThread {
 			res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
 			res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
 
-			for (int i = 0; i < buttons.length; i++)
+			for (var i = 0; i < buttons.length; i++)
 				res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
 
 			if (res) {
 				if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-					final INPUT input = new INPUT();
+					final var input = new INPUT();
 					input.type = new DWORD(INPUT.INPUT_MOUSE);
 					input.input.setType(MOUSEINPUT.class);
 					input.input.mi.dx = new LONG(cursorDeltaX);
@@ -446,50 +444,50 @@ public abstract class VJoyOutputThread extends OutputThread {
 					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 				}
 
-				for (final int b : newUpMouseButtons)
+				for (final var b : newUpMouseButtons)
 					doMouseButtonInput(b, false);
 
-				for (final int b : newDownMouseButtons)
+				for (final var b : newDownMouseButtons)
 					doMouseButtonInput(b, true);
 
-				for (final int b : downUpMouseButtons) {
+				for (final var b : downUpMouseButtons) {
 					doMouseButtonInput(b, true);
 					doMouseButtonInput(b, false);
 				}
 
-				for (final int e : offLockKeys)
+				for (final var e : offLockKeys)
 					setLockKeyState(e, false);
 
-				for (final int c : newUpNormalKeys)
+				for (final var c : newUpNormalKeys)
 					doKeyboardInput(c, false);
 
-				for (final int c : newUpModifiers)
+				for (final var c : newUpModifiers)
 					doKeyboardInput(c, false);
 
-				for (final int c : newDownModifiers)
+				for (final var c : newDownModifiers)
 					doKeyboardInput(c, true);
 
-				for (final int c : newDownNormalKeys)
+				for (final var c : newDownNormalKeys)
 					doKeyboardInput(c, true);
 
-				for (final int e : onLockKeys)
+				for (final var e : onLockKeys)
 					setLockKeyState(e, true);
 
-				for (final KeyStroke ks : downUpKeyStrokes) {
-					for (final int c : ks.getModifierCodes())
+				for (final var keyStroke : downUpKeyStrokes) {
+					for (final var c : keyStroke.getModifierCodes())
 						doKeyboardInput(c, true);
 
-					for (final int c : ks.getKeyCodes()) {
+					for (final var c : keyStroke.getKeyCodes()) {
 						doKeyboardInput(c, true);
 						doKeyboardInput(c, false);
 					}
 
-					for (final int c : ks.getModifierCodes())
+					for (final var c : keyStroke.getModifierCodes())
 						doKeyboardInput(c, false);
 				}
 
 				if (scrollClicks != 0) {
-					final INPUT input = new INPUT();
+					final var input = new INPUT();
 					input.type = new DWORD(INPUT.INPUT_MOUSE);
 					input.input.setType(MOUSEINPUT.class);
 					input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
@@ -498,9 +496,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 				}
 			} else {
-				final FutureTask<Integer> confirmDialogTask = new FutureTask<>(() -> JOptionPane.showConfirmDialog(
-						main.getFrame(), rb.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
+				final var confirmDialogTask = new FutureTask<>(() -> JOptionPane.showConfirmDialog(main.getFrame(),
+						rb.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"), rb.getString("ERROR_DIALOG_TITLE"),
+						JOptionPane.YES_NO_OPTION));
 				SwingUtilities.invokeLater(confirmDialogTask);
 				try {
 					if (confirmDialogTask.get() == JOptionPane.YES_OPTION)

@@ -17,50 +17,49 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.List;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToCursorAction extends InvertableAction implements ISuspendableAction, IModeChangeListenerAction {
+public class AxisToCursorAction extends InvertableAction<Float>
+		implements ISuspendableAction, IModeChangeListenerAction {
 
 	public enum MouseAxis {
 		X, Y
 	}
 
 	public static final float DEFAULT_DEAD_ZONE = 0.15f;
-	public static final float DEFAULT_EXPONENT = 2.0f;
-	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000.0f;
+	public static final float DEFAULT_EXPONENT = 2f;
+	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
 	private MouseAxis axis = MouseAxis.X;
 	private transient long lastCallTime;
-	private transient float remainingD = 0.0f;
+	private transient float remainingD = 0f;
 
 	@Override
-	public void doAction(final Input input, final float value) {
-		final long currentTime = System.currentTimeMillis();
-		long elapsedTime = input.getOutputThread().getPollInterval();
+	public void doAction(final Input input, final Float value) {
+		final var currentTime = System.currentTimeMillis();
+		var elapsedTime = input.getOutputThread().getPollInterval();
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
 
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) elapsedTime / (float) 1000L;
+			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
 
-			float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
-					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxCursorSpeed,
+			var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
+					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxCursorSpeed,
 					maxCursorSpeed) * rateMultiplier;
 
 			d = invert ? -d : d;
 			d += remainingD;
 
-			if (d >= -1.0f && d <= 1.0f)
+			if (d >= -1f && d <= 1f)
 				remainingD = d;
 			else {
-				remainingD = 0.0f;
+				remainingD = 0f;
 
 				if (axis.equals(MouseAxis.X))
 					input.setCursorDeltaX((int) (input.getCursorDeltaX() + d));
@@ -89,7 +88,7 @@ public class AxisToCursorAction extends InvertableAction implements ISuspendable
 
 	@Override
 	public void onModeChanged(final Mode newMode) {
-		for (final List<IAction> actions : newMode.getComponentToActionsMap().values())
+		for (final var actions : newMode.getAxisToActionsMap().values())
 			if (actions.contains(this)) {
 				lastCallTime = 0L;
 				break;

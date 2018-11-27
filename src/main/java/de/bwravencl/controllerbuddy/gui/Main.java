@@ -17,14 +17,26 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
+import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
+import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
+import static org.lwjgl.glfw.GLFW.glfwGetGamepadName;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwJoystickIsGamepad;
+import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
+import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
@@ -46,25 +58,18 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.System.Logger;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -84,25 +89,24 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
 
@@ -111,8 +115,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.lwjgl.glfw.GLFWJoystickCallback;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
@@ -124,7 +128,6 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionAdapter;
 import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
@@ -133,10 +136,6 @@ import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
-import net.java.games.input.Component;
-import net.java.games.input.Controller;
-import net.java.games.input.Controller.Type;
-import net.java.games.input.ControllerEnvironment;
 
 public final class Main {
 
@@ -151,7 +150,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final Mode mode = new Mode();
+			final var mode = new Mode();
 			input.getProfile().getModes().add(mode);
 
 			setUnsavedChanges(true);
@@ -171,13 +170,13 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final JFileChooser vJoyDirectoryFileChooser = new JFileChooser(
+			final var vJoyDirectoryFileChooser = new JFileChooser(
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final String path = vJoyDirectoryFileChooser.getSelectedFile().getAbsolutePath();
-				final File file = new File(VJoyOutputThread.getLibraryFilePath(path));
+				final var path = vJoyDirectoryFileChooser.getSelectedFile().getAbsolutePath();
+				final var file = new File(VJoyOutputThread.getLibraryFilePath(path));
 
 				if (file.exists()) {
 					preferences.put(PREFERENCES_VJOY_DIRECTORY, path);
@@ -215,28 +214,6 @@ public final class Main {
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
-		}
-
-	}
-
-	private class EditComponentAction extends AbstractAction {
-
-		private static final long serialVersionUID = 8811608785278071903L;
-
-		private final Component component;
-
-		private EditComponentAction(final Component component) {
-			this.component = component;
-
-			putValue(NAME, rb.getString("EDIT_COMPONENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_PREFIX") + component.getName()
-					+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(Main.this, component, input);
-			editComponentDialog.setVisible(true);
 		}
 
 	}
@@ -290,7 +267,7 @@ public final class Main {
 
 		@Override
 		public void approveSelection() {
-			final File file = getSelectedFile();
+			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final int result = JOptionPane.showConfirmDialog(this,
 						file.getName() + rb.getString("FILE_EXISTS_DIALOG_TEXT"),
@@ -389,12 +366,12 @@ public final class Main {
 
 		private static final long serialVersionUID = -2043467156713598592L;
 
-		private final Controller controller;
+		private final int jid;
 
-		private SelectControllerAction(final Controller controller) {
-			this.controller = controller;
+		private SelectControllerAction(final int jid) {
+			this.jid = jid;
 
-			final String name = controller.getName();
+			final var name = glfwGetGamepadName(jid);
 			putValue(NAME, name);
 			putValue(SHORT_DESCRIPTION, rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_PREFIX") + name
 					+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
@@ -402,7 +379,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			setSelectedController(controller);
+			setSelectedJid(jid);
 		}
 
 	}
@@ -422,7 +399,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final Color newColor = JColorChooser.showDialog(frame, "Choose Background Color",
+			final var newColor = JColorChooser.showDialog(frame, "Choose Background Color",
 					input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
 			if (newColor != null)
 				input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
@@ -458,7 +435,7 @@ public final class Main {
 		}
 
 		private void setHost() {
-			final String host = hostTextField.getText();
+			final var host = hostTextField.getText();
 
 			if (host != null && host.length() > 0)
 				preferences.put(PREFERENCES_HOST, host);
@@ -501,7 +478,7 @@ public final class Main {
 		}
 
 		private void setModeDescription() {
-			final String description = modeDescriptionTextField.getText();
+			final var description = modeDescriptionTextField.getText();
 
 			if (description != null && description.length() > 0) {
 				mode.setDescription(description);
@@ -522,7 +499,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final ImageIcon icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
+			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame,
 					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.getVersion()
 							+ rb.getString("ABOUT_DIALOG_TEXT_SUFFIX"),
@@ -542,7 +519,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final WindowEvent openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
+			final var openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
 			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
 			frame.setVisible(true);
 			frame.setExtendedState(Frame.NORMAL);
@@ -646,14 +623,22 @@ public final class Main {
 
 	}
 
-	private static final System.Logger log = System.getLogger(Main.class.getName());
+	static {
+		try {
+			UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
+		} catch (final UnsupportedLookAndFeelException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static final Logger log = System.getLogger(Main.class.getName());
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 	private static final int SINGLE_INSTANCE_PORT = 58008;
 	static final int DIALOG_BOUNDS_X = 100;
 	static final int DIALOG_BOUNDS_Y = 100;
-	static final int DIALOG_BOUNDS_WIDTH = 580;
+	static final int DIALOG_BOUNDS_WIDTH = 930;
 	static final int DIALOG_BOUNDS_HEIGHT = 640;
 	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
@@ -674,15 +659,15 @@ public final class Main {
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
 	private static final String PREFERENCES_SHOW_VR_OVERLAY = "show_vr_overlay";
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
-	private static final long ASSIGNMENTS_PANEL_UPDATE_INTERVAL = 100L;
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
+	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
 	private static boolean isModalDialogShowing() {
-		final Window[] windows = Window.getWindows();
+		final var windows = Window.getWindows();
 		if (windows != null)
 			for (final Window w : windows)
 				if (w.isShowing() && w instanceof Dialog && ((Dialog) w).isModal())
@@ -693,7 +678,7 @@ public final class Main {
 
 	public static void main(final String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			final Options options = new Options();
+			final var options = new Options();
 			options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
 			options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
 			options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
@@ -703,11 +688,11 @@ public final class Main {
 				if (commandLine.hasOption(OPTION_VERSION))
 					System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
 				else {
-					final Main main = new Main();
+					final var main = new Main();
 					if (!commandLine.hasOption(OPTION_TRAY))
 						main.frame.setVisible(true);
 					if (commandLine.hasOption(OPTION_AUTOSTART)) {
-						final String optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+						final var optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 
 						if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
 							main.startLocal();
@@ -718,49 +703,60 @@ public final class Main {
 					}
 				}
 			} catch (final ParseException e) {
-				final HelpFormatter helpFormatter = new HelpFormatter();
+				final var helpFormatter = new HelpFormatter();
 				helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
 			}
 		});
 	}
 
-	private static void setEnabledRecursive(final java.awt.Component component, final boolean enabled) {
-		if (component == null)
-			return;
-
-		component.setEnabled(enabled);
-
-		if (component instanceof Container)
-			for (final java.awt.Component child : ((Container) component).getComponents())
-				setEnabledRecursive(child, enabled);
+	private static void waitForThreadToFinish(final Thread thread) {
+		while (thread != null && thread.isAlive())
+			try {
+				Thread.sleep(100L);
+			} catch (final InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
 	}
 
 	private final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
 	private final Preferences preferences = Preferences.userNodeForPackage(Version.class);
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	private LocalVJoyOutputThread localThread;
-	private ClientVJoyOutputThread clientThread;
-	private ServerOutputThread serverThread;
-	private Controller selectedController;
+	private volatile LocalVJoyOutputThread localThread;
+	private volatile ClientVJoyOutputThread clientThread;
+	private volatile ServerOutputThread serverThread;
+	private int selectedJid = INVALID_JID;
 	private Input input;
 	private OutputType lastOutputType = OutputType.NONE;
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
+	private final JMenuBar menuBar = new JMenuBar();
+	private final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
+	private final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
+	private final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
+	private final JMenu clientMenu = new JMenu(rb.getString("CLIENT_MENU"));
+	private final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
+	private final JMenuItem newMenuItem = fileMenu.add(new NewAction());
+	private final JMenuItem openMenuItem = fileMenu.add(openAction);
+	private final JMenuItem saveMenuItem = fileMenu.add(new SaveAction());
+	private final JMenuItem saveAsMenuItem = fileMenu.add(new SaveAsAction());
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
 	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
 	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
-	private JRadioButtonMenuItem startServerRadioButtonMenuItem;
-	private JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
+	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
 	private MenuItem showMenuItem;
-	private final JPanel modesPanel;
-	private final JScrollPane modesScrollPane;
-	private final JPanel modesListPanel;
-	private final JPanel assignmentsPanel;
-	private final JPanel overlayPanel;
+	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
+	private JPanel modesPanel;
+	private JScrollPane modesScrollPane;
+	private JPanel modesListPanel;
+	private JPanel addModePanel;
+	private JPanel overlayPanel;
+	private AssignmentsComponent assignmentsComponent;
+	private final JScrollPane settingsScrollPane = new JScrollPane();
 	private final JPanel settingsPanel;
-	private final JScrollPane indicatorsScrollPane;
-	private final JPanel indicatorsListPanel;
+	private JScrollPane indicatorsScrollPane;
+	private JPanel indicatorsListPanel;
 	private TimerTask overlayTimerTask;
 	private JLabel vJoyDirectoryLabel1;
 	private JTextField hostTextField;
@@ -833,79 +829,37 @@ public final class Main {
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
-		final List<Image> icons = new ArrayList<>();
-		for (final String s : ICON_RESOURCE_PATHS) {
-			final ImageIcon icon = new ImageIcon(Main.class.getResource(s));
+		final var icons = new ArrayList<Image>();
+		for (final var path : ICON_RESOURCE_PATHS) {
+			final var icon = new ImageIcon(Main.class.getResource(path));
 			icons.add(icon.getImage());
 		}
 		frame.setIconImages(icons);
 
-		final JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
-		final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
 		menuBar.add(fileMenu);
-		fileMenu.add(new NewAction());
-		final List<Controller> controllers = Input.getControllers();
-		final boolean controllerConnected = !controllers.isEmpty();
-		if (controllerConnected) {
-			fileMenu.add(openAction);
-			fileMenu.add(new SaveAction());
-			fileMenu.add(new SaveAsAction());
-		}
-		fileMenu.add(new JSeparator());
 		final QuitAction quitAction = new QuitAction();
 		fileMenu.add(quitAction);
-
-		if (controllerConnected) {
-			final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
-			menuBar.add(deviceMenu);
-			deviceMenu.addMenuListener(new MenuListener() {
-
-				@Override
-				public void menuCanceled(final MenuEvent e) {
-				}
-
-				@Override
-				public void menuDeselected(final MenuEvent e) {
-				}
-
-				@Override
-				public void menuSelected(final MenuEvent e) {
-					deviceMenu.removeAll();
-
-					for (final Controller c : controllers)
-						if (c.poll())
-							deviceMenu.add(new SelectControllerAction(c));
-				}
-			});
-			deviceMenu.setEnabled(true);
-		}
+		menuBar.add(deviceMenu);
 
 		if (windows) {
-			if (controllerConnected) {
-				final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
-				menuBar.add(localMenu);
+			menuBar.add(localMenu, 2);
 
-				final ButtonGroup buttonGroupLocalState = new ButtonGroup();
+			final var buttonGroupLocalState = new ButtonGroup();
+			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+			startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
+			buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
+			localMenu.add(startLocalRadioButtonMenuItem);
 
-				startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
-				startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
-				buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
-				localMenu.add(startLocalRadioButtonMenuItem);
+			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+			stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
+			buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
+			localMenu.add(stopLocalRadioButtonMenuItem);
 
-				stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
-				stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
-				stopLocalRadioButtonMenuItem.setSelected(true);
-				stopLocalRadioButtonMenuItem.setEnabled(false);
-				buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
-				localMenu.add(stopLocalRadioButtonMenuItem);
-			}
-
-			final JMenu clientMenu = new JMenu(rb.getString("CLIENT_MENU"));
 			menuBar.add(clientMenu);
 
-			final ButtonGroup buttonGroupClientState = new ButtonGroup();
+			final var buttonGroupClientState = new ButtonGroup();
 
 			startClientRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
 			startClientRadioButtonMenuItem.setAction(new StartClientAction());
@@ -914,94 +868,46 @@ public final class Main {
 
 			stopClientRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
 			stopClientRadioButtonMenuItem.setAction(new StopClientAction());
-			stopClientRadioButtonMenuItem.setSelected(true);
-			stopClientRadioButtonMenuItem.setEnabled(false);
 			buttonGroupClientState.add(stopClientRadioButtonMenuItem);
 			clientMenu.add(stopClientRadioButtonMenuItem);
 		}
 
-		if (controllerConnected) {
-			final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
-			menuBar.add(serverMenu);
+		final var buttonGroupServerState = new ButtonGroup();
+		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+		startServerRadioButtonMenuItem.setAction(new StartServerAction());
+		buttonGroupServerState.add(startServerRadioButtonMenuItem);
+		serverMenu.add(startServerRadioButtonMenuItem);
 
-			final ButtonGroup buttonGroupServerState = new ButtonGroup();
+		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
+		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
+		serverMenu.add(stopServerRadioButtonMenuItem);
 
-			startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
-			startServerRadioButtonMenuItem.setAction(new StartServerAction());
-			buttonGroupServerState.add(startServerRadioButtonMenuItem);
-			serverMenu.add(startServerRadioButtonMenuItem);
-
-			stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
-			stopServerRadioButtonMenuItem.setAction(new StopServerAction());
-			stopServerRadioButtonMenuItem.setSelected(true);
-			stopServerRadioButtonMenuItem.setEnabled(false);
-			buttonGroupServerState.add(stopServerRadioButtonMenuItem);
-			serverMenu.add(stopServerRadioButtonMenuItem);
-		}
-
-		final JMenu helpMenu = new JMenu(rb.getString("HELP_MENU"));
+		final var helpMenu = new JMenu(rb.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowAboutDialogAction());
 
-		final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		frame.getContentPane().add(tabbedPane);
-
-		modesPanel = new JPanel(new BorderLayout());
-		tabbedPane.addTab(rb.getString("MODES_TAB"), null, modesPanel, null);
-
-		modesListPanel = new JPanel();
-		modesListPanel.setLayout(new GridBagLayout());
-
-		modesScrollPane = new JScrollPane();
-		modesScrollPane
-				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, modesListPanel.getBackground()));
-		modesPanel.add(modesScrollPane, BorderLayout.CENTER);
-
-		final JPanel addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		final JButton addButton = new JButton(new AddModeAction());
-		addButton.setPreferredSize(BUTTON_DIMENSION);
-		addModePanel.add(addButton);
-		modesPanel.add(addModePanel, BorderLayout.SOUTH);
-
-		assignmentsPanel = new JPanel();
-		assignmentsPanel.setLayout(new GridBagLayout());
-
-		final JScrollPane assignmentsScrollPane = new JScrollPane();
-		assignmentsScrollPane
-				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, assignmentsPanel.getBackground()));
-		tabbedPane.addTab(rb.getString("ASSIGNMENTS_TAB"), null, assignmentsScrollPane, null);
-
-		overlayPanel = new JPanel(new BorderLayout());
-		tabbedPane.addTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null);
-
-		indicatorsListPanel = new JPanel();
-		indicatorsListPanel.setLayout(new GridBagLayout());
-
-		indicatorsScrollPane = new JScrollPane();
-		indicatorsScrollPane
-				.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, indicatorsListPanel.getBackground()));
-		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 
 		settingsPanel = new JPanel();
 		settingsPanel.setLayout(new GridBagLayout());
 
-		final JScrollPane settingsScrollPane = new JScrollPane();
 		settingsScrollPane.setViewportView(settingsPanel);
-		tabbedPane.addTab(rb.getString("SETTINGS_TAB"), null, settingsScrollPane, null);
+		tabbedPane.addTab(rb.getString("SETTINGS_TAB"), null, settingsScrollPane);
 
-		final GridBagConstraints panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1,
-				0.0, 0.0, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 5);
+		final var panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 5);
 
-		final FlowLayout panelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
+		final var panelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
 
-		final JPanel pollIntervalPanel = new JPanel(panelFlowLayout);
+		final var pollIntervalPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(pollIntervalPanel, panelGridBagConstraints);
 
-		final JLabel pollIntervalLabel = new JLabel(rb.getString("POLL_INTERVAL_LABEL"));
+		final var pollIntervalLabel = new JLabel(rb.getString("POLL_INTERVAL_LABEL"));
 		pollIntervalLabel.setPreferredSize(new Dimension(120, 15));
 		pollIntervalPanel.add(pollIntervalLabel);
 
-		final JSpinner pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
+		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
 		final JSpinner.DefaultEditor pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner, "#");
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1011,10 +917,10 @@ public final class Main {
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (windows) {
-			final JPanel vJoyDirectoryPanel = new JPanel(panelFlowLayout);
+			final var vJoyDirectoryPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
 
-			final JLabel vJoyDirectoryLabel = new JLabel(rb.getString("VJOY_DIRECTORY_LABEL"));
+			final var vJoyDirectoryLabel = new JLabel(rb.getString("VJOY_DIRECTORY_LABEL"));
 			vJoyDirectoryLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
@@ -1022,17 +928,17 @@ public final class Main {
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel1);
 
-			final JButton vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
+			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
 
-			final JPanel vJoyDevicePanel = new JPanel(panelFlowLayout);
+			final var vJoyDevicePanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDevicePanel, panelGridBagConstraints);
 
-			final JLabel vJoyDeviceLabel = new JLabel(rb.getString("VJOY_DEVICE_LABEL"));
+			final var vJoyDeviceLabel = new JLabel(rb.getString("VJOY_DEVICE_LABEL"));
 			vJoyDeviceLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
-			final JSpinner vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
+			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
 					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
 			final JSpinner.DefaultEditor vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1041,28 +947,28 @@ public final class Main {
 					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
-			final JPanel hostPanel = new JPanel(panelFlowLayout);
+			final var hostPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(hostPanel, panelGridBagConstraints);
 
-			final JLabel hostLabel = new JLabel(rb.getString("HOST_LABEL"));
+			final var hostLabel = new JLabel(rb.getString("HOST_LABEL"));
 			hostLabel.setPreferredSize(new Dimension(120, 15));
 			hostPanel.add(hostLabel);
 
 			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 10);
-			final SetHostAction setHostAction = new SetHostAction(hostTextField);
+			final var setHostAction = new SetHostAction(hostTextField);
 			hostTextField.addActionListener(setHostAction);
 			hostTextField.addFocusListener(setHostAction);
 			hostPanel.add(hostTextField);
 		}
 
-		final JPanel portPanel = new JPanel(panelFlowLayout);
+		final var portPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(portPanel, panelGridBagConstraints);
 
-		final JLabel portLabel = new JLabel(rb.getString("PORT_LABEL"));
+		final var portLabel = new JLabel(rb.getString("PORT_LABEL"));
 		portLabel.setPreferredSize(new Dimension(120, 15));
 		portPanel.add(portLabel);
 
-		final JSpinner portSpinner = new JSpinner(new SpinnerNumberModel(
+		final var portSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT), 1024, 65535, 1));
 		final JSpinner.DefaultEditor portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1071,14 +977,14 @@ public final class Main {
 				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
-		final JPanel timeoutPanel = new JPanel(panelFlowLayout);
+		final var timeoutPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(timeoutPanel, panelGridBagConstraints);
 
-		final JLabel timeoutLabel = new JLabel(rb.getString("TIMEOUT_LABEL"));
+		final var timeoutLabel = new JLabel(rb.getString("TIMEOUT_LABEL"));
 		timeoutLabel.setPreferredSize(new Dimension(120, 15));
 		timeoutPanel.add(timeoutLabel);
 
-		final JSpinner timeoutSpinner = new JSpinner(new SpinnerNumberModel(
+		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
 		final JSpinner.DefaultEditor timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner, "#");
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1087,16 +993,16 @@ public final class Main {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
-		final boolean alwaysOnTopSupported = Toolkit.getDefaultToolkit().isAlwaysOnTopSupported();
+		final var alwaysOnTopSupported = Toolkit.getDefaultToolkit().isAlwaysOnTopSupported();
 		if (alwaysOnTopSupported || preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, alwaysOnTopSupported)) {
-			final JPanel overlaySettingsPanel = new JPanel(panelFlowLayout);
+			final var overlaySettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
-			final JLabel overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
+			final var overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
 			overlayLabel.setPreferredSize(new Dimension(120, 15));
 			overlaySettingsPanel.add(overlayLabel);
 
-			final JCheckBox showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
+			final var showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
 			showOverlayCheckBox.addActionListener(e -> {
 				final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
@@ -1108,35 +1014,34 @@ public final class Main {
 
 		if (windows) {
 			if (preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true)) {
-				final JPanel vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
+				final var vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
 				settingsPanel.add(vrOverlaySettingsPanel, panelGridBagConstraints);
 
-				final JLabel vrOverlayLabel = new JLabel(rb.getString("VR_OVERLAY_LABEL"));
+				final var vrOverlayLabel = new JLabel(rb.getString("VR_OVERLAY_LABEL"));
 				vrOverlayLabel.setPreferredSize(new Dimension(120, 15));
 				vrOverlaySettingsPanel.add(vrOverlayLabel);
 
-				final JCheckBox showVrOverlayCheckBox = new JCheckBox(rb.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
+				final var showVrOverlayCheckBox = new JCheckBox(rb.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
 				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
 				showVrOverlayCheckBox.addActionListener(e -> {
-					final boolean showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
+					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
 
 					preferences.putBoolean(PREFERENCES_SHOW_VR_OVERLAY, showVrOverlay);
 				});
 				vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
 			}
 
-			final JPanel preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
+			final var preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(preventPowerSaveModeSettingsPanel, panelGridBagConstraints);
 
-			final JLabel preventPowerSaveModeLabel = new JLabel(rb.getString("POWER_SAVE_MODE_LABEL"));
+			final var preventPowerSaveModeLabel = new JLabel(rb.getString("POWER_SAVE_MODE_LABEL"));
 			preventPowerSaveModeLabel.setPreferredSize(new Dimension(120, 15));
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
 
-			final JCheckBox preventPowerSaveModeCheckBox = new JCheckBox(
-					rb.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
+			final var preventPowerSaveModeCheckBox = new JCheckBox(rb.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
 			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
 			preventPowerSaveModeCheckBox.addActionListener(e -> {
-				final boolean preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
+				final var preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
 
 				preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
 			});
@@ -1144,22 +1049,22 @@ public final class Main {
 		}
 
 		if (SystemTray.isSupported()) {
-			final PopupMenu popupMenu = new PopupMenu();
+			final var popupMenu = new PopupMenu();
 
-			final ShowAction showAction = new ShowAction();
+			final var showAction = new ShowAction();
 			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
 			showMenuItem.addActionListener(showAction);
 			popupMenu.add(showMenuItem);
 
 			popupMenu.addSeparator();
 
-			final MenuItem openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
+			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 			openMenuItem.addActionListener(openAction);
 			popupMenu.add(openMenuItem);
 
 			popupMenu.addSeparator();
 
-			final MenuItem quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
+			final var quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
 			quitMenuItem.addActionListener(quitAction);
 			popupMenu.add(quitMenuItem);
 
@@ -1178,128 +1083,71 @@ public final class Main {
 		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-		final Border outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
-		final Border insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
+		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
 		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
 		frame.add(statusLabel, BorderLayout.SOUTH);
 
-		final String lastControllerName = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-
-		for (final Controller c : ControllerEnvironment.getDefaultEnvironment().getControllers())
-			if (c.getType() != Type.KEYBOARD && c.getType() != Type.MOUSE && c.getType() != Type.TRACKBALL
-					&& c.getType() != Type.TRACKPAD && c.getType() != Type.UNKNOWN && !c.getName().startsWith("vJoy")) {
-				final boolean lastControllerFound = c.getName().equals(lastControllerName);
-
-				if (selectedController == null || lastControllerFound)
-					selectedController = c;
-
-				if (lastControllerFound)
-					break;
+		final var glfwInitialized = glfwInit();
+		if (!glfwInitialized)
+			if (windows)
+				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			else {
+				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				quit();
 			}
+
+		final var presentJids = new HashSet<Integer>();
+		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
+			if (glfwJoystickPresent(jid) && glfwJoystickIsGamepad(jid))
+				presentJids.add(jid);
+
+		final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
+		for (final var jid : presentJids) {
+			final var lastControllerFound = lastControllerGuid != null
+					? lastControllerGuid.equals(glfwGetJoystickGUID(jid))
+					: false;
+
+			if (!isSelectedJidValid() || lastControllerFound)
+				selectedJid = jid;
+
+			if (lastControllerFound)
+				break;
+		}
 
 		newProfile();
 
-		if (input.getController() == null)
-			JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-					rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
-		else {
+		onControllersChanged(true);
+
+		glfwSetJoystickCallback(new GLFWJoystickCallback() {
+
+			@Override
+			public void invoke(final int jid, final int event) {
+				final var disconnected = event == GLFW_DISCONNECTED;
+				if (disconnected || glfwJoystickIsGamepad(jid)) {
+					if (disconnected && selectedJid == jid)
+						selectedJid = INVALID_JID;
+
+					invokeOnEventDispatchThreadIfRequired(() -> onControllersChanged(false));
+				}
+
+			}
+		});
+
+		if (glfwInitialized && presentJids.isEmpty()) {
+			if (windows)
+				JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
+						rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+			else
+				JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+						rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+		} else {
 			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
 			if (path != null)
 				loadProfile(new File(path));
 		}
-
-		timer.scheduleAtFixedRate(new TimerTask() {
-
-			@Override
-			public void run() {
-				SwingUtilities.invokeLater(() -> {
-					if (frame.getState() == Frame.ICONIFIED
-							|| !assignmentsScrollPane.equals(tabbedPane.getSelectedComponent()))
-						return;
-
-					assignmentsPanel.removeAll();
-
-					final Controller controller = input.getController();
-					if (controller != null && controller.poll()) {
-						for (final Component c : input.getComponents(controller)) {
-							final JPanel componentPanel = new JPanel(new GridBagLayout());
-							assignmentsPanel.add(componentPanel,
-									new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-											GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-											new Insets(0, 0, 0, 0), 5, 5));
-
-							final String name = c.getName();
-							final float value = c.getPollData();
-
-							final JLabel nameLabel = new JLabel();
-							nameLabel.setPreferredSize(new Dimension(100, 15));
-
-							final GridBagConstraints nameGridBagConstraints = new GridBagConstraints(0, 0, 1, 1, 0.0,
-									0.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
-									0, 0);
-
-							final GridBagConstraints valueGridBagConstraints = new GridBagConstraints(2, 0, 1, 1, 1.0,
-									1.0, GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0),
-									0, 0);
-
-							if (c.isAnalog()) {
-								nameLabel.setText(rb.getString("AXIS_LABEL") + name);
-								componentPanel.add(nameLabel, nameGridBagConstraints);
-
-								componentPanel.add(Box.createGlue(),
-										new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-												new Insets(0, 0, 0, 0), 0, 0));
-
-								final JProgressBar valueProgressBar = new JProgressBar(-100, 100);
-								valueProgressBar.setValue((int) (value * 100.0f));
-								componentPanel.add(valueProgressBar, valueGridBagConstraints);
-							} else {
-								nameLabel.setText(rb.getString("BUTTON_LABEL") + name);
-								componentPanel.add(nameLabel, nameGridBagConstraints);
-
-								componentPanel.add(Box.createGlue(),
-										new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-												GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-												new Insets(0, 0, 0, 0), 0, 0));
-
-								final JLabel valueLabel = new JLabel();
-								final StringWriter sw = new StringWriter();
-								if (value > 0.0f)
-									sw.append(rb.getString("BUTTON_DOWN_LABEL"));
-								else {
-									sw.append(rb.getString("BUTTON_UP_LABEL"));
-									valueLabel.setForeground(Color.LIGHT_GRAY);
-								}
-								sw.append(" (" + String.valueOf(value) + ')');
-								valueLabel.setText(sw.toString());
-								componentPanel.add(valueLabel, valueGridBagConstraints);
-							}
-
-							componentPanel.add(Box.createGlue(),
-									new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-											GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-											new Insets(0, 0, 0, 0), 0, 0));
-
-							final JButton editButton = new JButton(new EditComponentAction(c));
-							editButton.setPreferredSize(BUTTON_DIMENSION);
-							componentPanel.add(editButton,
-									new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-											GridBagConstraints.BASELINE, GridBagConstraints.NONE,
-											new Insets(0, 0, 0, 0), 0, 0));
-						}
-
-						assignmentsPanel.add(Box.createGlue(),
-								new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
-										GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-										new Insets(0, 0, 0, 0), 0, 0));
-					}
-
-					setEnabledRecursive(assignmentsPanel, assignmentsPanel.isEnabled());
-					assignmentsScrollPane.setViewportView(assignmentsPanel);
-				});
-			}
-		}, 0L, ASSIGNMENTS_PANEL_UPDATE_INTERVAL);
 	}
 
 	private void deInitOverlay() {
@@ -1339,6 +1187,10 @@ public final class Main {
 		return frame;
 	}
 
+	Input getInput() {
+		return input;
+	}
+
 	public OnScreenKeyboard getOnScreenKeyboard() {
 		return onScreenKeyboard;
 	}
@@ -1361,11 +1213,10 @@ public final class Main {
 
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
-			for (final List<ButtonToModeAction> buttonToModeActions : input.getProfile().getComponentToModeActionMap()
-					.values())
-				for (final ButtonToModeAction buttonToModeAction : buttonToModeActions)
+			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values())
+				for (final var buttonToModeAction : buttonToModeActions)
 					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-						buttonToModeAction.doAction(input, buttonToModeAction.getActivationValue());
+						buttonToModeAction.doAction(input, Byte.MAX_VALUE);
 						break;
 					}
 
@@ -1377,14 +1228,14 @@ public final class Main {
 		if (!preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()))
 			return;
 
-		String longestDescription = "";
-		for (final Mode m : input.getProfile().getModes()) {
-			final String description = m.getDescription();
+		var longestDescription = "";
+		for (final var mode : input.getProfile().getModes()) {
+			final var description = mode.getDescription();
 			if (description.length() > longestDescription.length())
 				longestDescription = description;
 		}
 
-		final FontMetrics fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
+		final var fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
 		labelCurrentMode
 				.setPreferredSize(new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
 		labelCurrentMode.setForeground(Color.RED);
@@ -1415,20 +1266,20 @@ public final class Main {
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
-		for (final VirtualAxis va : Input.VirtualAxis.values()) {
-			final Map<VirtualAxis, Color> virtualAxisToColorMap = input.getProfile().getVirtualAxisToColorMap();
+		for (final var virtualAxis : Input.VirtualAxis.values()) {
+			final var virtualAxisToColorMap = input.getProfile().getVirtualAxisToColorMap();
 
-			if (virtualAxisToColorMap.containsKey(va)) {
-				final JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL);
+			if (virtualAxisToColorMap.containsKey(virtualAxis)) {
+				final var progressBar = new JProgressBar(SwingConstants.VERTICAL);
 				progressBar.setPreferredSize(new Dimension(21, 149));
 				progressBar.setBorder(
 						BorderFactory.createDashedBorder(Color.BLACK, (float) progressBar.getPreferredSize().getWidth(),
 								(float) progressBar.getPreferredSize().getWidth()));
 				progressBar.setBackground(Color.LIGHT_GRAY);
-				progressBar.setForeground(virtualAxisToColorMap.get(va));
+				progressBar.setForeground(virtualAxisToColorMap.get(virtualAxis));
 				progressBar.setValue(1);
 				indicatorPanel.add(progressBar);
-				virtualAxisToProgressBarMap.put(va, progressBar);
+				virtualAxisToProgressBarMap.put(virtualAxis, progressBar);
 			}
 		}
 
@@ -1439,8 +1290,7 @@ public final class Main {
 			@Override
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
-				final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
-						.getMaximumWindowBounds();
+				final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 				updateOverlayAlignment(maxWindowBounds);
 			}
 
@@ -1465,6 +1315,10 @@ public final class Main {
 		}
 	}
 
+	private boolean isSelectedJidValid() {
+		return selectedJid >= GLFW_JOYSTICK_1 && selectedJid <= GLFW_JOYSTICK_LAST;
+	}
+
 	public boolean isWindows() {
 		return windows;
 	}
@@ -1472,23 +1326,23 @@ public final class Main {
 	private void loadProfile(final File file) {
 		stopAll();
 
-		boolean profileLoaded = false;
+		var profileLoaded = false;
 
 		try {
-			final String jsonString = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-			final ActionAdapter actionAdapter = new ActionAdapter();
-			final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, actionAdapter).create();
+			final var jsonString = Files.readString(file.toPath());
+			final var actionAdapter = new ActionAdapter();
+			final var gson = new GsonBuilder().registerTypeAdapter(IAction.class, actionAdapter).create();
 
 			try {
-				final Profile profile = gson.fromJson(jsonString, Profile.class);
+				final var profile = gson.fromJson(jsonString, Profile.class);
 
-				final Set<String> unknownActionClasses = actionAdapter.getUnknownActionClasses();
+				final var unknownActionClasses = actionAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty())
 					JOptionPane.showMessageDialog(frame,
 							rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT") + String.join("\n", unknownActionClasses),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 
-				profileLoaded = input.setProfile(profile, input.getController());
+				profileLoaded = input.setProfile(profile, input.getJid());
 				if (profileLoaded) {
 					saveLastProfile(file);
 					updateModesPanel();
@@ -1521,7 +1375,7 @@ public final class Main {
 		if (input != null)
 			input.deInit();
 
-		input = new Input(this, selectedController);
+		input = new Input(this, selectedJid);
 
 		loadedProfile = null;
 		updateTitleAndTooltip();
@@ -1531,11 +1385,141 @@ public final class Main {
 		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
 	}
 
-	public boolean preventPowerSaveMode() {
-		if (!windows)
-			return false;
+	private void onControllersChanged(final boolean selectFirstTab) {
+		final var presentJids = new HashSet<Integer>();
+		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
+			if (glfwJoystickPresent(jid) && glfwJoystickIsGamepad(jid)) {
+				presentJids.add(jid);
 
-		return preferences.getBoolean(Main.PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
+				if (!isSelectedJidValid())
+					setSelectedJid(jid);
+			}
+
+		final var controllerConnected = !presentJids.isEmpty();
+		if (!controllerConnected)
+			selectedJid = INVALID_JID;
+
+		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
+		fileMenu.remove(newMenuItem);
+		fileMenu.remove(openMenuItem);
+		fileMenu.remove(saveMenuItem);
+		fileMenu.remove(saveAsMenuItem);
+		if (fileMenu.getItemCount() > 1)
+			fileMenu.remove(0);
+		deviceMenu.removeAll();
+		menuBar.remove(deviceMenu);
+		menuBar.remove(localMenu);
+		menuBar.remove(serverMenu);
+		tabbedPane.remove(modesPanel);
+		tabbedPane.remove(assignmentsComponent);
+		tabbedPane.remove(overlayPanel);
+
+		if (controllerConnected) {
+			fileMenu.insert(newMenuItem, 0);
+			fileMenu.insert(openMenuItem, 1);
+			fileMenu.insert(saveMenuItem, 2);
+			fileMenu.insert(saveAsMenuItem, 3);
+			fileMenu.insertSeparator(4);
+
+			for (final var jid : presentJids)
+				deviceMenu.add(new SelectControllerAction(jid));
+			menuBar.add(deviceMenu, 1);
+
+			if (windows)
+				menuBar.add(localMenu, 2);
+
+			menuBar.add(serverMenu, windows ? 4 : 2);
+
+			modesPanel = new JPanel(new BorderLayout());
+			tabbedPane.insertTab(rb.getString("MODES_TAB"), null, modesPanel, null,
+					tabbedPane.indexOfComponent(settingsScrollPane));
+
+			modesListPanel = new JPanel();
+			modesListPanel.setLayout(new GridBagLayout());
+
+			modesScrollPane = new JScrollPane();
+			modesScrollPane
+					.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, modesListPanel.getBackground()));
+			modesPanel.add(modesScrollPane, BorderLayout.CENTER);
+
+			addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			final var addButton = new JButton(new AddModeAction());
+			addButton.setPreferredSize(BUTTON_DIMENSION);
+			addModePanel.add(addButton);
+			modesPanel.add(addModePanel, BorderLayout.SOUTH);
+
+			assignmentsComponent = new AssignmentsComponent(this);
+			tabbedPane.insertTab(rb.getString("ASSIGNMENTS_TAB"), null, assignmentsComponent, null,
+					tabbedPane.indexOfComponent(settingsScrollPane));
+
+			overlayPanel = new JPanel(new BorderLayout());
+
+			indicatorsListPanel = new JPanel();
+			indicatorsListPanel.setLayout(new GridBagLayout());
+
+			indicatorsScrollPane = new JScrollPane();
+			indicatorsScrollPane.setViewportBorder(
+					BorderFactory.createMatteBorder(10, 10, 0, 10, indicatorsListPanel.getBackground()));
+			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
+			tabbedPane.insertTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null,
+					tabbedPane.indexOfComponent(settingsScrollPane));
+		}
+
+		if (selectFirstTab || !controllerConnected)
+			tabbedPane.setSelectedIndex(0);
+		else if (previousSelectedTabIndex < tabbedPane.getTabCount())
+			tabbedPane.setSelectedIndex(previousSelectedTabIndex);
+
+		updateModesPanel();
+		updateOverlayPanel();
+		updatePanelAccess();
+
+		frame.getContentPane().invalidate();
+		frame.getContentPane().repaint();
+	}
+
+	private void onOutputThreadsChanged() {
+		final var localActive = localThread != null && localThread.isAlive();
+		final var clientActive = clientThread != null && clientThread.isAlive();
+		final var serverActive = serverThread != null && serverThread.isAlive();
+
+		final var noneActive = !localActive && !clientActive && !serverActive;
+
+		if (startLocalRadioButtonMenuItem != null) {
+			startLocalRadioButtonMenuItem.setSelected(localActive);
+			startLocalRadioButtonMenuItem.setEnabled(noneActive);
+		}
+
+		if (stopLocalRadioButtonMenuItem != null) {
+			stopLocalRadioButtonMenuItem.setSelected(!localActive);
+			stopLocalRadioButtonMenuItem.setEnabled(localActive);
+		}
+
+		if (startClientRadioButtonMenuItem != null) {
+			startClientRadioButtonMenuItem.setSelected(clientActive);
+			startClientRadioButtonMenuItem.setEnabled(noneActive);
+		}
+
+		if (stopClientRadioButtonMenuItem != null) {
+			stopClientRadioButtonMenuItem.setSelected(!clientActive);
+			stopClientRadioButtonMenuItem.setEnabled(clientActive);
+		}
+
+		if (startServerRadioButtonMenuItem != null) {
+			startServerRadioButtonMenuItem.setSelected(serverActive);
+			startServerRadioButtonMenuItem.setEnabled(noneActive);
+		}
+
+		if (stopServerRadioButtonMenuItem != null) {
+			stopServerRadioButtonMenuItem.setSelected(!serverActive);
+			stopServerRadioButtonMenuItem.setEnabled(serverActive);
+		}
+
+		updatePanelAccess();
+	}
+
+	public boolean preventPowerSaveMode() {
+		return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
 	public void quit() {
@@ -1550,15 +1534,15 @@ public final class Main {
 			input.deInit();
 
 		stopAll();
+		glfwTerminate();
 		System.exit(0);
 	}
 
 	private void repaintOverlay() {
-		if (overlayFrame == null)
-			return;
-
-		overlayFrame.getContentPane().validate();
-		overlayFrame.getContentPane().repaint();
+		if (overlayFrame != null) {
+			overlayFrame.getContentPane().validate();
+			overlayFrame.getContentPane().repaint();
+		}
 
 		if (onScreenKeyboard.isVisible()) {
 			onScreenKeyboard.getContentPane().validate();
@@ -1594,21 +1578,11 @@ public final class Main {
 		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
-		final Gson gson = new GsonBuilder().registerTypeAdapter(IAction.class, new ActionAdapter()).setPrettyPrinting()
+		final var gson = new GsonBuilder().registerTypeAdapter(IAction.class, new ActionAdapter()).setPrettyPrinting()
 				.create();
-		final String jsonString = gson.toJson(input.getProfile());
-
-		try (FileOutputStream fos = new FileOutputStream(file)) {
-			final Writer writer = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-			try {
-				writer.write(jsonString);
-				writer.flush();
-				fos.flush();
-				fos.close();
-			} finally {
-				writer.close();
-			}
-
+		final var jsonString = gson.toJson(input.getProfile());
+		try {
+			Files.writeString(file.toPath(), jsonString);
 			saveLastProfile(file);
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
@@ -1656,18 +1630,36 @@ public final class Main {
 
 		onScreenKeyboardButton.setVisible(visible);
 
-		final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		updateOverlayLocation(maxWindowBounds);
 	}
 
 	public void setOverlayText(final String text) {
-		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
+		invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
 	}
 
-	public void setSelectedController(final Controller controller) {
-		selectedController = controller;
-		newProfile();
-		preferences.put(PREFERENCES_LAST_CONTROLLER, controller.getName());
+	public void setSelectedJid(final int jid) {
+		if (selectedJid == jid)
+			return;
+
+		selectedJid = jid;
+
+		final var guid = glfwGetJoystickGUID(jid);
+		if (guid != null)
+			preferences.put(PREFERENCES_LAST_CONTROLLER, guid);
+
+		stopAll();
+
+		Profile previousProfile = null;
+		if (input != null) {
+			input.deInit();
+			previousProfile = input.getProfile();
+		}
+
+		input = new Input(this, selectedJid);
+
+		if (previousProfile != null)
+			input.setProfile(previousProfile, selectedJid);
 	}
 
 	public void setStatusBarText(final String text) {
@@ -1682,15 +1674,8 @@ public final class Main {
 		updateTitleAndTooltip();
 	}
 
-	public void startClient() {
+	private void startClient() {
 		lastOutputType = OutputType.CLIENT;
-		startClientRadioButtonMenuItem.setSelected(true);
-		if (startLocalRadioButtonMenuItem != null)
-			startLocalRadioButtonMenuItem.setEnabled(false);
-		startClientRadioButtonMenuItem.setEnabled(false);
-		if (startServerRadioButtonMenuItem != null)
-			startServerRadioButtonMenuItem.setEnabled(false);
-		stopClientRadioButtonMenuItem.setEnabled(true);
 		clientThread = new ClientVJoyOutputThread(Main.this, input);
 		clientThread.setvJoyDevice(
 				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
@@ -1699,32 +1684,21 @@ public final class Main {
 		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
 		clientThread.start();
 
-		initOverlay();
-		initVrOverlay();
-
-		startOverlayTimerTask();
+		onOutputThreadsChanged();
 	}
 
-	public void startLocal() {
+	private void startLocal() {
 		lastOutputType = OutputType.LOCAL;
-		startLocalRadioButtonMenuItem.setSelected(true);
-		startLocalRadioButtonMenuItem.setEnabled(false);
-		startClientRadioButtonMenuItem.setEnabled(false);
-		startServerRadioButtonMenuItem.setEnabled(false);
-		stopLocalRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesPanel, false);
-		setEnabledRecursive(assignmentsPanel, false);
-		setEnabledRecursive(overlayPanel, false);
-		setEnabledRecursive(settingsPanel, false);
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(
 				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
 		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
 		localThread.start();
 
+		onOutputThreadsChanged();
+
 		initOverlay();
 		initVrOverlay();
-
 		startOverlayTimerTask();
 	}
 
@@ -1748,7 +1722,7 @@ public final class Main {
 						}
 					}
 
-					final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+					final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
 							.getMaximumWindowBounds();
 					if (!maxWindowBounds.equals(prevMaxWindowBounds)) {
 						prevMaxWindowBounds = maxWindowBounds;
@@ -1765,97 +1739,55 @@ public final class Main {
 		timer.schedule(overlayTimerTask, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
 	}
 
-	public void startServer() {
+	private void startServer() {
 		lastOutputType = OutputType.SERVER;
-		startServerRadioButtonMenuItem.setSelected(true);
-		if (startLocalRadioButtonMenuItem != null)
-			startLocalRadioButtonMenuItem.setEnabled(false);
-		if (startClientRadioButtonMenuItem != null)
-			startClientRadioButtonMenuItem.setEnabled(false);
-		startServerRadioButtonMenuItem.setEnabled(false);
-		stopServerRadioButtonMenuItem.setEnabled(true);
-		setEnabledRecursive(modesPanel, false);
-		setEnabledRecursive(assignmentsPanel, false);
-		setEnabledRecursive(overlayPanel, false);
-		setEnabledRecursive(settingsPanel, false);
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
 		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
 		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
 		serverThread.start();
+
+		onOutputThreadsChanged();
+
+		initOverlay();
+		startOverlayTimerTask();
 	}
 
-	private void stopAll() {
+	public void stopAll() {
 		if (windows) {
 			stopLocal(false);
 			stopClient(false);
 		}
 		stopServer(false);
 
-		while (localThread != null && localThread.isAlive() || clientThread != null && clientThread.isAlive()
-				|| serverThread != null && serverThread.isAlive())
-			try {
-				Thread.sleep(100L);
-			} catch (final InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-
 		System.gc();
 	}
 
-	public void stopClient(final boolean resetLastOutputType) {
+	private void stopClient(final boolean resetLastOutputType) {
 		if (clientThread != null)
 			clientThread.stopOutput();
 
-		if (stopClientRadioButtonMenuItem != null) {
-			stopClientRadioButtonMenuItem.setSelected(true);
-			stopClientRadioButtonMenuItem.setEnabled(false);
-		}
-
-		if (startLocalRadioButtonMenuItem != null)
-			startLocalRadioButtonMenuItem.setEnabled(true);
-
-		if (startClientRadioButtonMenuItem != null)
-			startClientRadioButtonMenuItem.setEnabled(true);
-
-		if (startServerRadioButtonMenuItem != null)
-			startServerRadioButtonMenuItem.setEnabled(true);
-
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
 
-		stopOverlayTimerTask();
-		deInitOverlay();
+		waitForThreadToFinish(clientThread);
+		onOutputThreadsChanged();
 	}
 
-	public void stopLocal(final boolean resetLastOutputType) {
+	private void stopLocal(final boolean resetLastOutputType) {
 		if (localThread != null)
 			localThread.stopOutput();
 
-		if (stopLocalRadioButtonMenuItem != null) {
-			stopLocalRadioButtonMenuItem.setSelected(true);
-			stopLocalRadioButtonMenuItem.setEnabled(false);
-		}
-
-		if (startLocalRadioButtonMenuItem != null)
-			startLocalRadioButtonMenuItem.setEnabled(true);
-
-		if (startClientRadioButtonMenuItem != null)
-			startClientRadioButtonMenuItem.setEnabled(true);
-
-		if (startServerRadioButtonMenuItem != null)
-			startServerRadioButtonMenuItem.setEnabled(true);
-
-		setEnabledRecursive(modesPanel, true);
-		setEnabledRecursive(assignmentsPanel, true);
-		setEnabledRecursive(overlayPanel, true);
-		setEnabledRecursive(settingsPanel, true);
-
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
 
-		stopOverlayTimerTask();
-		deInitOverlay();
+		invokeOnEventDispatchThreadIfRequired(() -> {
+			stopOverlayTimerTask();
+			deInitOverlay();
+		});
+
+		waitForThreadToFinish(localThread);
+		onOutputThreadsChanged();
 	}
 
 	private void stopOverlayTimerTask() {
@@ -1863,33 +1795,20 @@ public final class Main {
 			overlayTimerTask.cancel();
 	}
 
-	public void stopServer(final boolean resetLastOutputType) {
+	private void stopServer(final boolean resetLastOutputType) {
 		if (serverThread != null)
 			serverThread.stopOutput();
 
-		if (stopLocalRadioButtonMenuItem != null) {
-			stopLocalRadioButtonMenuItem.setSelected(true);
-			stopLocalRadioButtonMenuItem.setEnabled(false);
-		}
-
-		if (windows) {
-			if (startLocalRadioButtonMenuItem != null)
-				startLocalRadioButtonMenuItem.setEnabled(true);
-
-			if (startClientRadioButtonMenuItem != null)
-				startClientRadioButtonMenuItem.setEnabled(true);
-		}
-
-		if (startServerRadioButtonMenuItem != null)
-			startServerRadioButtonMenuItem.setEnabled(true);
-
-		setEnabledRecursive(modesPanel, true);
-		setEnabledRecursive(assignmentsPanel, true);
-		setEnabledRecursive(overlayPanel, true);
-		setEnabledRecursive(settingsPanel, true);
-
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
+
+		invokeOnEventDispatchThreadIfRequired(() -> {
+			stopOverlayTimerTask();
+			deInitOverlay();
+		});
+
+		waitForThreadToFinish(serverThread);
+		onOutputThreadsChanged();
 	}
 
 	public void toggleOnScreenKeyboard() {
@@ -1902,15 +1821,18 @@ public final class Main {
 	}
 
 	void updateModesPanel() {
+		if (modesListPanel == null)
+			return;
+
 		modesListPanel.removeAll();
 
-		final List<Mode> modes = input.getProfile().getModes();
-		for (final Mode m : modes) {
-			final JPanel modePanel = new JPanel(new GridBagLayout());
+		final var modes = input.getProfile().getModes();
+		for (final var mode : modes) {
+			final var modePanel = new JPanel(new GridBagLayout());
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final JLabel modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(m));
+			final var modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(mode));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1918,23 +1840,22 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final JTextField descriptionTextField = new JTextField(m.getDescription(), 20);
+			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final SetModeDescriptionAction setModeDescriptionAction = new SetModeDescriptionAction(m,
-					descriptionTextField);
+			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			if (Profile.defaultMode.equals(m) || OnScreenKeyboard.onScreenKeyboardMode.equals(m)) {
+			if (Profile.defaultMode.equals(mode) || OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
 				descriptionTextField.setEditable(false);
 				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width));
 			} else {
-				final JButton deleteButton = new JButton(new RemoveModeAction(m));
+				final var deleteButton = new JButton(new RemoveModeAction(mode));
 				deleteButton.setPreferredSize(BUTTON_DIMENSION);
 				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1948,7 +1869,7 @@ public final class Main {
 	}
 
 	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
-		final boolean inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
+		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
 
 		if (onScreenKeyboardButton != null) {
 			overlayFrame.remove(onScreenKeyboardButton);
@@ -1958,8 +1879,8 @@ public final class Main {
 		overlayFrame.remove(labelCurrentMode);
 		overlayFrame.add(labelCurrentMode, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
 
-		int alignment = SwingConstants.RIGHT;
-		int flowLayoutAlignment = FlowLayout.RIGHT;
+		var alignment = SwingConstants.RIGHT;
+		var flowLayoutAlignment = FlowLayout.RIGHT;
 		if (overlayFrame.getX() + overlayFrame.getWidth() / 2 < maxWindowBounds.width / 2) {
 			alignment = SwingConstants.LEFT;
 			flowLayoutAlignment = FlowLayout.LEFT;
@@ -1976,8 +1897,8 @@ public final class Main {
 	}
 
 	public void updateOverlayAxisIndicators() {
-		for (final VirtualAxis va : Input.VirtualAxis.values())
-			if (virtualAxisToProgressBarMap.containsKey(va)) {
+		for (final var virtualAxis : Input.VirtualAxis.values())
+			if (virtualAxisToProgressBarMap.containsKey(virtualAxis)) {
 				OutputThread outputThread = null;
 				if (localThread != null && localThread.isAlive())
 					outputThread = localThread;
@@ -1987,11 +1908,11 @@ public final class Main {
 					outputThread = serverThread;
 
 				if (outputThread != null) {
-					final JProgressBar progressBar = virtualAxisToProgressBarMap.get(va);
+					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
 					progressBar.setMinimum(-outputThread.getMaxAxisValue());
 					progressBar.setMaximum(outputThread.getMinAxisValue());
 
-					final int newValue = -input.getAxis().get(va);
+					final var newValue = -input.getAxes().get(virtualAxis);
 					if (progressBar.getValue() != newValue)
 						progressBar.setValue(newValue);
 				}
@@ -2001,35 +1922,38 @@ public final class Main {
 	private void updateOverlayLocation(final Rectangle maxWindowBounds) {
 		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
 			overlayFrame.pack();
-			final int x = maxWindowBounds.width - overlayFrame.getWidth();
-			final int y = maxWindowBounds.height - overlayFrame.getHeight();
-			final Point defaultLocation = new Point(x, y);
-			GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
+			final var x = maxWindowBounds.width - overlayFrame.getWidth();
+			final var y = maxWindowBounds.height - overlayFrame.getHeight();
+			final var defaultLocation = new Point(x, y);
+			loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
 			updateOverlayAlignment(maxWindowBounds);
 		}
 	}
 
 	private void updateOverlayPanel() {
+		if (indicatorsListPanel == null)
+			return;
+
 		indicatorsListPanel.removeAll();
 
-		for (final VirtualAxis va : Input.VirtualAxis.values()) {
-			final JPanel indicatorPanel = new JPanel(new GridBagLayout());
+		for (final var virtualAxis : Input.VirtualAxis.values()) {
+			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorsListPanel.add(indicatorPanel,
 					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
 							0, 5));
 
-			final JLabel virtualAxisLabel = new JLabel(va.toString() + rb.getString("AXIS_LABEL_SUFFIX"));
+			final var virtualAxisLabel = new JLabel(virtualAxis.toString() + rb.getString("AXIS_LABEL_SUFFIX"));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final boolean enabled = input.getProfile().getVirtualAxisToColorMap().containsKey(va);
+			final var enabled = input.getProfile().getVirtualAxisToColorMap().containsKey(virtualAxis);
 
-			final JLabel colorLabel = new JLabel();
+			final var colorLabel = new JLabel();
 			if (enabled) {
 				colorLabel.setOpaque(true);
-				colorLabel.setBackground(input.getProfile().getVirtualAxisToColorMap().get(va));
+				colorLabel.setBackground(input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
 			} else
 				colorLabel.setText(rb.getString("INDICATOR_DISABLED_LABEL"));
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -2039,13 +1963,13 @@ public final class Main {
 			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final JButton colorButton = new JButton(new SelectIndicatorColorAction(va));
+			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
 			colorButton.setPreferredSize(BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
 			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final JCheckBox displayCheckBox = new JCheckBox(new DisplayIndicatorAction(va));
+			final var displayCheckBox = new JCheckBox(new DisplayIndicatorAction(virtualAxis));
 			displayCheckBox.setSelected(enabled);
 			indicatorPanel.add(displayCheckBox, new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -2057,10 +1981,25 @@ public final class Main {
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
 	}
 
-	public void updateTitleAndTooltip() {
-		final StringBuilder sb = new StringBuilder();
+	private void updatePanelAccess() {
+		final var localActive = localThread != null && localThread.isAlive();
+		final var serverActive = serverThread != null && serverThread.isAlive();
 
-		if (loadedProfile == null)
+		final var panelsEnabled = !localActive && !serverActive;
+		setEnabledRecursive(modesListPanel, panelsEnabled);
+		setEnabledRecursive(addModePanel, panelsEnabled);
+		if (assignmentsComponent != null)
+			assignmentsComponent.setEnabled(panelsEnabled);
+		setEnabledRecursive(indicatorsListPanel, panelsEnabled);
+		setEnabledRecursive(settingsPanel, panelsEnabled);
+	}
+
+	public void updateTitleAndTooltip() {
+		final var sb = new StringBuilder();
+
+		if (!isSelectedJidValid())
+			sb.append(rb.getString("APPLICATION_NAME"));
+		else if (loadedProfile == null)
 			sb.append(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
 		else {
 			if (unsavedChanges)
@@ -2073,7 +2012,7 @@ public final class Main {
 		frame.setTitle(sb.toString());
 
 		if (trayIcon != null && input != null) {
-			if (windows && Input.isDualShock4Controller(input.getController()))
+			if (input.isDualShock4Controller())
 				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
 						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
 								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));

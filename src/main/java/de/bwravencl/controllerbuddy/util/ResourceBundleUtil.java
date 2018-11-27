@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ResourceBundleUtil {
@@ -47,7 +46,7 @@ public class ResourceBundleUtil {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			final BundleLocale other = (BundleLocale) obj;
+			final var other = (BundleLocale) obj;
 			if (baseName == null) {
 				if (other.baseName != null)
 					return false;
@@ -63,8 +62,8 @@ public class ResourceBundleUtil {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
+			final var prime = 31;
+			var result = 1;
 			result = prime * result + (baseName == null ? 0 : baseName.hashCode());
 			result = prime * result + (locale == null ? 0 : locale.hashCode());
 			return result;
@@ -99,16 +98,16 @@ public class ResourceBundleUtil {
 	private final ConcurrentMap<BundleLocale, ResourceBundle> cache = new ConcurrentHashMap<>();
 
 	public ResourceBundle getResourceBundle(final String baseName, final Locale locale) {
-		final BundleLocale bundleLocale = new BundleLocale(baseName, locale);
+		final var bundleLocale = new BundleLocale(baseName, locale);
 
-		ReflectiveResourceBundle bundle = (ReflectiveResourceBundle) cache.get(bundleLocale);
+		var bundle = (ReflectiveResourceBundle) cache.get(bundleLocale);
 		if (bundle == null) {
-			final ResourceBundle fetchedBundle = ResourceBundle.getBundle(baseName, locale);
-			final Map<String, String> messages = new HashMap<>();
-			final Enumeration<String> keys = fetchedBundle.getKeys();
+			final var fetchedBundle = ResourceBundle.getBundle(baseName, locale);
+			final var messages = new HashMap<String, String>();
+			final var keys = fetchedBundle.getKeys();
 
 			while (keys.hasMoreElements()) {
-				final String key = keys.nextElement();
+				final var key = keys.nextElement();
 				messages.put(key, translateMessage(fetchedBundle, key, MAX_RECURSION));
 			}
 
@@ -120,10 +119,10 @@ public class ResourceBundleUtil {
 	}
 
 	private String translateMessage(final ResourceBundle bundle, final String key, final int iteration) {
-		final String message = bundle.getString(key);
+		final var message = bundle.getString(key);
 
-		final Matcher matcher = keyPattern.matcher(message);
-		final StringBuffer sb = new StringBuffer();
+		final var matcher = keyPattern.matcher(message);
+		final var sb = new StringBuffer();
 		while (matcher.find() && iteration > 0)
 			matcher.appendReplacement(sb, translateMessage(bundle, matcher.group(1), iteration - 1));
 

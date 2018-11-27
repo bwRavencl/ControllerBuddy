@@ -22,25 +22,25 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface ISuspendableAction extends IAction {
+public interface ISuspendableAction extends IAction<Float> {
 
 	long SUSPEND_TIME = 500L;
 
-	Map<ISuspendableAction, String> componentToSuspendedActionsMap = new ConcurrentHashMap<>();
+	Map<ISuspendableAction, Integer> suspendedActionToAxisMap = new ConcurrentHashMap<>();
 
 	default boolean isSuspended() {
-		return componentToSuspendedActionsMap.containsKey(this);
+		return suspendedActionToAxisMap.containsKey(this);
 	}
 
-	default void suspend(final Timer timer, final String componentName) {
-		componentToSuspendedActionsMap.remove(this);
-		componentToSuspendedActionsMap.put(this, componentName);
+	default void suspendAxis(final Timer timer, final int axis) {
+		suspendedActionToAxisMap.remove(this);
+		suspendedActionToAxisMap.put(this, axis);
 
 		timer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
-				componentToSuspendedActionsMap.remove(ISuspendableAction.this);
+				suspendedActionToAxisMap.remove(ISuspendableAction.this);
 			}
 
 		}, SUSPEND_TIME);

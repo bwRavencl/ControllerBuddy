@@ -17,33 +17,31 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.List;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToScrollAction extends ToScrollAction implements ISuspendableAction, IModeChangeListenerAction {
+public class AxisToScrollAction extends ToScrollAction<Float> implements ISuspendableAction, IModeChangeListenerAction {
 
 	public static final float DEFAULT_DEAD_ZONE = 0.15f;
-	public static final float DEFAULT_EXPONENT = 1.0f;
+	public static final float DEFAULT_EXPONENT = 1f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;
 	private transient long lastCallTime;
 
 	@Override
-	public void doAction(final Input input, final float value) {
-		final long currentTime = System.currentTimeMillis();
-		long elapsedTime = input.getOutputThread().getPollInterval();
+	public void doAction(final Input input, final Float value) {
+		final var currentTime = System.currentTimeMillis();
+		var elapsedTime = input.getOutputThread().getPollInterval();
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
 
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) elapsedTime / (float) 1000L;
+			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
 
-			final float d = -Input.normalize(
-					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent) * rateMultiplier,
+			final var d = -Input.normalize(
+					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
 					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
 					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
@@ -62,7 +60,7 @@ public class AxisToScrollAction extends ToScrollAction implements ISuspendableAc
 
 	@Override
 	public void onModeChanged(final Mode newMode) {
-		for (final List<IAction> actions : newMode.getComponentToActionsMap().values())
+		for (final var actions : newMode.getAxisToActionsMap().values())
 			if (actions.contains(this)) {
 				lastCallTime = 0L;
 				break;

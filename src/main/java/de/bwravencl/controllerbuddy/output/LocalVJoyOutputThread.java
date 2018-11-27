@@ -19,14 +19,12 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class LocalVJoyOutputThread extends VJoyOutputThread {
 
@@ -42,17 +40,17 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 			return false;
 		}
 
-		axisX = new LONG(input.getAxis().get(Input.VirtualAxis.X));
-		axisY = new LONG(input.getAxis().get(Input.VirtualAxis.Y));
-		axisZ = new LONG(input.getAxis().get(Input.VirtualAxis.Z));
-		axisRX = new LONG(input.getAxis().get(Input.VirtualAxis.RX));
-		axisRY = new LONG(input.getAxis().get(Input.VirtualAxis.RY));
-		axisRZ = new LONG(input.getAxis().get(Input.VirtualAxis.RZ));
-		axisS0 = new LONG(input.getAxis().get(Input.VirtualAxis.S0));
-		axisS1 = new LONG(input.getAxis().get(Input.VirtualAxis.S1));
+		axisX = new LONG(input.getAxes().get(Input.VirtualAxis.X));
+		axisY = new LONG(input.getAxes().get(Input.VirtualAxis.Y));
+		axisZ = new LONG(input.getAxes().get(Input.VirtualAxis.Z));
+		axisRX = new LONG(input.getAxes().get(Input.VirtualAxis.RX));
+		axisRY = new LONG(input.getAxes().get(Input.VirtualAxis.RY));
+		axisRZ = new LONG(input.getAxes().get(Input.VirtualAxis.RZ));
+		axisS0 = new LONG(input.getAxes().get(Input.VirtualAxis.S0));
+		axisS1 = new LONG(input.getAxes().get(Input.VirtualAxis.S1));
 
 		buttons = new BOOL[nButtons];
-		for (int i = 0; i < nButtons; i++) {
+		for (var i = 0; i < nButtons; i++) {
 			buttons[i] = new BOOL(input.getButtons()[i] ? 1L : 0L);
 			input.getButtons()[i] = false;
 		}
@@ -69,11 +67,11 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		downUpMouseButtons.addAll(input.getDownUpMouseButtons());
 		input.getDownUpMouseButtons().clear();
 
-		final Set<Integer> sourceModifiers = new HashSet<>();
-		final Set<Integer> sourceNormalKeys = new HashSet<>();
-		for (final KeyStroke ks : input.getDownKeyStrokes()) {
-			sourceModifiers.addAll(Arrays.asList(ks.getModifierCodes()));
-			sourceNormalKeys.addAll(Arrays.asList(ks.getKeyCodes()));
+		final var sourceModifiers = new HashSet<Integer>();
+		final var sourceNormalKeys = new HashSet<Integer>();
+		for (final var keyStroke : input.getDownKeyStrokes()) {
+			sourceModifiers.addAll(Arrays.asList(keyStroke.getModifierCodes()));
+			sourceNormalKeys.addAll(Arrays.asList(keyStroke.getKeyCodes()));
 		}
 		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
 		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);

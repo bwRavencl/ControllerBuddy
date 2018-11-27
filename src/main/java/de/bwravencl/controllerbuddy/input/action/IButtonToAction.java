@@ -19,31 +19,26 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Profile;
 
-public interface IButtonToAction extends IAction {
+public interface IButtonToAction extends IAction<Byte> {
 
 	long MIN_LONG_PRESS_TIME = 1000L;
 	boolean DEFAULT_LONG_PRESS = false;
-	float DEFAULT_ACTIVATION_VALUE = 1.0f;
+
 	Set<IButtonToAction> actionToWasDown = new HashSet<>();
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
-	static boolean floatEquals(final float f1, final float f2) {
-		return Math.abs(f1 - f2) < 0.001f;
-	}
-
-	static boolean isDownUpAction(final IAction action) {
+	static boolean isDownUpAction(final IAction<?> action) {
 		if (action instanceof ToKeyAction) {
-			final ToKeyAction toKeyAction = (ToKeyAction) action;
+			final var toKeyAction = (ToKeyAction<?>) action;
 			return toKeyAction.isDownUp();
 		} else if (action instanceof ToMouseButtonAction) {
-			final ToMouseButtonAction toMouseButtonAction = (ToMouseButtonAction) action;
+			final var toMouseButtonAction = (ToMouseButtonAction<?>) action;
 			return toMouseButtonAction.isDownUp();
 		} else if (action instanceof ButtonToCycleAction)
 			return true;
@@ -51,31 +46,25 @@ public interface IButtonToAction extends IAction {
 		return false;
 	}
 
-	float getActivationValue();
-
-	default float handleLongPress(final Input input, final float value) {
-		final float activationValue = getActivationValue();
-
+	default byte handleLongPress(final Input input, final byte value) {
 		if (isLongPress()) {
-			final long currentTime = System.currentTimeMillis();
+			final var currentTime = System.currentTimeMillis();
 
-			if (IButtonToAction.floatEquals(value, activationValue)) {
+			if (value != 0) {
 				if (!actionToDownSinceMap.containsKey(this))
 					actionToDownSinceMap.put(this, currentTime);
 				else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME)
 					return value;
 			} else if (actionToDownSinceMap.containsKey(this)) {
 				if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
-					for (final List<IAction> actions : input.getProfile().getActiveMode().getComponentToActionsMap()
-							.values())
+					for (final var actions : input.getProfile().getActiveMode().getButtonToActionsMap().values())
 						if (actions.contains(this)) {
 							actionToWasDown.removeAll(actions);
 							break;
 						}
 
 					if (!Profile.defaultMode.equals(input.getProfile().getActiveMode()))
-						for (final List<IAction> actions : input.getProfile().getModes().get(0)
-								.getComponentToActionsMap().values())
+						for (final var actions : input.getProfile().getModes().get(0).getButtonToActionsMap().values())
 							if (actions.contains(this)) {
 								actionToWasDown.removeAll(actions);
 								break;
@@ -84,23 +73,21 @@ public interface IButtonToAction extends IAction {
 				actionToDownSinceMap.remove(this);
 			}
 
-			return activationValue - 1.0f;
+			return 0;
 		} else if (isDownUpAction(this)) {
-			if (floatEquals(value, activationValue))
+			if (value != 0)
 				actionToWasDown.add(this);
 			else if (actionToWasDown.contains(this)) {
 				actionToWasDown.remove(this);
-				return activationValue;
+				return 1;
 			}
 
-			return activationValue - 1.0f;
+			return 0;
 		} else
 			return value;
 	}
 
 	boolean isLongPress();
-
-	void setActivationValue(float activationValue);
 
 	void setLongPress(boolean longPress);
 }

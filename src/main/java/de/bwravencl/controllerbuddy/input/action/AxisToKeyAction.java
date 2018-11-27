@@ -19,16 +19,16 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToKeyAction extends ToKeyAction implements ISuspendableAction {
+public class AxisToKeyAction extends ToKeyAction<Float> implements ISuspendableAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.75f;
-	public static final float DEFAULT_MAX_AXIS_VALUE = 1.0f;
+	public static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
-	public void doAction(final Input input, final float value) {
+	public void doAction(final Input input, final Float value) {
 		if (!isSuspended() && value >= minAxisValue && value <= maxAxisValue) {
 			if (downUp) {
 				if (wasUp) {

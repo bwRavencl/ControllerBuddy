@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class NullAction implements IAction {
+public class NullAction implements IAction<Number> {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -27,7 +27,7 @@ public class NullAction implements IAction {
 	}
 
 	@Override
-	public void doAction(final Input input, final float value) {
+	public void doAction(final Input input, final Number value) {
 	}
 
 	@Override

@@ -17,20 +17,21 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public interface IAction extends Cloneable {
+public interface IAction<V extends Number> extends Cloneable {
 
-	ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+	ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
 	Object clone() throws CloneNotSupportedException;
 
-	void doAction(final Input input, float value);
+	void doAction(final Input input, V value);
 
 }

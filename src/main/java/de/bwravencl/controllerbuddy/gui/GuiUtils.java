@@ -1,5 +1,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -33,12 +35,11 @@ class GuiUtils {
 			if (mouseDownLocation == null)
 				return;
 
-			final Point currentMouseLocation = e.getLocationOnScreen();
-			final Point newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
+			final var currentMouseLocation = e.getLocationOnScreen();
+			final var newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
 					currentMouseLocation.y - mouseDownLocation.y);
 
-			final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
-					.getMaximumWindowBounds();
+			final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 			setFrameLocationRespectingBounds(frame, newFrameLocation, maxWindowBounds);
 		}
 
@@ -51,17 +52,17 @@ class GuiUtils {
 		public void mouseReleased(final MouseEvent e) {
 			mouseDownLocation = null;
 
-			final Point frameLocation = frame.getLocation();
+			final var frameLocation = frame.getLocation();
 			main.getPreferences().put(getFrameLocationPreferencesKey(frame), frameLocation.x + "," + frameLocation.y);
 		}
 	}
 
 	private static String getFrameLocationPreferencesKey(final JFrame frame) {
-		final String title = frame.getTitle();
+		final var title = frame.getTitle();
 		if (title == null || title.isBlank())
 			return null;
 
-		String underscoreTitle = title.codePoints().mapToObj((c) -> {
+		var underscoreTitle = title.codePoints().mapToObj((c) -> {
 			if (c == ' ')
 				return "_";
 			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
@@ -80,15 +81,15 @@ class GuiUtils {
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
 			final Rectangle maxWindowBounds) {
-		final Point location = defaultLocation;
+		final var location = defaultLocation;
 
-		final String locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
+		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
 		if (locationString != null) {
-			final String[] parts = locationString.split(",");
+			final var parts = locationString.split(",");
 			if (parts.length == 2)
 				try {
-					final int x = Integer.parseInt(parts[0]);
-					final int y = Integer.parseInt(parts[1]);
+					final var x = Integer.parseInt(parts[0]);
+					final var y = Integer.parseInt(parts[1]);
 					location.x = x;
 					location.y = y;
 				} catch (final NumberFormatException e) {
@@ -96,6 +97,17 @@ class GuiUtils {
 		}
 
 		setFrameLocationRespectingBounds(frame, location, maxWindowBounds);
+	}
+
+	static void setEnabledRecursive(final Component component, final boolean enabled) {
+		if (component == null)
+			return;
+
+		component.setEnabled(enabled);
+
+		if (component instanceof Container)
+			for (final var child : ((Container) component).getComponents())
+				setEnabledRecursive(child, enabled);
 	}
 
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,

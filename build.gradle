@@ -1,5 +1,4 @@
 plugins {
-    id 'com.stehno.natives' version '0.3.1'
     id 'org.ajoberstar.grgit' version '3.0.0'
     id 'com.jonaslasauskas.capsule' version '0.3.0'
 }
@@ -50,37 +49,28 @@ repositories {
 }
 
 ext {
-    jinputVersion = '2.0.9'
     jnaVersion = '4.5.2'
     lwjglVersion = '3.2.0'
 }
 
 dependencies {
-    compile     'commons-cli:commons-cli:1.4',
-                'com.github.nyholku:purejavahidapi:322fdb03b7',
-                'com.google.code.gson:gson:2.8.5',
-                "net.java.dev.jna:jna:$jnaVersion",
-                "net.java.dev.jna:jna-platform:$jnaVersion",
-                "net.java.jinput:jinput:$jinputVersion",
-                "org.lwjgl:lwjgl:$lwjglVersion",
-                "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
-                "org.lwjgl:lwjgl-opengl:$lwjglVersion",
-                "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
-                "org.lwjgl:lwjgl-openvr:$lwjglVersion",
-                "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
-    compileOnly "net.java.jinput:jinput:$jinputVersion:natives-all"
-}
-
-natives {
-    configurations = ['compileOnly']
-    libraries {
-        include = ['jinput-dx8_64.dll', 'jinput-raw_64.dll', 'jinput-wintab.dll', 'libjinput-linux64.so', 'libjinput-osx.jnilib']
-    }
-}
-
-run {
-    dependsOn includeNatives
-    systemProperty 'java.library.path', "$buildDir/natives"
+    compile 'commons-cli:commons-cli:1.4',
+            'com.github.nyholku:purejavahidapi:322fdb03b7',
+            'com.google.code.gson:gson:2.8.5',
+            "net.java.dev.jna:jna:$jnaVersion",
+            "net.java.dev.jna:jna-platform:$jnaVersion",
+            "org.lwjgl:lwjgl:$lwjglVersion",
+            "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
+            "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
+            "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
+            "org.lwjgl:lwjgl-glfw:$lwjglVersion",
+            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
+            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
+            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
+            "org.lwjgl:lwjgl-opengl:$lwjglVersion",
+            "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
+            "org.lwjgl:lwjgl-openvr:$lwjglVersion",
+            "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
 }
 
 capsule {
@@ -88,22 +78,16 @@ capsule {
         applicationId = 'de.bwravencl.controllerbuddy'
         applicationClass = 'de.bwravencl.controllerbuddy.gui.Main'
     }
-    dependsOn includeNatives
     baseName 'ControllerBuddy'
-    from fileTree(dir: "$buildDir/natives", includes: ['*.dll', '*.jnilib', '*.so'])
 }
 
 apply plugin: 'eclipse'
 
-tasks.eclipse.dependsOn generateVersion, includeNatives
+tasks.eclipse.dependsOn generateVersion
 
 eclipse {
     classpath {
         file {
-            withXml {
-                def node = it.asNode()
-                node.find { it.@path.endsWith('jinput-2.0.9-natives-all.jar') }.find { child-> child.name() == 'attributes' }.appendNode('attribute', [name: 'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:"$buildDir/natives"])
-            }
             whenMerged { cp ->
                 cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
             }

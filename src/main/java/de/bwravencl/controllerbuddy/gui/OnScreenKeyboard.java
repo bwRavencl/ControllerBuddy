@@ -17,17 +17,20 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
+import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -131,7 +134,7 @@ public class OnScreenKeyboard extends JFrame {
 
 				@Override
 				public void stateChanged(final ChangeEvent e) {
-					final boolean pressed = getModel().isPressed();
+					final var pressed = getModel().isPressed();
 					if (pressed != lastPressed) {
 						if (pressed) {
 							beginPress = System.currentTimeMillis();
@@ -170,7 +173,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		public Dimension getPreferredSize() {
-			final Dimension preferredSize = super.getPreferredSize();
+			final var preferredSize = super.getPreferredSize();
 
 			if (DirectInputKeyCode.DIK_INSERT.equals(directInputKeyCodeName)
 					|| DirectInputKeyCode.DIK_DELETE.equals(directInputKeyCodeName)
@@ -204,7 +207,7 @@ public class OnScreenKeyboard extends JFrame {
 				doDownUp = false;
 			}
 
-			final Set<KeyStroke> downKeyStrokes = input.getDownKeyStrokes();
+			final var downKeyStrokes = input.getDownKeyStrokes();
 
 			if (heldButtons.contains(this)) {
 				if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME)
@@ -217,7 +220,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void press() {
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
+			invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this))
 				beginPress = System.currentTimeMillis();
@@ -228,7 +231,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void release() {
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
+			invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
 
 			if (heldButtons.remove(this)) {
 				if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
@@ -275,7 +278,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		public Dimension getPreferredSize() {
-			final Dimension preferredSize = super.getPreferredSize();
+			final var preferredSize = super.getPreferredSize();
 
 			if (virtualKeyCode == KeyEvent.VK_CAPS_LOCK)
 				preferredSize.width *= 2;
@@ -312,7 +315,7 @@ public class OnScreenKeyboard extends JFrame {
 		@Override
 		void toggleLock() {
 			locked = !locked;
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+			invokeOnEventDispatchThreadIfRequired(() -> {
 				setForeground(locked ? Color.GREEN : KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
 			});
 			changed = true;
@@ -346,13 +349,12 @@ public class OnScreenKeyboard extends JFrame {
 
 	static {
 		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
-				Locale.getDefault());
+		final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
 		onScreenKeyboardMode.setDescription(rb.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	private static String getShortDefaultKeyName(final String directInputKeyCodeName) {
-		String shortName = directInputKeyCodeName;
+		var shortName = directInputKeyCodeName;
 
 		shortName = shortName.replaceFirst("L ", "");
 		shortName = shortName.replaceFirst("R ", "");
@@ -364,7 +366,7 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private static String getShortLockKeyName(final String lockKeyName) {
-		String shortName = lockKeyName;
+		var shortName = lockKeyName;
 
 		if (!lockKeyName.equals(LockKey.CAPS_LOCK))
 			shortName = shortName.replaceFirst(LockKey.LOCK_SUFFIX, "Lk");
@@ -484,26 +486,26 @@ public class OnScreenKeyboard extends JFrame {
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
 		setUndecorated(true);
-		setBackground(Main.TRANSPARENT);
+		setBackground(TRANSPARENT);
 		setAlwaysOnTop(true);
 
 		addMouseListener(frameDragListener);
 		addMouseMotionListener(frameDragListener);
 
-		final JPanel parentPanel = new JPanel();
+		final var parentPanel = new JPanel();
 		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
-		parentPanel.setBackground(Main.TRANSPARENT);
+		parentPanel.setBackground(TRANSPARENT);
 
-		for (int row = 0; row < keyboardButtons.length; row++) {
-			final FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
+		for (var row = 0; row < keyboardButtons.length; row++) {
+			final var flowLayout = new FlowLayout(FlowLayout.LEFT);
 			flowLayout.setHgap(0);
 			flowLayout.setVgap(0);
-			final JPanel rowPanel = new JPanel(flowLayout);
+			final var rowPanel = new JPanel(flowLayout);
 			rowPanel.setBackground(ROW_BACKGROUND);
 			rowPanel.setBorder(BorderFactory.createEmptyBorder(row == 0 ? ROW_BORDER_WIDTH : 0, ROW_BORDER_WIDTH,
 					row == keyboardButtons.length - 1 ? ROW_BORDER_WIDTH : 0, ROW_BORDER_WIDTH));
 
-			for (int column = 0; column < keyboardButtons[row].length; column++)
+			for (var column = 0; column < keyboardButtons[row].length; column++)
 				rowPanel.add(keyboardButtons[row][column]);
 
 			parentPanel.add(rowPanel);
@@ -519,8 +521,8 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private int getCurrentButtonX() {
-		int x = keyboardButtons[selectedRow][selectedColumn].getPreferredSize().width / 2;
-		for (int i = 0; i < selectedColumn; i++)
+		var x = keyboardButtons[selectedRow][selectedColumn].getPreferredSize().width / 2;
+		for (var i = 0; i < selectedColumn; i++)
 			x += keyboardButtons[selectedRow][i].getPreferredSize().width;
 
 		return x;
@@ -530,7 +532,7 @@ public class OnScreenKeyboard extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			unfocusCurrentButton();
 
-			final int x = getCurrentButtonX();
+			final var x = getCurrentButtonX();
 			if (selectedRow < keyboardButtons.length - 1)
 				selectedRow++;
 			else
@@ -565,7 +567,7 @@ public class OnScreenKeyboard extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			unfocusCurrentButton();
 
-			final int x = getCurrentButtonX();
+			final var x = getCurrentButtonX();
 			if (selectedRow > 0)
 				selectedRow--;
 			else
@@ -578,9 +580,9 @@ public class OnScreenKeyboard extends JFrame {
 		if (anyChanges) {
 			anyChanges = false;
 
-			for (final AbstractKeyboardButton[] row : keyboardButtons)
-				for (final AbstractKeyboardButton kb : row)
-					kb.poll(input);
+			for (final var row : keyboardButtons)
+				for (final var keyboardButton : row)
+					keyboardButton.poll(input);
 		}
 	}
 
@@ -589,9 +591,9 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private void releaseAll() {
-		for (final AbstractKeyboardButton[] row : keyboardButtons)
-			for (final AbstractKeyboardButton kb : row)
-				kb.release();
+		for (final var row : keyboardButtons)
+			for (final var keyboardButton : row)
+				keyboardButton.release();
 	}
 
 	public void releaseSelected() {
@@ -599,11 +601,11 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private void selectButtonByX(final int targetX) {
-		int x = 0;
-		int minDelta = Integer.MAX_VALUE;
-		for (int i = 0; i < keyboardButtons[selectedRow].length; i++) {
-			final int width = keyboardButtons[selectedRow][i].getPreferredSize().width;
-			final int delta = Math.abs(targetX - (x + width / 2));
+		var x = 0;
+		var minDelta = Integer.MAX_VALUE;
+		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
+			final var width = keyboardButtons[selectedRow][i].getPreferredSize().width;
+			final var delta = Math.abs(targetX - (x + width / 2));
 
 			if (delta > minDelta)
 				break;
@@ -642,11 +644,11 @@ public class OnScreenKeyboard extends JFrame {
 
 		pack();
 
-		final Rectangle maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		final int x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
-		final int y = (int) maxWindowBounds.getMaxY() - getHeight();
-		final Point defaultLocation = new Point(x, y);
-		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
+		final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		final var x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
+		final var y = (int) maxWindowBounds.getMaxY() - getHeight();
+		final var defaultLocation = new Point(x, y);
+		loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
 	}
 
 }

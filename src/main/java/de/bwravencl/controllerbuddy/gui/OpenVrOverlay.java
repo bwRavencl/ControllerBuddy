@@ -74,7 +74,6 @@ import org.lwjgl.openvr.OpenVR;
 import org.lwjgl.openvr.Texture;
 import org.lwjgl.openvr.VREvent;
 import org.lwjgl.openvr.VRTextureBounds;
-import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.windows.PIXELFORMATDESCRIPTOR;
 import org.lwjgl.system.windows.User32;
@@ -87,24 +86,21 @@ class OpenVrOverlay {
 
 		private BufferedImage image;
 		private int textureObject;
-		private Graphics2D graphics;
+		private Graphics2D g2d;
 
 	}
 
-	private static final System.Logger log = System.getLogger(OpenVrOverlay.class.getName());
+	private static final Logger log = System.getLogger(OpenVrOverlay.class.getName());
 
 	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
-
 	private static final long OVERLAY_FPS = 25L;
 	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
 	private static final float STATUS_OVERLAY_POSITION_X = 0.2f;
 	private static final float STATUS_OVERLAY_POSITION_Y = -0.1f;
-
 	private static final float STATUS_OVERLAY_POSITION_Z = -0.4f;
 	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
-	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0.0f;
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
-
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z = -0.4f;
 
 	private static ByteBuffer bufferedImageToByteBuffer(final BufferedImage image, final MemoryStack stack) {
@@ -143,16 +139,16 @@ class OpenVrOverlay {
 	private static HmdMatrix34 createIdentityHmdMatrix34(final MemoryStack stack) {
 		final var mat = HmdMatrix34.callocStack(stack);
 
-		mat.m(0, 1.0f);
-		mat.m(5, 1.0f);
-		mat.m(10, 1.0f);
+		mat.m(0, 1f);
+		mat.m(5, 1f);
+		mat.m(10, 1f);
 
 		return mat;
 	}
 
 	private static void makeTransformFacing(final HmdMatrix34 mat) {
-		rotate(mat, (float) Math.atan(mat.m(3) / mat.m(11)), 0.0f, 1.0f, 0.0f);
-		rotate(mat, (float) -Math.atan(mat.m(7) / mat.m(11)), 1.0f, 0.0f, 0.0f);
+		rotate(mat, (float) Math.atan(mat.m(3) / mat.m(11)), 0f, 1f, 0f);
+		rotate(mat, (float) -Math.atan(mat.m(7) / mat.m(11)), 1f, 0f, 0f);
 	}
 
 	private static void rotate(final HmdMatrix34 mat, final float angle, final float x, final float y, final float z) {
@@ -160,7 +156,7 @@ class OpenVrOverlay {
 		final var s = (float) Math.sin(angle);
 
 		final var dot = x * x + y * y + z * z;
-		final var inv = 1.0f / (float) Math.sqrt(dot);
+		final var inv = 1f / (float) Math.sqrt(dot);
 
 		final var aX = x * inv;
 		final var aY = y * inv;
@@ -222,13 +218,12 @@ class OpenVrOverlay {
 	private long hglrc = NULL;
 	private short classAtom = 0;
 	private long hwnd = NULL;
+	private MemoryStack renderingMemoryStack;
 	private final ScheduledExecutorService executorService;
 
 	OpenVrOverlay(final Main main) throws Exception {
 		this.main = main;
 		onScreenKeyboard = main.getOnScreenKeyboard();
-
-		Configuration.STACK_SIZE.set(2048);
 
 		try (var stack = stackPush()) {
 			final var peError = stack.mallocInt(1);
@@ -240,7 +235,7 @@ class OpenVrOverlay {
 			try {
 				OpenVR.create(token);
 				final var overlayTextureBounds = VRTextureBounds.mallocStack(stack);
-				overlayTextureBounds.set(0.0f, 1.0f, 1.0f, 0.0f);
+				overlayTextureBounds.set(0f, 1f, 1f, 0f);
 
 				final var overlayFrame = main.getOverlayFrame();
 				if (overlayFrame != null) {
@@ -310,6 +305,8 @@ class OpenVrOverlay {
 
 				hglrc = check(wglCreateContext(hdc));
 
+				renderingMemoryStack = MemoryStack.create(2048000);
+
 				executorService = Executors.newSingleThreadScheduledExecutor();
 				executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 			} catch (final Throwable t) {
@@ -338,22 +335,25 @@ class OpenVrOverlay {
 	}
 
 	private void render() {
-		try (var stack = stackPush()) {
-			final var vrEvent = VREvent.mallocStack(stack);
+		renderingMemoryStack.push();
+		try {
+			final var vrEvent = VREvent.mallocStack(renderingMemoryStack);
 			while (VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent))
 				if (vrEvent.eventType() == EVREventType_VREvent_Quit)
 					SwingUtilities.invokeLater(() -> stop());
 
 			final var overlayFrame = main.getOverlayFrame();
 			if (overlayFrame != null)
-				updateOverlay(statusOverlayHandle, overlayFrame, stack);
+				updateOverlay(statusOverlayHandle, overlayFrame);
 
-			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard, stack);
+			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
 		} catch (final Throwable t) {
 			log.log(Logger.Level.ERROR, t.getMessage(), t);
 		} finally {
 			if (wglGetCurrentContext() == hglrc)
 				wglMakeCurrent(NULL, NULL);
+
+			renderingMemoryStack.pop();
 		}
 	}
 
@@ -367,51 +367,58 @@ class OpenVrOverlay {
 		}
 	}
 
-	private void updateOverlay(final long overlayHandle, final Frame frame, final MemoryStack stack) throws Exception {
-		if (frame.isVisible()) {
-			checkOverlayError(VROverlay_ShowOverlay(overlayHandle));
+	private void updateOverlay(final long overlayHandle, final Frame frame) throws Exception {
+		renderingMemoryStack.push();
+		try {
+			if (frame.isVisible()) {
+				checkOverlayError(VROverlay_ShowOverlay(overlayHandle));
 
-			if (VROverlay_IsOverlayVisible(overlayHandle)) {
-				var textureData = textureDataCache.get(overlayHandle);
-				if (textureData == null) {
-					textureData = new TextureData();
-					textureDataCache.put(overlayHandle, textureData);
+				if (VROverlay_IsOverlayVisible(overlayHandle)) {
+					var textureData = textureDataCache.get(overlayHandle);
+					if (textureData == null) {
+						textureData = new TextureData();
+						textureDataCache.put(overlayHandle, textureData);
+					}
+
+					final var imageResized = textureData.image == null
+							|| textureData.image.getWidth() != frame.getWidth()
+							|| textureData.image.getHeight() != frame.getHeight();
+
+					if (imageResized) {
+						textureData.image = new BufferedImage(frame.getWidth(), frame.getHeight(),
+								BufferedImage.TYPE_INT_ARGB_PRE);
+						textureData.g2d = textureData.image.createGraphics();
+					}
+
+					frame.paint(textureData.g2d);
+					final var byteBuffer = bufferedImageToByteBuffer(textureData.image, renderingMemoryStack);
+
+					if (wglGetCurrentContext() != hglrc) {
+						if (!wglMakeCurrent(hdc, hglrc))
+							throw new Exception(getClass().getName() + ": could not acquire OpenGL context");
+						createGLCapabilitiesIfRequired();
+					}
+
+					if (imageResized)
+						textureData.textureObject = glGenTextures();
+
+					glBindTexture(GL_TEXTURE_2D, textureData.textureObject);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureData.image.getWidth(),
+							textureData.image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, byteBuffer);
+
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+					final var texture = Texture.mallocStack(renderingMemoryStack);
+					texture.set(textureData.textureObject, ETextureType_TextureType_OpenGL,
+							EColorSpace_ColorSpace_Auto);
+					checkOverlayError(VROverlay_SetOverlayTexture(overlayHandle, texture));
 				}
-
-				final var imageResized = textureData.image == null || textureData.image.getWidth() != frame.getWidth()
-						|| textureData.image.getHeight() != frame.getHeight();
-
-				if (imageResized) {
-					textureData.image = new BufferedImage(frame.getWidth(), frame.getHeight(),
-							BufferedImage.TYPE_INT_ARGB_PRE);
-					textureData.graphics = textureData.image.createGraphics();
-				}
-
-				frame.paint(textureData.graphics);
-				final var byteBuffer = bufferedImageToByteBuffer(textureData.image, stack);
-
-				if (wglGetCurrentContext() != hglrc) {
-					if (!wglMakeCurrent(hdc, hglrc))
-						throw new Exception(getClass().getName() + ": could not acquire OpenGL context");
-					createGLCapabilitiesIfRequired();
-				}
-
-				if (imageResized)
-					textureData.textureObject = glGenTextures();
-
-				glBindTexture(GL_TEXTURE_2D, textureData.textureObject);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureData.image.getWidth(), textureData.image.getHeight(), 0,
-						GL_RGBA, GL_UNSIGNED_BYTE, byteBuffer);
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-				final var texture = Texture.mallocStack(stack);
-				texture.set(textureData.textureObject, ETextureType_TextureType_OpenGL, EColorSpace_ColorSpace_Auto);
-				checkOverlayError(VROverlay_SetOverlayTexture(overlayHandle, texture));
-			}
-		} else
-			checkOverlayError(VROverlay_HideOverlay(overlayHandle));
+			} else
+				checkOverlayError(VROverlay_HideOverlay(overlayHandle));
+		} finally {
+			renderingMemoryStack.pop();
+		}
 	}
 
 }

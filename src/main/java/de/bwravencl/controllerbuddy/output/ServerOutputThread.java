@@ -33,7 +33,6 @@ import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
 
 public class ServerOutputThread extends OutputThread {
 
@@ -41,7 +40,7 @@ public class ServerOutputThread extends OutputThread {
 		Listening, Connected
 	}
 
-	private static final System.Logger log = System.getLogger(ServerOutputThread.class.getName());
+	private static final Logger log = System.getLogger(ServerOutputThread.class.getName());
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
@@ -70,7 +69,7 @@ public class ServerOutputThread extends OutputThread {
 		SwingUtilities.invokeLater(() -> {
 			if (ServerOutputThread.this.isAlive()) {
 				main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
-				main.stopServer(false);
+				main.stopAll();
 			}
 		});
 	}
@@ -85,15 +84,15 @@ public class ServerOutputThread extends OutputThread {
 
 	@Override
 	public void run() {
-		final int clientPort = port + 1;
-		ServerState serverState = ServerState.Listening;
+		final var clientPort = port + 1;
+		var serverState = ServerState.Listening;
 		DatagramPacket receivePacket;
 		String message;
-		long counter = 0;
+		var counter = 0L;
 
 		try {
 			serverSocket = new DatagramSocket(port);
-			final byte[] receiveBuf = new byte[1024];
+			final var receiveBuf = new byte[1024];
 
 			SwingUtilities.invokeLater(() -> {
 				main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
@@ -111,23 +110,23 @@ public class ServerOutputThread extends OutputThread {
 							StandardCharsets.US_ASCII);
 
 					if (message.startsWith(PROTOCOL_MESSAGE_CLIENT_HELLO)) {
-						final String[] messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
+						final var messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
 
 						if (messageParts.length == 4) {
 							minAxisValue = Integer.parseInt(messageParts[1]);
 							maxAxisValue = Integer.parseInt(messageParts[2]);
 							setnButtons(Integer.parseInt(messageParts[3]));
 
-							final StringWriter sw = new StringWriter();
+							final var sw = new StringWriter();
 							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(PROTOCOL_VERSION));
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(pollInterval));
 
-							final byte[] sendBuf = sw.toString().getBytes("ASCII");
-							final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length,
-									clientIPAddress, clientPort);
+							final var sendBuf = sw.toString().getBytes("ASCII");
+							final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+									clientPort);
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
@@ -144,8 +143,8 @@ public class ServerOutputThread extends OutputThread {
 				case Connected:
 					Thread.sleep(pollInterval);
 
-					final StringWriter sw = new StringWriter();
-					boolean doAliveCheck = false;
+					final var sw = new StringWriter();
+					var doAliveCheck = false;
 					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
 						sw.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
 						doAliveCheck = true;
@@ -156,10 +155,10 @@ public class ServerOutputThread extends OutputThread {
 					if (!input.poll())
 						controllerDisconnected();
 					else {
-						for (final int v : input.getAxis().values())
+						for (final var v : input.getAxes().values())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
-						for (int i = 0; i < nButtons; i++) {
+						for (var i = 0; i < nButtons; i++) {
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
 							input.getButtons()[i] = false;
 						}
@@ -170,33 +169,33 @@ public class ServerOutputThread extends OutputThread {
 						input.setCursorDeltaY(0);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
-						for (final int b : input.getDownMouseButtons())
+						for (final var b : input.getDownMouseButtons())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
-						for (final int b : input.getDownUpMouseButtons())
+						for (final var b : input.getDownUpMouseButtons())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
 						input.getDownUpMouseButtons().clear();
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
-						for (final KeyStroke ks : input.getDownKeyStrokes()) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-							for (final int c : ks.getModifierCodes())
+						for (final var keyStroke : input.getDownKeyStrokes()) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
+							for (final var c : keyStroke.getModifierCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-							for (final int c : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
+							for (final var c : keyStroke.getKeyCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
-						for (final KeyStroke ks : input.getDownUpKeyStrokes()) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getModifierCodes().length);
-							for (final int c : ks.getModifierCodes())
+						for (final var keyStroke : input.getDownUpKeyStrokes()) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
+							for (final var c : keyStroke.getModifierCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + ks.getKeyCodes().length);
-							for (final int c : ks.getKeyCodes())
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
+							for (final var c : keyStroke.getKeyCodes())
 								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 						input.getDownUpKeyStrokes().clear();
@@ -205,19 +204,18 @@ public class ServerOutputThread extends OutputThread {
 						input.setScrollClicks(0);
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOnLockKeys().size());
-						for (final int c : input.getOnLockKeys())
+						for (final var c : input.getOnLockKeys())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOnLockKeys().clear();
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOffLockKeys().size());
-						for (final int c : input.getOffLockKeys())
+						for (final var c : input.getOffLockKeys())
 							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOffLockKeys().clear();
 
-						final byte[] sendBuf = sw.toString().getBytes("ASCII");
+						final var sendBuf = sw.toString().getBytes("ASCII");
 
-						final DatagramPacket sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
-								clientPort);
+						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
 						serverSocket.send(sendPacket);
 
 						if (doAliveCheck) {

@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class ToScrollAction extends InvertableAction {
+public abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
 	public static final int DEFAULT_CLICKS = 1;
 

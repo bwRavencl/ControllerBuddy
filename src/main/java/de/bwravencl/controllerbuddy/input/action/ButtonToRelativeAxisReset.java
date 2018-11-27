@@ -19,25 +19,19 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonToAction {
+public class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implements IButtonToAction {
 
-	private static final float DEFAULT_RESET_VALUE = 0.0f;
+	private static final float DEFAULT_RESET_VALUE = 0f;
 
 	private float resetValue = DEFAULT_RESET_VALUE;
 	private boolean longPress = DEFAULT_LONG_PRESS;
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		if (IButtonToAction.floatEquals(value, activationValue) ^ invert)
+		if (value != 0 ^ invert)
 			input.setAxis(virtualAxis, resetValue, false);
-	}
-
-	@Override
-	public float getActivationValue() {
-		return activationValue;
 	}
 
 	public float getResetValue() {
@@ -47,11 +41,6 @@ public class ButtonToRelativeAxisReset extends ToAxisAction implements IButtonTo
 	@Override
 	public boolean isLongPress() {
 		return longPress;
-	}
-
-	@Override
-	public void setActivationValue(final float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	@Override

@@ -33,34 +33,34 @@ import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
 
-public class ActionAdapter implements JsonSerializer<IAction>, JsonDeserializer<IAction> {
+public class ActionAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
-	private static final System.Logger log = System.getLogger(ActionAdapter.class.getName());
+	private static final Logger log = System.getLogger(ActionAdapter.class.getName());
 
 	private static final String PROPERTY_TYPE = "type";
 	private static final String PROPERTY_DATA = "data";
 
 	private static JsonElement get(final JsonObject wrapper, final String memberName) {
-		final JsonElement elem = wrapper.get(memberName);
-		if (elem == null)
+		final var jsonElement = wrapper.get(memberName);
+		if (jsonElement == null)
 			throw new JsonParseException(
 					"No member '" + memberName + "' found in what was expected to be an interface wrapper");
 
-		return elem;
+		return jsonElement;
 	}
 
 	private final Set<String> unknownActionClasses = new HashSet<>();
 
 	@Override
-	public IAction deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+	public IAction<?> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
 			throws JsonParseException {
-		final JsonObject wrapper = json.getAsJsonObject();
-		final JsonElement typeName = get(wrapper, PROPERTY_TYPE);
-		final String typeNameString = typeName.getAsString();
-		final JsonElement data = get(wrapper, PROPERTY_DATA);
+		final var wrapper = json.getAsJsonObject();
+		final var typeName = get(wrapper, PROPERTY_TYPE);
+		final var typeNameString = typeName.getAsString();
+		final var data = get(wrapper, PROPERTY_DATA);
 
 		try {
-			final Type actualType = Class.forName(typeNameString);
+			final var actualType = Class.forName(typeNameString);
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
 			if (typeOfT == IAction.class) {
@@ -80,8 +80,8 @@ public class ActionAdapter implements JsonSerializer<IAction>, JsonDeserializer<
 	}
 
 	@Override
-	public JsonElement serialize(final IAction src, final Type typeOfSrc, final JsonSerializationContext context) {
-		final JsonObject wrapper = new JsonObject();
+	public JsonElement serialize(final IAction<?> src, final Type typeOfSrc, final JsonSerializationContext context) {
+		final var wrapper = new JsonObject();
 		wrapper.addProperty(PROPERTY_TYPE, src.getClass().getName());
 		wrapper.add(PROPERTY_DATA, context.serialize(src));
 

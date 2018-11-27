@@ -19,16 +19,15 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToKeyAction extends ToKeyAction implements IButtonToAction {
+public class ButtonToKeyAction extends ToKeyAction<Byte> implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
-	private float activationValue = DEFAULT_ACTIVATION_VALUE;
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		if (!IButtonToAction.floatEquals(value, activationValue)) {
+		if (value == 0) {
 			if (downUp)
 				wasUp = true;
 			else
@@ -43,18 +42,8 @@ public class ButtonToKeyAction extends ToKeyAction implements IButtonToAction {
 	}
 
 	@Override
-	public float getActivationValue() {
-		return activationValue;
-	}
-
-	@Override
 	public boolean isLongPress() {
 		return longPress;
-	}
-
-	@Override
-	public void setActivationValue(final float activationValue) {
-		this.activationValue = activationValue;
 	}
 
 	@Override

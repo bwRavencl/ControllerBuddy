@@ -17,17 +17,15 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.List;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
 public class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
 
-	public static final float DEFAULT_EXPONENT = 2.0f;
-	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4.0f;
-	public static final float DEFAULT_INITIAL_VALUE = 0.0f;
+	public static final float DEFAULT_EXPONENT = 2f;
+	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
+	public static final float DEFAULT_INITIAL_VALUE = 0f;
 	public static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
 	private float exponent = DEFAULT_EXPONENT;
@@ -37,23 +35,23 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
 	@Override
-	public void doAction(final Input input, final float value) {
-		final long currentTime = System.currentTimeMillis();
-		long elapsedTime = input.getOutputThread().getPollInterval();
+	public void doAction(final Input input, final Float value) {
+		final var currentTime = System.currentTimeMillis();
+		var elapsedTime = input.getOutputThread().getPollInterval();
 
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
 
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final float rateMultiplier = (float) elapsedTime / (float) 1000L;
+			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
 
-			final float d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100.0f, exponent),
-					(float) -Math.pow(100.0f, exponent), (float) Math.pow(100.0f, exponent), -maxRelativeSpeed,
+			final var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
+					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxRelativeSpeed,
 					maxRelativeSpeed) * rateMultiplier;
 
-			final float oldValue = Input.normalize(input.getAxis().get(virtualAxis),
-					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1.0f, 1.0f);
+			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis),
+					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1f, 1f);
 
 			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback);
 		} else
@@ -83,7 +81,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	@Override
 	public void onModeChanged(final Mode newMode) {
-		for (final List<IAction> actions : newMode.getComponentToActionsMap().values())
+		for (final var actions : newMode.getAxisToActionsMap().values())
 			if (actions.contains(this)) {
 				lastCallTime = 0L;
 				break;

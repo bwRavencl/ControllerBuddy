@@ -19,21 +19,21 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction {
+public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.0f;
+	public static final float DEFAULT_DEAD_ZONE = 0f;
 
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	@Override
-	public void doAction(final Input input, float value) {
+	public void doAction(final Input input, Float value) {
 		if (!isSuspended()) {
 			if (Math.abs(value) <= deadZone)
-				value = 0.0f;
-			else if (value >= 0.0f)
-				value = Input.normalize(value, deadZone, 1.0f, 0.0f, 1.0f);
+				value = 0f;
+			else if (value >= 0f)
+				value = Input.normalize(value, deadZone, 1f, 0f, 1f);
 			else
-				value = Input.normalize(value, -1.0f, -deadZone, -1.0f, 0.0f);
+				value = Input.normalize(value, -1f, -deadZone, -1f, 0f);
 
 			input.setAxis(virtualAxis, invert ? -value : value, false);
 		}

@@ -17,8 +17,8 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import java.lang.System.Logger;
-import java.lang.reflect.InvocationTargetException;
+import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -28,11 +28,8 @@ import javax.swing.SwingUtilities;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
-import net.java.games.input.Controller;
 
 public abstract class OutputThread extends Thread {
-
-	private static final System.Logger log = System.getLogger(OutputThread.class.getName());
 
 	public static final int DEFAULT_POLL_INTERVAL = 10;
 
@@ -42,7 +39,7 @@ public abstract class OutputThread extends Thread {
 	int minAxisValue;
 	int maxAxisValue;
 	int nButtons;
-	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(Main.STRING_RESOURCE_BUNDLE_BASENAME,
+	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
 	public OutputThread(final Main main, final Input input) {
@@ -52,40 +49,18 @@ public abstract class OutputThread extends Thread {
 	}
 
 	void controllerDisconnected() throws InterruptedException {
-		try {
-			SwingUtilities.invokeAndWait(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(),
-						rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_PREFIX") + input.getController().getName()
-								+ rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT_SUFFIX"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
-		} catch (final InvocationTargetException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
-		}
-
-		for (final Controller c : Input.getControllers())
-			if (c.poll()) {
-				main.setSelectedController(c);
-
-				return;
-			}
-
-		try {
-			SwingUtilities.invokeAndWait(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
-		} catch (final InvocationTargetException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
-		}
-
 		new Thread() {
 
 			@Override
 			public void run() {
-				main.quit();
+				main.stopAll();
 			}
 		}.start();
+
+		SwingUtilities.invokeLater(() -> {
+			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
+					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		});
 	}
 
 	public int getMaxAxisValue() {

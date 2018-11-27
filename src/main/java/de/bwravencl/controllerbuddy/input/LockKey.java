@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,13 +38,16 @@ public class LockKey {
 	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
 
 	static {
-		lockKeyToVirtualKeyCodeMap = new HashMap<>();
-		virtualKeyCodeToLockKeyMap = new HashMap<>();
+		final var modifiableLockKeyToVirtualKeyCodeMap = new HashMap<LockKey, Integer>();
+		final var modifiableVirtualKeyCodeToLockKeyMap = new HashMap<Integer, LockKey>();
 
-		for (final LockKey lk : LOCK_KEYS) {
-			lockKeyToVirtualKeyCodeMap.put(lk, lk.virtualKeyCode);
-			virtualKeyCodeToLockKeyMap.put(lk.virtualKeyCode, lk);
+		for (final var lockKey : LOCK_KEYS) {
+			modifiableLockKeyToVirtualKeyCodeMap.put(lockKey, lockKey.virtualKeyCode);
+			modifiableVirtualKeyCodeToLockKeyMap.put(lockKey.virtualKeyCode, lockKey);
 		}
+
+		lockKeyToVirtualKeyCodeMap = Collections.unmodifiableMap(modifiableLockKeyToVirtualKeyCodeMap);
+		virtualKeyCodeToLockKeyMap = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
 	}
 
 	public final String name;
