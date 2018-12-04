@@ -577,12 +577,14 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	public void poll(final Input input) {
-		if (anyChanges) {
-			anyChanges = false;
+		synchronized (keyboardButtons) {
+			if (anyChanges) {
+				anyChanges = false;
 
-			for (final var row : keyboardButtons)
-				for (final var keyboardButton : row)
-					keyboardButton.poll(input);
+				for (final var row : keyboardButtons)
+					for (final var keyboardButton : row)
+						keyboardButton.poll(input);
+			}
 		}
 	}
 
@@ -622,12 +624,14 @@ public class OnScreenKeyboard extends JFrame {
 
 	@Override
 	public void setVisible(final boolean b) {
-		super.setVisible(b);
+		synchronized (keyboardButtons) {
+			super.setVisible(b);
 
-		if (b)
-			setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
-		else
-			releaseAll();
+			if (b)
+				setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+			else
+				releaseAll();
+		}
 	}
 
 	public void toggleLock() {

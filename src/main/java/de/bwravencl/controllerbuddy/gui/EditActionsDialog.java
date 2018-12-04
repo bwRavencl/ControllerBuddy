@@ -523,7 +523,7 @@ public class EditActionsDialog extends JDialog {
 		} else if (cycleActions != null)
 			clonedAssignedActions.addAll(cycleActions);
 
-		if (component.type == ComponentType.BUTTON && isComponentEditor() && Profile.defaultMode.equals(selectedMode)) {
+		if (isComponentEditor() && component.type == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
 			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index);
 			if (buttonToModeActions != null)
 				for (final var action : buttonToModeActions)

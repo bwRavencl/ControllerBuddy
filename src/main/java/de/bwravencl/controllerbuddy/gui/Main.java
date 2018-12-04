@@ -1771,7 +1771,10 @@ public final class Main {
 			lastOutputType = OutputType.NONE;
 
 		waitForThreadToFinish(clientThread);
-		onOutputThreadsChanged();
+
+		invokeOnEventDispatchThreadIfRequired(() -> {
+			onOutputThreadsChanged();
+		});
 	}
 
 	private void stopLocal(final boolean resetLastOutputType) {
@@ -1787,7 +1790,10 @@ public final class Main {
 		});
 
 		waitForThreadToFinish(localThread);
-		onOutputThreadsChanged();
+
+		invokeOnEventDispatchThreadIfRequired(() -> {
+			onOutputThreadsChanged();
+		});
 	}
 
 	private void stopOverlayTimerTask() {
@@ -1808,7 +1814,10 @@ public final class Main {
 		});
 
 		waitForThreadToFinish(serverThread);
-		onOutputThreadsChanged();
+
+		invokeOnEventDispatchThreadIfRequired(() -> {
+			onOutputThreadsChanged();
+		});
 	}
 
 	public void toggleOnScreenKeyboard() {
