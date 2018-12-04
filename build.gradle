@@ -49,13 +49,13 @@ repositories {
 }
 
 ext {
-    jnaVersion = '4.5.2'
+    jnaVersion = '5.1.0'
     lwjglVersion = '3.2.0'
 }
 
 dependencies {
     compile 'commons-cli:commons-cli:1.4',
-            'com.github.nyholku:purejavahidapi:322fdb03b7',
+            'com.github.git-moss:purejavahidapi:ac30486297',
             'com.google.code.gson:gson:2.8.5',
             "net.java.dev.jna:jna:$jnaVersion",
             "net.java.dev.jna:jna-platform:$jnaVersion",

@@ -260,7 +260,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				.get(PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
 
 		try {
-			vJoy = Native.loadLibrary(LIBRARY_NAME, IVjoyInterface.class);
+			vJoy = Native.load(LIBRARY_NAME, IVjoyInterface.class);
 
 			final var dllVersion = new Memory(WinDef.WORD.SIZE);
 			final var drvVersion = new Memory(WinDef.WORD.SIZE);
