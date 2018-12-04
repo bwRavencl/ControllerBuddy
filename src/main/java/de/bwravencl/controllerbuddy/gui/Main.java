@@ -641,7 +641,7 @@ public final class Main {
 	static final int DIALOG_BOUNDS_WIDTH = 930;
 	static final int DIALOG_BOUNDS_HEIGHT = 640;
 	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
-	static final Dimension BUTTON_DIMENSION = new Dimension(100, 25);
+	static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_TRAY = "tray";
 	private static final String OPTION_VERSION = "version";
@@ -1893,6 +1893,7 @@ public final class Main {
 		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
 		indicatorPanel.invalidate();
 
+		overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.pack();
 	}
 
