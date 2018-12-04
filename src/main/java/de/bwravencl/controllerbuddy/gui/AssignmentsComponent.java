@@ -430,8 +430,8 @@ public class AssignmentsComponent extends JScrollPane {
 		assignmentsPanel.add(
 				new FourWay(main, rb.getString("Y_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_Y),
 						rb.getString("X_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_X),
-						rb.getString("A_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_A),
-						rb.getString("B_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_B)),
+						rb.getString("B_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_B),
+						rb.getString("A_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_A)),
 				constraints);
 
 		constraints.gridx = 1;
