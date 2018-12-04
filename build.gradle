@@ -35,6 +35,7 @@ clean {
 compileJava {
     dependsOn generateVersion
     source generateVersion.outputs.files, sourceSets.main.java
+    options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
