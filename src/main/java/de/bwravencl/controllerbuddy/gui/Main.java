@@ -79,7 +79,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -662,7 +661,6 @@ public final class Main {
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
-	private static final String KEYBOARD_ICON_RESOURCE_PATH = "/keyboard.png";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
@@ -776,7 +774,6 @@ public final class Main {
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
 	private volatile JFrame overlayFrame;
-	private volatile JButton onScreenKeyboardButton;
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
@@ -1159,7 +1156,6 @@ public final class Main {
 		if (overlayFrame != null) {
 			overlayFrame.dispose();
 			overlayFrame = null;
-			onScreenKeyboardButton = null;
 		}
 
 		virtualAxisToProgressBarMap.clear();
@@ -1193,10 +1189,6 @@ public final class Main {
 
 	public OnScreenKeyboard getOnScreenKeyboard() {
 		return onScreenKeyboard;
-	}
-
-	JButton getOnScreenKeyboardButton() {
-		return onScreenKeyboardButton;
 	}
 
 	JFrame getOverlayFrame() {
@@ -1247,17 +1239,6 @@ public final class Main {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
-		if (input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
-			final Icon icon = new ImageIcon(Main.class.getResource(KEYBOARD_ICON_RESOURCE_PATH));
-			onScreenKeyboardButton = new JButton(icon);
-			onScreenKeyboardButton.addActionListener(e -> {
-				scheduleOnScreenKeyboardModeSwitch = true;
-			});
-			onScreenKeyboardButton.setBorder(null);
-			onScreenKeyboardButton.setFocusPainted(false);
-			onScreenKeyboardButton.setContentAreaFilled(false);
-			overlayFrame.add(onScreenKeyboardButton, BorderLayout.PAGE_START);
-		}
 
 		overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		overlayFrame.setAlwaysOnTop(true);
@@ -1624,16 +1605,6 @@ public final class Main {
 		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
 	}
 
-	void setOnScreenKeyboardButtonVisible(final boolean visible) {
-		if (onScreenKeyboardButton == null)
-			return;
-
-		onScreenKeyboardButton.setVisible(visible);
-
-		final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		updateOverlayLocation(maxWindowBounds);
-	}
-
 	public void setOverlayText(final String text) {
 		invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
 	}
@@ -1880,11 +1851,6 @@ public final class Main {
 	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
 		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
 
-		if (onScreenKeyboardButton != null) {
-			overlayFrame.remove(onScreenKeyboardButton);
-			overlayFrame.add(onScreenKeyboardButton, inLowerHalf ? BorderLayout.PAGE_END : BorderLayout.PAGE_START);
-		}
-
 		overlayFrame.remove(labelCurrentMode);
 		overlayFrame.add(labelCurrentMode, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
 
@@ -1895,8 +1861,6 @@ public final class Main {
 			flowLayoutAlignment = FlowLayout.LEFT;
 		}
 
-		if (onScreenKeyboardButton != null)
-			onScreenKeyboardButton.setHorizontalAlignment(alignment);
 		labelCurrentMode.setHorizontalAlignment(alignment);
 
 		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);

@@ -239,8 +239,6 @@ class OpenVrOverlay {
 
 				final var overlayFrame = main.getOverlayFrame();
 				if (overlayFrame != null) {
-					main.setOnScreenKeyboardButtonVisible(false);
-
 					final var statusOverlayHandleBuffer = stack.mallocLong(1);
 					checkOverlayError(VROverlay_CreateOverlay(OVERLAY_KEY_PREFIX + overlayFrame.getTitle(),
 							overlayFrame.getTitle(), statusOverlayHandleBuffer));
@@ -330,8 +328,6 @@ class OpenVrOverlay {
 
 		if (classAtom != 0)
 			nUnregisterClass(classAtom & 0xFFFF, WindowsLibrary.HINSTANCE);
-
-		main.setOnScreenKeyboardButtonVisible(true);
 	}
 
 	private void render() {
