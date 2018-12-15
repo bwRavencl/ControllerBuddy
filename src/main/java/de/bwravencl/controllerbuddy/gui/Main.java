@@ -61,7 +61,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.System.Logger;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -135,8 +134,10 @@ import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
+import jdk.jpackage.runtime.singleton.SingleInstanceListener;
+import jdk.jpackage.runtime.singleton.SingleInstanceService;
 
-public final class Main {
+public final class Main implements SingleInstanceListener {
 
 	private class AddModeAction extends AbstractAction {
 
@@ -634,7 +635,6 @@ public final class Main {
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
-	private static final int SINGLE_INSTANCE_PORT = 58008;
 	static final int DIALOG_BOUNDS_X = 100;
 	static final int DIALOG_BOUNDS_Y = 100;
 	static final int DIALOG_BOUNDS_WIDTH = 930;
@@ -777,16 +777,9 @@ public final class Main {
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
+		SingleInstanceService.addSingleInstanceListener(this);
+
 		frame = new JFrame();
-
-		try {
-			serverSocket = new ServerSocket(SINGLE_INSTANCE_PORT, 10, InetAddress.getLoopbackAddress());
-		} catch (final IOException e) {
-			JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			quit();
-		}
-
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -1348,6 +1341,13 @@ public final class Main {
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 	}
 
+	@Override
+	public void newActivation(final String... args) {
+		SwingUtilities
+				.invokeLater(() -> JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+	}
+
 	private void newProfile() {
 		stopAll();
 
@@ -1516,6 +1516,7 @@ public final class Main {
 
 		stopAll();
 		glfwTerminate();
+		SingleInstanceService.removeSingleInstanceListener(this);
 		System.exit(0);
 	}
 

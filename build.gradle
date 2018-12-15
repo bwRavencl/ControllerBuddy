@@ -1,9 +1,14 @@
 plugins {
     id 'org.ajoberstar.grgit' version '3.0.0'
-    id 'com.jonaslasauskas.capsule' version '0.3.0'
 }
 
 apply plugin: 'application'
+
+mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
+version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
+
+sourceCompatibility = 12
+targetCompatibility = 12
 
 def genDir = 'gen'
 def versionDir = "$genDir/main/java"
@@ -38,11 +43,22 @@ compileJava {
     options.compilerArgs += ["-Xlint:deprecation"]
 }
 
-mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
-version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
+task copyLibs(type: Copy) {
+    into "$buildDir/libs"
+    from configurations.runtime
+}
 
-sourceCompatibility = 11
-targetCompatibility = 11
+task jpackage(type: Exec) {
+    dependsOn jar, copyLibs
+    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', '\u00A9 Matteo Hausner', '--add-modules', 'java.sql,jdk.jpackage.runtime,jdk.unsupported', '--strip-native-commands', '--singleton', '--verbose'
+}
+
+task zip(type: Zip) {
+    dependsOn jpackage
+    from "$buildDir/dist"
+    include "$project.name/**"
+    destinationDir file("$buildDir/dist")
+}
 
 repositories {
     mavenCentral()
@@ -72,14 +88,6 @@ dependencies {
             "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
             "org.lwjgl:lwjgl-openvr:$lwjglVersion",
             "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
-}
-
-capsule {
-    capsuleManifest {
-        applicationId = 'de.bwravencl.controllerbuddy'
-        applicationClass = 'de.bwravencl.controllerbuddy.gui.Main'
-    }
-    baseName 'ControllerBuddy'
 }
 
 apply plugin: 'eclipse'

@@ -63,6 +63,7 @@ Both the status overlay and the On-Screen Keyboard can be displayed as overlays 
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server.  
 When running in client- or local-mode currently only Windows is supported.
+Currently only binary builds for Windows x64 are provided.
 
 A great number of XInput and DirectInput gamepads are supported such as:
 - Xbox 360 Controller
@@ -112,10 +113,10 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 </pre>
 
 #### Runtime Requirements:
-- [OpenJDK 11](https://openjdk.java.net/)
 - [vJoy 2.1.8](http://vjoystick.sourceforge.net)
 
 #### Dependencies:
+- [OpenJDK 12 with jpackage support](https://jdk.java.net/jpackage/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
@@ -129,7 +130,8 @@ The following tasks are supported:
 | Task                             | Command              |
 | -------------------------------- | -------------------- |
 | Run ControllerBuddy              | gradlew run          |
-| Create a capsule executable JAR  | gradlew capsule      |
+| Create a jpackage image          | gradlew jpackage     |
+| Create a zipped jpackage image   | gradlew zip          |
 | Generate Eclipse files           | gradlew eclipse      |
 | Clean Eclipse files              | gradlew cleanEclipse |
 | Delete build and gen directories | gradlew clean        |
