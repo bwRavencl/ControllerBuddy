@@ -127,7 +127,8 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.json.ActionAdapter;
+import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
+import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
 import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
@@ -251,7 +252,7 @@ public final class Main implements SingleInstanceListener {
 
 	}
 
-	private static enum OutputType {
+	private enum OutputType {
 		NONE, LOCAL, CLIENT, SERVER
 	}
 
@@ -1304,8 +1305,9 @@ public final class Main implements SingleInstanceListener {
 
 		try {
 			final var jsonString = Files.readString(file.toPath());
-			final var actionAdapter = new ActionAdapter();
-			final var gson = new GsonBuilder().registerTypeAdapter(IAction.class, actionAdapter).create();
+			final var actionAdapter = new ActionTypeAdapter();
+			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
+					.registerTypeAdapter(IAction.class, actionAdapter).create();
 
 			try {
 				final var profile = gson.fromJson(jsonString, Profile.class);
@@ -1560,8 +1562,8 @@ public final class Main implements SingleInstanceListener {
 		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
-		final var gson = new GsonBuilder().registerTypeAdapter(IAction.class, new ActionAdapter()).setPrettyPrinting()
-				.create();
+		final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
+				.registerTypeAdapter(IAction.class, new ActionTypeAdapter()).setPrettyPrinting().create();
 		final var jsonString = gson.toJson(input.getProfile());
 		try {
 			Files.writeString(file.toPath(), jsonString);

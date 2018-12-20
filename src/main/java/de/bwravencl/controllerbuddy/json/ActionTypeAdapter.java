@@ -33,9 +33,9 @@ import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
 
-public class ActionAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
+public class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
-	private static final Logger log = System.getLogger(ActionAdapter.class.getName());
+	private static final Logger log = System.getLogger(ActionTypeAdapter.class.getName());
 
 	private static final String PROPERTY_TYPE = "type";
 	private static final String PROPERTY_DATA = "data";
