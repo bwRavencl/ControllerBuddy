@@ -62,7 +62,7 @@ In addition a built-in On-Screen Keyboard is provided, that can either be contro
 Both the status overlay and the On-Screen Keyboard can be displayed as overlays inside OpenVR-based applications.
 
 For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, Mac OS X and Linux when running as a server.  
-When running in client- or local-mode currently only Windows is supported.
+When running in client- or local-mode currently only Windows is supported.  
 Currently only binary builds for Windows x64 are provided.
 
 A great number of XInput and DirectInput gamepads are supported such as:
