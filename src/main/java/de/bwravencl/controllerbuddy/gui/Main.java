@@ -1810,12 +1810,14 @@ public final class Main implements SingleInstanceListener {
 		modesListPanel.removeAll();
 
 		final var modes = input.getProfile().getModes();
-		for (final var mode : modes) {
+		for (var i = 0; i < modes.size(); i++) {
+			final var mode = modes.get(i);
+
 			final var modePanel = new JPanel(new GridBagLayout());
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final var modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + modes.indexOf(mode));
+			final var modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + (i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

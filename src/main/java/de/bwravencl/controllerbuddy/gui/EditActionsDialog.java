@@ -412,7 +412,7 @@ public class EditActionsDialog extends JDialog {
 		if (model instanceof DefaultListModel)
 			return ((DefaultListModel<?>) model).indexOf(value);
 
-		for (int i = 0; i < model.getSize(); i++)
+		for (var i = 0; i < model.getSize(); i++)
 			if (value.equals(model.getElementAt(i)))
 				return i;
 

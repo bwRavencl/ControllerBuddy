@@ -42,8 +42,8 @@ import javax.swing.SwingUtilities;
 import org.lwjgl.glfw.GLFWGamepadState;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
-import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
@@ -76,7 +76,7 @@ public class Input {
 	public static List<Integer> getPresentControllers() {
 		final var controllers = new ArrayList<Integer>();
 
-		for (int i = 0; i <= GLFW_JOYSTICK_LAST; i++)
+		for (var i = 0; i <= GLFW_JOYSTICK_LAST; i++)
 			if (glfwJoystickPresent(i) && glfwJoystickIsGamepad(i))
 				controllers.add(i);
 
@@ -440,7 +440,7 @@ public class Input {
 	private boolean sendDualShock4HidReport() {
 		var sent = false;
 
-		for (int i = 0; i < 2; i++) {
+		for (var i = 0; i < 2; i++) {
 			final var dataLength = dualShock4HidReport.length - 1;
 			final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
 					Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length), dataLength);
@@ -545,8 +545,37 @@ public class Input {
 			if (!isValidButton(button))
 				return false;
 
-		for (final var mode : profile.getModes()) {
-			for (final int axis : mode.getAxisToActionsMap().keySet())
+		final var modes = profile.getModes();
+		Collections.sort(modes, (o1, o2) -> {
+			final var o1IsDefaultMode = Profile.defaultMode.equals(o1);
+			final var o2IsDefaultMode = Profile.defaultMode.equals(o2);
+
+			if (o1IsDefaultMode && o2IsDefaultMode)
+				return 0;
+
+			if (o1IsDefaultMode)
+				return -1;
+
+			if (o2IsDefaultMode)
+				return 1;
+
+			final var o1IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o1);
+			final var o2IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o2);
+
+			if (o1IsOnScreenKeyboardMode && o2IsOnScreenKeyboardMode)
+				return 0;
+
+			if (o1IsOnScreenKeyboardMode)
+				return -1;
+
+			if (o2IsOnScreenKeyboardMode)
+				return 1;
+
+			return o1.getDescription().compareTo(o2.getDescription());
+		});
+
+		for (final var mode : modes) {
+			for (final var axis : mode.getAxisToActionsMap().keySet())
 				if (axis < 0 || axis > GLFW_GAMEPAD_AXIS_LAST)
 					return false;
 
@@ -554,23 +583,24 @@ public class Input {
 				if (!isValidButton(button))
 					return false;
 
-			for (final List<IAction<Byte>> actions : mode.getButtonToActionsMap().values())
+			for (final var actions : mode.getButtonToActionsMap().values())
 				Collections.sort(actions, (o1, o2) -> {
 					if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
-						final IButtonToAction buttonToAction1 = (IButtonToAction) o1;
-						final IButtonToAction buttonToAction2 = (IButtonToAction) o2;
+						final var buttonToAction1 = (IButtonToAction) o1;
+						final var buttonToAction2 = (IButtonToAction) o2;
 
-						final boolean o1IsLongPress = buttonToAction1.isLongPress();
-						final boolean o2IsLongPress = buttonToAction2.isLongPress();
+						final var o1IsLongPress = buttonToAction1.isLongPress();
+						final var o2IsLongPress = buttonToAction2.isLongPress();
 
 						if (o1IsLongPress && !o2IsLongPress)
 							return -1;
-						else if (!o1IsLongPress && o2IsLongPress)
+						if (!o1IsLongPress && o2IsLongPress)
 							return 1;
-						else
-							return 0;
-					} else
+
 						return 0;
+					}
+
+					return 0;
 				});
 		}
 

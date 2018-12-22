@@ -59,7 +59,7 @@ public class ButtonToModeAction implements IButtonToAction {
 		final var profile = input.getProfile();
 
 		Integer myButton = null;
-		buttonLoop: for (int button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+		buttonLoop: for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
 			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 			if (buttonToModeActions != null)
 				for (final var action : buttonToModeActions)
