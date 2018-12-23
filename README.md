@@ -106,6 +106,9 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 
 ![Component Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_3.png)
 
+![Overlay](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_4.png)
+
+![VR Overlay](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_5.png)
 
 #### Command Line Parameters:
 <pre>
