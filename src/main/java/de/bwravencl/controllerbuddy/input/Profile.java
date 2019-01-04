@@ -18,6 +18,8 @@
 package de.bwravencl.controllerbuddy.input;
 
 import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
 import java.awt.Color;
 import java.lang.System.Logger;
@@ -136,7 +138,9 @@ public class Profile implements Cloneable {
 						for (final var action : currentAxisToActionsMap.get(axis)) {
 							if (action instanceof AxisToAxisAction && !(action instanceof AxisToRelativeAxisAction)) {
 								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) action;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), 0f, false);
+								final var value = axis == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
+										|| axis == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
+								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false);
 							}
 
 							if (action instanceof IModeChangeListenerAction) {
