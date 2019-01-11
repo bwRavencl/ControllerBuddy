@@ -50,7 +50,7 @@ task copyLibs(type: Copy) {
 
 task jpackage(type: Exec) {
     dependsOn jar, copyLibs
-    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', '\u00A9 Matteo Hausner', '--add-modules', 'java.sql,jdk.jpackage.runtime,jdk.unsupported', '--strip-native-commands', '--singleton', '--verbose'
+    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', '\u00A9 Matteo Hausner', '--add-modules', 'java.sql,jdk.jpackage.runtime,jdk.unsupported', '--strip-native-commands', '--singleton', '--verbose', '--force'
 }
 
 task zip(type: Zip) {
@@ -66,13 +66,13 @@ repositories {
 }
 
 ext {
-    jnaVersion = '5.1.0'
-    lwjglVersion = '3.2.0'
+    jnaVersion = '5.2.0'
+    lwjglVersion = '3.2.1'
 }
 
 dependencies {
     compile 'commons-cli:commons-cli:1.4',
-            'com.github.git-moss:purejavahidapi:ac30486297',
+            'com.github.git-moss:purejavahidapi:66fd63877e',
             'com.google.code.gson:gson:2.8.5',
             "net.java.dev.jna:jna:$jnaVersion",
             "net.java.dev.jna:jna-platform:$jnaVersion",
