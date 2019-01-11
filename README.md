@@ -122,7 +122,8 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 </pre>
 
 #### Dependencies:
-- [OpenJDK 12 with jpackage support](https://jdk.java.net/jpackage/)
+- [OpenJDK 12](https://jdk.java.net/12/)
+- [OpenJDK 13 with jpackage support](https://jdk.java.net/jpackage/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)

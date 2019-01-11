@@ -117,6 +117,8 @@ import org.lwjgl.glfw.GLFWJoystickCallback;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.oracle.si.Singleton;
+import com.oracle.si.Singleton.SingletonApp;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
@@ -135,10 +137,8 @@ import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
-import jdk.jpackage.runtime.singleton.SingleInstanceListener;
-import jdk.jpackage.runtime.singleton.SingleInstanceService;
 
-public final class Main implements SingleInstanceListener {
+public final class Main implements SingletonApp {
 
 	private class AddModeAction extends AbstractAction {
 
@@ -633,6 +633,7 @@ public final class Main implements SingleInstanceListener {
 	}
 
 	private static final Logger log = System.getLogger(Main.class.getName());
+	private static final String SINGLETON_ID = Version.class.getPackageName();
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
@@ -676,36 +677,37 @@ public final class Main implements SingleInstanceListener {
 	}
 
 	public static void main(final String[] args) {
-		SwingUtilities.invokeLater(() -> {
-			final var options = new Options();
-			options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
-			options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
-			options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
+		if (!Singleton.invoke(SINGLETON_ID, args))
+			SwingUtilities.invokeLater(() -> {
+				final var options = new Options();
+				options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
+				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
+				options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
 
-			try {
-				final CommandLine commandLine = new DefaultParser().parse(options, args);
-				if (commandLine.hasOption(OPTION_VERSION))
-					System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
-				else {
-					final var main = new Main();
-					if (!commandLine.hasOption(OPTION_TRAY))
-						main.frame.setVisible(true);
-					if (commandLine.hasOption(OPTION_AUTOSTART)) {
-						final var optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+				try {
+					final CommandLine commandLine = new DefaultParser().parse(options, args);
+					if (commandLine.hasOption(OPTION_VERSION))
+						System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
+					else {
+						final var main = new Main();
+						if (!commandLine.hasOption(OPTION_TRAY))
+							main.frame.setVisible(true);
+						if (commandLine.hasOption(OPTION_AUTOSTART)) {
+							final var optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 
-						if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
-							main.startLocal();
-						else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
-							main.startClient();
-						else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
-							main.startServer();
+							if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
+								main.startLocal();
+							else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
+								main.startClient();
+							else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+								main.startServer();
+						}
 					}
+				} catch (final ParseException e) {
+					final var helpFormatter = new HelpFormatter();
+					helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
 				}
-			} catch (final ParseException e) {
-				final var helpFormatter = new HelpFormatter();
-				helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
-			}
-		});
+			});
 	}
 
 	private static void waitForThreadToFinish(final Thread thread) {
@@ -778,7 +780,7 @@ public final class Main implements SingleInstanceListener {
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
-		SingleInstanceService.addSingleInstanceListener(this);
+		Singleton.start(this, SINGLETON_ID);
 
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
@@ -1518,7 +1520,7 @@ public final class Main implements SingleInstanceListener {
 
 		stopAll();
 		glfwTerminate();
-		SingleInstanceService.removeSingleInstanceListener(this);
+		Singleton.stop();
 		System.exit(0);
 	}
 
