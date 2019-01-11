@@ -50,7 +50,7 @@ task copyLibs(type: Copy) {
 
 task jpackage(type: Exec) {
     dependsOn jar, copyLibs
-    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', '\u00A9 Matteo Hausner', '--add-modules', 'java.sql,jdk.jpackage.runtime,jdk.unsupported', '--strip-native-commands', '--singleton', '--verbose', '--force'
+    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', '\u00A9 Matteo Hausner', '--add-modules', 'java.sql,jdk.unsupported', '--strip-native-commands', '--verbose', '--force'
 }
 
 task zip(type: Zip) {
