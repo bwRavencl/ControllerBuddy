@@ -127,6 +127,7 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
@@ -209,9 +210,33 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (((JCheckBox) e.getSource()).isSelected())
-				input.getProfile().getVirtualAxisToColorMap().put(virtualAxis, new Color(0, 0, 0, 128));
+				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis());
 			else
-				input.getProfile().getVirtualAxisToColorMap().remove(virtualAxis);
+				input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
+
+			setUnsavedChanges(true);
+			updateOverlayPanel();
+		}
+
+	}
+
+	private class InvertIndicatorAction extends AbstractAction {
+
+		private static final long serialVersionUID = 3316770144012465987L;
+
+		private final VirtualAxis virtualAxis;
+
+		private InvertIndicatorAction(final VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+
+			putValue(NAME, rb.getString("INVERT_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("INVERT_INDICATOR_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis).inverted = ((JCheckBox) e.getSource())
+					.isSelected();
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -400,10 +425,11 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var newColor = JColorChooser.showDialog(frame, "Choose Background Color",
-					input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
+			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
+
+			final var newColor = JColorChooser.showDialog(frame, "Choose Background Color", overlayAxis.color);
 			if (newColor != null)
-				input.getProfile().getVirtualAxisToColorMap().replace(virtualAxis, newColor);
+				overlayAxis.color = newColor;
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -1243,17 +1269,41 @@ public final class Main implements SingletonApp {
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
+		final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
-			final var virtualAxisToColorMap = input.getProfile().getVirtualAxisToColorMap();
+			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
+			if (overlayAxis != null) {
+				final var progressBar = new JProgressBar(SwingConstants.VERTICAL) {
 
-			if (virtualAxisToColorMap.containsKey(virtualAxis)) {
-				final var progressBar = new JProgressBar(SwingConstants.VERTICAL);
+					private static final long serialVersionUID = 8167193907929992395L;
+
+					@Override
+					public void setMaximum(final int n) {
+						if (overlayAxis.inverted)
+							super.setMinimum(-n);
+						else
+							super.setMaximum(n);
+					}
+
+					@Override
+					public void setMinimum(final int n) {
+						if (overlayAxis.inverted)
+							super.setMaximum(-n);
+						else
+							super.setMinimum(n);
+					}
+
+					@Override
+					public void setValue(final int n) {
+						super.setValue(overlayAxis.inverted ? -n : n);
+					}
+				};
 				progressBar.setPreferredSize(new Dimension(21, 149));
 				progressBar.setBorder(
 						BorderFactory.createDashedBorder(Color.BLACK, (float) progressBar.getPreferredSize().getWidth(),
 								(float) progressBar.getPreferredSize().getWidth()));
 				progressBar.setBackground(Color.LIGHT_GRAY);
-				progressBar.setForeground(virtualAxisToColorMap.get(virtualAxis));
+				progressBar.setForeground(overlayAxis.color);
 				progressBar.setValue(1);
 				indicatorPanel.add(progressBar);
 				virtualAxisToProgressBarMap.put(virtualAxis, progressBar);
@@ -1933,12 +1983,14 @@ public final class Main implements SingletonApp {
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			final var enabled = input.getProfile().getVirtualAxisToColorMap().containsKey(virtualAxis);
+			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
+			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
+			final var enabled = overlayAxis != null;
 
 			final var colorLabel = new JLabel();
 			if (enabled) {
 				colorLabel.setOpaque(true);
-				colorLabel.setBackground(input.getProfile().getVirtualAxisToColorMap().get(virtualAxis));
+				colorLabel.setBackground(overlayAxis.color);
 			} else
 				colorLabel.setText(rb.getString("INDICATOR_DISABLED_LABEL"));
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1954,9 +2006,15 @@ public final class Main implements SingletonApp {
 			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
+			final var invertedCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
+			invertedCheckBox.setSelected(enabled && overlayAxis.inverted);
+			invertedCheckBox.setEnabled(enabled);
+			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0,
+					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
 			final var displayCheckBox = new JCheckBox(new DisplayIndicatorAction(virtualAxis));
 			displayCheckBox.setSelected(enabled);
-			indicatorPanel.add(displayCheckBox, new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}
 

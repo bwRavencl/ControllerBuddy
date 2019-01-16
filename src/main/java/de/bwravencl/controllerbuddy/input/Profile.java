@@ -21,7 +21,6 @@ import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASEN
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
-import java.awt.Color;
 import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +53,7 @@ public class Profile implements Cloneable {
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
 	private List<Mode> modes = new ArrayList<>();
 	private transient int activeModeIndex = 0;
-	private Map<VirtualAxis, Color> virtualAxisToColorMap = new HashMap<>();
+	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
 
 	Profile() {
 		modes.add(defaultMode);
@@ -86,13 +85,10 @@ public class Profile implements Cloneable {
 			}
 		profile.setModes(clonedModes);
 
-		final var clonedVirtualAxisToColorMap = new HashMap<VirtualAxis, Color>();
-		for (final var e : virtualAxisToColorMap.entrySet()) {
-			final var color = e.getValue();
-			clonedVirtualAxisToColorMap.put(e.getKey(),
-					new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
-		}
-		profile.setVirtualAxisToColorMap(clonedVirtualAxisToColorMap);
+		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
+		for (final var e : virtualAxisToOverlayAxisMap.entrySet())
+			clonedVirtualAxisToOverlayAxisMap.put(e.getKey(), (OverlayAxis) e.getValue().clone());
+		profile.setVirtualAxisToOverlayAxisMap(clonedVirtualAxisToOverlayAxisMap);
 
 		return profile;
 	}
@@ -109,8 +105,8 @@ public class Profile implements Cloneable {
 		return modes;
 	}
 
-	public Map<VirtualAxis, Color> getVirtualAxisToColorMap() {
-		return virtualAxisToColorMap;
+	public Map<VirtualAxis, OverlayAxis> getVirtualAxisToOverlayAxisMap() {
+		return virtualAxisToOverlayAxisMap;
 	}
 
 	public void removeMode(final Input input, final Mode mode) {
@@ -172,8 +168,8 @@ public class Profile implements Cloneable {
 		this.modes = modes;
 	}
 
-	private void setVirtualAxisToColorMap(final Map<VirtualAxis, Color> virtualAxisToColorMap) {
-		this.virtualAxisToColorMap = virtualAxisToColorMap;
+	public void setVirtualAxisToOverlayAxisMap(final Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap) {
+		this.virtualAxisToOverlayAxisMap = virtualAxisToOverlayAxisMap;
 	}
 
 }
