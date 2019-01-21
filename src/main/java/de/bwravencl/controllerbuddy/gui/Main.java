@@ -663,6 +663,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private static final Logger log = System.getLogger(Main.class.getName());
+	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
 	private static final String SINGLETON_ID = Version.class.getPackageName();
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
@@ -745,14 +746,15 @@ public final class Main implements SingletonApp {
 		if (!Singleton.invoke(SINGLETON_ID, args))
 			SwingUtilities.invokeLater(() -> {
 				final var options = new Options();
-				options.addOption(OPTION_AUTOSTART, true, rb.getString("AUTOSTART_OPTION_DESCRIPTION"));
+				options.addOption(OPTION_AUTOSTART, true, rb.getString(
+						Main.windows ? "AUTOSTART_OPTION_DESCRIPTION_WINDOWS" : "AUTOSTART_OPTION_DESCRIPTION"));
 				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
 				options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
 
 				try {
 					final CommandLine commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION))
-						System.out.println(rb.getString("APPLICATION_NAME") + ' ' + Version.getVersion());
+						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.getVersion());
 					else {
 						final var main = new Main();
 						if (!commandLine.hasOption(OPTION_TRAY))
@@ -760,12 +762,20 @@ public final class Main implements SingletonApp {
 						if (commandLine.hasOption(OPTION_AUTOSTART)) {
 							final var optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 
-							if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue))
-								main.startLocal();
-							else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue))
-								main.startClient();
-							else if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+							if (Main.windows)
+								if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue)) {
+									main.startLocal();
+									return;
+								} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue)) {
+									main.startClient();
+									return;
+								}
+							if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
 								main.startServer();
+							else
+								JOptionPane.showMessageDialog(main.frame,
+										rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART") + optionValue,
+										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				} catch (final ParseException e) {
@@ -784,7 +794,6 @@ public final class Main implements SingletonApp {
 			}
 	}
 
-	private final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
 	private final Preferences preferences = Preferences.userNodeForPackage(Version.class);
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private volatile LocalVJoyOutputThread localThread;
@@ -842,6 +851,7 @@ public final class Main implements SingletonApp {
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
 	private volatile JFrame overlayFrame;
+
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
@@ -1385,10 +1395,6 @@ public final class Main implements SingletonApp {
 		return selectedJid >= GLFW_JOYSTICK_1 && selectedJid <= GLFW_JOYSTICK_LAST;
 	}
 
-	public boolean isWindows() {
-		return windows;
-	}
-
 	private void loadProfile(final File file) {
 		stopAll();
 
@@ -1755,6 +1761,9 @@ public final class Main implements SingletonApp {
 	}
 
 	private void startLocal() {
+		if (!isSelectedJidValid())
+			return;
+
 		lastOutputType = OutputType.LOCAL;
 		localThread = new LocalVJoyOutputThread(Main.this, input);
 		localThread.setvJoyDevice(
@@ -1807,6 +1816,9 @@ public final class Main implements SingletonApp {
 	}
 
 	private void startServer() {
+		if (!isSelectedJidValid())
+			return;
+
 		lastOutputType = OutputType.SERVER;
 		serverThread = new ServerOutputThread(Main.this, input);
 		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
