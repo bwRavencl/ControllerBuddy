@@ -55,6 +55,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -69,11 +70,13 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -96,6 +99,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -691,6 +695,41 @@ public final class Main implements SingletonApp {
 			"/icon_128.png" };
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
+
+	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
+			final Set<Integer> alreadyAssignedKeyCodes) {
+		var keyCode = KeyEvent.VK_UNDEFINED;
+
+		final var text = button.getText();
+		if (text != null && text.length() > 0) {
+			var index = 0;
+			do {
+				keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(index));
+				index++;
+			} while (keyCode != KeyEvent.VK_UNDEFINED && !alreadyAssignedKeyCodes.add(keyCode));
+		}
+
+		return keyCode;
+	}
+
+	private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
+		final var action = button.getAction();
+		if (action != null)
+			if (action instanceof NewAction)
+				return KeyEvent.VK_N;
+			else if (action instanceof OpenAction)
+				return KeyEvent.VK_O;
+			else if (action instanceof SaveAction)
+				return KeyEvent.VK_S;
+			else if (action instanceof StartLocalAction || action instanceof StopLocalAction)
+				return KeyEvent.VK_L;
+			else if (action instanceof StartClientAction || action instanceof StopClientAction)
+				return KeyEvent.VK_C;
+			else if (action instanceof StartServerAction || action instanceof StopServerAction)
+				return KeyEvent.VK_E;
+
+		return KeyEvent.VK_UNDEFINED;
+	}
 
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
@@ -1505,6 +1544,7 @@ public final class Main implements SingletonApp {
 		else if (previousSelectedTabIndex < tabbedPane.getTabCount())
 			tabbedPane.setSelectedIndex(previousSelectedTabIndex);
 
+		updateMenuShortcuts();
 		updateModesPanel();
 		updateOverlayPanel();
 		updatePanelAccess();
@@ -1550,6 +1590,7 @@ public final class Main implements SingletonApp {
 			stopServerRadioButtonMenuItem.setEnabled(serverActive);
 		}
 
+		updateMenuShortcuts();
 		updatePanelAccess();
 	}
 
@@ -1857,6 +1898,33 @@ public final class Main implements SingletonApp {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
 				repaintOverlay();
 			});
+	}
+
+	private void updateMenuShortcuts() {
+		final var menuCount = menuBar.getMenuCount();
+		final var alreadyAssignedMenuKeyCodes = new HashSet<Integer>(menuCount);
+
+		for (var i = 0; i < menuCount; i++) {
+			final var menu = menuBar.getMenu(i);
+			menu.setMnemonic(getExtendedKeyCodeForMenu(menu, alreadyAssignedMenuKeyCodes));
+
+			final var menuShortcutKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+			for (var j = 0; j < menu.getItemCount(); j++) {
+				final var menuItem = menu.getItem(j);
+				if (menuItem != null) {
+					KeyStroke keyStroke = null;
+
+					if (menuItem.isEnabled()) {
+						final var keyCode = getExtendedKeyCodeForMenuItem(menuItem);
+
+						if (keyCode != KeyEvent.VK_UNDEFINED)
+							keyStroke = KeyStroke.getKeyStroke(keyCode, menuShortcutKeyMask);
+					}
+
+					menuItem.setAccelerator(keyStroke);
+				}
+			}
+		}
 	}
 
 	void updateModesPanel() {
