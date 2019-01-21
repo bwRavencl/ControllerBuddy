@@ -299,7 +299,7 @@ public class Input {
 	}
 
 	public boolean isDualShock4Controller() {
-		if (main.isWindows()) {
+		if (Main.windows) {
 			final var guid = glfwGetJoystickGUID(jid);
 
 			if (guid != null)

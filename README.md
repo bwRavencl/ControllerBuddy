@@ -113,7 +113,7 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 #### Command Line Parameters:
 <pre>
 usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
- -autostart <arg>   automatically start the:
+ -autostart <arg>   automatically start the
                     local feeder [-autostart local] or
                     client [-autostart client] or
                     server [-autostart server]
