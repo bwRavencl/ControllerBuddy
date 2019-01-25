@@ -1678,7 +1678,7 @@ public final class Main implements SingletonApp {
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(Logger.Level.ERROR, e.getMessage(), e);
-			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_SAVE_PROFILE"),
+			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -2140,7 +2140,7 @@ public final class Main implements SingletonApp {
 		frame.setTitle(sb.toString());
 
 		if (trayIcon != null && input != null) {
-			if (input.isDualShock4Controller())
+			if (input.getDualShock4ProductId() != null)
 				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
 						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
 								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));

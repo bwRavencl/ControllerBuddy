@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
@@ -34,9 +35,12 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.lwjgl.glfw.GLFWGamepadState;
@@ -49,8 +53,8 @@ import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
+import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
@@ -64,8 +68,6 @@ public class Input {
 
 	private static final int LOW_BATTERY_WARNING = 10;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-	private static final String DUAL_SHOCK_4_CONTROLLER_GUIDS[] = { "030000004c050000c405000000000000",
-			"030000004c050000cc09000000000000", "030000004c050000a00b000000000000" };
 	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
 	public static final int MAX_N_BUTTONS = 128;
@@ -103,7 +105,6 @@ public class Input {
 	}
 
 	private final Main main;
-
 	private final int jid;
 	private final EnumMap<VirtualAxis, Integer> axes = new EnumMap<>(VirtualAxis.class);
 	private Profile profile;
@@ -122,98 +123,103 @@ public class Input {
 	private HidDevice hidDevice;
 	private volatile boolean charging = true;
 	private volatile int batteryState;
-
 	private byte[] dualShock4HidReport;
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
 		this.jid = jid;
 
-		for (final VirtualAxis va : VirtualAxis.values())
-			axes.put(va, 0);
+		for (final var virtualAxis : VirtualAxis.values())
+			axes.put(virtualAxis, 0);
 
 		profile = new Profile();
 
-		if (isDualShock4Controller()) {
-			final List<HidDeviceInfo> devices = PureJavaHidApi.enumerateDevices();
-			HidDeviceInfo hidDeviceInfo = null;
-			for (final HidDeviceInfo hi : devices) {
-				final short productId = hi.getProductId();
-				if (hi.getVendorId() == (short) 0x54C
-						&& (productId == (short) 0x5C4 || productId == (short) 0x9CC || productId == (short) 0xBA0)) {
-					hidDeviceInfo = hi;
-					break;
+		final Short dualShock4ProductId = getDualShock4ProductId();
+		if (dualShock4ProductId != null) {
+			final var dualShock4Devices = PureJavaHidApi.enumerateDevices().stream()
+					.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
+							&& hidDeviceInfo.getProductId() == dualShock4ProductId)
+					.collect(Collectors.toUnmodifiableList());
+			final var count = dualShock4Devices.size();
+			if (count > 0) {
+				if (count > 1) {
+					final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+							Locale.getDefault());
+					JOptionPane.showMessageDialog(main.getFrame(),
+							rb.getString("MULTIPLE_DUAL_SHOCK_4_CONTROLLERS_CONNECTED_DIALOG_TEXT"),
+							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				}
-			}
-			if (hidDeviceInfo != null)
-				try {
-					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-					resetDualShock4();
 
-					hidDevice.setInputReportListener(new InputReportListener() {
+				final var hidDeviceInfo = dualShock4Devices.get(0);
+				if (hidDeviceInfo.getVendorId() == (short) 0x54C && hidDeviceInfo.getProductId() == dualShock4ProductId)
+					try {
+						hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
+						resetDualShock4();
 
-						private static final int TOUCHPAD_MAX_DELTA = 150;
-						private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.5f;
-						private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
+						hidDevice.setInputReportListener(new InputReportListener() {
 
-						private boolean prevTouchpadButtonDown;
-						private boolean prevDown1;
-						private boolean prevDown2;
-						private int prevX1;
-						private int prevY1;
+							private static final int TOUCHPAD_MAX_DELTA = 150;
+							private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.5f;
+							private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
 
-						@Override
-						public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
-								final int len) {
-							final var touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
-							final var down1 = data[34] >> 7 != 0 ? false : true;
-							final var down2 = data[38] >> 7 != 0 ? false : true;
-							final var x1 = data[35] + (data[36] & 0xF) * 255;
-							final var y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
-							final var dX1 = x1 - prevX1;
-							final var dY1 = y1 - prevY1;
+							private boolean prevTouchpadButtonDown;
+							private boolean prevDown1;
+							private boolean prevDown2;
+							private int prevX1;
+							private int prevY1;
 
-							if (touchpadButtonDown)
-								downMouseButtons.add(down2 ? 2 : 1);
-							else if (prevTouchpadButtonDown)
-								downMouseButtons.clear();
+							@Override
+							public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
+									final int len) {
+								final var touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
+								final var down1 = data[34] >> 7 != 0 ? false : true;
+								final var down2 = data[38] >> 7 != 0 ? false : true;
+								final var x1 = data[35] + (data[36] & 0xF) * 255;
+								final var y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
+								final var dX1 = x1 - prevX1;
+								final var dY1 = y1 - prevY1;
 
-							if (down1 && !prevDown1) {
-								prevX1 = -1;
-								prevY1 = -1;
+								if (touchpadButtonDown)
+									downMouseButtons.add(down2 ? 2 : 1);
+								else if (prevTouchpadButtonDown)
+									downMouseButtons.clear();
+
+								if (down1 && !prevDown1) {
+									prevX1 = -1;
+									prevY1 = -1;
+								}
+
+								if (!prevDown2 || touchpadButtonDown) {
+									if (prevX1 > 0)
+										if (Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+											cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
+
+									if (prevY1 > 0)
+										if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+											cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
+								} else if (prevY1 > 0)
+									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+										scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
+
+								prevTouchpadButtonDown = touchpadButtonDown;
+								prevDown1 = down1;
+								prevDown2 = down2;
+								prevX1 = x1;
+								prevY1 = y1;
+
+								final var charging = (data[29] & 0x10) > 6;
+								final var battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
+
+								setCharging(charging);
+								setBatteryState(battery);
 							}
 
-							if (!prevDown2 || touchpadButtonDown) {
-								if (prevX1 > 0)
-									if (Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-										cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
-
-								if (prevY1 > 0)
-									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-										cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
-							} else if (prevY1 > 0)
-								if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-									scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
-
-							prevTouchpadButtonDown = touchpadButtonDown;
-							prevDown1 = down1;
-							prevDown2 = down2;
-							prevX1 = x1;
-							prevY1 = y1;
-
-							final var charging = (data[29] & 0x10) > 6;
-							final var battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
-
-							setCharging(charging);
-							setBatteryState(battery);
-						}
-
-					});
-				} catch (final IOException e) {
-					log.log(Logger.Level.ERROR, e.getMessage(), e);
-				}
+						});
+					} catch (final IOException e) {
+						log.log(Logger.Level.ERROR, e.getMessage(), e);
+					}
+			}
 		}
-
 	}
 
 	public void deInit() {
@@ -259,6 +265,20 @@ public class Input {
 		return downUpMouseButtons;
 	}
 
+	public Short getDualShock4ProductId() {
+		if (Main.windows) {
+			final var guid = glfwGetJoystickGUID(jid);
+			if ("030000004c050000c405000000000000".equals(guid))
+				return 0x5C4;
+			else if ("030000004c050000cc09000000000000".equals(guid))
+				return 0x9CC;
+			else if ("030000004c050000a00b000000000000".equals(guid))
+				return 0xBA0;
+		}
+
+		return null;
+	}
+
 	public int getJid() {
 		return jid;
 	}
@@ -296,19 +316,6 @@ public class Input {
 
 	public boolean isCharging() {
 		return charging;
-	}
-
-	public boolean isDualShock4Controller() {
-		if (Main.windows) {
-			final var guid = glfwGetJoystickGUID(jid);
-
-			if (guid != null)
-				for (final var s : DUAL_SHOCK_4_CONTROLLER_GUIDS)
-					if (s.equals(guid))
-						return true;
-		}
-
-		return false;
 	}
 
 	public boolean poll() {
