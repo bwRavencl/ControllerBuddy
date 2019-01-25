@@ -63,8 +63,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
 
-	private static final long KEYEVENTF_KEYUP = 0x0002L;
-	private static final long KEYEVENTF_SCANCODE = 0x0008L;
 	private static final long MOUSEEVENTF_MOVE = 0x0001L;
 	private static final long MOUSEEVENTF_LEFTDOWN = 0x0002L;
 	private static final long MOUSEEVENTF_LEFTUP = 0x0004L;
@@ -84,12 +82,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wScan = new WORD(scanCode);
-		final long flags;
-		if (down)
-			flags = KEYEVENTF_SCANCODE;
-		else
-			flags = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE;
-		input.input.ki.dwFlags = new DWORD(flags);
+		input.input.ki.dwFlags = new DWORD((down ? 0 : KEYBDINPUT.KEYEVENTF_KEYUP) | KEYBDINPUT.KEYEVENTF_SCANCODE);
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
