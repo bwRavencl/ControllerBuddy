@@ -2052,8 +2052,14 @@ public final class Main implements SingletonApp {
 
 				if (outputThread != null) {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
-					progressBar.setMinimum(-outputThread.getMaxAxisValue());
-					progressBar.setMaximum(outputThread.getMinAxisValue());
+
+					final var newMinimum = -outputThread.getMaxAxisValue();
+					if (progressBar.getMinimum() != newMinimum)
+						progressBar.setMinimum(newMinimum);
+
+					final var newMaximum = outputThread.getMinAxisValue();
+					if (progressBar.getMaximum() != newMaximum)
+						progressBar.setMaximum(newMaximum);
 
 					final var newValue = -input.getAxes().get(virtualAxis);
 					if (progressBar.getValue() != newValue)
