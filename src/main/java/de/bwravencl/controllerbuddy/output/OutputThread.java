@@ -31,7 +31,7 @@ import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public abstract class OutputThread extends Thread {
 
-	public static final int DEFAULT_POLL_INTERVAL = 10;
+	public static final int DEFAULT_POLL_INTERVAL = 2;
 
 	final Main main;
 	final Input input;

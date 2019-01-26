@@ -988,7 +988,7 @@ public final class Main implements SingletonApp {
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 10, 500, 1));
+				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 1, 100, 1));
 		final JSpinner.DefaultEditor pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner, "#");
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
