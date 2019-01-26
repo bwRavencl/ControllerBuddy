@@ -19,7 +19,6 @@ task cleanVersion {
 
 task generateVersion {
     dependsOn cleanVersion
-
     def outputDir = file("$versionDir")
     outputs.dir outputDir
     doFirst {
