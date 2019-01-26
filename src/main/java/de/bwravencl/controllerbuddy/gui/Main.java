@@ -851,19 +851,15 @@ public final class Main implements SingletonApp {
 	private File currentFile;
 	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-	private final JLabel labelCurrentMode = new JLabel();
+	private JLabel labelCurrentMode;
 	private final JFileChooser fileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
 	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
 	private FlowLayout indicatorPanelFlowLayout;
-
 	private JPanel indicatorPanel;
-
 	private Rectangle prevMaxWindowBounds;
-
 	private volatile JFrame overlayFrame;
-
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
@@ -1241,6 +1237,7 @@ public final class Main implements SingletonApp {
 			overlayFrame = null;
 		}
 
+		labelCurrentMode = null;
 		virtualAxisToProgressBarMap.clear();
 
 		onScreenKeyboard.setVisible(false);
@@ -1303,18 +1300,18 @@ public final class Main implements SingletonApp {
 		if (!preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()))
 			return;
 
+		final var modes = input.getProfile().getModes();
+		final var multipleModes = modes.size() > 1;
+		final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
+		if (!multipleModes && virtualAxisToOverlayAxisMap.isEmpty())
+			return;
+
 		var longestDescription = "";
-		for (final var mode : input.getProfile().getModes()) {
+		for (final var mode : modes) {
 			final var description = mode.getDescription();
 			if (description.length() > longestDescription.length())
 				longestDescription = description;
 		}
-
-		final var fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
-		labelCurrentMode
-				.setPreferredSize(new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
-		labelCurrentMode.setForeground(Color.RED);
-		labelCurrentMode.setText(input.getProfile().getActiveMode().getDescription());
 
 		overlayFrame = new JFrame("Overlay");
 		overlayFrame.setType(JFrame.Type.UTILITY);
@@ -1322,15 +1319,21 @@ public final class Main implements SingletonApp {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
-
-		overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
 		overlayFrame.setAlwaysOnTop(true);
+
+		if (multipleModes) {
+			labelCurrentMode = new JLabel(input.getProfile().getActiveMode().getDescription());
+			final var fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
+			labelCurrentMode.setPreferredSize(
+					new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
+			labelCurrentMode.setForeground(Color.RED);
+			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
+		}
 
 		indicatorPanelFlowLayout = new FlowLayout();
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
-		final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
@@ -1736,7 +1739,8 @@ public final class Main implements SingletonApp {
 	}
 
 	public void setOverlayText(final String text) {
-		invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
+		if (labelCurrentMode != null)
+			invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
 	}
 
 	public void setSelectedJid(final int jid) {
@@ -2020,8 +2024,10 @@ public final class Main implements SingletonApp {
 	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
 		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
 
-		overlayFrame.remove(labelCurrentMode);
-		overlayFrame.add(labelCurrentMode, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
+		if (labelCurrentMode != null) {
+			overlayFrame.remove(labelCurrentMode);
+			overlayFrame.add(labelCurrentMode, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
+		}
 
 		var alignment = SwingConstants.RIGHT;
 		var flowLayoutAlignment = FlowLayout.RIGHT;
@@ -2030,7 +2036,8 @@ public final class Main implements SingletonApp {
 			flowLayoutAlignment = FlowLayout.LEFT;
 		}
 
-		labelCurrentMode.setHorizontalAlignment(alignment);
+		if (labelCurrentMode != null)
+			labelCurrentMode.setHorizontalAlignment(alignment);
 
 		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
 		indicatorPanel.invalidate();
