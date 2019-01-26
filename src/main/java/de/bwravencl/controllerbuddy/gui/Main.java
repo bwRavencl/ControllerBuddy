@@ -851,7 +851,7 @@ public final class Main implements SingletonApp {
 	private File currentFile;
 	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-	private JLabel labelCurrentMode;
+	private JLabel currentModeLabel;
 	private final JFileChooser fileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
 	private volatile OpenVrOverlay openVrOverlay;
@@ -1237,7 +1237,7 @@ public final class Main implements SingletonApp {
 			overlayFrame = null;
 		}
 
-		labelCurrentMode = null;
+		currentModeLabel = null;
 		virtualAxisToProgressBarMap.clear();
 
 		onScreenKeyboard.setVisible(false);
@@ -1322,12 +1322,12 @@ public final class Main implements SingletonApp {
 		overlayFrame.setAlwaysOnTop(true);
 
 		if (multipleModes) {
-			labelCurrentMode = new JLabel(input.getProfile().getActiveMode().getDescription());
-			final var fontMetrics = labelCurrentMode.getFontMetrics(labelCurrentMode.getFont());
-			labelCurrentMode.setPreferredSize(
+			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
+			final var fontMetrics = currentModeLabel.getFontMetrics(currentModeLabel.getFont());
+			currentModeLabel.setPreferredSize(
 					new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
-			labelCurrentMode.setForeground(Color.RED);
-			overlayFrame.add(labelCurrentMode, BorderLayout.PAGE_END);
+			currentModeLabel.setForeground(Color.RED);
+			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
 		}
 
 		indicatorPanelFlowLayout = new FlowLayout();
@@ -1739,8 +1739,8 @@ public final class Main implements SingletonApp {
 	}
 
 	public void setOverlayText(final String text) {
-		if (labelCurrentMode != null)
-			invokeOnEventDispatchThreadIfRequired(() -> labelCurrentMode.setText(text));
+		if (currentModeLabel != null)
+			invokeOnEventDispatchThreadIfRequired(() -> currentModeLabel.setText(text));
 	}
 
 	public void setSelectedJid(final int jid) {
@@ -2024,9 +2024,9 @@ public final class Main implements SingletonApp {
 	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
 		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
 
-		if (labelCurrentMode != null) {
-			overlayFrame.remove(labelCurrentMode);
-			overlayFrame.add(labelCurrentMode, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
+		if (currentModeLabel != null) {
+			overlayFrame.remove(currentModeLabel);
+			overlayFrame.add(currentModeLabel, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
 		}
 
 		var alignment = SwingConstants.RIGHT;
@@ -2036,8 +2036,8 @@ public final class Main implements SingletonApp {
 			flowLayoutAlignment = FlowLayout.LEFT;
 		}
 
-		if (labelCurrentMode != null)
-			labelCurrentMode.setHorizontalAlignment(alignment);
+		if (currentModeLabel != null)
+			currentModeLabel.setHorizontalAlignment(alignment);
 
 		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
 		indicatorPanel.invalidate();
