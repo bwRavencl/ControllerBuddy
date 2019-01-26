@@ -126,7 +126,6 @@ import com.oracle.si.Singleton.SingletonApp;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
-import de.bwravencl.controllerbuddy.Version;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -142,6 +141,8 @@ import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
+import de.bwravencl.controllerbuddy.version.Version;
+import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public final class Main implements SingletonApp {
 
@@ -532,7 +533,7 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame,
-					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.getVersion()
+					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.VERSION
 							+ rb.getString("ABOUT_DIALOG_TEXT_SUFFIX"),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
 		}
@@ -655,6 +656,9 @@ public final class Main implements SingletonApp {
 	}
 
 	static {
+		final var mainClassPackageName = Main.class.getPackageName();
+		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+
 		try {
 			UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
 		} catch (final UnsupportedLookAndFeelException e) {
@@ -662,9 +666,9 @@ public final class Main implements SingletonApp {
 		}
 	}
 
+	private static final String SINGLETON_ID;
 	private static final Logger log = System.getLogger(Main.class.getName());
 	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
-	private static final String SINGLETON_ID = Version.class.getPackageName();
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
@@ -754,7 +758,7 @@ public final class Main implements SingletonApp {
 				try {
 					final CommandLine commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION))
-						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.getVersion());
+						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					else {
 						final var main = new Main();
 						if (!commandLine.hasOption(OPTION_TRAY))
@@ -773,9 +777,9 @@ public final class Main implements SingletonApp {
 							if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
 								main.startServer();
 							else
-								JOptionPane.showMessageDialog(main.frame, rb
-										.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_PART_1") + optionValue
-										+ rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_PART_2")
+								JOptionPane.showMessageDialog(main.frame, rb.getString(
+										"INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT_PART_1") + optionValue
+										+ rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT_PART_2")
 										+ (Main.windows
 												? rb.getString("AUTOSTART_OPTION_DESCRIPTION_LOCAL_FEEDER_OR_CLIENT")
 												: "")
@@ -799,7 +803,7 @@ public final class Main implements SingletonApp {
 			}
 	}
 
-	private final Preferences preferences = Preferences.userNodeForPackage(Version.class);
+	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private volatile LocalVJoyOutputThread localThread;
 	private volatile ClientVJoyOutputThread clientThread;
@@ -853,8 +857,11 @@ public final class Main implements SingletonApp {
 	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
 	private FlowLayout indicatorPanelFlowLayout;
+
 	private JPanel indicatorPanel;
+
 	private Rectangle prevMaxWindowBounds;
+
 	private volatile JFrame overlayFrame;
 
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
@@ -1413,6 +1420,19 @@ public final class Main implements SingletonApp {
 
 			try {
 				final var profile = gson.fromJson(jsonString, Profile.class);
+				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
+				if (versionsComparisonResult.isEmpty())
+					JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_UNKNOWN_VERSION_DIALOG_TEXT"),
+							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+				else {
+					final var v = versionsComparisonResult.get();
+					if (v < 0)
+						JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_OLDER_VERSION_DIALOG_TEXT"),
+								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					else if (v > 0)
+						JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_NEWER_VERSION_DIALOG_TEXT"),
+								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+				}
 
 				final var unknownActionClasses = actionAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty())
@@ -1666,9 +1686,12 @@ public final class Main implements SingletonApp {
 		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
+		final var profile = input.getProfile();
+		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
+
 		final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
 				.registerTypeAdapter(IAction.class, new ActionTypeAdapter()).setPrettyPrinting().create();
-		final var jsonString = gson.toJson(input.getProfile());
+		final var jsonString = gson.toJson(profile);
 		try {
 			Files.writeString(file.toPath(), jsonString);
 			saveLastProfile(file);

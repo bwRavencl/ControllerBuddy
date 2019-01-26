@@ -13,24 +13,26 @@ targetCompatibility = 12
 def genDir = 'gen'
 def versionDir = "$genDir/main/java"
 
+task cleanVersion {
+    delete genDir
+}
+
 task generateVersion {
+    dependsOn cleanVersion
+
     def outputDir = file("$versionDir")
     outputs.dir outputDir
     doFirst {
-        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/Version.java")
+        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
         srcFile.parentFile.mkdirs()
-        srcFile.write("""package de.bwravencl.controllerbuddy;\n
+        srcFile.write("""package de.bwravencl.controllerbuddy.version;\n
 public class Version {
-\tpublic static String getVersion() {
-\t\treturn "$project.version";
-\t}
+
+\tpublic static final String VERSION = "$project.version";
+
 }
 """)
     }
-}
-
-task cleanVersion {
-    delete genDir
 }
 
 clean {

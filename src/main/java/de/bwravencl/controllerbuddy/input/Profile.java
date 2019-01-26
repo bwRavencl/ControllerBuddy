@@ -50,6 +50,7 @@ public class Profile implements Cloneable {
 		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
+	private String version;
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
 	private List<Mode> modes = new ArrayList<>();
 	private transient int activeModeIndex = 0;
@@ -62,6 +63,8 @@ public class Profile implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var profile = (Profile) super.clone();
+
+		profile.setVersion(version);
 
 		final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
 		for (final var e : buttonToModeActionsMap.entrySet()) {
@@ -103,6 +106,10 @@ public class Profile implements Cloneable {
 
 	public List<Mode> getModes() {
 		return modes;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	public Map<VirtualAxis, OverlayAxis> getVirtualAxisToOverlayAxisMap() {
@@ -166,6 +173,10 @@ public class Profile implements Cloneable {
 
 	private void setModes(final List<Mode> modes) {
 		this.modes = modes;
+	}
+
+	public void setVersion(final String version) {
+		this.version = version;
 	}
 
 	public void setVirtualAxisToOverlayAxisMap(final Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap) {

@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public class ServerOutputThread extends OutputThread {
 
@@ -44,7 +45,6 @@ public class ServerOutputThread extends OutputThread {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
-	public static final int PROTOCOL_VERSION = 3;
 	public static final String PROTOCOL_MESSAGE_DELIMITER = ":";
 	public static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
 	public static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
@@ -120,7 +120,7 @@ public class ServerOutputThread extends OutputThread {
 							final var sw = new StringWriter();
 							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
-							sw.append(String.valueOf(PROTOCOL_VERSION));
+							sw.append(VersionUtils.getMajorAndMinorVersion());
 							sw.append(PROTOCOL_MESSAGE_DELIMITER);
 							sw.append(String.valueOf(pollInterval));
 

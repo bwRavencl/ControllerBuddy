@@ -37,6 +37,7 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public class ClientVJoyOutputThread extends VJoyOutputThread {
 
@@ -111,12 +112,13 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 					if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_SERVER_HELLO)) {
 						final var messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
-						final var serverProtocolVersion = Integer.parseInt(messageParts[1]);
-						if (ServerOutputThread.PROTOCOL_VERSION != serverProtocolVersion) {
+						final var serverProtocolVersion = messageParts[1];
+						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
+						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
 							SwingUtilities.invokeLater(() -> {
 								JOptionPane.showMessageDialog(main.getFrame(),
 										rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_1")
-												+ ServerOutputThread.PROTOCOL_VERSION
+												+ VersionUtils.getMajorAndMinorVersion()
 												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_2")
 												+ serverProtocolVersion
 												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
