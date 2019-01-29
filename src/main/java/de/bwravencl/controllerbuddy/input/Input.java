@@ -19,6 +19,10 @@ package de.bwravencl.controllerbuddy.input;
 
 import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
@@ -87,6 +91,34 @@ public class Input {
 
 	private static boolean isValidButton(final int button) {
 		return button >= 0 && button <= GLFW_GAMEPAD_BUTTON_LAST;
+	}
+
+	private static void mapCircularAxesToSquareAxes(final GLFWGamepadState state, final int xAxisIndex,
+			final int yAxisIndex) {
+		final var u = state.axes(xAxisIndex);
+		final var v = state.axes(yAxisIndex);
+
+		final var u2 = u * u;
+		final var v2 = v * v;
+		final var twosqrt2 = 2.0 * Math.sqrt(2.0);
+		final var subtermx = 2.0 + u2 - v2;
+		final var subtermy = 2.0 - u2 + v2;
+		final var termx1 = subtermx + u * twosqrt2;
+		var termx2 = subtermx - u * twosqrt2;
+		final var termy1 = subtermy + v * twosqrt2;
+		var termy2 = subtermy - v * twosqrt2;
+
+		final double epsilon = 0.0000001;
+		if (Math.abs(termx2) < epsilon)
+			termx2 = 0.0;
+		if (Math.abs(termy2) < epsilon)
+			termy2 = 0.0;
+
+		final var x = 0.5 * Math.sqrt(termx1) - 0.5 * Math.sqrt(termx2);
+		final var y = 0.5 * Math.sqrt(termy1) - 0.5 * Math.sqrt(termy2);
+
+		state.axes(xAxisIndex, (float) x);
+		state.axes(yAxisIndex, (float) y);
 	}
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
@@ -342,6 +374,9 @@ public class Input {
 			final var activeMode = profile.getActiveMode();
 			final var axisToActionMap = activeMode.getAxisToActionsMap();
 			final var buttonToActionMap = activeMode.getButtonToActionsMap();
+
+			mapCircularAxesToSquareAxes(state, GLFW_GAMEPAD_AXIS_LEFT_X, GLFW_GAMEPAD_AXIS_LEFT_Y);
+			mapCircularAxesToSquareAxes(state, GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW_GAMEPAD_AXIS_RIGHT_Y);
 
 			for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
 				final var axisValue = state.axes(axis);
