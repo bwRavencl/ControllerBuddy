@@ -1233,7 +1233,19 @@ public final class Main implements SingletonApp {
 		}
 
 		if (overlayFrame != null) {
-			overlayFrame.dispose();
+			for (int i = 0; i < 10; i++) {
+				overlayFrame.dispose();
+
+				if (!overlayFrame.isDisplayable())
+					break;
+
+				try {
+					Thread.sleep(100L);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+
 			overlayFrame = null;
 		}
 
@@ -1900,8 +1912,6 @@ public final class Main implements SingletonApp {
 			deInitOverlay();
 		});
 
-		waitForOverlayDeInit();
-
 		waitForThreadToFinish(localThread);
 
 		invokeOnEventDispatchThreadIfRequired(() -> {
@@ -1925,8 +1935,6 @@ public final class Main implements SingletonApp {
 			stopOverlayTimerTask();
 			deInitOverlay();
 		});
-
-		waitForOverlayDeInit();
 
 		waitForThreadToFinish(serverThread);
 
@@ -2183,15 +2191,6 @@ public final class Main implements SingletonApp {
 
 			trayIcon.setToolTip(sb.toString());
 		}
-	}
-
-	private void waitForOverlayDeInit() {
-		while (overlayFrame != null || openVrOverlay != null)
-			try {
-				Thread.sleep(100L);
-			} catch (final InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
 	}
 
 }
