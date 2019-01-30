@@ -30,7 +30,7 @@ public class VersionUtils {
 			return Optional.empty();
 
 		final var currentVersionParts = getVersionParts(Version.VERSION);
-		for (int i = 0; i < 2; i++)
+		for (var i = 0; i < 2; i++)
 			try {
 				if (Integer.parseInt(versionParts[i]) < Integer.parseInt(currentVersionParts[i]))
 					return Optional.of(-1);

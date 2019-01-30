@@ -38,6 +38,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -1233,7 +1234,7 @@ public final class Main implements SingletonApp {
 		}
 
 		if (overlayFrame != null) {
-			for (int i = 0; i < 10; i++) {
+			for (var i = 0; i < 10; i++) {
 				overlayFrame.dispose();
 
 				if (!overlayFrame.isDisplayable())
@@ -1349,9 +1350,26 @@ public final class Main implements SingletonApp {
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
+				final var borderColor = Color.BLACK;
+
 				final var progressBar = new JProgressBar(SwingConstants.VERTICAL) {
 
 					private static final long serialVersionUID = 8167193907929992395L;
+
+					@Override
+					protected void paintComponent(final Graphics g) {
+						super.paintComponent(g);
+
+						final var width = getWidth();
+						final var height = getHeight();
+
+						final var subdivisions = 3;
+						for (var i = 1; i <= subdivisions; i++) {
+							g.setColor(borderColor);
+							final var y = i * (height / (subdivisions + 1));
+							g.drawLine(0, y, width, y);
+						}
+					}
 
 					@Override
 					public void setMaximum(final int n) {
@@ -1374,13 +1392,13 @@ public final class Main implements SingletonApp {
 						super.setValue(overlayAxis.inverted ? -n : n);
 					}
 				};
-				progressBar.setPreferredSize(new Dimension(21, 149));
-				progressBar.setBorder(
-						BorderFactory.createDashedBorder(Color.BLACK, (float) progressBar.getPreferredSize().getWidth(),
-								(float) progressBar.getPreferredSize().getWidth()));
+
+				progressBar.setPreferredSize(new Dimension(20, 150));
+				progressBar.setBorder(BorderFactory.createLineBorder(borderColor));
 				progressBar.setBackground(Color.LIGHT_GRAY);
 				progressBar.setForeground(overlayAxis.color);
 				progressBar.setValue(1);
+
 				indicatorPanel.add(progressBar);
 				virtualAxisToProgressBarMap.put(virtualAxis, progressBar);
 			}

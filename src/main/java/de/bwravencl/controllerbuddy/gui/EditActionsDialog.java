@@ -49,9 +49,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -544,20 +542,20 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private void init() {
-		final JPanel actionsPanel = new JPanel(new GridBagLayout());
+		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
 		actionsPanel.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1, 0d, 0d,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final JButton addButton = new JButton(new AddActionAction());
+		final var addButton = new JButton(new AddActionAction());
 		addButton.setPreferredSize(BUTTON_DIMENSION);
 		addButton.setEnabled(false);
 		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-		final JButton removeButton = new JButton(new RemoveActionAction());
+		final var removeButton = new JButton(new RemoveActionAction());
 		removeButton.setPreferredSize(BUTTON_DIMENSION);
 		removeButton.setEnabled(false);
 		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
@@ -578,12 +576,12 @@ public class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d, 0d,
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final JLabel propertiesLabel = new JLabel(rb.getString("PROPERTIES_LABEL"));
+		final var propertiesLabel = new JLabel(rb.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final JScrollPane propertiesScrollPane = new JScrollPane();
+		final var propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
 		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 0.5, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -598,57 +596,57 @@ public class EditActionsDialog extends JDialog {
 
 			JPanel propertiesPanel = null;
 			if (selectedAssignedAction != null)
-				for (final Method m : selectedAssignedAction.getClass().getMethods()) {
-					final String methodName = m.getName();
+				for (final var method : selectedAssignedAction.getClass().getMethods()) {
+					final var methodName = method.getName();
 
 					if (!methodName.startsWith(ACTION_PROPERTY_SETTER_PREFIX))
 						continue;
 
-					final Class<?>[] parameterTypes = m.getParameterTypes();
+					final var parameterTypes = method.getParameterTypes();
 					if (parameterTypes.length != 1)
 						continue;
 
 					if (propertiesPanel == null)
 						propertiesPanel = new JPanel(new GridBagLayout());
 
-					final Class<?> clazz = parameterTypes[0];
-					final String propertyName = methodName.substring(
+					final var clazz = parameterTypes[0];
+					final var propertyName = methodName.substring(
 							methodName.indexOf(ACTION_PROPERTY_SETTER_PREFIX) + ACTION_PROPERTY_SETTER_PREFIX.length());
 					try {
-						final Method getterMethod = selectedAssignedAction.getClass().getMethod(
+						final var getterMethod = selectedAssignedAction.getClass().getMethod(
 								(clazz == boolean.class ? ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN
 										: ACTION_PROPERTY_GETTER_PREFIX_DEFAULT) + propertyName,
 								"Mode".equals(propertyName) ? new Class<?>[] { Input.class } : new Class<?>[] {});
 
-						final JPanel propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
+						final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
 						propertiesPanel.add(propertyPanel,
 								new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 										GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 										new Insets(0, 0, 0, 0), 0, 10));
 
-						String spacedPropertyName = propertyName.codePoints()
+						var spacedPropertyName = propertyName.codePoints()
 								.mapToObj((c) -> (Character.isUpperCase(c) ? " " : "") + (char) c)
 								.collect(Collectors.joining());
 						spacedPropertyName = spacedPropertyName.startsWith(" ") ? spacedPropertyName.substring(1)
 								: spacedPropertyName;
-						final JLabel propertyNameLabel = new JLabel(spacedPropertyName);
+						final var propertyNameLabel = new JLabel(spacedPropertyName);
 						propertyNameLabel.setPreferredSize(new Dimension(100, 15));
 						propertyPanel.add(propertyNameLabel);
 						if (clazz == boolean.class) {
-							final JCheckBox checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(m));
+							final var checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(method));
 							if (!isComponentEditor() && "LongPress".equals(propertyName)) {
-								m.invoke(selectedAssignedAction, false);
+								method.invoke(selectedAssignedAction, false);
 								checkBox.setSelected(false);
 								checkBox.setEnabled(false);
 							} else if (!isComponentEditor() && "DownUp".equals(propertyName)) {
-								m.invoke(selectedAssignedAction, true);
+								method.invoke(selectedAssignedAction, true);
 								checkBox.setSelected(true);
 								checkBox.setEnabled(false);
 							} else
 								checkBox.setSelected((boolean) getterMethod.invoke(selectedAssignedAction));
 							propertyPanel.add(checkBox);
 						} else if (clazz == int.class) {
-							final int value = (int) getterMethod.invoke(selectedAssignedAction);
+							final var value = (int) getterMethod.invoke(selectedAssignedAction);
 
 							final SpinnerNumberModel model;
 							if ("Clicks".equals(propertyName))
@@ -658,16 +656,16 @@ public class EditActionsDialog extends JDialog {
 							else
 								model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS, 1);
 
-							final JSpinner spinner = new JSpinner(model);
-							final JComponent editor = spinner.getEditor();
-							final JFormattedTextField textField1 = ((JSpinner.DefaultEditor) editor).getTextField();
+							final var spinner = new JSpinner(model);
+							final var editor = spinner.getEditor();
+							final var textField1 = ((JSpinner.DefaultEditor) editor).getTextField();
 							textField1.setColumns(2);
-							final DefaultFormatter formatter1 = (DefaultFormatter) textField1.getFormatter();
+							final var formatter1 = (DefaultFormatter) textField1.getFormatter();
 							formatter1.setCommitsOnValidEdit(true);
-							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(method));
 							propertyPanel.add(spinner);
 						} else if (clazz == float.class) {
-							final float value = (float) getterMethod.invoke(selectedAssignedAction);
+							final var value = (float) getterMethod.invoke(selectedAssignedAction);
 
 							final SpinnerNumberModel model;
 							if ("DeadZone".equals(propertyName))
@@ -683,97 +681,97 @@ public class EditActionsDialog extends JDialog {
 							else
 								model = new SpinnerNumberModel(value, -1d, 1d, 0.05);
 
-							final JSpinner spinner = new JSpinner(model);
-							final JComponent editor = spinner.getEditor();
-							final JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+							final var spinner = new JSpinner(model);
+							final var editor = spinner.getEditor();
+							final var textField = ((JSpinner.DefaultEditor) editor).getTextField();
 							textField.setColumns(4);
-							final DefaultFormatter formatter = (DefaultFormatter) textField.getFormatter();
+							final var formatter = (DefaultFormatter) textField.getFormatter();
 							formatter.setCommitsOnValidEdit(true);
-							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(m));
+							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(method));
 							propertyPanel.add(spinner);
 						} else if (clazz == Mode.class) {
-							final JComboBox<Mode> comboBox = new JComboBox<>();
+							final var comboBox = new JComboBox<>();
 							if (!input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
 								comboBox.addItem(OnScreenKeyboard.onScreenKeyboardMode);
-							for (final Mode p : input.getProfile().getModes())
-								if (!Profile.defaultMode.equals(p))
-									comboBox.addItem(p);
-							comboBox.setAction(new JComboBoxSetPropertyAction(m));
+							for (final var mode : input.getProfile().getModes())
+								if (!Profile.defaultMode.equals(mode))
+									comboBox.addItem(mode);
+							comboBox.setAction(new JComboBoxSetPropertyAction(method));
 							comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction, input));
 							propertyPanel.add(comboBox);
 						} else if (VirtualAxis.class == clazz) {
-							final JComboBox<VirtualAxis> comboBox = new JComboBox<>(VirtualAxis.values());
-							comboBox.setAction(new JComboBoxSetPropertyAction(m));
+							final var comboBox = new JComboBox<>(VirtualAxis.values());
+							comboBox.setAction(new JComboBoxSetPropertyAction(method));
 							comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 							propertyPanel.add(comboBox);
 						} else if (clazz == MouseAxis.class) {
-							final JComboBox<MouseAxis> comboBox = new JComboBox<>(MouseAxis.values());
-							comboBox.setAction(new JComboBoxSetPropertyAction(m));
+							final var comboBox = new JComboBox<>(MouseAxis.values());
+							comboBox.setAction(new JComboBoxSetPropertyAction(method));
 							comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 							propertyPanel.add(comboBox);
 						} else if (clazz == Direction.class) {
-							final JComboBox<Direction> comboBox = new JComboBox<>(Direction.values());
-							comboBox.setAction(new JComboBoxSetPropertyAction(m));
+							final var comboBox = new JComboBox<>(Direction.values());
+							comboBox.setAction(new JComboBoxSetPropertyAction(method));
 							comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 							propertyPanel.add(comboBox);
 						} else if (clazz == LockKey.class) {
-							final JComboBox<LockKey> comboBox = new JComboBox<>(LockKey.LOCK_KEYS);
-							comboBox.setAction(new JComboBoxSetPropertyAction(m));
+							final var comboBox = new JComboBox<>(LockKey.LOCK_KEYS);
+							comboBox.setAction(new JComboBoxSetPropertyAction(method));
 							comboBox.setSelectedItem(getterMethod.invoke(selectedAssignedAction));
 							propertyPanel.add(comboBox);
 						} else if (clazz == KeyStroke.class) {
-							final KeyStroke keyStroke = (KeyStroke) getterMethod.invoke(selectedAssignedAction);
-							final Set<String> availableScanCodes = DirectInputKeyCode.nameToKeyCodeMap.keySet();
+							final var keyStroke = (KeyStroke) getterMethod.invoke(selectedAssignedAction);
+							final var availableScanCodes = DirectInputKeyCode.nameToKeyCodeMap.keySet();
 
-							final JPanel modifiersPanel = new JPanel();
+							final var modifiersPanel = new JPanel();
 							modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
-							final JLabel modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
+							final var modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
 							modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 							modifiersPanel.add(modifiersLabel);
 							modifiersPanel.add(Box.createVerticalStrut(5));
-							final JList<String> modifierList = new JList<>(
+							final var modifierList = new JList<>(
 									availableScanCodes.toArray(new String[availableScanCodes.size()]));
 							modifierList.addListSelectionListener(
-									new JListSetPropertyListSelectionListener(m, keyStroke, true));
+									new JListSetPropertyListSelectionListener(method, keyStroke, true));
 
-							final List<String> addedModifiers = new ArrayList<>();
+							final var addedModifiers = new ArrayList<String>();
 							for (final int c1 : keyStroke.getModifierCodes())
 								addedModifiers.add(DirectInputKeyCode.keyCodeToNameMap.get(c1));
-							for (final String s1 : addedModifiers) {
-								final int index1 = getListModelIndex(modifierList.getModel(), s1);
+							for (final var s1 : addedModifiers) {
+								final var index1 = getListModelIndex(modifierList.getModel(), s1);
 								if (index1 >= 0)
 									modifierList.addSelectionInterval(index1, index1);
 							}
-							final JScrollPane modifiersScrollPane = new JScrollPane(modifierList);
+							final var modifiersScrollPane = new JScrollPane(modifierList);
 							modifiersScrollPane.setPreferredSize(new Dimension(175, 200));
 							modifiersPanel.add(modifiersScrollPane);
 							propertyPanel.add(modifiersPanel);
 
-							final JPanel keysPanel = new JPanel();
+							final var keysPanel = new JPanel();
 							keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
-							final JLabel keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
+							final var keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
 							keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 							keysPanel.add(keysLabel);
 							keysPanel.add(Box.createVerticalStrut(5));
-							final JList<String> keyList = new JList<>(
+							final var keyList = new JList<>(
 									availableScanCodes.toArray(new String[availableScanCodes.size()]));
 							keyList.addListSelectionListener(
-									new JListSetPropertyListSelectionListener(m, keyStroke, false));
-							final List<String> addedKeys = new ArrayList<>();
+									new JListSetPropertyListSelectionListener(method, keyStroke, false));
+							final var addedKeys = new ArrayList<String>();
 							for (final int c2 : keyStroke.getKeyCodes())
 								addedKeys.add(DirectInputKeyCode.keyCodeToNameMap.get(c2));
-							for (final String s2 : addedKeys) {
-								final int index2 = getListModelIndex(keyList.getModel(), s2);
+							for (final var s2 : addedKeys) {
+								final var index2 = getListModelIndex(keyList.getModel(), s2);
 								if (index2 >= 0)
 									keyList.addSelectionInterval(index2, index2);
 							}
-							final JScrollPane keysScrollPane = new JScrollPane(keyList);
+							final var keysScrollPane = new JScrollPane(keyList);
 							keysScrollPane.setPreferredSize(new Dimension(175, 200));
 							keysPanel.add(keysScrollPane);
 							propertyPanel.add(keysPanel);
 
 						} else if (clazz == List.class) {
-							final JButton editActionsButton = new JButton(new EditActionsAction());
+							final var editActionsButton = new JButton(new EditActionsAction());
 							editActionsButton.setPreferredSize(BUTTON_DIMENSION);
 							propertyPanel.add(editActionsButton);
 						} else
@@ -799,17 +797,17 @@ public class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, 0.25, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		final JPanel buttonPanel = new JPanel();
+		final var buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-		final JButton okButton = new JButton(new OKAction());
+		final var okButton = new JButton(new OKAction());
 		okButton.setPreferredSize(BUTTON_DIMENSION);
 		buttonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
-		final JButton cancelButton = new JButton(new CancelAction());
+		final var cancelButton = new JButton(new CancelAction());
 		cancelButton.setPreferredSize(BUTTON_DIMENSION);
 		buttonPanel.add(cancelButton);
 
@@ -830,7 +828,7 @@ public class EditActionsDialog extends JDialog {
 	}
 
 	private void updateAvailableActions() {
-		final List<AvailableAction> availableActions = new ArrayList<>();
+		final var availableActions = new ArrayList<AvailableAction>();
 
 		Class<?>[] actionClasses;
 		if (isComponentEditor()) {
@@ -843,8 +841,8 @@ public class EditActionsDialog extends JDialog {
 		} else
 			actionClasses = CYCLE_ACTION_CLASSES;
 
-		for (final Class<?> c : actionClasses) {
-			final AvailableAction availableAction = new AvailableAction(c);
+		for (final var actionClass : actionClasses) {
+			final AvailableAction availableAction = new AvailableAction(actionClass);
 
 			if (ButtonToModeAction.class.equals(availableAction.clazz) && !Profile.defaultMode.equals(selectedMode))
 				continue;
