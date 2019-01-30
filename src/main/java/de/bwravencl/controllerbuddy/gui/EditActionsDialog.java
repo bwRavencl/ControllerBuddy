@@ -548,19 +548,19 @@ public class EditActionsDialog extends JDialog {
 		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
-		actionsPanel.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1, 0d, 0d,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final JButton addButton = new JButton(new AddActionAction());
 		addButton.setPreferredSize(BUTTON_DIMENSION);
 		addButton.setEnabled(false);
-		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0.0, 0.25, GridBagConstraints.CENTER,
+		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		final JButton removeButton = new JButton(new RemoveActionAction());
 		removeButton.setPreferredSize(BUTTON_DIMENSION);
 		removeButton.setEnabled(false);
-		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0.0, 0.25, GridBagConstraints.CENTER,
+		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -572,20 +572,20 @@ public class EditActionsDialog extends JDialog {
 				addButton.setEnabled(true);
 		});
 		updateAvailableActions();
-		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, 0.25, 1.0,
+		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, 0.25, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		actionsPanel.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0.0,
-				0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d, 0d,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final JLabel propertiesLabel = new JLabel(rb.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
-		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final JScrollPane propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
-		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 0.5, 1.0, GridBagConstraints.CENTER,
+		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 0.5, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -622,7 +622,7 @@ public class EditActionsDialog extends JDialog {
 
 						final JPanel propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
 						propertiesPanel.add(propertyPanel,
-								new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+								new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 										GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 										new Insets(0, 0, 0, 0), 0, 10));
 
@@ -671,17 +671,17 @@ public class EditActionsDialog extends JDialog {
 
 							final SpinnerNumberModel model;
 							if ("DeadZone".equals(propertyName))
-								model = new SpinnerNumberModel(value, 0.0, 1.0, 0.01);
+								model = new SpinnerNumberModel(value, 0d, 1d, 0.01);
 							else if ("Exponent".equals(propertyName))
-								model = new SpinnerNumberModel(value, 1.0, 5.0, 0.1);
+								model = new SpinnerNumberModel(value, 1d, 5d, 0.1);
 							else if ("MinAxisValue".equals(propertyName) || "MaxAxisValue".equals(propertyName))
-								model = new SpinnerNumberModel(value, -1.0, 1.0, 0.01);
+								model = new SpinnerNumberModel(value, -1d, 1d, 0.01);
 							else if ("MaxCursorSpeed".equals(propertyName))
-								model = new SpinnerNumberModel(value, 100.0, 10000.0, 1.0);
+								model = new SpinnerNumberModel(value, 100d, 10000d, 1d);
 							else if ("MaxRelativeSpeed".equals(propertyName))
-								model = new SpinnerNumberModel(value, 0.1, 100.0, 0.01);
+								model = new SpinnerNumberModel(value, 0.1, 100d, 0.01);
 							else
-								model = new SpinnerNumberModel(value, -1.0, 1.0, 0.05);
+								model = new SpinnerNumberModel(value, -1d, 1d, 0.05);
 
 							final JSpinner spinner = new JSpinner(model);
 							final JComponent editor = spinner.getEditor();
@@ -788,15 +788,15 @@ public class EditActionsDialog extends JDialog {
 			final boolean anyPropertiesFound = propertiesPanel != null;
 
 			if (anyPropertiesFound) {
-				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0,
-						1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d,
+						1d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 				propertiesScrollPane.setViewportView(propertiesPanel);
 			}
 			propertiesLabel.setVisible(anyPropertiesFound);
 			propertiesScrollPane.setVisible(anyPropertiesFound);
 		});
-		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, 0.25, 1.0,
+		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, 0.25, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final JPanel buttonPanel = new JPanel();

@@ -298,8 +298,8 @@ public class AssignmentsComponent extends JScrollPane {
 
 			final var constraints = new GridBagConstraints();
 			constraints.insets = new Insets(2, 2, 2, 2);
-			constraints.weightx = 1.0;
-			constraints.weighty = 1.0;
+			constraints.weightx = 1d;
+			constraints.weighty = 1d;
 
 			constraints.gridx = 1;
 			constraints.gridy = 0;
@@ -383,8 +383,8 @@ public class AssignmentsComponent extends JScrollPane {
 
 		final var constraints = new GridBagConstraints();
 		constraints.insets = new Insets(8, 8, 8, 8);
-		constraints.weightx = 1.0;
-		constraints.weighty = 1.0;
+		constraints.weightx = 1d;
+		constraints.weighty = 1d;
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;

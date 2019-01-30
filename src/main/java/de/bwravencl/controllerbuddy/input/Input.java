@@ -79,9 +79,13 @@ public class Input {
 			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+	private static float clamp(final float v) {
+		return Math.max(Math.min(v, 1f), -1f);
+	}
+
 	private static double correctNumericalImprecision(final double d) {
 		if (d < 0.0000001)
-			return 0.0;
+			return 0d;
 		else
 			return d;
 	}
@@ -102,16 +106,16 @@ public class Input {
 
 	private static void mapCircularAxesToSquareAxes(final GLFWGamepadState state, final int xAxisIndex,
 			final int yAxisIndex) {
-		final var u = Math.max(Math.min(state.axes(xAxisIndex), 1.0f), -1.0f);
-		final var v = Math.max(Math.min(state.axes(yAxisIndex), 1.0f), -1.0f);
+		final var u = clamp(state.axes(xAxisIndex));
+		final var v = clamp(state.axes(yAxisIndex));
 
 		final var u2 = u * u;
 		final var v2 = v * v;
 
-		final var subtermX = 2.0 + u2 - v2;
-		final var subtermY = 2.0 - u2 + v2;
+		final var subtermX = 2d + u2 - v2;
+		final var subtermY = 2d - u2 + v2;
 
-		final double twoSqrt2 = 2.0 * Math.sqrt(2.0);
+		final double twoSqrt2 = 2d * Math.sqrt(2d);
 
 		var termX1 = subtermX + u * twoSqrt2;
 		var termX2 = subtermX - u * twoSqrt2;
@@ -126,8 +130,8 @@ public class Input {
 		final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
 		final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
 
-		state.axes(xAxisIndex, (float) x);
-		state.axes(yAxisIndex, (float) y);
+		state.axes(xAxisIndex, clamp((float) x));
+		state.axes(yAxisIndex, clamp((float) y));
 	}
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,

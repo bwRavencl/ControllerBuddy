@@ -971,7 +971,7 @@ public final class Main implements SingletonApp {
 		settingsScrollPane.setViewportView(settingsPanel);
 		tabbedPane.addTab(rb.getString("SETTINGS_TAB"), null, settingsScrollPane);
 
-		final var panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+		final var panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 5);
 
 		final var panelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
@@ -1156,7 +1156,7 @@ public final class Main implements SingletonApp {
 
 		updateTitleAndTooltip();
 
-		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
@@ -1990,26 +1990,26 @@ public final class Main implements SingletonApp {
 			final var mode = modes.get(i);
 
 			final var modePanel = new JPanel(new GridBagLayout());
-			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
 			final var modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + (i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
-			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.BASELINE,
+			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
-			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1.0, 1.0,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
-			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			if (Profile.defaultMode.equals(mode) || OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
@@ -2018,12 +2018,12 @@ public final class Main implements SingletonApp {
 			} else {
 				final var deleteButton = new JButton(new RemoveModeAction(mode));
 				deleteButton.setPreferredSize(BUTTON_DIMENSION);
-				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			}
 		}
 
-		modesListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+		modesListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		modesScrollPane.setViewportView(modesListPanel);
@@ -2102,15 +2102,13 @@ public final class Main implements SingletonApp {
 
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
-			indicatorsListPanel.add(indicatorPanel,
-					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
-							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0),
-							0, 5));
+			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
 			final var virtualAxisLabel = new JLabel(virtualAxis.toString() + rb.getString("AXIS_LABEL_SUFFIX"));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
-			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -2126,28 +2124,28 @@ public final class Main implements SingletonApp {
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
 			colorLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
+			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
 			colorButton.setPreferredSize(BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
-			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.BASELINE,
+			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var invertedCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
 			invertedCheckBox.setSelected(enabled && overlayAxis.inverted);
 			invertedCheckBox.setEnabled(enabled);
-			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
+					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			final var displayCheckBox = new JCheckBox(new DisplayIndicatorAction(virtualAxis));
 			displayCheckBox.setSelected(enabled);
-			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0,
+			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}
 
-		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
