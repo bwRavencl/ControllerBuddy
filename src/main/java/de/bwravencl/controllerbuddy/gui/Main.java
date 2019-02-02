@@ -99,6 +99,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
@@ -560,6 +561,33 @@ public final class Main implements SingletonApp {
 
 	}
 
+	private class ShowLicensesAction extends AbstractAction {
+
+		private static final long serialVersionUID = 2471952794110895043L;
+
+		private ShowLicensesAction() {
+			putValue(NAME, rb.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var file = new File(Main.class.getResource(Main.LICENSES_PATH).getFile());
+			try {
+				final var text = Files.readString(file.toPath());
+				final var textArea = new JTextArea(text);
+				textArea.setLineWrap(true);
+				textArea.setEditable(false);
+				final var scrollPane = new JScrollPane(textArea);
+				scrollPane.setPreferredSize(new Dimension(600, 400));
+				JOptionPane.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
+			} catch (final IOException e1) {
+				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+			}
+		}
+
+	}
+
 	private class StartClientAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3975574941559749481L;
@@ -699,6 +727,7 @@ public final class Main implements SingletonApp {
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+	private static final String LICENSES_PATH = "/licenses.txt";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
@@ -962,6 +991,7 @@ public final class Main implements SingletonApp {
 
 		final var helpMenu = new JMenu(rb.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
+		helpMenu.add(new ShowLicensesAction());
 		helpMenu.add(new ShowAboutDialogAction());
 
 		frame.getContentPane().add(tabbedPane);
