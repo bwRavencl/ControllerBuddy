@@ -60,10 +60,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.System.Logger;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +78,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -99,6 +103,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
@@ -560,6 +565,33 @@ public final class Main implements SingletonApp {
 
 	}
 
+	private class ShowLicensesAction extends AbstractAction {
+
+		private static final long serialVersionUID = 2471952794110895043L;
+
+		private ShowLicensesAction() {
+			putValue(NAME, rb.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try (final var bufferedReader = new BufferedReader(new InputStreamReader(
+					ClassLoader.getSystemResourceAsStream(Main.LICENSES_FILENAME), StandardCharsets.UTF_8))) {
+				final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
+				final var textArea = new JTextArea(text);
+				textArea.setLineWrap(true);
+				textArea.setEditable(false);
+				final var scrollPane = new JScrollPane(textArea);
+				scrollPane.setPreferredSize(new Dimension(600, 400));
+				JOptionPane.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
+			} catch (final IOException e1) {
+				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+			}
+		}
+
+	}
+
 	private class StartClientAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3975574941559749481L;
@@ -699,6 +731,7 @@ public final class Main implements SingletonApp {
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+	private static final String LICENSES_FILENAME = "licenses.txt";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
@@ -962,6 +995,7 @@ public final class Main implements SingletonApp {
 
 		final var helpMenu = new JMenu(rb.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
+		helpMenu.add(new ShowLicensesAction());
 		helpMenu.add(new ShowAboutDialogAction());
 
 		frame.getContentPane().add(tabbedPane);
