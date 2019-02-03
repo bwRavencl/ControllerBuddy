@@ -271,6 +271,7 @@ public class Input {
 		if (hidDevice != null) {
 			resetDualShock4();
 			hidDevice.close();
+			hidDevice = null;
 		}
 	}
 

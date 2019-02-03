@@ -1238,8 +1238,10 @@ public final class Main implements SingletonApp {
 			public void invoke(final int jid, final int event) {
 				final var disconnected = event == GLFW_DISCONNECTED;
 				if (disconnected || glfwJoystickIsGamepad(jid)) {
-					if (disconnected && selectedJid == jid)
+					if (disconnected && selectedJid == jid) {
 						selectedJid = INVALID_JID;
+						input.deInit();
+					}
 
 					invokeOnEventDispatchThreadIfRequired(() -> onControllersChanged(false));
 				}
@@ -1804,7 +1806,10 @@ public final class Main implements SingletonApp {
 
 	public void setOverlayText(final String text) {
 		if (currentModeLabel != null)
-			invokeOnEventDispatchThreadIfRequired(() -> currentModeLabel.setText(text));
+			invokeOnEventDispatchThreadIfRequired(() -> {
+				if (currentModeLabel != null)
+					currentModeLabel.setText(text);
+			});
 	}
 
 	public void setSelectedJid(final int jid) {
