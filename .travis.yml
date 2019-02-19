@@ -1,11 +1,11 @@
 os: windows
 language: sh
 before_script:
-  - curl https://download.java.net/java/early_access/jdk12/30/GPL/openjdk-12-ea+30_windows-x64_bin.zip -o jdk12.zip
+  - curl https://download.java.net/java/GA/jdk12/32/GPL/openjdk-12_windows-x64_bin.zip -o jdk12.zip
   - unzip jdk12.zip
   - export PATH=$(pwd)/jdk-12/bin:$PATH
   - export JAVA_HOME=jdk-12
-  - curl https://download.java.net/java/early_access/jpackage/archive/0/binaries/openjdk-13-jpackage+8_windows-x64_bin.zip -o jdk13.zip
+  - curl https://download.java.net/java/early_access/jpackage/archive/17/binaries/openjdk-13-jpackage+17_windows-x64_bin.zip -o jdk13.zip
   - unzip jdk13.zip
   - export PATH=$(pwd)/jdk-13/bin:$PATH
   - export GRADLE_OPTS=-Dorg.gradle.daemon=false
