@@ -2211,13 +2211,19 @@ public final class Main implements SingletonApp {
 	private void updatePanelAccess() {
 		final var localActive = localThread != null && localThread.isAlive();
 		final var serverActive = serverThread != null && serverThread.isAlive();
-
 		final var panelsEnabled = !localActive && !serverActive;
+
 		setEnabledRecursive(modesListPanel, panelsEnabled);
 		setEnabledRecursive(addModePanel, panelsEnabled);
+
 		if (assignmentsComponent != null)
 			assignmentsComponent.setEnabled(panelsEnabled);
-		setEnabledRecursive(indicatorsListPanel, panelsEnabled);
+
+		if (!panelsEnabled)
+			setEnabledRecursive(indicatorsListPanel, false);
+		else
+			updateOverlayPanel();
+
 		setEnabledRecursive(settingsPanel, panelsEnabled);
 	}
 
