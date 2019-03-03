@@ -360,7 +360,15 @@ public class OnScreenKeyboard extends JFrame {
 		shortName = shortName.replaceFirst("R ", "");
 		shortName = shortName.replaceFirst("Num", "");
 		shortName = shortName.replaceFirst("App ", "");
-		shortName = shortName.replaceAll(" Arrow", "");
+		if (shortName.endsWith("Arrow"))
+			if (shortName.startsWith("Left"))
+				shortName = "\u2190";
+			else if (shortName.startsWith("Right"))
+				shortName = "\u2192";
+			else if (shortName.startsWith("Up"))
+				shortName = "\u2191";
+			else if (shortName.startsWith("Down"))
+				shortName = "\u2193";
 
 		return shortName;
 	}

@@ -55,7 +55,7 @@ public class DirectInputKeyCode {
 	public static final String DIK_DECIMAL = "Num.";
 	public static final String DIK_DELETE = "Del";
 	public static final String DIK_DIVIDE = "Num/";
-	public static final String DIK_DOWN = "Down";
+	public static final String DIK_DOWN = "Down Arrow";
 	public static final String DIK_E = "E";
 	public static final String DIK_END = "End";
 	public static final String DIK_EQUALS = "=";
