@@ -96,13 +96,13 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
 			sw.append(String.valueOf(nButtons));
 
-			final var sendBuf = sw.toString().getBytes("ASCII");
-			final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, hostAddress, port);
+			final var helloBuf = sw.toString().getBytes("ASCII");
+			final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
 
 			var success = false;
 			var retry = N_CONNECTION_RETRIES;
 			do {
-				clientSocket.send(sendPacket);
+				clientSocket.send(helloPacket);
 
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				try {
@@ -295,9 +295,9 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				}
 
 				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
-					final var sendBuf1 = ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
-					final var sendPacket1 = new DatagramPacket(sendBuf1, sendBuf1.length, hostAddress, port);
-					clientSocket.send(sendPacket1);
+					final var keepAliveBuf = ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
+					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress, port);
+					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
 				log.log(Logger.Level.INFO, e.getMessage(), e);
