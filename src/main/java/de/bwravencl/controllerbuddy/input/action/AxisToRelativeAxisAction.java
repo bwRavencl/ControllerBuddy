@@ -31,8 +31,9 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 	private float initialValue = DEFAULT_INITIAL_VALUE;
-	private transient long lastCallTime = 0L;
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
+	private Float detentValue = null;
+	private transient long lastCallTime = 0L;
 
 	@Override
 	public void doAction(final Input input, final Float value) {
@@ -53,9 +54,13 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis),
 					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1f, 1f);
 
-			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback);
+			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
 		} else
 			lastCallTime = 0L;
+	}
+
+	public Float getDetentValue() {
+		return detentValue;
 	}
 
 	public float getExponent() {
@@ -72,7 +77,7 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	@Override
 	public void init(final Input input) {
-		input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false);
+		input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
 	}
 
 	public boolean isHapticFeedback() {
@@ -86,6 +91,10 @@ public class AxisToRelativeAxisAction extends AxisToAxisAction
 				lastCallTime = 0L;
 				break;
 			}
+	}
+
+	public void setDetentValue(final Float detentValue) {
+		this.detentValue = detentValue;
 	}
 
 	public void setExponent(final float exponent) {

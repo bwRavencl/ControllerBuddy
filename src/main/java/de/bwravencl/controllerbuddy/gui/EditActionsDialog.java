@@ -689,6 +689,45 @@ public class EditActionsDialog extends JDialog {
 							formatter.setCommitsOnValidEdit(true);
 							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(method));
 							propertyPanel.add(spinner);
+						} else if (clazz == Float.class) {
+							final var value = (Float) getterMethod.invoke(selectedAssignedAction);
+
+							final var spinner = new JSpinner(
+									new SpinnerNumberModel(value != null ? value : 0f, -1d, 1d, 0.05));
+							spinner.setEnabled(value != null);
+							final var editor = spinner.getEditor();
+							final var textField = ((JSpinner.DefaultEditor) editor).getTextField();
+							textField.setColumns(4);
+							final var formatter = (DefaultFormatter) textField.getFormatter();
+							formatter.setCommitsOnValidEdit(true);
+							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(method));
+
+							final var checkBox = new JCheckBox(new AbstractAction() {
+
+								@Override
+								public void actionPerformed(final ActionEvent e) {
+									final var selected = ((JCheckBox) e.getSource()).isSelected();
+
+									final Float value;
+									if (selected)
+										value = ((Double) spinner.getValue()).floatValue();
+									else
+										value = null;
+
+									try {
+										method.invoke(selectedAssignedAction, value);
+									} catch (final IllegalAccessException | IllegalArgumentException
+											| InvocationTargetException e1) {
+										log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+									}
+
+									spinner.setEnabled(selected);
+								}
+							});
+							checkBox.setSelected(value != null);
+
+							propertyPanel.add(checkBox);
+							propertyPanel.add(spinner);
 						} else if (clazz == Mode.class) {
 							final var comboBox = new JComboBox<>();
 							if (!input.getProfile().getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))

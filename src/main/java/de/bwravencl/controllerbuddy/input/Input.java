@@ -507,16 +507,19 @@ public class Input {
 		return sent;
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback) {
+	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback,
+			final Float dententValue) {
 		value = Math.max(value, -1f);
 		value = Math.min(value, 1f);
 
-		setAxis(virtualAxis,
-				(int) normalize(value, -1f, 1f, outputThread.getMinAxisValue(), outputThread.getMaxAxisValue()),
-				hapticFeedback);
+		final var minAxisValue = outputThread.getMinAxisValue();
+		final var maxAxisValue = outputThread.getMaxAxisValue();
+		setAxis(virtualAxis, (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue), hapticFeedback,
+				dententValue != null ? (int) normalize(dententValue, -1f, 1f, minAxisValue, maxAxisValue) : null);
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback) {
+	public void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
+			final Integer dententValue) {
 		final var minAxisValue = outputThread.getMinAxisValue();
 		final var maxAxisValue = outputThread.getMaxAxisValue();
 
@@ -525,14 +528,12 @@ public class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && hidDevice != null && prevValue != value) {
-			final var midpoint = (maxAxisValue - minAxisValue) / 2;
-
+		if (hapticFeedback && hidDevice != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
 				rumbleDualShock4(80L, Byte.MAX_VALUE);
-			else if (prevValue > midpoint && value < midpoint || prevValue < midpoint && value > midpoint)
+			else if (dententValue != null && (prevValue > dententValue && value < dententValue
+					|| prevValue < dententValue && value > dententValue))
 				rumbleDualShock4(20L, (byte) 1);
-		}
 	}
 
 	public void setBatteryState(final int batteryState) {

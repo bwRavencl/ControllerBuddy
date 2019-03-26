@@ -143,7 +143,7 @@ public class Profile implements Cloneable {
 								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) action;
 								final var value = axis == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
 										|| axis == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false);
+								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
 							}
 
 							if (action instanceof IModeChangeListenerAction) {

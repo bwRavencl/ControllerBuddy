@@ -138,6 +138,7 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
@@ -1388,6 +1389,16 @@ public final class Main implements SingletonApp {
 			if (overlayAxis != null) {
 				final var borderColor = Color.BLACK;
 
+				final var dententValues = new HashSet<Float>();
+				for (final var mode : input.getProfile().getModes())
+					for (final var actions : mode.getAxisToActionsMap().values())
+						for (final var action : actions)
+							if (action instanceof AxisToRelativeAxisAction) {
+								final var detentValue = ((AxisToRelativeAxisAction) action).getDetentValue();
+								if (detentValue != null)
+									dententValues.add(detentValue);
+							}
+
 				final var progressBar = new JProgressBar(SwingConstants.VERTICAL) {
 
 					private static final long serialVersionUID = 8167193907929992395L;
@@ -1403,6 +1414,12 @@ public final class Main implements SingletonApp {
 						for (var i = 1; i <= subdivisions; i++) {
 							g.setColor(borderColor);
 							final var y = i * (height / (subdivisions + 1));
+							g.drawLine(0, y, width, y);
+						}
+
+						for (final var detentValue : dententValues) {
+							g.setColor(Color.RED);
+							final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
 							g.drawLine(0, y, width, y);
 						}
 					}

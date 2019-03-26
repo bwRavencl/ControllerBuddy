@@ -35,7 +35,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendabl
 			else
 				value = Input.normalize(value, -1f, -deadZone, -1f, 0f);
 
-			input.setAxis(virtualAxis, invert ? -value : value, false);
+			input.setAxis(virtualAxis, invert ? -value : value, false, null);
 		}
 	}
 

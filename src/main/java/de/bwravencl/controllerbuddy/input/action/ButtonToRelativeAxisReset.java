@@ -31,7 +31,7 @@ public class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implements IBu
 		value = handleLongPress(input, value);
 
 		if (value != 0 ^ invert)
-			input.setAxis(virtualAxis, resetValue, false);
+			input.setAxis(virtualAxis, resetValue, false, null);
 	}
 
 	public float getResetValue() {
