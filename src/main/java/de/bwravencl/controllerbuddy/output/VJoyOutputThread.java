@@ -184,6 +184,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private boolean restart = false;
+	private boolean forceStop = false;
 	UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	IVjoyInterface vJoy;
 	LONG axisX;
@@ -235,11 +236,12 @@ public abstract class VJoyOutputThread extends OutputThread {
 			});
 		}
 
-		if (restart)
-			SwingUtilities.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
+			if (forceStop || restart)
 				main.stopAll();
+			if (restart)
 				main.restartLast();
-			});
+		});
 	}
 
 	public UINT getvJoyDevice() {
@@ -494,6 +496,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 				try {
 					if (confirmDialogTask.get() == JOptionPane.YES_OPTION)
 						restart = true;
+					else
+						forceStop = true;
 				} catch (final ExecutionException e) {
 					log.log(Logger.Level.ERROR, e.getMessage(), e);
 				}
