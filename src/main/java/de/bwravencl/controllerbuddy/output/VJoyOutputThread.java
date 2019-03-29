@@ -235,11 +235,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 			});
 		}
 
-		if (restart)
-			SwingUtilities.invokeLater(() -> {
-				main.stopAll();
+		SwingUtilities.invokeLater(() -> {
+			main.stopAll();
+			if (restart)
 				main.restartLast();
-			});
+		});
 	}
 
 	public UINT getvJoyDevice() {
