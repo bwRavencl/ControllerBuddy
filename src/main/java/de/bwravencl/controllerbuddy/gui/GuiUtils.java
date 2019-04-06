@@ -23,6 +23,7 @@ import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.prefs.Preferences;
@@ -30,6 +31,12 @@ import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinUser;
 
 class GuiUtils {
 
@@ -114,6 +121,17 @@ class GuiUtils {
 		}
 
 		setFrameLocationRespectingBounds(frame, location, maxWindowBounds);
+	}
+
+	static void makeWindowTopmost(final Window window) {
+		if (Main.windows) {
+			final var windowHwnd = new HWND(Native.getWindowPointer(window));
+			User32.INSTANCE.SetWindowPos(windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0,
+					WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
+		} else {
+			window.setAlwaysOnTop(false);
+			window.setAlwaysOnTop(true);
+		}
 	}
 
 	static void setEnabledRecursive(final Component component, final boolean enabled) {

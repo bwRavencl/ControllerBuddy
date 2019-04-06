@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
@@ -1905,15 +1906,11 @@ public final class Main implements SingletonApp {
 			public void run() {
 				SwingUtilities.invokeLater(() -> {
 					if (!isModalDialogShowing()) {
-						if (overlayFrame != null) {
-							overlayFrame.setAlwaysOnTop(false);
-							overlayFrame.setAlwaysOnTop(true);
-						}
+						if (overlayFrame != null)
+							makeWindowTopmost(overlayFrame);
 
-						if (onScreenKeyboard.isVisible()) {
-							onScreenKeyboard.setAlwaysOnTop(false);
-							onScreenKeyboard.setAlwaysOnTop(true);
-						}
+						if (onScreenKeyboard.isVisible())
+							makeWindowTopmost(onScreenKeyboard);
 					}
 
 					final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
