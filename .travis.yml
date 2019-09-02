@@ -1,13 +1,13 @@
 os: windows
 language: sh
 before_script:
-  - curl https://download.java.net/java/GA/jdk12/GPL/openjdk-12_windows-x64_bin.zip -o jdk12.zip
+  - curl https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip -o jdk12.zip
   - unzip jdk12.zip
   - export PATH=$(pwd)/jdk-12/bin:$PATH
-  - export JAVA_HOME=jdk-12
-  - curl https://download.java.net/java/early_access/jpackage/30/openjdk-13-jpackage+30_windows-x64_bin.zip -o jdk13.zip
-  - unzip jdk13.zip
-  - export PATH=$(pwd)/jdk-13/bin:$PATH
+  - export JAVA_HOME=jdk-12.0.2
+  - curl https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-35_windows-x64_bin.zip -o jdk14.zip
+  - unzip jdk14.zip
+  - export PATH=$(pwd)/jdk-14/bin:$PATH
   - export GRADLE_OPTS=-Dorg.gradle.daemon=false
 script: ./gradlew zip
 deploy:

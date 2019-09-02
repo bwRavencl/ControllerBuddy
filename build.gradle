@@ -1,5 +1,5 @@
 plugins {
-    id 'org.ajoberstar.grgit' version '3.0.0'
+    id 'org.ajoberstar.grgit' version '3.1.1'
 }
 
 apply plugin: 'application'
@@ -51,7 +51,7 @@ task copyLibs(type: Copy) {
 
 task jpackage(type: Exec) {
     dependsOn jar, copyLibs
-    commandLine 'jpackage', 'create-image', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--verbose'
+    commandLine 'jpackage', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--verbose'
 }
 
 task zip(type: Zip) {
@@ -67,13 +67,13 @@ repositories {
 }
 
 ext {
-    jnaVersion = '5.2.0'
-    lwjglVersion = '3.2.1'
+    jnaVersion = '5.4.0'
+    lwjglVersion = '3.2.3'
 }
 
 dependencies {
     compile 'commons-cli:commons-cli:1.4',
-            'com.github.git-moss:purejavahidapi:66fd63877e',
+            'com.github.git-moss:purejavahidapi:9e9d54b33d',
             'com.google.code.gson:gson:2.8.5',
             "net.java.dev.jna:jna:$jnaVersion",
             "net.java.dev.jna:jna-platform:$jnaVersion",
