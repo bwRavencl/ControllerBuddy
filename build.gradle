@@ -74,7 +74,7 @@ task jpackage(type: Exec) {
     doFirst {
         delete "$distDir/$project.name"
     }
-    commandLine 'jpackage', '--input', "$buildDir/libs", '--output', "$distDir", '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--verbose'
+    commandLine 'jpackage', '--input', "$buildDir/libs", '--dest', "$distDir", '--package-type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
 }
 
 task zip(type: Zip) {
