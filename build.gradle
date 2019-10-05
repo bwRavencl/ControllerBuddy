@@ -12,6 +12,8 @@ targetCompatibility = 12
 
 def genDir = 'gen'
 def versionDir = "$genDir/main/java"
+def runtimeDir = "$buildDir/runtime"
+def distDir = "$buildDir/dist"
 
 task cleanVersion {
     delete genDir
@@ -45,13 +47,34 @@ compileJava {
 }
 
 task copyLibs(type: Copy) {
-    into "$buildDir/libs"
     from configurations.runtime
+    into "$buildDir/libs"
+}
+
+task jlink(type: Exec) {
+    doFirst {
+        delete runtimeDir
+    }
+    commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--bind-services', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
+}
+
+task customizeLoggingProperties() {
+    dependsOn jlink
+    doLast {
+        def loggingPropertiesFile = "$runtimeDir/conf/logging.properties"
+        ant.replace(file: "$loggingPropertiesFile", token: 'handlers= java.util.logging.ConsoleHandler', value: '#handlers= java.util.logging.ConsoleHandler')
+        ant.replace(file: "$loggingPropertiesFile", token: '#handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler', value: 'handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
+        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.pattern = %h/java%u.log', value: 'java.util.logging.FileHandler.pattern = %t/ControllerBuddy.log')
+        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter', value: 'java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter')
+    }
 }
 
 task jpackage(type: Exec) {
-    dependsOn jar, copyLibs
-    commandLine 'jpackage', '--input', "$buildDir/libs", '--output', "$buildDir/dist", '--name', "$project.name", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--verbose'
+    dependsOn jar, copyLibs, customizeLoggingProperties
+    doFirst {
+        delete "$distDir/$project.name"
+    }
+    commandLine 'jpackage', '--input', "$buildDir/libs", '--output', "$distDir", '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--identifier', 'de.bwravencl.controllerbuddy', '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--verbose'
 }
 
 task zip(type: Zip) {

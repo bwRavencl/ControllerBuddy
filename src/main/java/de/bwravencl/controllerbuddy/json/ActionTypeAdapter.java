@@ -17,10 +17,11 @@
 
 package de.bwravencl.controllerbuddy.json;
 
-import java.lang.System.Logger;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -35,7 +36,7 @@ import de.bwravencl.controllerbuddy.input.action.NullAction;
 
 public class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
-	private static final Logger log = System.getLogger(ActionTypeAdapter.class.getName());
+	private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
 
 	private static final String PROPERTY_TYPE = "type";
 	private static final String PROPERTY_DATA = "data";
@@ -64,7 +65,7 @@ public class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeseri
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
 			if (typeOfT == IAction.class) {
-				log.log(Logger.Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
+				log.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
 						+ NullAction.class.getSimpleName() + "'");
 				unknownActionClasses.add(typeNameString);
 

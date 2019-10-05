@@ -35,6 +35,7 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -65,7 +66,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.System.Logger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -78,6 +80,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -588,7 +592,7 @@ public final class Main implements SingletonApp {
 				scrollPane.setPreferredSize(new Dimension(600, 400));
 				JOptionPane.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
 			} catch (final IOException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -702,7 +706,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private static final String SINGLETON_ID;
-	private static final Logger log = System.getLogger(Main.class.getName());
+	private static final Logger log = Logger.getLogger(Main.class.getName());
 	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
@@ -772,6 +776,23 @@ public final class Main implements SingletonApp {
 		return KeyEvent.VK_UNDEFINED;
 	}
 
+	private static void handleUncaughtException(final Throwable e, final Component parentComponent) {
+		log.log(Level.SEVERE, e.getMessage(), e);
+		if (parentComponent != null)
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+				final var sw = new StringWriter();
+				e.printStackTrace(new PrintWriter(sw));
+
+				JOptionPane.showMessageDialog(parentComponent,
+						rb.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT") + sw.toString(),
+						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+
+				terminate(1);
+			});
+		else
+			terminate(1);
+	}
+
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
 		if (windows != null)
@@ -783,7 +804,11 @@ public final class Main implements SingletonApp {
 	}
 
 	public static void main(final String[] args) {
-		if (!Singleton.invoke(SINGLETON_ID, args))
+		if (!Singleton.invoke(SINGLETON_ID, args)) {
+			Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
+
+			log.log(Level.INFO, "Launching " + rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
+
 			SwingUtilities.invokeLater(() -> {
 				final var options = new Options();
 				options.addOption(OPTION_AUTOSTART, true, rb.getString(
@@ -797,6 +822,7 @@ public final class Main implements SingletonApp {
 						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					else {
 						final var main = new Main();
+
 						if (!commandLine.hasOption(OPTION_TRAY))
 							main.frame.setVisible(true);
 						if (commandLine.hasOption(OPTION_AUTOSTART)) {
@@ -828,6 +854,12 @@ public final class Main implements SingletonApp {
 					helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
 				}
 			});
+		}
+	}
+
+	private static void terminate(final int status) {
+		log.log(Level.INFO, "Terminated (" + status + ")");
+		System.exit(status);
 	}
 
 	private static void waitForThreadToFinish(final Thread thread) {
@@ -902,6 +934,9 @@ public final class Main implements SingletonApp {
 		Singleton.start(this, SINGLETON_ID);
 
 		frame = new JFrame();
+
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, frame));
+
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -1187,7 +1222,7 @@ public final class Main implements SingletonApp {
 			try {
 				SystemTray.getSystemTray().add(trayIcon);
 			} catch (final AWTException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 
@@ -1541,10 +1576,10 @@ public final class Main implements SingletonApp {
 					restartLast();
 				}
 			} catch (final JsonParseException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 		} catch (final IOException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 
 		if (!profileLoaded)
@@ -1721,7 +1756,7 @@ public final class Main implements SingletonApp {
 			try {
 				serverSocket.close();
 			} catch (final IOException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 		if (input != null)
@@ -1730,7 +1765,7 @@ public final class Main implements SingletonApp {
 		stopAll();
 		glfwTerminate();
 		Singleton.stop();
-		System.exit(0);
+		terminate(0);
 	}
 
 	private void repaintOverlay() {
@@ -1787,7 +1822,7 @@ public final class Main implements SingletonApp {
 			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}

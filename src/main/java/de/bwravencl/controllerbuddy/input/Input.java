@@ -32,7 +32,6 @@ import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 import java.io.IOException;
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +41,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -68,7 +69,7 @@ public class Input {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
 
-	private static final Logger log = System.getLogger(Input.class.getName());
+	private static final Logger log = Logger.getLogger(Input.class.getName());
 
 	private static final int LOW_BATTERY_WARNING = 25;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
@@ -261,7 +262,7 @@ public class Input {
 
 						});
 					} catch (final IOException e) {
-						log.log(Logger.Level.ERROR, e.getMessage(), e);
+						log.log(Level.SEVERE, e.getMessage(), e);
 					}
 			}
 		}

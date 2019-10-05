@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.System.Logger;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,6 +26,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -41,7 +42,7 @@ public class ServerOutputThread extends OutputThread {
 		Listening, Connected
 	}
 
-	private static final Logger log = System.getLogger(ServerOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(ServerOutputThread.class.getName());
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
@@ -249,9 +250,9 @@ public class ServerOutputThread extends OutputThread {
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
-			log.log(Logger.Level.INFO, e.getMessage(), e);
+			log.log(Level.INFO, e.getMessage(), e);
 		} catch (final IOException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

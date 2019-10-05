@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.System.Logger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -27,6 +26,8 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -45,7 +46,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		Connecting, Connected
 	}
 
-	private static final Logger log = System.getLogger(ClientVJoyOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(ClientVJoyOutputThread.class.getName());
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	private static final int N_CONNECTION_RETRIES = 10;
@@ -140,7 +141,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						});
 					}
 				} catch (final SocketTimeoutException e) {
-					log.log(Logger.Level.INFO, e.getMessage(), e);
+					log.log(Level.INFO, e.getMessage(), e);
 					retry--;
 					final var finalRetry = retry;
 					SwingUtilities.invokeLater(() -> {
@@ -296,11 +297,12 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
 					final var keepAliveBuf = ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
-					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress, port);
+					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress,
+							port);
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
-				log.log(Logger.Level.INFO, e.getMessage(), e);
+				log.log(Level.INFO, e.getMessage(), e);
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -333,7 +335,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

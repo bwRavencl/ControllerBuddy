@@ -29,7 +29,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.lang.System.Logger;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -40,6 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -140,7 +141,7 @@ public class EditActionsDialog extends JDialog {
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -163,7 +164,7 @@ public class EditActionsDialog extends JDialog {
 				description = action.toString();
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 			return description;
@@ -221,7 +222,7 @@ public class EditActionsDialog extends JDialog {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -242,7 +243,7 @@ public class EditActionsDialog extends JDialog {
 			try {
 				setterMethod.invoke(selectedAssignedAction, ((JComboBox<?>) e.getSource()).getSelectedItem());
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -278,7 +279,7 @@ public class EditActionsDialog extends JDialog {
 
 				setterMethod.invoke(selectedAssignedAction, keyStroke);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -300,7 +301,7 @@ public class EditActionsDialog extends JDialog {
 				setterMethod.invoke(selectedAssignedAction,
 						value instanceof Double ? ((Double) value).floatValue() : value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 
@@ -379,7 +380,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private static final Logger log = System.getLogger(EditActionsDialog.class.getName());
+	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
 
 	private static final Class<?>[] AXIS_ACTION_CLASSES = { AxisToAxisAction.class, AxisToButtonAction.class,
 			AxisToCursorAction.class, AxisToKeyAction.class, AxisToMouseButtonAction.class,
@@ -447,7 +448,7 @@ public class EditActionsDialog extends JDialog {
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -488,7 +489,7 @@ public class EditActionsDialog extends JDialog {
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -718,7 +719,7 @@ public class EditActionsDialog extends JDialog {
 										method.invoke(selectedAssignedAction, value);
 									} catch (final IllegalAccessException | IllegalArgumentException
 											| InvocationTargetException e1) {
-										log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+										log.log(Level.SEVERE, e1.getMessage(), e1);
 									}
 
 									spinner.setEnabled(selected);
@@ -818,7 +819,7 @@ public class EditActionsDialog extends JDialog {
 									+ ": GUI representation implementation missing for " + clazz.getName());
 					} catch (final NoSuchMethodException | SecurityException | IllegalAccessException
 							| IllegalArgumentException | InvocationTargetException e1) {
-						log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+						log.log(Level.SEVERE, e1.getMessage(), e1);
 					}
 				}
 

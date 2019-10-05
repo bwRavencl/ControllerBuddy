@@ -21,13 +21,14 @@ import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASEN
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
@@ -38,7 +39,7 @@ import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public class Profile implements Cloneable {
 
-	private static final Logger log = System.getLogger(Profile.class.getName());
+	private static final Logger log = Logger.getLogger(Profile.class.getName());
 
 	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
 
@@ -73,7 +74,7 @@ public class Profile implements Cloneable {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) action.clone());
 				} catch (final CloneNotSupportedException e1) {
-					log.log(Logger.Level.ERROR, e1.getMessage(), e1);
+					log.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 			clonedButtonToModeActionsMap.put(e.getKey(), buttonToModeActions);
 		}
@@ -84,7 +85,7 @@ public class Profile implements Cloneable {
 			try {
 				clonedModes.add((Mode) mode.clone());
 			} catch (final CloneNotSupportedException e) {
-				log.log(Logger.Level.ERROR, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 		profile.setModes(clonedModes);
 

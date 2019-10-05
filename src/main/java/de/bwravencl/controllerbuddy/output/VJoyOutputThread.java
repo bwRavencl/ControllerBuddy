@@ -21,13 +21,14 @@ import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -57,7 +58,7 @@ import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 
 public abstract class VJoyOutputThread extends OutputThread {
 
-	private static final Logger log = System.getLogger(VJoyOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(VJoyOutputThread.class.getName());
 
 	public static final int DEFAULT_VJOY_DEVICE = 1;
 	public static final String LIBRARY_NAME = "vJoyInterface";
@@ -394,7 +395,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
-			log.log(Logger.Level.ERROR, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -499,7 +500,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 					else
 						forceStop = true;
 				} catch (final ExecutionException e) {
-					log.log(Logger.Level.ERROR, e.getMessage(), e);
+					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 
 				stopOutput();

@@ -74,13 +74,14 @@ import static org.lwjgl.system.windows.WindowsUtil.windowsThrowException;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.lang.System.Logger;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -107,7 +108,7 @@ class OpenVrOverlay {
 
 	}
 
-	private static final Logger log = System.getLogger(OpenVrOverlay.class.getName());
+	private static final Logger log = Logger.getLogger(OpenVrOverlay.class.getName());
 
 	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
 	private static final long OVERLAY_FPS = 25L;
@@ -325,7 +326,7 @@ class OpenVrOverlay {
 				executorService = Executors.newSingleThreadScheduledExecutor();
 				executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 			} catch (final Throwable t) {
-				log.log(Logger.Level.ERROR, t.getMessage(), t);
+				log.log(Level.SEVERE, t.getMessage(), t);
 				deInit();
 				throw t;
 			}
@@ -361,7 +362,7 @@ class OpenVrOverlay {
 
 			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
 		} catch (final Throwable t) {
-			log.log(Logger.Level.ERROR, t.getMessage(), t);
+			log.log(Level.SEVERE, t.getMessage(), t);
 		} finally {
 			if (wglGetCurrentContext() == hglrc)
 				wglMakeCurrent(NULL, NULL);
