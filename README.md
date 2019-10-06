@@ -131,7 +131,7 @@ usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
 
 #### Building:
-ControllerBuddy uses the Gradle build system. 
+ControllerBuddy uses the Gradle build system.  
 The following tasks are supported:
 
 | Task                             | Command                 |
