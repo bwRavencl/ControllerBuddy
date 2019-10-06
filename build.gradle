@@ -1,8 +1,8 @@
 plugins {
+    id 'application'
+    id 'eclipse'
     id 'org.ajoberstar.grgit' version '3.1.1'
 }
-
-apply plugin: 'application'
 
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
@@ -10,88 +10,22 @@ version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr
 sourceCompatibility = 12
 targetCompatibility = 12
 
-def genDir = 'gen'
-def versionDir = "$genDir/main/java"
-def runtimeDir = "$buildDir/runtime"
-def distDir = "$buildDir/dist"
+ext {
+    jnaVersion = '5.4.0'
+    lwjglVersion = '3.2.3'
 
-task cleanVersion {
-    delete genDir
-}
+    genDir = 'gen'
+    versionDir = "$genDir/main/java"
 
-task generateVersion {
-    dependsOn cleanVersion
-    def outputDir = file("$versionDir")
-    outputs.dir outputDir
-    doFirst {
-        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
-        srcFile.parentFile.mkdirs()
-        srcFile.write("""package de.bwravencl.controllerbuddy.version;\n
-public class Version {
-
-\tpublic static final String VERSION = "$project.version";
-
-}
-""")
-    }
-}
-
-clean {
-    dependsOn cleanVersion
-}
-
-compileJava {
-    dependsOn generateVersion
-    source generateVersion.outputs.files, sourceSets.main.java
-    options.compilerArgs += ["-Xlint:deprecation"]
-}
-
-task copyLibs(type: Copy) {
-    from configurations.runtime
-    into "$buildDir/libs"
-}
-
-task jlink(type: Exec) {
-    doFirst {
-        delete runtimeDir
-    }
-    commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--bind-services', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
-}
-
-task customizeLoggingProperties() {
-    dependsOn jlink
-    doLast {
-        def loggingPropertiesFile = "$runtimeDir/conf/logging.properties"
-        ant.replace(file: "$loggingPropertiesFile", token: 'handlers= java.util.logging.ConsoleHandler', value: '#handlers= java.util.logging.ConsoleHandler')
-        ant.replace(file: "$loggingPropertiesFile", token: '#handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler', value: 'handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
-        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.pattern = %h/java%u.log', value: 'java.util.logging.FileHandler.pattern = %t/ControllerBuddy.log')
-        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter', value: 'java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter')
-    }
-}
-
-task jpackage(type: Exec) {
-    dependsOn jar, copyLibs, customizeLoggingProperties
-    doFirst {
-        delete "$distDir/$project.name"
-    }
-    commandLine 'jpackage', '--input', "$buildDir/libs", '--dest', "$distDir", '--package-type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
-}
-
-task zip(type: Zip) {
-    dependsOn jpackage
-    from "$buildDir/dist"
-    include "$project.name/**"
-    destinationDir file("$buildDir/dist")
+    libsDir = "$buildDir/$libsDirName"
+    tmpDir = "$buildDir/tmp"
+    appImageDir = "$tmpDir/$project.name"
+    runtimeDir = "$tmpDir/runtime"
 }
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-}
-
-ext {
-    jnaVersion = '5.4.0'
-    lwjglVersion = '3.2.3'
 }
 
 dependencies {
@@ -114,7 +48,30 @@ dependencies {
             "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
 }
 
-apply plugin: 'eclipse'
+task cleanGenDirectory {
+    description = 'Removes the \'gen\' directory'
+    doLast { delete genDir }
+}
+
+clean.dependsOn cleanGenDirectory
+
+task generateVersion {
+    description = 'Creates a source directory named \'gen\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory.'
+    dependsOn cleanGenDirectory
+    def outputDir = file("$versionDir")
+    outputs.dir outputDir
+    doLast {
+        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
+        srcFile.parentFile.mkdirs()
+        srcFile.write("""package de.bwravencl.controllerbuddy.version;\n
+public class Version {
+
+\tpublic static final String VERSION = "$project.version";
+
+}
+""")
+    }
+}
 
 tasks.eclipse.dependsOn generateVersion
 
@@ -126,4 +83,60 @@ eclipse {
             }
         }
     }
+}
+
+compileJava {
+    dependsOn generateVersion
+    source generateVersion.outputs.files, sourceSets.main.java
+    options.compilerArgs += ["-Xlint:deprecation"]
+}
+
+task jlink(type: Exec) {
+    description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
+    group
+    doFirst { delete runtimeDir }
+    commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--bind-services', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
+}
+
+task copyLibs(type: Copy) {
+    description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
+    dependsOn jar
+    from configurations.runtime
+    into "$libsDir"
+}
+
+task customizeLoggingProperties {
+    description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter.'
+    dependsOn jlink
+    doLast {
+        def loggingPropertiesFile = "$runtimeDir/conf/logging.properties"
+        ant.replace(file: "$loggingPropertiesFile", token: 'handlers= java.util.logging.ConsoleHandler', value: '#handlers= java.util.logging.ConsoleHandler')
+        ant.replace(file: "$loggingPropertiesFile", token: '#handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler', value: 'handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
+        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.pattern = %h/java%u.log', value: "java.util.logging.FileHandler.pattern = %t/${project.name}.log")
+        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter', value: 'java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter')
+    }
+}
+
+task jpackage(type: Exec) {
+    description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
+    dependsOn copyLibs, customizeLoggingProperties
+    doFirst { delete "$appImageDir" }
+    commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--package-type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+}
+
+startScripts.enabled = false
+distTar.enabled = false
+
+task distZip(type: Zip, overwrite: true) {
+    dependsOn jpackage
+    from "$tmpDir"
+    destinationDir file("$buildDir/$distsDirName")
+    include "$project.name/**"
+}
+
+task installDist(type: Sync, overwrite: true) {
+    dependsOn jpackage
+    from "$tmpDir"
+    into "$buildDir/install"
+    include "$project.name/**"
 }

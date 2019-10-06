@@ -138,8 +138,8 @@ The following tasks are supported:
 | -------------------------------- | ----------------------- |
 | Generate version source file     | gradlew generateVersion |
 | Run ControllerBuddy              | gradlew run             |
-| Create a jpackage image          | gradlew jpackage        |
-| Create a zipped jpackage image   | gradlew zip             |
+| Install a jpackage image         | gradlew installDist     |
+| Create a zipped jpackage image   | gradlew distZip         |
 | Generate Eclipse files           | gradlew eclipse         |
-| Clean Eclipse files              | gradlew cleanEclipse    |
+| Delete Eclipse files             | gradlew cleanEclipse    |
 | Delete build and gen directories | gradlew clean           |
