@@ -253,10 +253,17 @@ public class Input {
 								prevX1 = x1;
 								prevY1 = y1;
 
-								final var charging = (data[29] & 0x10) > 6;
-								final var battery = Math.min((data[29] & 0x0F) * 100 / (charging ? 11 : 8), 100);
+								final var cableConnected = (data[29] >> 4 & 0x01) != 0;
+								var battery = data[29] & 0x0F;
 
-								setCharging(charging);
+								setCharging(cableConnected);
+
+								if (!cableConnected)
+									battery++;
+
+								battery = Math.min(battery, 10);
+								battery *= 10;
+
 								setBatteryState(battery);
 							}
 
