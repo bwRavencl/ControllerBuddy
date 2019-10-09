@@ -205,7 +205,7 @@ public class Input {
 						hidDevice.setInputReportListener(new InputReportListener() {
 
 							private static final int TOUCHPAD_MAX_DELTA = 150;
-							private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.5f;
+							private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
 							private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
 
 							private boolean prevTouchpadButtonDown;
@@ -222,30 +222,25 @@ public class Input {
 								final var down2 = data[38] >> 7 != 0 ? false : true;
 								final var x1 = data[35] + (data[36] & 0xF) * 255;
 								final var y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
-								final var dX1 = x1 - prevX1;
-								final var dY1 = y1 - prevY1;
 
 								if (touchpadButtonDown)
 									downMouseButtons.add(down2 ? 2 : 1);
 								else if (prevTouchpadButtonDown)
 									downMouseButtons.clear();
 
-								if (down1 && !prevDown1) {
-									prevX1 = -1;
-									prevY1 = -1;
-								}
+								if (down1 && prevDown1) {
+									final var dX1 = x1 - prevX1;
+									final var dY1 = y1 - prevY1;
 
-								if (!prevDown2 || touchpadButtonDown) {
-									if (prevX1 > 0)
-										if (Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+									if (!prevDown2 || touchpadButtonDown) {
+										if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
 											cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
 
-									if (prevY1 > 0)
-										if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+										if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
 											cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
-								} else if (prevY1 > 0)
-									if (Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+									} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
 										scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
+								}
 
 								prevTouchpadButtonDown = touchpadButtonDown;
 								prevDown1 = down1;
