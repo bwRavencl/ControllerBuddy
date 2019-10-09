@@ -27,7 +27,7 @@ public class ButtonToButtonAction extends ToButtonAction<Byte> implements IButto
 	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		input.setButtons(buttonId, value != 0);
+		input.setButton(buttonId, value != 0);
 	}
 
 	@Override

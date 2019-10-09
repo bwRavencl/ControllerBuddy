@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +52,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -66,6 +69,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -650,19 +654,42 @@ public class EditActionsDialog extends JDialog {
 							final var value = (int) getterMethod.invoke(selectedAssignedAction);
 
 							final SpinnerNumberModel model;
+							DefaultFormatterFactory customFormatterFactory = null;
 							if ("Clicks".equals(propertyName))
 								model = new SpinnerNumberModel(value, 1, 20, 1);
 							else if ("MouseButton".equals(propertyName))
 								model = new SpinnerNumberModel(value, 1, 3, 1);
-							else
-								model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS, 1);
+							else {
+								model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS - 1, 1);
+								customFormatterFactory = new DefaultFormatterFactory() {
+
+									@Override
+									public AbstractFormatter getFormatter(final JFormattedTextField tf) {
+										return new DefaultFormatter() {
+
+											@Override
+											public Object stringToValue(final String text) throws ParseException {
+												return Integer.parseInt(text) - 1;
+											}
+
+											@Override
+											public String valueToString(final Object value) throws ParseException {
+												return Integer.toString((int) value + 1);
+											}
+
+										};
+									}
+								};
+							}
 
 							final var spinner = new JSpinner(model);
 							final var editor = spinner.getEditor();
-							final var textField1 = ((JSpinner.DefaultEditor) editor).getTextField();
-							textField1.setColumns(2);
-							final var formatter1 = (DefaultFormatter) textField1.getFormatter();
-							formatter1.setCommitsOnValidEdit(true);
+							final var textField = ((JSpinner.DefaultEditor) editor).getTextField();
+							textField.setColumns(2);
+							if (customFormatterFactory != null)
+								textField.setFormatterFactory(customFormatterFactory);
+							final var formatter = (DefaultFormatter) textField.getFormatter();
+							formatter.setCommitsOnValidEdit(true);
 							spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(method));
 							propertyPanel.add(spinner);
 						} else if (clazz == float.class) {

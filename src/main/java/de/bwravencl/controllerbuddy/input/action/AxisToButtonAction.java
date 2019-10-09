@@ -31,7 +31,7 @@ public class AxisToButtonAction extends ToButtonAction<Float> implements ISuspen
 	public void doAction(final Input input, final Float value) {
 		final var down = !isSuspended() && value >= minAxisValue && value <= maxAxisValue;
 
-		input.setButtons(buttonId, down);
+		input.setButton(buttonId, down);
 	}
 
 	public float getMaxAxisValue() {

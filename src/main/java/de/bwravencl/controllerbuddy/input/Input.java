@@ -560,16 +560,18 @@ public class Input {
 		}
 	}
 
-	public void setButtons(final int id, final boolean value) {
+	public void setButton(final int id, final boolean value) {
 		if (id < buttons.length)
 			buttons[id] = value;
+		else
+			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
 	}
 
-	public void setButtons(final int id, final float value) {
+	public void setButton(final int id, final float value) {
 		if (value < 0.5f)
-			setButtons(id, false);
+			setButton(id, false);
 		else
-			setButtons(id, true);
+			setButton(id, true);
 	}
 
 	public void setCharging(final boolean charging) {
