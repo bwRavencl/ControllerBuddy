@@ -25,6 +25,7 @@ import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
@@ -64,15 +65,32 @@ public class OnScreenKeyboard extends JFrame {
 
 		private static final int BASE_BUTTON_SIZE = 55;
 
+		Color defaultBackground;
+		Color defaultForeground;
+
+		Border defaultButtonBorder;
+		Border focusedButtonBorder;
+
 		private AbstractKeyboardButton(final String text) {
 			super(text);
 
+			updateTheme();
 			setMargin(new Insets(1, 1, 1, 1));
+			setFont(getFont().deriveFont(Font.BOLD));
 		}
 
 		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(BASE_BUTTON_SIZE, BASE_BUTTON_SIZE);
+		}
+
+		private void updateTheme() {
+			defaultBackground = new JButton().getBackground();
+			defaultForeground = new JButton().getForeground();
+
+			defaultButtonBorder = UIManager.getBorder("Button.border");
+			focusedButtonBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 3),
+					((CompoundBorder) defaultButtonBorder).getInsideBorder());
 		}
 
 		abstract void poll(final Input input);
@@ -81,7 +99,17 @@ public class OnScreenKeyboard extends JFrame {
 
 		abstract void release();
 
+		private void setFocus(final boolean focus) {
+			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
+		}
+
 		abstract void toggleLock();
+
+		@Override
+		public void updateUI() {
+			super.updateUI();
+			updateTheme();
+		}
 
 	}
 
@@ -160,7 +188,7 @@ public class OnScreenKeyboard extends JFrame {
 							if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
 								release();
 							else
-								DefaultKeyboardButton.this.setForeground(KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
+								DefaultKeyboardButton.this.setForeground(defaultForeground);
 
 							lockTimerTask.cancel();
 						}
@@ -231,7 +259,7 @@ public class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void release() {
-			invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_DEFAULT_BACKGROUND));
+			invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
 
 			if (heldButtons.remove(this)) {
 				if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
@@ -316,7 +344,7 @@ public class OnScreenKeyboard extends JFrame {
 		void toggleLock() {
 			locked = !locked;
 			invokeOnEventDispatchThreadIfRequired(() -> {
-				setForeground(locked ? Color.GREEN : KEYBOARD_BUTTON_DEFAULT_FOREGROUND);
+				setForeground(locked ? Color.GREEN : defaultForeground);
 			});
 			changed = true;
 			anyChanges = true;
@@ -325,10 +353,6 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private static final long serialVersionUID = -111088315813179371L;
-
-	private static final Color KEYBOARD_BUTTON_DEFAULT_BACKGROUND = new JButton().getBackground();
-
-	private static final Color KEYBOARD_BUTTON_DEFAULT_FOREGROUND = new JButton().getForeground();
 
 	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
 
@@ -341,11 +365,6 @@ public class OnScreenKeyboard extends JFrame {
 	private static final int ROW_BORDER_WIDTH = 15;
 
 	private static final Color ROW_BACKGROUND = new Color(128, 128, 128, 64);
-
-	private static final Border defaultButtonBorder = UIManager.getBorder("Button.border");
-
-	private static final Border focusedButtonBorder = BorderFactory.createCompoundBorder(
-			BorderFactory.createLineBorder(Color.RED, 3), ((CompoundBorder) defaultButtonBorder).getInsideBorder());
 
 	static {
 		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
@@ -525,7 +544,7 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private void focusCurrentButton() {
-		keyboardButtons[selectedRow][selectedColumn].setBorder(focusedButtonBorder);
+		keyboardButtons[selectedRow][selectedColumn].setFocus(true);
 	}
 
 	private int getCurrentButtonX() {
@@ -647,7 +666,7 @@ public class OnScreenKeyboard extends JFrame {
 	}
 
 	private void unfocusCurrentButton() {
-		keyboardButtons[selectedRow][selectedColumn].setBorder(defaultButtonBorder);
+		keyboardButtons[selectedRow][selectedColumn].setFocus(false);
 	}
 
 	void updateLocation() {
