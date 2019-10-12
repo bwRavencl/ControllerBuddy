@@ -21,6 +21,8 @@ import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASEN
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -38,7 +40,9 @@ public abstract class OutputThread extends Thread {
 	long pollInterval = DEFAULT_POLL_INTERVAL;
 	int minAxisValue;
 	int maxAxisValue;
+
 	int nButtons;
+
 	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
@@ -63,6 +67,8 @@ public abstract class OutputThread extends Thread {
 		});
 	}
 
+	abstract Logger getLogger();
+
 	public int getMaxAxisValue() {
 		return maxAxisValue;
 	}
@@ -77,6 +83,14 @@ public abstract class OutputThread extends Thread {
 
 	public long getPollInterval() {
 		return pollInterval;
+	}
+
+	void logStart() {
+		getLogger().log(Level.INFO, "Starting output");
+	}
+
+	void logStop() {
+		getLogger().log(Level.INFO, "Stopped output");
 	}
 
 	public void setMaxAxisValue(final int maxAxisValue) {

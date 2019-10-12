@@ -106,14 +106,15 @@ task copyLibs(type: Copy) {
 }
 
 task customizeLoggingProperties {
-    description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter.'
+    description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
     dependsOn jlink
     doLast {
-        def loggingPropertiesFile = "$runtimeDir/conf/logging.properties"
-        ant.replace(file: "$loggingPropertiesFile", token: 'handlers= java.util.logging.ConsoleHandler', value: '#handlers= java.util.logging.ConsoleHandler')
-        ant.replace(file: "$loggingPropertiesFile", token: '#handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler', value: 'handlers= java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
-        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.pattern = %h/java%u.log', value: "java.util.logging.FileHandler.pattern = %t/${project.name}.log")
-        ant.replace(file: "$loggingPropertiesFile", token: 'java.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter', value: 'java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter')
+        ant.propertyfile(file: "$runtimeDir/conf/logging.properties") {
+            entry(key: 'handlers', value: 'java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
+            entry(key: 'java.util.logging.FileHandler.pattern', value: "%t/${project.name}.log")
+            entry(key: 'java.util.logging.FileHandler.formatter', value: 'java.util.logging.SimpleFormatter')
+            entry(key: 'java.util.logging.SimpleFormatter.format', value: '[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n')
+        }
     }
 }
 

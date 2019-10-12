@@ -68,6 +68,11 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		return host;
 	}
 
+	@Override
+	Logger getLogger() {
+		return log;
+	}
+
 	public int getPort() {
 		return port;
 	}
@@ -317,6 +322,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	public void run() {
+		logStart();
+
 		try {
 			if (init()) {
 				hostAddress = InetAddress.getByName(host);
@@ -346,6 +353,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 				clientSocket.close();
 			deInit();
 		}
+
+		logStop();
 	}
 
 	public void setHost(final String host) {

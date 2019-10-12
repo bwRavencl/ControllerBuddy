@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.output;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -28,8 +29,15 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class LocalVJoyOutputThread extends VJoyOutputThread {
 
+	private static final Logger log = Logger.getLogger(LocalVJoyOutputThread.class.getName());
+
 	public LocalVJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
+	}
+
+	@Override
+	Logger getLogger() {
+		return log;
 	}
 
 	@Override
@@ -96,6 +104,8 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	public void run() {
+		logStart();
+
 		try {
 			if (init())
 				while (!Thread.currentThread().isInterrupted()) {
@@ -107,6 +117,8 @@ public class LocalVJoyOutputThread extends VJoyOutputThread {
 		} finally {
 			deInit();
 		}
+
+		logStop();
 	}
 
 }

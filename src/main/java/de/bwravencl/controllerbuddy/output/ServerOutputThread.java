@@ -75,6 +75,11 @@ public class ServerOutputThread extends OutputThread {
 		});
 	}
 
+	@Override
+	Logger getLogger() {
+		return log;
+	}
+
 	public int getPort() {
 		return port;
 	}
@@ -85,6 +90,8 @@ public class ServerOutputThread extends OutputThread {
 
 	@Override
 	public void run() {
+		logStart();
+
 		final var clientPort = port + 1;
 		var serverState = ServerState.Listening;
 		DatagramPacket receivePacket;
@@ -261,6 +268,8 @@ public class ServerOutputThread extends OutputThread {
 		} finally {
 			deInit();
 		}
+
+		logStop();
 	}
 
 	public void setPort(final int port) {

@@ -60,6 +60,7 @@ import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
@@ -187,7 +188,11 @@ public class Input {
 							&& hidDeviceInfo.getProductId() == dualShock4ProductId)
 					.collect(Collectors.toUnmodifiableList());
 			final var count = dualShock4Devices.size();
+
 			if (count > 0) {
+				log.log(Level.INFO, "Found " + count + " DualShock 4 controller(s): "
+						+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(Collectors.joining(", ")));
+
 				if (count > 1) {
 					final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 							Locale.getDefault());
@@ -199,6 +204,8 @@ public class Input {
 				final var hidDeviceInfo = dualShock4Devices.get(0);
 				if (hidDeviceInfo.getVendorId() == (short) 0x54C && hidDeviceInfo.getProductId() == dualShock4ProductId)
 					try {
+						log.log(Level.INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
+
 						hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
 						resetDualShock4();
 

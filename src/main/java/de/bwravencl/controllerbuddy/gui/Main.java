@@ -22,6 +22,7 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
+import static org.lwjgl.glfw.GLFW.GLFW_CONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
@@ -74,6 +75,7 @@ import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -743,6 +745,11 @@ public final class Main implements SingletonApp {
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
 	}
 
+	private static String assembleControllerLoggingMessage(final String prefix, final int jid) {
+		return prefix + " controller " + glfwGetGamepadName(jid) + " (" + jid + ")" + " [" + glfwGetJoystickGUID(jid)
+				+ "]";
+	}
+
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
 			final Set<Integer> alreadyAssignedKeyCodes) {
 		var keyCode = KeyEvent.VK_UNDEFINED;
@@ -780,6 +787,7 @@ public final class Main implements SingletonApp {
 
 	private static void handleUncaughtException(final Throwable e, final Component parentComponent) {
 		log.log(Level.SEVERE, e.getMessage(), e);
+
 		if (parentComponent != null)
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 				final var sw = new StringWriter();
@@ -874,7 +882,6 @@ public final class Main implements SingletonApp {
 	}
 
 	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
-
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private volatile LocalVJoyOutputThread localThread;
 	private volatile ClientVJoyOutputThread clientThread;
@@ -931,6 +938,7 @@ public final class Main implements SingletonApp {
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
 	private volatile JFrame overlayFrame;
+
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main() {
@@ -1281,8 +1289,11 @@ public final class Main implements SingletonApp {
 			if (!isSelectedJidValid() || lastControllerFound)
 				selectedJid = jid;
 
-			if (lastControllerFound)
+			if (lastControllerFound) {
+				log.log(Level.INFO, assembleControllerLoggingMessage("Selected previously used", jid));
 				break;
+			} else
+				log.log(Level.INFO, "Previously used controller is not present");
 		}
 
 		newProfile();
@@ -1295,14 +1306,17 @@ public final class Main implements SingletonApp {
 			public void invoke(final int jid, final int event) {
 				final var disconnected = event == GLFW_DISCONNECTED;
 				if (disconnected || glfwJoystickIsGamepad(jid)) {
-					if (disconnected && selectedJid == jid) {
-						selectedJid = INVALID_JID;
-						input.deInit();
-					}
+					if (disconnected) {
+						log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", jid));
+						if (selectedJid == jid) {
+							selectedJid = INVALID_JID;
+							input.deInit();
+						}
+					} else if (event == GLFW_CONNECTED)
+						log.log(Level.INFO, assembleControllerLoggingMessage("Connected", jid));
 
 					invokeOnEventDispatchThreadIfRequired(() -> onControllersChanged(false));
 				}
-
 			}
 		});
 
@@ -1554,6 +1568,8 @@ public final class Main implements SingletonApp {
 	private void loadProfile(final File file) {
 		stopAll();
 
+		log.log(Level.INFO, "Loading profile " + file.getAbsolutePath());
+
 		var profileLoaded = false;
 
 		try {
@@ -1611,6 +1627,7 @@ public final class Main implements SingletonApp {
 
 	@Override
 	public void newActivation(final String... args) {
+		log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
 		SwingUtilities
 				.invokeLater(() -> JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
@@ -1710,7 +1727,8 @@ public final class Main implements SingletonApp {
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 			tabbedPane.insertTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null,
 					tabbedPane.indexOfComponent(settingsScrollPane));
-		}
+		} else
+			log.log(Level.INFO, "No controllers connected");
 
 		if (selectFirstTab || !controllerConnected)
 			tabbedPane.setSelectedIndex(0);
@@ -1828,6 +1846,8 @@ public final class Main implements SingletonApp {
 		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
 			file = new File(file.getAbsoluteFile() + profileFileSuffix);
 
+		log.log(Level.INFO, "Saving profile " + file.getAbsolutePath());
+
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
 
@@ -1892,8 +1912,10 @@ public final class Main implements SingletonApp {
 		selectedJid = jid;
 
 		final var guid = glfwGetJoystickGUID(jid);
-		if (guid != null)
+		if (guid != null) {
+			log.log(Level.INFO, "Selected controller " + selectedJid + "(" + guid + ")");
 			preferences.put(PREFERENCES_LAST_CONTROLLER, guid);
+		}
 
 		stopAll();
 
