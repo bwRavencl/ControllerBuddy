@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
 import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
@@ -43,18 +44,19 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LinearGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -65,6 +67,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
+import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component;
@@ -92,14 +95,12 @@ public class AssignmentsComponent extends JScrollPane {
 		}
 
 		private static final long serialVersionUID = 5560396295119690740L;
-		private static final Color COMPOUND_BUTTON_TEXT_COLOR = MetalLookAndFeel.getControlTextColor();
-		private static final Color COMPOUND_BUTTON_INACTIVE_TEXT_COLOR = MetalLookAndFeel.getInactiveControlTextColor();
-		private static final Color COMPOUND_BUTTON_BORDER_COLOR = MetalLookAndFeel.getControlDarkShadow();
 
-		private static final Color COMPOUND_BUTTON_BACKGROUND_COLOR = new Color(200, 218, 235);
-
-		protected Shape shape;
-		protected Shape base;
+		private Color selectColor;
+		private float[] gradientFractions = null;
+		private Color[] gradientColors = null;
+		private transient Shape shape;
+		private transient Shape base;
 		private final CompoundButtonLocation buttonLocation;
 		private final Dimension preferredSize;
 		private String text;
@@ -116,6 +117,8 @@ public class AssignmentsComponent extends JScrollPane {
 			this.peer = peer;
 			if (peer != null)
 				peer.setPeer(this);
+
+			updateTheme();
 
 			if (component.type == ComponentType.BUTTON) {
 				if (component.index == GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
@@ -165,22 +168,31 @@ public class AssignmentsComponent extends JScrollPane {
 
 					final var enabled = model.isEnabled() || peerModel != null && peerModel.isEnabled();
 					if (enabled) {
-						final Color color2;
-						if (model.isArmed() || peerModel != null && peerModel.isArmed())
-							color2 = getBackground().darker();
-						else
-							color2 = Color.WHITE;
+						final var armed = model.isArmed() || peerModel != null && peerModel.isArmed();
+						final var pressed = model.isPressed() || peerModel != null && peerModel.isPressed();
 
-						g2d.setPaint(new GradientPaint(0, 0, getBackground(), getWidth() - 1, getHeight() - 1, color2,
-								true));
+						if (!pressed || armed) {
+							if (!pressed)
+								if (gradientFractions != null && gradientColors != null)
+									g2d.setPaint(new LinearGradientPaint(0f, 0f, 0f, getHeight() - 1f,
+											gradientFractions, gradientColors));
+								else
+									g2d.setColor(getBackground());
+							else if (armed)
+								g2d.setColor(selectColor);
 
-						g2d.fill(shape);
+							if (shape == null)
+								initShape();
+
+							g2d.fill(shape);
+						}
 					}
 
 					if (buttonLocation == CompoundButtonLocation.Center && text != null) {
 						g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 								RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-						g2d.setColor(enabled ? COMPOUND_BUTTON_TEXT_COLOR : COMPOUND_BUTTON_INACTIVE_TEXT_COLOR);
+						g2d.setColor(enabled ? MetalLookAndFeel.getControlTextColor()
+								: MetalLookAndFeel.getInactiveControlTextColor());
 
 						final var font = getFont();
 						final var metrics = g.getFontMetrics(font);
@@ -194,15 +206,17 @@ public class AssignmentsComponent extends JScrollPane {
 				}
 			});
 
-			setFocusPainted(false);
+			setFocusPainted(true);
 			setContentAreaFilled(false);
-			setBackground(COMPOUND_BUTTON_BACKGROUND_COLOR);
 
 			initShape();
 		}
 
 		@Override
 		public boolean contains(final int x, final int y) {
+			if (shape == null)
+				initShape();
+
 			return shape.contains(x, y);
 		}
 
@@ -234,11 +248,14 @@ public class AssignmentsComponent extends JScrollPane {
 			final var g2d = (Graphics2D) g;
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-			if (isRolloverEnabled() && getModel().isRollover()
-					|| peer != null && peer.isRolloverEnabled() && peer.getModel().isRollover())
+			if (usingOceanTheme() && (isRolloverEnabled() && getModel().isRollover()
+					|| peer != null && peer.isRolloverEnabled() && peer.getModel().isRollover()))
 				g2d.setColor(MetalLookAndFeel.getControlShadow());
 			else
-				g2d.setColor(COMPOUND_BUTTON_BORDER_COLOR);
+				g2d.setColor(MetalLookAndFeel.getControlDarkShadow());
+
+			if (shape == null)
+				initShape();
 
 			g2d.draw(shape);
 			g2d.dispose();
@@ -257,6 +274,44 @@ public class AssignmentsComponent extends JScrollPane {
 		@Override
 		public void setText(final String text) {
 			this.text = text;
+		}
+
+		private void updateTheme() {
+			selectColor = (Color) UIManager.get("Button.select");
+
+			if (usingOceanTheme()) {
+				final var buttonGradient = UIManager.get("Button.gradient");
+				if (buttonGradient instanceof List) {
+					Float r1 = null;
+					final var buttonGradientColors = new Color[3];
+
+					var i = 0;
+					for (final var e : (List<?>) buttonGradient) {
+						if (e instanceof Float && r1 == null)
+							r1 = (Float) e;
+
+						if (e instanceof Color) {
+							buttonGradientColors[i] = (Color) e;
+							i++;
+						}
+					}
+
+					if (r1 != null && i == 3) {
+						gradientFractions = new float[] { 0f, r1, r1 * 2f, 1f };
+						gradientColors = new Color[] { buttonGradientColors[0], buttonGradientColors[1],
+								buttonGradientColors[0], buttonGradientColors[2] };
+					}
+				}
+			} else {
+				gradientFractions = null;
+				gradientColors = null;
+			}
+		}
+
+		@Override
+		public void updateUI() {
+			super.updateUI();
+			updateTheme();
 		}
 
 	}
@@ -446,7 +501,7 @@ public class AssignmentsComponent extends JScrollPane {
 		constraints.gridy = 3;
 		assignmentsPanel.add(new Stick(main, Stick.StickType.Right), constraints);
 
-		setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, assignmentsPanel.getBackground()));
+		setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		setViewportView(assignmentsPanel);
 	}
 

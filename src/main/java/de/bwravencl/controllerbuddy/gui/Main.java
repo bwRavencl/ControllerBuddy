@@ -21,6 +21,7 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThr
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
@@ -39,6 +40,7 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
@@ -74,6 +76,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -121,6 +124,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.text.DefaultFormatter;
 
 import org.apache.commons.cli.CommandLine;
@@ -694,17 +701,6 @@ public final class Main implements SingletonApp {
 
 	}
 
-	static {
-		final var mainClassPackageName = Main.class.getPackageName();
-		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
-
-		try {
-			UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
-		} catch (final UnsupportedLookAndFeelException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private static final String SINGLETON_ID;
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
@@ -731,6 +727,7 @@ public final class Main implements SingletonApp {
 	private static final String PREFERENCES_HOST = "host";
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
+	private static final String PREFERENCES_DARK_THEME = "dark_theme";
 	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
 	private static final String PREFERENCES_SHOW_VR_OVERLAY = "show_vr_overlay";
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
@@ -740,6 +737,11 @@ public final class Main implements SingletonApp {
 	private static final String LICENSES_FILENAME = "licenses.txt";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
+
+	static {
+		final var mainClassPackageName = Main.class.getPackageName();
+		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
 			final Set<Integer> alreadyAssignedKeyCodes) {
@@ -872,6 +874,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
+
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private volatile LocalVJoyOutputThread localThread;
 	private volatile ClientVJoyOutputThread clientThread;
@@ -1019,6 +1022,8 @@ public final class Main implements SingletonApp {
 			clientMenu.add(stopClientRadioButtonMenuItem);
 		}
 
+		menuBar.add(serverMenu);
+
 		final var buttonGroupServerState = new ButtonGroup();
 		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
 		startServerRadioButtonMenuItem.setAction(new StartServerAction());
@@ -1141,6 +1146,22 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
+		final var darkThemePanel = new JPanel(panelFlowLayout);
+		settingsPanel.add(darkThemePanel, panelGridBagConstraints);
+
+		final var darkThemeLabel = new JLabel(rb.getString("DARK_THEME_LABEL"));
+		darkThemeLabel.setPreferredSize(new Dimension(120, 15));
+		darkThemePanel.add(darkThemeLabel);
+
+		final var darkThemeCheckBox = new JCheckBox(rb.getString("DARK_THEME_CHECK_BOX"));
+		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
+		darkThemeCheckBox.addActionListener(e -> {
+			final var darkTheme = ((JCheckBox) e.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
+			updateTheme();
+		});
+		darkThemePanel.add(darkThemeCheckBox);
+
 		final var alwaysOnTopSupported = Toolkit.getDefaultToolkit().isAlwaysOnTopSupported();
 		if (alwaysOnTopSupported || preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, alwaysOnTopSupported)) {
 			final var overlaySettingsPanel = new JPanel(panelFlowLayout);
@@ -1153,8 +1174,7 @@ public final class Main implements SingletonApp {
 			final var showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
 			showOverlayCheckBox.addActionListener(e -> {
-				final boolean showOverlay = ((JCheckBox) e.getSource()).isSelected();
-
+				final var showOverlay = ((JCheckBox) e.getSource()).isSelected();
 				preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
@@ -1173,7 +1193,6 @@ public final class Main implements SingletonApp {
 				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
 				showVrOverlayCheckBox.addActionListener(e -> {
 					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
-
 					preferences.putBoolean(PREFERENCES_SHOW_VR_OVERLAY, showVrOverlay);
 				});
 				vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
@@ -1190,7 +1209,6 @@ public final class Main implements SingletonApp {
 			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
 			preventPowerSaveModeCheckBox.addActionListener(e -> {
 				final var preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
-
 				preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
 			});
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
@@ -1235,6 +1253,8 @@ public final class Main implements SingletonApp {
 		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
 		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
 		frame.add(statusLabel, BorderLayout.SOUTH);
+
+		updateTheme();
 
 		final var glfwInitialized = glfwInit();
 		if (!glfwInitialized)
@@ -1409,7 +1429,9 @@ public final class Main implements SingletonApp {
 
 		if (multipleModes) {
 			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
-			final var fontMetrics = currentModeLabel.getFontMetrics(currentModeLabel.getFont());
+			final var font = currentModeLabel.getFont().deriveFont(Font.BOLD);
+			currentModeLabel.setFont(font);
+			final var fontMetrics = currentModeLabel.getFontMetrics(font);
 			currentModeLabel.setPreferredSize(
 					new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
 			currentModeLabel.setForeground(Color.RED);
@@ -1665,8 +1687,7 @@ public final class Main implements SingletonApp {
 			modesListPanel.setLayout(new GridBagLayout());
 
 			modesScrollPane = new JScrollPane();
-			modesScrollPane
-					.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 0, 10, modesListPanel.getBackground()));
+			modesScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			modesPanel.add(modesScrollPane, BorderLayout.CENTER);
 
 			addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -1685,8 +1706,7 @@ public final class Main implements SingletonApp {
 			indicatorsListPanel.setLayout(new GridBagLayout());
 
 			indicatorsScrollPane = new JScrollPane();
-			indicatorsScrollPane.setViewportBorder(
-					BorderFactory.createMatteBorder(10, 10, 0, 10, indicatorsListPanel.getBackground()));
+			indicatorsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 			tabbedPane.insertTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null,
 					tabbedPane.indexOfComponent(settingsScrollPane));
@@ -2274,6 +2294,48 @@ public final class Main implements SingletonApp {
 			updateOverlayPanel();
 
 		setEnabledRecursive(settingsPanel, panelsEnabled);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void updateTheme() {
+		final var theme = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new DefaultMetalTheme()
+				: new OceanTheme();
+		MetalLookAndFeel.setCurrentTheme(theme);
+
+		try {
+			UIManager.setLookAndFeel(new MetalLookAndFeel());
+		} catch (final UnsupportedLookAndFeelException e) {
+			throw new RuntimeException(e);
+		}
+
+		final var keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			final var key = keys.nextElement();
+			final var font = UIManager.getFont(key);
+			if (font != null) {
+				final var newFontUIResource = new FontUIResource(font.getName(), Font.PLAIN, font.getSize());
+				UIManager.put(key, newFontUIResource);
+			}
+		}
+
+		if (usingOceanTheme()) {
+			final var buttonGradient = UIManager.get("Button.gradient");
+			final var panelBackground = UIManager.getColor("Panel.background");
+
+			if (buttonGradient instanceof List && panelBackground != null) {
+				final var factor = .94f;
+
+				final var buttonGradientColor = new Color(Math.max((int) (panelBackground.getRed() * factor), 0),
+						Math.max((int) (panelBackground.getGreen() * factor), 0),
+						Math.max((int) (panelBackground.getBlue() * factor), 0), panelBackground.getAlpha());
+
+				((List<Object>) buttonGradient).replaceAll(v -> v instanceof Color ? buttonGradientColor : v);
+			}
+		}
+
+		SwingUtilities.updateComponentTreeUI(frame);
+		SwingUtilities.updateComponentTreeUI(fileChooser);
+		SwingUtilities.updateComponentTreeUI(onScreenKeyboard);
 	}
 
 	public void updateTitleAndTooltip() {

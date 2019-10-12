@@ -224,7 +224,8 @@ public class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				setterMethod.invoke(selectedAssignedAction, ((JCheckBox) e.getSource()).isSelected());
+				final var selected = ((JCheckBox) e.getSource()).isSelected();
+				setterMethod.invoke(selectedAssignedAction, selected);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
@@ -382,6 +383,28 @@ public class EditActionsDialog extends JDialog {
 			updateAssignedActions();
 		}
 
+	}
+
+	private static class ZeroBasedFormatter extends DefaultFormatter {
+
+		@Override
+		public Object stringToValue(final String text) throws ParseException {
+			return Integer.parseInt(text) - 1;
+		}
+
+		@Override
+		public String valueToString(final Object value) throws ParseException {
+			return Integer.toString((int) value + 1);
+		}
+
+	}
+
+	private static class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
+
+		@Override
+		public AbstractFormatter getFormatter(final JFormattedTextField tf) {
+			return new ZeroBasedFormatter();
+		}
 	}
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
@@ -661,25 +684,7 @@ public class EditActionsDialog extends JDialog {
 								model = new SpinnerNumberModel(value, 1, 3, 1);
 							else {
 								model = new SpinnerNumberModel(value, 0, Input.MAX_N_BUTTONS - 1, 1);
-								customFormatterFactory = new DefaultFormatterFactory() {
-
-									@Override
-									public AbstractFormatter getFormatter(final JFormattedTextField tf) {
-										return new DefaultFormatter() {
-
-											@Override
-											public Object stringToValue(final String text) throws ParseException {
-												return Integer.parseInt(text) - 1;
-											}
-
-											@Override
-											public String valueToString(final Object value) throws ParseException {
-												return Integer.toString((int) value + 1);
-											}
-
-										};
-									}
-								};
+								customFormatterFactory = new ZeroBasedFormatterFactory();
 							}
 
 							final var spinner = new JSpinner(model);
