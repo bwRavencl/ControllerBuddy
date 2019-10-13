@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinBase;
@@ -46,6 +47,7 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinUser.INPUT;
 import com.sun.jna.platform.win32.WinUser.KEYBDINPUT;
 import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
@@ -63,6 +65,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 	public static final int DEFAULT_VJOY_DEVICE = 1;
 	public static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
+	private static final String UNINSTALL_REGISTRY_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{8E31F76F-74C3-47F1-9550-E041EEDC5FBB}_is1";
+	private static final String INSTALL_LOCATION_REGISTRY_VALUE = "InstallLocation";
 
 	private static final long MOUSEEVENTF_MOVE = 0x0001L;
 	private static final long MOUSEEVENTF_LEFTDOWN = 0x0002L;
@@ -117,18 +121,17 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	public static String getDefaultInstallationPath() {
-		return System.getenv("ProgramFiles") + File.separator + "vJoy";
-	}
-
-	public static String getDefaultLibraryFolderPath() {
-		return getDefaultInstallationPath() + File.separator + getArchFolderName();
+		try {
+			return Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, UNINSTALL_REGISTRY_KEY,
+					INSTALL_LOCATION_REGISTRY_VALUE);
+		} catch (final Throwable t) {
+			final var defaultPath = System.getenv("ProgramFiles") + File.separator + "vJoy";
+			log.log(Level.WARNING, "Could not retrieve vJoy installation path from registry", t);
+			return defaultPath;
+		}
 	}
 
 	private static native short GetKeyState(int KeyState);
-
-	public static String getLibraryFilePath(final String vJoyDirectory) {
-		return vJoyDirectory + File.separator + getArchFolderName() + File.separator + LIBRARY_FILENAME;
-	}
 
 	private static void setLockKeyState(final int virtualKeyCode, final boolean on) {
 		final var state = (GetKeyState(virtualKeyCode) & 0x1) != 0;
@@ -250,8 +253,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	boolean init() {
-		System.setProperty("jna.library.path", main.getPreferences()
-				.get(PREFERENCES_VJOY_DIRECTORY + File.separator + getArchFolderName(), getDefaultLibraryFolderPath()));
+		final var vJoyPath = main.getPreferences().get(PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath());
+		final var libraryPath = new File(vJoyPath, getArchFolderName()).getAbsolutePath();
+
+		log.log(Level.INFO, "Using vJoy library path: " + libraryPath);
+		System.setProperty("jna.library.path", libraryPath);
 
 		try {
 			vJoy = Native.load(LIBRARY_NAME, IVjoyInterface.class);

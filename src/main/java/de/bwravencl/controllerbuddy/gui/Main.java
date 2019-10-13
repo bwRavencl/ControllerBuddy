@@ -203,12 +203,13 @@ public final class Main implements SingletonApp {
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final var path = vJoyDirectoryFileChooser.getSelectedFile().getAbsolutePath();
-				final var file = new File(VJoyOutputThread.getLibraryFilePath(path));
-
-				if (file.exists()) {
-					preferences.put(PREFERENCES_VJOY_DIRECTORY, path);
-					vJoyDirectoryLabel1.setText(path);
+				final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
+				final var dllFile = new File(vjoyDirectory,
+						VJoyOutputThread.getArchFolderName() + File.separator + VJoyOutputThread.LIBRARY_FILENAME);
+				if (dllFile.exists()) {
+					final var vjoyPath = vjoyDirectory.getAbsolutePath();
+					preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
+					vJoyDirectoryLabel1.setText(vjoyPath);
 				} else
 					JOptionPane.showMessageDialog(frame,
 							rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_PREFIX")
