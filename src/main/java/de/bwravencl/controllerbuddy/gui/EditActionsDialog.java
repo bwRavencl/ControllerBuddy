@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -198,8 +199,8 @@ public class EditActionsDialog extends JDialog {
 
 		private EditActionsAction() {
 			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_PREFIX")
-					+ selectedAssignedAction.toString() + rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION_SUFFIX"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+					selectedAssignedAction.toString()));
 		}
 
 		@Override
@@ -471,7 +472,8 @@ public class EditActionsDialog extends JDialog {
 
 			setBounds(DIALOG_BOUNDS_X + DIALOG_BOUNDS_X_Y_OFFSET, DIALOG_BOUNDS_Y + DIALOG_BOUNDS_X_Y_OFFSET,
 					DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-			setTitle(cycleAction.toString() + rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR_SUFFIX"));
+			setTitle(MessageFormat.format(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
+					cycleAction.toString()));
 
 			init();
 		} catch (final CloneNotSupportedException e) {
@@ -491,7 +493,7 @@ public class EditActionsDialog extends JDialog {
 			preInit();
 
 			setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-			setTitle(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR_PREFIX") + name);
+			setTitle(MessageFormat.format(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 			final JPanel modePanel = new JPanel(new FlowLayout());
 			getContentPane().add(modePanel, BorderLayout.NORTH);

@@ -72,7 +72,7 @@ public class Input {
 
 	private static final Logger log = Logger.getLogger(Input.class.getName());
 
-	private static final int LOW_BATTERY_WARNING = 25;
+	private static final int LOW_BATTERY_WARNING = 20;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
@@ -557,7 +557,7 @@ public class Input {
 					main.updateTitleAndTooltip();
 
 					if (batteryState == LOW_BATTERY_WARNING)
-						main.displayLowBatteryWarning(batteryState);
+						main.displayLowBatteryWarning(batteryState / 100f);
 				});
 		}
 	}

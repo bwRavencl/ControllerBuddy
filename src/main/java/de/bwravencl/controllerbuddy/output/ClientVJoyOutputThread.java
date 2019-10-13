@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,9 +89,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		switch (clientState) {
 		case Connecting:
 			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(rb.getString("STATUS_CONNECTING_TO_HOST_PART_1") + host
-						+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_2") + port
-						+ rb.getString("STATUS_CONNECTING_TO_HOST_PART_3"));
+				main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
 			final var sw = new StringWriter();
@@ -123,11 +122,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
 							SwingUtilities.invokeLater(() -> {
 								JOptionPane.showMessageDialog(main.getFrame(),
-										rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_1")
-												+ VersionUtils.getMajorAndMinorVersion()
-												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_2")
-												+ serverProtocolVersion
-												+ rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT_PART_3"),
+										MessageFormat.format(rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+												VersionUtils.getMajorAndMinorVersion(), serverProtocolVersion),
 										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 							});
 							retry = -1;
@@ -139,10 +135,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						retry--;
 						final var finalRetry = retry;
 						SwingUtilities.invokeLater(() -> {
-							main.setStatusBarText(rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_1")
-									+ (N_CONNECTION_RETRIES - finalRetry)
-									+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_2") + N_CONNECTION_RETRIES
-									+ rb.getString("STATUS_INVALID_MESSAGE_RETRYING_PART_3"));
+							main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+									N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 						});
 					}
 				} catch (final SocketTimeoutException e) {
@@ -150,9 +144,8 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					retry--;
 					final var finalRetry = retry;
 					SwingUtilities.invokeLater(() -> {
-						main.setStatusBarText(rb.getString("STATUS_TIMEOUT_RETRYING_PART_1")
-								+ (N_CONNECTION_RETRIES - finalRetry) + rb.getString("STATUS_TIMEOUT_RETRYING_PART_2")
-								+ N_CONNECTION_RETRIES + rb.getString("STATUS_TIMEOUT_RETRYING_PART_3"));
+						main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_TIMEOUT_RETRYING"),
+								N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 					});
 				}
 			} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
@@ -160,17 +153,15 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 			if (success) {
 				clientState = ClientState.Connected;
 				SwingUtilities.invokeLater(() -> {
-					main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1") + host
-							+ rb.getString("STATUS_CONNECTED_TO_PART_2") + port
-							+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
-							+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
+					main.setStatusBarText(
+							MessageFormat.format(rb.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
 				});
 			} else {
 				if (retry != -1 && !Thread.currentThread().isInterrupted())
 					SwingUtilities.invokeLater(() -> {
 						JOptionPane.showMessageDialog(main.getFrame(),
-								rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_PREFIX") + N_CONNECTION_RETRIES
-										+ rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT_SUFFIX"),
+								MessageFormat.format(rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
+										N_CONNECTION_RETRIES),
 								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
 				interrupt();
@@ -337,8 +328,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 		} catch (final UnknownHostException e) {
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
-						rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_PREFIX") + host
-								+ rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT_SUFFIX"),
+						MessageFormat.format(rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {

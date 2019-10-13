@@ -74,6 +74,7 @@ import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -192,7 +193,7 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -7672382299595684105L;
 
 		private ChangeVJoyDirectoryAction() {
-			putValue(NAME, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_NAME"));
+			putValue(NAME, "...");
 			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
 		}
 
@@ -212,9 +213,8 @@ public final class Main implements SingletonApp {
 					vJoyDirectoryLabel1.setText(vjoyPath);
 				} else
 					JOptionPane.showMessageDialog(frame,
-							rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_PREFIX")
-									+ VJoyOutputThread.getDefaultInstallationPath()
-									+ rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT_SUFFIX"),
+							MessageFormat.format(rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+									VJoyOutputThread.getDefaultInstallationPath()),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -313,9 +313,9 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -4669170626378955605L;
 
 		private ProfileFileChooser() {
-			setFileFilter(new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"),
-					rb.getString("PROFILE_FILE_EXTENSION")));
-			setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
+			setFileFilter(
+					new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
+			setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 		}
 
 		@Override
@@ -323,7 +323,7 @@ public final class Main implements SingletonApp {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final int result = JOptionPane.showConfirmDialog(this,
-						file.getName() + rb.getString("FILE_EXISTS_DIALOG_TEXT"),
+						MessageFormat.format(file.getName(), rb.getString("FILE_EXISTS_DIALOG_TEXT")),
 						rb.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.NO_OPTION:
@@ -367,8 +367,8 @@ public final class Main implements SingletonApp {
 			this.mode = mode;
 
 			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_PREFIX") + mode.getDescription()
-					+ rb.getString("REMOVE_MODE_ACTION_DESCRIPTION_SUFFIX"));
+			putValue(SHORT_DESCRIPTION,
+					MessageFormat.format(rb.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
 		}
 
 		@Override
@@ -426,8 +426,8 @@ public final class Main implements SingletonApp {
 
 			final var name = glfwGetGamepadName(jid);
 			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION, rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_PREFIX") + name
-					+ rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION_SUFFIX"));
+			putValue(SHORT_DESCRIPTION,
+					MessageFormat.format(rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), name));
 		}
 
 		@Override
@@ -555,9 +555,8 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame,
-					rb.getString("ABOUT_DIALOG_TEXT_PREFIX") + Version.VERSION
-							+ rb.getString("ABOUT_DIALOG_TEXT_SUFFIX"),
-					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
+					MessageFormat.format(rb.getString("ABOUT_DIALOG_TEXT"), Version.VERSION), (String) getValue(NAME),
+					JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 
 	}
@@ -710,6 +709,8 @@ public final class Main implements SingletonApp {
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
+	private static String PROFILE_FILE_EXTENSION = "json";
+	private static String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
 	static final int DIALOG_BOUNDS_X = 100;
 	static final int DIALOG_BOUNDS_Y = 100;
 	static final int DIALOG_BOUNDS_WIDTH = 930;
@@ -795,7 +796,7 @@ public final class Main implements SingletonApp {
 				e.printStackTrace(new PrintWriter(sw));
 
 				JOptionPane.showMessageDialog(parentComponent,
-						rb.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT") + sw.toString(),
+						MessageFormat.format(rb.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
 				terminate(1);
@@ -850,14 +851,12 @@ public final class Main implements SingletonApp {
 							if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
 								main.startServer();
 							else
-								JOptionPane.showMessageDialog(main.frame, rb.getString(
-										"INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT_PART_1") + optionValue
-										+ rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT_PART_2")
-										+ (Main.windows
+								JOptionPane.showMessageDialog(main.frame, MessageFormat.format(
+										rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"), optionValue,
+										(Main.windows
 												? rb.getString("AUTOSTART_OPTION_DESCRIPTION_LOCAL_FEEDER_OR_CLIENT")
-												: "")
-										+ rb.getString("AUTOSTART_OPTION_DESCRIPTION_SERVER"),
-										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+												: "") + rb.getString("AUTOSTART_OPTION_DESCRIPTION_SERVER"),
+										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 						}
 					}
 				} catch (final ParseException e) {
@@ -1369,16 +1368,17 @@ public final class Main implements SingletonApp {
 	public void displayChargingStateInfo(final boolean charging) {
 		if (trayIcon != null && input != null)
 			trayIcon.displayMessage(rb.getString("CHARGING_STATE_CAPTION"),
-					(charging ? rb.getString("CHARGING_STATE_CHARGING_PREFIX")
-							: rb.getString("CHARGING_STATE_DISCHARGING_PREFIX")) + input.getBatteryState()
-							+ rb.getString("CHARGING_STATE_SUFFIX"),
+					MessageFormat.format(
+							rb.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
+							input.getBatteryState() / 100f),
 					MessageType.INFO);
 	}
 
-	public void displayLowBatteryWarning(final int batteryCharge) {
+	public void displayLowBatteryWarning(final float batteryCharge) {
 		SwingUtilities.invokeLater(() -> {
 			if (trayIcon != null)
-				trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"), batteryCharge + "%", MessageType.WARNING);
+				trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"),
+						MessageFormat.format("{0,number,percent}", batteryCharge), MessageType.WARNING);
 		});
 	}
 
@@ -1585,15 +1585,21 @@ public final class Main implements SingletonApp {
 				final var profile = gson.fromJson(jsonString, Profile.class);
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty())
-					JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_UNKNOWN_VERSION_DIALOG_TEXT"),
+					JOptionPane.showMessageDialog(frame,
+							MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+									rb.getString("AN_UNKNOWN")),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				else {
 					final var v = versionsComparisonResult.get();
 					if (v < 0)
-						JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_OLDER_VERSION_DIALOG_TEXT"),
+						JOptionPane.showMessageDialog(frame,
+								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										rb.getString("AN_OLDER")),
 								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					else if (v > 0)
-						JOptionPane.showMessageDialog(frame, rb.getString("PROFILE_FOR_NEWER_VERSION_DIALOG_TEXT"),
+						JOptionPane.showMessageDialog(frame,
+								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										rb.getString("A_NEWER")),
 								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				}
 
@@ -1610,7 +1616,8 @@ public final class Main implements SingletonApp {
 					updateOverlayPanel();
 					loadedProfile = file.getName();
 					setUnsavedChanges(false);
-					setStatusBarText(rb.getString("STATUS_PROFILE_LOADED") + file.getAbsolutePath());
+					setStatusBarText(
+							MessageFormat.format(rb.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
 					scheduleStatusBarText(rb.getString("STATUS_READY"));
 					fileChooser.setSelectedFile(file);
 
@@ -1651,7 +1658,7 @@ public final class Main implements SingletonApp {
 		updateModesPanel();
 		updateOverlayPanel();
 		setStatusBarText(rb.getString("STATUS_READY"));
-		fileChooser.setSelectedFile(new File(rb.getString("PROFILE_FILE_SUFFIX")));
+		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
 	private void onControllersChanged(final boolean selectFirstTab) {
@@ -1845,9 +1852,8 @@ public final class Main implements SingletonApp {
 	private void saveProfile(File file) {
 		input.reset();
 
-		final String profileFileSuffix = rb.getString("PROFILE_FILE_SUFFIX");
-		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(profileFileSuffix))
-			file = new File(file.getAbsoluteFile() + profileFileSuffix);
+		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(PROFILE_FILE_SUFFIX))
+			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 
 		log.log(Level.INFO, "Saving profile " + file.getAbsolutePath());
 
@@ -1862,7 +1868,7 @@ public final class Main implements SingletonApp {
 			saveLastProfile(file);
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
-			setStatusBarText(rb.getString("STATUS_PROFILE_SAVED") + file.getAbsolutePath());
+			setStatusBarText(MessageFormat.format(rb.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
 			scheduleStatusBarText(rb.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -2144,7 +2150,7 @@ public final class Main implements SingletonApp {
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final var modeNoLabel = new JLabel(rb.getString("MODE_NO_LABEL_PREFIX") + (i + 1));
+			final var modeNoLabel = new JLabel(MessageFormat.format(rb.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -2256,7 +2262,8 @@ public final class Main implements SingletonApp {
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final var virtualAxisLabel = new JLabel(virtualAxis.toString() + rb.getString("AXIS_LABEL_SUFFIX"));
+			final var virtualAxisLabel = new JLabel(
+					MessageFormat.format(rb.getString("AXIS_LABEL"), virtualAxis.toString()));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -2364,29 +2371,33 @@ public final class Main implements SingletonApp {
 	}
 
 	public void updateTitleAndTooltip() {
-		final var sb = new StringBuilder();
+		final String title;
 
 		if (!isSelectedJidValid())
-			sb.append(rb.getString("APPLICATION_NAME"));
-		else if (loadedProfile == null)
-			sb.append(rb.getString("MAIN_FRAME_TITLE_UNSAVED_PROFILE"));
+			title = rb.getString("APPLICATION_NAME");
 		else {
-			if (unsavedChanges)
-				sb.append(rb.getString("MAIN_FRAME_TITLE_PREFIX"));
+			final String profile;
+			if (loadedProfile != null)
+				profile = (unsavedChanges ? "*" : "") + loadedProfile;
+			else
+				profile = rb.getString("UNSAVED");
 
-			sb.append(loadedProfile);
-			sb.append(rb.getString("MAIN_FRAME_TITLE_SUFFIX"));
+			title = MessageFormat.format(rb.getString("MAIN_FRAME_TITLE"), profile);
 		}
 
-		frame.setTitle(sb.toString());
+		frame.setTitle(title);
 
 		if (trayIcon != null && input != null) {
-			if (input.getDualShock4ProductId() != null)
-				sb.append(rb.getString("BATTERY_TOOLTIP_PREFIX") + input.getBatteryState()
-						+ (input.isCharging() ? rb.getString("BATTERY_TOOLTIP_CHARGING_SUFFIX")
-								: rb.getString("BATTERY_TOOLTIP_DISCHARGING_SUFFIX")));
+			final String toolTip;
 
-			trayIcon.setToolTip(sb.toString());
+			if (input.getDualShock4ProductId() != null)
+				toolTip = MessageFormat.format(
+						rb.getString(input.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
+						title, input.getBatteryState() / 100f);
+			else
+				toolTip = title;
+
+			trayIcon.setToolTip(toolTip);
 		}
 	}
 

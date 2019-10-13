@@ -56,6 +56,7 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -330,8 +331,7 @@ public class AssignmentsComponent extends JScrollPane {
 			this.component = component;
 
 			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION, rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_PREFIX") + name
-					+ rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION_SUFFIX"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
 		@Override

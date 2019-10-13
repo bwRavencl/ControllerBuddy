@@ -26,6 +26,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,7 +104,7 @@ public class ServerOutputThread extends OutputThread {
 			final var receiveBuf = new byte[1024];
 
 			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(rb.getString("STATUS_LISTENING") + port);
+				main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_LISTENING"), port));
 			});
 
 			while (!Thread.currentThread().isInterrupted())
@@ -139,11 +140,8 @@ public class ServerOutputThread extends OutputThread {
 
 							serverState = ServerState.Connected;
 							SwingUtilities.invokeLater(() -> {
-								main.setStatusBarText(rb.getString("STATUS_CONNECTED_TO_PART_1")
-										+ clientIPAddress.getCanonicalHostName()
-										+ rb.getString("STATUS_CONNECTED_TO_PART_2") + clientPort
-										+ rb.getString("STATUS_CONNECTED_TO_PART_3") + pollInterval
-										+ rb.getString("STATUS_CONNECTED_TO_PART_4"));
+								main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_CONNECTED_TO"),
+										clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
 							});
 						}
 					}
@@ -241,7 +239,8 @@ public class ServerOutputThread extends OutputThread {
 								}
 							} catch (final SocketTimeoutException e) {
 								serverState = ServerState.Listening;
-								main.scheduleStatusBarText(rb.getString("STATUS_LISTENING") + port);
+								main.scheduleStatusBarText(
+										MessageFormat.format(rb.getString("STATUS_LISTENING"), port));
 							}
 						} else
 							counter++;
@@ -252,8 +251,7 @@ public class ServerOutputThread extends OutputThread {
 		} catch (final BindException e) {
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
-						rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_PREFIX") + port
-								+ rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT_SUFFIX"),
+						MessageFormat.format(rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
