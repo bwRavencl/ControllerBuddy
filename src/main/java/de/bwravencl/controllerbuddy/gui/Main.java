@@ -1071,7 +1071,8 @@ public final class Main implements SingletonApp {
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 1, 100, 1));
-		final JSpinner.DefaultEditor pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner, "#");
+		final var pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner,
+				"# " + rb.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
 		pollIntervalSpinner.addChangeListener(
@@ -1102,7 +1103,7 @@ public final class Main implements SingletonApp {
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
 					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
-			final JSpinner.DefaultEditor vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
+			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
 			vJoyDeviceSpinner.addChangeListener(
@@ -1116,7 +1117,7 @@ public final class Main implements SingletonApp {
 			hostLabel.setPreferredSize(new Dimension(120, 15));
 			hostPanel.add(hostLabel);
 
-			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 10);
+			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 15);
 			final var setHostAction = new SetHostAction(hostTextField);
 			hostTextField.addActionListener(setHostAction);
 			hostTextField.addFocusListener(setHostAction);
@@ -1132,7 +1133,7 @@ public final class Main implements SingletonApp {
 
 		final var portSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT), 1024, 65535, 1));
-		final JSpinner.DefaultEditor portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
+		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		portSpinner.setEditor(portSpinnerEditor);
 		portSpinner.addChangeListener(
@@ -1148,7 +1149,8 @@ public final class Main implements SingletonApp {
 
 		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
-		final JSpinner.DefaultEditor timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner, "#");
+		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
+				"# " + rb.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		timeoutSpinner.setEditor(timeoutSpinnerEditor);
 		timeoutSpinner.addChangeListener(
