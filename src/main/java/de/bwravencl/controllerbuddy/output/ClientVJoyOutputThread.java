@@ -305,7 +305,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
-				log.log(Level.INFO, "Connection timed out");
+				log.log(Level.FINE, e.getMessage(), e);
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
