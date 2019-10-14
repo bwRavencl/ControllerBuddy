@@ -85,38 +85,42 @@ public class ButtonToModeAction implements IButtonToAction {
 	}
 
 	private void deactivateMode(final Input input, final Profile profile) {
-		if (buttonToModeActionStack.contains(this)) {
-			while (!buttonToModeActionStack.isEmpty() && !buttonToModeActionStack.peek().equals(this))
-				buttonToModeActionStack.poll().deactivateMode(input, profile);
-
-			Mode previousMode = profile.getModes().get(0);
-			if (!buttonToModeActionStack.isEmpty()) {
-				buttonToModeActionStack.pop();
-				if (!buttonToModeActionStack.isEmpty())
-					previousMode = buttonToModeActionStack.peek().getMode(input);
-			}
-
-			final var activeMode = profile.getActiveMode();
-			for (final var action : activeMode.getAllActions())
-				if (action instanceof ToKeyAction)
-					((ToKeyAction<?>) action).resetWasUp();
-
-			final var axes = activeMode.getAxisToActionsMap().keySet();
-			final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
-			final var main = input.getMain();
-			final var timer = main.getTimer();
-			if (defaultAxisToActionsMap != null)
-				for (final int axis : axes)
-					if (defaultAxisToActionsMap.containsKey(axis))
-						for (final var action : defaultAxisToActionsMap.get(axis))
-							if (action instanceof ISuspendableAction)
-								((ISuspendableAction) action).suspendAxis(timer, axis);
-
-			profile.setActiveMode(input, previousMode.getUuid());
-
-			if (targetsOnScreenKeyboardMode())
-				main.toggleOnScreenKeyboard();
+		for (var topmostModeAction = buttonToModeActionStack
+				.peek(); topmostModeAction != this; topmostModeAction = buttonToModeActionStack.peek()) {
+			topmostModeAction.deactivateMode(input, profile);
+			input.repeatModeActionWalk();
 		}
+
+		buttonToModeActionStack.pop();
+
+		final Mode previousMode;
+		final var previousButtonToModeAction = buttonToModeActionStack.peek();
+		if (previousButtonToModeAction != null)
+			previousMode = previousButtonToModeAction.getMode(input);
+		else
+			previousMode = profile.getModes().get(0);
+
+		final var activeMode = profile.getActiveMode();
+
+		for (final var action : activeMode.getAllActions())
+			if (action instanceof ToKeyAction)
+				((ToKeyAction<?>) action).resetWasUp();
+
+		final var axes = activeMode.getAxisToActionsMap().keySet();
+		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
+		final var main = input.getMain();
+		final var timer = main.getTimer();
+		if (defaultAxisToActionsMap != null)
+			for (final int axis : axes)
+				if (defaultAxisToActionsMap.containsKey(axis))
+					for (final var action : defaultAxisToActionsMap.get(axis))
+						if (action instanceof ISuspendableAction)
+							((ISuspendableAction) action).suspendAxis(timer, axis);
+
+		profile.setActiveMode(input, previousMode.getUuid());
+
+		if (targetsOnScreenKeyboardMode())
+			main.toggleOnScreenKeyboard();
 	}
 
 	@Override
@@ -127,11 +131,11 @@ public class ButtonToModeAction implements IButtonToAction {
 		if (value == 0) {
 			if (toggle)
 				up = true;
-			else
+			else if (buttonToModeActionStack.contains(this))
 				deactivateMode(input, profile);
 		} else if (toggle) {
 			if (up) {
-				if (profile.getActiveMode().getUuid().equals(modeUuid))
+				if (buttonToModeActionStack.contains(this))
 					deactivateMode(input, profile);
 				else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
 					activateMode(input, profile);

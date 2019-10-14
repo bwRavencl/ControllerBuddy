@@ -167,6 +167,7 @@ public class Input {
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
 	private boolean clearOnNextPoll = false;
+	private boolean repeatModeActionWalk = false;
 	private HidDevice hidDevice;
 	private volatile boolean charging = true;
 	private volatile int batteryState;
@@ -451,11 +452,18 @@ public class Input {
 						action.doAction(this, state.buttons(button));
 			}
 
-			for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
-				final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
-				if (buttonToModeActions != null)
-					for (final ButtonToModeAction action : buttonToModeActions)
-						action.doAction(this, state.buttons(button));
+			for (;;) {
+				for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+					final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
+					if (buttonToModeActions != null)
+						for (final var action : buttonToModeActions)
+							action.doAction(this, state.buttons(button));
+				}
+
+				if (repeatModeActionWalk)
+					repeatModeActionWalk = false;
+				else
+					break;
 			}
 		}
 
@@ -467,7 +475,14 @@ public class Input {
 		return true;
 	}
 
+	public void repeatModeActionWalk() {
+		repeatModeActionWalk = true;
+	}
+
 	public void reset() {
+		clearOnNextPoll = false;
+		repeatModeActionWalk = false;
+
 		profile.setActiveMode(this, 0);
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 
