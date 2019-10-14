@@ -74,6 +74,7 @@ import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,7 +134,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.text.DefaultFormatter;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -703,6 +703,7 @@ public final class Main implements SingletonApp {
 
 	}
 
+	private static final Options options = new Options();
 	private static final String SINGLETON_ID;
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
@@ -718,6 +719,7 @@ public final class Main implements SingletonApp {
 	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final String OPTION_AUTOSTART = "autostart";
+	private static final String OPTION_PROFILE = "profile";
 	private static final String OPTION_TRAY = "tray";
 	private static final String OPTION_VERSION = "version";
 	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
@@ -743,8 +745,20 @@ public final class Main implements SingletonApp {
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
 	static {
+		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(rb.getString("AUTOSTART_OPTION_DESCRIPTION"),
+				Main.windows ? rb.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : rb.getString("SERVER")));
+		options.addOption(OPTION_PROFILE, true, rb.getString("PROFILE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
+
 		final var mainClassPackageName = Main.class.getPackageName();
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+
+		try {
+			UIManager.setLookAndFeel(new MetalLookAndFeel());
+		} catch (final UnsupportedLookAndFeelException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static String assembleControllerLoggingMessage(final String prefix, final int jid) {
@@ -822,41 +836,41 @@ public final class Main implements SingletonApp {
 			log.log(Level.INFO, "Launching " + rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
 			SwingUtilities.invokeLater(() -> {
-				final var options = new Options();
-				options.addOption(OPTION_AUTOSTART, true, rb.getString(
-						Main.windows ? "AUTOSTART_OPTION_DESCRIPTION_WINDOWS" : "AUTOSTART_OPTION_DESCRIPTION"));
-				options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
-				options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
-
 				try {
-					final CommandLine commandLine = new DefaultParser().parse(options, args);
+					final var commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION))
 						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					else {
-						final var main = new Main();
+						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+						final var main = new Main(cmdProfilePath);
 
 						if (!commandLine.hasOption(OPTION_TRAY))
 							main.frame.setVisible(true);
 						if (commandLine.hasOption(OPTION_AUTOSTART)) {
-							final var optionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+							final var autostartOption = commandLine.getOptionValue(OPTION_AUTOSTART);
 
 							if (Main.windows)
-								if (OPTION_AUTOSTART_VALUE_LOCAL.equals(optionValue)) {
+								if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
 									main.startLocal();
 									return;
-								} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(optionValue)) {
+								} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOption)) {
 									main.startClient();
 									return;
 								}
-							if (OPTION_AUTOSTART_VALUE_SERVER.equals(optionValue))
+							if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption))
 								main.startServer();
 							else
-								JOptionPane.showMessageDialog(main.frame, MessageFormat.format(
-										rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"), optionValue,
-										(Main.windows
-												? rb.getString("AUTOSTART_OPTION_DESCRIPTION_LOCAL_FEEDER_OR_CLIENT")
-												: "") + rb.getString("AUTOSTART_OPTION_DESCRIPTION_SERVER"),
-										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+								JOptionPane.showMessageDialog(main.frame,
+										MessageFormat
+												.format(rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
+														OPTION_AUTOSTART, autostartOption,
+														MessageFormat.format(
+																Main.windows
+																		? rb.getString(
+																				"LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+																		: rb.getString("SERVER"),
+																rb.getString("ERROR_DIALOG_TITLE"),
+																JOptionPane.ERROR_MESSAGE)));
 						}
 					}
 				} catch (final ParseException e) {
@@ -941,7 +955,7 @@ public final class Main implements SingletonApp {
 
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
-	private Main() {
+	private Main(final String cmdProfilePath) {
 		Singleton.start(this, SINGLETON_ID);
 
 		frame = new JFrame();
@@ -1267,7 +1281,9 @@ public final class Main implements SingletonApp {
 		updateTheme();
 
 		final var glfwInitialized = glfwInit();
-		if (!glfwInitialized)
+		if (!glfwInitialized) {
+			log.log(Level.SEVERE, "Could not initialize GLFW");
+
 			if (windows)
 				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -1276,6 +1292,7 @@ public final class Main implements SingletonApp {
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
+		}
 
 		final var presentJids = new HashSet<Integer>();
 		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
@@ -1330,9 +1347,15 @@ public final class Main implements SingletonApp {
 				JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 						rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			final String path = preferences.get(PREFERENCES_LAST_PROFILE, null);
-			if (path != null)
-				loadProfile(new File(path));
+			final var profilePath = cmdProfilePath != null ? cmdProfilePath
+					: preferences.get(PREFERENCES_LAST_PROFILE, null);
+			if (profilePath != null) {
+				loadProfile(new File(profilePath));
+				if (loadedProfile == null && cmdProfilePath == null) {
+					log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+					preferences.remove(PREFERENCES_LAST_PROFILE);
+				}
+			}
 		}
 	}
 
@@ -1584,30 +1607,38 @@ public final class Main implements SingletonApp {
 			try {
 				final var profile = gson.fromJson(jsonString, Profile.class);
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
-				if (versionsComparisonResult.isEmpty())
+				if (versionsComparisonResult.isEmpty()) {
+					log.log(Level.WARNING, "Trying to load a profile without version information");
 					JOptionPane.showMessageDialog(frame,
 							MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 									rb.getString("AN_UNKNOWN")),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-				else {
+				} else {
 					final var v = versionsComparisonResult.get();
-					if (v < 0)
+					if (v < 0) {
+						log.log(Level.WARNING, "Trying to load a profile for an older release");
 						JOptionPane.showMessageDialog(frame,
 								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										rb.getString("AN_OLDER")),
 								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-					else if (v > 0)
+					} else if (v > 0) {
+						log.log(Level.WARNING, "Trying to load a profile for a newer release");
 						JOptionPane.showMessageDialog(frame,
 								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										rb.getString("A_NEWER")),
 								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					}
 				}
 
 				final var unknownActionClasses = actionAdapter.getUnknownActionClasses();
-				if (!unknownActionClasses.isEmpty())
+				if (!unknownActionClasses.isEmpty()) {
+					log.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
+							+ String.join(", ", unknownActionClasses));
 					JOptionPane.showMessageDialog(frame,
-							rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT") + String.join("\n", unknownActionClasses),
+							MessageFormat.format(rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+									String.join("\n", unknownActionClasses)),
 							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+				}
 
 				profileLoaded = input.setProfile(profile, input.getJid());
 				if (profileLoaded) {
@@ -1626,18 +1657,36 @@ public final class Main implements SingletonApp {
 			} catch (final JsonParseException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
+		} catch (final NoSuchFileException e) {
+			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 
-		if (!profileLoaded)
+		if (!profileLoaded) {
+			log.log(Level.SEVERE, "Could load profile");
 			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	@Override
 	public void newActivation(final String... args) {
 		log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+
+		try {
+			final var commandLine = new DefaultParser().parse(options, args);
+
+			final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+			if (cmdProfilePath != null) {
+				loadProfile(new File(cmdProfilePath));
+				if (commandLine.getOptions().length == 1)
+					return;
+			}
+		} catch (final ParseException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+
 		SwingUtilities
 				.invokeLater(() -> JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));

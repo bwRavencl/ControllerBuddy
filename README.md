@@ -81,7 +81,7 @@ A great number of XInput and DirectInput gamepads are supported such as:
 To see if your device is supported please checkout the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project.
 
 #### Architecture:
-<pre>
+```
               Host:                             Client:
 
        Physical Controller
@@ -97,7 +97,7 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
         |                |                 |                |
         v                v                 v                v
         Target Application                 Target Application
-</pre>
+```
 
 #### Example Screenshots:
 ![Modes Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_1.png)
@@ -111,15 +111,18 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 ![VR Overlay](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_5.png)
 
 #### Command Line Parameters:
-<pre>
-usage: ControllerBuddy [-autostart <arg>] [-tray] [-version]
- -autostart <arg>   automatically start the
-                    local feeder [-autostart local] or
+```
+usage: ControllerBuddy [-autostart <arg>] [-profile <arg>] [-tray]
+       [-version]
+ -autostart <arg>   automatically start the local feeder [-autostart local] or
                     client [-autostart client] or
                     server [-autostart server]
+ -profile <arg>     load the specified profile
  -tray              launch in system tray
  -version           print version and quit
-</pre>
+```
+
+If an instance of ControllerBuddy is already running, launching a second instance with the `-profile` parameter can be used to trigger the loading of the specified profile in the first instance. This enables profile switching from any other application that can execute shell commands.
 
 #### Dependencies:
 - [OpenJDK 12](https://jdk.java.net/12/)

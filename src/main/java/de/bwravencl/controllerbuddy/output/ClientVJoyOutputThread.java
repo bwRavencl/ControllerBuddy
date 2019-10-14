@@ -88,6 +88,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 		switch (clientState) {
 		case Connecting:
+			log.log(Level.INFO, "Connecting to " + host + ":" + port);
 			SwingUtilities.invokeLater(() -> {
 				main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
@@ -120,10 +121,13 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						final var serverProtocolVersion = messageParts[1];
 						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
+							final var clientVersion = VersionUtils.getMajorAndMinorVersion();
+							log.log(Level.WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
+									+ serverProtocolVersion);
 							SwingUtilities.invokeLater(() -> {
 								JOptionPane.showMessageDialog(main.getFrame(),
 										MessageFormat.format(rb.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
-												VersionUtils.getMajorAndMinorVersion(), serverProtocolVersion),
+												clientVersion, serverProtocolVersion),
 										rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 							});
 							retry = -1;
@@ -152,18 +156,21 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 
 			if (success) {
 				clientState = ClientState.Connected;
+				log.log(Level.INFO, "Successfully connected");
 				SwingUtilities.invokeLater(() -> {
 					main.setStatusBarText(
 							MessageFormat.format(rb.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
 				});
 			} else {
-				if (retry != -1 && !Thread.currentThread().isInterrupted())
+				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
+					log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
 					SwingUtilities.invokeLater(() -> {
 						JOptionPane.showMessageDialog(main.getFrame(),
 								MessageFormat.format(rb.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
 										N_CONNECTION_RETRIES),
 								rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
+				}
 				interrupt();
 			}
 
@@ -298,7 +305,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
-				log.log(Level.INFO, e.getMessage(), e);
+				log.log(Level.INFO, "Connection timed out");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -326,6 +333,7 @@ public class ClientVJoyOutputThread extends VJoyOutputThread {
 						writeOutput();
 			}
 		} catch (final UnknownHostException e) {
+			log.log(Level.INFO, "Could not resolve host " + host);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						MessageFormat.format(rb.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),

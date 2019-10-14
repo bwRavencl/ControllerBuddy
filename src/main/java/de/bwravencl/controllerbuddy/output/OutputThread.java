@@ -33,6 +33,8 @@ import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public abstract class OutputThread extends Thread {
 
+	private static final Logger log = Logger.getLogger(OutputThread.class.getName());
+
 	public static final int DEFAULT_POLL_INTERVAL = 2;
 
 	final Main main;
@@ -61,6 +63,7 @@ public abstract class OutputThread extends Thread {
 			}
 		}.start();
 
+		log.log(Level.WARNING, "Could not read from controller");
 		SwingUtilities.invokeLater(() -> {
 			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
 					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);

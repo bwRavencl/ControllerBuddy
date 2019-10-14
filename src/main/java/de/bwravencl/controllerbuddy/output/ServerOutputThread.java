@@ -249,13 +249,14 @@ public class ServerOutputThread extends OutputThread {
 					break;
 				}
 		} catch (final BindException e) {
+			log.log(Level.WARNING, "Could not bind socket on port " + port);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						MessageFormat.format(rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
 						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
-			log.log(Level.INFO, e.getMessage(), e);
+			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
