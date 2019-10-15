@@ -2,9 +2,6 @@
 "ControllerBuddy")
 ## ControllerBuddy
 
-[![Build Status](https://travis-ci.org/bwRavencl/ControllerBuddy.svg?branch=master)](https://travis-ci.org/bwRavencl/ControllerBuddy)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-
 #### License Information:
 GNU General Public License v2.0
 

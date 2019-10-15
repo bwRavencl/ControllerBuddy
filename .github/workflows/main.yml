@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 12
+      - name: Install JDK with jpackage support
+        shell: bash
+        run: |
+          curl https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-49_windows-x64_bin.zip -o jdk14.zip
+          unzip jdk14.zip -d /c/
+          echo ::add-path::"C:\jdk-14\bin"
+      - name: Build
+        uses: eskatos/gradle-command-action@v1
+        env:
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        with:
+          arguments: distZip --info
+      - name: Extract Release Variables
+        id: extract_release_variables
+        shell: bash
+        run: |
+          echo ::set-output name=release_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename {} .zip)
+          echo ::set-output name=asset_path::$(ls build/distributions/ControllerBuddy-*.zip)
+          echo ::set-output name=asset_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -n 1 basename)
+      - name: Tag Commit
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.extract_release_variables.outputs.release_name }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract_release_variables.outputs.release_name }}
+          release_name: ${{ steps.extract_release_variables.outputs.release_name }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.extract_release_variables.outputs.asset_path }}
+          asset_name: ${{ steps.extract_release_variables.outputs.asset_name }}
+          asset_content_type: application/zip
