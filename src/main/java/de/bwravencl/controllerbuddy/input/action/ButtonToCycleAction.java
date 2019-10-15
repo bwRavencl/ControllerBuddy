@@ -22,7 +22,7 @@ import java.util.List;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToCycleAction implements IButtonToAction, IResetableAction {
+public final class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
 	private transient boolean wasUp = true;
 

@@ -34,9 +34,9 @@ import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public class Mode implements Cloneable {
+public final class Mode implements Cloneable {
 
-	public static class Component {
+	public static final class Component {
 
 		public enum ComponentType {
 			AXIS, BUTTON

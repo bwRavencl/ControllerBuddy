@@ -20,7 +20,7 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToRelativeAxisAction extends AxisToAxisAction
+public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
 
 	public static final float DEFAULT_EXPONENT = 2f;

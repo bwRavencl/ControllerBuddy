@@ -35,7 +35,7 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
+public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 
 	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());

@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 
-public class ButtonToModeAction implements IButtonToAction {
+public final class ButtonToModeAction implements IButtonToAction {
 
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 

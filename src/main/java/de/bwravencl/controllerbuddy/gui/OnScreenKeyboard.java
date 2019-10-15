@@ -57,7 +57,7 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public class OnScreenKeyboard extends JFrame {
+public final class OnScreenKeyboard extends JFrame {
 
 	private abstract class AbstractKeyboardButton extends JButton {
 
@@ -113,7 +113,7 @@ public class OnScreenKeyboard extends JFrame {
 
 	}
 
-	private class DefaultKeyboardButton extends AbstractKeyboardButton {
+	private final class DefaultKeyboardButton extends AbstractKeyboardButton {
 
 		private static final long serialVersionUID = -1739002089027358633L;
 
@@ -283,7 +283,7 @@ public class OnScreenKeyboard extends JFrame {
 
 	}
 
-	private class LockKeyButton extends AbstractKeyboardButton {
+	private final class LockKeyButton extends AbstractKeyboardButton {
 
 		private static final long serialVersionUID = 4014130700331413635L;
 

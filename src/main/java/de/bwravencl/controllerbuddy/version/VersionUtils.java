@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.version;
 
 import java.util.Optional;
 
-public class VersionUtils {
+public final class VersionUtils {
 
 	public static Optional<Integer> compareVersions(final String version) throws IllegalArgumentException {
 		if (version == null)

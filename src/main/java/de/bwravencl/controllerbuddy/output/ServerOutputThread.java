@@ -37,7 +37,7 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public class ServerOutputThread extends OutputThread {
+public final class ServerOutputThread extends OutputThread {
 
 	private enum ServerState {
 		Listening, Connected

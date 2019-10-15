@@ -37,7 +37,7 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IModeChangeListenerAction;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public class Profile implements Cloneable {
+public final class Profile implements Cloneable {
 
 	private static final Logger log = Logger.getLogger(Profile.class.getName());
 

@@ -75,9 +75,9 @@ import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public class AssignmentsComponent extends JScrollPane {
+public final class AssignmentsComponent extends JScrollPane {
 
-	private static class CompoundButton extends JButton {
+	private static final class CompoundButton extends JButton {
 
 		private enum CompoundButtonLocation {
 
@@ -317,7 +317,7 @@ public class AssignmentsComponent extends JScrollPane {
 
 	}
 
-	private static class EditComponentAction extends AbstractAction {
+	private static final class EditComponentAction extends AbstractAction {
 
 		private static final long serialVersionUID = 8811608785278071903L;
 
@@ -342,7 +342,7 @@ public class AssignmentsComponent extends JScrollPane {
 
 	}
 
-	private static class FourWay extends JPanel {
+	private static final class FourWay extends JPanel {
 
 		private static final long serialVersionUID = -5178710302755638535L;
 
@@ -372,7 +372,7 @@ public class AssignmentsComponent extends JScrollPane {
 
 	}
 
-	private static class Stick extends JPanel {
+	private static final class Stick extends JPanel {
 
 		private enum StickType {
 			Left, Right

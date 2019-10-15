@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToScrollAction extends ToScrollAction<Byte> implements IButtonToAction {
+public final class ButtonToScrollAction extends ToScrollAction<Byte> implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 

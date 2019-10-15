@@ -20,7 +20,7 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public class AxisToCursorAction extends InvertableAction<Float>
+public final class AxisToCursorAction extends InvertableAction<Float>
 		implements ISuspendableAction, IModeChangeListenerAction {
 
 	public enum MouseAxis {

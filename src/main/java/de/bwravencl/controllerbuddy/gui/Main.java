@@ -168,7 +168,7 @@ import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public final class Main implements SingletonApp {
 
-	private class AddModeAction extends AbstractAction {
+	private final class AddModeAction extends AbstractAction {
 
 		private static final long serialVersionUID = -4881923833724315489L;
 
@@ -188,7 +188,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class ChangeVJoyDirectoryAction extends AbstractAction {
+	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
 		private static final long serialVersionUID = -7672382299595684105L;
 
@@ -221,7 +221,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class DisplayIndicatorAction extends AbstractAction {
+	private final class DisplayIndicatorAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3316770144012465987L;
 
@@ -247,7 +247,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class InvertIndicatorAction extends AbstractAction {
+	private final class InvertIndicatorAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3316770144012465987L;
 
@@ -271,7 +271,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class NewAction extends AbstractAction {
+	private final class NewAction extends AbstractAction {
 
 		private static final long serialVersionUID = 5703987691203427504L;
 
@@ -287,7 +287,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class OpenAction extends AbstractAction {
+	private final class OpenAction extends AbstractAction {
 
 		private static final long serialVersionUID = -8932510785275935297L;
 
@@ -341,7 +341,7 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private class QuitAction extends AbstractAction {
+	private final class QuitAction extends AbstractAction {
 
 		private static final long serialVersionUID = 8952460723177800923L;
 
@@ -357,7 +357,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class RemoveModeAction extends AbstractAction {
+	private final class RemoveModeAction extends AbstractAction {
 
 		private static final long serialVersionUID = -1056071724769862582L;
 
@@ -380,7 +380,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SaveAction extends AbstractAction {
+	private final class SaveAction extends AbstractAction {
 
 		private static final long serialVersionUID = -8469921697479550983L;
 
@@ -399,7 +399,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SaveAsAction extends AbstractAction {
+	private final class SaveAsAction extends AbstractAction {
 
 		private static final long serialVersionUID = -8469921697479550983L;
 
@@ -415,7 +415,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SelectControllerAction extends AbstractAction {
+	private final class SelectControllerAction extends AbstractAction {
 
 		private static final long serialVersionUID = -2043467156713598592L;
 
@@ -437,7 +437,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SelectIndicatorColorAction extends AbstractAction {
+	private final class SelectIndicatorColorAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3316770144012465987L;
 
@@ -464,7 +464,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SetHostAction extends AbstractAction implements FocusListener {
+	private final class SetHostAction extends AbstractAction implements FocusListener {
 
 		private static final long serialVersionUID = -7674562782751876814L;
 
@@ -499,7 +499,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
+	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
 
 		private static final long serialVersionUID = -6706537047137827688L;
 
@@ -542,7 +542,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class ShowAboutDialogAction extends AbstractAction {
+	private final class ShowAboutDialogAction extends AbstractAction {
 
 		private static final long serialVersionUID = -2578971543384483382L;
 
@@ -561,7 +561,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class ShowAction extends AbstractAction {
+	private final class ShowAction extends AbstractAction {
 
 		private static final long serialVersionUID = 8578159622754054457L;
 
@@ -580,7 +580,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class ShowLicensesAction extends AbstractAction {
+	private final class ShowLicensesAction extends AbstractAction {
 
 		private static final long serialVersionUID = 2471952794110895043L;
 
@@ -607,7 +607,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StartClientAction extends AbstractAction {
+	private final class StartClientAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3975574941559749481L;
 
@@ -623,7 +623,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StartLocalAction extends AbstractAction {
+	private final class StartLocalAction extends AbstractAction {
 
 		private static final long serialVersionUID = -2003502124995392039L;
 
@@ -639,7 +639,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StartServerAction extends AbstractAction {
+	private final class StartServerAction extends AbstractAction {
 
 		private static final long serialVersionUID = 1758447420975631146L;
 
@@ -655,7 +655,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StopClientAction extends AbstractAction {
+	private final class StopClientAction extends AbstractAction {
 
 		private static final long serialVersionUID = -2863419586328503426L;
 
@@ -671,7 +671,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StopLocalAction extends AbstractAction {
+	private final class StopLocalAction extends AbstractAction {
 
 		private static final long serialVersionUID = -4859431944733030332L;
 
@@ -687,7 +687,7 @@ public final class Main implements SingletonApp {
 
 	}
 
-	private class StopServerAction extends AbstractAction {
+	private final class StopServerAction extends AbstractAction {
 
 		private static final long serialVersionUID = 6023207463370122769L;
 

@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
+public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
 
 	private boolean lockKey = false;
 

@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class AxisToButtonAction extends ToButtonAction<Float> implements ISuspendableAction {
+public final class AxisToButtonAction extends ToButtonAction<Float> implements ISuspendableAction {
 
 	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	public static final float DEFAULT_MAX_AXIS_VALUE = 1f;

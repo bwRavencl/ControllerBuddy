@@ -100,7 +100,7 @@ import org.lwjgl.system.windows.WindowsLibrary;
 
 class OpenVrOverlay {
 
-	private static class TextureData {
+	private static final class TextureData {
 
 		private BufferedImage image;
 		private int textureObject;

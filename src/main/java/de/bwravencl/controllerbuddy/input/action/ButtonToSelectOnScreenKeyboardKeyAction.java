@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
+public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
 
 	public enum Direction {
 		UP, DOWN, LEFT, RIGHT

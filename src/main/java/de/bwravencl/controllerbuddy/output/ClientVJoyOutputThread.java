@@ -41,7 +41,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public class ClientVJoyOutputThread extends VJoyOutputThread {
+public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 	private enum ClientState {
 		Connecting, Connected

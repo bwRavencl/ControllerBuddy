@@ -27,7 +27,7 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class LocalVJoyOutputThread extends VJoyOutputThread {
+public final class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	private static final Logger log = Logger.getLogger(LocalVJoyOutputThread.class.getName());
 

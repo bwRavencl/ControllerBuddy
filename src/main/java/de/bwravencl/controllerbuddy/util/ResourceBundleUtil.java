@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
-public class ResourceBundleUtil {
+public final class ResourceBundleUtil {
 
 	private static final class BundleLocale {
 		private final String baseName;

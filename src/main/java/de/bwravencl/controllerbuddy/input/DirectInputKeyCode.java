@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class DirectInputKeyCode {
+public final class DirectInputKeyCode {
 
 	public static final String DIK_0 = "0";
 	public static final String DIK_1 = "1";

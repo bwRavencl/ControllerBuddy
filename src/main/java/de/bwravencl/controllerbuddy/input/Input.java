@@ -64,7 +64,7 @@ import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
-public class Input {
+public final class Input {
 
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1

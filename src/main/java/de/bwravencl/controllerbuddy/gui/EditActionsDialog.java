@@ -105,9 +105,9 @@ import de.bwravencl.controllerbuddy.input.action.NullAction;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 @SuppressWarnings("serial")
-public class EditActionsDialog extends JDialog {
+public final class EditActionsDialog extends JDialog {
 
-	private class AddActionAction extends AbstractAction {
+	private final class AddActionAction extends AbstractAction {
 
 		private static final long serialVersionUID = -7713175853948284887L;
 
@@ -152,7 +152,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class AvailableAction {
+	private final class AvailableAction {
 
 		private final Class<?> clazz;
 
@@ -177,7 +177,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class CancelAction extends AbstractAction {
+	private final class CancelAction extends AbstractAction {
 
 		private static final long serialVersionUID = 8086810563127997199L;
 
@@ -193,7 +193,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class EditActionsAction extends AbstractAction {
+	private final class EditActionsAction extends AbstractAction {
 
 		private static final long serialVersionUID = -6538021954760621595L;
 
@@ -212,7 +212,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class JCheckBoxSetPropertyAction extends AbstractAction {
+	private final class JCheckBoxSetPropertyAction extends AbstractAction {
 
 		private static final long serialVersionUID = -33052386834598414L;
 
@@ -234,7 +234,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class JComboBoxSetPropertyAction extends AbstractAction {
+	private final class JComboBoxSetPropertyAction extends AbstractAction {
 
 		private static final long serialVersionUID = 1938012378184518954L;
 
@@ -255,7 +255,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class JListSetPropertyListSelectionListener implements ListSelectionListener {
+	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
 		private final Method setterMethod;
 		private final KeyStroke keyStroke;
@@ -291,7 +291,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class JSpinnerSetPropertyChangeListener implements ChangeListener {
+	private final class JSpinnerSetPropertyChangeListener implements ChangeListener {
 
 		private final Method setterMethod;
 
@@ -313,7 +313,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class OKAction extends AbstractAction {
+	private final class OKAction extends AbstractAction {
 
 		private static final long serialVersionUID = -6947022759101822700L;
 
@@ -353,7 +353,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private class RemoveActionAction extends AbstractAction {
+	private final class RemoveActionAction extends AbstractAction {
 
 		private static final long serialVersionUID = -5681740772832902238L;
 
@@ -386,7 +386,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private static class ZeroBasedFormatter extends DefaultFormatter {
+	private static final class ZeroBasedFormatter extends DefaultFormatter {
 
 		@Override
 		public Object stringToValue(final String text) throws ParseException {
@@ -400,7 +400,7 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
-	private static class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
+	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
 
 		@Override
 		public AbstractFormatter getFormatter(final JFormattedTextField tf) {
