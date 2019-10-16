@@ -56,12 +56,14 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -77,7 +79,7 @@ import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public final class AssignmentsComponent extends JScrollPane {
 
-	private static final class CompoundButton extends JButton {
+	private static final class CompoundButton extends CustomButton {
 
 		private enum CompoundButtonLocation {
 
@@ -97,9 +99,6 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		private static final long serialVersionUID = 5560396295119690740L;
 
-		private Color selectColor;
-		private float[] gradientFractions = null;
-		private Color[] gradientColors = null;
 		private transient Shape shape;
 		private transient Shape base;
 		private final CompoundButtonLocation buttonLocation;
@@ -113,13 +112,13 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
+			super();
+
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
 			this.peer = peer;
 			if (peer != null)
 				peer.setPeer(this);
-
-			updateTheme();
 
 			if (component.type == ComponentType.BUTTON) {
 				if (component.index == GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
@@ -161,11 +160,10 @@ public final class AssignmentsComponent extends JScrollPane {
 
 				@Override
 				public void paintIcon(final java.awt.Component c, final Graphics g, final int x, final int y) {
-					final var g2d = (Graphics2D) g.create();
-					g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
 					final var model = getModel();
 					final var peerModel = CompoundButton.this.peer != null ? CompoundButton.this.peer.getModel() : null;
+
+					final var g2d = (Graphics2D) g;
 
 					final var enabled = model.isEnabled() || peerModel != null && peerModel.isEnabled();
 					if (enabled) {
@@ -173,14 +171,7 @@ public final class AssignmentsComponent extends JScrollPane {
 						final var pressed = model.isPressed() || peerModel != null && peerModel.isPressed();
 
 						if (!pressed || armed) {
-							if (!pressed)
-								if (gradientFractions != null && gradientColors != null)
-									g2d.setPaint(new LinearGradientPaint(0f, 0f, 0f, getHeight() - 1f,
-											gradientFractions, gradientColors));
-								else
-									g2d.setColor(getBackground());
-							else if (armed)
-								g2d.setColor(selectColor);
+							beginBackground(g2d);
 
 							if (shape == null)
 								initShape();
@@ -190,20 +181,14 @@ public final class AssignmentsComponent extends JScrollPane {
 					}
 
 					if (buttonLocation == CompoundButtonLocation.Center && text != null) {
-						g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-								RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-						g2d.setColor(enabled ? MetalLookAndFeel.getControlTextColor()
-								: MetalLookAndFeel.getInactiveControlTextColor());
+						beginForeground(g2d);
 
-						final var font = getFont();
-						final var metrics = g.getFontMetrics(font);
+						final var metrics = g2d.getFontMetrics(getFont());
 						final int tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
 						final int ty = y + (getIconHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
-						g2d.setFont(font);
+
 						g2d.drawString(text, tx, ty);
 					}
-
-					g2d.dispose();
 				}
 			});
 
@@ -246,20 +231,16 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		@Override
 		protected void paintBorder(final Graphics g) {
-			final var g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			if (!isBorderPainted())
+				return;
 
-			if (usingOceanTheme() && (isRolloverEnabled() && getModel().isRollover()
-					|| peer != null && peer.isRolloverEnabled() && peer.getModel().isRollover()))
-				g2d.setColor(MetalLookAndFeel.getControlShadow());
-			else
-				g2d.setColor(MetalLookAndFeel.getControlDarkShadow());
+			final var g2d = (Graphics2D) g;
+			beginBorder(g2d);
 
 			if (shape == null)
 				initShape();
 
 			g2d.draw(shape);
-			g2d.dispose();
 		}
 
 		@Override
@@ -275,6 +256,71 @@ public final class AssignmentsComponent extends JScrollPane {
 		@Override
 		public void setText(final String text) {
 			this.text = text;
+		}
+
+	}
+
+	private static abstract class CustomButton extends JButton {
+
+		private static final long serialVersionUID = 5458020346838696827L;
+
+		Color selectColor;
+		float[] gradientFractions = null;
+		Color[] gradientColors = null;
+
+		private CustomButton() {
+			updateTheme();
+		}
+
+		private CustomButton(final Action action) {
+			super(action);
+			updateTheme();
+		}
+
+		void beginBackground(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			if (!model.isPressed())
+				if (gradientFractions != null && gradientColors != null)
+					g2d.setPaint(
+							new LinearGradientPaint(0f, 0f, 0f, getHeight() - 1f, gradientFractions, gradientColors));
+				else
+					g2d.setColor(getBackground());
+			else if (model.isArmed())
+				g2d.setColor(selectColor);
+		}
+
+		void beginBorder(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			final Color color;
+			if (!isEnabled()) {
+				if (usingOceanTheme())
+					color = MetalLookAndFeel.getInactiveControlTextColor();
+				else
+					color = MetalLookAndFeel.getControlDisabled();
+			} else if (usingOceanTheme() && isRolloverEnabled() && getModel().isRollover())
+				color = MetalLookAndFeel.getControlShadow();
+			else
+				color = MetalLookAndFeel.getControlDarkShadow();
+
+			g2d.setColor(color);
+		}
+
+		void beginForeground(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+			final Color color;
+			if (!isEnabled())
+				color = MetalLookAndFeel.getInactiveControlTextColor();
+			else if (isForegroundSet())
+				color = getForeground();
+			else
+				color = MetalLookAndFeel.getControlTextColor();
+
+			g2d.setColor(color);
+
+			g2d.setFont(getFont());
 		}
 
 		private void updateTheme() {
@@ -358,16 +404,16 @@ public final class AssignmentsComponent extends JScrollPane {
 
 			constraints.gridx = 1;
 			constraints.gridy = 0;
-			add(createButton(main, upTitle, upComponent), constraints);
+			add(createComponentButton(main, upTitle, upComponent), constraints);
 			constraints.gridx = 0;
 			constraints.gridy = 1;
-			add(createButton(main, leftTitle, leftComponent), constraints);
+			add(createComponentButton(main, leftTitle, leftComponent), constraints);
 			constraints.gridx = 2;
 			constraints.gridy = 1;
-			add(createButton(main, rightTitle, rightComponent), constraints);
+			add(createComponentButton(main, rightTitle, rightComponent), constraints);
 			constraints.gridx = 1;
 			constraints.gridy = 2;
-			add(createButton(main, downTitle, downComponent), constraints);
+			add(createComponentButton(main, downTitle, downComponent), constraints);
 		}
 
 	}
@@ -416,12 +462,103 @@ public final class AssignmentsComponent extends JScrollPane {
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
-	private static JButton createButton(final Main main, final String name, final Component component) {
-		final var button = new JButton(new EditComponentAction(main, name, component));
+	private static void checkDimensionIsSquare(final Dimension dimension) {
+		if (dimension.width != dimension.height)
+			throw new IllegalArgumentException();
+	}
 
+	private static JButton createComponentButton(final Main main, final String name, final Component component) {
+		final boolean round;
+		final JButton button;
 		if (component.type == ComponentType.BUTTON && (component.index == GLFW_GAMEPAD_BUTTON_A
 				|| component.index == GLFW_GAMEPAD_BUTTON_B || component.index == GLFW_GAMEPAD_BUTTON_X
-				|| component.index == GLFW_GAMEPAD_BUTTON_Y || component.index == GLFW_GAMEPAD_BUTTON_DPAD_DOWN
+				|| component.index == GLFW_GAMEPAD_BUTTON_Y || component.index == GLFW_GAMEPAD_BUTTON_BACK
+				|| component.index == GLFW_GAMEPAD_BUTTON_START || component.index == GLFW_GAMEPAD_BUTTON_GUIDE)) {
+			round = true;
+			button = new CustomButton(new EditComponentAction(main, name, component)) {
+
+				private static final long serialVersionUID = 8467379031897370934L;
+
+				@Override
+				public boolean contains(final int x, final int y) {
+					final var radius = getDiameter() / 2;
+					return Point2D.distance(x, y, getWidth() / 2, getHeight() / 2) < radius;
+				}
+
+				private int getDiameter() {
+					return Math.min(getWidth(), getHeight());
+				}
+
+				@Override
+				protected void paintBorder(final Graphics g) {
+					if (!isBorderPainted())
+						return;
+
+					final var g2d = (Graphics2D) g;
+					beginBorder(g2d);
+
+					final var diameter = getDiameter() - 2;
+					final var radius = diameter / 2;
+					g2d.drawOval(getWidth() / 2 - radius, getHeight() / 2 - radius, diameter, diameter);
+				}
+
+				@Override
+				public void paintComponent(final Graphics g) {
+					final var diameter = getDiameter() - 3;
+					final var radius = diameter / 2;
+
+					final var width = getWidth();
+					final var height = getHeight();
+
+					final var g2d = (Graphics2D) g;
+
+					g2d.setColor(getBackground());
+					g2d.fillRect(0, 0, width, height);
+
+					if (model.isEnabled() && (!model.isPressed() || model.isArmed())) {
+						beginBackground(g2d);
+
+						final var ovalWidth = width % 2 != 0 ? width + 1 : width;
+						final var ovalHeight = height % 2 != 0 ? height + 1 : height;
+
+						g2d.fillOval(ovalWidth / 2 - radius, ovalHeight / 2 - radius, diameter, diameter);
+					}
+
+					beginForeground(g2d);
+
+					final var text = getText();
+					final var metrics = g2d.getFontMetrics(getFont());
+					final int tx = width / 2 - metrics.stringWidth(text) / 2;
+					final int ty = height / 2 + metrics.getAscent() - metrics.getHeight() / 2;
+
+					g2d.drawString(text, tx, ty);
+				}
+
+				@Override
+				public void setMaximumSize(final Dimension maximumSize) {
+					checkDimensionIsSquare(maximumSize);
+					super.setMaximumSize(maximumSize);
+				}
+
+				@Override
+				public void setMinimumSize(final Dimension minimumSize) {
+					checkDimensionIsSquare(minimumSize);
+					super.setMinimumSize(minimumSize);
+				}
+
+				@Override
+				public void setPreferredSize(final Dimension preferredSize) {
+					checkDimensionIsSquare(preferredSize);
+					super.setPreferredSize(preferredSize);
+				}
+
+			};
+		} else {
+			round = false;
+			button = new JButton(new EditComponentAction(main, name, component));
+		}
+
+		if (component.type == ComponentType.BUTTON && (round || component.index == GLFW_GAMEPAD_BUTTON_DPAD_DOWN
 				|| component.index == GLFW_GAMEPAD_BUTTON_DPAD_LEFT || component.index == GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
 				|| component.index == GLFW_GAMEPAD_BUTTON_DPAD_UP))
 			button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
@@ -443,27 +580,27 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createButton(main, rb.getString("LEFT_TRIGGER"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("LEFT_TRIGGER"),
 				new Component(ComponentType.AXIS, GLFW_GAMEPAD_AXIS_LEFT_TRIGGER)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createButton(main, rb.getString("RIGHT_TRIGGER"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("RIGHT_TRIGGER"),
 				new Component(ComponentType.AXIS, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createButton(main, rb.getString("LEFT_BUMPER"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("LEFT_BUMPER"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER)), constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createButton(main, rb.getString("GUIDE_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("GUIDE_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createButton(main, rb.getString("RIGHT_BUMPER"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("RIGHT_BUMPER"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER)), constraints);
 
 		constraints.gridx = 0;
@@ -472,12 +609,12 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createButton(main, rb.getString("BACK_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("BACK_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_BACK)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createButton(main, rb.getString("START_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, rb.getString("START_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
