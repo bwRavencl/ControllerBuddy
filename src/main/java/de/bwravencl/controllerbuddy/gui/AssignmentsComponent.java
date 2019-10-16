@@ -50,6 +50,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LinearGradientPaint;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -83,16 +84,12 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		private enum CompoundButtonLocation {
 
-			Center(0f), North(45f), East(135f), South(225f), West(-45f);
+			East(-45f), Center(0f), North(45f), West(135f), South(225f);
 
-			private final float degree;
+			final float startDegree;
 
-			CompoundButtonLocation(final float degree) {
-				this.degree = degree;
-			}
-
-			public float getStartDegree() {
-				return degree;
+			CompoundButtonLocation(final float startDegree) {
+				this.startDegree = startDegree;
 			}
 
 		}
@@ -104,6 +101,8 @@ public final class AssignmentsComponent extends JScrollPane {
 		private final CompoundButtonLocation buttonLocation;
 		private final Dimension preferredSize;
 		private String text;
+		private boolean contentAreaFilled = true;
+		private boolean paintFocus = true;
 		private CompoundButton peer;
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
@@ -113,6 +112,9 @@ public final class AssignmentsComponent extends JScrollPane {
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
 			super();
+
+			super.setContentAreaFilled(false);
+			super.setFocusPainted(false);
 
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
@@ -165,8 +167,7 @@ public final class AssignmentsComponent extends JScrollPane {
 
 					final var g2d = (Graphics2D) g;
 
-					final var enabled = model.isEnabled() || peerModel != null && peerModel.isEnabled();
-					if (enabled) {
+					if (contentAreaFilled && (model.isEnabled() || peerModel != null && peerModel.isEnabled())) {
 						final var armed = model.isArmed() || peerModel != null && peerModel.isArmed();
 						final var pressed = model.isPressed() || peerModel != null && peerModel.isPressed();
 
@@ -180,20 +181,32 @@ public final class AssignmentsComponent extends JScrollPane {
 						}
 					}
 
-					if (buttonLocation == CompoundButtonLocation.Center && text != null) {
+					final var paintFocus = CompoundButton.this.paintFocus && hasFocus();
+
+					if (buttonLocation == CompoundButtonLocation.Center) {
 						beginForeground(g2d);
 
 						final var metrics = g2d.getFontMetrics(getFont());
+						final var stringWidth = metrics.stringWidth(text);
+						final var textHeight = metrics.getHeight();
+						final var ascent = metrics.getAscent();
+
 						final int tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
-						final int ty = y + (getIconHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+						final int ty = y + (getIconHeight() - textHeight) / 2 + ascent;
 
 						g2d.drawString(text, tx, ty);
+
+						if (paintFocus) {
+							final var focusRectangle = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
+							paintFocus(g2d, focusRectangle);
+						}
+					} else if (paintFocus) {
+						final var focusRectangle = shape.getBounds();
+						focusRectangle.grow(-focusRectangle.width / 3, -focusRectangle.height / 3);
+						paintFocus(g2d, focusRectangle);
 					}
 				}
 			});
-
-			setFocusPainted(true);
-			setContentAreaFilled(false);
 
 			initShape();
 		}
@@ -211,6 +224,11 @@ public final class AssignmentsComponent extends JScrollPane {
 			return preferredSize;
 		}
 
+		@Override
+		public String getText() {
+			return null;
+		}
+
 		private void initShape() {
 			if (!getBounds().equals(base)) {
 				base = getBounds();
@@ -221,12 +239,22 @@ public final class AssignmentsComponent extends JScrollPane {
 					shape = innerShape;
 				else {
 					final var outerShape = new Arc2D.Float(1, 1, getWidth() - 2, getHeight() - 2,
-							buttonLocation.getStartDegree(), 90f, Arc2D.PIE);
+							buttonLocation.startDegree, 90f, Arc2D.PIE);
 					final var outerArea = new Area(outerShape);
 					outerArea.subtract(new Area(innerShape));
 					shape = outerArea;
 				}
 			}
+		}
+
+		@Override
+		public boolean isContentAreaFilled() {
+			return false;
+		}
+
+		@Override
+		public boolean isFocusPainted() {
+			return false;
 		}
 
 		@Override
@@ -249,6 +277,16 @@ public final class AssignmentsComponent extends JScrollPane {
 			super.paintComponent(g);
 		}
 
+		@Override
+		public void setContentAreaFilled(final boolean b) {
+			contentAreaFilled = b;
+		}
+
+		@Override
+		public void setFocusPainted(final boolean b) {
+			paintFocus = b;
+		}
+
 		private void setPeer(final CompoundButton peer) {
 			this.peer = peer;
 		}
@@ -264,9 +302,10 @@ public final class AssignmentsComponent extends JScrollPane {
 
 		private static final long serialVersionUID = 5458020346838696827L;
 
-		Color selectColor;
-		float[] gradientFractions = null;
-		Color[] gradientColors = null;
+		private Color focusColor;
+		private Color selectColor;
+		private float[] gradientFractions = null;
+		private Color[] gradientColors = null;
 
 		private CustomButton() {
 			updateTheme();
@@ -291,8 +330,6 @@ public final class AssignmentsComponent extends JScrollPane {
 		}
 
 		void beginBorder(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
 			final Color color;
 			if (!isEnabled()) {
 				if (usingOceanTheme())
@@ -304,12 +341,11 @@ public final class AssignmentsComponent extends JScrollPane {
 			else
 				color = MetalLookAndFeel.getControlDarkShadow();
 
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setColor(color);
 		}
 
 		void beginForeground(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
 			final Color color;
 			if (!isEnabled())
 				color = MetalLookAndFeel.getInactiveControlTextColor();
@@ -318,12 +354,19 @@ public final class AssignmentsComponent extends JScrollPane {
 			else
 				color = MetalLookAndFeel.getControlTextColor();
 
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setColor(color);
-
 			g2d.setFont(getFont());
 		}
 
+		void paintFocus(final Graphics2D g2d, final Rectangle focusRect) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+			g2d.setColor(focusColor);
+			g2d.drawRect(focusRect.x - 1, focusRect.y - 1, focusRect.width + 1, focusRect.height + 1);
+		}
+
 		private void updateTheme() {
+			focusColor = UIManager.getColor("Button.focus");
 			selectColor = (Color) UIManager.get("Button.select");
 
 			if (usingOceanTheme()) {
@@ -524,14 +567,30 @@ public final class AssignmentsComponent extends JScrollPane {
 						g2d.fillOval(ovalWidth / 2 - radius, ovalHeight / 2 - radius, diameter, diameter);
 					}
 
-					beginForeground(g2d);
-
+					Rectangle focusRectangle = null;
 					final var text = getText();
-					final var metrics = g2d.getFontMetrics(getFont());
-					final int tx = width / 2 - metrics.stringWidth(text) / 2;
-					final int ty = height / 2 + metrics.getAscent() - metrics.getHeight() / 2;
+					if (text != null && text.length() > 0) {
+						beginForeground(g2d);
+						final var metrics = g2d.getFontMetrics(getFont());
+						final var stringWidth = metrics.stringWidth(text);
+						final var ascent = metrics.getAscent();
+						final var textHeight = metrics.getHeight();
 
-					g2d.drawString(text, tx, ty);
+						final int tx = width / 2 - stringWidth / 2;
+						final int ty = height / 2 + ascent - textHeight / 2;
+
+						g2d.drawString(text, tx, ty);
+						focusRectangle = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
+					}
+
+					if (isFocusPainted() && hasFocus()) {
+						if (focusRectangle == null) {
+							focusRectangle = g2d.getClipBounds();
+							focusRectangle.grow(-width / 3, -height / 3);
+						}
+
+						paintFocus(g2d, focusRectangle);
+					}
 				}
 
 				@Override
