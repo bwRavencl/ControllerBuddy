@@ -63,7 +63,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	private static final Logger log = Logger.getLogger(VJoyOutputThread.class.getName());
 
 	public static final int DEFAULT_VJOY_DEVICE = 1;
-	public static final String LIBRARY_NAME = "vJoyInterface";
+	private static final String LIBRARY_NAME = "vJoyInterface";
 	public static final String LIBRARY_FILENAME = LIBRARY_NAME + ".dll";
 	private static final String UNINSTALL_REGISTRY_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{8E31F76F-74C3-47F1-9550-E041EEDC5FBB}_is1";
 	private static final String INSTALL_LOCATION_REGISTRY_VALUE = "InstallLocation";
@@ -189,8 +189,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	private boolean restart = false;
 	private boolean forceStop = false;
-	UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
-	IVjoyInterface vJoy;
+	private UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
+	private IVjoyInterface vJoy;
 	LONG axisX;
 	LONG axisY;
 	LONG axisZ;
@@ -217,7 +217,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	final Set<Integer> offLockKeys = new HashSet<>();
 	final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
-	public VJoyOutputThread(final Main main, final Input input) {
+	VJoyOutputThread(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -247,10 +247,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 			if (restart)
 				main.restartLast();
 		});
-	}
-
-	public UINT getvJoyDevice() {
-		return vJoyDevice;
 	}
 
 	boolean init() {

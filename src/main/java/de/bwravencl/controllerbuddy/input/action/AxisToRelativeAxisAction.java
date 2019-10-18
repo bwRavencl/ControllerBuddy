@@ -23,10 +23,10 @@ import de.bwravencl.controllerbuddy.input.Mode;
 public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
 
-	public static final float DEFAULT_EXPONENT = 2f;
-	public static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
-	public static final float DEFAULT_INITIAL_VALUE = 0f;
-	public static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
+	private static final float DEFAULT_EXPONENT = 2f;
+	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
+	private static final float DEFAULT_INITIAL_VALUE = 0f;
+	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
 	private float exponent = DEFAULT_EXPONENT;
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;

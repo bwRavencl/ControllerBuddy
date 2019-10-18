@@ -35,7 +35,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 		return buttonToModeActionStack;
 	}
 
-	boolean toggle = false;
+	private boolean toggle = false;
 	private transient boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
 	private UUID modeUuid;

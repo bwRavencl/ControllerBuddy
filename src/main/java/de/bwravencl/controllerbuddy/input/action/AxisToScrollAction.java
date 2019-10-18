@@ -20,10 +20,11 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 
-public final class AxisToScrollAction extends ToScrollAction<Float> implements ISuspendableAction, IModeChangeListenerAction {
+public final class AxisToScrollAction extends ToScrollAction<Float>
+		implements ISuspendableAction, IModeChangeListenerAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0.15f;
-	public static final float DEFAULT_EXPONENT = 1f;
+	private static final float DEFAULT_DEAD_ZONE = 0.15f;
+	private static final float DEFAULT_EXPONENT = 1f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;

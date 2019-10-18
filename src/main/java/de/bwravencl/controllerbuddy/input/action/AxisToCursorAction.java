@@ -27,9 +27,9 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 		X, Y
 	}
 
-	public static final float DEFAULT_DEAD_ZONE = 0.15f;
-	public static final float DEFAULT_EXPONENT = 2f;
-	public static final float DEFAULT_MAX_CURSOR_SPEED = 2000f;
+	private static final float DEFAULT_DEAD_ZONE = 0.15f;
+	private static final float DEFAULT_EXPONENT = 2f;
+	private static final float DEFAULT_MAX_CURSOR_SPEED = 2000f;
 
 	private float deadZone = DEFAULT_DEAD_ZONE;
 	private float exponent = DEFAULT_EXPONENT;

@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 
-public abstract class ToKeyAction<V extends Number> implements IAction<V> {
+abstract class ToKeyAction<V extends Number> implements IAction<V> {
 
 	boolean downUp = false;
 
@@ -43,7 +43,7 @@ public abstract class ToKeyAction<V extends Number> implements IAction<V> {
 		return downUp;
 	}
 
-	public void resetWasUp() {
+	void resetWasUp() {
 		wasUp = false;
 	}
 

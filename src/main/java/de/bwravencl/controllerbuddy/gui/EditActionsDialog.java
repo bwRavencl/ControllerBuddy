@@ -105,7 +105,7 @@ import de.bwravencl.controllerbuddy.input.action.NullAction;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 @SuppressWarnings("serial")
-public final class EditActionsDialog extends JDialog {
+final class EditActionsDialog extends JDialog {
 
 	private final class AddActionAction extends AbstractAction {
 
@@ -423,8 +423,8 @@ public final class EditActionsDialog extends JDialog {
 			NullAction.class };
 	private static final Class<?>[] ON_SCREEN_KEYBOARD_ACTION_CLASSES = { ButtonToPressOnScreenKeyboardKeyAction.class,
 			ButtonToSelectOnScreenKeyboardKeyAction.class };
-	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 
+	private static final String ACTION_PROPERTY_GETTER_PREFIX_DEFAULT = "get";
 	private static final String ACTION_PROPERTY_GETTER_PREFIX_BOOLEAN = "is";
 	private static final String ACTION_PROPERTY_SETTER_PREFIX = "set";
 	private static final int DIALOG_BOUNDS_X = Main.DIALOG_BOUNDS_X + DIALOG_BOUNDS_X_Y_OFFSET;
@@ -432,7 +432,7 @@ public final class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_WIDTH = 950;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 
-	public static int getListModelIndex(final ListModel<?> model, final Object value) {
+	private static int getListModelIndex(final ListModel<?> model, final Object value) {
 		if (value == null)
 			return -1;
 

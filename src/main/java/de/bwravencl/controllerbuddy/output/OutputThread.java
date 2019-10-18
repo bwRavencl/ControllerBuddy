@@ -48,7 +48,7 @@ public abstract class OutputThread extends Thread {
 	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
 
-	public OutputThread(final Main main, final Input input) {
+	OutputThread(final Main main, final Input input) {
 		this.main = main;
 		this.input = input;
 		input.setOutputThread(this);
@@ -104,7 +104,7 @@ public abstract class OutputThread extends Thread {
 		this.minAxisValue = minAxisValue;
 	}
 
-	public void setnButtons(final int nButtons) {
+	void setnButtons(final int nButtons) {
 		this.nButtons = nButtons;
 		input.setnButtons(nButtons);
 	}

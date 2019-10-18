@@ -84,15 +84,6 @@ public final class OnScreenKeyboard extends JFrame {
 			return new Dimension(BASE_BUTTON_SIZE, BASE_BUTTON_SIZE);
 		}
 
-		private void updateTheme() {
-			defaultBackground = new JButton().getBackground();
-			defaultForeground = new JButton().getForeground();
-
-			defaultButtonBorder = UIManager.getBorder("Button.border");
-			focusedButtonBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 3),
-					((CompoundBorder) defaultButtonBorder).getInsideBorder());
-		}
-
 		abstract void poll(final Input input);
 
 		abstract void press();
@@ -104,6 +95,15 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		abstract void toggleLock();
+
+		private void updateTheme() {
+			defaultBackground = new JButton().getBackground();
+			defaultForeground = new JButton().getForeground();
+
+			defaultButtonBorder = UIManager.getBorder("Button.border");
+			focusedButtonBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 3),
+					((CompoundBorder) defaultButtonBorder).getInsideBorder());
+		}
 
 		@Override
 		public void updateUI() {
@@ -358,7 +358,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
 
-	static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
+	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 
 	public static final Mode onScreenKeyboardMode;
 

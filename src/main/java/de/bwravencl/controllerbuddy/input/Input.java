@@ -24,20 +24,15 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwJoystickIsGamepad;
-import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,7 +69,6 @@ public final class Input {
 
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-	public static final String XINPUT_LIBRARY_FILENAME = "xinput1_3.dll";
 
 	public static final int MAX_N_BUTTONS = 128;
 	private static final byte[] DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00,
@@ -90,16 +84,6 @@ public final class Input {
 			return 0d;
 		else
 			return d;
-	}
-
-	public static List<Integer> getPresentControllers() {
-		final var controllers = new ArrayList<Integer>();
-
-		for (var i = 0; i <= GLFW_JOYSTICK_LAST; i++)
-			if (glfwJoystickPresent(i) && glfwJoystickIsGamepad(i))
-				controllers.add(i);
-
-		return controllers;
 	}
 
 	private static boolean isValidButton(final int button) {
@@ -543,7 +527,7 @@ public final class Input {
 				dententValue != null ? (int) normalize(dententValue, -1f, 1f, minAxisValue, maxAxisValue) : null);
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
+	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
 			final Integer dententValue) {
 		final var minAxisValue = outputThread.getMinAxisValue();
 		final var maxAxisValue = outputThread.getMaxAxisValue();
@@ -582,13 +566,6 @@ public final class Input {
 			buttons[id] = value;
 		else
 			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
-	}
-
-	public void setButton(final int id, final float value) {
-		if (value < 0.5f)
-			setButton(id, false);
-		else
-			setButton(id, true);
 	}
 
 	public void setCharging(final boolean charging) {

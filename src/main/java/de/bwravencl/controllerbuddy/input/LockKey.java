@@ -26,9 +26,9 @@ public final class LockKey {
 
 	public static final String LOCK_SUFFIX = " Lock";
 	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
-	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
-	public static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
-	public static final String KANA_LOCK = "Kana" + LOCK_SUFFIX;
+	private static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
+	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
+	private static final String KANA_LOCK = "Kana" + LOCK_SUFFIX;
 
 	public static final LockKey[] LOCK_KEYS = { new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK),
 			new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK), new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK),

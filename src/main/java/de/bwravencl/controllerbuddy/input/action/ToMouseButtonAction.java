@@ -17,9 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
+abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 
-	public static final int DEFAULT_MOUSE_BUTTON = 1;
+	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
 	boolean downUp = false;
 	transient boolean wasUp = true;

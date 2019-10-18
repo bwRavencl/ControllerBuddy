@@ -29,7 +29,7 @@ public final class OverlayAxis implements Cloneable {
 		this(new Color(0, 0, 0, 128), false);
 	}
 
-	public OverlayAxis(final Color color, final boolean inverted) {
+	private OverlayAxis(final Color color, final boolean inverted) {
 		this.color = color;
 		this.inverted = inverted;
 	}

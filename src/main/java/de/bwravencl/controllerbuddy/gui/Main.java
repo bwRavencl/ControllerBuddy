@@ -714,8 +714,8 @@ public final class Main implements SingletonApp {
 	private static String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
 	static final int DIALOG_BOUNDS_X = 100;
 	static final int DIALOG_BOUNDS_Y = 100;
-	static final int DIALOG_BOUNDS_WIDTH = 930;
-	static final int DIALOG_BOUNDS_HEIGHT = 640;
+	private static final int DIALOG_BOUNDS_WIDTH = 930;
+	private static final int DIALOG_BOUNDS_HEIGHT = 640;
 	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
 	static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final String OPTION_AUTOSTART = "autostart";
@@ -1848,7 +1848,7 @@ public final class Main implements SingletonApp {
 		return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
-	public void quit() {
+	private void quit() {
 		if (serverSocket != null)
 			try {
 				serverSocket.close();
@@ -1938,7 +1938,7 @@ public final class Main implements SingletonApp {
 			private final String newText;
 			private final String originalText;
 
-			public StatusBarTextTimerTask(final String newText) {
+			private StatusBarTextTimerTask(final String newText) {
 				this.newText = newText;
 				originalText = statusLabel.getText();
 			}

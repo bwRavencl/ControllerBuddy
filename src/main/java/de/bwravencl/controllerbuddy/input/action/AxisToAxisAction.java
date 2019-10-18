@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction {
 
-	public static final float DEFAULT_DEAD_ZONE = 0f;
+	private static final float DEFAULT_DEAD_ZONE = 0f;
 
 	float deadZone = DEFAULT_DEAD_ZONE;
 

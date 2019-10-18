@@ -21,8 +21,8 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements ISuspendableAction {
 
-	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
-	public static final float DEFAULT_MAX_AXIS_VALUE = 1f;
+	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
+	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;

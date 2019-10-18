@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 
-public abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
+abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 
 	protected VirtualAxis virtualAxis = VirtualAxis.X;
 

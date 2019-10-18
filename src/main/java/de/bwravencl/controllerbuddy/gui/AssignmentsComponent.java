@@ -78,7 +78,7 @@ import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
-public final class AssignmentsComponent extends JScrollPane {
+final class AssignmentsComponent extends JScrollPane {
 
 	private static final class CompoundButton extends CustomButton {
 
