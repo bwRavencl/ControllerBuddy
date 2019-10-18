@@ -7,8 +7,8 @@ plugins {
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
-sourceCompatibility = 12
-targetCompatibility = 12
+sourceCompatibility = 13
+targetCompatibility = 13
 
 ext {
     jnaVersion = '5.4.0'

@@ -122,7 +122,7 @@ usage: ControllerBuddy [-autostart <arg>] [-profile <arg>] [-tray]
 If an instance of ControllerBuddy is already running, launching a second instance with the `-profile` parameter can be used to trigger the loading of the specified profile in the first instance. This enables profile switching from any other application that can execute shell commands.
 
 #### Dependencies:
-- [OpenJDK 12](https://jdk.java.net/12/)
+- [OpenJDK 13](https://jdk.java.net/13/)
 - [OpenJDK with jpackage support](https://jdk.java.net/jpackage/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [Gson](https://github.com/google/gson)
