@@ -33,9 +33,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.LONG;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -187,19 +184,61 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 					final var newCounter = Long.parseLong(messageParts[1]);
 					if (newCounter > counter) {
-						axisX = new LONG(Integer.parseInt(messageParts[2]));
-						axisY = new LONG(Integer.parseInt(messageParts[3]));
-						axisZ = new LONG(Integer.parseInt(messageParts[4]));
-						axisRX = new LONG(Integer.parseInt(messageParts[5]));
-						axisRY = new LONG(Integer.parseInt(messageParts[6]));
-						axisRZ = new LONG(Integer.parseInt(messageParts[7]));
-						axisS0 = new LONG(Integer.parseInt(messageParts[8]));
-						axisS1 = new LONG(Integer.parseInt(messageParts[9]));
+						final var inputAxisX = Integer.parseInt(messageParts[2]);
+						if (axisX.intValue() != inputAxisX) {
+							axisX.setValue(inputAxisX);
+							axisXChanged = true;
+						}
 
-						buttons = new BOOL[nButtons];
-						for (var i = 1; i <= nButtons; i++) {
-							final var b = Boolean.parseBoolean(messageParts[9 + i]);
-							buttons[i - 1] = new BOOL(b ? 1L : 0L);
+						final var inputAxisY = Integer.parseInt(messageParts[3]);
+						if (axisY.intValue() != inputAxisY) {
+							axisY.setValue(inputAxisY);
+							axisYChanged = true;
+						}
+
+						final var inputAxisZ = Integer.parseInt(messageParts[4]);
+						if (axisZ.intValue() != inputAxisZ) {
+							axisZ.setValue(inputAxisZ);
+							axisZChanged = true;
+						}
+
+						final var inputAxisRX = Integer.parseInt(messageParts[5]);
+						if (axisRX.intValue() != inputAxisRX) {
+							axisRX.setValue(inputAxisRX);
+							axisRXChanged = true;
+						}
+
+						final var inputAxisRY = Integer.parseInt(messageParts[6]);
+						if (axisRY.intValue() != inputAxisRY) {
+							axisRY.setValue(inputAxisRY);
+							axisRYChanged = true;
+						}
+
+						final var inputAxisRZ = Integer.parseInt(messageParts[7]);
+						if (axisRZ.intValue() != inputAxisRZ) {
+							axisRZ.setValue(inputAxisRZ);
+							axisRZChanged = true;
+						}
+
+						final var inputAxisS0 = Integer.parseInt(messageParts[8]);
+						if (axisS0.intValue() != inputAxisS0) {
+							axisS0.setValue(inputAxisS0);
+							axisS0Changed = true;
+						}
+
+						final var inputAxisS1 = Integer.parseInt(messageParts[9]);
+						if (axisS1.intValue() != inputAxisS1) {
+							axisS1.setValue(inputAxisS1);
+							axisS1Changed = true;
+						}
+
+						for (var i = 0; i <= nButtons; i++) {
+							final var b = Boolean.parseBoolean(messageParts[10 + i]);
+
+							if (buttons[i].booleanValue() != b) {
+								buttons[i].setValue(b ? 1L : 0L);
+								buttonsChanged[i] = true;
+							}
 						}
 
 						cursorDeltaX = Integer.parseInt(messageParts[10 + nButtons]);

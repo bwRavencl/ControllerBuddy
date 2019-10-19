@@ -187,19 +187,28 @@ public abstract class VJoyOutputThread extends OutputThread {
 		oldDownSet.addAll(newDownSet);
 	}
 
-	private boolean restart = false;
-	private boolean forceStop = false;
+	private boolean restart;
+	private boolean forceStop;
 	private UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	private IVjoyInterface vJoy;
 	LONG axisX;
+	boolean axisXChanged;
 	LONG axisY;
+	boolean axisYChanged;
 	LONG axisZ;
+	boolean axisZChanged;
 	LONG axisRX;
+	boolean axisRXChanged;
 	LONG axisRY;
+	boolean axisRYChanged;
 	LONG axisRZ;
+	boolean axisRZChanged;
 	LONG axisS0;
+	boolean axisS0Changed;
 	LONG axisS1;
+	boolean axisS1Changed;
 	BOOL[] buttons;
+	boolean[] buttonsChanged;
 	int cursorDeltaX;
 	int cursorDeltaY;
 	int scrollClicks;
@@ -389,18 +398,35 @@ public abstract class VJoyOutputThread extends OutputThread {
 				return false;
 			}
 
-			setnButtons(nButtons);
-
 			SwingUtilities.invokeLater(() -> {
 				main.setStatusBarText(
 						MessageFormat.format(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue()));
 			});
 
-			input.init();
-
 			if (main.preventPowerSaveMode())
 				Kernel32.INSTANCE.SetThreadExecutionState(
 						WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_DISPLAY_REQUIRED);
+
+			input.init();
+
+			axisX = new LONG();
+			axisXChanged = true;
+			axisY = new LONG();
+			axisYChanged = true;
+			axisZ = new LONG();
+			axisZChanged = true;
+			axisRX = new LONG();
+			axisRXChanged = true;
+			axisRY = new LONG();
+			axisRYChanged = true;
+			axisRZ = new LONG();
+			axisRZChanged = true;
+			axisS0 = new LONG();
+			axisS0Changed = true;
+			axisS1 = new LONG();
+			axisS1Changed = true;
+
+			setnButtons(nButtons);
 
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
@@ -415,6 +441,20 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 	abstract boolean readInput() throws Exception;
 
+	@Override
+	void setnButtons(final int nButtons) {
+		super.setnButtons(nButtons);
+
+		if (buttons == null || buttons.length != nButtons) {
+			buttons = new BOOL[nButtons];
+			buttonsChanged = new boolean[nButtons];
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i] = new BOOL();
+				buttonsChanged[i] = true;
+			}
+		}
+	}
+
 	public void setvJoyDevice(final UINT vJoyDevice) {
 		this.vJoyDevice = vJoyDevice;
 	}
@@ -423,17 +463,51 @@ public abstract class VJoyOutputThread extends OutputThread {
 		if (!Thread.currentThread().isInterrupted()) {
 			var res = true;
 
-			res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
-			res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
-			res &= vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
-			res &= vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
-			res &= vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
-			res &= vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
-			res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
-			res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
+			if (axisXChanged) {
+				res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
+				axisXChanged = false;
+			}
+
+			if (axisYChanged) {
+				res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
+				axisYChanged = false;
+			}
+
+			if (axisZChanged) {
+				res &= vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
+				axisZChanged = false;
+			}
+
+			if (axisRXChanged) {
+				res &= vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
+				axisRXChanged = false;
+			}
+
+			if (axisRYChanged) {
+				res &= vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
+				axisRYChanged = false;
+			}
+
+			if (axisRZChanged) {
+				res &= vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
+				axisRZChanged = false;
+			}
+
+			if (axisS0Changed) {
+				res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
+				axisS0Changed = false;
+			}
+
+			if (axisS1Changed) {
+				res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
+				axisS1Changed = false;
+			}
 
 			for (var i = 0; i < buttons.length; i++)
-				res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
+				if (buttonsChanged[i]) {
+					res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
+					buttonsChanged[i] = false;
+				}
 
 			if (res) {
 				if (cursorDeltaX != 0 || cursorDeltaY != 0) {
