@@ -30,20 +30,35 @@ public interface IButtonToAction extends IAction<Byte> {
 	long MIN_LONG_PRESS_TIME = 1000L;
 	boolean DEFAULT_LONG_PRESS = false;
 
-	Set<IButtonToAction> actionToWasDown = new HashSet<>();
+	Set<IButtonToAction> wasDownActions = new HashSet<>();
+	Map<IAction<?>, Boolean> actionToIsDownUpActionMap = new HashMap<>();
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
 	static boolean isDownUpAction(final IAction<?> action) {
-		if (action instanceof ToKeyAction) {
-			final var toKeyAction = (ToKeyAction<?>) action;
-			return toKeyAction.isDownUp();
-		} else if (action instanceof ToMouseButtonAction) {
-			final var toMouseButtonAction = (ToMouseButtonAction<?>) action;
-			return toMouseButtonAction.isDownUp();
-		} else if (action instanceof ButtonToCycleAction)
-			return true;
+		var res = actionToIsDownUpActionMap.get(action);
 
-		return false;
+		if (res == null) {
+			if (action instanceof ToKeyAction) {
+				final var toKeyAction = (ToKeyAction<?>) action;
+				res = toKeyAction.isDownUp();
+			} else if (action instanceof ToMouseButtonAction) {
+				final var toMouseButtonAction = (ToMouseButtonAction<?>) action;
+				res = toMouseButtonAction.isDownUp();
+			} else if (action instanceof ButtonToCycleAction)
+				res = true;
+			else
+				res = false;
+
+			actionToIsDownUpActionMap.put(action, res);
+		}
+
+		return res;
+	}
+
+	static void reset() {
+		wasDownActions.clear();
+		actionToIsDownUpActionMap.clear();
+		actionToDownSinceMap.clear();
 	}
 
 	default byte handleLongPress(final Input input, final byte value) {
@@ -59,14 +74,14 @@ public interface IButtonToAction extends IAction<Byte> {
 				if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
 					for (final var actions : input.getProfile().getActiveMode().getButtonToActionsMap().values())
 						if (actions.contains(this)) {
-							actionToWasDown.removeAll(actions);
+							wasDownActions.removeAll(actions);
 							break;
 						}
 
 					if (!Profile.defaultMode.equals(input.getProfile().getActiveMode()))
 						for (final var actions : input.getProfile().getModes().get(0).getButtonToActionsMap().values())
 							if (actions.contains(this)) {
-								actionToWasDown.removeAll(actions);
+								wasDownActions.removeAll(actions);
 								break;
 							}
 				}
@@ -76,9 +91,9 @@ public interface IButtonToAction extends IAction<Byte> {
 			return 0;
 		} else if (isDownUpAction(this)) {
 			if (value != 0)
-				actionToWasDown.add(this);
-			else if (actionToWasDown.contains(this)) {
-				actionToWasDown.remove(this);
+				wasDownActions.add(this);
+			else if (wasDownActions.contains(this)) {
+				wasDownActions.remove(this);
 				return 1;
 			}
 

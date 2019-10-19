@@ -468,7 +468,10 @@ public final class Input {
 		repeatModeActionWalk = false;
 
 		profile.setActiveMode(this, 0);
-		ButtonToModeAction.getButtonToModeActionStack().clear();
+
+		ButtonToModeAction.reset();
+		IButtonToAction.reset();
+		ISuspendableAction.reset();
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())

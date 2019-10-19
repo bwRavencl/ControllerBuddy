@@ -28,6 +28,10 @@ public interface ISuspendableAction extends IAction<Float> {
 
 	Map<ISuspendableAction, Integer> suspendedActionToAxisMap = new ConcurrentHashMap<>();
 
+	static void reset() {
+		suspendedActionToAxisMap.clear();
+	}
+
 	default boolean isSuspended() {
 		return suspendedActionToAxisMap.containsKey(this);
 	}

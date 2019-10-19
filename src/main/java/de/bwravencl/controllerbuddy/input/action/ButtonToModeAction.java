@@ -35,6 +35,10 @@ public final class ButtonToModeAction implements IButtonToAction {
 		return buttonToModeActionStack;
 	}
 
+	public static void reset() {
+		buttonToModeActionStack.clear();
+	}
+
 	private boolean toggle = false;
 	private transient boolean up = true;
 	private boolean longPress = DEFAULT_LONG_PRESS;
