@@ -21,9 +21,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.LONG;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
@@ -48,19 +45,64 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 			return false;
 		}
 
-		axisX = new LONG(input.getAxes().get(Input.VirtualAxis.X));
-		axisY = new LONG(input.getAxes().get(Input.VirtualAxis.Y));
-		axisZ = new LONG(input.getAxes().get(Input.VirtualAxis.Z));
-		axisRX = new LONG(input.getAxes().get(Input.VirtualAxis.RX));
-		axisRY = new LONG(input.getAxes().get(Input.VirtualAxis.RY));
-		axisRZ = new LONG(input.getAxes().get(Input.VirtualAxis.RZ));
-		axisS0 = new LONG(input.getAxes().get(Input.VirtualAxis.S0));
-		axisS1 = new LONG(input.getAxes().get(Input.VirtualAxis.S1));
+		final var inputAxes = input.getAxes();
 
-		buttons = new BOOL[nButtons];
+		final var inputAxisX = inputAxes.get(Input.VirtualAxis.X);
+		if (axisX.intValue() != inputAxisX) {
+			axisX.setValue(inputAxisX);
+			axisXChanged = true;
+		}
+
+		final var inputAxisY = inputAxes.get(Input.VirtualAxis.Y);
+		if (axisY.intValue() != inputAxisY) {
+			axisY.setValue(inputAxisY);
+			axisYChanged = true;
+		}
+
+		final var inputAxisZ = inputAxes.get(Input.VirtualAxis.Z);
+		if (axisZ.intValue() != inputAxisZ) {
+			axisZ.setValue(inputAxisZ);
+			axisZChanged = true;
+		}
+
+		final var inputAxisRX = inputAxes.get(Input.VirtualAxis.RX);
+		if (axisRX.intValue() != inputAxisRX) {
+			axisRX.setValue(inputAxisRX);
+			axisRXChanged = true;
+		}
+
+		final var inputAxisRY = inputAxes.get(Input.VirtualAxis.RY);
+		if (axisRY.intValue() != inputAxisRY) {
+			axisRY.setValue(inputAxisRY);
+			axisRYChanged = true;
+		}
+
+		final var inputAxisRZ = inputAxes.get(Input.VirtualAxis.RZ);
+		if (axisRZ.intValue() != inputAxisRZ) {
+			axisRZ.setValue(inputAxisRZ);
+			axisRZChanged = true;
+		}
+
+		final var inputAxisS0 = inputAxes.get(Input.VirtualAxis.S0);
+		if (axisS0.intValue() != inputAxisS0) {
+			axisS0.setValue(inputAxisS0);
+			axisS0Changed = true;
+		}
+
+		final var inputAxisS1 = inputAxes.get(Input.VirtualAxis.S1);
+		if (axisS1.intValue() != inputAxisS1) {
+			axisS1.setValue(inputAxisS1);
+			axisS1Changed = true;
+		}
+
+		final var inputButtons = input.getButtons();
 		for (var i = 0; i < nButtons; i++) {
-			buttons[i] = new BOOL(input.getButtons()[i] ? 1L : 0L);
-			input.getButtons()[i] = false;
+			if (buttons[i].booleanValue() != inputButtons[i]) {
+				buttons[i].setValue(inputButtons[i] ? 1L : 0L);
+				buttonsChanged = true;
+			}
+
+			inputButtons[i] = false;
 		}
 
 		cursorDeltaX = input.getCursorDeltaX();
