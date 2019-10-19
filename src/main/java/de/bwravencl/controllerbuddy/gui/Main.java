@@ -710,14 +710,13 @@ public final class Main implements SingletonApp {
 	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
 	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
-	private static String PROFILE_FILE_EXTENSION = "json";
-	private static String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
-	static final int DIALOG_BOUNDS_X = 100;
-	static final int DIALOG_BOUNDS_Y = 100;
+	private static final String PROFILE_FILE_EXTENSION = "json";
+	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
+	private static final int DIALOG_BOUNDS_X = 100;
+	private static final int DIALOG_BOUNDS_Y = 100;
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
 	private static final int DIALOG_BOUNDS_HEIGHT = 640;
-	static final int DIALOG_BOUNDS_X_Y_OFFSET = 25;
-	static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
+	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
 	private static final String OPTION_TRAY = "tray";
@@ -1963,7 +1962,7 @@ public final class Main implements SingletonApp {
 			});
 	}
 
-	public void setSelectedJid(final int jid) {
+	private void setSelectedJid(final int jid) {
 		if (selectedJid == jid)
 			return;
 

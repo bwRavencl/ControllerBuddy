@@ -19,6 +19,9 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 
 public final class AxisToScrollAction extends ToScrollAction<Float>
 		implements ISuspendableAction, IModeChangeListenerAction {
@@ -26,8 +29,12 @@ public final class AxisToScrollAction extends ToScrollAction<Float>
 	private static final float DEFAULT_DEAD_ZONE = 0.15f;
 	private static final float DEFAULT_EXPONENT = 1f;
 
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class)
 	private float deadZone = DEFAULT_DEAD_ZONE;
+
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class)
 	private float exponent = DEFAULT_EXPONENT;
+
 	private transient long lastCallTime;
 
 	@Override

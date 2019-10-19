@@ -18,12 +18,18 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 public final class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implements IButtonToAction {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
 
+	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class)
 	private float resetValue = DEFAULT_RESET_VALUE;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
@@ -54,7 +60,7 @@ public final class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implemen
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_RELATIVE_AXIS_RESET_ACTION_STRING");
+		return rb.getString("BUTTON_TO_RELATIVE_AXIS_RESET_ACTION");
 	}
 
 }

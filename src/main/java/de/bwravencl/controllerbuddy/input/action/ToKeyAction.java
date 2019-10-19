@@ -18,14 +18,19 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
 abstract class ToKeyAction<V extends Number> implements IAction<V> {
 
+	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class)
 	boolean downUp = false;
 
-	transient boolean wasUp = true;
-
+	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class)
 	KeyStroke keystroke = new KeyStroke();
+
+	transient boolean wasUp = true;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -57,7 +62,7 @@ abstract class ToKeyAction<V extends Number> implements IAction<V> {
 
 	@Override
 	public String toString() {
-		return rb.getString("TO_KEY_ACTION_STRING");
+		return rb.getString("TO_KEY_ACTION");
 	}
 
 }

@@ -117,11 +117,11 @@ public final class Mode implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var mode = (Mode) super.clone();
-		mode.setUuid(uuid);
+		mode.uuid = uuid;
 		mode.setDescription(description);
 
-		mode.setAxisToActionsMap(cloneActionMap(axisToActionsMap));
-		mode.setButtonToActionsMap(cloneActionMap(buttonToActionsMap));
+		mode.axisToActionsMap = cloneActionMap(axisToActionsMap);
+		mode.buttonToActionsMap = cloneActionMap(buttonToActionsMap);
 
 		return mode;
 	}
@@ -176,20 +176,8 @@ public final class Mode implements Cloneable {
 		return Objects.hash(uuid);
 	}
 
-	public void setAxisToActionsMap(final Map<Integer, List<IAction<Float>>> axisToActionsMap) {
-		this.axisToActionsMap = axisToActionsMap;
-	}
-
-	public void setButtonToActionsMap(final Map<Integer, List<IAction<Byte>>> buttonToActionsMap) {
-		this.buttonToActionsMap = buttonToActionsMap;
-	}
-
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-
-	public void setUuid(final UUID uuid) {
-		this.uuid = uuid;
 	}
 
 	@Override

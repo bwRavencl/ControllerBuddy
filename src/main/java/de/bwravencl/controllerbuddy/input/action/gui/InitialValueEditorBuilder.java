@@ -15,24 +15,34 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.controllerbuddy.input.action;
+package de.bwravencl.controllerbuddy.input.action.gui;
 
-import de.bwravencl.controllerbuddy.input.Input;
+import java.lang.reflect.InvocationTargetException;
 
-public final class NullAction implements IAction<Number> {
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+public final class InitialValueEditorBuilder extends NumberEditorBuilder<Float> {
+
+	public InitialValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
+			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
 	@Override
-	public void doAction(final Input input, final Number value) {
+	Comparable<Float> getMaximum() {
+		return 1f;
 	}
 
 	@Override
-	public String toString() {
-		return rb.getString("NULL_ACTION");
+	Comparable<Float> getMinimum() {
+		return -1f;
+	}
+
+	@Override
+	Number getStepSize() {
+		return 0.05f;
 	}
 
 }

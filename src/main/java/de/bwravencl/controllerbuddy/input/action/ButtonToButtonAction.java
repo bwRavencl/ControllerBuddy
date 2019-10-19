@@ -18,9 +18,12 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 public final class ButtonToButtonAction extends ToButtonAction<Byte> implements IButtonToAction {
 
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override

@@ -54,7 +54,7 @@ public abstract class OutputThread extends Thread {
 		input.setOutputThread(this);
 	}
 
-	void controllerDisconnected() throws InterruptedException {
+	final void controllerDisconnected() throws InterruptedException {
 		new Thread() {
 
 			@Override
@@ -72,36 +72,28 @@ public abstract class OutputThread extends Thread {
 
 	abstract Logger getLogger();
 
-	public int getMaxAxisValue() {
+	public final int getMaxAxisValue() {
 		return maxAxisValue;
 	}
 
-	public int getMinAxisValue() {
+	public final int getMinAxisValue() {
 		return minAxisValue;
 	}
 
-	public int getnButtons() {
+	public final int getnButtons() {
 		return nButtons;
 	}
 
-	public long getPollInterval() {
+	public final long getPollInterval() {
 		return pollInterval;
 	}
 
-	void logStart() {
+	final void logStart() {
 		getLogger().log(Level.INFO, "Starting output");
 	}
 
-	void logStop() {
+	final void logStop() {
 		getLogger().log(Level.INFO, "Stopped output");
-	}
-
-	public void setMaxAxisValue(final int maxAxisValue) {
-		this.maxAxisValue = maxAxisValue;
-	}
-
-	public void setMinAxisValue(final int minAxisValue) {
-		this.minAxisValue = minAxisValue;
 	}
 
 	void setnButtons(final int nButtons) {
@@ -109,7 +101,7 @@ public abstract class OutputThread extends Thread {
 		input.setnButtons(nButtons);
 	}
 
-	public void setPollInterval(final long pollInterval) {
+	public final void setPollInterval(final long pollInterval) {
 		this.pollInterval = pollInterval;
 	}
 

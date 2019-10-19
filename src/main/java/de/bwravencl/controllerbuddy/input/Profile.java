@@ -92,7 +92,7 @@ public final class Profile implements Cloneable {
 		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
 		for (final var e : virtualAxisToOverlayAxisMap.entrySet())
 			clonedVirtualAxisToOverlayAxisMap.put(e.getKey(), (OverlayAxis) e.getValue().clone());
-		profile.setVirtualAxisToOverlayAxisMap(clonedVirtualAxisToOverlayAxisMap);
+		profile.virtualAxisToOverlayAxisMap = clonedVirtualAxisToOverlayAxisMap;
 
 		return profile;
 	}
@@ -178,10 +178,6 @@ public final class Profile implements Cloneable {
 
 	public void setVersion(final String version) {
 		this.version = version;
-	}
-
-	public void setVirtualAxisToOverlayAxisMap(final Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap) {
-		this.virtualAxisToOverlayAxisMap = virtualAxisToOverlayAxisMap;
 	}
 
 }

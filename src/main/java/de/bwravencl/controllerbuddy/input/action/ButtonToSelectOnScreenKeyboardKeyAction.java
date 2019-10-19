@@ -18,6 +18,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
 
@@ -27,11 +30,13 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	private static final long MIN_ELAPSE_TIME = 150L;
 
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	private transient long lastPressTime;
-
+	@ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class)
 	private Direction direction = Direction.UP;
+
+	private transient long lastPressTime;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -87,7 +92,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_STRING");
+		return rb.getString("BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION");
 	}
 
 }

@@ -17,15 +17,22 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
+
 abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
+	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class)
 	boolean downUp = false;
+
+	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class)
+	int mouseButton = DEFAULT_MOUSE_BUTTON;
+
 	transient boolean wasUp = true;
 	transient boolean initiator = false;
-
-	int mouseButton = DEFAULT_MOUSE_BUTTON;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -50,7 +57,7 @@ abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 
 	@Override
 	public String toString() {
-		return rb.getString("TO_MOUSE_BUTTON_ACTION_STRING");
+		return rb.getString("TO_MOUSE_BUTTON_ACTION");
 	}
 
 }

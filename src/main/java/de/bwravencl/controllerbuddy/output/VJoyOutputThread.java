@@ -230,7 +230,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		super(main, input);
 	}
 
-	void deInit() {
+	final void deInit() {
 		if (main.preventPowerSaveMode())
 			Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
 
@@ -258,7 +258,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		});
 	}
 
-	boolean init() {
+	final boolean init() {
 		final var vJoyPath = main.getPreferences().get(PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath());
 		final var libraryPath = new File(vJoyPath, getArchFolderName()).getAbsolutePath();
 
@@ -455,11 +455,11 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	public void setvJoyDevice(final UINT vJoyDevice) {
+	public final void setvJoyDevice(final UINT vJoyDevice) {
 		this.vJoyDevice = vJoyDevice;
 	}
 
-	void writeOutput() throws InterruptedException {
+	final void writeOutput() throws InterruptedException {
 		if (!Thread.currentThread().isInterrupted()) {
 			var res = true;
 

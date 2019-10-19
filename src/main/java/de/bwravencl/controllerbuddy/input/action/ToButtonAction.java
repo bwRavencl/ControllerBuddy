@@ -17,8 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
+
 public abstract class ToButtonAction<V extends Number> implements IAction<V> {
 
+	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class)
 	int buttonId = 0;
 
 	@Override
@@ -36,7 +40,7 @@ public abstract class ToButtonAction<V extends Number> implements IAction<V> {
 
 	@Override
 	public String toString() {
-		return rb.getString("TO_BUTTON_ACTION_STRING");
+		return rb.getString("TO_BUTTON_ACTION");
 	}
 
 }

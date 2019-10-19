@@ -52,7 +52,7 @@ class GuiUtils {
 			this.frame = frame;
 		}
 
-		boolean isDragging() {
+		final boolean isDragging() {
 			return mouseDownLocation != null;
 		}
 

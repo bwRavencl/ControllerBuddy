@@ -18,14 +18,19 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
 public final class AxisToButtonAction extends ToButtonAction<Float> implements ISuspendableAction {
 
-	public static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
-	public static final float DEFAULT_MAX_AXIS_VALUE = 1f;
+	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
+	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
-	private float minAxisValue = 0.5f;
-	private float maxAxisValue = 1f;
+	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class)
+	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
+
+	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class)
+	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
 	public void doAction(final Input input, final Float value) {

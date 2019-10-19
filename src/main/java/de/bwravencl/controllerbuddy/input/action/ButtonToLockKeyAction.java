@@ -19,12 +19,20 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 
 public final class ButtonToLockKeyAction implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
+
+	@ActionProperty(label = "VIRTUAL_KEY_CODE", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class)
 	private int virtualKeyCode = LockKey.LOCK_KEYS[0].virtualKeyCode;
+
+	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class)
 	private boolean on = true;
+
 	private transient boolean wasUp = true;
 
 	@Override
@@ -76,7 +84,7 @@ public final class ButtonToLockKeyAction implements IButtonToAction {
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_LOCK_KEY_ACTION_STRING");
+		return rb.getString("BUTTON_TO_LOCK_KEY_ACTION");
 	}
 
 }

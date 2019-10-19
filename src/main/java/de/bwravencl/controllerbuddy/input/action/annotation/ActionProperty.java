@@ -15,29 +15,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.controllerbuddy.input.action;
+package de.bwravencl.controllerbuddy.input.action.annotation;
 
-import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	private static final int DEFAULT_CLICKS = 1;
+import de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder;
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class)
-	int clicks = DEFAULT_CLICKS;
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface ActionProperty {
 
-	public int getClicks() {
-		return clicks;
-	}
+	Class<? extends EditorBuilder> editorBuilder();
 
-	public void setClicks(final int clicks) {
-		this.clicks = clicks;
-	}
+	String label();
 
-	@Override
-	public String toString() {
-		return rb.getString("TO_SCROLL_ACTION");
-	}
+	String overrideFieldName() default "";
+
+	Class<?> overrideFieldType() default Void.class;
 
 }

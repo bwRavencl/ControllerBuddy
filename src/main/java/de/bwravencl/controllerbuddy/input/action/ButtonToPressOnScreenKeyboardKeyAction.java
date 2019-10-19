@@ -18,11 +18,16 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
 
+	@ActionProperty(label = "LOCK_KEY", editorBuilder = BooleanEditorBuilder.class)
 	private boolean lockKey = false;
 
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	private transient boolean wasUp = true;
@@ -79,7 +84,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_STRING");
+		return rb.getString("BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION");
 	}
 
 }

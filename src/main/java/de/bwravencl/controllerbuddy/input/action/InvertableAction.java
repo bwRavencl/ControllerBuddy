@@ -17,8 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+
 abstract class InvertableAction<V extends Number> implements IAction<V> {
 
+	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class)
 	boolean invert = false;
 
 	@Override

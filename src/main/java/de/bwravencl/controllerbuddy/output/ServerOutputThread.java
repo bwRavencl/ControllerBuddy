@@ -81,14 +81,6 @@ public final class ServerOutputThread extends OutputThread {
 		return log;
 	}
 
-	public int getPort() {
-		return port;
-	}
-
-	public int getTimeout() {
-		return timeout;
-	}
-
 	@Override
 	public void run() {
 		logStart();

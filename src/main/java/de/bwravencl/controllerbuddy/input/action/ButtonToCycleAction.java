@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 public final class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
@@ -28,8 +31,10 @@ public final class ButtonToCycleAction implements IButtonToAction, IResetableAct
 
 	private transient int index = 0;
 
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
+	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class)
 	private List<IAction<Byte>> actions = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
@@ -90,7 +95,7 @@ public final class ButtonToCycleAction implements IButtonToAction, IResetableAct
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_CYCLE_ACTION_STRING");
+		return rb.getString("BUTTON_TO_CYCLE_ACTION");
 	}
 
 }

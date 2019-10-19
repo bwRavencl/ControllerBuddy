@@ -18,22 +18,25 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 
 abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 
+	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class)
 	protected VirtualAxis virtualAxis = VirtualAxis.X;
 
 	public VirtualAxis getVirtualAxis() {
 		return virtualAxis;
 	}
 
-	public void setVirtualAxis(final VirtualAxis virtualAxis) {
+	public final void setVirtualAxis(final VirtualAxis virtualAxis) {
 		this.virtualAxis = virtualAxis;
 	}
 
 	@Override
 	public String toString() {
-		return rb.getString("TO_AXIS_ACTION_STRING");
+		return rb.getString("TO_AXIS_ACTION");
 	}
 
 }

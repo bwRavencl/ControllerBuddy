@@ -19,6 +19,12 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
 public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
@@ -28,11 +34,21 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 	private static final float DEFAULT_INITIAL_VALUE = 0f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class)
 	private float exponent = DEFAULT_EXPONENT;
+
+	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
+
+	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class)
 	private float initialValue = DEFAULT_INITIAL_VALUE;
+
+	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
+
+	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class)
 	private Float detentValue = null;
+
 	private transient long lastCallTime = 0L;
 
 	@Override
@@ -115,7 +131,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	@Override
 	public String toString() {
-		return rb.getString("AXIS_TO_RELATIVE_AXIS_ACTION_STRING");
+		return rb.getString("AXIS_TO_RELATIVE_AXIS_ACTION");
 	}
 
 }

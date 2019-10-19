@@ -26,6 +26,10 @@ import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 
 public final class ButtonToModeAction implements IButtonToAction {
 
@@ -39,10 +43,16 @@ public final class ButtonToModeAction implements IButtonToAction {
 		buttonToModeActionStack.clear();
 	}
 
+	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class)
 	private boolean toggle = false;
-	private transient boolean up = true;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
 	private boolean longPress = DEFAULT_LONG_PRESS;
+
+	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class)
 	private UUID modeUuid;
+
+	private transient boolean up = true;
 
 	public ButtonToModeAction(final Input input) {
 		final var modes = input.getProfile().getModes();
@@ -189,7 +199,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 
 	@Override
 	public String toString() {
-		return rb.getString("BUTTON_TO_MODE_ACTION_STRING");
+		return rb.getString("BUTTON_TO_MODE_ACTION");
 	}
 
 }

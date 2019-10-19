@@ -18,11 +18,14 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 
 public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;
 
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	@Override

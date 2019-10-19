@@ -62,21 +62,9 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 		super(main, input);
 	}
 
-	public String getHost() {
-		return host;
-	}
-
 	@Override
 	Logger getLogger() {
 		return log;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public int getTimeout() {
-		return timeout;
 	}
 
 	@Override

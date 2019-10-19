@@ -15,29 +15,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package de.bwravencl.controllerbuddy.input.action;
+package de.bwravencl.controllerbuddy.input.action.gui;
 
-import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
+import java.lang.reflect.InvocationTargetException;
 
-abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 
-	private static final int DEFAULT_CLICKS = 1;
+public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class)
-	int clicks = DEFAULT_CLICKS;
-
-	public int getClicks() {
-		return clicks;
-	}
-
-	public void setClicks(final int clicks) {
-		this.clicks = clicks;
+	public LockKeyEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
+			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
 	@Override
-	public String toString() {
-		return rb.getString("TO_SCROLL_ACTION");
+	LockKey[] getValues() {
+		return LockKey.LOCK_KEYS;
 	}
 
 }
