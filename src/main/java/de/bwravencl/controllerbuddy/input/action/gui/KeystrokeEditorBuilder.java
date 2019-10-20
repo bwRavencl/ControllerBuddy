@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -110,7 +112,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var modifiersPanel = new JPanel();
 		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
-		final var modifiersLabel = new JLabel(rb.getString("MODIFIERS_LABEL"));
+		final var modifiersLabel = new JLabel(strings.getString("MODIFIERS_LABEL"));
 		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
@@ -133,7 +135,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var keysPanel = new JPanel();
 		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
-		final var keysLabel = new JLabel(rb.getString("KEYS_LABEL"));
+		final var keysLabel = new JLabel(strings.getString("KEYS_LABEL"));
 		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));

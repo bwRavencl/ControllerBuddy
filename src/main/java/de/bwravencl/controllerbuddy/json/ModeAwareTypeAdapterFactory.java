@@ -17,11 +17,9 @@
 
 package de.bwravencl.controllerbuddy.json;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -33,12 +31,8 @@ import com.google.gson.stream.JsonWriter;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
-
-	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
@@ -53,9 +47,9 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 					final var mode = (Mode) obj;
 
 					if (Profile.defaultMode.equals(mode))
-						mode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
+						mode.setDescription(strings.getString("DEFAULT_MODE_DESCRIPTION"));
 					else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode))
-						mode.setDescription(rb.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+						mode.setDescription(strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 				}
 
 				return obj;

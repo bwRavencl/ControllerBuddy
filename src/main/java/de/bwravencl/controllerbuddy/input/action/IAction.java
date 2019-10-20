@@ -17,19 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public interface IAction<V extends Number> extends Cloneable {
-
-	ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	static String getLabel(final Class<?> actionClass) {
 		final var annotation = actionClass.getAnnotation(Action.class);
@@ -37,7 +30,7 @@ public interface IAction<V extends Number> extends Cloneable {
 			throw new RuntimeException(
 					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
 
-		return rb.getString(annotation.label());
+		return strings.getString(annotation.label());
 	}
 
 	Object clone() throws CloneNotSupportedException;

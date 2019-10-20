@@ -17,10 +17,8 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +27,6 @@ import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public abstract class OutputThread extends Thread {
 
@@ -44,9 +41,6 @@ public abstract class OutputThread extends Thread {
 	int maxAxisValue;
 
 	int nButtons;
-
-	final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	OutputThread(final Main main, final Input input) {
 		this.main = main;
@@ -65,8 +59,8 @@ public abstract class OutputThread extends Thread {
 
 		log.log(Level.WARNING, "Could not read from controller");
 		SwingUtilities.invokeLater(() -> {
-			JOptionPane.showMessageDialog(main.getFrame(), rb.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		});
 	}
 

@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -60,8 +60,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -76,7 +74,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 final class AssignmentsComponent extends JScrollPane {
 
@@ -124,26 +121,26 @@ final class AssignmentsComponent extends JScrollPane {
 
 			if (component.type == ComponentType.BUTTON) {
 				if (component.index == GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
-					setAction(new EditComponentAction(main, rb.getString("LEFT_THUMB"), component));
-					text = rb.getString("LEFT_STICK");
+					setAction(new EditComponentAction(main, strings.getString("LEFT_THUMB"), component));
+					text = strings.getString("LEFT_STICK");
 				} else if (component.index == GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
-					setAction(new EditComponentAction(main, rb.getString("RIGHT_THUMB"), component));
-					text = rb.getString("RIGHT_STICK");
+					setAction(new EditComponentAction(main, strings.getString("RIGHT_THUMB"), component));
+					text = strings.getString("RIGHT_STICK");
 				} else
 					throw new IllegalArgumentException();
 			} else
 				switch (component.index) {
 				case GLFW_GAMEPAD_AXIS_LEFT_X:
-					setAction(new EditComponentAction(main, rb.getString("LEFT_STICK_X_AXIS"), component));
+					setAction(new EditComponentAction(main, strings.getString("LEFT_STICK_X_AXIS"), component));
 					break;
 				case GLFW_GAMEPAD_AXIS_LEFT_Y:
-					setAction(new EditComponentAction(main, rb.getString("LEFT_STICK_Y_AXIS"), component));
+					setAction(new EditComponentAction(main, strings.getString("LEFT_STICK_Y_AXIS"), component));
 					break;
 				case GLFW_GAMEPAD_AXIS_RIGHT_X:
-					setAction(new EditComponentAction(main, rb.getString("RIGHT_STICK_X_AXIS"), component));
+					setAction(new EditComponentAction(main, strings.getString("RIGHT_STICK_X_AXIS"), component));
 					break;
 				case GLFW_GAMEPAD_AXIS_RIGHT_Y:
-					setAction(new EditComponentAction(main, rb.getString("RIGHT_STICK_Y_AXIS"), component));
+					setAction(new EditComponentAction(main, strings.getString("RIGHT_STICK_Y_AXIS"), component));
 					break;
 				default:
 					throw new IllegalArgumentException();
@@ -420,7 +417,8 @@ final class AssignmentsComponent extends JScrollPane {
 			this.component = component;
 
 			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(rb.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
+			putValue(SHORT_DESCRIPTION,
+					MessageFormat.format(strings.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
 		@Override
@@ -498,12 +496,9 @@ final class AssignmentsComponent extends JScrollPane {
 
 	}
 
-	private static final int BUTTON_HEIGHT = 50;
-
 	private static final long serialVersionUID = -4096911611882875787L;
 
-	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
+	private static final int BUTTON_HEIGHT = 50;
 
 	private static void checkDimensionIsSquare(final Dimension dimension) {
 		if (dimension.width != dimension.height)
@@ -639,27 +634,27 @@ final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("LEFT_TRIGGER"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("LEFT_TRIGGER"),
 				new Component(ComponentType.AXIS, GLFW_GAMEPAD_AXIS_LEFT_TRIGGER)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("RIGHT_TRIGGER"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("RIGHT_TRIGGER"),
 				new Component(ComponentType.AXIS, GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("LEFT_BUMPER"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("LEFT_BUMPER"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_LEFT_BUMPER)), constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("GUIDE_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("GUIDE_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("RIGHT_BUMPER"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("RIGHT_BUMPER"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER)), constraints);
 
 		constraints.gridx = 0;
@@ -668,29 +663,28 @@ final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("BACK_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("BACK_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_BACK)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(main, rb.getString("START_BUTTON"),
+		assignmentsPanel.add(createComponentButton(main, strings.getString("START_BUTTON"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 2;
-		assignmentsPanel.add(
-				new FourWay(main, rb.getString("Y_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_Y),
-						rb.getString("X_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_X),
-						rb.getString("B_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_B),
-						rb.getString("A_BUTTON"), new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_A)),
-				constraints);
+		assignmentsPanel.add(new FourWay(main, strings.getString("Y_BUTTON"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_Y), strings.getString("X_BUTTON"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_X), strings.getString("B_BUTTON"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_B), strings.getString("A_BUTTON"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_A)), constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 3;
-		assignmentsPanel.add(new FourWay(main, rb.getString("DPAD_UP"),
-				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_UP), rb.getString("DPAD_LEFT"),
-				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_LEFT), rb.getString("DPAD_RIGHT"),
-				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT), rb.getString("DPAD_DOWN"),
+		assignmentsPanel.add(new FourWay(main, strings.getString("DPAD_UP"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_UP), strings.getString("DPAD_LEFT"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_LEFT), strings.getString("DPAD_RIGHT"),
+				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_RIGHT), strings.getString("DPAD_DOWN"),
 				new Component(ComponentType.BUTTON, GLFW_GAMEPAD_BUTTON_DPAD_DOWN)), constraints);
 
 		constraints.gridx = 3;

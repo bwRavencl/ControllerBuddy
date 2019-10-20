@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -37,9 +39,9 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 		private static final long serialVersionUID = -6538021954760621595L;
 
 		private EditActionsAction() {
-			putValue(NAME, rb.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(NAME, strings.getString("EDIT_ACTIONS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(rb.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"), action.toString()));
+					MessageFormat.format(strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"), action.toString()));
 		}
 
 		@Override

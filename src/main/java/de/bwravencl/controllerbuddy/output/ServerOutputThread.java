@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.BindException;
@@ -70,7 +72,7 @@ public final class ServerOutputThread extends OutputThread {
 
 		SwingUtilities.invokeLater(() -> {
 			if (ServerOutputThread.this.isAlive()) {
-				main.setStatusBarText(rb.getString("STATUS_SOCKET_CLOSED"));
+				main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
 				main.stopAll();
 			}
 		});
@@ -96,7 +98,7 @@ public final class ServerOutputThread extends OutputThread {
 			final var receiveBuf = new byte[1024];
 
 			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_LISTENING"), port));
+				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_LISTENING"), port));
 			});
 
 			while (!Thread.currentThread().isInterrupted())
@@ -132,7 +134,7 @@ public final class ServerOutputThread extends OutputThread {
 
 							serverState = ServerState.Connected;
 							SwingUtilities.invokeLater(() -> {
-								main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_CONNECTED_TO"),
+								main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTED_TO"),
 										clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
 							});
 						}
@@ -232,7 +234,7 @@ public final class ServerOutputThread extends OutputThread {
 							} catch (final SocketTimeoutException e) {
 								serverState = ServerState.Listening;
 								main.scheduleStatusBarText(
-										MessageFormat.format(rb.getString("STATUS_LISTENING"), port));
+										MessageFormat.format(strings.getString("STATUS_LISTENING"), port));
 							}
 						} else
 							counter++;
@@ -244,16 +246,17 @@ public final class ServerOutputThread extends OutputThread {
 			log.log(Level.WARNING, "Could not bind socket on port " + port);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
-						MessageFormat.format(rb.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						MessageFormat.format(strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
 			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(main.getFrame(),
+						strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final InterruptedException e) {
 		} finally {

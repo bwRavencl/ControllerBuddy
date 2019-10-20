@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -36,9 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,7 +64,6 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import io.github.classgraph.ClassGraph;
 
 @SuppressWarnings("serial")
@@ -77,8 +74,8 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = -7713175853948284887L;
 
 		private AddActionAction() {
-			putValue(NAME, rb.getString("ADD_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("ADD_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("ADD_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -154,7 +151,7 @@ public final class EditActionsDialog extends JDialog {
 
 		private CancelAction() {
 			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText"));
-			putValue(SHORT_DESCRIPTION, rb.getString("CANCEL_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -170,7 +167,7 @@ public final class EditActionsDialog extends JDialog {
 
 		private OKAction() {
 			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText"));
-			putValue(SHORT_DESCRIPTION, rb.getString("OK_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("OK_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -209,8 +206,8 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = -5681740772832902238L;
 
 		private RemoveActionAction() {
-			putValue(NAME, rb.getString("REMOVE_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("REMOVE_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -248,9 +245,6 @@ public final class EditActionsDialog extends JDialog {
 	private static final List<Class<?>> buttonActionClasses = new ArrayList<>();
 	private static final List<Class<?>> cycleActionClasses = new ArrayList<>();
 	private static final List<Class<?>> onScreenKeyboardActionClasses = new ArrayList<>();
-
-	private final static ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	static {
 		final var scanResult = new ClassGraph().whitelistPackages("de.bwravencl.controllerbuddy.input.action")
@@ -322,7 +316,7 @@ public final class EditActionsDialog extends JDialog {
 				cycleActions.add((IAction<Byte>) action.clone());
 
 			preInit(parentComponent);
-			setTitle(MessageFormat.format(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
+			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
 					cycleAction.toString()));
 
 			init();
@@ -341,12 +335,12 @@ public final class EditActionsDialog extends JDialog {
 			unsavedProfile = (Profile) input.getProfile().clone();
 
 			preInit(main.getFrame());
-			setTitle(MessageFormat.format(rb.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
+			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 			final JPanel modePanel = new JPanel(new FlowLayout());
 			getContentPane().add(modePanel, BorderLayout.NORTH);
 
-			modePanel.add(new JLabel(rb.getString("MODE_LABEL")));
+			modePanel.add(new JLabel(strings.getString("MODE_LABEL")));
 
 			final List<Mode> modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
@@ -433,8 +427,8 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
-		actionsPanel.add(new JLabel(rb.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1, 0d, 0d,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1,
+				0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final var addButton = new JButton(new AddActionAction());
 		addButton.setPreferredSize(BUTTON_DIMENSION);
@@ -460,10 +454,10 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, 0.25, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		actionsPanel.add(new JLabel(rb.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d, 0d,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d,
+				0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var propertiesLabel = new JLabel(rb.getString("PROPERTIES_LABEL"));
+		final var propertiesLabel = new JLabel(strings.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
@@ -498,7 +492,7 @@ public final class EditActionsDialog extends JDialog {
 									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 									new Insets(5, 5, 5, 5), 0, 10));
 
-					final var propertyNameLabel = new JLabel(rb.getString(annotation.label()));
+					final var propertyNameLabel = new JLabel(strings.getString(annotation.label()));
 					propertyNameLabel.setPreferredSize(new Dimension(110, 15));
 					propertyPanel.add(propertyNameLabel);
 

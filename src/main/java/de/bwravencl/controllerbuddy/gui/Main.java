@@ -162,7 +162,6 @@ import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
@@ -173,8 +172,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -4881923833724315489L;
 
 		private AddModeAction() {
-			putValue(NAME, rb.getString("ADD_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("ADD_MODE_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("ADD_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("ADD_MODE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -194,7 +193,7 @@ public final class Main implements SingletonApp {
 
 		private ChangeVJoyDirectoryAction() {
 			putValue(NAME, "...");
-			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -213,9 +212,9 @@ public final class Main implements SingletonApp {
 					vJoyDirectoryLabel1.setText(vjoyPath);
 				} else
 					JOptionPane.showMessageDialog(frame,
-							MessageFormat.format(rb.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
 									VJoyOutputThread.getDefaultInstallationPath()),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -230,8 +229,8 @@ public final class Main implements SingletonApp {
 		private DisplayIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, rb.getString("DISPLAY_INDICATOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("DISPLAY_INDICATOR_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("DISPLAY_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("DISPLAY_INDICATOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -256,8 +255,8 @@ public final class Main implements SingletonApp {
 		private InvertIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, rb.getString("INVERT_INDICATOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("INVERT_INDICATOR_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("INVERT_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("INVERT_INDICATOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -276,8 +275,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 5703987691203427504L;
 
 		private NewAction() {
-			putValue(NAME, rb.getString("NEW_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("NEW_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("NEW_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("NEW_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -292,8 +291,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -8932510785275935297L;
 
 		private OpenAction() {
-			putValue(NAME, rb.getString("OPEN_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("OPEN_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("OPEN_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("OPEN_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -314,7 +313,7 @@ public final class Main implements SingletonApp {
 
 		private ProfileFileChooser() {
 			setFileFilter(
-					new FileNameExtensionFilter(rb.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
+					new FileNameExtensionFilter(strings.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
 			setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 		}
 
@@ -323,8 +322,8 @@ public final class Main implements SingletonApp {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final int result = JOptionPane.showConfirmDialog(this,
-						MessageFormat.format(file.getName(), rb.getString("FILE_EXISTS_DIALOG_TEXT")),
-						rb.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.NO_OPTION:
 					return;
@@ -346,8 +345,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 8952460723177800923L;
 
 		private QuitAction() {
-			putValue(NAME, rb.getString("QUIT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("QUIT_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("QUIT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("QUIT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -366,9 +365,9 @@ public final class Main implements SingletonApp {
 		private RemoveModeAction(final Mode mode) {
 			this.mode = mode;
 
-			putValue(NAME, rb.getString("REMOVE_MODE_ACTION_NAME"));
+			putValue(NAME, strings.getString("REMOVE_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(rb.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
+					MessageFormat.format(strings.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
 		}
 
 		@Override
@@ -385,8 +384,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		private SaveAction() {
-			putValue(NAME, rb.getString("SAVE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SAVE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SAVE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -404,8 +403,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		private SaveAsAction() {
-			putValue(NAME, rb.getString("SAVE_AS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SAVE_AS_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SAVE_AS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SAVE_AS_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -427,7 +426,7 @@ public final class Main implements SingletonApp {
 			final var name = glfwGetGamepadName(jid);
 			putValue(NAME, name);
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(rb.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), name));
+					MessageFormat.format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), name));
 		}
 
 		@Override
@@ -446,8 +445,8 @@ public final class Main implements SingletonApp {
 		private SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -547,16 +546,16 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -2578971543384483382L;
 
 		private ShowAboutDialogAction() {
-			putValue(NAME, rb.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(rb.getString("ABOUT_DIALOG_TEXT"), Version.VERSION), (String) getValue(NAME),
-					JOptionPane.INFORMATION_MESSAGE, icon);
+					MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
+					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 
 	}
@@ -566,8 +565,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 8578159622754054457L;
 
 		private ShowAction() {
-			putValue(NAME, rb.getString("SHOW_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -585,8 +584,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 2471952794110895043L;
 
 		private ShowLicensesAction() {
-			putValue(NAME, rb.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -612,8 +611,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 3975574941559749481L;
 
 		private StartClientAction() {
-			putValue(NAME, rb.getString("START_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_CLIENT_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_CLIENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_CLIENT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -628,8 +627,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -2003502124995392039L;
 
 		private StartLocalAction() {
-			putValue(NAME, rb.getString("START_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_LOCAL_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_LOCAL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_LOCAL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -644,8 +643,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 1758447420975631146L;
 
 		private StartServerAction() {
-			putValue(NAME, rb.getString("START_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("START_SERVER_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -660,8 +659,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -2863419586328503426L;
 
 		private StopClientAction() {
-			putValue(NAME, rb.getString("STOP_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("STOP_CLIENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -676,8 +675,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = -4859431944733030332L;
 
 		private StopLocalAction() {
-			putValue(NAME, rb.getString("STOP_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("STOP_LOCAL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -692,8 +691,8 @@ public final class Main implements SingletonApp {
 		private static final long serialVersionUID = 6023207463370122769L;
 
 		private StopServerAction() {
-			putValue(NAME, rb.getString("STOP_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, rb.getString("STOP_SERVER_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("STOP_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("STOP_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -707,9 +706,7 @@ public final class Main implements SingletonApp {
 	private static final String SINGLETON_ID;
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
-	public static final String STRING_RESOURCE_BUNDLE_BASENAME = "strings";
-	private static final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
+	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	private static final String PROFILE_FILE_EXTENSION = "json";
 	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
 	private static final int DIALOG_BOUNDS_X = 100;
@@ -744,11 +741,12 @@ public final class Main implements SingletonApp {
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
 	static {
-		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(rb.getString("AUTOSTART_OPTION_DESCRIPTION"),
-				Main.windows ? rb.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : rb.getString("SERVER")));
-		options.addOption(OPTION_PROFILE, true, rb.getString("PROFILE_OPTION_DESCRIPTION"));
-		options.addOption(OPTION_TRAY, false, rb.getString("TRAY_OPTION_DESCRIPTION"));
-		options.addOption(OPTION_VERSION, false, rb.getString("VERSION_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
+				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
+				Main.windows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
+		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
@@ -809,8 +807,8 @@ public final class Main implements SingletonApp {
 				e.printStackTrace(new PrintWriter(sw));
 
 				JOptionPane.showMessageDialog(parentComponent,
-						MessageFormat.format(rb.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
 				terminate(1);
 			});
@@ -832,13 +830,13 @@ public final class Main implements SingletonApp {
 		if (!Singleton.invoke(SINGLETON_ID, args)) {
 			Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
 
-			log.log(Level.INFO, "Launching " + rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
+			log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
 			SwingUtilities.invokeLater(() -> {
 				try {
 					final var commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION))
-						System.out.println(rb.getString("APPLICATION_NAME") + " " + Version.VERSION);
+						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					else {
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 						final var main = new Main(cmdProfilePath);
@@ -859,22 +857,24 @@ public final class Main implements SingletonApp {
 							if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption))
 								main.startServer();
 							else
-								JOptionPane.showMessageDialog(main.frame,
-										MessageFormat
-												.format(rb.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
+								JOptionPane
+										.showMessageDialog(main.frame,
+												MessageFormat.format(
+														strings.getString(
+																"INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
 														OPTION_AUTOSTART, autostartOption,
 														MessageFormat.format(
 																Main.windows
-																		? rb.getString(
+																		? strings.getString(
 																				"LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-																		: rb.getString("SERVER"),
-																rb.getString("ERROR_DIALOG_TITLE"),
+																		: strings.getString("SERVER"),
+																strings.getString("ERROR_DIALOG_TITLE"),
 																JOptionPane.ERROR_MESSAGE)));
 						}
 					}
 				} catch (final ParseException e) {
 					final var helpFormatter = new HelpFormatter();
-					helpFormatter.printHelp(rb.getString("APPLICATION_NAME"), options, true);
+					helpFormatter.printHelp(strings.getString("APPLICATION_NAME"), options, true);
 				}
 			});
 		}
@@ -905,11 +905,11 @@ public final class Main implements SingletonApp {
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
 	private final JMenuBar menuBar = new JMenuBar();
-	private final JMenu fileMenu = new JMenu(rb.getString("FILE_MENU"));
-	private final JMenu deviceMenu = new JMenu(rb.getString("DEVICE_MENU"));
-	private final JMenu localMenu = new JMenu(rb.getString("LOCAL_MENU"));
-	private final JMenu clientMenu = new JMenu(rb.getString("CLIENT_MENU"));
-	private final JMenu serverMenu = new JMenu(rb.getString("SERVER_MENU"));
+	private final JMenu fileMenu = new JMenu(strings.getString("FILE_MENU"));
+	private final JMenu deviceMenu = new JMenu(strings.getString("DEVICE_MENU"));
+	private final JMenu localMenu = new JMenu(strings.getString("LOCAL_MENU"));
+	private final JMenu clientMenu = new JMenu(strings.getString("CLIENT_MENU"));
+	private final JMenu serverMenu = new JMenu(strings.getString("SERVER_MENU"));
 	private final JMenuItem newMenuItem = fileMenu.add(new NewAction());
 	private final JMenuItem openMenuItem = fileMenu.add(openAction);
 	private final JMenuItem saveMenuItem = fileMenu.add(new SaveAction());
@@ -935,7 +935,7 @@ public final class Main implements SingletonApp {
 	private TimerTask overlayTimerTask;
 	private JLabel vJoyDirectoryLabel1;
 	private JTextField hostTextField;
-	private final JLabel statusLabel = new JLabel(rb.getString("STATUS_READY"));
+	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
 	private TrayIcon trayIcon;
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
@@ -1018,12 +1018,12 @@ public final class Main implements SingletonApp {
 			menuBar.add(localMenu, 2);
 
 			final var buttonGroupLocalState = new ButtonGroup();
-			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 			startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
 			buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
 			localMenu.add(startLocalRadioButtonMenuItem);
 
-			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 			stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
 			buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
 			localMenu.add(stopLocalRadioButtonMenuItem);
@@ -1032,12 +1032,12 @@ public final class Main implements SingletonApp {
 
 			final var buttonGroupClientState = new ButtonGroup();
 
-			startClientRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+			startClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 			startClientRadioButtonMenuItem.setAction(new StartClientAction());
 			buttonGroupClientState.add(startClientRadioButtonMenuItem);
 			clientMenu.add(startClientRadioButtonMenuItem);
 
-			stopClientRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+			stopClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 			stopClientRadioButtonMenuItem.setAction(new StopClientAction());
 			buttonGroupClientState.add(stopClientRadioButtonMenuItem);
 			clientMenu.add(stopClientRadioButtonMenuItem);
@@ -1046,17 +1046,17 @@ public final class Main implements SingletonApp {
 		menuBar.add(serverMenu);
 
 		final var buttonGroupServerState = new ButtonGroup();
-		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("START_MENU_ITEM"));
+		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 		startServerRadioButtonMenuItem.setAction(new StartServerAction());
 		buttonGroupServerState.add(startServerRadioButtonMenuItem);
 		serverMenu.add(startServerRadioButtonMenuItem);
 
-		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(rb.getString("STOP_MENU_ITEM"));
+		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
 		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
 		serverMenu.add(stopServerRadioButtonMenuItem);
 
-		final var helpMenu = new JMenu(rb.getString("HELP_MENU"));
+		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowLicensesAction());
 		helpMenu.add(new ShowAboutDialogAction());
@@ -1067,7 +1067,7 @@ public final class Main implements SingletonApp {
 		settingsPanel.setLayout(new GridBagLayout());
 
 		settingsScrollPane.setViewportView(settingsPanel);
-		tabbedPane.addTab(rb.getString("SETTINGS_TAB"), null, settingsScrollPane);
+		tabbedPane.addTab(strings.getString("SETTINGS_TAB"), null, settingsScrollPane);
 
 		final var panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 5);
@@ -1077,14 +1077,14 @@ public final class Main implements SingletonApp {
 		final var pollIntervalPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(pollIntervalPanel, panelGridBagConstraints);
 
-		final var pollIntervalLabel = new JLabel(rb.getString("POLL_INTERVAL_LABEL"));
+		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
 		pollIntervalLabel.setPreferredSize(new Dimension(120, 15));
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 1, 100, 1));
 		final var pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner,
-				"# " + rb.getString("MILLISECOND_SYMBOL"));
+				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
 		pollIntervalSpinner.addChangeListener(
@@ -1095,7 +1095,7 @@ public final class Main implements SingletonApp {
 			final var vJoyDirectoryPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
 
-			final var vJoyDirectoryLabel = new JLabel(rb.getString("VJOY_DIRECTORY_LABEL"));
+			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
 			vJoyDirectoryLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
@@ -1109,7 +1109,7 @@ public final class Main implements SingletonApp {
 			final var vJoyDevicePanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(vJoyDevicePanel, panelGridBagConstraints);
 
-			final var vJoyDeviceLabel = new JLabel(rb.getString("VJOY_DEVICE_LABEL"));
+			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
 			vJoyDeviceLabel.setPreferredSize(new Dimension(120, 15));
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
@@ -1125,7 +1125,7 @@ public final class Main implements SingletonApp {
 			final var hostPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(hostPanel, panelGridBagConstraints);
 
-			final var hostLabel = new JLabel(rb.getString("HOST_LABEL"));
+			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
 			hostLabel.setPreferredSize(new Dimension(120, 15));
 			hostPanel.add(hostLabel);
 
@@ -1139,7 +1139,7 @@ public final class Main implements SingletonApp {
 		final var portPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(portPanel, panelGridBagConstraints);
 
-		final var portLabel = new JLabel(rb.getString("PORT_LABEL"));
+		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
 		portLabel.setPreferredSize(new Dimension(120, 15));
 		portPanel.add(portLabel);
 
@@ -1155,14 +1155,14 @@ public final class Main implements SingletonApp {
 		final var timeoutPanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(timeoutPanel, panelGridBagConstraints);
 
-		final var timeoutLabel = new JLabel(rb.getString("TIMEOUT_LABEL"));
+		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
 		timeoutLabel.setPreferredSize(new Dimension(120, 15));
 		timeoutPanel.add(timeoutLabel);
 
 		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
 				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
 		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
-				"# " + rb.getString("MILLISECOND_SYMBOL"));
+				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		timeoutSpinner.setEditor(timeoutSpinnerEditor);
 		timeoutSpinner.addChangeListener(
@@ -1172,11 +1172,11 @@ public final class Main implements SingletonApp {
 		final var darkThemePanel = new JPanel(panelFlowLayout);
 		settingsPanel.add(darkThemePanel, panelGridBagConstraints);
 
-		final var darkThemeLabel = new JLabel(rb.getString("DARK_THEME_LABEL"));
+		final var darkThemeLabel = new JLabel(strings.getString("DARK_THEME_LABEL"));
 		darkThemeLabel.setPreferredSize(new Dimension(120, 15));
 		darkThemePanel.add(darkThemeLabel);
 
-		final var darkThemeCheckBox = new JCheckBox(rb.getString("DARK_THEME_CHECK_BOX"));
+		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
 		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
 		darkThemeCheckBox.addActionListener(e -> {
 			final var darkTheme = ((JCheckBox) e.getSource()).isSelected();
@@ -1190,11 +1190,11 @@ public final class Main implements SingletonApp {
 			final var overlaySettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
 
-			final var overlayLabel = new JLabel(rb.getString("OVERLAY_LABEL"));
+			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
 			overlayLabel.setPreferredSize(new Dimension(120, 15));
 			overlaySettingsPanel.add(overlayLabel);
 
-			final var showOverlayCheckBox = new JCheckBox(rb.getString("SHOW_OVERLAY_CHECK_BOX"));
+			final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
 			showOverlayCheckBox.addActionListener(e -> {
 				final var showOverlay = ((JCheckBox) e.getSource()).isSelected();
@@ -1208,11 +1208,11 @@ public final class Main implements SingletonApp {
 				final var vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
 				settingsPanel.add(vrOverlaySettingsPanel, panelGridBagConstraints);
 
-				final var vrOverlayLabel = new JLabel(rb.getString("VR_OVERLAY_LABEL"));
+				final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
 				vrOverlayLabel.setPreferredSize(new Dimension(120, 15));
 				vrOverlaySettingsPanel.add(vrOverlayLabel);
 
-				final var showVrOverlayCheckBox = new JCheckBox(rb.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
+				final var showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
 				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
 				showVrOverlayCheckBox.addActionListener(e -> {
 					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
@@ -1224,11 +1224,12 @@ public final class Main implements SingletonApp {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
 			settingsPanel.add(preventPowerSaveModeSettingsPanel, panelGridBagConstraints);
 
-			final var preventPowerSaveModeLabel = new JLabel(rb.getString("POWER_SAVE_MODE_LABEL"));
+			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
 			preventPowerSaveModeLabel.setPreferredSize(new Dimension(120, 15));
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
 
-			final var preventPowerSaveModeCheckBox = new JCheckBox(rb.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
+			final var preventPowerSaveModeCheckBox = new JCheckBox(
+					strings.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
 			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
 			preventPowerSaveModeCheckBox.addActionListener(e -> {
 				final var preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
@@ -1284,11 +1285,11 @@ public final class Main implements SingletonApp {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
 
 			if (windows)
-				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			else {
-				JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
 		}
@@ -1340,11 +1341,11 @@ public final class Main implements SingletonApp {
 
 		if (glfwInitialized && presentJids.isEmpty()) {
 			if (windows)
-				JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
-						rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
+						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			else
-				JOptionPane.showMessageDialog(frame, rb.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-						rb.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			final var profilePath = cmdProfilePath != null ? cmdProfilePath
 					: preferences.get(PREFERENCES_LAST_PROFILE, null);
@@ -1389,9 +1390,9 @@ public final class Main implements SingletonApp {
 
 	public void displayChargingStateInfo(final boolean charging) {
 		if (trayIcon != null && input != null)
-			trayIcon.displayMessage(rb.getString("CHARGING_STATE_CAPTION"),
+			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
 					MessageFormat.format(
-							rb.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
+							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
 							input.getBatteryState() / 100f),
 					MessageType.INFO);
 	}
@@ -1399,7 +1400,7 @@ public final class Main implements SingletonApp {
 	public void displayLowBatteryWarning(final float batteryCharge) {
 		SwingUtilities.invokeLater(() -> {
 			if (trayIcon != null)
-				trayIcon.displayMessage(rb.getString("LOW_BATTERY_CAPTION"),
+				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"),
 						MessageFormat.format("{0,number,percent}", batteryCharge), MessageType.WARNING);
 		});
 	}
@@ -1609,23 +1610,23 @@ public final class Main implements SingletonApp {
 				if (versionsComparisonResult.isEmpty()) {
 					log.log(Level.WARNING, "Trying to load a profile without version information");
 					JOptionPane.showMessageDialog(frame,
-							MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-									rb.getString("AN_UNKNOWN")),
-							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+							MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+									strings.getString("AN_UNKNOWN")),
+							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				} else {
 					final var v = versionsComparisonResult.get();
 					if (v < 0) {
 						log.log(Level.WARNING, "Trying to load a profile for an older release");
 						JOptionPane.showMessageDialog(frame,
-								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-										rb.getString("AN_OLDER")),
-								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										strings.getString("AN_OLDER")),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					} else if (v > 0) {
 						log.log(Level.WARNING, "Trying to load a profile for a newer release");
 						JOptionPane.showMessageDialog(frame,
-								MessageFormat.format(rb.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-										rb.getString("A_NEWER")),
-								rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										strings.getString("A_NEWER")),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					}
 				}
 
@@ -1634,9 +1635,9 @@ public final class Main implements SingletonApp {
 					log.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
 					JOptionPane.showMessageDialog(frame,
-							MessageFormat.format(rb.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 									String.join("\n", unknownActionClasses)),
-							rb.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				}
 
 				profileLoaded = input.setProfile(profile, input.getJid());
@@ -1647,8 +1648,8 @@ public final class Main implements SingletonApp {
 					loadedProfile = file.getName();
 					setUnsavedChanges(false);
 					setStatusBarText(
-							MessageFormat.format(rb.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
-					scheduleStatusBarText(rb.getString("STATUS_READY"));
+							MessageFormat.format(strings.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
+					scheduleStatusBarText(strings.getString("STATUS_READY"));
 					fileChooser.setSelectedFile(file);
 
 					restartLast();
@@ -1664,8 +1665,8 @@ public final class Main implements SingletonApp {
 
 		if (!profileLoaded) {
 			log.log(Level.SEVERE, "Could load profile");
-			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1686,9 +1687,9 @@ public final class Main implements SingletonApp {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 
-		SwingUtilities
-				.invokeLater(() -> JOptionPane.showMessageDialog(frame, rb.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+		SwingUtilities.invokeLater(
+				() -> JOptionPane.showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 	}
 
 	private void newProfile() {
@@ -1705,7 +1706,7 @@ public final class Main implements SingletonApp {
 		updateTitleAndTooltip();
 		updateModesPanel();
 		updateOverlayPanel();
-		setStatusBarText(rb.getString("STATUS_READY"));
+		setStatusBarText(strings.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
@@ -1755,7 +1756,7 @@ public final class Main implements SingletonApp {
 			menuBar.add(serverMenu, windows ? 4 : 2);
 
 			modesPanel = new JPanel(new BorderLayout());
-			tabbedPane.insertTab(rb.getString("MODES_TAB"), null, modesPanel, null,
+			tabbedPane.insertTab(strings.getString("MODES_TAB"), null, modesPanel, null,
 					tabbedPane.indexOfComponent(settingsScrollPane));
 
 			modesListPanel = new JPanel();
@@ -1772,7 +1773,7 @@ public final class Main implements SingletonApp {
 			modesPanel.add(addModePanel, BorderLayout.SOUTH);
 
 			assignmentsComponent = new AssignmentsComponent(this);
-			tabbedPane.insertTab(rb.getString("ASSIGNMENTS_TAB"), null, assignmentsComponent, null,
+			tabbedPane.insertTab(strings.getString("ASSIGNMENTS_TAB"), null, assignmentsComponent, null,
 					tabbedPane.indexOfComponent(settingsScrollPane));
 
 			overlayPanel = new JPanel(new BorderLayout());
@@ -1783,7 +1784,7 @@ public final class Main implements SingletonApp {
 			indicatorsScrollPane = new JScrollPane();
 			indicatorsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
-			tabbedPane.insertTab(rb.getString("OVERLAY_TAB"), null, overlayPanel, null,
+			tabbedPane.insertTab(strings.getString("OVERLAY_TAB"), null, overlayPanel, null,
 					tabbedPane.indexOfComponent(settingsScrollPane));
 		} else
 			log.log(Level.INFO, "No controllers connected");
@@ -1916,12 +1917,12 @@ public final class Main implements SingletonApp {
 			saveLastProfile(file);
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
-			setStatusBarText(MessageFormat.format(rb.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
-			scheduleStatusBarText(rb.getString("STATUS_READY"));
+			setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
+			scheduleStatusBarText(strings.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
-			JOptionPane.showMessageDialog(frame, rb.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
-					rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2198,7 +2199,7 @@ public final class Main implements SingletonApp {
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
-			final var modeNoLabel = new JLabel(MessageFormat.format(rb.getString("MODE_LABEL_NO"), i + 1));
+			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -2311,7 +2312,7 @@ public final class Main implements SingletonApp {
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 
 			final var virtualAxisLabel = new JLabel(
-					MessageFormat.format(rb.getString("AXIS_LABEL"), virtualAxis.toString()));
+					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -2325,7 +2326,7 @@ public final class Main implements SingletonApp {
 				colorLabel.setOpaque(true);
 				colorLabel.setBackground(overlayAxis.color);
 			} else
-				colorLabel.setText(rb.getString("INDICATOR_DISABLED_LABEL"));
+				colorLabel.setText(strings.getString("INDICATOR_DISABLED_LABEL"));
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
@@ -2422,15 +2423,15 @@ public final class Main implements SingletonApp {
 		final String title;
 
 		if (!isSelectedJidValid())
-			title = rb.getString("APPLICATION_NAME");
+			title = strings.getString("APPLICATION_NAME");
 		else {
 			final String profile;
 			if (loadedProfile != null)
 				profile = (unsavedChanges ? "*" : "") + loadedProfile;
 			else
-				profile = rb.getString("UNSAVED");
+				profile = strings.getString("UNSAVED");
 
-			title = MessageFormat.format(rb.getString("MAIN_FRAME_TITLE"), profile);
+			title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profile);
 		}
 
 		frame.setTitle(title);
@@ -2440,7 +2441,8 @@ public final class Main implements SingletonApp {
 
 			if (input.getDualShock4ProductId() != null)
 				toolTip = MessageFormat.format(
-						rb.getString(input.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
+						strings.getString(
+								input.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
 						title, input.getBatteryState() / 100f);
 			else
 				toolTip = title;

@@ -19,8 +19,8 @@ package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
 import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,7 +31,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Locale;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -55,7 +54,6 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public final class OnScreenKeyboard extends JFrame {
 
@@ -368,8 +366,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	static {
 		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
-		onScreenKeyboardMode.setDescription(rb.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+		onScreenKeyboardMode.setDescription(strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	private static String getShortDefaultKeyName(final String directInputKeyCodeName) {

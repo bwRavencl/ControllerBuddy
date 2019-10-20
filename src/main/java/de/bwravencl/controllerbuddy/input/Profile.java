@@ -17,14 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -35,7 +34,6 @@ import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IModeChangeListenerAction;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public final class Profile implements Cloneable {
 
@@ -47,8 +45,7 @@ public final class Profile implements Cloneable {
 
 	static {
 		defaultMode = new Mode(DEFAULT_MODE_UUID);
-		final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
-		defaultMode.setDescription(rb.getString("DEFAULT_MODE_DESCRIPTION"));
+		defaultMode.setDescription(strings.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	private String version;

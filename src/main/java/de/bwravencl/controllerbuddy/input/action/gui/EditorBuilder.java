@@ -17,12 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
@@ -32,7 +28,6 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public abstract class EditorBuilder {
 
@@ -61,9 +56,6 @@ public abstract class EditorBuilder {
 		}
 
 	}
-
-	protected final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
 
 	protected final EditActionsDialog editActionsDialog;
 	protected final IAction<?> action;

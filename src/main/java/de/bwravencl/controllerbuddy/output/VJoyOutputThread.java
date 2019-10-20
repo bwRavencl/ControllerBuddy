@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -245,7 +246,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				doKeyboardInput(c, false);
 
 			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(rb.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"),
+				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"),
 						vJoyDevice.intValue()));
 			});
 		}
@@ -273,8 +274,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 			if (!vJoy.vJoyEnabled().booleanValue()) {
 				log.log(Level.WARNING, "vJoy driver is not enabled");
 				SwingUtilities.invokeLater(() -> {
-					JOptionPane.showMessageDialog(main.getFrame(), rb.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(main.getFrame(),
+							strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -283,9 +285,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 						+ drvVersion.toString());
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
-							MessageFormat.format(rb.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.getShort(0L), drvVersion.getShort(0L)),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -296,9 +298,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 				log.log(Level.WARNING, "vJoy device is not available");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
-							MessageFormat.format(rb.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
 									vJoyDevice.intValue()),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -334,10 +336,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 				final var missingAxesString = String.join(", ", missingAxes);
 				log.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
 				SwingUtilities.invokeLater(() -> {
-					JOptionPane.showMessageDialog(
-							main.getFrame(), MessageFormat.format(rb.getString("MISSING_AXES_DIALOG_TEXT"),
-									vJoyDevice.intValue(), missingAxesString),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(main.getFrame(),
+							MessageFormat.format(strings.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice.intValue(),
+									missingAxesString),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -346,9 +348,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 				log.log(Level.WARNING, "Could not acquire vJoy device");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
-							MessageFormat.format(rb.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
 									vJoyDevice.intValue()),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -357,9 +359,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 				log.log(Level.WARNING, "Could not reset vJoy device");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
-							MessageFormat.format(rb.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
+							MessageFormat.format(strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
 									vJoyDevice.intValue()),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -391,16 +393,16 @@ public abstract class VJoyOutputThread extends OutputThread {
 				log.log(Level.WARNING, "vJoy device has not enough buttons");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
-							MessageFormat.format(rb.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"), vJoyDevice.intValue(),
-									nButtons, requiredButtons),
-							rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							MessageFormat.format(strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
+									vJoyDevice.intValue(), nButtons, requiredButtons),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 
 			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(
-						MessageFormat.format(rb.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue()));
+				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"),
+						vJoyDevice.intValue()));
 			});
 
 			if (main.preventPowerSaveMode())
@@ -432,8 +434,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 		} catch (final UnsatisfiedLinkError e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(), rb.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
-						rb.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(main.getFrame(),
+						strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 			return false;
 		}
@@ -574,8 +577,8 @@ public abstract class VJoyOutputThread extends OutputThread {
 				}
 			} else {
 				final var confirmDialogTask = new FutureTask<>(() -> JOptionPane.showConfirmDialog(main.getFrame(),
-						rb.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"), rb.getString("ERROR_DIALOG_TITLE"),
-						JOptionPane.YES_NO_OPTION));
+						strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
 				SwingUtilities.invokeLater(confirmDialogTask);
 				try {
 					if (confirmDialogTask.get() == JOptionPane.YES_OPTION)

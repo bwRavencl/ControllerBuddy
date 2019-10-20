@@ -17,12 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -32,7 +31,6 @@ import java.util.stream.Stream;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public final class Mode implements Cloneable {
 
@@ -106,8 +104,7 @@ public final class Mode implements Cloneable {
 
 	public Mode() {
 		uuid = UUID.randomUUID();
-		final var rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME, Locale.getDefault());
-		description = rb.getString("NEW_MODE_DESCRIPTION");
+		description = strings.getString("NEW_MODE_DESCRIPTION");
 	}
 
 	public Mode(final UUID uuid) {
