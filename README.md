@@ -125,6 +125,7 @@ If an instance of ControllerBuddy is already running, launching a second instanc
 - [OpenJDK 13](https://jdk.java.net/13/)
 - [OpenJDK with jpackage support](https://jdk.java.net/jpackage/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
+- [ClassGraph](https://github.com/classgraph/classgraph)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
