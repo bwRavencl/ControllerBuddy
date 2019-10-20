@@ -543,7 +543,7 @@ public final class Input {
 				rumbleDualShock4(20L, (byte) 1);
 	}
 
-	public void setBatteryState(final int batteryState) {
+	private void setBatteryState(final int batteryState) {
 		if (this.batteryState != batteryState) {
 			this.batteryState = batteryState;
 
@@ -566,7 +566,7 @@ public final class Input {
 			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
 	}
 
-	public void setCharging(final boolean charging) {
+	private void setCharging(final boolean charging) {
 		if (this.charging != charging) {
 			this.charging = charging;
 
