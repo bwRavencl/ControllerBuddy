@@ -19,10 +19,13 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 
+@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON)
 public final class ButtonToLockKeyAction implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -80,11 +83,6 @@ public final class ButtonToLockKeyAction implements IButtonToAction {
 
 	public void setOn(final boolean on) {
 		this.on = on;
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("BUTTON_TO_LOCK_KEY_ACTION");
 	}
 
 }

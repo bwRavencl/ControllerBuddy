@@ -18,7 +18,10 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
+@Action(label = "NULL_ACTION", category = ActionCategory.ALL)
 public final class NullAction implements IAction<Number> {
 
 	@Override
@@ -28,11 +31,6 @@ public final class NullAction implements IAction<Number> {
 
 	@Override
 	public void doAction(final Input input, final Number value) {
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("NULL_ACTION");
 	}
 
 }

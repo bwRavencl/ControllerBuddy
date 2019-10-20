@@ -26,11 +26,14 @@ import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 
+@Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON)
 public final class ButtonToModeAction implements IButtonToAction {
 
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
@@ -195,11 +198,6 @@ public final class ButtonToModeAction implements IButtonToAction {
 
 	public boolean targetsOnScreenKeyboardMode() {
 		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("BUTTON_TO_MODE_ACTION");
 	}
 
 }

@@ -21,6 +21,7 @@ import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
 import static de.bwravencl.controllerbuddy.gui.Main.STRING_RESOURCE_BUNDLE_BASENAME;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -58,27 +60,14 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToButtonAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToKeyAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToMouseButtonAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
-import de.bwravencl.controllerbuddy.input.action.AxisToScrollAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToKeyAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToLockKeyAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToMouseButtonAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToPressOnScreenKeyboardKeyAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToRelativeAxisReset;
-import de.bwravencl.controllerbuddy.input.action.ButtonToScrollAction;
-import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.input.action.NullAction;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
+import io.github.classgraph.ClassGraph;
 
 @SuppressWarnings("serial")
 public final class EditActionsDialog extends JDialog {
@@ -129,7 +118,22 @@ public final class EditActionsDialog extends JDialog {
 
 	}
 
-	private final class AvailableAction {
+	private static final class AssignedAction {
+
+		private final IAction<?> action;
+
+		private AssignedAction(final IAction<?> action) {
+			this.action = action;
+		}
+
+		@Override
+		public String toString() {
+			return IAction.getLabel(action.getClass());
+		}
+
+	}
+
+	private static final class AvailableAction {
 
 		private final Class<?> actionClass;
 
@@ -139,17 +143,7 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public String toString() {
-			String string = "";
-
-			try {
-				final IAction<?> action = getActionClassInstance(actionClass);
-				string = action.toString();
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-
-			return string;
+			return IAction.getLabel(actionClass);
 		}
 
 	}
@@ -221,18 +215,18 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedAssignedAction instanceof ButtonToModeAction) {
+			if (selectedAssignedAction.action instanceof ButtonToModeAction) {
 				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-				buttonToModeActionsMap.get(component.index).remove(selectedAssignedAction);
+				buttonToModeActionsMap.get(component.index).remove(selectedAssignedAction.action);
 				if (buttonToModeActionsMap.get(component.index).isEmpty())
 					buttonToModeActionsMap.remove(component.index);
 			} else if (isCycleEditor())
-				cycleActions.remove(selectedAssignedAction);
+				cycleActions.remove(selectedAssignedAction.action);
 			else {
 				final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type);
 				@SuppressWarnings("unchecked")
 				final var actions = (List<IAction<?>>) componentToActionMap.get(component.index);
-				actions.remove(selectedAssignedAction);
+				actions.remove(selectedAssignedAction.action);
 
 				if (actions.isEmpty())
 					componentToActionMap.remove(component.index);
@@ -246,23 +240,45 @@ public final class EditActionsDialog extends JDialog {
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
 
-	private static final Class<?>[] AXIS_ACTION_CLASSES = { AxisToAxisAction.class, AxisToButtonAction.class,
-			AxisToCursorAction.class, AxisToKeyAction.class, AxisToMouseButtonAction.class,
-			AxisToRelativeAxisAction.class, AxisToScrollAction.class, NullAction.class };
-
-	private static final Class<?>[] BUTTON_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToCycleAction.class,
-			ButtonToKeyAction.class, ButtonToLockKeyAction.class, ButtonToModeAction.class,
-			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class,
-			NullAction.class };
-	private static final Class<?>[] CYCLE_ACTION_CLASSES = { ButtonToButtonAction.class, ButtonToKeyAction.class,
-			ButtonToMouseButtonAction.class, ButtonToRelativeAxisReset.class, ButtonToScrollAction.class,
-			NullAction.class };
-	private static final Class<?>[] ON_SCREEN_KEYBOARD_ACTION_CLASSES = { ButtonToPressOnScreenKeyboardKeyAction.class,
-			ButtonToSelectOnScreenKeyboardKeyAction.class };
-
-	private static final int DIALOG_BOUNDS_WIDTH = 950;
+	private static final int DIALOG_BOUNDS_WIDTH = 970;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
+
+	private static final List<Class<?>> axisActionClasses = new ArrayList<>();
+	private static final List<Class<?>> buttonActionClasses = new ArrayList<>();
+	private static final List<Class<?>> cycleActionClasses = new ArrayList<>();
+	private static final List<Class<?>> onScreenKeyboardActionClasses = new ArrayList<>();
+
+	private final static ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
+			Locale.getDefault());
+
+	static {
+		final var scanResult = new ClassGraph().whitelistPackages("de.bwravencl.controllerbuddy.input.action")
+				.enableClassInfo().enableAnnotationInfo().scan();
+		final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
+		Collections.sort(classInfoList, (c1, c2) -> {
+			final var l1 = IAction.getLabel(c1.loadClass());
+			final var l2 = IAction.getLabel(c2.loadClass());
+
+			return l1.compareTo(l2);
+		});
+
+		for (final var classInfo : classInfoList) {
+			final var actionClass = classInfo.loadClass();
+			final var annotation = actionClass.getAnnotation(Action.class);
+			final var category = annotation.category();
+
+			if (category == ActionCategory.ALL || category == ActionCategory.AXIS)
+				axisActionClasses.add(actionClass);
+			if (category == ActionCategory.ALL || category == ActionCategory.BUTTON
+					|| category == ActionCategory.BUTTON_AND_CYCLES)
+				buttonActionClasses.add(actionClass);
+			if (category == ActionCategory.ALL || category == ActionCategory.BUTTON_AND_CYCLES)
+				cycleActionClasses.add(actionClass);
+			if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE)
+				onScreenKeyboardActionClasses.add(actionClass);
+		}
+	}
 
 	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass))
@@ -293,11 +309,9 @@ public final class EditActionsDialog extends JDialog {
 	private final List<IAction<Byte>> cycleActions = new ArrayList<>();
 	private Mode selectedMode;
 	private AvailableAction selectedAvailableAction;
-	private IAction<?> selectedAssignedAction;
-	private final ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
-			Locale.getDefault());
+	private AssignedAction selectedAssignedAction;
 	private final JList<AvailableAction> availableActionsList = new JList<>();
-	private final JList<IAction<?>> assignedActionsList = new JList<>();
+	private final JList<AssignedAction> assignedActionsList = new JList<>();
 
 	@SuppressWarnings("unchecked")
 	public EditActionsDialog(final java.awt.Component parentComponent, final ButtonToCycleAction cycleAction) {
@@ -375,27 +389,29 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IAction<?>[] getAssignedActions() {
-		final var clonedAssignedActions = new ArrayList<IAction<?>>();
+	private AssignedAction[] getAssignedActions() {
+		final var assignedActions = new ArrayList<AssignedAction>();
 
 		final var cycleEditor = isCycleEditor();
 
 		if (cycleEditor && cycleActions != null)
-			clonedAssignedActions.addAll(cycleActions);
+			for (final var action : cycleActions)
+				assignedActions.add(new AssignedAction(action));
 		else {
 			final var componentActions = selectedMode.getComponentToActionsMap(component.type).get(component.index);
 			if (componentActions != null)
-				clonedAssignedActions.addAll((Collection<? extends IAction<?>>) componentActions);
+				for (final var action : (Collection<? extends IAction<?>>) componentActions)
+					assignedActions.add(new AssignedAction(action));
 		}
 
 		if (!cycleEditor && component.type == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
 			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index);
 			if (buttonToModeActions != null)
 				for (final var action : buttonToModeActions)
-					clonedAssignedActions.add(action);
+					assignedActions.add(new AssignedAction(action));
 		}
 
-		return clonedAssignedActions.toArray(new IAction[clonedAssignedActions.size()]);
+		return assignedActions.toArray(new AssignedAction[assignedActions.size()]);
 	}
 
 	public Input getInput() {
@@ -405,8 +421,8 @@ public final class EditActionsDialog extends JDialog {
 	private boolean hasModeAction() {
 		boolean hasModeAction = false;
 
-		for (final var action : getAssignedActions())
-			if (action instanceof ButtonToModeAction)
+		for (final var assignedAction : getAssignedActions())
+			if (assignedAction.action instanceof ButtonToModeAction)
 				hasModeAction = true;
 
 		return hasModeAction;
@@ -467,7 +483,7 @@ public final class EditActionsDialog extends JDialog {
 
 			JPanel propertiesPanel = null;
 			if (selectedAssignedAction != null) {
-				final var actionClass = selectedAssignedAction.getClass();
+				final var actionClass = selectedAssignedAction.action.getClass();
 				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
 				for (final var entry : fieldToActionPropertyMap.entrySet()) {
 					final var field = entry.getKey();
@@ -483,6 +499,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(5, 5, 5, 5), 0, 10));
 
 					final var propertyNameLabel = new JLabel(rb.getString(annotation.label()));
+					propertyNameLabel.setPreferredSize(new Dimension(110, 15));
 					propertyPanel.add(propertyNameLabel);
 
 					try {
@@ -497,9 +514,9 @@ public final class EditActionsDialog extends JDialog {
 							fieldType = field.getType();
 
 						final var constructor = editorBuilderClass.getDeclaredConstructor(
-								new Class[] { IAction.class, String.class, Class.class, boolean.class, Input.class });
-						final var editorBuilder = constructor.newInstance(selectedAssignedAction, fieldName, fieldType,
-								isCycleEditor(), input);
+								new Class[] { EditActionsDialog.class, IAction.class, String.class, Class.class });
+						final var editorBuilder = constructor.newInstance(this, selectedAssignedAction.action,
+								fieldName, fieldType);
 
 						editorBuilder.buildEditor(propertyPanel);
 					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
@@ -562,15 +579,15 @@ public final class EditActionsDialog extends JDialog {
 	private void updateAvailableActions() {
 		final var availableActions = new ArrayList<AvailableAction>();
 
-		Class<?>[] actionClasses;
+		final List<Class<?>> actionClasses;
 		if (isCycleEditor())
-			actionClasses = CYCLE_ACTION_CLASSES;
-		else if (component.type == ComponentType.AXIS)
-			actionClasses = AXIS_ACTION_CLASSES;
+			actionClasses = cycleActionClasses;
 		else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode))
-			actionClasses = ON_SCREEN_KEYBOARD_ACTION_CLASSES;
+			actionClasses = onScreenKeyboardActionClasses;
+		else if (component.type == ComponentType.AXIS)
+			actionClasses = axisActionClasses;
 		else
-			actionClasses = BUTTON_ACTION_CLASSES;
+			actionClasses = buttonActionClasses;
 
 		for (final var actionClass : actionClasses) {
 			final AvailableAction availableAction = new AvailableAction(actionClass);

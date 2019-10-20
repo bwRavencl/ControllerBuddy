@@ -23,12 +23,22 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.util.ResourceBundleUtil;
 
 public interface IAction<V extends Number> extends Cloneable {
 
 	ResourceBundle rb = new ResourceBundleUtil().getResourceBundle(STRING_RESOURCE_BUNDLE_BASENAME,
 			Locale.getDefault());
+
+	static String getLabel(final Class<?> actionClass) {
+		final var annotation = actionClass.getAnnotation(Action.class);
+		if (annotation == null)
+			throw new RuntimeException(
+					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
+
+		return rb.getString(annotation.label());
+	}
 
 	Object clone() throws CloneNotSupportedException;
 

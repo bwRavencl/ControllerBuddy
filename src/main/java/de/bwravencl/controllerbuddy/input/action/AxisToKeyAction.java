@@ -18,9 +18,12 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
+@Action(label = "TO_KEY_ACTION", category = ActionCategory.AXIS)
 public final class AxisToKeyAction extends ToKeyAction<Float> implements ISuspendableAction {
 
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.75f;

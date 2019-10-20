@@ -19,12 +19,15 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxCursorSpeedEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
+@Action(label = "AXIS_TO_CURSOR_ACTION", category = ActionCategory.AXIS)
 public final class AxisToCursorAction extends InvertableAction<Float>
 		implements ISuspendableAction, IModeChangeListenerAction {
 
@@ -122,11 +125,6 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 
 	public void setMaxCursorSpeed(final float maxCursorSpeed) {
 		this.maxCursorSpeed = maxCursorSpeed;
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("AXIS_TO_CURSOR_ACTION");
 	}
 
 }

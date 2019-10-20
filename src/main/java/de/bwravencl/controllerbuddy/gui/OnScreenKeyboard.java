@@ -354,11 +354,11 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private static final long serialVersionUID = -111088315813179371L;
 
+	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
+
 	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
 
 	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
-
-	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 
 	public static final Mode onScreenKeyboardMode;
 

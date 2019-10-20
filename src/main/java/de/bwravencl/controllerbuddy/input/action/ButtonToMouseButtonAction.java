@@ -18,9 +18,12 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
+@Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES)
 public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Byte> implements IButtonToAction {
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)

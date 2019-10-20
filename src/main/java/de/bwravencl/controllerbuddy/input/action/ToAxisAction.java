@@ -30,13 +30,8 @@ abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 		return virtualAxis;
 	}
 
-	public final void setVirtualAxis(final VirtualAxis virtualAxis) {
+	public void setVirtualAxis(final VirtualAxis virtualAxis) {
 		this.virtualAxis = virtualAxis;
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("TO_AXIS_ACTION");
 	}
 
 }

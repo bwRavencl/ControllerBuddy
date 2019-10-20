@@ -32,6 +32,7 @@ dependencies {
     compile 'commons-cli:commons-cli:1.4',
             'com.github.git-moss:purejavahidapi:9e9d54b33d',
             'com.google.code.gson:gson:2.8.6',
+            'io.github.classgraph:classgraph:4.8.50',
             "net.java.dev.jna:jna:$jnaVersion",
             "net.java.dev.jna:jna-platform:$jnaVersion",
             "org.lwjgl:lwjgl:$lwjglVersion",

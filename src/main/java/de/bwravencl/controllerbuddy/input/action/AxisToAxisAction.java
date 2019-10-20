@@ -18,9 +18,12 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 
+@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS)
 public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;

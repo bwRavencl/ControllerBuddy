@@ -18,10 +18,13 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
+@Action(label = "BUTTON_TO_RELATIVE_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES)
 public final class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implements IButtonToAction {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
@@ -56,11 +59,6 @@ public final class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implemen
 
 	public void setResetValue(final float resetValue) {
 		this.resetValue = resetValue;
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("BUTTON_TO_RELATIVE_AXIS_RESET_ACTION");
 	}
 
 }

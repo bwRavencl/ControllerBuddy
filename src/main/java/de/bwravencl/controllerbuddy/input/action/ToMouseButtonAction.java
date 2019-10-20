@@ -55,9 +55,4 @@ abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 		this.mouseButton = mouseButton;
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("TO_MOUSE_BUTTON_ACTION");
-	}
-
 }

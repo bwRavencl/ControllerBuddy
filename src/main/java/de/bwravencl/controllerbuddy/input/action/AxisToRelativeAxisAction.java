@@ -21,9 +21,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
 public final class AxisToRelativeAxisAction extends AxisToAxisAction
@@ -127,11 +127,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
 		this.maxRelativeSpeed = maxRelativeSpeed;
-	}
-
-	@Override
-	public String toString() {
-		return rb.getString("AXIS_TO_RELATIVE_AXIS_ACTION");
 	}
 
 }

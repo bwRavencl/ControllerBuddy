@@ -38,9 +38,4 @@ public abstract class ToButtonAction<V extends Number> implements IAction<V> {
 		this.buttonId = buttonId;
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("TO_BUTTON_ACTION");
-	}
-
 }

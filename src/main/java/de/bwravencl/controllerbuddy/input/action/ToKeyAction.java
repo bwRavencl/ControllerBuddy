@@ -60,9 +60,4 @@ abstract class ToKeyAction<V extends Number> implements IAction<V> {
 		this.keystroke = keystroke;
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("TO_KEY_ACTION");
-	}
-
 }

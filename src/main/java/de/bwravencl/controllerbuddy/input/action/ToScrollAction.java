@@ -35,9 +35,4 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		this.clicks = clicks;
 	}
 
-	@Override
-	public String toString() {
-		return rb.getString("TO_SCROLL_ACTION");
-	}
-
 }
