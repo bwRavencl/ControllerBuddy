@@ -493,7 +493,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(5, 5, 5, 5), 0, 10));
 
 					final var propertyNameLabel = new JLabel(strings.getString(annotation.label()));
-					propertyNameLabel.setPreferredSize(new Dimension(110, 15));
+					propertyNameLabel.setPreferredSize(new Dimension(130, 15));
 					propertyPanel.add(propertyNameLabel);
 
 					try {
