@@ -223,7 +223,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 							axisS1Changed = true;
 						}
 
-						for (var i = 0; i <= nButtons; i++) {
+						for (var i = 0; i < nButtons; i++) {
 							final var b = Boolean.parseBoolean(messageParts[10 + i]);
 
 							if (buttons[i].booleanValue() != b) {
