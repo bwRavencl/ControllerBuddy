@@ -317,7 +317,7 @@ public final class EditActionsDialog extends JDialog {
 
 			preInit(parentComponent);
 			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
-					cycleAction.toString()));
+					IAction.getLabel(cycleAction.getClass())));
 
 			init();
 		} catch (final CloneNotSupportedException e) {

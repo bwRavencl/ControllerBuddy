@@ -40,8 +40,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 
 		private EditActionsAction() {
 			putValue(NAME, strings.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"), action.toString()));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+					IAction.getLabel(action.getClass())));
 		}
 
 		@Override
