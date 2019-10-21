@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
@@ -96,6 +97,10 @@ class GuiUtils {
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return underscoreTitle + "_location";
+	}
+
+	static ColorUIResource invertColorUIResource(final ColorUIResource color) {
+		return new ColorUIResource(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
 	}
 
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {

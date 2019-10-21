@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.invertColorUIResource;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
@@ -128,6 +129,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -950,6 +952,7 @@ public final class Main implements SingletonApp {
 	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
+
 	private volatile JFrame overlayFrame;
 
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
@@ -2330,7 +2333,7 @@ public final class Main implements SingletonApp {
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
-			colorLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			colorLabel.setBorder(BorderFactory.createLineBorder(MetalLookAndFeel.getControlDarkShadow()));
 			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
@@ -2379,8 +2382,49 @@ public final class Main implements SingletonApp {
 
 	@SuppressWarnings("unchecked")
 	private void updateTheme() {
-		final var theme = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new DefaultMetalTheme()
-				: new OceanTheme();
+		final var theme = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new DefaultMetalTheme() {
+
+			@Override
+			protected ColorUIResource getBlack() {
+				return super.getWhite();
+			}
+
+			@Override
+			protected ColorUIResource getPrimary1() {
+				return new ColorUIResource(super.getPrimary1().darker());
+			};
+
+			@Override
+			protected ColorUIResource getPrimary2() {
+				return new ColorUIResource(super.getPrimary2().darker());
+			};
+
+			@Override
+			protected ColorUIResource getPrimary3() {
+				return new ColorUIResource(super.getPrimary3().darker());
+			};
+
+			@Override
+			protected ColorUIResource getSecondary1() {
+				return invertColorUIResource(super.getSecondary1());
+			}
+
+			@Override
+			protected ColorUIResource getSecondary2() {
+				return invertColorUIResource(super.getSecondary2());
+			}
+
+			@Override
+			protected ColorUIResource getSecondary3() {
+				return invertColorUIResource(super.getSecondary3());
+			}
+
+			@Override
+			protected ColorUIResource getWhite() {
+				return super.getBlack();
+			};
+
+		} : new OceanTheme();
 		MetalLookAndFeel.setCurrentTheme(theme);
 
 		try {
