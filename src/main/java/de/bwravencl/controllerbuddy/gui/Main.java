@@ -138,6 +138,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.text.DefaultFormatter;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -845,36 +846,7 @@ public final class Main implements SingletonApp {
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 						final var main = new Main(cmdProfilePath);
 
-						if (!commandLine.hasOption(OPTION_TRAY))
-							main.frame.setVisible(true);
-						if (commandLine.hasOption(OPTION_AUTOSTART)) {
-							final var autostartOption = commandLine.getOptionValue(OPTION_AUTOSTART);
-
-							if (Main.windows)
-								if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
-									main.startLocal();
-									return;
-								} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOption)) {
-									main.startClient();
-									return;
-								}
-							if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption))
-								main.startServer();
-							else
-								JOptionPane
-										.showMessageDialog(main.frame,
-												MessageFormat.format(
-														strings.getString(
-																"INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
-														OPTION_AUTOSTART, autostartOption,
-														MessageFormat.format(
-																Main.windows
-																		? strings.getString(
-																				"LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-																		: strings.getString("SERVER"),
-																strings.getString("ERROR_DIALOG_TITLE"),
-																JOptionPane.ERROR_MESSAGE)));
-						}
+						main.handleTrayAndAutostartCommandLine(commandLine);
 					}
 				} catch (final ParseException e) {
 					final var helpFormatter = new HelpFormatter();
@@ -1447,6 +1419,36 @@ public final class Main implements SingletonApp {
 		}
 	}
 
+	private void handleTrayAndAutostartCommandLine(final CommandLine commandLine) {
+		frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
+
+		final var autostartOption = commandLine.getOptionValue(OPTION_AUTOSTART);
+		if (autostartOption == null)
+			return;
+
+		if (Main.windows)
+			if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
+				if (localThread == null || !localThread.isAlive())
+					startLocal();
+				return;
+			} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOption)) {
+				if (clientThread == null || !clientThread.isAlive())
+					startClient();
+				return;
+			}
+		if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption)) {
+			if (serverThread == null || !serverThread.isAlive())
+				startServer();
+		} else
+			JOptionPane.showMessageDialog(frame,
+					MessageFormat.format(strings.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
+							OPTION_AUTOSTART, autostartOption,
+							MessageFormat.format(
+									Main.windows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+											: strings.getString("SERVER"),
+									strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
+	}
+
 	private void initOverlay() {
 		if (!preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()))
 			return;
@@ -1680,22 +1682,25 @@ public final class Main implements SingletonApp {
 	public void newActivation(final String... args) {
 		log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
 
-		try {
-			final var commandLine = new DefaultParser().parse(options, args);
+		if (args.length > 0)
+			try {
+				final var commandLine = new DefaultParser().parse(options, args);
 
-			final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-			if (cmdProfilePath != null) {
-				loadProfile(new File(cmdProfilePath));
-				if (commandLine.getOptions().length == 1)
-					return;
+				final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+
+				SwingUtilities.invokeLater(() -> {
+					if (cmdProfilePath != null)
+						loadProfile(new File(cmdProfilePath));
+
+					handleTrayAndAutostartCommandLine(commandLine);
+				});
+			} catch (final ParseException e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
-		} catch (final ParseException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-
-		SwingUtilities.invokeLater(
-				() -> JOptionPane.showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+		else
+			SwingUtilities.invokeLater(
+					() -> JOptionPane.showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 	}
 
 	private void newProfile() {
