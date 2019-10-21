@@ -107,6 +107,8 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 
 ![VR Overlay](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_5.png)
 
+![Dark Mode](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_6.png)
+
 #### Command Line Parameters:
 ```
 usage: ControllerBuddy [-autostart <arg>] [-profile <arg>] [-tray]
