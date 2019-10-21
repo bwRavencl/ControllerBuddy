@@ -126,6 +126,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -1545,10 +1546,11 @@ public final class Main implements SingletonApp {
 					public void setValue(final int n) {
 						super.setValue(overlayAxis.inverted ? -n : n);
 					}
+
 				};
 
 				progressBar.setPreferredSize(new Dimension(20, 150));
-				progressBar.setBorder(BorderFactory.createLineBorder(borderColor));
+				progressBar.setBorder(LineBorder.createBlackLineBorder());
 				progressBar.setBackground(Color.LIGHT_GRAY);
 				progressBar.setForeground(overlayAxis.color);
 				progressBar.setValue(1);
@@ -2392,26 +2394,21 @@ public final class Main implements SingletonApp {
 			@Override
 			protected ColorUIResource getPrimary1() {
 				return new ColorUIResource(super.getPrimary1().darker());
-			};
+			}
 
 			@Override
 			protected ColorUIResource getPrimary2() {
 				return new ColorUIResource(super.getPrimary2().darker());
-			};
+			}
 
 			@Override
 			protected ColorUIResource getPrimary3() {
 				return new ColorUIResource(super.getPrimary3().darker());
-			};
+			}
 
 			@Override
 			protected ColorUIResource getSecondary1() {
 				return invertColorUIResource(super.getSecondary1());
-			}
-
-			@Override
-			protected ColorUIResource getSecondary2() {
-				return invertColorUIResource(super.getSecondary2());
 			}
 
 			@Override
@@ -2422,7 +2419,7 @@ public final class Main implements SingletonApp {
 			@Override
 			protected ColorUIResource getWhite() {
 				return super.getBlack();
-			};
+			}
 
 		} : new OceanTheme();
 		MetalLookAndFeel.setCurrentTheme(theme);
