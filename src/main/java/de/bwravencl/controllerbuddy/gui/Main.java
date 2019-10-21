@@ -75,6 +75,7 @@ import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -1662,7 +1663,7 @@ public final class Main implements SingletonApp {
 			} catch (final JsonParseException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
-		} catch (final NoSuchFileException e) {
+		} catch (final NoSuchFileException | InvalidPathException e) {
 			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
