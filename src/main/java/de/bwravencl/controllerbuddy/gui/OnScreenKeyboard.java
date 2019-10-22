@@ -54,6 +54,7 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 
+@SuppressWarnings("serial")
 public final class OnScreenKeyboard extends JFrame {
 
 	private abstract class AbstractKeyboardButton extends JButton {
@@ -349,8 +350,6 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 	}
-
-	private static final long serialVersionUID = -111088315813179371L;
 
 	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 

@@ -352,9 +352,8 @@ final class AssignmentsComponent extends JScrollPane {
 
 	}
 
+	@SuppressWarnings("serial")
 	private static final class EditComponentAction extends AbstractAction {
-
-		private static final long serialVersionUID = 8811608785278071903L;
 
 		private final Main main;
 		private final String name;
@@ -469,7 +468,7 @@ final class AssignmentsComponent extends JScrollPane {
 				@Override
 				public boolean contains(final int x, final int y) {
 					final var radius = getDiameter() / 2;
-					return Point2D.distance(x, y, getWidth() / 2, getHeight() / 2) < radius;
+					return Point2D.distance(x, y, getWidth() / 2d, getHeight() / 2d) < radius;
 				}
 
 				private int getDiameter() {
@@ -520,7 +519,7 @@ final class AssignmentsComponent extends JScrollPane {
 						final int ty = height / 2 + ascent - textHeight / 2;
 
 						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-						FlatButtonUI.paintText(g, this, textRect, text, isEnabled() ? getForeground() : disabledText);
+						FlatButtonUI.paintText(g2d, this, textRect, text, isEnabled() ? getForeground() : disabledText);
 					}
 				}
 
