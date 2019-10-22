@@ -44,9 +44,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.formdev.flatlaf.ui.FlatButtonBorder;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
@@ -100,7 +101,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 			defaultButtonBorder = UIManager.getBorder("Button.border");
 			focusedButtonBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 3),
-					((CompoundBorder) defaultButtonBorder).getInsideBorder());
+					new FlatButtonBorder());
 		}
 
 		@Override
