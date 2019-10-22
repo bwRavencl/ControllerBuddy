@@ -44,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -90,17 +89,18 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private void setFocus(final boolean focus) {
 			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
+			if (!focus)
+				OnScreenKeyboard.this.repaint();
 		}
 
 		abstract void toggleLock();
 
 		private void updateTheme() {
-			defaultBackground = new JButton().getBackground();
-			defaultForeground = new JButton().getForeground();
+			defaultBackground = UIManager.getColor("Button.background");
+			defaultForeground = UIManager.getColor("Button.foreground");
 
 			defaultButtonBorder = UIManager.getBorder("Button.border");
-			focusedButtonBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 3),
-					((CompoundBorder) defaultButtonBorder).getInsideBorder());
+			focusedButtonBorder = BorderFactory.createLineBorder(Color.RED, 2);
 		}
 
 		@Override

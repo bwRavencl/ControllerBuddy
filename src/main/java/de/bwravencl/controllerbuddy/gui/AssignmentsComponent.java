@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
@@ -49,7 +48,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.LinearGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -59,7 +57,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.text.MessageFormat;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -70,7 +67,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalLookAndFeel;
+
+import com.formdev.flatlaf.ui.FlatButtonUI;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
@@ -98,8 +96,6 @@ final class AssignmentsComponent extends JScrollPane {
 		private final CompoundButtonLocation buttonLocation;
 		private final Dimension preferredSize;
 		private String text;
-		private boolean contentAreaFilled = true;
-		private boolean paintFocus = true;
 		private CompoundButton peer;
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
@@ -109,9 +105,6 @@ final class AssignmentsComponent extends JScrollPane {
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
 			super();
-
-			super.setContentAreaFilled(false);
-			super.setFocusPainted(false);
 
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
@@ -165,42 +158,28 @@ final class AssignmentsComponent extends JScrollPane {
 					final var g2d = (Graphics2D) g;
 
 					if (contentAreaFilled && (model.isEnabled() || peerModel != null && peerModel.isEnabled())) {
-						final var armed = model.isArmed() || peerModel != null && peerModel.isArmed();
-						final var pressed = model.isPressed() || peerModel != null && peerModel.isPressed();
+						beginBackground(g2d);
 
-						if (!pressed || armed) {
-							beginBackground(g2d);
+						if (shape == null)
+							initShape();
 
-							if (shape == null)
-								initShape();
-
-							g2d.fill(shape);
-						}
+						g2d.fill(shape);
 					}
-
-					final var paintFocus = CompoundButton.this.paintFocus && hasFocus();
 
 					if (buttonLocation == CompoundButtonLocation.Center) {
 						beginForeground(g2d);
 
 						final var metrics = g2d.getFontMetrics(getFont());
-						final var stringWidth = metrics.stringWidth(text);
 						final var textHeight = metrics.getHeight();
 						final var ascent = metrics.getAscent();
 
 						final int tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
 						final int ty = y + (getIconHeight() - textHeight) / 2 + ascent;
+						final var stringWidth = metrics.stringWidth(text);
 
-						g2d.drawString(text, tx, ty);
-
-						if (paintFocus) {
-							final var focusRectangle = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-							paintFocus(g2d, focusRectangle);
-						}
-					} else if (paintFocus) {
-						final var focusRectangle = shape.getBounds();
-						focusRectangle.grow(-focusRectangle.width / 3, -focusRectangle.height / 3);
-						paintFocus(g2d, focusRectangle);
+						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
+						FlatButtonUI.paintText(g, CompoundButton.this, textRect, text,
+								isEnabled() ? getForeground() : disabledText);
 					}
 				}
 			});
@@ -245,16 +224,6 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 
 		@Override
-		public boolean isContentAreaFilled() {
-			return false;
-		}
-
-		@Override
-		public boolean isFocusPainted() {
-			return false;
-		}
-
-		@Override
 		protected void paintBorder(final Graphics g) {
 			if (!isBorderPainted())
 				return;
@@ -274,16 +243,6 @@ final class AssignmentsComponent extends JScrollPane {
 			super.paintComponent(g);
 		}
 
-		@Override
-		public void setContentAreaFilled(final boolean b) {
-			contentAreaFilled = b;
-		}
-
-		@Override
-		public void setFocusPainted(final boolean b) {
-			paintFocus = b;
-		}
-
 		private void setPeer(final CompoundButton peer) {
 			this.peer = peer;
 		}
@@ -299,100 +258,90 @@ final class AssignmentsComponent extends JScrollPane {
 
 		private static final long serialVersionUID = 5458020346838696827L;
 
-		private Color focusColor;
-		private Color selectColor;
-		private float[] gradientFractions = null;
-		private Color[] gradientColors = null;
+		private Color defaultForeground;
+		private Color defaultBackground;
+		private Color focusedBackground;
+		private Color hoverBackground;
+		private Color pressedBackground;
+		private Color defaultFocusedBackground;
+		private Color defaultHoverBackground;
+		private Color defaultPressedBackground;
+		private Color borderColor;
+		private Color disabledBorderColor;
+		private Color focusedBorderColor;
+		private Color hoverBorderColor;
+		private Color defaultBorderColor;
+		private Color defaultHoverBorderColor;
+		private Color defaultFocusedBorderColor;
+		Color disabledText;
+
+		boolean contentAreaFilled = true;
 
 		private CustomButton() {
 			updateTheme();
+			super.setContentAreaFilled(false);
 		}
 
 		private CustomButton(final Action action) {
 			super(action);
 			updateTheme();
+			super.setContentAreaFilled(false);
 		}
 
 		void beginBackground(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-			if (!model.isPressed())
-				if (gradientFractions != null && gradientColors != null)
-					g2d.setPaint(
-							new LinearGradientPaint(0f, 0f, 0f, getHeight() - 1f, gradientFractions, gradientColors));
-				else
-					g2d.setColor(getBackground());
-			else if (model.isArmed())
-				g2d.setColor(selectColor);
+			final var def = isDefaultButton();
+			final var color = FlatButtonUI.buttonStateColor(this, def ? defaultBackground : getBackground(), null,
+					def ? defaultFocusedBackground : focusedBackground, def ? defaultHoverBackground : hoverBackground,
+					def ? defaultPressedBackground : pressedBackground);
+
+			g2d.setColor(color);
 		}
 
 		void beginBorder(final Graphics2D g2d) {
-			final Color color;
-			if (!isEnabled()) {
-				if (usingOceanTheme())
-					color = MetalLookAndFeel.getInactiveControlTextColor();
-				else
-					color = MetalLookAndFeel.getControlDisabled();
-			} else if (usingOceanTheme() && isRolloverEnabled() && getModel().isRollover())
-				color = MetalLookAndFeel.getControlShadow();
-			else
-				color = MetalLookAndFeel.getControlDarkShadow();
-
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			final var def = isDefaultButton();
+			final var color = FlatButtonUI.buttonStateColor(this, def ? defaultBorderColor : borderColor,
+					disabledBorderColor, def ? defaultFocusedBorderColor : focusedBorderColor,
+					def ? defaultHoverBorderColor : hoverBorderColor, null);
+
 			g2d.setColor(color);
 		}
 
 		void beginForeground(final Graphics2D g2d) {
-			final Color color;
-			if (!isEnabled())
-				color = MetalLookAndFeel.getInactiveControlTextColor();
-			else if (isForegroundSet())
-				color = getForeground();
-			else
-				color = MetalLookAndFeel.getControlTextColor();
-
-			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			final var color = isDefaultButton() ? defaultForeground : getForeground();
 			g2d.setColor(color);
-			g2d.setFont(getFont());
 		}
 
-		void paintFocus(final Graphics2D g2d, final Rectangle focusRect) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-			g2d.setColor(focusColor);
-			g2d.drawRect(focusRect.x - 1, focusRect.y - 1, focusRect.width + 1, focusRect.height + 1);
+		@Override
+		public boolean isContentAreaFilled() {
+			return false;
+		}
+
+		@Override
+		public void setContentAreaFilled(final boolean b) {
+			contentAreaFilled = b;
 		}
 
 		private void updateTheme() {
-			focusColor = UIManager.getColor("Button.focus");
-			selectColor = (Color) UIManager.get("Button.select");
-
-			if (usingOceanTheme()) {
-				final var buttonGradient = UIManager.get("Button.gradient");
-				if (buttonGradient instanceof List) {
-					Float r1 = null;
-					final var buttonGradientColors = new Color[3];
-
-					var i = 0;
-					for (final var e : (List<?>) buttonGradient) {
-						if (e instanceof Float && r1 == null)
-							r1 = (Float) e;
-
-						if (e instanceof Color) {
-							buttonGradientColors[i] = (Color) e;
-							i++;
-						}
-					}
-
-					if (r1 != null && i == 3) {
-						gradientFractions = new float[] { 0f, r1, r1 * 2f, 1f };
-						gradientColors = new Color[] { buttonGradientColors[0], buttonGradientColors[1],
-								buttonGradientColors[0], buttonGradientColors[2] };
-					}
-				}
-			} else {
-				gradientFractions = null;
-				gradientColors = null;
-			}
+			defaultForeground = UIManager.getColor("Button.default.foreground");
+			defaultBackground = UIManager.getColor("Button.default.background");
+			focusedBackground = UIManager.getColor("Button.focusedBackground");
+			hoverBackground = UIManager.getColor("Button.hoverBackground");
+			pressedBackground = UIManager.getColor("Button.pressedBackground");
+			defaultFocusedBackground = UIManager.getColor("Button.default.focusedBackground");
+			defaultHoverBackground = UIManager.getColor("Button.default.hoverBackground");
+			defaultPressedBackground = UIManager.getColor("Button.default.pressedBackground");
+			borderColor = UIManager.getColor("Button.borderColor");
+			disabledBorderColor = UIManager.getColor("Button.disabledBorderColor");
+			focusedBorderColor = UIManager.getColor("Button.focusedBorderColor");
+			hoverBorderColor = UIManager.getColor("Button.hoverBorderColor");
+			defaultBorderColor = UIManager.getColor("Button.default.borderColor");
+			defaultHoverBorderColor = UIManager.getColor("Button.default.hoverBorderColor");
+			defaultFocusedBorderColor = UIManager.getColor("Button.default.focusedBorderColor");
+			disabledText = UIManager.getColor("Button.disabledText");
 		}
 
 		@Override
@@ -550,10 +499,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 					final var g2d = (Graphics2D) g;
 
-					g2d.setColor(getBackground());
-					g2d.fillRect(0, 0, width, height);
-
-					if (model.isEnabled() && (!model.isPressed() || model.isArmed())) {
+					if (contentAreaFilled && isEnabled()) {
 						beginBackground(g2d);
 
 						final var ovalWidth = width % 2 != 0 ? width + 1 : width;
@@ -562,7 +508,6 @@ final class AssignmentsComponent extends JScrollPane {
 						g2d.fillOval(ovalWidth / 2 - radius, ovalHeight / 2 - radius, diameter, diameter);
 					}
 
-					Rectangle focusRectangle = null;
 					final var text = getText();
 					if (text != null && text.length() > 0) {
 						beginForeground(g2d);
@@ -574,17 +519,8 @@ final class AssignmentsComponent extends JScrollPane {
 						final int tx = width / 2 - stringWidth / 2;
 						final int ty = height / 2 + ascent - textHeight / 2;
 
-						g2d.drawString(text, tx, ty);
-						focusRectangle = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-					}
-
-					if (isFocusPainted() && hasFocus()) {
-						if (focusRectangle == null) {
-							focusRectangle = g2d.getClipBounds();
-							focusRectangle.grow(-width / 3, -height / 3);
-						}
-
-						paintFocus(g2d, focusRectangle);
+						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
+						FlatButtonUI.paintText(g, this, textRect, text, isEnabled() ? getForeground() : disabledText);
 					}
 				}
 

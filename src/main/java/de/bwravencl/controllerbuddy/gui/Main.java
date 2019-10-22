@@ -17,12 +17,10 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.invertColorUIResource;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.usingOceanTheme;
 import static org.lwjgl.glfw.GLFW.GLFW_CONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
@@ -82,7 +80,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -127,15 +124,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.text.DefaultFormatter;
 
 import org.apache.commons.cli.CommandLine;
@@ -145,6 +136,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.lwjgl.glfw.GLFWJoystickCallback;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.oracle.si.Singleton;
@@ -757,7 +750,7 @@ public final class Main implements SingletonApp {
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
 
 		try {
-			UIManager.setLookAndFeel(new MetalLookAndFeel());
+			UIManager.setLookAndFeel(new FlatLightLaf());
 		} catch (final UnsupportedLookAndFeelException e) {
 			throw new RuntimeException(e);
 		}
@@ -1553,8 +1546,6 @@ public final class Main implements SingletonApp {
 				};
 
 				progressBar.setPreferredSize(new Dimension(20, 150));
-				progressBar.setBorder(LineBorder.createBlackLineBorder());
-				progressBar.setBackground(Color.LIGHT_GRAY);
 				progressBar.setForeground(overlayAxis.color);
 				progressBar.setValue(1);
 
@@ -1876,16 +1867,20 @@ public final class Main implements SingletonApp {
 		terminate(0);
 	}
 
-	private void repaintOverlay() {
-		if (overlayFrame != null) {
-			overlayFrame.getContentPane().validate();
-			overlayFrame.getContentPane().repaint();
-		}
+	private void repaintOnScreenKeyboard() {
+		if (!onScreenKeyboard.isVisible())
+			return;
 
-		if (onScreenKeyboard.isVisible()) {
-			onScreenKeyboard.getContentPane().validate();
-			onScreenKeyboard.getContentPane().repaint();
-		}
+		onScreenKeyboard.getContentPane().validate();
+		onScreenKeyboard.getContentPane().repaint();
+	}
+
+	private void repaintOverlay() {
+		if (overlayFrame == null)
+			return;
+
+		overlayFrame.getContentPane().validate();
+		overlayFrame.getContentPane().repaint();
 	}
 
 	public void restartLast() {
@@ -2069,6 +2064,7 @@ public final class Main implements SingletonApp {
 					}
 
 					repaintOverlay();
+					repaintOnScreenKeyboard();
 				});
 			}
 		};
@@ -2165,7 +2161,7 @@ public final class Main implements SingletonApp {
 				|| serverThread != null && serverThread.isAlive())
 			SwingUtilities.invokeLater(() -> {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
-				repaintOverlay();
+				repaintOnScreenKeyboard();
 			});
 	}
 
@@ -2284,18 +2280,28 @@ public final class Main implements SingletonApp {
 
 				if (outputThread != null) {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
+					var changed = false;
 
 					final var newMinimum = -outputThread.getMaxAxisValue();
-					if (progressBar.getMinimum() != newMinimum)
+					if (progressBar.getMinimum() != newMinimum) {
 						progressBar.setMinimum(newMinimum);
+						changed = true;
+					}
 
 					final var newMaximum = outputThread.getMinAxisValue();
-					if (progressBar.getMaximum() != newMaximum)
+					if (progressBar.getMaximum() != newMaximum) {
 						progressBar.setMaximum(newMaximum);
+						changed = true;
+					}
 
 					final var newValue = -input.getAxes().get(virtualAxis);
-					if (progressBar.getValue() != newValue)
+					if (progressBar.getValue() != newValue) {
 						progressBar.setValue(newValue);
+						changed = true;
+					}
+
+					if (changed)
+						repaintOverlay();
 				}
 			}
 	}
@@ -2317,6 +2323,7 @@ public final class Main implements SingletonApp {
 
 		indicatorsListPanel.removeAll();
 
+		final var borderColor = UIManager.getColor("Component.borderColor");
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
@@ -2341,7 +2348,7 @@ public final class Main implements SingletonApp {
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
-			colorLabel.setBorder(BorderFactory.createLineBorder(MetalLookAndFeel.getControlDarkShadow()));
+			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
 			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
 					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
@@ -2388,77 +2395,14 @@ public final class Main implements SingletonApp {
 		setEnabledRecursive(settingsPanel, panelsEnabled);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void updateTheme() {
-		final var theme = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new DefaultMetalTheme() {
-
-			@Override
-			protected ColorUIResource getBlack() {
-				return super.getWhite();
-			}
-
-			@Override
-			protected ColorUIResource getPrimary1() {
-				return new ColorUIResource(super.getPrimary1().darker());
-			}
-
-			@Override
-			protected ColorUIResource getPrimary2() {
-				return new ColorUIResource(super.getPrimary2().darker());
-			}
-
-			@Override
-			protected ColorUIResource getPrimary3() {
-				return new ColorUIResource(super.getPrimary3().darker());
-			}
-
-			@Override
-			protected ColorUIResource getSecondary1() {
-				return invertColorUIResource(super.getSecondary1());
-			}
-
-			@Override
-			protected ColorUIResource getSecondary3() {
-				return invertColorUIResource(super.getSecondary3());
-			}
-
-			@Override
-			protected ColorUIResource getWhite() {
-				return super.getBlack();
-			}
-
-		} : new OceanTheme();
-		MetalLookAndFeel.setCurrentTheme(theme);
+		final var lookAndFeel = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new FlatDarkLaf()
+				: new FlatLightLaf();
 
 		try {
-			UIManager.setLookAndFeel(new MetalLookAndFeel());
+			UIManager.setLookAndFeel(lookAndFeel);
 		} catch (final UnsupportedLookAndFeelException e) {
 			throw new RuntimeException(e);
-		}
-
-		final var keys = UIManager.getDefaults().keys();
-		while (keys.hasMoreElements()) {
-			final var key = keys.nextElement();
-			final var font = UIManager.getFont(key);
-			if (font != null) {
-				final var newFontUIResource = new FontUIResource(font.getName(), Font.PLAIN, font.getSize());
-				UIManager.put(key, newFontUIResource);
-			}
-		}
-
-		if (usingOceanTheme()) {
-			final var buttonGradient = UIManager.get("Button.gradient");
-			final var panelBackground = UIManager.getColor("Panel.background");
-
-			if (buttonGradient instanceof List && panelBackground != null) {
-				final var factor = .94f;
-
-				final var buttonGradientColor = new Color(Math.max((int) (panelBackground.getRed() * factor), 0),
-						Math.max((int) (panelBackground.getGreen() * factor), 0),
-						Math.max((int) (panelBackground.getBlue() * factor), 0), panelBackground.getAlpha());
-
-				((List<Object>) buttonGradient).replaceAll(v -> v instanceof Color ? buttonGradientColor : v);
-			}
 		}
 
 		SwingUtilities.updateComponentTreeUI(frame);
