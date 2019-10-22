@@ -150,7 +150,7 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = 8086810563127997199L;
 
 		private CancelAction() {
-			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.cancelButtonText"));
+			putValue(NAME, UIManager.getString("OptionPane.cancelButtonText"));
 			putValue(SHORT_DESCRIPTION, strings.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
@@ -166,7 +166,7 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = -6947022759101822700L;
 
 		private OKAction() {
-			putValue(NAME, UIManager.getLookAndFeelDefaults().get("OptionPane.okButtonText"));
+			putValue(NAME, UIManager.getString("OptionPane.okButtonText"));
 			putValue(SHORT_DESCRIPTION, strings.getString("OK_ACTION_DESCRIPTION"));
 		}
 
@@ -433,13 +433,13 @@ public final class EditActionsDialog extends JDialog {
 		final var addButton = new JButton(new AddActionAction());
 		addButton.setPreferredSize(BUTTON_DIMENSION);
 		addButton.setEnabled(false);
-		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
+		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var removeButton = new JButton(new RemoveActionAction());
 		removeButton.setPreferredSize(BUTTON_DIMENSION);
 		removeButton.setEnabled(false);
-		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 0.25, GridBagConstraints.CENTER,
+		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -451,7 +451,7 @@ public final class EditActionsDialog extends JDialog {
 				addButton.setEnabled(true);
 		});
 		updateAvailableActions();
-		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, 0.25, 1d,
+		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, .1d, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		actionsPanel.add(new JLabel(strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d,
@@ -464,7 +464,7 @@ public final class EditActionsDialog extends JDialog {
 
 		final var propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
-		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 0.5, 1d, GridBagConstraints.CENTER,
+		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, .8d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -493,7 +493,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(5, 5, 5, 5), 0, 10));
 
 					final var propertyNameLabel = new JLabel(strings.getString(annotation.label()));
-					propertyNameLabel.setPreferredSize(new Dimension(130, 15));
+					propertyNameLabel.setPreferredSize(new Dimension(150, 15));
 					propertyPanel.add(propertyNameLabel);
 
 					try {
@@ -530,7 +530,7 @@ public final class EditActionsDialog extends JDialog {
 			propertiesLabel.setVisible(anyPropertiesFound);
 			propertiesScrollPane.setVisible(anyPropertiesFound);
 		});
-		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, 0.25, 1d,
+		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, .1d, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var buttonPanel = new JPanel();

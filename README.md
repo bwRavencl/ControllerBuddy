@@ -13,69 +13,81 @@ GNU General Public License v2.0
 
 #### Description:
 ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.  
-In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the vJoy device driver.  
-The set goal of this is application is to allow controlling target applications without having the user take off their hands from the gamepad to reach for the keyboard or mouse.
+In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the awesome [vJoy](http://vjoystick.sourceforge.net) device driver created by Shaul Eizikovich.  
+The goal of this is application is to allow controlling target applications without having the user take off their hands from the gamepad to reach for the keyboard or mouse.
 
 #### Features:
-ControllerBuddy can either feed inputs to the local computer or via network to a second computer.
+- Maps gamepad axes and buttons to highly customizable actions:
+ - vJoy axis movements (absolute and relative)
+ - vJoy button presses
+ - Keyboard inputs
+ - Mouse inputs
+ - Cycles of actions
+ - Mode switching
+ - ...
+- Powerful user interface:
+ - Allows the creation of mapping profiles
+ - Configuration of settings
+ - Support for a light and dark UI theme
+- In-game overlay:
+ - Displays currently active mode
+ - Can display current position of virtual axes
+ - On-Screen-Keyboard that can be controlled via gamepad
+ - VR support (OpenVR-based)
+ - Customizable position and colors
+- Two scenarios of operation:
+ - Local
+ - Server to client (experimental! use only in trusted networks!)
+- Supported gamepads:
+ - Xbox 360 Controller
+ - Xbox One Controller
+ - Dual Shock 3
+ - Dual Shock 4 (with custom support for the touchpad / rumble and lightbar)
+ - ... to see if your device is supported please checkout the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project.
+- Supported operating systems:
+ - Windows x64 (local / client / server)
+ - macOS (only server - no binaries provided!)
+ - Linux (only server - no binaries provided!)
 
-Consequently ControllerBuddy can operate in three different roles:
-- Local (Single machine with a physical controller and a vJoy device)
-- Server (Source machine with the physical controller)
-- Client (Target machine with the vJoy device)
+#### Profiles:
+Profiles are used to configure your gamepad for a certain target application.  
+A profile has the following general structure:
 
-When using ControllerBuddy in client-server mode, both instances communicate over a lightweight UDP-based protocol.
-Please note that this mode of operation is currently considered experimental and should only ever be used in trusted networks!
+- Profile (.json file)
+ - Default Mode
+  - X Axis
+   - some Action
+   - another Action
+  - Y Axis
+   - some Action
+  - A Button
+   - some Action
+   - another Action
+  - B Button
+   - Mode Action (switches to "Another Mode" and back)
+  - X Button
+   - Mode Action (switches to "Yet another Mode" and back)
+  - Y Button
+   - Cycle Action (performs Action 1, when pressed again Action 2, then Action 3, then starts over with Action 1)
+    - Action 1
+    - Action 2
+    - Action 3
+ - Another Mode 
+  - X Axis
+   - some Action
+  - A Button
+    - some Action
+  - Yet another Mode
+   - X Axis
+    - some Action
+ - ...
 
-In order to support the creation of very complex input profiles, ControllerBuddy comes with a variety of so called actions.  
-Each axis or button present on the device can be mapped to one or multiple actions invoked on the target host.  
-An action can for example be the rather common mapping of a physical axis or button to a vJoy axis, a mouse button or a keyboard shortcut.  
-More specialized types of actions are available for tasks such as resetting a relative vJoy axis to its initial value or creating cycles of actions.
-
-Currently among the following actions are supported:
-- Axis movements
-- Relative axis movements
-- Button presses
-- Cursor movement
-- Keyboard inputs
-- Mouse button presses
-- Mouse scrolling
-- Lock key toggling
-- Cycles of actions
-- Mode switching
-- Relative axis resetting
-- ...
-
-ControllerBuddy supports the creation of multiple input modes, which are best be described as shift-states.
-In each mode, each physical axis or button can be mapped to one or multiple different actions.
+When switching from one Mode to another, all the axes and buttons that are not used by the other mode retain their function from the previous mode. This works over multiple levels of modes.
 Mode switching can be configured to operate in two different ways:
-- Default mode switching works similarily to the shift key found on keyboards, when the button used for switching to a mode is realeased the shift-state becones inactive
-- Toggle mode switching works like when using the Caps Lock key of a keyboard, pressing it once switches to the assigned mode and pressing it again turns the mode off
-It is possible to stack multiple modes on top of each other, thereby buttons and axes that are not assigned in a mode further up on the stack retain their function from the modes further down in the stack.
+- Default: works like the SHIFT key on your keyboard
+- Toggle: works like the Caps Lock key
 
-The whole programming of the physical controller can be performed via the graphical user interface of ControllerBuddy.
-The resulting profile can be exported to a simple JSON-based file format.
-
-ControllerBuddy offers a freely moveable overlay window, that displays the currently active input mode and the position of the vJoy axes.
-The virtual axes displayed in the overlay can be customized on a per-profile basis.
-The overlay was designed to be used with applications, that are running in (borderless fullscreen) windowed mode.
-
-In addition a built-in On-Screen Keyboard is provided, that can either be controlled via special actions bound to controller buttons or via the mouse cursor.
-
-Both the status overlay and the On-Screen Keyboard can be displayed as overlays inside OpenVR-based applications.
-
-For maximum platform-independence ControllerBuddy was implemented as a Java application, supporting all three major operating systems Windows, macOS and Linux when running as a server.  
-When running in client- or local-mode currently only Windows is supported.  
-Currently only binary builds for Windows x64 are provided.
-
-A great number of XInput and DirectInput gamepads are supported such as:
-- Xbox 360 Controller
-- Xbox One Controller
-- Dual Shock 3
-- Dual Shock 4 (with custom support for the touchpad / rumble and lightbar)
-- ...
-
-To see if your device is supported please checkout the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project.
+A set of well thought out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles).
 
 #### Architecture:
 ```
@@ -110,31 +122,32 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 ![Dark Mode](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_6.png)
 
 #### Command Line Parameters:
-```
-usage: ControllerBuddy [-autostart <arg>] [-profile <arg>] [-tray]
-       [-version]
- -autostart <arg>   automatically start the local feeder [-autostart local] or
-                    client [-autostart client] or
-                    server [-autostart server]
- -profile <arg>     load the specified profile
- -tray              launch in system tray
- -version           print version and quit
-```
 
-If an instance of ControllerBuddy is already running, launching a second instance with the `-profile` parameter can be used to trigger the loading of the specified profile in the first instance. This enables profile switching from any other application that can execute shell commands.
+| Parameter  | Arguments               | Description                                          | Avaiable for scripting |
+| ---------- | ----------------------- | ---------------------------------------------------- | ---------------------- |
+| -autostart | local, client, server   | Starts the specified mode of operation after launch. | yes                    |
+| -profile   | path to a profile file  | Loads the specified profile after launch.            | yes                    |
+| -tray      |                         | Launches the application in system tray.             | yes                    |
+| -version   |                         | Prints the version information and quits.            | no                     |
+
+If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance. This can for example be used to integrate ControllerBuddy into third party applications.  
+For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration) examplary integration of ControllerBuddy into DCS World.
 
 #### Dependencies:
+ControllerBuddy depends on the following awesome software technologies and libraries:
 - [OpenJDK 13](https://jdk.java.net/13/)
 - [OpenJDK with jpackage support](https://jdk.java.net/jpackage/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
+- [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
 
 #### Building:
-ControllerBuddy uses the Gradle build system.  
+If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
+ControllerBuddy uses the Gradle build system 
 The following tasks are supported:
 
 | Task                             | Command                 |

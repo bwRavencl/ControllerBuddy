@@ -129,7 +129,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		}
 
 		final var modifiersScrollPane = new JScrollPane(modifierList);
-		modifiersScrollPane.setPreferredSize(new Dimension(175, 200));
+		modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
 		modifiersPanel.add(modifiersScrollPane);
 		parentPanel.add(modifiersPanel);
 
@@ -152,7 +152,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		}
 
 		final var keysScrollPane = new JScrollPane(keyList);
-		keysScrollPane.setPreferredSize(new Dimension(175, 200));
+		keysScrollPane.setPreferredSize(new Dimension(130, 200));
 		keysPanel.add(keysScrollPane);
 		parentPanel.add(keysPanel);
 	}
