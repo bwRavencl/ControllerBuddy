@@ -32,7 +32,7 @@ public abstract class OutputThread extends Thread {
 
 	private static final Logger log = Logger.getLogger(OutputThread.class.getName());
 
-	public static final int DEFAULT_POLL_INTERVAL = 2;
+	public static final int DEFAULT_POLL_INTERVAL = 1;
 
 	final Main main;
 	final Input input;
