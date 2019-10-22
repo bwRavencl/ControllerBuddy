@@ -19,6 +19,8 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
@@ -26,6 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
+@Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
 
