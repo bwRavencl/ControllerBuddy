@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -159,10 +157,6 @@ class GuiUtils {
 		location.y = Math.max(maxWindowBounds.y,
 				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
-	}
-
-	static boolean usingOceanTheme() {
-		return MetalLookAndFeel.getCurrentTheme() instanceof OceanTheme;
 	}
 
 }
