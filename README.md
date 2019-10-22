@@ -53,7 +53,7 @@ The goal of this is application is to allow controlling target applications with
 Profiles are used to configure your gamepad for a certain target application.  
 A profile has the following general structure:
 
-- Profile (.json file)
+- Profile (`.json` file)
   - Default Mode
     - X Axis
       - some Action
