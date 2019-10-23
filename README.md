@@ -24,7 +24,7 @@ The goal of this is application is to allow controlling target applications with
   - Mouse inputs
   - Cycles of actions
   - Mode switching
-  - ...
+  - etc.
 - Powerful user interface:
   - Allows the creation of mapping profiles
   - Configuration of settings
@@ -42,12 +42,15 @@ The goal of this is application is to allow controlling target applications with
   - Xbox 360 Controller
   - Xbox One Controller
   - Dual Shock 3
-  - Dual Shock 4 (with custom support for the touchpad / rumble and lightbar)
-  - ... to see if your device is supported please checkout the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project.
+  - Dual Shock 4 (with special support for the touchpad, haptic feedback and lightbar)
+  - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
 - Supported operating systems:
   - Windows x64 (local / client / server)
   - macOS (only server - no binaries provided!)
   - Linux (only server - no binaries provided!)
+- Language support for:
+  - English
+  - German
 
 #### Profiles:
 Profiles are used to configure your gamepad for a certain target application.  
@@ -112,9 +115,9 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 
 ![Assignments Tab](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_2.png)
 
-![Button Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_3.png)
+![Component Editor - Button](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_3.png)
 
-![Axis Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_4.png)
+![Component Editor - Axis](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_4.png)
 
 ![Dark Mode](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_5.png)
 
@@ -149,8 +152,7 @@ ControllerBuddy depends on the following awesome software technologies and libra
 
 #### Building:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
-ControllerBuddy uses the Gradle build system 
-The following tasks are supported:
+ControllerBuddy uses the Gradle build system, the following tasks are supported:
 
 | Task                             | Command                 |
 | -------------------------------- | ----------------------- |

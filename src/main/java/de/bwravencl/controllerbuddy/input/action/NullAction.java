@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
-@Action(label = "NULL_ACTION", category = ActionCategory.ALL)
+@Action(label = "NULL_ACTION", category = ActionCategory.ALL, order = 999)
 public final class NullAction implements IAction<Number> {
 
 	@Override

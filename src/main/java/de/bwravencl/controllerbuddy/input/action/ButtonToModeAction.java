@@ -33,7 +33,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 
-@Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON)
+@Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToModeAction implements IButtonToAction {
 
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
@@ -46,13 +46,13 @@ public final class ButtonToModeAction implements IButtonToAction {
 		buttonToModeActionStack.clear();
 	}
 
-	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class)
+	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean toggle = false;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class)
+	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
 
 	private transient boolean up = true;

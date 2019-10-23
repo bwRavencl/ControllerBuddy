@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxCursorSpeedEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
-@Action(label = "AXIS_TO_CURSOR_ACTION", category = ActionCategory.AXIS)
+@Action(label = "AXIS_TO_CURSOR_ACTION", category = ActionCategory.AXIS, order = 25)
 public final class AxisToCursorAction extends InvertableAction<Float>
 		implements ISuspendableAction, IModeChangeListenerAction {
 
@@ -39,16 +39,16 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 	private static final float DEFAULT_EXPONENT = 2f;
 	private static final float DEFAULT_MAX_CURSOR_SPEED = 2000f;
 
-	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class)
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
 	private float deadZone = DEFAULT_DEAD_ZONE;
 
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class)
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 12)
 	private float exponent = DEFAULT_EXPONENT;
 
-	@ActionProperty(label = "MAX_CURSOR_SPEED", editorBuilder = MaxCursorSpeedEditorBuilder.class)
+	@ActionProperty(label = "MAX_CURSOR_SPEED", editorBuilder = MaxCursorSpeedEditorBuilder.class, order = 11)
 	private float maxCursorSpeed = DEFAULT_MAX_CURSOR_SPEED;
 
-	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class)
+	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
 	private MouseAxis axis = MouseAxis.X;
 
 	private transient long lastCallTime;

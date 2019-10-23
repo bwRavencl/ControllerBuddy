@@ -24,10 +24,10 @@ import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
 abstract class ToKeyAction<V extends Number> implements IAction<V> {
 
-	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class)
+	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class, order = 11)
 	boolean downUp = false;
 
-	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class)
+	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	KeyStroke keystroke = new KeyStroke();
 
 	transient boolean wasUp = true;

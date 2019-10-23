@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 
 abstract class InvertableAction<V extends Number> implements IAction<V> {
 
-	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class)
+	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class, order = 500)
 	boolean invert = false;
 
 	@Override

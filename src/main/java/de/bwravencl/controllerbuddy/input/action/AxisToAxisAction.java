@@ -23,12 +23,12 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 
-@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS)
+@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;
 
-	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class)
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	@Override

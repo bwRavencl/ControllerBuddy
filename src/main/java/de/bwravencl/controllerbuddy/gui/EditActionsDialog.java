@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -251,10 +252,10 @@ public final class EditActionsDialog extends JDialog {
 				.enableClassInfo().enableAnnotationInfo().scan();
 		final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
 		Collections.sort(classInfoList, (c1, c2) -> {
-			final var l1 = IAction.getLabel(c1.loadClass());
-			final var l2 = IAction.getLabel(c2.loadClass());
+			final var a1 = c1.loadClass().getAnnotation(Action.class);
+			final var a2 = c2.loadClass().getAnnotation(Action.class);
 
-			return l1.compareTo(l2);
+			return a1.order() - a2.order();
 		});
 
 		for (final var classInfo : classInfoList) {
@@ -479,7 +480,14 @@ public final class EditActionsDialog extends JDialog {
 			if (selectedAssignedAction != null) {
 				final var actionClass = selectedAssignedAction.action.getClass();
 				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
-				for (final var entry : fieldToActionPropertyMap.entrySet()) {
+				final var sortedEntires = fieldToActionPropertyMap.entrySet().stream().sorted((e1, e2) -> {
+					final var a1 = e1.getValue();
+					final var a2 = e2.getValue();
+
+					return a1.order() - a2.order();
+				}).collect(Collectors.toUnmodifiableList());
+
+				for (final var entry : sortedEntires) {
 					final var field = entry.getKey();
 					final var annotation = entry.getValue();
 
@@ -493,7 +501,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(5, 5, 5, 5), 0, 10));
 
 					final var propertyNameLabel = new JLabel(strings.getString(annotation.label()));
-					propertyNameLabel.setPreferredSize(new Dimension(150, 15));
+					propertyNameLabel.setPreferredSize(new Dimension(175, 15));
 					propertyPanel.add(propertyNameLabel);
 
 					try {

@@ -24,7 +24,7 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
 	private static final int DEFAULT_CLICKS = 1;
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class)
+	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class, order = 10)
 	int clicks = DEFAULT_CLICKS;
 
 	public int getClicks() {

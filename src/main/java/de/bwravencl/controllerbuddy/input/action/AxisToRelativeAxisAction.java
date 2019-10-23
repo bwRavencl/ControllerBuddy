@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
-@Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS)
+@Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		implements IModeChangeListenerAction, IInitializationAction {
 
@@ -37,19 +37,19 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 	private static final float DEFAULT_INITIAL_VALUE = 0f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class)
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
 	private float exponent = DEFAULT_EXPONENT;
 
-	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class)
+	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
-	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class)
+	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class, order = 202)
 	private float initialValue = DEFAULT_INITIAL_VALUE;
 
-	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class)
+	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
-	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class)
+	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
 	private Float detentValue = null;
 
 	private transient long lastCallTime = 0L;

@@ -27,17 +27,17 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-@Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON)
+@Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 135)
 public final class ButtonToCycleAction implements IButtonToAction, IResetableAction {
 
 	private transient boolean wasUp = true;
 
 	private transient int index = 0;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class)
+	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
 	private List<IAction<Byte>> actions = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")

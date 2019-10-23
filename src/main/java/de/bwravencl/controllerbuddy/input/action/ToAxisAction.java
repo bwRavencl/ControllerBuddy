@@ -23,7 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 
 abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 
-	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class)
+	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	protected VirtualAxis virtualAxis = VirtualAxis.X;
 
 	public VirtualAxis getVirtualAxis() {

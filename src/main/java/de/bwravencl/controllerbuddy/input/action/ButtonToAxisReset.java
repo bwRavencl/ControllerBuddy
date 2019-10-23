@@ -24,15 +24,15 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-@Action(label = "BUTTON_TO_RELATIVE_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES)
-public final class ButtonToRelativeAxisReset extends ToAxisAction<Byte> implements IButtonToAction {
+@Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
+public final class ButtonToAxisReset extends ToAxisAction<Byte> implements IButtonToAction {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
 
-	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class)
+	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float resetValue = DEFAULT_RESET_VALUE;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class)
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override

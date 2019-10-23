@@ -33,6 +33,8 @@ public @interface ActionProperty {
 
 	String label();
 
+	int order();
+
 	String overrideFieldName() default "";
 
 	Class<?> overrideFieldType() default Void.class;

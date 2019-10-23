@@ -25,15 +25,15 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 
-@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON)
+@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON, order = 116)
 public final class ButtonToLockKeyAction implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "VIRTUAL_KEY_CODE", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class)
+	@ActionProperty(label = "VIRTUAL_KEY_CODE", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
 	private int virtualKeyCode = LockKey.LOCK_KEYS[0].virtualKeyCode;
 
-	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class)
+	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
 
 	private transient boolean wasUp = true;

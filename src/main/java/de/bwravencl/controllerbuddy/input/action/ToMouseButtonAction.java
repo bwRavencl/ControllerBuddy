@@ -25,10 +25,10 @@ abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
-	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class)
+	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class, order = 11)
 	boolean downUp = false;
 
-	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class)
+	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	int mouseButton = DEFAULT_MOUSE_BUTTON;
 
 	transient boolean wasUp = true;
