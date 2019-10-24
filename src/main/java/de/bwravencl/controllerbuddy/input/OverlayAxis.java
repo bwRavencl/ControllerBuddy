@@ -26,7 +26,7 @@ public final class OverlayAxis implements Cloneable {
 	public boolean inverted;
 
 	public OverlayAxis() {
-		this(new Color(0, 0, 0, 128), false);
+		this(Color.BLACK, false);
 	}
 
 	private OverlayAxis(final Color color, final boolean inverted) {
@@ -36,8 +36,7 @@ public final class OverlayAxis implements Cloneable {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return new OverlayAxis(new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()),
-				inverted);
+		return new OverlayAxis(new Color(color.getRGB(), true), inverted);
 	}
 
 }
