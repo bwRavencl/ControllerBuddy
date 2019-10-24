@@ -1485,8 +1485,6 @@ public final class Main implements SingletonApp {
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
-				final var borderColor = Color.BLACK;
-
 				final var dententValues = new HashSet<Float>();
 				for (final var mode : input.getProfile().getModes())
 					for (final var actions : mode.getAxisToActionsMap().values())
@@ -1510,7 +1508,7 @@ public final class Main implements SingletonApp {
 
 						final var subdivisions = 3;
 						for (var i = 1; i <= subdivisions; i++) {
-							g.setColor(borderColor);
+							g.setColor(Color.WHITE);
 							final var y = i * (height / (subdivisions + 1));
 							g.drawLine(0, y, width, y);
 						}
