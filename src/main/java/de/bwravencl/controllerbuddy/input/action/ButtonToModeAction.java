@@ -152,7 +152,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 				deactivateMode(input, profile);
 		} else if (toggle) {
 			if (up) {
-				if (buttonToModeActionStack.contains(this))
+				if (buttonToModeActionStack.peek() == this)
 					deactivateMode(input, profile);
 				else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
 					activateMode(input, profile);
