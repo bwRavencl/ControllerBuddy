@@ -29,25 +29,25 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-cli:commons-cli:1.4',
-            'com.formdev:flatlaf:0.16',
-            'com.github.git-moss:purejavahidapi:9e9d54b33d',
-            'com.google.code.gson:gson:2.8.6',
-            'io.github.classgraph:classgraph:4.8.52',
-            "net.java.dev.jna:jna:$jnaVersion",
-            "net.java.dev.jna:jna-platform:$jnaVersion",
-            "org.lwjgl:lwjgl:$lwjglVersion",
-            "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
-            "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
-            "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
-            "org.lwjgl:lwjgl-glfw:$lwjglVersion",
-            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
-            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
-            "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
-            "org.lwjgl:lwjgl-opengl:$lwjglVersion",
-            "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
-            "org.lwjgl:lwjgl-openvr:$lwjglVersion",
-            "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+    implementation 'commons-cli:commons-cli:1.4',
+                   'com.formdev:flatlaf:0.16',
+                   'com.github.git-moss:purejavahidapi:9e9d54b33d',
+                   'com.google.code.gson:gson:2.8.6',
+                   'io.github.classgraph:classgraph:4.8.52',
+                   "net.java.dev.jna:jna:$jnaVersion",
+                   "net.java.dev.jna:jna-platform:$jnaVersion",
+                   "org.lwjgl:lwjgl:$lwjglVersion",
+                   "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
+                   "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
+                   "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
+                   "org.lwjgl:lwjgl-glfw:$lwjglVersion",
+                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
+                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
+                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
+                   "org.lwjgl:lwjgl-opengl:$lwjglVersion",
+                   "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
+                   "org.lwjgl:lwjgl-openvr:$lwjglVersion",
+                   "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
 }
 
 task cleanGenDirectory {
@@ -103,7 +103,7 @@ task jlink(type: Exec) {
 task copyLibs(type: Copy) {
     description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
     dependsOn jar
-    from configurations.runtime
+    from configurations.runtimeClasspath
     into "$libsDir"
 }
 
@@ -133,7 +133,7 @@ distTar.enabled = false
 task distZip(type: Zip, overwrite: true) {
     dependsOn jpackage
     from "$tmpDir"
-    destinationDir file("$buildDir/$distsDirName")
+//    destinationDirectory file("$buildDir/$distsDirName")
     include "$project.name/**"
 }
 
