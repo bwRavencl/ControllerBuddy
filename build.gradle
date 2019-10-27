@@ -37,17 +37,17 @@ dependencies {
                    "net.java.dev.jna:jna:$jnaVersion",
                    "net.java.dev.jna:jna-platform:$jnaVersion",
                    "org.lwjgl:lwjgl:$lwjglVersion",
-                   "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
-                   "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
-                   "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
                    "org.lwjgl:lwjgl-glfw:$lwjglVersion",
-                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
-                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
-                   "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
                    "org.lwjgl:lwjgl-opengl:$lwjglVersion",
-                   "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
-                   "org.lwjgl:lwjgl-openvr:$lwjglVersion",
-                   "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+                   "org.lwjgl:lwjgl-openvr:$lwjglVersion"
+    runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
+                "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
+                "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
+                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
+                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
+                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
+                "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
+                "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
 }
 
 task cleanGenDirectory {
