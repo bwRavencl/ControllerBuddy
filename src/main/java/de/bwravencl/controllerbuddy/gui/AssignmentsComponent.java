@@ -69,6 +69,7 @@ import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
 
 import com.formdev.flatlaf.ui.FlatButtonUI;
+import com.formdev.flatlaf.ui.FlatUIUtils;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
@@ -292,11 +293,11 @@ final class AssignmentsComponent extends JScrollPane {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 			final var def = isDefaultButton();
-			final var color = FlatButtonUI.buttonStateColor(this, def ? defaultBackground : getBackground(), null,
+			final var background = FlatButtonUI.buttonStateColor(this, def ? defaultBackground : getBackground(), null,
 					def ? defaultFocusedBackground : focusedBackground, def ? defaultHoverBackground : hoverBackground,
 					def ? defaultPressedBackground : pressedBackground);
 
-			g2d.setColor(color);
+			FlatUIUtils.setColor(g2d, background, def ? defaultBackground : getBackground());
 		}
 
 		void beginBorder(final Graphics2D g2d) {
