@@ -130,8 +130,8 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 | Parameter  | Arguments               | Description                                          | Available for scripting |
 | ---------- | ----------------------- | ---------------------------------------------------- | :---------------------: |
 | -autostart | local / client / server | starts the specified mode of operation after launch  | yes                     |
-| -profile   | path to a profile file  | loads the specified profile after launch             | yes                     |
-| -tray      |                         | launches the application in system tray              | yes                     |
+| -profile   | path of a profile-file  | loads the specified profile after launch             | yes                     |
+| -tray      |                         | launches the application in the system tray          | yes                     |
 | -version   |                         | prints the version information and quits             | no                      |
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
