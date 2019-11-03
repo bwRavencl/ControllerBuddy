@@ -155,6 +155,8 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 						writeOutput();
 					Thread.sleep(pollInterval);
 				}
+			else
+				forceStop = true;
 		} catch (final InterruptedException e) {
 		} finally {
 			deInit();

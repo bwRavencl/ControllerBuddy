@@ -361,7 +361,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				while (!Thread.currentThread().isInterrupted())
 					if (readInput())
 						writeOutput();
-			}
+			} else
+				forceStop = true;
 		} catch (final UnknownHostException e) {
 			log.log(Level.INFO, "Could not resolve host " + host);
 			SwingUtilities.invokeLater(() -> {

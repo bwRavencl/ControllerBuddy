@@ -189,7 +189,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	private boolean restart;
-	private boolean forceStop;
+	boolean forceStop;
 	private UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
 	private IVjoyInterface vJoy;
 	LONG axisX;
