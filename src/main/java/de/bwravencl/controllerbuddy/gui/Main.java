@@ -159,6 +159,7 @@ import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 import de.bwravencl.controllerbuddy.output.ServerOutputThread;
+import de.bwravencl.controllerbuddy.output.ServerOutputThread.ServerState;
 import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
@@ -1300,11 +1301,15 @@ public final class Main implements SingletonApp {
 						if (selectedJid == jid) {
 							selectedJid = INVALID_JID;
 							input.deInit();
+
+							if (serverThread != null && serverThread.isAlive()
+									&& serverThread.getServerState() != ServerState.Connected)
+								serverThread.controllerDisconnected();
 						}
 					} else if (event == GLFW_CONNECTED)
 						log.log(Level.INFO, assembleControllerLoggingMessage("Connected", jid));
 
-					invokeOnEventDispatchThreadIfRequired(() -> onControllersChanged(false));
+					SwingUtilities.invokeLater(() -> onControllersChanged(false));
 				}
 			}
 		});

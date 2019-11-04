@@ -41,7 +41,7 @@ import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public final class ServerOutputThread extends OutputThread {
 
-	private enum ServerState {
+	public enum ServerState {
 		Listening, Connected
 	}
 
@@ -61,6 +61,7 @@ public final class ServerOutputThread extends OutputThread {
 	private int timeout = DEFAULT_TIMEOUT;
 	private DatagramSocket serverSocket;
 	private InetAddress clientIPAddress;
+	private ServerState serverState;
 
 	public ServerOutputThread(final Main main, final Input input) {
 		super(main, input);
@@ -71,10 +72,10 @@ public final class ServerOutputThread extends OutputThread {
 			serverSocket.close();
 
 		SwingUtilities.invokeLater(() -> {
-			if (ServerOutputThread.this.isAlive()) {
-				main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
+			main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
+
+			if (ServerOutputThread.this.isAlive())
 				main.stopAll();
-			}
 		});
 	}
 
@@ -83,12 +84,16 @@ public final class ServerOutputThread extends OutputThread {
 		return log;
 	}
 
+	public ServerState getServerState() {
+		return serverState;
+	}
+
 	@Override
 	public void run() {
 		logStart();
 
 		final var clientPort = port + 1;
-		var serverState = ServerState.Listening;
+		serverState = ServerState.Listening;
 		DatagramPacket receivePacket;
 		String message;
 		var counter = 0L;

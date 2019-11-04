@@ -48,13 +48,14 @@ public abstract class OutputThread extends Thread {
 		input.setOutputThread(this);
 	}
 
-	final void controllerDisconnected() throws InterruptedException {
+	public final void controllerDisconnected() {
 		new Thread() {
 
 			@Override
 			public void run() {
 				main.stopAll();
 			}
+
 		}.start();
 
 		log.log(Level.WARNING, "Could not read from controller");

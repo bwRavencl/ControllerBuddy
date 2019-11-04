@@ -38,7 +38,7 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 	}
 
 	@Override
-	boolean readInput() throws InterruptedException {
+	boolean readInput() {
 		if (!input.poll()) {
 			controllerDisconnected();
 

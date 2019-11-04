@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.ColorUIResource;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -39,7 +38,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
 
-class GuiUtils {
+final class GuiUtils {
 
 	static class FrameDragListener extends MouseAdapter {
 		private final Main main;
@@ -95,10 +94,6 @@ class GuiUtils {
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return underscoreTitle + "_location";
-	}
-
-	static ColorUIResource invertColorUIResource(final ColorUIResource color) {
-		return new ColorUIResource(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
 	}
 
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
