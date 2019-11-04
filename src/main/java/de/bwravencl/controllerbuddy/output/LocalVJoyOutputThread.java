@@ -110,8 +110,10 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 		cursorDeltaY = input.getCursorDeltaY();
 		input.setCursorDeltaY(0);
 
-		updateOutputSets(input.getDownMouseButtons(), oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons,
-				false);
+		final var downMouseButtons = input.getDownMouseButtons();
+		synchronized (downMouseButtons) {
+			updateOutputSets(downMouseButtons, oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons, false);
+		}
 
 		downUpMouseButtons.clear();
 		downUpMouseButtons.addAll(input.getDownUpMouseButtons());
