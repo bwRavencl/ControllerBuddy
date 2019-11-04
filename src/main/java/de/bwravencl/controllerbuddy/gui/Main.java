@@ -2376,8 +2376,10 @@ public final class Main implements SingletonApp {
 
 	private void updatePanelAccess() {
 		final var localActive = localThread != null && localThread.isAlive();
+		final var clientActive = clientThread != null && clientThread.isAlive();
 		final var serverActive = serverThread != null && serverThread.isAlive();
-		final var panelsEnabled = !localActive && !serverActive;
+
+		final var panelsEnabled = !localActive && !clientActive && !serverActive;
 
 		setEnabledRecursive(modesListPanel, panelsEnabled);
 		setEnabledRecursive(addModePanel, panelsEnabled);

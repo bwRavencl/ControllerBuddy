@@ -159,6 +159,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
 				}
+
+				forceStop = true;
 				interrupt();
 			}
 
@@ -340,6 +342,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
+
+				forceStop = true;
 				interrupt();
 			}
 			break;
