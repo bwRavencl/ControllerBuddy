@@ -73,6 +73,8 @@ public final class Input {
 			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+	private static final int hidReportOffset = Main.windows ? -1 : 0;
+
 	private static float clamp(final float v) {
 		return Math.max(Math.min(v, 1f), -1f);
 	}
@@ -204,16 +206,21 @@ public final class Input {
 							@Override
 							public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
 									final int len) {
-								final var touchpadButtonDown = (data[6] & 1 << 2 - 1) != 0;
-								final var down1 = data[34] >> 7 != 0 ? false : true;
-								final var down2 = data[38] >> 7 != 0 ? false : true;
-								final var x1 = data[35] + (data[36] & 0xF) * 255;
-								final var y1 = ((data[36] & 0xF0) >> 4) + data[37] * 16;
+								final var touchpadButtonDown = (data[7 + hidReportOffset] & 1 << 2 - 1) != 0;
+								final var down1 = data[35 + hidReportOffset] >> 7 != 0 ? false : true;
+								final var down2 = data[39 + hidReportOffset] >> 7 != 0 ? false : true;
+								final var x1 = data[36 + hidReportOffset] + (data[37 + hidReportOffset] & 0xF) * 255;
+								final var y1 = ((data[37 + hidReportOffset] & 0xF0) >> 4)
+										+ data[38 + hidReportOffset] * 16;
 
 								if (touchpadButtonDown)
-									downMouseButtons.add(down2 ? 2 : 1);
+									synchronized (downMouseButtons) {
+										downMouseButtons.add(down2 ? 2 : 1);
+									}
 								else if (prevTouchpadButtonDown)
-									downMouseButtons.clear();
+									synchronized (downMouseButtons) {
+										downMouseButtons.clear();
+									}
 
 								if (down1 && prevDown1) {
 									final var dX1 = x1 - prevX1;
@@ -302,15 +309,14 @@ public final class Input {
 	}
 
 	public Short getDualShock4ProductId() {
-		if (Main.windows) {
-			final var guid = glfwGetJoystickGUID(jid);
-			if ("030000004c050000c405000000000000".equals(guid))
+		final var guid = glfwGetJoystickGUID(jid);
+		if (guid != null)
+			if (guid.startsWith("030000004c050000c405"))
 				return 0x5C4;
-			else if ("030000004c050000cc09000000000000".equals(guid))
+			else if (guid.startsWith("030000004c050000cc09"))
 				return 0x9CC;
-			else if ("030000004c050000a00b000000000000".equals(guid))
+			else if (guid.startsWith("030000004c050000a00b"))
 				return 0xBA0;
-		}
 
 		return null;
 	}
@@ -504,9 +510,10 @@ public final class Input {
 		var sent = false;
 
 		for (var i = 0; i < 2; i++) {
-			final var dataLength = dualShock4HidReport.length - 1;
+			final var dataLength = dualShock4HidReport.length + hidReportOffset;
 			final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-					Arrays.copyOfRange(dualShock4HidReport, 1, dualShock4HidReport.length), dataLength);
+					Arrays.copyOfRange(dualShock4HidReport, 0 - hidReportOffset, dualShock4HidReport.length),
+					dataLength);
 
 			sent |= dataSent == dataLength;
 		}

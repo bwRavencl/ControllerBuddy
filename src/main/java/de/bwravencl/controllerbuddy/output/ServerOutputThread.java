@@ -133,6 +133,7 @@ public final class ServerOutputThread extends OutputThread {
 							serverSocket.send(sendPacket);
 
 							serverState = ServerState.Connected;
+							input.init();
 							SwingUtilities.invokeLater(() -> {
 								main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTED_TO"),
 										clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
@@ -168,9 +169,12 @@ public final class ServerOutputThread extends OutputThread {
 						input.setCursorDeltaX(0);
 						input.setCursorDeltaY(0);
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownMouseButtons().size());
-						for (final var b : input.getDownMouseButtons())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+						final var downMouseButtons = input.getDownMouseButtons();
+						synchronized (downMouseButtons) {
+							sw.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
+							for (final var b : downMouseButtons)
+								sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+						}
 
 						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
 						for (final var b : input.getDownUpMouseButtons())
