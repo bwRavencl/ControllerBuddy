@@ -1,5 +1,4 @@
-![ControllerBuddy Logo](https://github.com/bwRavencl/ControllerBuddy/raw/master/src/main/resources/icon_128.png
-"ControllerBuddy")
+![ControllerBuddy Logo](./src/main/resources/icon_128.png)
 ## ControllerBuddy
 
 #### License Information:
