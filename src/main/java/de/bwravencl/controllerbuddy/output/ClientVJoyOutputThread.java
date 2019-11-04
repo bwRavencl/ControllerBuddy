@@ -159,6 +159,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
 				}
+
+				forceStop = true;
 				interrupt();
 			}
 
@@ -326,9 +328,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 						counter = newCounter;
 						retVal = true;
 					}
-				}
-
-				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
+				} else if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
 					final var keepAliveBuf = ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
 					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress,
 							port);
@@ -340,6 +340,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
+
+				forceStop = true;
 				interrupt();
 			}
 			break;
