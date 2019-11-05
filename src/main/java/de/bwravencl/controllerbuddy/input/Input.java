@@ -248,8 +248,8 @@ public final class Input {
 							prevX1 = x1;
 							prevY1 = y1;
 
-							final var cableConnected = (reportData[29] >> 4 & 0x01) != 0;
-							var battery = reportData[29] & 0x0F;
+							final var cableConnected = (reportData[30 + hidReportOffset] >> 4 & 0x01) != 0;
+							var battery = reportData[30 + hidReportOffset] & 0x0F;
 
 							setCharging(cableConnected);
 
