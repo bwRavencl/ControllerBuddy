@@ -184,82 +184,88 @@ public final class Input {
 							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 
 				final var hidDeviceInfo = dualShock4Devices.get(0);
-				if (hidDeviceInfo.getVendorId() == (short) 0x54C && hidDeviceInfo.getProductId() == dualShock4ProductId)
-					try {
-						log.log(Level.INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
+				try {
+					log.log(Level.INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
 
-						hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-						resetDualShock4();
+					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
+					resetDualShock4();
 
-						hidDevice.setInputReportListener(new InputReportListener() {
+					hidDevice.setInputReportListener(new InputReportListener() {
 
-							private static final int TOUCHPAD_MAX_DELTA = 150;
-							private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
-							private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
+						private static final int TOUCHPAD_MAX_DELTA = 150;
+						private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
+						private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
 
-							private boolean prevTouchpadButtonDown;
-							private boolean prevDown1;
-							private boolean prevDown2;
-							private int prevX1;
-							private int prevY1;
+						private boolean prevTouchpadButtonDown;
+						private boolean prevDown1;
+						private boolean prevDown2;
+						private int prevX1;
+						private int prevY1;
 
-							@Override
-							public void onInputReport(final HidDevice source, final byte Id, final byte[] data,
-									final int len) {
-								final var touchpadButtonDown = (data[7 + hidReportOffset] & 1 << 2 - 1) != 0;
-								final var down1 = data[35 + hidReportOffset] >> 7 != 0 ? false : true;
-								final var down2 = data[39 + hidReportOffset] >> 7 != 0 ? false : true;
-								final var x1 = data[36 + hidReportOffset] + (data[37 + hidReportOffset] & 0xF) * 255;
-								final var y1 = ((data[37 + hidReportOffset] & 0xF0) >> 4)
-										+ data[38 + hidReportOffset] * 16;
-
-								if (touchpadButtonDown)
-									synchronized (downMouseButtons) {
-										downMouseButtons.add(down2 ? 2 : 1);
-									}
-								else if (prevTouchpadButtonDown)
-									synchronized (downMouseButtons) {
-										downMouseButtons.clear();
-									}
-
-								if (down1 && prevDown1) {
-									final var dX1 = x1 - prevX1;
-									final var dY1 = y1 - prevY1;
-
-									if (!prevDown2 || touchpadButtonDown) {
-										if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-											cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
-
-										if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-											cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
-									} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-										scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
-								}
-
-								prevTouchpadButtonDown = touchpadButtonDown;
-								prevDown1 = down1;
-								prevDown2 = down2;
-								prevX1 = x1;
-								prevY1 = y1;
-
-								final var cableConnected = (data[29] >> 4 & 0x01) != 0;
-								var battery = data[29] & 0x0F;
-
-								setCharging(cableConnected);
-
-								if (!cableConnected)
-									battery++;
-
-								battery = Math.min(battery, 10);
-								battery *= 10;
-
-								setBatteryState(battery);
+						@Override
+						public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
+								final int reportLength) {
+							if (reportID != 0x01 || reportData.length != 64) {
+								log.log(Level.WARNING, "Received unknown HID input report with ID " + reportID
+										+ " and length " + reportLength);
+								return;
 							}
 
-						});
-					} catch (final IOException e) {
-						log.log(Level.SEVERE, e.getMessage(), e);
-					}
+							final var touchpadButtonDown = (reportData[7 + hidReportOffset] & 1 << 2 - 1) != 0;
+							final var down1 = reportData[35 + hidReportOffset] >> 7 != 0 ? false : true;
+							final var down2 = reportData[39 + hidReportOffset] >> 7 != 0 ? false : true;
+							final var x1 = reportData[36 + hidReportOffset]
+									+ (reportData[37 + hidReportOffset] & 0xF) * 255;
+							final var y1 = ((reportData[37 + hidReportOffset] & 0xF0) >> 4)
+									+ reportData[38 + hidReportOffset] * 16;
+
+							if (touchpadButtonDown)
+								synchronized (downMouseButtons) {
+									downMouseButtons.add(down2 ? 2 : 1);
+								}
+							else if (prevTouchpadButtonDown)
+								synchronized (downMouseButtons) {
+									downMouseButtons.clear();
+								}
+
+							if (down1 && prevDown1) {
+								final var dX1 = x1 - prevX1;
+								final var dY1 = y1 - prevY1;
+
+								if (!prevDown2 || touchpadButtonDown) {
+									if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+										cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
+
+									if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+										cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
+								} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+									scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
+							}
+
+							prevTouchpadButtonDown = touchpadButtonDown;
+							prevDown1 = down1;
+							prevDown2 = down2;
+							prevX1 = x1;
+							prevY1 = y1;
+
+							final var cableConnected = (reportData[29] >> 4 & 0x01) != 0;
+							var battery = reportData[29] & 0x0F;
+
+							setCharging(cableConnected);
+
+							if (!cableConnected)
+								battery++;
+
+							battery = Math.min(battery, 10);
+							battery *= 10;
+
+							setBatteryState(battery);
+						}
+
+					});
+				} catch (final IOException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				}
 			}
 		}
 	}
