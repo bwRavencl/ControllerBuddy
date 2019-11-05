@@ -273,7 +273,10 @@ public final class Input {
 	public void deInit() {
 		if (hidDevice != null) {
 			resetDualShock4();
-			hidDevice.close();
+			try {
+				hidDevice.close();
+			} catch (final IllegalStateException e) {
+			}
 			hidDevice = null;
 		}
 	}
@@ -517,11 +520,14 @@ public final class Input {
 
 		for (var i = 0; i < 2; i++) {
 			final var dataLength = dualShock4HidReport.length + hidReportOffset;
-			final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-					Arrays.copyOfRange(dualShock4HidReport, 0 - hidReportOffset, dualShock4HidReport.length),
-					dataLength);
-
-			sent |= dataSent == dataLength;
+			try {
+				final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
+						Arrays.copyOfRange(dualShock4HidReport, 0 - hidReportOffset, dualShock4HidReport.length),
+						dataLength);
+				sent |= dataSent == dataLength;
+			} catch (final IllegalStateException e) {
+				break;
+			}
 		}
 
 		return sent;
