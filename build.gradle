@@ -133,7 +133,6 @@ distTar.enabled = false
 task distZip(type: Zip, overwrite: true) {
     dependsOn jpackage
     from "$tmpDir"
-//    destinationDirectory file("$buildDir/$distsDirName")
     include "$project.name/**"
 }
 
