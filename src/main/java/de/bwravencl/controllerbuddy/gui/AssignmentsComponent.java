@@ -110,8 +110,10 @@ final class AssignmentsComponent extends JScrollPane {
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
 			this.peer = peer;
-			if (peer != null)
+			if (peer != null) {
 				peer.setPeer(this);
+				setModel(peer.getModel());
+			}
 
 			if (component.type == ComponentType.BUTTON) {
 				if (component.index == GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
@@ -122,7 +124,7 @@ final class AssignmentsComponent extends JScrollPane {
 					text = strings.getString("RIGHT_STICK");
 				} else
 					throw new IllegalArgumentException();
-			} else
+			} else if (peer != null)
 				switch (component.index) {
 				case GLFW_GAMEPAD_AXIS_LEFT_X:
 					setAction(new EditComponentAction(main, strings.getString("LEFT_STICK_X_AXIS"), component));
