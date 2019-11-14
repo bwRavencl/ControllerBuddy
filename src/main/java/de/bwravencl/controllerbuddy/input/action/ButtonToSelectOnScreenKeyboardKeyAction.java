@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -28,7 +30,30 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
 
 	public enum Direction {
-		UP, DOWN, LEFT, RIGHT
+		UP {
+			@Override
+			public String toString() {
+				return strings.getString("DIRECTION_UP");
+			}
+		},
+		DOWN {
+			@Override
+			public String toString() {
+				return strings.getString("DIRECTION_DOWN");
+			}
+		},
+		LEFT {
+			@Override
+			public String toString() {
+				return strings.getString("DIRECTION_LEFT");
+			}
+		},
+		RIGHT {
+			@Override
+			public String toString() {
+				return strings.getString("DIRECTION_RIGHT");
+			}
+		}
 	}
 
 	private static final long MIN_ELAPSE_TIME = 150L;
