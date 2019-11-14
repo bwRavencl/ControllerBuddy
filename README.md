@@ -70,7 +70,7 @@ A profile has the following general structure:
     - X Button
        - Mode Action (switches to "Yet another Mode" and back)
     - Y Button
-       - Cycle Action (performs Action 1, when pressed again Action 2, then Action 3, then starts over with Action 1)
+       - Cycle Action (performs Action 1, when pressed again Action 2, then Action 3, then starts over)
          - Action 1
          - Action 2
          - Action 3
