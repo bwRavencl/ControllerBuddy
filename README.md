@@ -7,7 +7,7 @@ GNU General Public License v2.0
 #### Download and Installation:
 1. First ensure you have correctly installed [vJoy 2.1](http://vjoystick.sourceforge.net) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
-3. Extract the ControllerBuddy directory from the archive to any desired location on your hard-drive.
+3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the ControllerBuddy directory.
 
 #### Description:
