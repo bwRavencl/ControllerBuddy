@@ -18,7 +18,7 @@ jobs:
       - name: Install JDK with jpackage support
         shell: bash
         run: |
-          curl https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-67_windows-x64_bin.zip -o jdk14.zip
+          curl https://download.java.net/java/early_access/jpackage/1/openjdk-14-jpackage+1-70_windows-x64_bin.zip -o jdk14.zip
           unzip jdk14.zip -d /c/
           echo ::add-path::"C:\jdk-14\bin"
       - name: Build

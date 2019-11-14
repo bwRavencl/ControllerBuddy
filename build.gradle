@@ -124,7 +124,7 @@ task jpackage(type: Exec) {
     description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
     dependsOn copyLibs, customizeLoggingProperties
     doFirst { delete "$appImageDir" }
-    commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--package-type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+    commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
 }
 
 startScripts.enabled = false
