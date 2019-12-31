@@ -11,7 +11,7 @@ sourceCompatibility = 13
 targetCompatibility = 13
 
 ext {
-    jnaVersion = '5.4.0'
+    jnaVersion = '5.5.0'
     lwjglVersion = '3.2.3'
 
     genDir = 'gen'
@@ -31,7 +31,7 @@ repositories {
 dependencies {
     implementation 'commons-cli:commons-cli:1.4',
                    'com.formdev:flatlaf:0.23',
-                   'com.github.git-moss:purejavahidapi:9e9d54b33d',
+                   'com.github.git-moss:purejavahidapi:29a18abb61',
                    'com.google.code.gson:gson:2.8.6',
                    'io.github.classgraph:classgraph:4.8.59',
                    "net.java.dev.jna:jna:$jnaVersion",
