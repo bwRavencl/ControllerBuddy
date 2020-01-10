@@ -43,6 +43,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -67,6 +68,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
+import javax.swing.plaf.UIResource;
 
 import com.formdev.flatlaf.ui.FlatButtonUI;
 import com.formdev.flatlaf.ui.FlatUIUtils;
@@ -181,8 +183,8 @@ final class AssignmentsComponent extends JScrollPane {
 						final var stringWidth = metrics.stringWidth(text);
 
 						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-						FlatButtonUI.paintText(g, CompoundButton.this, textRect, text,
-								isEnabled() ? getForeground() : disabledText);
+
+						paintText(g, textRect, text);
 					}
 				}
 			});
@@ -276,6 +278,7 @@ final class AssignmentsComponent extends JScrollPane {
 		private Color defaultBorderColor;
 		private Color defaultHoverBorderColor;
 		private Color defaultFocusedBorderColor;
+		protected boolean defaultBoldText;
 		Color disabledText;
 
 		boolean contentAreaFilled = true;
@@ -323,6 +326,21 @@ final class AssignmentsComponent extends JScrollPane {
 			return false;
 		}
 
+		void paintText(final Graphics g, final Rectangle textRect, final String text) {
+			if (defaultBoldText && isDefaultButton() && getFont() instanceof UIResource) {
+				final Font boldFont = g.getFont().deriveFont(Font.BOLD);
+				g.setFont(boldFont);
+
+				final int boldWidth = getFontMetrics(boldFont).stringWidth(text);
+				if (boldWidth > textRect.width) {
+					textRect.x -= (boldWidth - textRect.width) / 2;
+					textRect.width = boldWidth;
+				}
+			}
+
+			FlatButtonUI.paintText(g, this, textRect, text, isEnabled() ? getForeground() : disabledText);
+		}
+
 		@Override
 		public void setContentAreaFilled(final boolean b) {
 			contentAreaFilled = b;
@@ -345,6 +363,7 @@ final class AssignmentsComponent extends JScrollPane {
 			defaultHoverBorderColor = UIManager.getColor("Button.default.hoverBorderColor");
 			defaultFocusedBorderColor = UIManager.getColor("Button.default.focusedBorderColor");
 			disabledText = UIManager.getColor("Button.disabledText");
+			defaultBoldText = UIManager.getBoolean("Button.default.boldText");
 		}
 
 		@Override
@@ -522,7 +541,7 @@ final class AssignmentsComponent extends JScrollPane {
 						final int ty = height / 2 + ascent - textHeight / 2;
 
 						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-						FlatButtonUI.paintText(g2d, this, textRect, text, isEnabled() ? getForeground() : disabledText);
+						paintText(g, textRect, text);
 					}
 				}
 
