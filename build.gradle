@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.4',
-                   'com.formdev:flatlaf:0.24',
+                   'com.formdev:flatlaf:0.25.1',
                    'com.github.git-moss:purejavahidapi:29a18abb61',
                    'com.google.code.gson:gson:2.8.6',
                    'io.github.classgraph:classgraph:4.8.60',
