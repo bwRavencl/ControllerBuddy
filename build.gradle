@@ -33,7 +33,7 @@ dependencies {
                    'com.formdev:flatlaf:0.26',
                    'com.github.git-moss:purejavahidapi:29a18abb61',
                    'com.google.code.gson:gson:2.8.6',
-                   'io.github.classgraph:classgraph:4.8.61',
+                   'io.github.classgraph:classgraph:4.8.62',
                    "net.java.dev.jna:jna:$jnaVersion",
                    "net.java.dev.jna:jna-platform:$jnaVersion",
                    "org.lwjgl:lwjgl:$lwjglVersion",
