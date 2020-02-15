@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,13 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
 @Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
-public final class AxisToRelativeAxisAction extends AxisToAxisAction
-		implements IModeChangeListenerAction, IInitializationAction {
+public final class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeChangeListenerAction {
 
 	private static final float DEFAULT_EXPONENT = 2f;
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
-	private static final float DEFAULT_INITIAL_VALUE = 0f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
@@ -42,9 +39,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
-
-	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class, order = 202)
-	private float initialValue = DEFAULT_INITIAL_VALUE;
 
 	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
@@ -86,17 +80,8 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 		return exponent;
 	}
 
-	public float getInitialValue() {
-		return initialValue;
-	}
-
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
-	}
-
-	@Override
-	public void init(final Input input) {
-		input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
 	}
 
 	public boolean isHapticFeedback() {
@@ -122,10 +107,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction
 
 	public void setHapticFeedback(final boolean hapticFeedback) {
 		this.hapticFeedback = hapticFeedback;
-	}
-
-	public void setInitialValue(final float initialValue) {
-		this.initialValue = initialValue;
 	}
 
 	public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
