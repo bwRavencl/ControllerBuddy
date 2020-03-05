@@ -135,11 +135,11 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
 This can be used to integrate ControllerBuddy into third party applications.  
-For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration) exemplary integration of ControllerBuddy into DCS World.
+For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration) exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
 
 #### Dependencies:
 ControllerBuddy depends on the following awesome software technologies and libraries:
-- [OpenJDK 14](https://jdk.java.net/14/)
+- [OpenJDK 14](https://jdk.java.net/14)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
