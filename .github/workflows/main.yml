@@ -14,13 +14,7 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 13
-      - name: Install JDK with jpackage support
-        shell: bash
-        run: |
-          curl https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_windows-x64_bin.zip -o jdk14.zip
-          unzip jdk14.zip -d /c/
-          echo ::add-path::"C:\jdk-14\bin"
+          java-version: 14.0.0-ea.36
       - name: Build
         uses: eskatos/gradle-command-action@v1
         env:

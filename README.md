@@ -139,8 +139,7 @@ For more information check out [this](https://github.com/bwRavencl/ControllerBud
 
 #### Dependencies:
 ControllerBuddy depends on the following awesome software technologies and libraries:
-- [OpenJDK 13](https://jdk.java.net/13/)
-- [OpenJDK with jpackage support](https://jdk.java.net/jpackage/)
+- [OpenJDK 14](https://jdk.java.net/14/)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
