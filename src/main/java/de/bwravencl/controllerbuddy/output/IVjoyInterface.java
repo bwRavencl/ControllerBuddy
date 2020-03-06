@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General License as published by
@@ -29,21 +29,21 @@ import com.sun.jna.platform.win32.WinDef.UINT;
 
 interface IVjoyInterface extends Library {
 
-	static final UINT HID_USAGE_X = new UINT(0x30L);
-	static final UINT HID_USAGE_Y = new UINT(0x31L);
-	static final UINT HID_USAGE_Z = new UINT(0x32L);
-	static final UINT HID_USAGE_RX = new UINT(0x33L);
-	static final UINT HID_USAGE_RY = new UINT(0x34L);
-	static final UINT HID_USAGE_RZ = new UINT(0x35L);
-	static final UINT HID_USAGE_SL0 = new UINT(0x36L);
-	static final UINT HID_USAGE_SL1 = new UINT(0x37L);
-	static final UINT HID_USAGE_WHL = new UINT(0x38L);
-	static final UINT HID_USAGE_POV = new UINT(0x39L);
-	static final int VJD_STAT_OWN = 0;
-	static final int VJD_STAT_FREE = 1;
-	static final int VJD_STAT_BUSY = 2;
-	static final int VJD_STAT_MISS = 3;
-	static final int VJD_STAT_UNKN = 4;
+	UINT HID_USAGE_X = new UINT(0x30L);
+	UINT HID_USAGE_Y = new UINT(0x31L);
+	UINT HID_USAGE_Z = new UINT(0x32L);
+	UINT HID_USAGE_RX = new UINT(0x33L);
+	UINT HID_USAGE_RY = new UINT(0x34L);
+	UINT HID_USAGE_RZ = new UINT(0x35L);
+	UINT HID_USAGE_SL0 = new UINT(0x36L);
+	UINT HID_USAGE_SL1 = new UINT(0x37L);
+	UINT HID_USAGE_WHL = new UINT(0x38L);
+	UINT HID_USAGE_POV = new UINT(0x39L);
+	int VJD_STAT_OWN = 0;
+	int VJD_STAT_FREE = 1;
+	int VJD_STAT_BUSY = 2;
+	int VJD_STAT_MISS = 3;
+	int VJD_STAT_UNKN = 4;
 
 	BOOL AcquireVJD(UINT rID);
 

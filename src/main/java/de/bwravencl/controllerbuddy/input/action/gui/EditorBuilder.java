@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ public abstract class EditorBuilder {
 		fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
 		final var capizalizedFieldName = new String(fieldNameChars);
 
-		setterMethod = clazz.getMethod("set" + capizalizedFieldName, new Class[] { fieldType });
+		setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
 
 		final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
 		final var modeProperty = fieldType == Mode.class;

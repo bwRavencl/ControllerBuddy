@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -515,8 +515,8 @@ public final class EditActionsDialog extends JDialog {
 						if (fieldType == Void.class)
 							fieldType = field.getType();
 
-						final var constructor = editorBuilderClass.getDeclaredConstructor(
-								new Class[] { EditActionsDialog.class, IAction.class, String.class, Class.class });
+						final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
+								IAction.class, String.class, Class.class);
 						final var editorBuilder = constructor.newInstance(this, selectedAssignedAction.action,
 								fieldName, fieldType);
 

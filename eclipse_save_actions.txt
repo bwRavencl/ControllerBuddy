@@ -16,8 +16,12 @@ Add missing '@Deprecated' annotations
 Remove unnecessary casts
 Remove redundant modifiers
 Remove redundant semicolons
+Remove unnecessary array creation for varargs
 Remove unnecessary '$NON-NLS$' tags
 Sort members excluding fields, enum constants, and initializers
 Remove trailing white spaces on all lines
 Correct indentation
 Remove redundant type arguments
+Use Autoboxing
+Use Unboxing
+Push down negation

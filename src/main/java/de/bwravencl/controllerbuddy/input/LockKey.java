@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public final class LockKey {
 
 	public static final LockKey[] LOCK_KEYS = { new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK),
 			new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK), new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK),
-			new LockKey(KANA_LOCK, KeyEvent.VK_KANA_LOCK), };
+			new LockKey(KANA_LOCK, KeyEvent.VK_KANA_LOCK) };
 
 	public static final Map<LockKey, Integer> lockKeyToVirtualKeyCodeMap;
 	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
