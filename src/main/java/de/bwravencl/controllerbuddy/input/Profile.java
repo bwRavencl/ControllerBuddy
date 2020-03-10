@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,12 @@ public final class Profile implements Cloneable {
 
 	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
 
+	private static final boolean DEFAULT_SHOW_OVERLAY = true;
+
+	private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
+
+	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
+
 	public static final Mode defaultMode;
 
 	static {
@@ -49,6 +55,9 @@ public final class Profile implements Cloneable {
 	}
 
 	private String version;
+	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
+	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
+	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
 	private List<Mode> modes = new ArrayList<>();
 	private transient int activeModeIndex = 0;
@@ -63,6 +72,9 @@ public final class Profile implements Cloneable {
 		final var profile = (Profile) super.clone();
 
 		profile.setVersion(version);
+		profile.setShowOverlay(showOverlay);
+		profile.setShowVrOverlay(showVrOverlay);
+		profile.setKeyRepeatInterval(keyRepeatInterval);
 
 		final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
 		for (final var e : buttonToModeActionsMap.entrySet()) {
@@ -102,6 +114,10 @@ public final class Profile implements Cloneable {
 		return buttonToModeActionsMap;
 	}
 
+	public long getKeyRepeatInterval() {
+		return keyRepeatInterval;
+	}
+
 	public List<Mode> getModes() {
 		return modes;
 	}
@@ -112,6 +128,14 @@ public final class Profile implements Cloneable {
 
 	public Map<VirtualAxis, OverlayAxis> getVirtualAxisToOverlayAxisMap() {
 		return virtualAxisToOverlayAxisMap;
+	}
+
+	public boolean isShowOverlay() {
+		return showOverlay;
+	}
+
+	public boolean isShowVrOverlay() {
+		return showVrOverlay;
 	}
 
 	public void removeMode(final Input input, final Mode mode) {
@@ -169,8 +193,20 @@ public final class Profile implements Cloneable {
 		buttonToModeActionsMap = buttonToModeActionMap;
 	}
 
+	public void setKeyRepeatInterval(final long minKeyRepeatInterval) {
+		this.keyRepeatInterval = minKeyRepeatInterval;
+	}
+
 	private void setModes(final List<Mode> modes) {
 		this.modes = modes;
+	}
+
+	public void setShowOverlay(final boolean showOverlay) {
+		this.showOverlay = showOverlay;
+	}
+
+	public void setShowVrOverlay(final boolean showVrOverlay) {
+		this.showVrOverlay = showVrOverlay;
 	}
 
 	public void setVersion(final String version) {

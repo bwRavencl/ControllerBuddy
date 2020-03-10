@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -713,6 +713,7 @@ public final class Main implements SingletonApp {
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
 	private static final int DIALOG_BOUNDS_HEIGHT = 640;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
+	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
 	private static final String OPTION_TRAY = "tray";
@@ -729,8 +730,6 @@ public final class Main implements SingletonApp {
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 	private static final String PREFERENCES_DARK_THEME = "dark_theme";
-	private static final String PREFERENCES_SHOW_OVERLAY = "show_overlay";
-	private static final String PREFERENCES_SHOW_VR_OVERLAY = "show_vr_overlay";
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
@@ -898,8 +897,11 @@ public final class Main implements SingletonApp {
 	private JPanel addModePanel;
 	private JPanel overlayPanel;
 	private AssignmentsComponent assignmentsComponent;
-	private final JScrollPane settingsScrollPane = new JScrollPane();
-	private final JPanel settingsPanel;
+	private JScrollPane profileSettingsScrollPane;
+	private JPanel profileSettingsPanel;
+	private JCheckBox showVrOverlayCheckBox;
+	private final JScrollPane globalSettingsScrollPane = new JScrollPane();
+	private final JPanel globalSettingsPanel;
 	private JScrollPane indicatorsScrollPane;
 	private JPanel indicatorsListPanel;
 	private TimerTask overlayTimerTask;
@@ -920,9 +922,11 @@ public final class Main implements SingletonApp {
 	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
-
+	private final FlowLayout settingsPanelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
+	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
+			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+			new Insets(0, 0, 0, 0), 0, 5);
 	private volatile JFrame overlayFrame;
-
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
 
 	private Main(final String cmdProfilePath) {
@@ -1034,22 +1038,17 @@ public final class Main implements SingletonApp {
 
 		frame.getContentPane().add(tabbedPane);
 
-		settingsPanel = new JPanel();
-		settingsPanel.setLayout(new GridBagLayout());
+		globalSettingsPanel = new JPanel();
+		globalSettingsPanel.setLayout(new GridBagLayout());
 
-		settingsScrollPane.setViewportView(settingsPanel);
-		tabbedPane.addTab(strings.getString("SETTINGS_TAB"), null, settingsScrollPane);
+		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
+		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
 
-		final var panelGridBagConstraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 5);
-
-		final var panelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
-
-		final var pollIntervalPanel = new JPanel(panelFlowLayout);
-		settingsPanel.add(pollIntervalPanel, panelGridBagConstraints);
+		final var pollIntervalPanel = new JPanel(settingsPanelFlowLayout);
+		globalSettingsPanel.add(pollIntervalPanel, settingsPanelGridBagConstraints);
 
 		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
-		pollIntervalLabel.setPreferredSize(new Dimension(120, 15));
+		pollIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1063,11 +1062,11 @@ public final class Main implements SingletonApp {
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (windows) {
-			final var vJoyDirectoryPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(vJoyDirectoryPanel, panelGridBagConstraints);
+			final var vJoyDirectoryPanel = new JPanel(settingsPanelFlowLayout);
+			globalSettingsPanel.add(vJoyDirectoryPanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
-			vJoyDirectoryLabel.setPreferredSize(new Dimension(120, 15));
+			vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			vJoyDirectoryLabel1 = new JLabel(
@@ -1077,11 +1076,11 @@ public final class Main implements SingletonApp {
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
 
-			final var vJoyDevicePanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(vJoyDevicePanel, panelGridBagConstraints);
+			final var vJoyDevicePanel = new JPanel(settingsPanelFlowLayout);
+			globalSettingsPanel.add(vJoyDevicePanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
-			vJoyDeviceLabel.setPreferredSize(new Dimension(120, 15));
+			vJoyDeviceLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1093,11 +1092,11 @@ public final class Main implements SingletonApp {
 					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
-			final var hostPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(hostPanel, panelGridBagConstraints);
+			final var hostPanel = new JPanel(settingsPanelFlowLayout);
+			globalSettingsPanel.add(hostPanel, settingsPanelGridBagConstraints);
 
 			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
-			hostLabel.setPreferredSize(new Dimension(120, 15));
+			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			hostPanel.add(hostLabel);
 
 			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 15);
@@ -1107,11 +1106,11 @@ public final class Main implements SingletonApp {
 			hostPanel.add(hostTextField);
 		}
 
-		final var portPanel = new JPanel(panelFlowLayout);
-		settingsPanel.add(portPanel, panelGridBagConstraints);
+		final var portPanel = new JPanel(settingsPanelFlowLayout);
+		globalSettingsPanel.add(portPanel, settingsPanelGridBagConstraints);
 
 		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
-		portLabel.setPreferredSize(new Dimension(120, 15));
+		portLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		portPanel.add(portLabel);
 
 		final var portSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1123,11 +1122,11 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
-		final var timeoutPanel = new JPanel(panelFlowLayout);
-		settingsPanel.add(timeoutPanel, panelGridBagConstraints);
+		final var timeoutPanel = new JPanel(settingsPanelFlowLayout);
+		globalSettingsPanel.add(timeoutPanel, settingsPanelGridBagConstraints);
 
 		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
-		timeoutLabel.setPreferredSize(new Dimension(120, 15));
+		timeoutLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		timeoutPanel.add(timeoutLabel);
 
 		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
@@ -1140,11 +1139,11 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
-		final var darkThemePanel = new JPanel(panelFlowLayout);
-		settingsPanel.add(darkThemePanel, panelGridBagConstraints);
+		final var darkThemePanel = new JPanel(settingsPanelFlowLayout);
+		globalSettingsPanel.add(darkThemePanel, settingsPanelGridBagConstraints);
 
 		final var darkThemeLabel = new JLabel(strings.getString("DARK_THEME_LABEL"));
-		darkThemeLabel.setPreferredSize(new Dimension(120, 15));
+		darkThemeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		darkThemePanel.add(darkThemeLabel);
 
 		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
@@ -1156,47 +1155,12 @@ public final class Main implements SingletonApp {
 		});
 		darkThemePanel.add(darkThemeCheckBox);
 
-		final var alwaysOnTopSupported = Toolkit.getDefaultToolkit().isAlwaysOnTopSupported();
-		if (alwaysOnTopSupported || preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, alwaysOnTopSupported)) {
-			final var overlaySettingsPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(overlaySettingsPanel, panelGridBagConstraints);
-
-			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
-			overlayLabel.setPreferredSize(new Dimension(120, 15));
-			overlaySettingsPanel.add(overlayLabel);
-
-			final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
-			showOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, true));
-			showOverlayCheckBox.addActionListener(e -> {
-				final var showOverlay = ((JCheckBox) e.getSource()).isSelected();
-				preferences.putBoolean(PREFERENCES_SHOW_OVERLAY, showOverlay);
-			});
-			overlaySettingsPanel.add(showOverlayCheckBox);
-		}
-
 		if (windows) {
-			if (preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true)) {
-				final var vrOverlaySettingsPanel = new JPanel(panelFlowLayout);
-				settingsPanel.add(vrOverlaySettingsPanel, panelGridBagConstraints);
-
-				final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
-				vrOverlayLabel.setPreferredSize(new Dimension(120, 15));
-				vrOverlaySettingsPanel.add(vrOverlayLabel);
-
-				final var showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
-				showVrOverlayCheckBox.setSelected(preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true));
-				showVrOverlayCheckBox.addActionListener(e -> {
-					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
-					preferences.putBoolean(PREFERENCES_SHOW_VR_OVERLAY, showVrOverlay);
-				});
-				vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
-			}
-
-			final var preventPowerSaveModeSettingsPanel = new JPanel(panelFlowLayout);
-			settingsPanel.add(preventPowerSaveModeSettingsPanel, panelGridBagConstraints);
+			final var preventPowerSaveModeSettingsPanel = new JPanel(settingsPanelFlowLayout);
+			globalSettingsPanel.add(preventPowerSaveModeSettingsPanel, settingsPanelGridBagConstraints);
 
 			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
-			preventPowerSaveModeLabel.setPreferredSize(new Dimension(120, 15));
+			preventPowerSaveModeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
 
 			final var preventPowerSaveModeCheckBox = new JCheckBox(
@@ -1241,7 +1205,7 @@ public final class Main implements SingletonApp {
 
 		updateTitleAndTooltip();
 
-		settingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
+		globalSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
@@ -1448,7 +1412,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void initOverlay() {
-		if (!preferences.getBoolean(PREFERENCES_SHOW_OVERLAY, Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()))
+		if (!Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !input.getProfile().isShowOverlay())
 			return;
 
 		final var modes = input.getProfile().getModes();
@@ -1579,7 +1543,10 @@ public final class Main implements SingletonApp {
 	}
 
 	private void initVrOverlay() {
-		if (!windows || !preferences.getBoolean(PREFERENCES_SHOW_VR_OVERLAY, true))
+		final var profile = input.getProfile();
+
+		if (!windows || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !profile.isShowOverlay()
+				|| !profile.isShowVrOverlay())
 			return;
 
 		try {
@@ -1647,6 +1614,7 @@ public final class Main implements SingletonApp {
 					saveLastProfile(file);
 					updateModesPanel();
 					updateOverlayPanel();
+					updateProfileSettingsPanel();
 					loadedProfile = file.getName();
 					setUnsavedChanges(false);
 					setStatusBarText(
@@ -1711,6 +1679,7 @@ public final class Main implements SingletonApp {
 		updateTitleAndTooltip();
 		updateModesPanel();
 		updateOverlayPanel();
+		updateProfileSettingsPanel();
 		setStatusBarText(strings.getString("STATUS_READY"));
 		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
@@ -1743,6 +1712,7 @@ public final class Main implements SingletonApp {
 		tabbedPane.remove(modesPanel);
 		tabbedPane.remove(assignmentsComponent);
 		tabbedPane.remove(overlayPanel);
+		tabbedPane.remove(profileSettingsScrollPane);
 
 		if (controllerConnected) {
 			fileMenu.insert(newMenuItem, 0);
@@ -1762,7 +1732,7 @@ public final class Main implements SingletonApp {
 
 			modesPanel = new JPanel(new BorderLayout());
 			tabbedPane.insertTab(strings.getString("MODES_TAB"), null, modesPanel, null,
-					tabbedPane.indexOfComponent(settingsScrollPane));
+					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 
 			modesListPanel = new JPanel();
 			modesListPanel.setLayout(new GridBagLayout());
@@ -1779,7 +1749,7 @@ public final class Main implements SingletonApp {
 
 			assignmentsComponent = new AssignmentsComponent(this);
 			tabbedPane.insertTab(strings.getString("ASSIGNMENTS_TAB"), null, assignmentsComponent, null,
-					tabbedPane.indexOfComponent(settingsScrollPane));
+					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 
 			overlayPanel = new JPanel(new BorderLayout());
 
@@ -1790,7 +1760,16 @@ public final class Main implements SingletonApp {
 			indicatorsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 			tabbedPane.insertTab(strings.getString("OVERLAY_TAB"), null, overlayPanel, null,
-					tabbedPane.indexOfComponent(settingsScrollPane));
+					tabbedPane.indexOfComponent(globalSettingsScrollPane));
+
+			profileSettingsPanel = new JPanel();
+			profileSettingsPanel.setLayout(new GridBagLayout());
+
+			profileSettingsScrollPane = new JScrollPane();
+			profileSettingsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+			profileSettingsScrollPane.setViewportView(profileSettingsPanel);
+			tabbedPane.insertTab(strings.getString("PROFILE_SETTINGS_TAB"), null, profileSettingsScrollPane, null,
+					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 		} else
 			log.log(Level.INFO, "No controllers connected");
 
@@ -1802,6 +1781,7 @@ public final class Main implements SingletonApp {
 		updateMenuShortcuts();
 		updateModesPanel();
 		updateOverlayPanel();
+		updateProfileSettingsPanel();
 		updatePanelAccess();
 
 		frame.getContentPane().invalidate();
@@ -2392,12 +2372,91 @@ public final class Main implements SingletonApp {
 		if (assignmentsComponent != null)
 			assignmentsComponent.setEnabled(panelsEnabled);
 
-		if (!panelsEnabled)
+		if (!panelsEnabled || input != null && !input.getProfile().isShowOverlay())
 			setEnabledRecursive(indicatorsListPanel, false);
 		else
 			updateOverlayPanel();
 
-		setEnabledRecursive(settingsPanel, panelsEnabled);
+		setEnabledRecursive(profileSettingsPanel, panelsEnabled);
+
+		setEnabledRecursive(globalSettingsPanel, panelsEnabled);
+	}
+
+	private void updateProfileSettingsPanel() {
+		if (profileSettingsPanel == null)
+			return;
+
+		profileSettingsPanel.removeAll();
+		showVrOverlayCheckBox = null;
+
+		final var keyRepeatIntervalPanel = new JPanel(settingsPanelFlowLayout);
+		profileSettingsPanel.add(keyRepeatIntervalPanel, settingsPanelGridBagConstraints);
+
+		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
+		keyRepeatIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		keyRepeatIntervalPanel.add(keyRepeatIntervalLabel);
+
+		final var profile = input.getProfile();
+
+		final var keyRepeatIntervalSpinner = new JSpinner(
+				new SpinnerNumberModel((int) profile.getKeyRepeatInterval(), 0, 1000, 1));
+		final var keyRepeatIntervalEditor = new JSpinner.NumberEditor(keyRepeatIntervalSpinner,
+				"# " + strings.getString("MILLISECOND_SYMBOL"));
+		((DefaultFormatter) keyRepeatIntervalEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		keyRepeatIntervalSpinner.setEditor(keyRepeatIntervalEditor);
+		keyRepeatIntervalSpinner.addChangeListener(e -> {
+			final var keyRepeatInterval = (int) ((JSpinner) e.getSource()).getValue();
+			input.getProfile().setKeyRepeatInterval(keyRepeatInterval);
+			setUnsavedChanges(true);
+		});
+		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
+
+		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()) {
+			final var overlaySettingsPanel = new JPanel(settingsPanelFlowLayout);
+			profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
+
+			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
+			overlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			overlaySettingsPanel.add(overlayLabel);
+
+			final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
+			showOverlayCheckBox.setSelected(profile.isShowOverlay());
+			showOverlayCheckBox.addActionListener(e -> {
+				final var showOverlay = ((JCheckBox) e.getSource()).isSelected();
+				profile.setShowOverlay(showOverlay);
+				if (!showOverlay)
+					profile.setShowVrOverlay(false);
+				if (showVrOverlayCheckBox != null) {
+					showVrOverlayCheckBox.setEnabled(showOverlay);
+					if (!showOverlay)
+						showVrOverlayCheckBox.setSelected(false);
+				}
+				updatePanelAccess();
+				setUnsavedChanges(true);
+			});
+			overlaySettingsPanel.add(showOverlayCheckBox);
+
+			if (windows) {
+				final var vrOverlaySettingsPanel = new JPanel(settingsPanelFlowLayout);
+				profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
+
+				final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
+				vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+				vrOverlaySettingsPanel.add(vrOverlayLabel);
+
+				showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
+				showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
+				showVrOverlayCheckBox.addActionListener(e -> {
+					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
+					profile.setShowVrOverlay(showVrOverlay);
+					setUnsavedChanges(true);
+				});
+				vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
+			}
+		}
+
+		profileSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 	private void updateTheme() {

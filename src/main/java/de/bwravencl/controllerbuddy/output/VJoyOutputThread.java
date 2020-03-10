@@ -213,6 +213,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	int cursorDeltaX;
 	int cursorDeltaY;
 	int scrollClicks;
+	private long prevKeyInputTime = 0;
 	final Set<Integer> oldDownMouseButtons = new HashSet<>();
 	final Set<Integer> newUpMouseButtons = new HashSet<>();
 	final Set<Integer> newDownMouseButtons = new HashSet<>();
@@ -547,8 +548,13 @@ public abstract class VJoyOutputThread extends OutputThread {
 				for (final var c : newDownModifiers)
 					doKeyboardInput(c, true);
 
-				for (final var c : newDownNormalKeys)
-					doKeyboardInput(c, true);
+				final var currentTime = System.currentTimeMillis();
+				if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
+					for (final var c : newDownNormalKeys)
+						doKeyboardInput(c, true);
+
+					prevKeyInputTime = currentTime;
+				}
 
 				for (final var e : onLockKeys)
 					setLockKeyState(e, true);
