@@ -150,7 +150,7 @@ ControllerBuddy depends on the following awesome software technologies and libra
 
 #### Building:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
-ControllerBuddy uses the Gradle build system, the following tasks are supported:
+ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
 | Task                             | Command                 |
 | -------------------------------- | ----------------------- |
