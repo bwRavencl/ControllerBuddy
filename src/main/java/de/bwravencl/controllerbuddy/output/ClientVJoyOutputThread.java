@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 		boolean retVal = false;
 
 		switch (clientState) {
-		case Connecting:
+		case Connecting -> {
 			log.log(Level.INFO, "Connecting to " + host + ":" + port);
 			SwingUtilities.invokeLater(() -> {
 				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
@@ -163,9 +163,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				forceStop = true;
 				interrupt();
 			}
-
-			break;
-		case Connected:
+		}
+		case Connected -> {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				clientSocket.receive(receivePacket);
@@ -346,7 +345,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				forceStop = true;
 				interrupt();
 			}
-			break;
+		}
 		}
 
 		return retVal;

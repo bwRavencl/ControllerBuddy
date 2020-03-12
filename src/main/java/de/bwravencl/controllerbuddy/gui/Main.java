@@ -324,12 +324,9 @@ public final class Main implements SingletonApp {
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
-				case JOptionPane.NO_OPTION:
-					return;
-				case JOptionPane.CLOSED_OPTION:
-					return;
 				case JOptionPane.CANCEL_OPTION:
 					cancelSelection();
+				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
 					return;
 				default:
 					break;
@@ -1868,17 +1865,11 @@ public final class Main implements SingletonApp {
 
 	public void restartLast() {
 		switch (lastOutputType) {
-		case LOCAL:
-			startLocal();
-			break;
-		case CLIENT:
-			startClient();
-			break;
-		case SERVER:
-			startServer();
-			break;
-		case NONE:
-			break;
+		case LOCAL -> startLocal();
+		case CLIENT -> startClient();
+		case SERVER -> startServer();
+		case NONE -> {
+		}
 		}
 	}
 

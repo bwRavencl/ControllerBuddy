@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,18 +89,10 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 				final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 
 				switch (direction) {
-				case UP:
-					onScreenKeyboard.moveSelectorUp();
-					break;
-				case DOWN:
-					onScreenKeyboard.moveSelectorDown();
-					break;
-				case LEFT:
-					onScreenKeyboard.moveSelectorLeft();
-					break;
-				case RIGHT:
-					onScreenKeyboard.moveSelectorRight();
-					break;
+				case UP -> onScreenKeyboard.moveSelectorUp();
+				case DOWN -> onScreenKeyboard.moveSelectorDown();
+				case LEFT -> onScreenKeyboard.moveSelectorLeft();
+				case RIGHT -> onScreenKeyboard.moveSelectorRight();
 				}
 
 				lastPressTime = currentTime;

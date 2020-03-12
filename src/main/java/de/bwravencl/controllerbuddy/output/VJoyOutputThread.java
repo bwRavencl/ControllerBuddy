@@ -97,18 +97,12 @@ public abstract class VJoyOutputThread extends OutputThread {
 		final var input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_MOUSE);
 		input.input.setType(MOUSEINPUT.class);
+
 		switch (button) {
-		case 1:
-			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP);
-			break;
-		case 2:
-			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
-			break;
-		case 3:
-			input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
-			break;
-		default:
-			throw new IllegalArgumentException();
+		case 1 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP);
+		case 2 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
+		case 3 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
+		default -> throw new IllegalArgumentException();
 		}
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
@@ -128,6 +122,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		} catch (final Throwable t) {
 			final var defaultPath = System.getenv("ProgramFiles") + File.separator + "vJoy";
 			log.log(Level.WARNING, "Could not retrieve vJoy installation path from registry", t);
+
 			return defaultPath;
 		}
 	}

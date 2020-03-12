@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ public final class ServerOutputThread extends OutputThread {
 
 			while (!Thread.currentThread().isInterrupted())
 				switch (serverState) {
-				case Listening:
+				case Listening -> {
 					counter = 0;
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(0);
@@ -145,8 +145,8 @@ public final class ServerOutputThread extends OutputThread {
 							});
 						}
 					}
-					break;
-				case Connected:
+				}
+				case Connected -> {
 					Thread.sleep(pollInterval);
 
 					final var sw = new StringWriter();
@@ -249,7 +249,7 @@ public final class ServerOutputThread extends OutputThread {
 							counter++;
 					}
 
-					break;
+				}
 				}
 		} catch (final BindException e) {
 			log.log(Level.WARNING, "Could not bind socket on port " + port);

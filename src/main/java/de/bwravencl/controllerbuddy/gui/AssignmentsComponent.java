@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,20 +128,15 @@ final class AssignmentsComponent extends JScrollPane {
 					throw new IllegalArgumentException();
 			} else if (peer != null)
 				switch (component.index) {
-				case GLFW_GAMEPAD_AXIS_LEFT_X:
-					setAction(new EditComponentAction(main, strings.getString("LEFT_STICK_X_AXIS"), component));
-					break;
-				case GLFW_GAMEPAD_AXIS_LEFT_Y:
-					setAction(new EditComponentAction(main, strings.getString("LEFT_STICK_Y_AXIS"), component));
-					break;
-				case GLFW_GAMEPAD_AXIS_RIGHT_X:
-					setAction(new EditComponentAction(main, strings.getString("RIGHT_STICK_X_AXIS"), component));
-					break;
-				case GLFW_GAMEPAD_AXIS_RIGHT_Y:
-					setAction(new EditComponentAction(main, strings.getString("RIGHT_STICK_Y_AXIS"), component));
-					break;
-				default:
-					throw new IllegalArgumentException();
+				case GLFW_GAMEPAD_AXIS_LEFT_X -> setAction(
+						new EditComponentAction(main, strings.getString("LEFT_STICK_X_AXIS"), component));
+				case GLFW_GAMEPAD_AXIS_LEFT_Y -> setAction(
+						new EditComponentAction(main, strings.getString("LEFT_STICK_Y_AXIS"), component));
+				case GLFW_GAMEPAD_AXIS_RIGHT_X -> setAction(
+						new EditComponentAction(main, strings.getString("RIGHT_STICK_X_AXIS"), component));
+				case GLFW_GAMEPAD_AXIS_RIGHT_Y -> setAction(
+						new EditComponentAction(main, strings.getString("RIGHT_STICK_Y_AXIS"), component));
+				default -> throw new IllegalArgumentException();
 				}
 
 			setIcon(new Icon() {
