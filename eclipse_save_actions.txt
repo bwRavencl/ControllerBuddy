@@ -25,3 +25,4 @@ Remove redundant type arguments
 Use Autoboxing
 Use Unboxing
 Push down negation
+Operate on Maps directly
