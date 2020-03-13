@@ -245,6 +245,64 @@ public final class Main implements SingletonApp {
 
 	}
 
+	private static final class IndicatorProgressBar extends JProgressBar {
+
+		private static final long serialVersionUID = 8167193907929992395L;
+
+		private final HashSet<Float> dententValues;
+		private final OverlayAxis overlayAxis;
+
+		private IndicatorProgressBar(final int orient, final HashSet<Float> dententValues,
+				final OverlayAxis overlayAxis) {
+			super(orient);
+			this.dententValues = dententValues;
+			this.overlayAxis = overlayAxis;
+		}
+
+		@Override
+		protected void paintComponent(final Graphics g) {
+			super.paintComponent(g);
+
+			final var width = getWidth();
+			final var height = getHeight();
+
+			final var subdivisions = 3;
+			for (var i = 1; i <= subdivisions; i++) {
+				g.setColor(Color.WHITE);
+				final var y = i * (height / (subdivisions + 1));
+				g.drawLine(0, y, width, y);
+			}
+
+			for (final var detentValue : dententValues) {
+				g.setColor(Color.RED);
+				final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
+				g.drawLine(0, y, width, y);
+			}
+		}
+
+		@Override
+		public void setMaximum(final int n) {
+			if (overlayAxis.inverted)
+				super.setMinimum(-n);
+			else
+				super.setMaximum(n);
+		}
+
+		@Override
+		public void setMinimum(final int n) {
+			if (overlayAxis.inverted)
+				super.setMaximum(-n);
+			else
+				super.setMinimum(n);
+		}
+
+		@Override
+		public void setValue(final int n) {
+			super.setValue(overlayAxis.inverted ? -n : n);
+		}
+
+	}
+
 	private final class InvertIndicatorAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3316770144012465987L;
@@ -1461,60 +1519,14 @@ public final class Main implements SingletonApp {
 									dententValues.add(detentValue);
 							}
 
-				final var progressBar = new JProgressBar(SwingConstants.VERTICAL) {
+				final var indicatorProgressBar = new IndicatorProgressBar(SwingConstants.VERTICAL, dententValues,
+						overlayAxis);
+				indicatorProgressBar.setPreferredSize(new Dimension(20, 150));
+				indicatorProgressBar.setForeground(overlayAxis.color);
+				indicatorProgressBar.setValue(1);
 
-					private static final long serialVersionUID = 8167193907929992395L;
-
-					@Override
-					protected void paintComponent(final Graphics g) {
-						super.paintComponent(g);
-
-						final var width = getWidth();
-						final var height = getHeight();
-
-						final var subdivisions = 3;
-						for (var i = 1; i <= subdivisions; i++) {
-							g.setColor(Color.WHITE);
-							final var y = i * (height / (subdivisions + 1));
-							g.drawLine(0, y, width, y);
-						}
-
-						for (final var detentValue : dententValues) {
-							g.setColor(Color.RED);
-							final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
-							g.drawLine(0, y, width, y);
-						}
-					}
-
-					@Override
-					public void setMaximum(final int n) {
-						if (overlayAxis.inverted)
-							super.setMinimum(-n);
-						else
-							super.setMaximum(n);
-					}
-
-					@Override
-					public void setMinimum(final int n) {
-						if (overlayAxis.inverted)
-							super.setMaximum(-n);
-						else
-							super.setMinimum(n);
-					}
-
-					@Override
-					public void setValue(final int n) {
-						super.setValue(overlayAxis.inverted ? -n : n);
-					}
-
-				};
-
-				progressBar.setPreferredSize(new Dimension(20, 150));
-				progressBar.setForeground(overlayAxis.color);
-				progressBar.setValue(1);
-
-				indicatorPanel.add(progressBar);
-				virtualAxisToProgressBarMap.put(virtualAxis, progressBar);
+				indicatorPanel.add(indicatorProgressBar);
+				virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
 			}
 		}
 

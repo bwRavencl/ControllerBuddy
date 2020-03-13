@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FindBugsFilter>
+  <Class name="~com.oracle.si\.[^.]+"/>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.output.VJoyOutputThread"/>
+    <Bug pattern="NM_METHOD_NAMING_CONVENTION"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.Main"/>
+    <Bug pattern="DM_EXIT"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"/>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.EditActionsDialog"/>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"/>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.Input"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.KeyStroke"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.LockKey"/>
+    <Bug pattern="MS_MUTABLE_ARRAY"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.action.IButtonToAction"/>
+    <Bug pattern="MS_OOI_PKGPROTECT"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.KeyStroke"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.Input"/>
+    <Bug pattern="SWL_SLEEP_WITH_LOCK_HELD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.Main"/>
+    <Bug pattern="DM_GC"/>
+  </And>
+  <And>
+    <Rank value="20"/>
+    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1"/>
+    <Bug pattern="BC_UNCONFIRMED_CAST"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"/>
+    <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.Main$IndicatorProgressBar"/>
+    <Bug pattern="SE_BAD_FIELD"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"/>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+  </And>
+  <And>
+    <Class name="de.bwravencl.controllerbuddy.input.Input"/>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+  </And>
+</FindBugsFilter>
