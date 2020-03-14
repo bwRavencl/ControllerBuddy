@@ -194,7 +194,7 @@ public final class Profile implements Cloneable {
 	}
 
 	public void setKeyRepeatInterval(final long minKeyRepeatInterval) {
-		this.keyRepeatInterval = minKeyRepeatInterval;
+		keyRepeatInterval = minKeyRepeatInterval;
 	}
 
 	private void setModes(final List<Mode> modes) {
