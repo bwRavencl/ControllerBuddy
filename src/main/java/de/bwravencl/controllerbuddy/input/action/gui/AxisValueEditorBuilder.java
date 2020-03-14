@@ -44,5 +44,4 @@ public final class AxisValueEditorBuilder extends NumberEditorBuilder<Float> {
 	Number getStepSize() {
 		return 0.01f;
 	}
-
 }

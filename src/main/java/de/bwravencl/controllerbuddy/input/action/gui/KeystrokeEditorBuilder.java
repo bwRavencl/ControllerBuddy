@@ -79,7 +79,6 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
@@ -156,5 +155,4 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		keysPanel.add(keysScrollPane);
 		parentPanel.add(keysPanel);
 	}
-
 }

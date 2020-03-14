@@ -59,5 +59,4 @@ abstract class ToKeyAction<V extends Number> implements IAction<V> {
 	public void setKeystroke(final KeyStroke keystroke) {
 		this.keystroke = keystroke;
 	}
-
 }

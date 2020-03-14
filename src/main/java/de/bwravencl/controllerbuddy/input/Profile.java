@@ -212,5 +212,4 @@ public final class Profile implements Cloneable {
 	public void setVersion(final String version) {
 		this.version = version;
 	}
-
 }

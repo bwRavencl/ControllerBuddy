@@ -44,5 +44,4 @@ public final class MaxCursorSpeedEditorBuilder extends NumberEditorBuilder<Float
 	Number getStepSize() {
 		return 1f;
 	}
-
 }

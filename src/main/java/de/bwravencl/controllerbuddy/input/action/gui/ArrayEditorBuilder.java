@@ -47,7 +47,6 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
@@ -67,5 +66,4 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	}
 
 	abstract T[] getValues();
-
 }

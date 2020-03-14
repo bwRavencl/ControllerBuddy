@@ -35,5 +35,4 @@ public final class DirectionEditorBuilder extends ArrayEditorBuilder<Direction> 
 	Direction[] getValues() {
 		return Direction.values();
 	}
-
 }

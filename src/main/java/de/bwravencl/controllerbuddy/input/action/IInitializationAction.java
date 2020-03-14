@@ -22,5 +22,4 @@ import de.bwravencl.controllerbuddy.input.Input;
 public interface IInitializationAction extends IAction<Float> {
 
 	void init(final Input input);
-
 }

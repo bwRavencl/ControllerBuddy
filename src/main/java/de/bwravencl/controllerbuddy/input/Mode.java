@@ -73,7 +73,6 @@ public final class Mode implements Cloneable {
 			result = prime * result + (type == null ? 0 : type.hashCode());
 			return result;
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -181,5 +180,4 @@ public final class Mode implements Cloneable {
 	public String toString() {
 		return description;
 	}
-
 }

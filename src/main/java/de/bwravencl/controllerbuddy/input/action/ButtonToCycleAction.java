@@ -95,5 +95,4 @@ public final class ButtonToCycleAction implements IButtonToAction, IResetableAct
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

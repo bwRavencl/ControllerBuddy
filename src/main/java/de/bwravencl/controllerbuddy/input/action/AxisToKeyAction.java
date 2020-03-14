@@ -66,5 +66,4 @@ public final class AxisToKeyAction extends ToKeyAction<Float> implements ISuspen
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
-
 }

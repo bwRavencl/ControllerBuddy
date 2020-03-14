@@ -33,5 +33,4 @@ abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 	public void setVirtualAxis(final VirtualAxis virtualAxis) {
 		this.virtualAxis = virtualAxis;
 	}
-
 }

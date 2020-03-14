@@ -44,5 +44,4 @@ public final class DownUpEditorBuilder extends BooleanEditorBuilder {
 		if (cycleEditor)
 			checkBox.setEnabled(false);
 	}
-
 }

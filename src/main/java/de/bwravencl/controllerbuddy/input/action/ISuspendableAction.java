@@ -46,8 +46,6 @@ public interface ISuspendableAction extends IAction<Float> {
 			public void run() {
 				suspendedActionToAxisMap.remove(ISuspendableAction.this);
 			}
-
 		}, SUSPEND_TIME);
 	}
-
 }

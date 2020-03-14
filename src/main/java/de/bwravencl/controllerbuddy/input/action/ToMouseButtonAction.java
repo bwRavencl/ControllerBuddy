@@ -54,5 +54,4 @@ abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
 	public void setMouseButton(final int mouseButton) {
 		this.mouseButton = mouseButton;
 	}
-
 }

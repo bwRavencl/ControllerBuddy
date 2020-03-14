@@ -35,5 +35,4 @@ public final class VirtualAxisEditorBuilder extends ArrayEditorBuilder<VirtualAx
 	VirtualAxis[] getValues() {
 		return VirtualAxis.values();
 	}
-
 }

@@ -105,7 +105,6 @@ class OpenVrOverlay {
 		private BufferedImage image;
 		private int textureObject;
 		private Graphics2D g2d;
-
 	}
 
 	private static final Logger log = Logger.getLogger(OpenVrOverlay.class.getName());
@@ -434,5 +433,4 @@ class OpenVrOverlay {
 			renderingMemoryStack.pop();
 		}
 	}
-
 }

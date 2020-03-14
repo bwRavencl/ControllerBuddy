@@ -44,5 +44,4 @@ public final class ClicksEditorBuilder extends NumberEditorBuilder<Integer> {
 	Number getStepSize() {
 		return 1;
 	}
-
 }

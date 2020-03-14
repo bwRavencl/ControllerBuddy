@@ -46,5 +46,4 @@ public final class ButtonToScrollAction extends ToScrollAction<Byte> implements 
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

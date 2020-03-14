@@ -89,7 +89,6 @@ final class AssignmentsComponent extends JScrollPane {
 			CompoundButtonLocation(final float startDegree) {
 				this.startDegree = startDegree;
 			}
-
 		}
 
 		private static final long serialVersionUID = 5560396295119690740L;
@@ -140,6 +139,7 @@ final class AssignmentsComponent extends JScrollPane {
 				}
 
 			setIcon(new Icon() {
+
 				@Override
 				public int getIconHeight() {
 					return preferredSize.height;
@@ -251,7 +251,6 @@ final class AssignmentsComponent extends JScrollPane {
 		public void setText(final String text) {
 			this.text = text;
 		}
-
 	}
 
 	private static abstract class CustomButton extends JButton {
@@ -366,7 +365,6 @@ final class AssignmentsComponent extends JScrollPane {
 			super.updateUI();
 			updateTheme();
 		}
-
 	}
 
 	@SuppressWarnings("serial")
@@ -391,7 +389,6 @@ final class AssignmentsComponent extends JScrollPane {
 			final EditActionsDialog editComponentDialog = new EditActionsDialog(main, component, name);
 			editComponentDialog.setVisible(true);
 		}
-
 	}
 
 	private static final class FourWay extends JPanel {
@@ -421,7 +418,6 @@ final class AssignmentsComponent extends JScrollPane {
 			constraints.gridy = 2;
 			add(createComponentButton(main, downTitle, downComponent), constraints);
 		}
-
 	}
 
 	private static final class Stick extends JPanel {
@@ -458,7 +454,6 @@ final class AssignmentsComponent extends JScrollPane {
 			add(new CompoundButton(main, this, yComponent, CompoundButton.CompoundButtonLocation.South,
 					northernButton));
 		}
-
 	}
 
 	private static final long serialVersionUID = -4096911611882875787L;
@@ -557,7 +552,6 @@ final class AssignmentsComponent extends JScrollPane {
 					checkDimensionIsSquare(preferredSize);
 					super.setPreferredSize(preferredSize);
 				}
-
 			};
 		} else {
 			round = false;
@@ -651,5 +645,4 @@ final class AssignmentsComponent extends JScrollPane {
 	public void setEnabled(final boolean enabled) {
 		setEnabledRecursive(assignmentsPanel, enabled);
 	}
-
 }

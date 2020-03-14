@@ -45,5 +45,4 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

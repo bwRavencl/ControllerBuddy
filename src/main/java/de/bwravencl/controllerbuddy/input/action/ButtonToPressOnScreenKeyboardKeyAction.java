@@ -84,5 +84,4 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

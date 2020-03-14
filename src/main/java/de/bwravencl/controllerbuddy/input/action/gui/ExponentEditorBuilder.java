@@ -44,5 +44,4 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 	Number getStepSize() {
 		return 0.1f;
 	}
-
 }

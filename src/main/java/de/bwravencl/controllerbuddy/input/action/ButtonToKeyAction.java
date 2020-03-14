@@ -56,5 +56,4 @@ public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButto
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

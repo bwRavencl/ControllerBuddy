@@ -42,7 +42,6 @@ public abstract class EditorBuilder {
 			this.action = action;
 			this.setterMethod = setterMethod;
 		}
-
 	}
 
 	static abstract class PropertySetterChangeListener implements ChangeListener {
@@ -54,7 +53,6 @@ public abstract class EditorBuilder {
 			this.action = action;
 			this.setterMethod = setterMethod;
 		}
-
 	}
 
 	protected final EditActionsDialog editActionsDialog;
@@ -89,5 +87,4 @@ public abstract class EditorBuilder {
 	}
 
 	public abstract void buildEditor(final JPanel parentPanel);
-
 }

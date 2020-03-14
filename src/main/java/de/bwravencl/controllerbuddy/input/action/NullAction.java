@@ -32,5 +32,4 @@ public final class NullAction implements IAction<Number> {
 	@Override
 	public void doAction(final Input input, final Number value) {
 	}
-
 }

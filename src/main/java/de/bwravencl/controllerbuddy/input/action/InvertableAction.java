@@ -37,5 +37,4 @@ abstract class InvertableAction<V extends Number> implements IAction<V> {
 	public void setInvert(final boolean invert) {
 		this.invert = invert;
 	}
-
 }

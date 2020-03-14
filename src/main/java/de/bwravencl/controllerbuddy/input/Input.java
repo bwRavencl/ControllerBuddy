@@ -44,6 +44,10 @@ import javax.swing.SwingUtilities;
 
 import org.lwjgl.glfw.GLFWGamepadState;
 
+import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
+import purejavahidapi.PureJavaHidApi;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -52,10 +56,6 @@ import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
 
 public final class Input {
 
@@ -261,7 +261,6 @@ public final class Input {
 
 							setBatteryState(battery);
 						}
-
 					});
 				} catch (final IOException e) {
 					log.log(Level.SEVERE, e.getMessage(), e);
@@ -705,5 +704,4 @@ public final class Input {
 			sendDualShock4HidReport();
 		}
 	}
-
 }

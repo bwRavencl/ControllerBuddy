@@ -41,6 +41,7 @@ import com.sun.jna.platform.win32.WinUser;
 final class GuiUtils {
 
 	static class FrameDragListener extends MouseAdapter {
+
 		private final Main main;
 		private final JFrame frame;
 		private Point mouseDownLocation = null;
@@ -153,5 +154,4 @@ final class GuiUtils {
 				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
 	}
-
 }

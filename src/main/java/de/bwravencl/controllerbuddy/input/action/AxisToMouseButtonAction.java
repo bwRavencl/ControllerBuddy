@@ -71,5 +71,4 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
-
 }

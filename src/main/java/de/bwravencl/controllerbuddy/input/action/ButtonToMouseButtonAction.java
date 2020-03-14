@@ -61,5 +61,4 @@ public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Byte> i
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

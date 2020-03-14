@@ -36,5 +36,4 @@ public interface IAction<V extends Number> extends Cloneable {
 	Object clone() throws CloneNotSupportedException;
 
 	void doAction(final Input input, V value);
-
 }

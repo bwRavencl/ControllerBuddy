@@ -183,7 +183,6 @@ public final class Main implements SingletonApp {
 			setUnsavedChanges(true);
 			updateModesPanel();
 		}
-
 	}
 
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
@@ -216,7 +215,6 @@ public final class Main implements SingletonApp {
 							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
 	}
 
 	private final class DisplayIndicatorAction extends AbstractAction {
@@ -242,7 +240,6 @@ public final class Main implements SingletonApp {
 			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
-
 	}
 
 	private static final class IndicatorProgressBar extends JProgressBar {
@@ -300,7 +297,6 @@ public final class Main implements SingletonApp {
 		public void setValue(final int n) {
 			super.setValue(overlayAxis.inverted ? -n : n);
 		}
-
 	}
 
 	private final class InvertIndicatorAction extends AbstractAction {
@@ -324,7 +320,6 @@ public final class Main implements SingletonApp {
 			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
-
 	}
 
 	private final class NewAction extends AbstractAction {
@@ -340,7 +335,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			newProfile();
 		}
-
 	}
 
 	private final class OpenAction extends AbstractAction {
@@ -357,7 +351,6 @@ public final class Main implements SingletonApp {
 			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 				loadProfile(fileChooser.getSelectedFile());
 		}
-
 	}
 
 	private enum OutputType {
@@ -407,7 +400,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			quit();
 		}
-
 	}
 
 	private final class RemoveModeAction extends AbstractAction {
@@ -430,7 +422,6 @@ public final class Main implements SingletonApp {
 			setUnsavedChanges(true);
 			updateModesPanel();
 		}
-
 	}
 
 	private final class SaveAction extends AbstractAction {
@@ -449,7 +440,6 @@ public final class Main implements SingletonApp {
 			else
 				saveProfileAs();
 		}
-
 	}
 
 	private final class SaveAsAction extends AbstractAction {
@@ -465,7 +455,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			saveProfileAs();
 		}
-
 	}
 
 	private final class SelectControllerAction extends AbstractAction {
@@ -487,7 +476,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			setSelectedJid(jid);
 		}
-
 	}
 
 	private final class SelectIndicatorColorAction extends AbstractAction {
@@ -514,7 +502,6 @@ public final class Main implements SingletonApp {
 			setUnsavedChanges(true);
 			updateOverlayPanel();
 		}
-
 	}
 
 	private final class SetHostAction extends AbstractAction implements FocusListener {
@@ -549,7 +536,6 @@ public final class Main implements SingletonApp {
 			else
 				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST));
 		}
-
 	}
 
 	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
@@ -592,7 +578,6 @@ public final class Main implements SingletonApp {
 				setUnsavedChanges(true);
 			}
 		}
-
 	}
 
 	private final class ShowAboutDialogAction extends AbstractAction {
@@ -611,7 +596,6 @@ public final class Main implements SingletonApp {
 					MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
 		}
-
 	}
 
 	private final class ShowAction extends AbstractAction {
@@ -630,7 +614,6 @@ public final class Main implements SingletonApp {
 			frame.setVisible(true);
 			frame.setExtendedState(Frame.NORMAL);
 		}
-
 	}
 
 	private final class ShowLicensesAction extends AbstractAction {
@@ -657,7 +640,6 @@ public final class Main implements SingletonApp {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private final class StartClientAction extends AbstractAction {
@@ -673,7 +655,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			startClient();
 		}
-
 	}
 
 	private final class StartLocalAction extends AbstractAction {
@@ -689,7 +670,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			startLocal();
 		}
-
 	}
 
 	private final class StartServerAction extends AbstractAction {
@@ -705,7 +685,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			startServer();
 		}
-
 	}
 
 	private final class StopClientAction extends AbstractAction {
@@ -721,7 +700,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			stopClient(true);
 		}
-
 	}
 
 	private final class StopLocalAction extends AbstractAction {
@@ -737,7 +715,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			stopLocal(true);
 		}
-
 	}
 
 	private final class StopServerAction extends AbstractAction {
@@ -753,7 +730,6 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			stopServer(true);
 		}
-
 	}
 
 	private static final Options options = new Options();
@@ -1024,7 +1000,6 @@ public final class Main implements SingletonApp {
 				if (showMenuItem != null)
 					showMenuItem.setEnabled(false);
 			}
-
 		});
 
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
@@ -1540,7 +1515,6 @@ public final class Main implements SingletonApp {
 				final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 				updateOverlayAlignment(maxWindowBounds);
 			}
-
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
 		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
@@ -2508,5 +2482,4 @@ public final class Main implements SingletonApp {
 			trayIcon.setToolTip(toolTip);
 		}
 	}
-
 }

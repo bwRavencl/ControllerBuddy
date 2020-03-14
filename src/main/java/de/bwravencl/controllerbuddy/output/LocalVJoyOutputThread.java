@@ -166,5 +166,4 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 
 		logStop();
 	}
-
 }

@@ -38,5 +38,4 @@ public final class OverlayAxis implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		return new OverlayAxis(new Color(color.getRGB(), true), inverted);
 	}
-
 }

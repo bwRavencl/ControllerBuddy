@@ -35,5 +35,4 @@ public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 	LockKey[] getValues() {
 		return LockKey.LOCK_KEYS;
 	}
-
 }

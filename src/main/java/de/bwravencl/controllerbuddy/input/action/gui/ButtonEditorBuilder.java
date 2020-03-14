@@ -45,7 +45,6 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 		public String valueToString(final Object value) throws ParseException {
 			return Integer.toString((int) value + 1);
 		}
-
 	}
 
 	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
@@ -89,5 +88,4 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 	Number getStepSize() {
 		return 1;
 	}
-
 }

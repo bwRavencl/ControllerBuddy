@@ -85,5 +85,4 @@ public final class AxisToScrollAction extends ToScrollAction<Float>
 	public void setExponent(final float exponent) {
 		this.exponent = exponent;
 	}
-
 }

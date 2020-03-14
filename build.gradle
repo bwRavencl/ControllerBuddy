@@ -1,8 +1,9 @@
 plugins {
-    id 'application'
-    id 'com.github.spotbugs' version '4.0.2'
-    id 'eclipse'
-    id 'org.ajoberstar.grgit' version '4.0.1'
+	id 'application'
+	id 'com.github.spotbugs' version '4.0.2'
+	id 'com.diffplug.gradle.spotless' version '3.27.2'
+	id 'eclipse'
+	id 'org.ajoberstar.grgit' version '4.0.1'
 }
 
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
@@ -12,142 +13,182 @@ sourceCompatibility = 14
 targetCompatibility = 14
 
 ext {
-    jnaVersion = '5.5.0'
-    lwjglVersion = '3.2.3'
+	jnaVersion = '5.5.0'
+	lwjglVersion = '3.2.3'
 
-    genDir = 'gen'
-    versionDir = "$genDir/main/java"
+	genDir = 'gen'
+	versionDir = "$genDir/main/java"
 
-    libsDir = "$buildDir/$libsDirName"
-    tmpDir = "$buildDir/tmp"
-    appImageDir = "$tmpDir/$project.name"
-    runtimeDir = "$tmpDir/runtime"
+	libsDir = "$buildDir/$libsDirName"
+	tmpDir = "$buildDir/tmp"
+	appImageDir = "$tmpDir/$project.name"
+	runtimeDir = "$tmpDir/runtime"
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'commons-cli:commons-cli:1.4',
-                   'com.formdev:flatlaf:0.27',
-                   'com.github.git-moss:purejavahidapi:29a18abb61',
-                   'com.google.code.gson:gson:2.8.6',
-                   'io.github.classgraph:classgraph:4.8.65',
-                   "net.java.dev.jna:jna:$jnaVersion",
-                   "net.java.dev.jna:jna-platform:$jnaVersion",
-                   "org.lwjgl:lwjgl:$lwjglVersion",
-                   "org.lwjgl:lwjgl-glfw:$lwjglVersion",
-                   "org.lwjgl:lwjgl-opengl:$lwjglVersion",
-                   "org.lwjgl:lwjgl-openvr:$lwjglVersion"
-    runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
-                "org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
-                "org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
-                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
-                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
-                "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
-                "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
-                "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+	implementation 'commons-cli:commons-cli:1.4',
+			'com.formdev:flatlaf:0.27',
+			'com.github.git-moss:purejavahidapi:29a18abb61',
+			'com.google.code.gson:gson:2.8.6',
+			'io.github.classgraph:classgraph:4.8.65',
+			"net.java.dev.jna:jna:$jnaVersion",
+			"net.java.dev.jna:jna-platform:$jnaVersion",
+			"org.lwjgl:lwjgl:$lwjglVersion",
+			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
+			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
+			"org.lwjgl:lwjgl-openvr:$lwjglVersion"
+	runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
+			"org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
+			"org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
+			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-linux",
+			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-macos",
+			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
+			"org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
+			"org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
 }
 
 spotbugs {
-    effort = 'max'
-    excludeFilter = file("$projectDir/spotbugs-excludeFilter.xml")
-    reportLevel = 'low'
+	effort = 'max'
+	excludeFilter = file("$projectDir/spotbugs-excludeFilter.xml")
+	reportLevel = 'low'
+}
+
+spotless {
+	java {
+		target 'src/main/java/de/bwravencl/**/*.java'
+		eclipse().configFile 'spotless.eclipseformat.xml'
+		importOrderFile 'spotless.importorder'
+		licenseHeader '''/* Copyright (C) $YEAR  Matteo Hausner
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+'''
+	}
+	groovyGradle {
+		target '**/.*gradle'
+		greclipse().configFile 'spotless.eclipseformat.xml'
+	}
+    format 'properties', {
+            target 'src/main/resources/**/*.properties'
+        encoding 'ISO_8859_1'
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
+    format 'misc', {
+        target '**/*.gitignore', '**/*.md', 'src/main/resources/**/*.txt'
+        endWithNewline()
+    }
 }
 
 jar.dependsOn check
 
 task cleanGenDirectory {
-    description = 'Removes the \'gen\' directory'
-    doLast { delete genDir }
+	description = 'Removes the \'gen\' directory'
+	doLast { delete genDir }
 }
 
 clean.dependsOn cleanGenDirectory
 
 task generateVersion {
-    description = 'Creates a source directory named \'gen\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory.'
-    dependsOn cleanGenDirectory
-    def outputDir = file("$versionDir")
-    outputs.dir outputDir
-    doLast {
-        def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
-        srcFile.parentFile.mkdirs()
-        srcFile.write("""package de.bwravencl.controllerbuddy.version;\n
+	description = 'Creates a source directory named \'gen\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory.'
+	dependsOn cleanGenDirectory
+	def outputDir = file("$versionDir")
+	outputs.dir outputDir
+	doLast {
+		def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
+		srcFile.parentFile.mkdirs()
+		srcFile.write("""package de.bwravencl.controllerbuddy.version;\n
 public class Version {
 
 \tpublic static final String VERSION = "$project.version";
 
 }
 """)
-    }
+	}
 }
 
 tasks.eclipse.dependsOn generateVersion
 
 eclipse {
-    classpath {
-        file {
-            whenMerged { cp ->
-                cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
-            }
-        }
-    }
+	classpath {
+		file {
+			whenMerged { cp ->
+				cp.entries.add( new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
+			}
+		}
+	}
 }
 
 compileJava {
-    dependsOn generateVersion
-    source generateVersion.outputs.files, sourceSets.main.java
-    options.compilerArgs += ["-Xlint:deprecation"]
+	dependsOn generateVersion
+	source generateVersion.outputs.files, sourceSets.main.java
+	options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 task jlink(type: Exec) {
-    description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
-    group
-    doFirst { delete runtimeDir }
-    commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
+	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
+	group
+	doFirst { delete runtimeDir }
+	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
 }
 
 task copyLibs(type: Copy) {
-    description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
-    dependsOn jar
-    from configurations.runtimeClasspath
-    into "$libsDir"
+	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
+	dependsOn jar
+	from configurations.runtimeClasspath
+	into "$libsDir"
 }
 
 task customizeLoggingProperties {
-    description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
-    dependsOn jlink
-    doLast {
-        ant.propertyfile(file: "$runtimeDir/conf/logging.properties") {
-            entry(key: 'handlers', value: 'java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
-            entry(key: 'java.util.logging.FileHandler.pattern', value: "%t/${project.name}.log")
-            entry(key: 'java.util.logging.FileHandler.formatter', value: 'java.util.logging.SimpleFormatter')
-            entry(key: 'java.util.logging.SimpleFormatter.format', value: '[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n')
-        }
-    }
+	description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
+	dependsOn jlink
+	doLast {
+		ant.propertyfile(file: "$runtimeDir/conf/logging.properties") {
+			entry(key: 'handlers', value: 'java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
+			entry(key: 'java.util.logging.FileHandler.pattern', value: "%t/${project.name}.log")
+			entry(key: 'java.util.logging.FileHandler.formatter', value: 'java.util.logging.SimpleFormatter')
+			entry(key: 'java.util.logging.SimpleFormatter.format', value: '[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n')
+		}
+	}
 }
 
 task jpackage(type: Exec) {
-    description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
-    dependsOn copyLibs, customizeLoggingProperties
-    doFirst { delete "$appImageDir" }
-    commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
+	dependsOn copyLibs, customizeLoggingProperties
+	doFirst { delete "$appImageDir" }
+	commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
 }
 
 startScripts.enabled = false
 distTar.enabled = false
 
 task distZip(type: Zip, overwrite: true) {
-    dependsOn jpackage
-    from "$tmpDir"
-    include "$project.name/**"
+	dependsOn jpackage
+	from "$tmpDir"
+	include "$project.name/**"
 }
 
 task installDist(type: Sync, overwrite: true) {
-    dependsOn jpackage
-    from "$tmpDir"
-    into "$buildDir/install"
-    include "$project.name/**"
+	dependsOn jpackage
+	from "$tmpDir"
+	into "$buildDir/install"
+	include "$project.name/**"
 }

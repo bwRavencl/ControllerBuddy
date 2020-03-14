@@ -288,5 +288,4 @@ public final class ServerOutputThread extends OutputThread {
 		super.stopOutput();
 		serverSocket.close();
 	}
-
 }

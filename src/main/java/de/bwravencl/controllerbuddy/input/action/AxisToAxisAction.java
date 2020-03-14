@@ -70,5 +70,4 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendabl
 	public void setInitialValue(final float initialValue) {
 		this.initialValue = initialValue;
 	}
-
 }

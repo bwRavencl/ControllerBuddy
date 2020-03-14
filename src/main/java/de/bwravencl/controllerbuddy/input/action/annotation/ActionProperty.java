@@ -38,5 +38,4 @@ public @interface ActionProperty {
 	String overrideFieldName() default "";
 
 	Class<?> overrideFieldType() default Void.class;
-
 }

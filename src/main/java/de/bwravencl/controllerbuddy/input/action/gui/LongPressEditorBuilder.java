@@ -44,5 +44,4 @@ public final class LongPressEditorBuilder extends BooleanEditorBuilder {
 		if (cycleEditor)
 			checkBox.setEnabled(false);
 	}
-
 }

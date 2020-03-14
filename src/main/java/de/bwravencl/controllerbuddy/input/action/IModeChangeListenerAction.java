@@ -22,5 +22,4 @@ import de.bwravencl.controllerbuddy.input.Mode;
 public interface IModeChangeListenerAction extends IAction<Float> {
 
 	void onModeChanged(Mode newMode);
-
 }

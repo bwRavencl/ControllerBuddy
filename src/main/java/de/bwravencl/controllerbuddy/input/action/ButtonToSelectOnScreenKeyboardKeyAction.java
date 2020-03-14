@@ -36,7 +36,6 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			public String toString() {
 				return strings.getString("DIRECTION_UP");
 			}
-
 		},
 		DOWN {
 
@@ -44,7 +43,6 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			public String toString() {
 				return strings.getString("DIRECTION_DOWN");
 			}
-
 		},
 		LEFT {
 
@@ -52,7 +50,6 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			public String toString() {
 				return strings.getString("DIRECTION_LEFT");
 			}
-
 		},
 		RIGHT {
 
@@ -60,7 +57,6 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			public String toString() {
 				return strings.getString("DIRECTION_RIGHT");
 			}
-
 		}
 	}
 
@@ -117,5 +113,4 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
 	}
-
 }

@@ -594,5 +594,4 @@ public abstract class VJoyOutputThread extends OutputThread {
 			}
 		}
 	}
-
 }

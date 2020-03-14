@@ -36,5 +36,4 @@ public @interface Action {
 	String label();
 
 	int order();
-
 }

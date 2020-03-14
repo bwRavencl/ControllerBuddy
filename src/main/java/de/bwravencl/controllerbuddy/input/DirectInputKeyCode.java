@@ -269,5 +269,4 @@ public final class DirectInputKeyCode {
 	public String toString() {
 		return name;
 	}
-
 }

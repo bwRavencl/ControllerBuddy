@@ -37,5 +37,4 @@ public abstract class ToButtonAction<V extends Number> implements IAction<V> {
 	public void setButtonId(final int buttonId) {
 		this.buttonId = buttonId;
 	}
-
 }

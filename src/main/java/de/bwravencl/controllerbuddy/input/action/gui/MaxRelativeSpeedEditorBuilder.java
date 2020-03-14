@@ -44,5 +44,4 @@ public final class MaxRelativeSpeedEditorBuilder extends NumberEditorBuilder<Flo
 	Number getStepSize() {
 		return 0.01f;
 	}
-
 }

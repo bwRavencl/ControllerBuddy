@@ -46,5 +46,4 @@ public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 
 		return modes.toArray(new Mode[modes.size()]);
 	}
-
 }

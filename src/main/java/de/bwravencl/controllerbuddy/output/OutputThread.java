@@ -55,7 +55,6 @@ public abstract class OutputThread extends Thread {
 			public void run() {
 				main.stopAll();
 			}
-
 		}.start();
 
 		log.log(Level.WARNING, "Could not read from controller");
@@ -104,5 +103,4 @@ public abstract class OutputThread extends Thread {
 		input.reset();
 		interrupt();
 	}
-
 }

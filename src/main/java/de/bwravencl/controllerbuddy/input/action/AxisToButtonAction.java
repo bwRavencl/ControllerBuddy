@@ -57,5 +57,4 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}
-
 }

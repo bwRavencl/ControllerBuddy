@@ -155,7 +155,8 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Task                             | Command                 |
 | -------------------------------- | ----------------------- |
 | Generate version source file     | gradlew generateVersion |
-| Perform SpotBugs analysis        | gradlew check           |
+| Run SpotBugs and Spotless        | gradlew check           |
+| Apply Spotless formatting        | gradlew spotlessApply   |
 | Run ControllerBuddy              | gradlew run             |
 | Install a jpackage image         | gradlew installDist     |
 | Create a zipped jpackage image   | gradlew distZip         |

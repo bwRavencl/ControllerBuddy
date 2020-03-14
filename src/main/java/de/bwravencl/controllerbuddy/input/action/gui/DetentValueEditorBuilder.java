@@ -90,5 +90,4 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 	Number getStepSize() {
 		return 0.05f;
 	}
-
 }

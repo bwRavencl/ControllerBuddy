@@ -126,5 +126,4 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 	public void setMaxCursorSpeed(final float maxCursorSpeed) {
 		this.maxCursorSpeed = maxCursorSpeed;
 	}
-
 }

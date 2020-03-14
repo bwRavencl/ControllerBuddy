@@ -35,5 +35,4 @@ public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> 
 	MouseAxis[] getValues() {
 		return MouseAxis.values();
 	}
-
 }

@@ -50,7 +50,6 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
@@ -87,5 +86,4 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	abstract Comparable<T> getMinimum();
 
 	abstract Number getStepSize();
-
 }

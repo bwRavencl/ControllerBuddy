@@ -50,5 +50,4 @@ public final class VersionUtils {
 	private static String[] getVersionParts(final String version) {
 		return version.split("\\.");
 	}
-
 }

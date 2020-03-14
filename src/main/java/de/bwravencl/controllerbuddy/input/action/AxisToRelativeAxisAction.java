@@ -112,5 +112,4 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction implements 
 	public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
 		this.maxRelativeSpeed = maxRelativeSpeed;
 	}
-
 }

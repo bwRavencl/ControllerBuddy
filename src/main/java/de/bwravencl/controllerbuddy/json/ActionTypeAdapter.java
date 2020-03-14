@@ -88,5 +88,4 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 
 		return wrapper;
 	}
-
 }

@@ -48,7 +48,6 @@ public class BooleanEditorBuilder extends EditorBuilder {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
@@ -67,5 +66,4 @@ public class BooleanEditorBuilder extends EditorBuilder {
 		checkBox.setSelected((boolean) initialValue);
 		parentPanel.add(checkBox);
 	}
-
 }

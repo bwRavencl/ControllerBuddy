@@ -44,5 +44,4 @@ public final class InitialValueEditorBuilder extends NumberEditorBuilder<Float> 
 	Number getStepSize() {
 		return 0.05f;
 	}
-
 }

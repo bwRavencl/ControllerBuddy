@@ -113,7 +113,6 @@ public final class EditActionsDialog extends JDialog {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
-
 	}
 
 	private static final class AssignedAction {
@@ -128,7 +127,6 @@ public final class EditActionsDialog extends JDialog {
 		public String toString() {
 			return IAction.getLabel(action.getClass());
 		}
-
 	}
 
 	private static final class AvailableAction {
@@ -143,7 +141,6 @@ public final class EditActionsDialog extends JDialog {
 		public String toString() {
 			return IAction.getLabel(actionClass);
 		}
-
 	}
 
 	private final class CancelAction extends AbstractAction {
@@ -159,7 +156,6 @@ public final class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			closeDialog();
 		}
-
 	}
 
 	private final class OKAction extends AbstractAction {
@@ -199,7 +195,6 @@ public final class EditActionsDialog extends JDialog {
 
 			closeDialog();
 		}
-
 	}
 
 	private final class RemoveActionAction extends AbstractAction {
@@ -233,7 +228,6 @@ public final class EditActionsDialog extends JDialog {
 			updateAvailableActions();
 			updateAssignedActions();
 		}
-
 	}
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
@@ -603,5 +597,4 @@ public final class EditActionsDialog extends JDialog {
 
 		availableActionsList.setListData(availableActions.toArray(new AvailableAction[availableActions.size()]));
 	}
-
 }

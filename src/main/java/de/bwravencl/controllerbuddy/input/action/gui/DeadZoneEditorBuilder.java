@@ -44,5 +44,4 @@ public final class DeadZoneEditorBuilder extends NumberEditorBuilder<Float> {
 	Number getStepSize() {
 		return 0.01f;
 	}
-
 }

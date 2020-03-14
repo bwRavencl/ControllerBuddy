@@ -34,5 +34,4 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 	public void setClicks(final int clicks) {
 		this.clicks = clicks;
 	}
-
 }

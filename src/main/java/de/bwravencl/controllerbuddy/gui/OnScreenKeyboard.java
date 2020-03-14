@@ -109,7 +109,6 @@ public final class OnScreenKeyboard extends JFrame {
 			super.updateUI();
 			updateTheme();
 		}
-
 	}
 
 	private final class DefaultKeyboardButton extends AbstractKeyboardButton {
@@ -180,7 +179,6 @@ public final class OnScreenKeyboard extends JFrame {
 										press();
 									}
 								}
-
 							};
 							main.getTimer().schedule(lockTimerTask, MIN_REPEAT_PRESS_TIME);
 						} else {
@@ -279,7 +277,6 @@ public final class OnScreenKeyboard extends JFrame {
 				beginPress = 0L;
 			}
 		}
-
 	}
 
 	private final class LockKeyButton extends AbstractKeyboardButton {
@@ -348,7 +345,6 @@ public final class OnScreenKeyboard extends JFrame {
 			changed = true;
 			anyChanges = true;
 		}
-
 	}
 
 	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
@@ -677,5 +673,4 @@ public final class OnScreenKeyboard extends JFrame {
 		final var defaultLocation = new Point(x, y);
 		loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
 	}
-
 }

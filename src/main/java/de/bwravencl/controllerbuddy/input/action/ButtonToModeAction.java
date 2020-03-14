@@ -199,5 +199,4 @@ public final class ButtonToModeAction implements IButtonToAction {
 	public boolean targetsOnScreenKeyboardMode() {
 		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
 	}
-
 }

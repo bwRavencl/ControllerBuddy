@@ -84,5 +84,4 @@ public final class ButtonToLockKeyAction implements IButtonToAction {
 	public void setOn(final boolean on) {
 		this.on = on;
 	}
-
 }

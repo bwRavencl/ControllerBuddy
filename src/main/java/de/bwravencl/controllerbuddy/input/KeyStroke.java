@@ -63,5 +63,4 @@ public final class KeyStroke implements Cloneable {
 	public void setModifierCodes(final Integer[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
 	}
-
 }

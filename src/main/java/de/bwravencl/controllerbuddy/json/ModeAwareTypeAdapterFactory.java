@@ -39,6 +39,7 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 		final var delegate = gson.getDelegateAdapter(this, type);
 
 		return new TypeAdapter<>() {
+
 			@Override
 			public T read(final JsonReader in) throws IOException {
 				final var obj = delegate.read(in);
@@ -76,5 +77,4 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 			}
 		};
 	}
-
 }

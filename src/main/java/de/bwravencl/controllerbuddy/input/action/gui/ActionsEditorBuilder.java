@@ -50,7 +50,6 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 					(ButtonToCycleAction) action);
 			editComponentDialog.setVisible(true);
 		}
-
 	}
 
 	public ActionsEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
@@ -65,5 +64,4 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 		editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		parentPanel.add(editActionsButton);
 	}
-
 }
