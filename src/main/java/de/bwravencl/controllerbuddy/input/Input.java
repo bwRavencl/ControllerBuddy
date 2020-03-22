@@ -73,7 +73,7 @@ public final class Input {
 			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	private static final int hidReportOffset = Main.windows ? -1 : 0;
+	private static final int hidReportOffset = Main.windows ? 1 : 0;
 
 	private static float clamp(final float v) {
 		return Math.max(Math.min(v, 1f), -1f);
@@ -211,13 +211,11 @@ public final class Input {
 								return;
 							}
 
-							final var touchpadButtonDown = (reportData[7 + hidReportOffset] & 1 << 2 - 1) != 0;
-							final var down1 = reportData[35 + hidReportOffset] >> 7 != 0 ? false : true;
-							final var down2 = reportData[39 + hidReportOffset] >> 7 != 0 ? false : true;
-							final var x1 = reportData[36 + hidReportOffset]
-									+ (reportData[37 + hidReportOffset] & 0xF) * 255;
-							final var y1 = ((reportData[37 + hidReportOffset] & 0xF0) >> 4)
-									+ reportData[38 + hidReportOffset] * 16;
+							final var touchpadButtonDown = (reportData[7] & 1 << 2 - 1) != 0;
+							final var down1 = reportData[35] >> 7 != 0 ? false : true;
+							final var down2 = reportData[39] >> 7 != 0 ? false : true;
+							final var x1 = reportData[36] + (reportData[37] & 0xF) * 255;
+							final var y1 = ((reportData[37] & 0xF0) >> 4) + reportData[38] * 16;
 
 							if (touchpadButtonDown)
 								synchronized (downMouseButtons) {
@@ -248,8 +246,8 @@ public final class Input {
 							prevX1 = x1;
 							prevY1 = y1;
 
-							final var cableConnected = (reportData[30 + hidReportOffset] >> 4 & 0x01) != 0;
-							var battery = reportData[30 + hidReportOffset] & 0x0F;
+							final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
+							var battery = reportData[30] & 0x0F;
 
 							setCharging(cableConnected);
 
@@ -518,10 +516,10 @@ public final class Input {
 		var sent = false;
 
 		for (var i = 0; i < 2; i++) {
-			final var dataLength = dualShock4HidReport.length + hidReportOffset;
+			final var dataLength = dualShock4HidReport.length - hidReportOffset;
 			try {
 				final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-						Arrays.copyOfRange(dualShock4HidReport, 0 - hidReportOffset, dualShock4HidReport.length),
+						Arrays.copyOfRange(dualShock4HidReport, 0 + hidReportOffset, dualShock4HidReport.length),
 						dataLength);
 				sent |= dataSent == dataLength;
 			} catch (final IllegalStateException e) {
