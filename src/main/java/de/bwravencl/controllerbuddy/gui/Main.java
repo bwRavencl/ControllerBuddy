@@ -2122,6 +2122,7 @@ public final class Main implements SingletonApp {
 			SwingUtilities.invokeLater(() -> {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
 				repaintOnScreenKeyboard();
+				repaintOverlay();
 			});
 	}
 
