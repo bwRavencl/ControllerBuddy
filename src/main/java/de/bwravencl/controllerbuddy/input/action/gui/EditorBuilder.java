@@ -72,7 +72,7 @@ public abstract class EditorBuilder {
 
 		final var fieldNameChars = fieldName.toCharArray();
 		fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
-		final var capizalizedFieldName = new String(fieldNameChars);
+		final var capizalizedFieldName = String.valueOf(fieldNameChars);
 
 		setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
 

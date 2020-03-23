@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,20 +249,20 @@ public final class DirectInputKeyCode {
 		final var modifiableKeyCodeToNameMap = new HashMap<Integer, String>();
 
 		for (final DirectInputKeyCode sc : KEY_CODES) {
-			modifiableNameToKeyCodeMap.put(sc.name, sc.DirectInputKeyCode);
-			modifiableKeyCodeToNameMap.put(sc.DirectInputKeyCode, sc.name);
+			modifiableNameToKeyCodeMap.put(sc.name, sc.keyCode);
+			modifiableKeyCodeToNameMap.put(sc.keyCode, sc.name);
 		}
 
 		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
 		keyCodeToNameMap = Collections.unmodifiableMap(modifiableKeyCodeToNameMap);
 	}
 
-	private final int DirectInputKeyCode;
+	private final int keyCode;
 	private final String name;
 
 	private DirectInputKeyCode(final String name, final int DirectInputKeyCode) {
 		this.name = name;
-		this.DirectInputKeyCode = DirectInputKeyCode;
+		this.keyCode = DirectInputKeyCode;
 	}
 
 	@Override
