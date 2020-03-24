@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,6 +211,22 @@ public final class Input {
 								return;
 							}
 
+							final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
+							var battery = reportData[30] & 0x0F;
+
+							setCharging(cableConnected);
+
+							if (!cableConnected)
+								battery++;
+
+							battery = Math.min(battery, 10);
+							battery *= 10;
+
+							setBatteryState(battery);
+
+							if (!main.isLocalThreadActive() && !main.isServerThreadActive())
+								return;
+
 							final var touchpadButtonDown = (reportData[7] & 1 << 2 - 1) != 0;
 							final var down1 = reportData[35] >> 7 != 0 ? false : true;
 							final var down2 = reportData[39] >> 7 != 0 ? false : true;
@@ -245,19 +261,6 @@ public final class Input {
 							prevDown2 = down2;
 							prevX1 = x1;
 							prevY1 = y1;
-
-							final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
-							var battery = reportData[30] & 0x0F;
-
-							setCharging(cableConnected);
-
-							if (!cableConnected)
-								battery++;
-
-							battery = Math.min(battery, 10);
-							battery *= 10;
-
-							setBatteryState(battery);
 						}
 					});
 				} catch (final IOException e) {
@@ -513,21 +516,20 @@ public final class Input {
 	}
 
 	private boolean sendDualShock4HidReport() {
-		var sent = false;
+		final var dataLength = dualShock4HidReport.length - hidReportOffset;
 
-		for (var i = 0; i < 2; i++) {
-			final var dataLength = dualShock4HidReport.length - hidReportOffset;
-			try {
+		try {
+			for (var i = 0; i < 5; i++) {
 				final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
 						Arrays.copyOfRange(dualShock4HidReport, 0 + hidReportOffset, dualShock4HidReport.length),
 						dataLength);
-				sent |= dataSent == dataLength;
-			} catch (final IllegalStateException e) {
-				break;
+				if (dataSent == dataLength)
+					return true;
 			}
+		} catch (final IllegalStateException e) {
 		}
 
-		return sent;
+		return false;
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback,

@@ -1313,8 +1313,7 @@ public final class Main implements SingletonApp {
 							selectedJid = INVALID_JID;
 							input.deInit();
 
-							if (serverThread != null && serverThread.isAlive()
-									&& serverThread.getServerState() != ServerState.Connected)
+							if (isServerThreadActive() && serverThread.getServerState() != ServerState.Connected)
 								serverThread.controllerDisconnected();
 						}
 					} else if (event == GLFW_CONNECTED)
@@ -1437,16 +1436,16 @@ public final class Main implements SingletonApp {
 
 		if (Main.windows)
 			if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
-				if (localThread == null || !localThread.isAlive())
+				if (!isLocalThreadActive())
 					startLocal();
 				return;
 			} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOption)) {
-				if (clientThread == null || !clientThread.isAlive())
+				if (!isClientThreadActive())
 					startClient();
 				return;
 			}
 		if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption)) {
-			if (serverThread == null || !serverThread.isAlive())
+			if (!isServerThreadActive())
 				startServer();
 		} else
 			JOptionPane.showMessageDialog(frame,
@@ -1556,8 +1555,20 @@ public final class Main implements SingletonApp {
 		}
 	}
 
+	private boolean isClientThreadActive() {
+		return clientThread != null && clientThread.isAlive();
+	}
+
+	public boolean isLocalThreadActive() {
+		return localThread != null && localThread.isAlive();
+	}
+
 	private boolean isSelectedJidValid() {
 		return selectedJid >= GLFW_JOYSTICK_1 && selectedJid <= GLFW_JOYSTICK_LAST;
+	}
+
+	public boolean isServerThreadActive() {
+		return serverThread != null && serverThread.isAlive();
 	}
 
 	private void loadProfile(final File file) {
@@ -1789,9 +1800,9 @@ public final class Main implements SingletonApp {
 	}
 
 	private void onOutputThreadsChanged() {
-		final var localActive = localThread != null && localThread.isAlive();
-		final var clientActive = clientThread != null && clientThread.isAlive();
-		final var serverActive = serverThread != null && serverThread.isAlive();
+		final var localActive = isLocalThreadActive();
+		final var clientActive = isClientThreadActive();
+		final var serverActive = isServerThreadActive();
 
 		final var noneActive = !localActive && !clientActive && !serverActive;
 
@@ -2134,8 +2145,7 @@ public final class Main implements SingletonApp {
 	}
 
 	public void toggleOnScreenKeyboard() {
-		if (localThread != null && localThread.isAlive() || clientThread != null && clientThread.isAlive()
-				|| serverThread != null && serverThread.isAlive())
+		if (isLocalThreadActive() || isServerThreadActive())
 			SwingUtilities.invokeLater(() -> {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
 				repaintOnScreenKeyboard();
@@ -2249,11 +2259,9 @@ public final class Main implements SingletonApp {
 		for (final var virtualAxis : Input.VirtualAxis.values())
 			if (virtualAxisToProgressBarMap.containsKey(virtualAxis)) {
 				OutputThread outputThread = null;
-				if (localThread != null && localThread.isAlive())
+				if (isLocalThreadActive())
 					outputThread = localThread;
-				else if (clientThread != null && clientThread.isAlive())
-					outputThread = clientThread;
-				else if (serverThread != null && serverThread.isAlive())
+				else if (isServerThreadActive())
 					outputThread = serverThread;
 
 				if (outputThread != null) {
@@ -2355,11 +2363,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void updatePanelAccess() {
-		final var localActive = localThread != null && localThread.isAlive();
-		final var clientActive = clientThread != null && clientThread.isAlive();
-		final var serverActive = serverThread != null && serverThread.isAlive();
-
-		final var panelsEnabled = !localActive && !clientActive && !serverActive;
+		final var panelsEnabled = !isLocalThreadActive() && !isClientThreadActive() && !isServerThreadActive();
 
 		setEnabledRecursive(modesListPanel, panelsEnabled);
 		setEnabledRecursive(addModePanel, panelsEnabled);
