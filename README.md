@@ -13,7 +13,7 @@ GNU General Public License v2.0
 #### Description:
 ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.  
 In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the awesome [vJoy](http://vjoystick.sourceforge.net) device driver created by Shaul Eizikovich.  
-The goal ControllerBuddy is to allow controlling target applications without having the user take off their hands from the gamepad to reach for the keyboard or mouse.
+ControllerBuddy's goal is to enable the user to control target applications solely via a gamepad and not having to reach for a keyboard or mouse at any point in time.
 
 #### Features:
 - Maps gamepad axes and buttons to highly customizable actions:
