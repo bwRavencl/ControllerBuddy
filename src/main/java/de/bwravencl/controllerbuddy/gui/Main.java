@@ -788,8 +788,25 @@ public final class Main implements SingletonApp {
 	}
 
 	private static String assembleControllerLoggingMessage(final String prefix, final int jid) {
-		return prefix + " controller " + glfwGetGamepadName(jid) + " (" + jid + ")" + " [" + glfwGetJoystickGUID(jid)
-				+ "]";
+		final var sw = new StringWriter();
+		sw.append(prefix + " controller ");
+
+		final var gamepadName = glfwGetGamepadName(jid);
+		final var appendGamepadName = gamepadName != null;
+
+		if (appendGamepadName)
+			sw.append(gamepadName + " (");
+
+		sw.append(String.valueOf(jid));
+
+		if (appendGamepadName)
+			sw.append(")");
+
+		final var joystickGuid = glfwGetJoystickGUID(jid);
+		if (joystickGuid != null)
+			sw.append(" [" + glfwGetJoystickGUID(jid) + "]");
+
+		return sw.toString();
 	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
