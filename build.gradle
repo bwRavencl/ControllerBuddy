@@ -88,7 +88,6 @@ spotless {
 	}
     format 'properties', {
             target 'src/main/resources/**/*.properties'
-        encoding 'ISO_8859_1'
         endWithNewline()
         trimTrailingWhitespace()
     }
