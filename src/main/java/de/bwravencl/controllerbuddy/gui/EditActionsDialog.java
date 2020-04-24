@@ -232,7 +232,7 @@ public final class EditActionsDialog extends JDialog {
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
 
-	private static final int DIALOG_BOUNDS_WIDTH = 970;
+	private static final int DIALOG_BOUNDS_WIDTH = 980;
 	private static final int DIALOG_BOUNDS_HEIGHT = 510;
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
 
@@ -429,13 +429,13 @@ public final class EditActionsDialog extends JDialog {
 		addButton.setPreferredSize(BUTTON_DIMENSION);
 		addButton.setEnabled(false);
 		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 		final var removeButton = new JButton(new RemoveActionAction());
 		removeButton.setPreferredSize(BUTTON_DIMENSION);
 		removeButton.setEnabled(false);
 		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(e -> {
