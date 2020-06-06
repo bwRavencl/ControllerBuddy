@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,9 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final Float value) {
+		if (isAlreadyPressed(input))
+			return;
+
 		final var down = !isSuspended() && value >= minAxisValue && value <= maxAxisValue;
 
 		input.setButton(buttonId, down);

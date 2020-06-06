@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
 
@@ -32,6 +33,10 @@ public abstract class ToButtonAction<V extends Number> implements IAction<V> {
 
 	public int getButtonId() {
 		return buttonId;
+	}
+
+	final boolean isAlreadyPressed(final Input input) {
+		return input.getButtons()[buttonId];
 	}
 
 	public void setButtonId(final int buttonId) {

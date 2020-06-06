@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 
 	@Override
 	public void doAction(final Input input, Byte value) {
+		if (isAlreadyPressed(input))
+			return;
+
 		value = handleLongPress(input, value);
 
 		input.setButton(buttonId, value != 0);

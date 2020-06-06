@@ -375,10 +375,10 @@ public final class Input {
 			if (!glfwGetGamepadState(jid, state))
 				return false;
 
-			if (clearOnNextPoll) {
-				for (var i = 0; i < buttons.length; i++)
-					buttons[i] = false;
+			for (var i = 0; i < buttons.length; i++)
+				buttons[i] = false;
 
+			if (clearOnNextPoll) {
 				downKeyStrokes.clear();
 				downMouseButtons.clear();
 
