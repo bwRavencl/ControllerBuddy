@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
 
-	protected JCheckBox checkBox;
+	JCheckBox checkBox;
 
 	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
