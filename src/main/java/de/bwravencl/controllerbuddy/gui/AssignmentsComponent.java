@@ -296,7 +296,7 @@ final class AssignmentsComponent extends JScrollPane {
 					def ? defaultFocusedBackground : focusedBackground, def ? defaultHoverBackground : hoverBackground,
 					def ? defaultPressedBackground : pressedBackground);
 
-			FlatUIUtils.setColor(g2d, background, def ? defaultBackground : getBackground());
+			g2d.setColor(FlatUIUtils.deriveColor(background, def ? defaultBackground : getBackground()));
 		}
 
 		void beginBorder(final Graphics2D g2d) {
