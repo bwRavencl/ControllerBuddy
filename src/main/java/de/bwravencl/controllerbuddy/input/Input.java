@@ -162,6 +162,7 @@ public final class Input {
 	private byte[] dualShock4HidReport;
 	private final Map<VirtualAxis, Integer> axesToTargetValueMap = new HashMap<>();
 	private long lastCallTime = 0L;
+	private float rateMultiplier = 0f;
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
@@ -369,6 +370,10 @@ public final class Input {
 		return profile;
 	}
 
+	public float getRateMultiplier() {
+		return rateMultiplier;
+	}
+
 	public int getScrollClicks() {
 		return scrollClicks;
 	}
@@ -394,7 +399,7 @@ public final class Input {
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
-		final var rateMultiplier = (float) elapsedTime / (float) 1000L;
+		rateMultiplier = (float) elapsedTime / (float) 1000L;
 
 		try (var stack = stackPush()) {
 			final var state = GLFWGamepadState.callocStack(stack);
@@ -531,6 +536,7 @@ public final class Input {
 		clearOnNextPoll = false;
 		repeatModeActionWalk = false;
 		lastCallTime = 0;
+		rateMultiplier = 0f;
 		axesToTargetValueMap.clear();
 
 		profile.setActiveMode(this, 0);

@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
@@ -28,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
 @Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
-public final class AxisToRelativeAxisAction extends AxisToAxisAction implements IModeChangeListenerAction {
+public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	private static final float DEFAULT_EXPONENT = 2f;
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
@@ -46,30 +45,18 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction implements 
 	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
 	private Float detentValue = null;
 
-	private transient long lastCallTime = 0L;
-
 	@Override
 	public void doAction(final Input input, final Float value) {
-		final var currentTime = System.currentTimeMillis();
-		var elapsedTime = input.getOutputThread().getPollInterval();
-
-		if (lastCallTime > 0L)
-			elapsedTime = currentTime - lastCallTime;
-		lastCallTime = currentTime;
-
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
-
 			final var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
 					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxRelativeSpeed,
-					maxRelativeSpeed) * rateMultiplier;
+					maxRelativeSpeed) * input.getRateMultiplier();
 
 			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis),
 					input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1f, 1f);
 
 			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
-		} else
-			lastCallTime = 0L;
+		}
 	}
 
 	public Float getDetentValue() {
@@ -86,15 +73,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction implements 
 
 	public boolean isHapticFeedback() {
 		return hapticFeedback;
-	}
-
-	@Override
-	public void onModeChanged(final Mode newMode) {
-		for (final var actions : newMode.getAxisToActionsMap().values())
-			if (actions.contains(this)) {
-				lastCallTime = 0L;
-				break;
-			}
 	}
 
 	public void setDetentValue(final Float detentValue) {

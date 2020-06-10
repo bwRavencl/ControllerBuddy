@@ -33,7 +33,6 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
-import de.bwravencl.controllerbuddy.input.action.IModeChangeListenerAction;
 
 public final class Profile implements Cloneable {
 
@@ -160,19 +159,13 @@ public final class Profile implements Cloneable {
 				for (final var axis : newMode.getAxisToActionsMap().keySet()) {
 					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
 					if (currentAxisToActionsMap.containsKey(axis))
-						for (final var action : currentAxisToActionsMap.get(axis)) {
+						for (final var action : currentAxisToActionsMap.get(axis))
 							if (action instanceof AxisToAxisAction && !(action instanceof AxisToRelativeAxisAction)) {
 								final AxisToAxisAction axisToAxisAction = (AxisToAxisAction) action;
 								final var value = axis == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
 										|| axis == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
 							}
-
-							if (action instanceof IModeChangeListenerAction) {
-								final IModeChangeListenerAction modeChangeListenerAction = (IModeChangeListenerAction) action;
-								modeChangeListenerAction.onModeChanged(newMode);
-							}
-						}
 				}
 
 			activeModeIndex = index;

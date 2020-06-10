@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
@@ -26,8 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 
 @Action(label = "TO_SCROLL_ACTION", category = ActionCategory.AXIS, order = 35)
-public final class AxisToScrollAction extends ToScrollAction<Float>
-		implements ISuspendableAction, IModeChangeListenerAction {
+public final class AxisToScrollAction extends ToScrollAction<Float> implements ISuspendableAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0.15f;
 	private static final float DEFAULT_EXPONENT = 1f;
@@ -38,18 +36,10 @@ public final class AxisToScrollAction extends ToScrollAction<Float>
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
 	private float exponent = DEFAULT_EXPONENT;
 
-	private transient long lastCallTime;
-
 	@Override
 	public void doAction(final Input input, final Float value) {
-		final var currentTime = System.currentTimeMillis();
-		var elapsedTime = input.getOutputThread().getPollInterval();
-		if (lastCallTime > 0L)
-			elapsedTime = currentTime - lastCallTime;
-		lastCallTime = currentTime;
-
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
+			final var rateMultiplier = input.getRateMultiplier();
 
 			final var d = -Input.normalize(
 					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
@@ -57,8 +47,7 @@ public final class AxisToScrollAction extends ToScrollAction<Float>
 					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
 			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
-		} else
-			lastCallTime = 0L;
+		}
 	}
 
 	public float getDeadZone() {
@@ -67,15 +56,6 @@ public final class AxisToScrollAction extends ToScrollAction<Float>
 
 	public float getExponent() {
 		return exponent;
-	}
-
-	@Override
-	public void onModeChanged(final Mode newMode) {
-		for (final var actions : newMode.getAxisToActionsMap().values())
-			if (actions.contains(this)) {
-				lastCallTime = 0L;
-				break;
-			}
 	}
 
 	public void setDeadZone(final float deadZone) {

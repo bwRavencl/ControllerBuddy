@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
@@ -28,8 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxCursorSpeedEditorBuilder
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
 @Action(label = "AXIS_TO_CURSOR_ACTION", category = ActionCategory.AXIS, order = 25)
-public final class AxisToCursorAction extends InvertableAction<Float>
-		implements ISuspendableAction, IModeChangeListenerAction {
+public final class AxisToCursorAction extends InvertableAction<Float> implements ISuspendableAction {
 
 	public enum MouseAxis {
 		X, Y
@@ -51,23 +49,14 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
 	private MouseAxis axis = MouseAxis.X;
 
-	private transient long lastCallTime;
 	private transient float remainingD = 0f;
 
 	@Override
 	public void doAction(final Input input, final Float value) {
-		final var currentTime = System.currentTimeMillis();
-		var elapsedTime = input.getOutputThread().getPollInterval();
-		if (lastCallTime > 0L)
-			elapsedTime = currentTime - lastCallTime;
-		lastCallTime = currentTime;
-
 		if (!isSuspended() && Math.abs(value) > deadZone) {
-			final var rateMultiplier = (float) elapsedTime / (float) 1000L;
-
 			var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
 					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxCursorSpeed,
-					maxCursorSpeed) * rateMultiplier;
+					maxCursorSpeed) * input.getRateMultiplier();
 
 			d = invert ? -d : d;
 			d += remainingD;
@@ -82,8 +71,7 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 				else
 					input.setCursorDeltaY((int) (input.getCursorDeltaY() + d));
 			}
-		} else
-			lastCallTime = 0L;
+		}
 	}
 
 	public MouseAxis getAxis() {
@@ -100,15 +88,6 @@ public final class AxisToCursorAction extends InvertableAction<Float>
 
 	public float getMaxCursorSpeed() {
 		return maxCursorSpeed;
-	}
-
-	@Override
-	public void onModeChanged(final Mode newMode) {
-		for (final var actions : newMode.getAxisToActionsMap().values())
-			if (actions.contains(this)) {
-				lastCallTime = 0L;
-				break;
-			}
 	}
 
 	public void setAxis(final MouseAxis axis) {
