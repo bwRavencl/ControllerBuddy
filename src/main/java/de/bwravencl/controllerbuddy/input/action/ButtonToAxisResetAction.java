@@ -18,38 +18,76 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 
 @Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
-public final class ButtonToAxisResetAction extends ToAxisAction<Byte> implements IButtonToAction {
+public final class ButtonToAxisResetAction implements IButtonToAction {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
 
-	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+	private static final boolean DEFAULT_FLUID = false;
+
+	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	VirtualAxis virtualAxis = VirtualAxis.X;
+
+	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
 	private float resetValue = DEFAULT_RESET_VALUE;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
+	private boolean fluid = DEFAULT_FLUID;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 40)
 	private boolean longPress = DEFAULT_LONG_PRESS;
+
+	private transient boolean wasUp = true;
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 
 	@Override
 	public void doAction(final Input input, Byte value) {
 		value = handleLongPress(input, value);
 
-		if (value != 0 ^ invert)
-			input.setAxis(virtualAxis, resetValue, false, null);
+		if (value == 0)
+			wasUp = true;
+		else if (wasUp) {
+			if (fluid)
+				input.moveAxisToTargetValue(virtualAxis, resetValue);
+			else
+				input.setAxis(virtualAxis, resetValue, false, null);
+
+			wasUp = false;
+		}
 	}
 
 	public float getResetValue() {
 		return resetValue;
 	}
 
+	public VirtualAxis getVirtualAxis() {
+		return virtualAxis;
+	}
+
+	public boolean isFluid() {
+		return fluid;
+	}
+
 	@Override
 	public boolean isLongPress() {
 		return longPress;
+	}
+
+	public void setFluid(final boolean fluid) {
+		this.fluid = fluid;
 	}
 
 	@Override
@@ -59,5 +97,9 @@ public final class ButtonToAxisResetAction extends ToAxisAction<Byte> implements
 
 	public void setResetValue(final float resetValue) {
 		this.resetValue = resetValue;
+	}
+
+	public void setVirtualAxis(final VirtualAxis virtualAxis) {
+		this.virtualAxis = virtualAxis;
 	}
 }

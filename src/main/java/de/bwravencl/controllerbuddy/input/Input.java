@@ -32,7 +32,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -66,6 +68,8 @@ public final class Input {
 	private static final Logger log = Logger.getLogger(Input.class.getName());
 
 	private static final int LOW_BATTERY_WARNING = 20;
+	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
+	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 
 	public static final int MAX_N_BUTTONS = 128;
@@ -156,6 +160,8 @@ public final class Input {
 	private volatile boolean charging = true;
 	private volatile int batteryState;
 	private byte[] dualShock4HidReport;
+	private final Map<VirtualAxis, Integer> axesToTargetValueMap = new HashMap<>();
+	private long lastCallTime = 0L;
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
@@ -281,6 +287,15 @@ public final class Input {
 		}
 	}
 
+	public int floatToIntAxisValue(float value) {
+		value = Math.max(value, -1f);
+		value = Math.min(value, 1f);
+
+		final var minAxisValue = outputThread.getMinAxisValue();
+		final var maxAxisValue = outputThread.getMaxAxisValue();
+		return (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue);
+	}
+
 	public EnumMap<VirtualAxis, Integer> getAxes() {
 		return axes;
 	}
@@ -369,7 +384,18 @@ public final class Input {
 		return charging;
 	}
 
+	public void moveAxisToTargetValue(final VirtualAxis virtualAxis, final float targetValue) {
+		axesToTargetValueMap.put(virtualAxis, floatToIntAxisValue(targetValue));
+	}
+
 	public boolean poll() {
+		final var currentTime = System.currentTimeMillis();
+		var elapsedTime = outputThread.getPollInterval();
+		if (lastCallTime > 0L)
+			elapsedTime = currentTime - lastCallTime;
+		lastCallTime = currentTime;
+		final var rateMultiplier = (float) elapsedTime / (float) 1000L;
+
 		try (var stack = stackPush()) {
 			final var state = GLFWGamepadState.callocStack(stack);
 			if (!glfwGetGamepadState(jid, state))
@@ -389,6 +415,33 @@ public final class Input {
 			if (onScreenKeyboard.isVisible())
 				onScreenKeyboard.poll(this);
 
+			final var axesToTargetValueMapIterator = axesToTargetValueMap.entrySet().iterator();
+			while (axesToTargetValueMapIterator.hasNext()) {
+				final var entry = axesToTargetValueMapIterator.next();
+				final var virtualAxis = entry.getKey();
+				final var targetValue = entry.getValue();
+
+				final var currentValue = axes.get(virtualAxis);
+				final var delta = targetValue - currentValue;
+				final var axisRange = outputThread.getMaxAxisValue() - outputThread.getMinAxisValue();
+
+				final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
+						AXIS_MOVEMENT_MAX_DELTA_FACTOR);
+
+				final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
+
+				var newValue = currentValue + d;
+				if (delta > 0)
+					newValue = Math.min(newValue, targetValue);
+				else if (delta < 0)
+					newValue = Math.max(newValue, targetValue);
+
+				if (newValue == targetValue)
+					axesToTargetValueMapIterator.remove();
+
+				setAxis(virtualAxis, newValue, false, (Integer) null);
+			}
+
 			final var modes = profile.getModes();
 			final var activeMode = profile.getActiveMode();
 			final var axisToActionMap = activeMode.getAxisToActionsMap();
@@ -401,10 +454,11 @@ public final class Input {
 				final var axisValue = state.axes(axis);
 
 				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-					final var it = ISuspendableAction.suspendedActionToAxisMap.entrySet().iterator();
-					while (it.hasNext())
-						if (axis == it.next().getValue())
-							it.remove();
+					final var suspendedActionToAxisMapIterator = ISuspendableAction.suspendedActionToAxisMap.entrySet()
+							.iterator();
+					while (suspendedActionToAxisMapIterator.hasNext())
+						if (axis == suspendedActionToAxisMapIterator.next().getValue())
+							suspendedActionToAxisMapIterator.remove();
 				}
 
 				var actions = axisToActionMap.get(axis);
@@ -476,6 +530,8 @@ public final class Input {
 	public void reset() {
 		clearOnNextPoll = false;
 		repeatModeActionWalk = false;
+		lastCallTime = 0;
+		axesToTargetValueMap.clear();
 
 		profile.setActiveMode(this, 0);
 
@@ -532,15 +588,10 @@ public final class Input {
 		return false;
 	}
 
-	public void setAxis(final VirtualAxis virtualAxis, float value, final boolean hapticFeedback,
+	public void setAxis(final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback,
 			final Float dententValue) {
-		value = Math.max(value, -1f);
-		value = Math.min(value, 1f);
-
-		final var minAxisValue = outputThread.getMinAxisValue();
-		final var maxAxisValue = outputThread.getMaxAxisValue();
-		setAxis(virtualAxis, (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue), hapticFeedback,
-				dententValue != null ? (int) normalize(dententValue, -1f, 1f, minAxisValue, maxAxisValue) : null);
+		setAxis(virtualAxis, floatToIntAxisValue(value), hapticFeedback,
+				dententValue != null ? floatToIntAxisValue(dententValue) : null);
 	}
 
 	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
