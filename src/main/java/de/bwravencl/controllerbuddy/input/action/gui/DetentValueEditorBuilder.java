@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 			enabled = true;
 
 		super.buildEditor(parentPanel);
+		spinner.setEnabled(enabled);
 
 		final var checkBox = new JCheckBox(new AbstractAction() {
 
@@ -58,9 +59,11 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 			public void actionPerformed(final ActionEvent e) {
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 
+				spinner.setEnabled(selected);
+
 				final Float value;
 				if (selected)
-					value = ((Double) spinner.getValue()).floatValue();
+					value = roundFloat((Float) spinner.getValue());
 				else
 					value = null;
 
@@ -74,6 +77,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 			}
 		});
 		checkBox.setSelected(enabled);
+		parentPanel.add(checkBox, 1);
 	}
 
 	@Override

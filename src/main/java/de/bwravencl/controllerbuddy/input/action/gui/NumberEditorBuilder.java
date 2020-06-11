@@ -38,8 +38,6 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final class JSpinnerSetPropertyChangeListener extends PropertySetterChangeListener {
 
-		private static final int FLOAT_ROUNDING_DECIMALS = 3;
-
 		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
 			super(action, setterMethod);
 		}
@@ -50,8 +48,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 				Object value = ((JSpinner) e.getSource()).getValue();
 
 				if (value instanceof Float)
-					value = new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP)
-							.floatValue();
+					value = roundFloat((Float) value);
 
 				setterMethod.invoke(action, value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
@@ -60,7 +57,13 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		}
 	}
 
+	private static final int FLOAT_ROUNDING_DECIMALS = 3;
+
 	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+
+	static final float roundFloat(final Float value) {
+		return new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP).floatValue();
+	}
 
 	JSpinner spinner;
 
