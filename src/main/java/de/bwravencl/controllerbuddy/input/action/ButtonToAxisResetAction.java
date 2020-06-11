@@ -61,7 +61,7 @@ public final class ButtonToAxisResetAction implements IButtonToAction {
 			wasUp = true;
 		else if (wasUp) {
 			if (fluid)
-				input.moveAxisToTargetValue(virtualAxis, resetValue);
+				input.moveAxis(virtualAxis, resetValue);
 			else
 				input.setAxis(virtualAxis, resetValue, false, null);
 

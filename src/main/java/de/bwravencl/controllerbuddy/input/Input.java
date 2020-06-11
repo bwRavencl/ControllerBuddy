@@ -389,7 +389,7 @@ public final class Input {
 		return charging;
 	}
 
-	public void moveAxisToTargetValue(final VirtualAxis virtualAxis, final float targetValue) {
+	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
 		axesToTargetValueMap.put(virtualAxis, floatToIntAxisValue(targetValue));
 	}
 
