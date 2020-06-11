@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Set;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,8 +45,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
@@ -82,7 +81,7 @@ public final class OnScreenKeyboard extends JFrame {
 			return new Dimension(BASE_BUTTON_SIZE, BASE_BUTTON_SIZE);
 		}
 
-		abstract void poll(final Input input);
+		abstract boolean poll(final Input input);
 
 		abstract void press();
 
@@ -117,6 +116,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private static final long MIN_REPEAT_PRESS_TIME = 150L;
 
+		private volatile boolean mouseDown;
+
 		private volatile boolean changed;
 
 		private volatile boolean doDownUp;
@@ -126,8 +127,6 @@ public final class OnScreenKeyboard extends JFrame {
 		private final String directInputKeyCodeName;
 
 		private final KeyStroke keyStroke;
-
-		private TimerTask lockTimerTask;
 
 		private DefaultKeyboardButton(final String directInputKeyCodeName) {
 			super(getShortDefaultKeyName(directInputKeyCodeName));
@@ -154,44 +153,35 @@ public final class OnScreenKeyboard extends JFrame {
 
 			keyStroke = new KeyStroke(keyCodes, modifierCodes);
 
-			addChangeListener(new ChangeListener() {
-
-				private boolean lastPressed;
+			addMouseListener(new MouseListener() {
 
 				@Override
-				public void stateChanged(final ChangeEvent e) {
-					final var pressed = getModel().isPressed();
-					if (pressed != lastPressed) {
-						if (pressed) {
-							beginPress = System.currentTimeMillis();
-							press();
+				public void mouseClicked(final MouseEvent e) {
+				}
 
-							if (lockTimerTask != null)
-								lockTimerTask.cancel();
-							lockTimerTask = new TimerTask() {
+				@Override
+				public void mouseEntered(final MouseEvent e) {
+				}
 
-								@Override
-								public void run() {
-									if (heldButtons.contains(DefaultKeyboardButton.this)) {
-										SwingUtilities.invokeLater(() -> {
-											DefaultKeyboardButton.this.setForeground(Color.GRAY);
-										});
-										press();
-									}
-								}
-							};
-							main.getTimer().schedule(lockTimerTask, MIN_REPEAT_PRESS_TIME);
-						} else {
-							if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
-								release();
-							else
-								DefaultKeyboardButton.this.setForeground(defaultForeground);
+				@Override
+				public void mouseExited(final MouseEvent e) {
+				}
 
-							lockTimerTask.cancel();
-						}
-
-						lastPressed = pressed;
+				@Override
+				public void mousePressed(final MouseEvent e) {
+					if (SwingUtilities.isLeftMouseButton(e)) {
+						mouseDown = true;
+						press();
 					}
+				}
+
+				@Override
+				public void mouseReleased(final MouseEvent e) {
+					if (SwingUtilities.isLeftMouseButton(e)) {
+						mouseDown = false;
+						release();
+					} else if (SwingUtilities.isRightMouseButton(e))
+						toggleLock();
 				}
 			});
 		}
@@ -223,24 +213,25 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void poll(final Input input) {
-			if (!changed)
-				return;
+		boolean poll(final Input input) {
+			if (mouseDown || changed) {
 
-			if (doDownUp) {
-				input.getDownUpKeyStrokes().add(keyStroke);
-				doDownUp = false;
+				if (doDownUp) {
+					input.getDownUpKeyStrokes().add(keyStroke);
+					doDownUp = false;
+				} else {
+					final var downKeyStrokes = input.getDownKeyStrokes();
+
+					if (heldButtons.contains(this)) {
+						if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME)
+							downKeyStrokes.add(keyStroke);
+					} else
+						downKeyStrokes.remove(keyStroke);
+				}
+
+				changed = false;
 			}
-
-			final var downKeyStrokes = input.getDownKeyStrokes();
-
-			if (heldButtons.contains(this)) {
-				if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME)
-					downKeyStrokes.add(keyStroke);
-			} else
-				downKeyStrokes.remove(keyStroke);
-
-			changed = false;
+			return mouseDown;
 		}
 
 		@Override
@@ -311,16 +302,17 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void poll(final Input input) {
-			if (!changed)
-				return;
+		boolean poll(final Input input) {
+			if (changed) {
+				if (locked)
+					input.getOnLockKeys().add(virtualKeyCode);
+				else
+					input.getOffLockKeys().add(virtualKeyCode);
 
-			if (locked)
-				input.getOnLockKeys().add(virtualKeyCode);
-			else
-				input.getOffLockKeys().add(virtualKeyCode);
+				changed = false;
+			}
 
-			changed = false;
+			return false;
 		}
 
 		@Override
@@ -602,7 +594,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 				for (final var row : keyboardButtons)
 					for (final var keyboardButton : row)
-						keyboardButton.poll(input);
+						anyChanges |= keyboardButton.poll(input);
 			}
 		}
 	}

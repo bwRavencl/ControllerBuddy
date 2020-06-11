@@ -1410,10 +1410,6 @@ public final class Main implements SingletonApp {
 		return preferences;
 	}
 
-	public Timer getTimer() {
-		return timer;
-	}
-
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values())
