@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeListener;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -30,6 +29,17 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
 public abstract class EditorBuilder {
+
+	static abstract class PropertySetter {
+
+		final IAction<?> action;
+		final Method setterMethod;
+
+		PropertySetter(final IAction<?> action, final Method setterMethod) {
+			this.action = action;
+			this.setterMethod = setterMethod;
+		}
+	}
 
 	static abstract class PropertySetterAction extends AbstractAction {
 
@@ -39,17 +49,6 @@ public abstract class EditorBuilder {
 		final Method setterMethod;
 
 		PropertySetterAction(final IAction<?> action, final Method setterMethod) {
-			this.action = action;
-			this.setterMethod = setterMethod;
-		}
-	}
-
-	static abstract class PropertySetterChangeListener implements ChangeListener {
-
-		final IAction<?> action;
-		final Method setterMethod;
-
-		PropertySetterChangeListener(final IAction<?> action, final Method setterMethod) {
 			this.action = action;
 			this.setterMethod = setterMethod;
 		}

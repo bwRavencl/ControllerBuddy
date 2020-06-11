@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 
-abstract class ToMouseButtonAction<V extends Number> implements IAction<V> {
+abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 

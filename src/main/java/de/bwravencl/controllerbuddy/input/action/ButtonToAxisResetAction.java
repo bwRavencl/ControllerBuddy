@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 
 @Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
-public final class ButtonToAxisResetAction implements IButtonToAction {
+public final class ButtonToAxisResetAction extends DescribableAction<Byte> implements IButtonToAction {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
 

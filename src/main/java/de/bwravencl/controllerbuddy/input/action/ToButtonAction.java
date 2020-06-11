@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
 
-public abstract class ToButtonAction<V extends Number> implements IAction<V> {
+public abstract class ToButtonAction<V extends Number> extends DescribableAction<V> {
 
 	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId = 0;

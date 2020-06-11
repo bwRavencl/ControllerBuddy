@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
@@ -36,7 +37,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
-	private static final class JSpinnerSetPropertyChangeListener extends PropertySetterChangeListener {
+	private static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 
 		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
 			super(action, setterMethod);

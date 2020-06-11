@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 
 @Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON, order = 116)
-public final class ButtonToLockKeyAction implements IButtonToAction {
+public final class ButtonToLockKeyAction extends DescribableAction<Byte> implements IButtonToAction {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 

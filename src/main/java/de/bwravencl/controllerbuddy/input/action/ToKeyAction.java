@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
-abstract class ToKeyAction<V extends Number> implements IAction<V> {
+abstract class ToKeyAction<V extends Number> extends DescribableAction<V> {
 
 	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class, order = 11)
 	boolean downUp = false;

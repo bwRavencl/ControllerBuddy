@@ -18,23 +18,23 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder;
 
-abstract class InvertableAction<V extends Number> extends DescribableAction<V> {
+public abstract class DescribableAction<V extends Number> implements IAction<V> {
 
-	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class, order = 500)
-	boolean invert = false;
+	@ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
+	private String decription;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
-	public boolean isInvert() {
-		return invert;
+	public String getDecription() {
+		return decription;
 	}
 
-	public void setInvert(final boolean invert) {
-		this.invert = invert;
+	public void setDecription(final String decription) {
+		this.decription = decription;
 	}
 }
