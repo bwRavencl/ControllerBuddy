@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +38,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final class JSpinnerSetPropertyChangeListener extends PropertySetterChangeListener {
 
+		private static final int FLOAT_ROUNDING_DECIMALS = 3;
+
 		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
 			super(action, setterMethod);
 		}
@@ -43,9 +47,13 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		@Override
 		public void stateChanged(final ChangeEvent e) {
 			try {
-				final Object value = ((JSpinner) e.getSource()).getValue();
+				Object value = ((JSpinner) e.getSource()).getValue();
 
-				setterMethod.invoke(action, value instanceof Double ? ((Double) value).floatValue() : value);
+				if (value instanceof Float)
+					value = new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP)
+							.floatValue();
+
+				setterMethod.invoke(action, value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
