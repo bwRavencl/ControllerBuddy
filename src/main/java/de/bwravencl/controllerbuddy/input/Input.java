@@ -395,7 +395,10 @@ public final class Input {
 	}
 
 	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
-		virtualAxisToTargetValueMap.put(virtualAxis, floatToIntAxisValue(targetValue));
+		final var integerTargetValue = floatToIntAxisValue(targetValue);
+
+		if (axes.get(virtualAxis) != integerTargetValue)
+			virtualAxisToTargetValueMap.put(virtualAxis, integerTargetValue);
 	}
 
 	public boolean poll() {
@@ -442,23 +445,27 @@ public final class Input {
 
 				final var currentValue = axes.get(virtualAxis);
 				final var delta = targetValue - currentValue;
-				final var axisRange = outputThread.getMaxAxisValue() - outputThread.getMinAxisValue();
+				if (delta != 0) {
+					final var axisRange = outputThread.getMaxAxisValue() - outputThread.getMinAxisValue();
 
-				final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
-						AXIS_MOVEMENT_MAX_DELTA_FACTOR);
+					final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
+							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
 
-				final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
+					final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
 
-				var newValue = currentValue + d;
-				if (delta > 0)
-					newValue = Math.min(newValue, targetValue);
-				else if (delta < 0)
-					newValue = Math.max(newValue, targetValue);
+					var newValue = currentValue + d;
+					if (delta > 0)
+						newValue = Math.min(newValue, targetValue);
+					else
+						newValue = Math.max(newValue, targetValue);
 
-				if (newValue == targetValue)
-					axesToTargetValueMapIterator.remove();
+					setAxis(virtualAxis, newValue, false, (Integer) null);
 
-				setAxis(virtualAxis, newValue, false, (Integer) null);
+					if (newValue != targetValue)
+						continue;
+				}
+
+				axesToTargetValueMapIterator.remove();
 			}
 
 			final var modes = profile.getModes();
