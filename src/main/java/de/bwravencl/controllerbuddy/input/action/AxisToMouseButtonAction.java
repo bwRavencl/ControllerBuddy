@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
 @Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.AXIS, order = 30)
-public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements ISuspendableAction {
+public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements IAxisToAction {
 
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
@@ -36,8 +36,8 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
-	public void doAction(final Input input, final Float value) {
-		if (!isSuspended() && value >= minAxisValue && value <= maxAxisValue) {
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue) {
 			if (downUp) {
 				if (wasUp) {
 					input.getDownUpMouseButtons().add(mouseButton);

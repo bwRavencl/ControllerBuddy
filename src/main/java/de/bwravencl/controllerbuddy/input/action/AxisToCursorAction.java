@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxCursorSpeedEditorBuilder
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
 @Action(label = "AXIS_TO_CURSOR_ACTION", category = ActionCategory.AXIS, order = 25)
-public final class AxisToCursorAction extends InvertableAction<Float> implements ISuspendableAction {
+public final class AxisToCursorAction extends InvertableAction<Float> implements IAxisToAction {
 
 	public enum MouseAxis {
 		X, Y
@@ -52,8 +52,8 @@ public final class AxisToCursorAction extends InvertableAction<Float> implements
 	private transient float remainingD = 0f;
 
 	@Override
-	public void doAction(final Input input, final Float value) {
-		if (!isSuspended() && Math.abs(value) > deadZone) {
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
 					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxCursorSpeed,
 					maxCursorSpeed) * input.getRateMultiplier();

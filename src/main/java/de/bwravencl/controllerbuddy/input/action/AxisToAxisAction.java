@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 
 @Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
-public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendableAction, IInitializationAction {
+public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;
 	private static final float DEFAULT_INITIAL_VALUE = 0f;
@@ -37,8 +37,8 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements ISuspendabl
 	float initialValue = DEFAULT_INITIAL_VALUE;
 
 	@Override
-	public void doAction(final Input input, Float value) {
-		if (!isSuspended()) {
+	public void doAction(final Input input, final int component, Float value) {
+		if (!input.isAxisSuspended(component)) {
 			if (Math.abs(value) <= deadZone)
 				value = 0f;
 			else if (value >= 0f)

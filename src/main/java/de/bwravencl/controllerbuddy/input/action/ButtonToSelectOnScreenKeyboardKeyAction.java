@@ -76,7 +76,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 	}
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
 
 		if (value != 0) {

@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ public final class ButtonToScrollAction extends ToScrollAction<Byte> implements 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
 
 		if (value != 0)

@@ -54,7 +54,7 @@ public final class ButtonToAxisResetAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
 
 		if (value == 0)

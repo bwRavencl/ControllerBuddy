@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
 @Action(label = "TO_KEY_ACTION", category = ActionCategory.AXIS, order = 40)
-public final class AxisToKeyAction extends ToKeyAction<Float> implements ISuspendableAction {
+public final class AxisToKeyAction extends ToKeyAction<Float> implements IAxisToAction {
 
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
@@ -36,8 +36,8 @@ public final class AxisToKeyAction extends ToKeyAction<Float> implements ISuspen
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
-	public void doAction(final Input input, final Float value) {
-		if (!isSuspended() && value >= minAxisValue && value <= maxAxisValue) {
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue) {
 			if (downUp) {
 				if (wasUp) {
 					input.getDownUpKeyStrokes().add(keystroke);

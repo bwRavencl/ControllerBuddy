@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 
 @Action(label = "TO_SCROLL_ACTION", category = ActionCategory.AXIS, order = 35)
-public final class AxisToScrollAction extends ToScrollAction<Float> implements ISuspendableAction {
+public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0.15f;
 	private static final float DEFAULT_EXPONENT = 1f;
@@ -37,8 +37,8 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 	private float exponent = DEFAULT_EXPONENT;
 
 	@Override
-	public void doAction(final Input input, final Float value) {
-		if (!isSuspended() && Math.abs(value) > deadZone) {
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			final var rateMultiplier = input.getRateMultiplier();
 
 			final var d = -Input.normalize(

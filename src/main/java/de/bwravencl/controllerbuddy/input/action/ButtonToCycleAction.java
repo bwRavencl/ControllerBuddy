@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +54,11 @@ public final class ButtonToCycleAction implements IButtonToAction, IResetableAct
 	}
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
 
 		if (value == 0) {
-			actions.get(index).doAction(input, value);
+			actions.get(index).doAction(input, component, value);
 			if (!wasUp) {
 				if (index == actions.size() - 1)
 					index = 0;
@@ -68,7 +68,7 @@ public final class ButtonToCycleAction implements IButtonToAction, IResetableAct
 				wasUp = true;
 			}
 		} else if (wasUp) {
-			actions.get(index).doAction(input, Byte.MAX_VALUE);
+			actions.get(index).doAction(input, component, Byte.MAX_VALUE);
 			wasUp = false;
 		}
 	}

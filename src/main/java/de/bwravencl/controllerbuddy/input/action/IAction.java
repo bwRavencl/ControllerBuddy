@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,5 +35,5 @@ public interface IAction<V extends Number> extends Cloneable {
 
 	Object clone() throws CloneNotSupportedException;
 
-	void doAction(final Input input, V value);
+	void doAction(final Input input, int component, V value);
 }

@@ -17,19 +17,5 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
-
-@Action(label = "NULL_ACTION", category = ActionCategory.ALL, order = 999)
-public final class NullAction implements IAction<Number> {
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	@Override
-	public void doAction(final Input input, final int component, final Number value) {
-	}
+public interface IAxisToAction extends IAction<Float> {
 }

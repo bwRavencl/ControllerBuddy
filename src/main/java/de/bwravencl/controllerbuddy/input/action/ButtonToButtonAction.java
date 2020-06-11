@@ -30,7 +30,7 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		if (isAlreadyPressed(input))
 			return;
 

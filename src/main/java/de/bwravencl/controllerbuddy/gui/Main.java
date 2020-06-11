@@ -1419,7 +1419,7 @@ public final class Main implements SingletonApp {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values())
 				for (final var buttonToModeAction : buttonToModeActions)
 					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-						buttonToModeAction.doAction(input, Byte.MAX_VALUE);
+						buttonToModeAction.doAction(input, -1, Byte.MAX_VALUE);
 						break;
 					}
 

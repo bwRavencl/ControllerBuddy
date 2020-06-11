@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,13 +126,12 @@ public final class ButtonToModeAction implements IButtonToAction {
 		final var axes = activeMode.getAxisToActionsMap().keySet();
 		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
 		final var main = input.getMain();
-		final var timer = main.getTimer();
 		if (defaultAxisToActionsMap != null)
 			for (final int axis : axes)
 				if (defaultAxisToActionsMap.containsKey(axis))
 					for (final var action : defaultAxisToActionsMap.get(axis))
-						if (action instanceof ISuspendableAction)
-							((ISuspendableAction) action).suspendAxis(timer, axis);
+						if (action instanceof IAxisToAction)
+							input.suspendAxis(axis);
 
 		profile.setActiveMode(input, previousMode.getUuid());
 
@@ -141,7 +140,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 	}
 
 	@Override
-	public void doAction(final Input input, Byte value) {
+	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
 		final var profile = input.getProfile();
 

@@ -56,7 +56,6 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
-import de.bwravencl.controllerbuddy.input.action.ISuspendableAction;
 import de.bwravencl.controllerbuddy.output.OutputThread;
 
 public final class Input {
@@ -71,6 +70,7 @@ public final class Input {
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
 	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
+	private static final long SUSPENSION_TIME = 500L;
 
 	public static final int MAX_N_BUTTONS = 128;
 	private static final byte[] DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00,
@@ -160,9 +160,10 @@ public final class Input {
 	private volatile boolean charging = true;
 	private volatile int batteryState;
 	private byte[] dualShock4HidReport;
-	private final Map<VirtualAxis, Integer> axesToTargetValueMap = new HashMap<>();
+	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
 	private long lastCallTime = 0L;
 	private float rateMultiplier = 0f;
+	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
@@ -385,16 +386,29 @@ public final class Input {
 					((IInitializationAction) action).init(this);
 	}
 
+	public boolean isAxisSuspended(final int axis) {
+		return axisToEndSuspensionTimestampMap.containsKey(axis);
+	}
+
 	public boolean isCharging() {
 		return charging;
 	}
 
 	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
-		axesToTargetValueMap.put(virtualAxis, floatToIntAxisValue(targetValue));
+		virtualAxisToTargetValueMap.put(virtualAxis, floatToIntAxisValue(targetValue));
 	}
 
 	public boolean poll() {
 		final var currentTime = System.currentTimeMillis();
+
+		final var axisToEndSuspensionTimestampMapIterator = axisToEndSuspensionTimestampMap.values().iterator();
+		while (axisToEndSuspensionTimestampMapIterator.hasNext()) {
+			final var timestamp = axisToEndSuspensionTimestampMapIterator.next();
+
+			if (timestamp < currentTime)
+				axisToEndSuspensionTimestampMapIterator.remove();
+		}
+
 		var elapsedTime = outputThread.getPollInterval();
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
@@ -420,7 +434,7 @@ public final class Input {
 			if (onScreenKeyboard.isVisible())
 				onScreenKeyboard.poll(this);
 
-			final var axesToTargetValueMapIterator = axesToTargetValueMap.entrySet().iterator();
+			final var axesToTargetValueMapIterator = virtualAxisToTargetValueMap.entrySet().iterator();
 			while (axesToTargetValueMapIterator.hasNext()) {
 				final var entry = axesToTargetValueMapIterator.next();
 				final var virtualAxis = entry.getKey();
@@ -458,13 +472,8 @@ public final class Input {
 			for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
 				final var axisValue = state.axes(axis);
 
-				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-					final var suspendedActionToAxisMapIterator = ISuspendableAction.suspendedActionToAxisMap.entrySet()
-							.iterator();
-					while (suspendedActionToAxisMapIterator.hasNext())
-						if (axis == suspendedActionToAxisMapIterator.next().getValue())
-							suspendedActionToAxisMapIterator.remove();
-				}
+				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
+					axisToEndSuspensionTimestampMap.remove(axis);
 
 				var actions = axisToActionMap.get(axis);
 				if (actions == null) {
@@ -482,7 +491,7 @@ public final class Input {
 
 				if (actions != null)
 					for (final var action : actions)
-						action.doAction(this, axisValue);
+						action.doAction(this, axis, axisValue);
 			}
 
 			for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
@@ -502,7 +511,7 @@ public final class Input {
 
 				if (actions != null)
 					for (final var action : actions)
-						action.doAction(this, state.buttons(button));
+						action.doAction(this, button, state.buttons(button));
 			}
 
 			for (;;) {
@@ -510,7 +519,7 @@ public final class Input {
 					final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 					if (buttonToModeActions != null)
 						for (final var action : buttonToModeActions)
-							action.doAction(this, state.buttons(button));
+							action.doAction(this, button, state.buttons(button));
 				}
 
 				if (repeatModeActionWalk)
@@ -537,13 +546,13 @@ public final class Input {
 		repeatModeActionWalk = false;
 		lastCallTime = 0;
 		rateMultiplier = 0f;
-		axesToTargetValueMap.clear();
+		virtualAxisToTargetValueMap.clear();
+		axisToEndSuspensionTimestampMap.clear();
 
 		profile.setActiveMode(this, 0);
 
 		ButtonToModeAction.reset();
 		IButtonToAction.reset();
-		ISuspendableAction.reset();
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
@@ -744,6 +753,10 @@ public final class Input {
 
 	public void setScrollClicks(final int scrollClicks) {
 		this.scrollClicks = scrollClicks;
+	}
+
+	public void suspendAxis(final int axis) {
+		axisToEndSuspensionTimestampMap.put(axis, System.currentTimeMillis() + SUSPENSION_TIME);
 	}
 
 	private void updateDualShock4LightbarColor() {

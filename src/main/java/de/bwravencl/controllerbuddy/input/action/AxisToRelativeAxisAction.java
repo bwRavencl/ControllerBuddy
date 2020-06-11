@@ -46,8 +46,8 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private Float detentValue = null;
 
 	@Override
-	public void doAction(final Input input, final Float value) {
-		if (!isSuspended() && Math.abs(value) > deadZone) {
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			final var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
 					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxRelativeSpeed,
 					maxRelativeSpeed) * input.getRateMultiplier();
