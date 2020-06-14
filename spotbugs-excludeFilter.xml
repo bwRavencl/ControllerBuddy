@@ -63,7 +63,11 @@
     <Bug pattern="BC_UNCONFIRMED_CAST"/>
   </And>
   <And>
-    <Class name="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"/>
+    <Class name="de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser"/>
+    <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+  </And>
+  <And>
+  <Class name="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"/>
     <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
   </And>
   <And>

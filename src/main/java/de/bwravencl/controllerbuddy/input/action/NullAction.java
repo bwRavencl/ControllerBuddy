@@ -32,4 +32,9 @@ public final class NullAction implements IAction<Number> {
 	@Override
 	public void doAction(final Input input, final int component, final Number value) {
 	}
+
+	@Override
+	public String getDescription(final Input input) {
+		return IAction.getDefaultDescription(this);
+	}
 }

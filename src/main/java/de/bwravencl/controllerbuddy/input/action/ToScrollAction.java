@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
 
@@ -29,6 +35,15 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
 	public int getClicks() {
 		return clicks;
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return super.getDescription(input);
+
+		return MessageFormat.format(strings.getString("SCROLL_DIRECTION"),
+				strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
 	}
 
 	public void setClicks(final int clicks) {

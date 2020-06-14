@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
@@ -190,6 +191,7 @@ public final class EditActionsDialog extends JDialog {
 
 				input.setProfile(unsavedProfile, input.getJid());
 				main.updateModesPanel();
+				main.updateVisualizationPanel();
 				main.setUnsavedChanges(true);
 			}
 
@@ -332,26 +334,20 @@ public final class EditActionsDialog extends JDialog {
 			preInit(main.getFrame());
 			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
-			final JPanel modePanel = new JPanel(new FlowLayout());
-			getContentPane().add(modePanel, BorderLayout.NORTH);
-
-			modePanel.add(new JLabel(strings.getString("MODE_LABEL")));
-
-			final List<Mode> modes = unsavedProfile.getModes();
+			final var modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
-			final JComboBox<Mode> modeComboBox = new JComboBox<>(modes.toArray(new Mode[modes.size()]));
-			modeComboBox.addActionListener(new AbstractAction() {
+			addModePanel(getContentPane(), modes, new AbstractAction() {
 
 				private static final long serialVersionUID = -9107064465015662054L;
 
+				@SuppressWarnings("unchecked")
 				@Override
 				public void actionPerformed(final ActionEvent e) {
-					selectedMode = (Mode) modeComboBox.getSelectedItem();
+					selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
 					updateAssignedActions();
 					updateAvailableActions();
 				}
 			});
-			modePanel.add(modeComboBox);
 
 			init();
 		} catch (final CloneNotSupportedException e) {

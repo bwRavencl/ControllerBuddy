@@ -42,6 +42,9 @@ dependencies {
 			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion"
+	implementation	('org.apache.xmlgraphics:batik-swing:1.13') {
+		exclude group: 'xml-apis', module: 'xml-apis'
+	}
 	runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
 			"org.lwjgl:lwjgl:$lwjglVersion:natives-macos",
 			"org.lwjgl:lwjgl:$lwjglVersion:natives-windows",
@@ -83,18 +86,18 @@ spotless {
 '''
 	}
 	groovyGradle {
-		target '**/.*gradle'
-		greclipse().configFile 'spotless.eclipseformat.xml'
+		target '**/*.gradle'
+		greclipse().configFile('spotless.eclipseformat.xml')
 	}
-    format 'properties', {
-            target 'src/main/resources/**/*.properties'
-        endWithNewline()
-        trimTrailingWhitespace()
-    }
-    format 'misc', {
-        target '**/*.gitignore', '**/*.md', 'src/main/resources/**/*.txt'
-        endWithNewline()
-    }
+	format 'newlineAndTrailingWhitespace', {
+		target 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
+		endWithNewline()
+		trimTrailingWhitespace()
+	}
+	format 'onlyNewline', {
+		target '**/*.gitignore', '**/*.md', 'src/main/resources/**/*.txt'
+		endWithNewline()
+	}
 }
 
 jar.dependsOn check
@@ -146,7 +149,7 @@ task jlink(type: Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported'
+	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
 }
 
 task copyLibs(type: Copy) {

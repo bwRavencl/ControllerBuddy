@@ -19,6 +19,9 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 
+import java.text.MessageFormat;
+import java.util.Locale;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -94,6 +97,12 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 				lastPressTime = currentTime;
 			}
 		}
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		return MessageFormat.format(strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+				direction.toString().toLowerCase(Locale.ROOT));
 	}
 
 	public Direction getDirection() {

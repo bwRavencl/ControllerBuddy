@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
  */
 
 package de.bwravencl.controllerbuddy.input;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public final class KeyStroke implements Cloneable {
 
@@ -62,5 +66,13 @@ public final class KeyStroke implements Cloneable {
 
 	public void setModifierCodes(final Integer[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
+	}
+
+	@Override
+	public String toString() {
+		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
+		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
+		return collectedKeyCodes.stream().map(keyCode -> DirectInputKeyCode.keyCodeToNameMap.get(keyCode))
+				.collect(Collectors.joining(" + "));
 	}
 }

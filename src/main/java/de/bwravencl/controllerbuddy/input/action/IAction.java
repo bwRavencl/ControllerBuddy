@@ -24,6 +24,10 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 
 public interface IAction<V extends Number> extends Cloneable {
 
+	static String getDefaultDescription(final IAction<?> action) {
+		return getLabel(action.getClass());
+	}
+
 	static String getLabel(final Class<?> actionClass) {
 		final var annotation = actionClass.getAnnotation(Action.class);
 		if (annotation == null)
@@ -36,4 +40,6 @@ public interface IAction<V extends Number> extends Cloneable {
 	Object clone() throws CloneNotSupportedException;
 
 	void doAction(final Input input, int component, V value);
+
+	String getDescription(final Input input);
 }

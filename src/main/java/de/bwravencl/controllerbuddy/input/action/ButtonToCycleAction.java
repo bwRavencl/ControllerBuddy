@@ -17,8 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
@@ -75,6 +79,15 @@ public final class ButtonToCycleAction extends DescribableAction<Byte> implement
 
 	public List<IAction<Byte>> getActions() {
 		return actions;
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return super.getDescription(input);
+
+		return MessageFormat.format(strings.getString("CYCLE"),
+				actions.stream().map(action -> action.getDescription(input)).collect(Collectors.joining(" → ")));
 	}
 
 	@Override

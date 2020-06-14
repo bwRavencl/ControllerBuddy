@@ -120,9 +120,11 @@ vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
 
 ![Dark Mode](./example_screenshot_5.png)
 
-![Overlay](./example_screenshot_6.png)
+![Visualization Tab](./example_screenshot_6.png)
 
-![VR Overlay](./example_screenshot_7.png)
+![Overlay](./example_screenshot_7.png)
+
+![VR Overlay](./example_screenshot_8.png)
 
 #### Command Line Parameters:
 
@@ -140,6 +142,7 @@ For more information check out [this](https://github.com/bwRavencl/ControllerBud
 #### Dependencies:
 ControllerBuddy depends on the following awesome software technologies and libraries:
 - [OpenJDK 14](https://jdk.java.net/14)
+- [Apache Batik](https://xmlgraphics.apache.org/batik)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [FlatLaf](https://www.formdev.com/flatlaf/)

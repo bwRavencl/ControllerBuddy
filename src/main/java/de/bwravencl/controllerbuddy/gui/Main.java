@@ -17,12 +17,44 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
+import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
+import static org.apache.batik.constants.XMLConstants.XLINK_NAMESPACE_URI;
+import static org.apache.batik.util.CSSConstants.CSS_DISPLAY_PROPERTY;
+import static org.apache.batik.util.CSSConstants.CSS_FILL_PROPERTY;
+import static org.apache.batik.util.CSSConstants.CSS_INLINE_VALUE;
+import static org.apache.batik.util.CSSConstants.CSS_NONE_VALUE;
+import static org.apache.batik.util.CSSConstants.CSS_STROKE_PROPERTY;
 import static org.lwjgl.glfw.GLFW.GLFW_CONNECTED;
 import static org.lwjgl.glfw.GLFW.GLFW_DISCONNECTED;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_GUIDE;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadName;
@@ -66,6 +98,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -80,6 +113,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -97,10 +131,12 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -128,15 +164,33 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SVGStylableElement;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.DocumentLoader;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.dom.util.DOMUtilities;
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.lwjgl.glfw.GLFWJoystickCallback;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.svg.SVGDocument;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -200,20 +254,21 @@ public final class Main implements SingletonApp {
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-			if (vJoyDirectoryFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-				final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
-				final var dllFile = new File(vjoyDirectory,
-						VJoyOutputThread.getArchFolderName() + File.separator + VJoyOutputThread.LIBRARY_FILENAME);
-				if (dllFile.exists()) {
-					final var vjoyPath = vjoyDirectory.getAbsolutePath();
-					preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
-					vJoyDirectoryLabel1.setText(vjoyPath);
-				} else
-					JOptionPane.showMessageDialog(frame,
-							MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
-									VJoyOutputThread.getDefaultInstallationPath()),
-							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			}
+			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+				return;
+
+			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
+			final var dllFile = new File(vjoyDirectory,
+					VJoyOutputThread.getArchFolderName() + File.separator + VJoyOutputThread.LIBRARY_FILENAME);
+			if (dllFile.exists()) {
+				final var vjoyPath = vjoyDirectory.getAbsolutePath();
+				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
+				vJoyDirectoryLabel1.setText(vjoyPath);
+			} else
+				JOptionPane.showMessageDialog(frame,
+						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+								VJoyOutputThread.getDefaultInstallationPath()),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -239,6 +294,117 @@ public final class Main implements SingletonApp {
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
+		}
+	}
+
+	private final class ExportAction extends AbstractAction {
+
+		private static final long serialVersionUID = -6582801831348704984L;
+
+		private ExportAction() {
+			putValue(NAME, strings.getString("EXPORT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("EXPORT_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var htmlFileChooser = new HtmlFileChooser(currentFile);
+
+			if (htmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION)
+				return;
+
+			try {
+				final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
+						.getDOMImplementation();
+				final var htmlDocumentType = domImplementation.createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN",
+						"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
+				final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html",
+						htmlDocumentType);
+
+				final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
+				htmlDocument.getDocumentElement().appendChild(headElement);
+
+				final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
+				final var title = currentFile != null ? currentFile.getName() : strings.getString("UNSAVED");
+				titleElement.setTextContent(title);
+				headElement.appendChild(titleElement);
+
+				final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
+				htmlDocument.getDocumentElement().appendChild(bodyElement);
+
+				final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
+				profileHeaderElement.setTextContent(title);
+				bodyElement.appendChild(profileHeaderElement);
+
+				for (final var mode : input.getProfile().getModes()) {
+					final var modeDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+					modeDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px");
+					bodyElement.appendChild(modeDivElement);
+
+					final var modeHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h2");
+					modeHeaderElement.setTextContent(
+							MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription()));
+					modeDivElement.appendChild(modeHeaderElement);
+
+					final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+					svgDivElement.setAttribute("style", "height:450px");
+					modeDivElement.appendChild(svgDivElement);
+
+					final var svgDocument = generateSvgDocument(mode, false);
+					final var importedSvgNode = htmlDocument.importNode(svgDocument.getRootElement(), true);
+					svgDivElement.appendChild(importedSvgNode);
+				}
+
+				final var transformerFactory = TransformerFactory.newInstance();
+				final var transformer = transformerFactory.newTransformer();
+				transformer.setOutputProperty(DOCTYPE_PUBLIC, htmlDocumentType.getPublicId());
+				transformer.setOutputProperty(DOCTYPE_SYSTEM, htmlDocumentType.getSystemId());
+
+				try (final var fileOutputStream = new FileOutputStream(htmlFileChooser.getSelectedFile())) {
+					transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
+				}
+			} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e1) {
+				log.log(Level.SEVERE, e1.getMessage(), e);
+				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private static final class HtmlFileChooser extends JFileChooser {
+
+		private static final long serialVersionUID = -1707951153902772391L;
+
+		private HtmlFileChooser(final File profileFile) {
+			setFileFilter(new FileNameExtensionFilter(strings.getString("HTML_FILE_DESCRIPTION"), "htm", "html"));
+
+			String filename;
+			if (profileFile != null) {
+				filename = profileFile.getName();
+				filename = filename.substring(0, filename.lastIndexOf('.'));
+			} else
+				filename = "";
+
+			setSelectedFile(new File(filename + ".html"));
+		}
+
+		@Override
+		public void approveSelection() {
+			final var file = getSelectedFile();
+			if (file.exists() && getDialogType() == SAVE_DIALOG) {
+				final int result = JOptionPane.showConfirmDialog(this,
+						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+				switch (result) {
+				case JOptionPane.CANCEL_OPTION:
+					cancelSelection();
+				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
+					return;
+				default:
+					break;
+				}
+			}
+			super.approveSelection();
 		}
 	}
 
@@ -348,8 +514,8 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-				loadProfile(fileChooser.getSelectedFile());
+			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+				loadProfile(profileFileChooser.getSelectedFile());
 		}
 	}
 
@@ -421,6 +587,7 @@ public final class Main implements SingletonApp {
 			input.getProfile().removeMode(input, mode);
 			setUnsavedChanges(true);
 			updateModesPanel();
+			updateVisualizationPanel();
 		}
 	}
 
@@ -743,6 +910,11 @@ public final class Main implements SingletonApp {
 	private static final int DIALOG_BOUNDS_Y = 100;
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
 	private static final int DIALOG_BOUNDS_HEIGHT = 640;
+	private static final int SVG_VIEWBOX_MARGIN = 20;
+	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
+	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
+	static final int DEFAULT_HGAP = 10;
+	static final int DEFAULT_VGAP = 10;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
 	private static final String OPTION_AUTOSTART = "autostart";
@@ -766,9 +938,9 @@ public final class Main implements SingletonApp {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String LICENSES_FILENAME = "licenses.txt";
+	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
-
 	static {
 		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
 				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
@@ -944,6 +1116,7 @@ public final class Main implements SingletonApp {
 	private JPanel modesListPanel;
 	private JPanel addModePanel;
 	private JPanel overlayPanel;
+	private JPanel visualizationPanel;
 	private AssignmentsComponent assignmentsComponent;
 	private JScrollPane profileSettingsScrollPane;
 	private JPanel profileSettingsPanel;
@@ -963,19 +1136,23 @@ public final class Main implements SingletonApp {
 	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 	private JLabel currentModeLabel;
-	private final JFileChooser fileChooser = new ProfileFileChooser();
+	private final JFileChooser profileFileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
 	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
 	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
-	private final FlowLayout settingsPanelFlowLayout = new FlowLayout(FlowLayout.LEADING, 10, 10);
+	private final FlowLayout defaultFlowLayout = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP, DEFAULT_VGAP);
 	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
 			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 			new Insets(0, 0, 0, 0), 0, 5);
 	private volatile JFrame overlayFrame;
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
+	private JComboBox<Mode> modeComboBox;
+	private JSVGCanvas svgCanvas;
+	private SVGDocument templateSvgDocument;
+	private FlatLaf lookAndFeel;
 
 	private Main(final String cmdProfilePath) {
 		Singleton.start(this, SINGLETON_ID);
@@ -1091,7 +1268,7 @@ public final class Main implements SingletonApp {
 		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
 		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
 
-		final var pollIntervalPanel = new JPanel(settingsPanelFlowLayout);
+		final var pollIntervalPanel = new JPanel(defaultFlowLayout);
 		globalSettingsPanel.add(pollIntervalPanel, settingsPanelGridBagConstraints);
 
 		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
@@ -1109,7 +1286,7 @@ public final class Main implements SingletonApp {
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (windows) {
-			final var vJoyDirectoryPanel = new JPanel(settingsPanelFlowLayout);
+			final var vJoyDirectoryPanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(vJoyDirectoryPanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
@@ -1123,7 +1300,7 @@ public final class Main implements SingletonApp {
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
 
-			final var vJoyDevicePanel = new JPanel(settingsPanelFlowLayout);
+			final var vJoyDevicePanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(vJoyDevicePanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
@@ -1139,7 +1316,7 @@ public final class Main implements SingletonApp {
 					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
-			final var hostPanel = new JPanel(settingsPanelFlowLayout);
+			final var hostPanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(hostPanel, settingsPanelGridBagConstraints);
 
 			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
@@ -1153,7 +1330,7 @@ public final class Main implements SingletonApp {
 			hostPanel.add(hostTextField);
 		}
 
-		final var portPanel = new JPanel(settingsPanelFlowLayout);
+		final var portPanel = new JPanel(defaultFlowLayout);
 		globalSettingsPanel.add(portPanel, settingsPanelGridBagConstraints);
 
 		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
@@ -1169,7 +1346,7 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
-		final var timeoutPanel = new JPanel(settingsPanelFlowLayout);
+		final var timeoutPanel = new JPanel(defaultFlowLayout);
 		globalSettingsPanel.add(timeoutPanel, settingsPanelGridBagConstraints);
 
 		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
@@ -1186,7 +1363,7 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
-		final var darkThemePanel = new JPanel(settingsPanelFlowLayout);
+		final var darkThemePanel = new JPanel(defaultFlowLayout);
 		globalSettingsPanel.add(darkThemePanel, settingsPanelGridBagConstraints);
 
 		final var darkThemeLabel = new JLabel(strings.getString("DARK_THEME_LABEL"));
@@ -1203,7 +1380,7 @@ public final class Main implements SingletonApp {
 		darkThemePanel.add(darkThemeCheckBox);
 
 		if (windows) {
-			final var preventPowerSaveModeSettingsPanel = new JPanel(settingsPanelFlowLayout);
+			final var preventPowerSaveModeSettingsPanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(preventPowerSaveModeSettingsPanel, settingsPanelGridBagConstraints);
 
 			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
@@ -1388,6 +1565,72 @@ public final class Main implements SingletonApp {
 				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"),
 						MessageFormat.format("{0,number,percent}", batteryCharge), MessageType.WARNING);
 		});
+	}
+
+	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
+		if (templateSvgDocument == null)
+			return null;
+
+		final var workingCopySvgDocument = (SVGDocument) DOMUtilities.deepCloneDocument(templateSvgDocument,
+				templateSvgDocument.getImplementation());
+
+		final var userAgentAdapter = new UserAgentAdapter();
+		final var documentLoader = new DocumentLoader(userAgentAdapter);
+		final var bridgeContext = new BridgeContext(userAgentAdapter, documentLoader);
+		bridgeContext.setDynamicState(BridgeContext.DYNAMIC);
+		new GVTBuilder().build(bridgeContext, workingCopySvgDocument);
+
+		for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
+			final var idPrefix = switch (axis) {
+			case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> "lefttrigger";
+			case GLFW_GAMEPAD_AXIS_LEFT_X -> "leftx";
+			case GLFW_GAMEPAD_AXIS_LEFT_Y -> "lefty";
+			case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> "righttrigger";
+			case GLFW_GAMEPAD_AXIS_RIGHT_X -> "rightx";
+			case GLFW_GAMEPAD_AXIS_RIGHT_Y -> "righty";
+			default -> null;
+			};
+
+			final var actions = mode.getAxisToActionsMap().get(axis);
+			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme);
+		}
+
+		for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+			final var idPrefix = switch (button) {
+			case GLFW_GAMEPAD_BUTTON_A -> "a";
+			case GLFW_GAMEPAD_BUTTON_B -> "b";
+			case GLFW_GAMEPAD_BUTTON_BACK -> "back";
+			case GLFW_GAMEPAD_BUTTON_DPAD_DOWN -> "dpdown";
+			case GLFW_GAMEPAD_BUTTON_DPAD_LEFT -> "dpleft";
+			case GLFW_GAMEPAD_BUTTON_DPAD_RIGHT -> "dpright";
+			case GLFW_GAMEPAD_BUTTON_DPAD_UP -> "dpup";
+			case GLFW_GAMEPAD_BUTTON_GUIDE -> "guide";
+			case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> "leftshoulder";
+			case GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> "leftstick";
+			case GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> "rightshoulder";
+			case GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> "rightstick";
+			case GLFW_GAMEPAD_BUTTON_START -> "start";
+			case GLFW_GAMEPAD_BUTTON_X -> "x";
+			case GLFW_GAMEPAD_BUTTON_Y -> "y";
+			default -> null;
+			};
+
+			final var combinedActions = new ArrayList<IAction<Byte>>();
+
+			final var normalActions = mode.getButtonToActionsMap().get(button);
+			if (normalActions != null)
+				combinedActions.addAll(normalActions);
+
+			if (Profile.defaultMode.equals(mode)) {
+				final var modeActions = input.getProfile().getButtonToModeActionsMap().get(button);
+				if (modeActions != null)
+					combinedActions.addAll(modeActions);
+			}
+
+			updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme);
+		}
+
+		return workingCopySvgDocument;
 	}
 
 	public JFrame getFrame() {
@@ -1620,6 +1863,7 @@ public final class Main implements SingletonApp {
 				if (profileLoaded) {
 					saveLastProfile(file);
 					updateModesPanel();
+					updateVisualizationPanel();
 					updateOverlayPanel();
 					updateProfileSettingsPanel();
 					loadedProfile = file.getName();
@@ -1627,7 +1871,7 @@ public final class Main implements SingletonApp {
 					setStatusBarText(
 							MessageFormat.format(strings.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
 					scheduleStatusBarText(strings.getString("STATUS_READY"));
-					fileChooser.setSelectedFile(file);
+					profileFileChooser.setSelectedFile(file);
 
 					restartLast();
 				}
@@ -1685,10 +1929,11 @@ public final class Main implements SingletonApp {
 		loadedProfile = null;
 		updateTitleAndTooltip();
 		updateModesPanel();
+		updateVisualizationPanel();
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
 		setStatusBarText(strings.getString("STATUS_READY"));
-		fileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
+		profileFileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
 	private void onControllersChanged(final boolean selectFirstTab) {
@@ -1719,6 +1964,7 @@ public final class Main implements SingletonApp {
 		tabbedPane.remove(modesPanel);
 		tabbedPane.remove(assignmentsComponent);
 		tabbedPane.remove(overlayPanel);
+		tabbedPane.remove(visualizationPanel);
 		tabbedPane.remove(profileSettingsScrollPane);
 
 		if (controllerConnected) {
@@ -1745,7 +1991,6 @@ public final class Main implements SingletonApp {
 			modesListPanel.setLayout(new GridBagLayout());
 
 			modesScrollPane = new JScrollPane();
-			modesScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			modesPanel.add(modesScrollPane, BorderLayout.CENTER);
 
 			addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -1759,22 +2004,58 @@ public final class Main implements SingletonApp {
 					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 
 			overlayPanel = new JPanel(new BorderLayout());
+			tabbedPane.insertTab(strings.getString("OVERLAY_TAB"), null, overlayPanel, null,
+					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 
 			indicatorsListPanel = new JPanel();
 			indicatorsListPanel.setLayout(new GridBagLayout());
 
 			indicatorsScrollPane = new JScrollPane();
-			indicatorsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
-			tabbedPane.insertTab(strings.getString("OVERLAY_TAB"), null, overlayPanel, null,
-					tabbedPane.indexOfComponent(globalSettingsScrollPane));
+
+			try (final var bufferedReader = new BufferedReader(new InputStreamReader(
+					ClassLoader.getSystemResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+				final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+				templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
+
+				visualizationPanel = new JPanel(new BorderLayout());
+				tabbedPane.insertTab(strings.getString("VISUALIZATION_TAB"), null, visualizationPanel, null,
+						tabbedPane.indexOfComponent(globalSettingsScrollPane));
+
+				final var modes = input.getProfile().getModes();
+				modeComboBox = addModePanel(visualizationPanel, modes, new AbstractAction() {
+
+					private static final long serialVersionUID = -9107064465015662054L;
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void actionPerformed(final ActionEvent e) {
+						final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
+						final var darkTheme = lookAndFeel instanceof FlatDarkLaf;
+
+						final var workingCopySvgDocument = generateSvgDocument(selectedMode, darkTheme);
+
+						svgCanvas.setSVGDocument(workingCopySvgDocument);
+					}
+				});
+
+				svgCanvas = new JSVGCanvas(null, false, false);
+				svgCanvas.setBackground(TRANSPARENT);
+				visualizationPanel.add(new JScrollPane(svgCanvas), BorderLayout.CENTER);
+
+				final var exportPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+				final var exportButton = new JButton(new ExportAction());
+				exportButton.setPreferredSize(BUTTON_DIMENSION);
+				exportPanel.add(exportButton);
+				visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			}
 
 			profileSettingsPanel = new JPanel();
 			profileSettingsPanel.setLayout(new GridBagLayout());
 
-			profileSettingsScrollPane = new JScrollPane();
-			profileSettingsScrollPane.setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
-			profileSettingsScrollPane.setViewportView(profileSettingsPanel);
+			profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
 			tabbedPane.insertTab(strings.getString("PROFILE_SETTINGS_TAB"), null, profileSettingsScrollPane, null,
 					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 		} else
@@ -1787,6 +2068,7 @@ public final class Main implements SingletonApp {
 
 		updateMenuShortcuts();
 		updateModesPanel();
+		updateVisualizationPanel();
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
 		updatePanelAccess();
@@ -1891,7 +2173,7 @@ public final class Main implements SingletonApp {
 	private void saveProfile(File file) {
 		input.reset();
 
-		if (!file.getName().toLowerCase(Locale.getDefault()).endsWith(PROFILE_FILE_SUFFIX))
+		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX))
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 
 		log.log(Level.INFO, "Saving profile " + file.getAbsolutePath());
@@ -1917,9 +2199,9 @@ public final class Main implements SingletonApp {
 	}
 
 	private void saveProfileAs() {
-		fileChooser.setSelectedFile(currentFile);
-		if (fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
-			saveProfile(fileChooser.getSelectedFile());
+		profileFileChooser.setSelectedFile(currentFile);
+		if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
+			saveProfile(profileFileChooser.getSelectedFile());
 	}
 
 	public void scheduleStatusBarText(final String text) {
@@ -2187,8 +2469,10 @@ public final class Main implements SingletonApp {
 			final var mode = modes.get(i);
 
 			final var modePanel = new JPanel(new GridBagLayout());
-			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
+			modesListPanel.add(modePanel,
+					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
+							new Insets(DEFAULT_VGAP, DEFAULT_HGAP, 0, DEFAULT_HGAP), 0, 5));
 
 			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
@@ -2308,8 +2592,10 @@ public final class Main implements SingletonApp {
 		final var borderColor = UIManager.getColor("Component.borderColor");
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
-			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
+			indicatorsListPanel.add(indicatorPanel,
+					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
+							new Insets(DEFAULT_VGAP, DEFAULT_HGAP, 0, DEFAULT_HGAP), 0, 5));
 
 			final var virtualAxisLabel = new JLabel(
 					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
@@ -2384,7 +2670,7 @@ public final class Main implements SingletonApp {
 		profileSettingsPanel.removeAll();
 		showVrOverlayCheckBox = null;
 
-		final var keyRepeatIntervalPanel = new JPanel(settingsPanelFlowLayout);
+		final var keyRepeatIntervalPanel = new JPanel(defaultFlowLayout);
 		profileSettingsPanel.add(keyRepeatIntervalPanel, settingsPanelGridBagConstraints);
 
 		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
@@ -2407,7 +2693,7 @@ public final class Main implements SingletonApp {
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
 
 		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()) {
-			final var overlaySettingsPanel = new JPanel(settingsPanelFlowLayout);
+			final var overlaySettingsPanel = new JPanel(defaultFlowLayout);
 			profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
 
 			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
@@ -2432,7 +2718,7 @@ public final class Main implements SingletonApp {
 			overlaySettingsPanel.add(showOverlayCheckBox);
 
 			if (windows) {
-				final var vrOverlaySettingsPanel = new JPanel(settingsPanelFlowLayout);
+				final var vrOverlaySettingsPanel = new JPanel(defaultFlowLayout);
 				profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
 
 				final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
@@ -2454,9 +2740,39 @@ public final class Main implements SingletonApp {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
+	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,
+			final List<? extends IAction<?>> actions, final boolean darkTheme) {
+		final var groupElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Group");
+
+		final var hide = actions == null || actions.isEmpty();
+		groupElement.getStyle().setProperty(CSS_DISPLAY_PROPERTY, hide ? CSS_NONE_VALUE : CSS_INLINE_VALUE, "");
+
+		if (hide)
+			return;
+
+		final var textContent = actions.stream().map(action -> action.getDescription(input)).distinct()
+				.collect(Collectors.joining(", "));
+		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
+		final var tSpanElement = textElement.getFirstChild();
+		tSpanElement.setTextContent(textContent);
+
+		if (darkTheme) {
+			textElement.getStyle().setProperty(CSS_FILL_PROPERTY, SVG_DARK_THEME_TEXT_COLOR, "");
+
+			final var pathElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Path");
+			pathElement.getStyle().setProperty(CSS_STROKE_PROPERTY, SVG_DARK_THEME_PATH_COLOR, "");
+		}
+
+		final var rootElement = svgDocument.getRootElement();
+		final var bBox = rootElement.getBBox();
+
+		final var halfMargin = SVG_VIEWBOX_MARGIN / 2;
+		rootElement.setAttributeNS(null, "viewBox", bBox.getX() - halfMargin + " " + (bBox.getY() - halfMargin) + " "
+				+ (bBox.getWidth() + SVG_VIEWBOX_MARGIN) + " " + bBox.getHeight() + SVG_VIEWBOX_MARGIN);
+	}
+
 	private void updateTheme() {
-		final var lookAndFeel = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new FlatDarkLaf()
-				: new FlatLightLaf();
+		lookAndFeel = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new FlatDarkLaf() : new FlatLightLaf();
 
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
@@ -2465,8 +2781,10 @@ public final class Main implements SingletonApp {
 		}
 
 		SwingUtilities.updateComponentTreeUI(frame);
-		SwingUtilities.updateComponentTreeUI(fileChooser);
+		SwingUtilities.updateComponentTreeUI(profileFileChooser);
 		SwingUtilities.updateComponentTreeUI(onScreenKeyboard);
+
+		updateVisualizationPanel();
 	}
 
 	public void updateTitleAndTooltip() {
@@ -2499,5 +2817,15 @@ public final class Main implements SingletonApp {
 
 			trayIcon.setToolTip(toolTip);
 		}
+	}
+
+	void updateVisualizationPanel() {
+		if (visualizationPanel == null)
+			return;
+
+		final var modes = input.getProfile().getModes();
+		final var model = new DefaultComboBoxModel<>(modes.toArray(new Mode[modes.size()]));
+		modeComboBox.setModel(model);
+		modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 	}
 }

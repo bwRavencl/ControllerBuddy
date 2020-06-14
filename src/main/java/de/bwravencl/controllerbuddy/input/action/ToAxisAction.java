@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
+import java.text.MessageFormat;
+
+import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
@@ -25,6 +30,14 @@ abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 
 	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	VirtualAxis virtualAxis = VirtualAxis.X;
+
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return super.getDescription(input);
+
+		return MessageFormat.format(strings.getString("VJOY_AXIS_NAME"), virtualAxis);
+	}
 
 	public VirtualAxis getVirtualAxis() {
 		return virtualAxis;

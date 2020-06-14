@@ -61,7 +61,6 @@ import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -637,7 +636,6 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridy = 3;
 		assignmentsPanel.add(new Stick(main, Stick.StickType.Right), constraints);
 
-		setViewportBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		setViewportView(assignmentsPanel);
 	}
 

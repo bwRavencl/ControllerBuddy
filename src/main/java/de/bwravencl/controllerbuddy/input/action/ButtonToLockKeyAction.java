@@ -17,6 +17,10 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
+import java.text.MessageFormat;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
@@ -57,6 +61,14 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
 			}
 		} else
 			wasUp = true;
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return super.getDescription(input);
+
+		return MessageFormat.format(strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
 	}
 
 	public LockKey getLockKey() {

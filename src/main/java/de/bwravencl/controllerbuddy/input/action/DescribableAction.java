@@ -17,24 +17,37 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder;
 
 public abstract class DescribableAction<V extends Number> implements IAction<V> {
 
 	@ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
-	private String decription;
+	private String description;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
-	public String getDecription() {
-		return decription;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDecription(final String decription) {
-		this.decription = decription;
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return description;
+
+		return IAction.getDefaultDescription(this);
+	}
+
+	boolean isDescriptionEmpty() {
+		return description == null || description.length() < 1;
+	}
+
+	public void setDescription(final String decription) {
+		this.description = decription;
 	}
 }

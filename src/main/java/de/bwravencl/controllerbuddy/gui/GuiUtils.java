@@ -17,8 +17,14 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_HGAP;
+import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_VGAP;
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -26,10 +32,15 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.sun.jna.Native;
@@ -37,6 +48,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
+import de.bwravencl.controllerbuddy.input.Mode;
 
 final class GuiUtils {
 
@@ -80,6 +92,22 @@ final class GuiUtils {
 			final var frameLocation = frame.getLocation();
 			main.getPreferences().put(getFrameLocationPreferencesKey(frame), frameLocation.x + "," + frameLocation.y);
 		}
+	}
+
+	static final int DEFAULT_SCROLL_PANE_BORDER_WIDTH = 10;
+
+	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
+			final AbstractAction actionListener) {
+		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, DEFAULT_HGAP, DEFAULT_VGAP));
+		container.add(modePanel, BorderLayout.NORTH);
+
+		modePanel.add(new JLabel(strings.getString("MODE_LABEL")));
+
+		final var modeComboBox = new JComboBox<>(modes.toArray(new Mode[modes.size()]));
+		modeComboBox.addActionListener(actionListener);
+		modePanel.add(modeComboBox);
+
+		return modeComboBox;
 	}
 
 	private static String getFrameLocationPreferencesKey(final JFrame frame) {

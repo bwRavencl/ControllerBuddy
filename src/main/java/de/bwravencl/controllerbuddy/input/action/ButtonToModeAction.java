@@ -17,8 +17,10 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -160,6 +162,12 @@ public final class ButtonToModeAction implements IButtonToAction {
 			}
 		} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
 			activateMode(input, profile);
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		final var mode = getMode(input);
+		return MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription());
 	}
 
 	public Mode getMode(final Input input) {
