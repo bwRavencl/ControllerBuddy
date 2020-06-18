@@ -91,22 +91,42 @@ Mode switching can be configured to operate in two different ways:
 A set of well thought out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles).
 
 #### Architecture:
+Local mode:
 ```
-              Host:                             Client:
+              Local:
+
+       Physical Controller
+                |
+                |
+                v
+         ControllerBuddy
+         |             |
+         |             |
+         v             v
+vJoy Device Driver   Win32 API
+        |                |
+        |                |
+        v                v
+        Target Application
+```
+
+Server-Client mode:
+```
+             Server:                             Client:
 
        Physical Controller
                 |
                 |
                 v
          ControllerBuddy  --------------->  ControllerBuddy
-         |             |                    |             |
-         |             |                    |             |
-         v             v                    v             v
-vJoy Device Driver   Win32 API     vJoy Device Driver   Win32 API
-        |                |                 |                |
-        |                |                 |                |
-        v                v                 v                v
-        Target Application                 Target Application
+                                            |             |
+                                            |             |
+                                            v             v
+                                   vJoy Device Driver   Win32 API
+                                           |                |
+                                           |                |
+                                           v                v
+                                           Target Application
 ```
 
 #### Example Screenshots:
