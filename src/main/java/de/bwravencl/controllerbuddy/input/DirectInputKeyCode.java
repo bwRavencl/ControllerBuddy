@@ -262,7 +262,7 @@ public final class DirectInputKeyCode {
 
 	private DirectInputKeyCode(final String name, final int DirectInputKeyCode) {
 		this.name = name;
-		this.keyCode = DirectInputKeyCode;
+		keyCode = DirectInputKeyCode;
 	}
 
 	@Override

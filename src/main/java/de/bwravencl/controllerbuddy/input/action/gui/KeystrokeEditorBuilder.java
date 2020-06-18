@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				for (final Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
 					scanCodes.add(DirectInputKeyCode.nameToKeyCodeMap.get(o));
 
-				final Integer[] scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
+				final var scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
 
 				if (modifiers)
 					keyStroke.setModifierCodes(scanCodesArray);

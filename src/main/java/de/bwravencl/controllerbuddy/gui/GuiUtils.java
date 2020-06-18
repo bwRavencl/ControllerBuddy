@@ -115,7 +115,7 @@ final class GuiUtils {
 		if (title == null || title.isBlank())
 			return null;
 
-		var underscoreTitle = title.codePoints().mapToObj((c) -> {
+		var underscoreTitle = title.codePoints().mapToObj(c -> {
 			if (c == ' ')
 				return "_";
 			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);

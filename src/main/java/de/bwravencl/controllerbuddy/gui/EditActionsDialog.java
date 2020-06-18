@@ -404,7 +404,7 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	private boolean hasModeAction() {
-		boolean hasModeAction = false;
+		var hasModeAction = false;
 
 		for (final var assignedAction : getAssignedActions())
 			if (assignedAction.action instanceof ButtonToModeAction)
@@ -518,7 +518,7 @@ public final class EditActionsDialog extends JDialog {
 				}
 			}
 
-			final boolean anyPropertiesFound = propertiesPanel != null;
+			final var anyPropertiesFound = propertiesPanel != null;
 			if (anyPropertiesFound) {
 				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d,
 						1d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -582,7 +582,7 @@ public final class EditActionsDialog extends JDialog {
 			actionClasses = buttonActionClasses;
 
 		for (final var actionClass : actionClasses) {
-			final AvailableAction availableAction = new AvailableAction(actionClass);
+			final var availableAction = new AvailableAction(actionClass);
 
 			if (ButtonToModeAction.class.equals(availableAction.actionClass)
 					&& !Profile.defaultMode.equals(selectedMode))

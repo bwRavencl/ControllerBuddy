@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(editActionsDialog,
-					(ButtonToCycleAction) action);
+			final var editComponentDialog = new EditActionsDialog(editActionsDialog, (ButtonToCycleAction) action);
 			editComponentDialog.setVisible(true);
 		}
 	}

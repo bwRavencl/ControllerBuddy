@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ public abstract class OutputThread extends Thread {
 	long pollInterval = DEFAULT_POLL_INTERVAL;
 	int minAxisValue;
 	int maxAxisValue;
-
 	int nButtons;
 
 	OutputThread(final Main main, final Input input) {

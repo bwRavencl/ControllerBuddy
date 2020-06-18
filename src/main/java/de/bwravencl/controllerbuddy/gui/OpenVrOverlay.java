@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +353,7 @@ class OpenVrOverlay {
 			final var vrEvent = VREvent.mallocStack(renderingMemoryStack);
 			while (VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent))
 				if (vrEvent.eventType() == EVREventType_VREvent_Quit)
-					SwingUtilities.invokeLater(() -> stop());
+					SwingUtilities.invokeLater(this::stop);
 
 			final var overlayFrame = main.getOverlayFrame();
 			if (overlayFrame != null)

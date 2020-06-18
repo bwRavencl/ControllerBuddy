@@ -172,8 +172,8 @@ final class AssignmentsComponent extends JScrollPane {
 						final var textHeight = metrics.getHeight();
 						final var ascent = metrics.getAscent();
 
-						final int tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
-						final int ty = y + (getIconHeight() - textHeight) / 2 + ascent;
+						final var tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
+						final var ty = y + (getIconHeight() - textHeight) / 2 + ascent;
 						final var stringWidth = metrics.stringWidth(text);
 
 						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
@@ -321,10 +321,10 @@ final class AssignmentsComponent extends JScrollPane {
 
 		void paintText(final Graphics g, final Rectangle textRect, final String text) {
 			if (defaultBoldText && isDefaultButton() && getFont() instanceof UIResource) {
-				final Font boldFont = g.getFont().deriveFont(Font.BOLD);
+				final var boldFont = g.getFont().deriveFont(Font.BOLD);
 				g.setFont(boldFont);
 
-				final int boldWidth = getFontMetrics(boldFont).stringWidth(text);
+				final var boldWidth = getFontMetrics(boldFont).stringWidth(text);
 				if (boldWidth > textRect.width) {
 					textRect.x -= (boldWidth - textRect.width) / 2;
 					textRect.width = boldWidth;
@@ -385,7 +385,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final EditActionsDialog editComponentDialog = new EditActionsDialog(main, component, name);
+			final var editComponentDialog = new EditActionsDialog(main, component, name);
 			editComponentDialog.setVisible(true);
 		}
 	}
@@ -526,8 +526,8 @@ final class AssignmentsComponent extends JScrollPane {
 						final var ascent = metrics.getAscent();
 						final var textHeight = metrics.getHeight();
 
-						final int tx = width / 2 - stringWidth / 2;
-						final int ty = height / 2 + ascent - textHeight / 2;
+						final var tx = width / 2 - stringWidth / 2;
+						final var ty = height / 2 + ascent - textHeight / 2;
 
 						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
 						paintText(g, textRect, text);

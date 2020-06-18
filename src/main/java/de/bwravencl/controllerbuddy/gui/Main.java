@@ -392,7 +392,7 @@ public final class Main implements SingletonApp {
 		public void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final int result = JOptionPane.showConfirmDialog(this,
+				final var result = JOptionPane.showConfirmDialog(this,
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
@@ -537,7 +537,7 @@ public final class Main implements SingletonApp {
 		public void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final int result = JOptionPane.showConfirmDialog(this,
+				final var result = JOptionPane.showConfirmDialog(this,
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (result) {
@@ -1209,7 +1209,7 @@ public final class Main implements SingletonApp {
 		frame.setJMenuBar(menuBar);
 
 		menuBar.add(fileMenu);
-		final QuitAction quitAction = new QuitAction();
+		final var quitAction = new QuitAction();
 		fileMenu.add(quitAction);
 		menuBar.add(deviceMenu);
 

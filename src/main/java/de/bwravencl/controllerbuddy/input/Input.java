@@ -105,7 +105,7 @@ public final class Input {
 		final var subtermX = 2d + u2 - v2;
 		final var subtermY = 2d - u2 + v2;
 
-		final double twoSqrt2 = 2d * Math.sqrt(2d);
+		final var twoSqrt2 = 2d * Math.sqrt(2d);
 
 		var termX1 = subtermX + u * twoSqrt2;
 		var termX2 = subtermX - u * twoSqrt2;
@@ -174,7 +174,7 @@ public final class Input {
 
 		profile = new Profile();
 
-		final Short dualShock4ProductId = getDualShock4ProductId();
+		final var dualShock4ProductId = getDualShock4ProductId();
 		if (dualShock4ProductId != null) {
 			final var dualShock4Devices = PureJavaHidApi.enumerateDevices().stream()
 					.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C

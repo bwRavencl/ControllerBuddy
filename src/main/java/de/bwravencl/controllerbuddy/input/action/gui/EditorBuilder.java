@@ -79,7 +79,7 @@ public abstract class EditorBuilder {
 		final var modeProperty = fieldType == Mode.class;
 
 		final var getterParams = modeProperty ? new Class[] { Input.class } : null;
-		final Method getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
+		final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
 
 		final var getterArgs = modeProperty ? new Object[] { editActionsDialog.getInput() } : null;
 		initialValue = getterMethod.invoke(action, getterArgs);

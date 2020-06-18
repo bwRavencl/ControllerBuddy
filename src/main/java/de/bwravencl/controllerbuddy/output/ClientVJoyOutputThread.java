@@ -71,7 +71,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	boolean readInput() throws IOException {
-		boolean retVal = false;
+		var retVal = false;
 
 		switch (clientState) {
 		case Connecting -> {
@@ -253,7 +253,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 						final var sourceModifiers = new HashSet<Integer>();
 						final var sourceNormalKeys = new HashSet<Integer>();
-						int nDownKeyStrokes = Integer
+						var nDownKeyStrokes = Integer
 								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
 						for (var i = 1; i <= nDownKeyStrokes; i++) {
 							final var nDownModifierCodes = Integer.parseInt(

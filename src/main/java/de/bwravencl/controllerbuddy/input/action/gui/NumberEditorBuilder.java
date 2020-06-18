@@ -46,7 +46,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		@Override
 		public void stateChanged(final ChangeEvent e) {
 			try {
-				Object value = ((JSpinner) e.getSource()).getValue();
+				var value = ((JSpinner) e.getSource()).getValue();
 
 				if (value instanceof Float)
 					value = roundFloat((Float) value);

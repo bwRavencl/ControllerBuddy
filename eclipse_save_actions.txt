@@ -7,8 +7,11 @@ Convert 'for' loops to enhanced 'for' loops
 Add final modifier to private fields
 Add final modifier to method parameters
 Add final modifier to local variables
+Use the local variable type inference where possible
 Use lambda where possible
 Remove unnecessary parentheses
+Simplify lambda expression and method reference syntax
+Use lazy logical operator (&& and ||)
 Remove unused imports
 Add missing '@Override' annotations
 Add missing '@Override' annotations to implementations of interface methods
@@ -25,4 +28,5 @@ Remove redundant type arguments
 Use Autoboxing
 Use Unboxing
 Push down negation
+Merge conditions of if/else if/else that have the same blocks
 Operate on Maps directly
