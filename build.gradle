@@ -86,16 +86,16 @@ spotless {
 '''
 	}
 	groovyGradle {
-		target '**/*.gradle'
+		target '*.gradle'
 		greclipse().configFile('spotless.eclipseformat.xml')
 	}
 	format 'newlineAndTrailingWhitespace', {
-		target 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
+		target '.github/workflows/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
 		endWithNewline()
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target '**/*.gitignore', '**/*.md', 'src/main/resources/**/*.txt'
+		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', 'src/main/resources/**/*.txt', '*.txt', '*.xml'
 		endWithNewline()
 	}
 }
