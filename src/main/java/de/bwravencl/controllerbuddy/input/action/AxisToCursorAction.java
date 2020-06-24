@@ -66,10 +66,12 @@ public final class AxisToCursorAction extends InvertableAction<Float> implements
 			else {
 				remainingD = 0f;
 
+				final var intD = Math.round(d);
+
 				if (axis.equals(MouseAxis.X))
-					input.setCursorDeltaX((int) (input.getCursorDeltaX() + d));
+					input.setCursorDeltaX(input.getCursorDeltaX() + intD);
 				else
-					input.setCursorDeltaY((int) (input.getCursorDeltaY() + d));
+					input.setCursorDeltaY(input.getCursorDeltaY() + intD);
 			}
 		}
 	}
