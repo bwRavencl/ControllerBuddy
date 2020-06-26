@@ -17,40 +17,26 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
-import java.text.MessageFormat;
-import java.util.Locale;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
-abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
+public abstract class ToCursorAction<V extends Number> extends InvertableAction<V> {
 
-	private static final int DEFAULT_CLICKS = 10;
+	public enum MouseAxis {
+		X, Y
+	}
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class, order = 10)
-	int clicks = DEFAULT_CLICKS;
+	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
+	MouseAxis axis = MouseAxis.X;
 
 	transient float remainingD = 0f;
 
-	public int getClicks() {
-		return clicks;
+	public MouseAxis getAxis() {
+		return axis;
 	}
 
-	@Override
-	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty())
-			return super.getDescription(input);
-
-		return MessageFormat.format(strings.getString("SCROLL_DIRECTION"),
-				strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
-	}
-
-	void scroll(final Input input, float d) {
-		d = invert ? -d : d;
-
+	void moveCursor(final Input input, float d) {
 		d += remainingD;
 
 		if (d >= -1f && d <= 1f)
@@ -58,11 +44,16 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		else {
 			remainingD = 0f;
 
-			input.setScrollClicks(Math.round(d));
+			final var intD = Math.round(d);
+
+			if (axis.equals(MouseAxis.X))
+				input.setCursorDeltaX(input.getCursorDeltaX() + intD);
+			else
+				input.setCursorDeltaY(input.getCursorDeltaY() + intD);
 		}
 	}
 
-	public void setClicks(final int clicks) {
-		this.clicks = clicks;
+	public void setAxis(final MouseAxis axis) {
+		this.axis = axis;
 	}
 }

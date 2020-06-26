@@ -46,8 +46,9 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
 					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
-			input.setScrollClicks((int) (input.getScrollClicks() + (invert ? -d : d)));
-		}
+			scroll(input, d);
+		} else
+			remainingD = 0f;
 	}
 
 	public float getDeadZone() {

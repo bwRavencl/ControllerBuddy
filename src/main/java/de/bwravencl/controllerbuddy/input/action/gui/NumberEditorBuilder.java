@@ -83,7 +83,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 		final var editor = spinner.getEditor();
 		textField = ((JSpinner.DefaultEditor) editor).getTextField();
-		textField.setColumns(fieldType == int.class ? 2 : 4);
+		textField.setColumns(4);
 
 		final var formatter = (DefaultFormatter) textField.getFormatter();
 		formatter.setCommitsOnValidEdit(true);

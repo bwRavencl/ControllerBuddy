@@ -56,7 +56,6 @@ public abstract class EditorBuilder {
 
 	protected final EditActionsDialog editActionsDialog;
 	protected final IAction<?> action;
-	protected final Class<?> fieldType;
 	protected final Method setterMethod;
 	protected Object initialValue;
 
@@ -65,7 +64,6 @@ public abstract class EditorBuilder {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		this.editActionsDialog = editActionsDialog;
 		this.action = action;
-		this.fieldType = fieldType;
 
 		final var clazz = action.getClass();
 

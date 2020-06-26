@@ -20,8 +20,8 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import java.lang.reflect.InvocationTargetException;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
 
 public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> {
 
