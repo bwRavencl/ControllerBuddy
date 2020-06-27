@@ -2767,8 +2767,14 @@ public final class Main implements SingletonApp {
 		final var bBox = rootElement.getBBox();
 
 		final var halfMargin = SVG_VIEWBOX_MARGIN / 2;
-		rootElement.setAttributeNS(null, "viewBox", bBox.getX() - halfMargin + " " + (bBox.getY() - halfMargin) + " "
-				+ (bBox.getWidth() + SVG_VIEWBOX_MARGIN) + " " + bBox.getHeight() + SVG_VIEWBOX_MARGIN);
+
+		final var viewBoxX = bBox.getX() - halfMargin;
+		final var viewBoxY = bBox.getY() - halfMargin;
+		final var viewBoxWidth = bBox.getWidth() + SVG_VIEWBOX_MARGIN;
+		final var viewBoxHeight = bBox.getHeight() + SVG_VIEWBOX_MARGIN;
+
+		rootElement.setAttributeNS(null, "viewBox",
+				viewBoxX + " " + viewBoxY + " " + viewBoxWidth + " " + viewBoxHeight);
 	}
 
 	private void updateTheme() {
