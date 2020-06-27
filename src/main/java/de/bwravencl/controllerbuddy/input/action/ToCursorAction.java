@@ -37,6 +37,8 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 	}
 
 	void moveCursor(final Input input, float d) {
+		d = invert ? -d : d;
+
 		d += remainingD;
 
 		if (d >= -1f && d <= 1f)
