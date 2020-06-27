@@ -1193,6 +1193,8 @@ public final class Main implements SingletonApp {
 
 				if (showMenuItem != null)
 					showMenuItem.setEnabled(false);
+
+				updateVisualizationPanel();
 			}
 		});
 
@@ -2659,7 +2661,6 @@ public final class Main implements SingletonApp {
 			updateOverlayPanel();
 
 		setEnabledRecursive(profileSettingsPanel, panelsEnabled);
-
 		setEnabledRecursive(globalSettingsPanel, panelsEnabled);
 	}
 
