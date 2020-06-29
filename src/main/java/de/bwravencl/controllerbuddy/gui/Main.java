@@ -137,6 +137,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -951,6 +952,9 @@ public final class Main implements SingletonApp {
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		JDialog.setDefaultLookAndFeelDecorated(true);
 
 		try {
 			UIManager.setLookAndFeel(new FlatLightLaf());
