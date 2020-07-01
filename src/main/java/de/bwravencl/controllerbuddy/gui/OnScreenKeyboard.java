@@ -42,6 +42,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -493,10 +494,10 @@ public final class OnScreenKeyboard extends JFrame {
 		this.main = main;
 		frameDragListener = new FrameDragListener(main, this);
 
+		rootPane.setWindowDecorationStyle(JRootPane.NONE);
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
-		setUndecorated(true);
 		setBackground(TRANSPARENT);
 		setAlwaysOnTop(true);
 

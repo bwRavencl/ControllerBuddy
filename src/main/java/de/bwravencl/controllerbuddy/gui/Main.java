@@ -148,6 +148,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -1720,10 +1721,10 @@ public final class Main implements SingletonApp {
 		}
 
 		overlayFrame = new JFrame("Overlay");
+		overlayFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		overlayFrame.setType(JFrame.Type.UTILITY);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
-		overlayFrame.setUndecorated(true);
 		overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.setAlwaysOnTop(true);
 
