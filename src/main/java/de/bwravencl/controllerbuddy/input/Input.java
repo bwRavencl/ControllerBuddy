@@ -17,7 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static de.bwravencl.controllerbuddy.input.DualShock4Extension.handleDualShock4;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -25,11 +29,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -39,17 +40,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.lwjgl.glfw.GLFWGamepadState;
 
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -66,21 +61,14 @@ public final class Input {
 
 	private static final Logger log = Logger.getLogger(Input.class.getName());
 
-	private static final int LOW_BATTERY_WARNING = 20;
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
 	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 	private static final long SUSPENSION_TIME = 500L;
-
 	public static final int MAX_N_BUTTONS = 128;
-	private static final byte[] DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00,
-			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-	private static final int hidReportOffset = Main.windows ? 1 : 0;
 
 	private static float clamp(final float v) {
-		return Math.max(Math.min(v, 1f), -1f);
+		return max(min(v, 1f), -1f);
 	}
 
 	private static double correctNumericalImprecision(final double d) {
@@ -105,7 +93,7 @@ public final class Input {
 		final var subtermX = 2d + u2 - v2;
 		final var subtermY = 2d - u2 + v2;
 
-		final var twoSqrt2 = 2d * Math.sqrt(2d);
+		final var twoSqrt2 = 2d * sqrt(2d);
 
 		var termX1 = subtermX + u * twoSqrt2;
 		var termX2 = subtermX - u * twoSqrt2;
@@ -117,8 +105,8 @@ public final class Input {
 		termX2 = correctNumericalImprecision(termX2);
 		termY2 = correctNumericalImprecision(termY2);
 
-		final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
-		final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
+		final var x = 0.5 * sqrt(termX1) - 0.5 * sqrt(termX2);
+		final var y = 0.5 * sqrt(termY1) - 0.5 * sqrt(termY2);
 
 		state.axes(xAxisIndex, clamp((float) x));
 		state.axes(yAxisIndex, clamp((float) y));
@@ -156,14 +144,11 @@ public final class Input {
 	private final Set<Integer> offLockKeys = new HashSet<>();
 	private boolean clearOnNextPoll = false;
 	private boolean repeatModeActionWalk = false;
-	private HidDevice hidDevice;
-	private volatile boolean charging = true;
-	private volatile int batteryState;
-	private byte[] dualShock4HidReport;
 	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
 	private long lastCallTime = 0L;
 	private float rateMultiplier = 0f;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
+	private final DualShock4Extension dualShock4Extension;
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
@@ -174,124 +159,17 @@ public final class Input {
 
 		profile = new Profile();
 
-		final var dualShock4ProductId = getDualShock4ProductId();
-		if (dualShock4ProductId != null) {
-			final var dualShock4Devices = PureJavaHidApi.enumerateDevices().stream()
-					.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
-							&& hidDeviceInfo.getProductId() == dualShock4ProductId)
-					.collect(Collectors.toUnmodifiableList());
-			final var count = dualShock4Devices.size();
-
-			if (count > 0) {
-				log.log(Level.INFO, "Found " + count + " DualShock 4 controller(s): "
-						+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(Collectors.joining(", ")));
-
-				if (count > 1)
-					JOptionPane.showMessageDialog(main.getFrame(),
-							strings.getString("MULTIPLE_DUAL_SHOCK_4_CONTROLLERS_CONNECTED_DIALOG_TEXT"),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-
-				final var hidDeviceInfo = dualShock4Devices.get(0);
-				try {
-					log.log(Level.INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
-
-					hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-					resetDualShock4();
-
-					hidDevice.setInputReportListener(new InputReportListener() {
-
-						private static final int TOUCHPAD_MAX_DELTA = 150;
-						private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
-						private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
-
-						private boolean prevTouchpadButtonDown;
-						private boolean prevDown1;
-						private boolean prevDown2;
-						private int prevX1;
-						private int prevY1;
-
-						@Override
-						public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
-								final int reportLength) {
-							if (reportID != 0x01 || reportData.length != 64) {
-								log.log(Level.WARNING, "Received unknown HID input report with ID " + reportID
-										+ " and length " + reportLength);
-								return;
-							}
-
-							final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
-							var battery = reportData[30] & 0x0F;
-
-							setCharging(cableConnected);
-
-							if (!cableConnected)
-								battery++;
-
-							battery = Math.min(battery, 10);
-							battery *= 10;
-
-							setBatteryState(battery);
-
-							if (!main.isLocalThreadActive() && !main.isServerThreadActive())
-								return;
-
-							final var touchpadButtonDown = (reportData[7] & 1 << 2 - 1) != 0;
-							final var down1 = reportData[35] >> 7 != 0 ? false : true;
-							final var down2 = reportData[39] >> 7 != 0 ? false : true;
-							final var x1 = reportData[36] + (reportData[37] & 0xF) * 255;
-							final var y1 = ((reportData[37] & 0xF0) >> 4) + reportData[38] * 16;
-
-							if (touchpadButtonDown)
-								synchronized (downMouseButtons) {
-									downMouseButtons.add(down2 ? 2 : 1);
-								}
-							else if (prevTouchpadButtonDown)
-								synchronized (downMouseButtons) {
-									downMouseButtons.clear();
-								}
-
-							if (down1 && prevDown1) {
-								final var dX1 = x1 - prevX1;
-								final var dY1 = y1 - prevY1;
-
-								if (!prevDown2 || touchpadButtonDown) {
-									if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-										cursorDeltaX = (int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY);
-
-									if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-										cursorDeltaY = (int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY);
-								} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-									scrollClicks = (int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY);
-							}
-
-							prevTouchpadButtonDown = touchpadButtonDown;
-							prevDown1 = down1;
-							prevDown2 = down2;
-							prevX1 = x1;
-							prevY1 = y1;
-						}
-					});
-				} catch (final IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
-			}
-		}
+		dualShock4Extension = handleDualShock4(this, jid);
 	}
 
 	public void deInit() {
-		if (hidDevice != null) {
-			resetDualShock4();
-			try {
-				hidDevice.close();
-			} catch (final IllegalStateException e) {
-			}
-			hidDevice = null;
-		}
+		if (dualShock4Extension != null)
+			dualShock4Extension.deInit();
 	}
 
 	public int floatToIntAxisValue(float value) {
-		value = Math.max(value, -1f);
-		value = Math.min(value, 1f);
+		value = max(value, -1f);
+		value = min(value, 1f);
 
 		final var minAxisValue = outputThread.getMinAxisValue();
 		final var maxAxisValue = outputThread.getMaxAxisValue();
@@ -300,10 +178,6 @@ public final class Input {
 
 	public EnumMap<VirtualAxis, Integer> getAxes() {
 		return axes;
-	}
-
-	public int getBatteryState() {
-		return batteryState;
 	}
 
 	public boolean[] getButtons() {
@@ -334,17 +208,8 @@ public final class Input {
 		return downUpMouseButtons;
 	}
 
-	public Short getDualShock4ProductId() {
-		final var guid = glfwGetJoystickGUID(jid);
-		if (guid != null)
-			if (guid.startsWith("030000004c050000c405"))
-				return 0x5C4;
-			else if (guid.startsWith("030000004c050000cc09"))
-				return 0x9CC;
-			else if (guid.startsWith("030000004c050000a00b"))
-				return 0xBA0;
-
-		return null;
+	public DualShock4Extension getDualShock4Extension() {
+		return dualShock4Extension;
 	}
 
 	public int getJid() {
@@ -388,10 +253,6 @@ public final class Input {
 
 	public boolean isAxisSuspended(final int axis) {
 		return axisToEndSuspensionTimestampMap.containsKey(axis);
-	}
-
-	public boolean isCharging() {
-		return charging;
 	}
 
 	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
@@ -448,16 +309,16 @@ public final class Input {
 				if (delta != 0) {
 					final var axisRange = outputThread.getMaxAxisValue() - outputThread.getMinAxisValue();
 
-					final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
+					final var deltaFactor = normalize(abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
 							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
 
 					final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
 
 					var newValue = currentValue + d;
 					if (delta > 0)
-						newValue = Math.min(newValue, targetValue);
+						newValue = min(newValue, targetValue);
 					else
-						newValue = Math.max(newValue, targetValue);
+						newValue = max(newValue, targetValue);
 
 					setAxis(virtualAxis, newValue, false, (Integer) null);
 
@@ -479,7 +340,7 @@ public final class Input {
 			for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
 				final var axisValue = state.axes(axis);
 
-				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
+				if (abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
 					axisToEndSuspensionTimestampMap.remove(axis);
 
 				var actions = axisToActionMap.get(axis);
@@ -567,47 +428,8 @@ public final class Input {
 					((IResetableAction) action).reset();
 	}
 
-	private void resetDualShock4() {
-		dualShock4HidReport = Arrays.copyOf(DUAL_SHOCK_4_HID_REPORT, DUAL_SHOCK_4_HID_REPORT.length);
-		sendDualShock4HidReport();
-	}
-
-	private void rumbleDualShock4(final long duration, final byte strength) {
-		new Thread(() -> {
-			synchronized (dualShock4HidReport) {
-				dualShock4HidReport[5] = strength;
-				if (sendDualShock4HidReport()) {
-					try {
-						Thread.sleep(duration);
-					} catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-					dualShock4HidReport[5] = 0;
-					sendDualShock4HidReport();
-				}
-			}
-		}).start();
-	}
-
 	void scheduleClearOnNextPoll() {
 		clearOnNextPoll = true;
-	}
-
-	private boolean sendDualShock4HidReport() {
-		final var dataLength = dualShock4HidReport.length - hidReportOffset;
-
-		try {
-			for (var i = 0; i < 5; i++) {
-				final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-						Arrays.copyOfRange(dualShock4HidReport, 0 + hidReportOffset, dualShock4HidReport.length),
-						dataLength);
-				if (dataSent == dataLength)
-					return true;
-			}
-		} catch (final IllegalStateException e) {
-		}
-
-		return false;
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback,
@@ -621,33 +443,17 @@ public final class Input {
 		final var minAxisValue = outputThread.getMinAxisValue();
 		final var maxAxisValue = outputThread.getMaxAxisValue();
 
-		value = Math.max(value, minAxisValue);
-		value = Math.min(value, maxAxisValue);
+		value = max(value, minAxisValue);
+		value = min(value, maxAxisValue);
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && hidDevice != null && prevValue != value)
+		if (hapticFeedback && dualShock4Extension != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
-				rumbleDualShock4(80L, Byte.MAX_VALUE);
+				dualShock4Extension.rumble(80L, Byte.MAX_VALUE);
 			else if (dententValue != null && (prevValue > dententValue && value < dententValue
 					|| prevValue < dententValue && value > dententValue))
-				rumbleDualShock4(20L, (byte) 1);
-	}
-
-	private void setBatteryState(final int batteryState) {
-		if (this.batteryState != batteryState) {
-			this.batteryState = batteryState;
-
-			updateDualShock4LightbarColor();
-
-			if (main != null)
-				SwingUtilities.invokeLater(() -> {
-					main.updateTitleAndTooltip();
-
-					if (batteryState == LOW_BATTERY_WARNING)
-						main.displayLowBatteryWarning(batteryState / 100f);
-				});
-		}
+				dualShock4Extension.rumble(20L, (byte) 1);
 	}
 
 	public void setButton(final int id, final boolean value) {
@@ -655,20 +461,6 @@ public final class Input {
 			buttons[id] = value;
 		else
 			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
-	}
-
-	private void setCharging(final boolean charging) {
-		if (this.charging != charging) {
-			this.charging = charging;
-
-			updateDualShock4LightbarColor();
-
-			SwingUtilities.invokeLater(() -> {
-				main.updateTitleAndTooltip();
-				main.displayChargingStateInfo(charging);
-			});
-
-		}
 	}
 
 	public void setCursorDeltaX(final int cursorDeltaX) {
@@ -680,7 +472,7 @@ public final class Input {
 	}
 
 	public void setnButtons(final int nButtons) {
-		buttons = new boolean[Math.min(outputThread.getnButtons(), MAX_N_BUTTONS)];
+		buttons = new boolean[min(outputThread.getnButtons(), MAX_N_BUTTONS)];
 	}
 
 	public void setOutputThread(final OutputThread outputThread) {
@@ -764,21 +556,5 @@ public final class Input {
 
 	public void suspendAxis(final int axis) {
 		axisToEndSuspensionTimestampMap.put(axis, System.currentTimeMillis() + SUSPENSION_TIME);
-	}
-
-	private void updateDualShock4LightbarColor() {
-		synchronized (dualShock4HidReport) {
-			if (charging) {
-				dualShock4HidReport[6] = (byte) (batteryState >= 100 ? 0x00 : 0x1C);
-				dualShock4HidReport[7] = (byte) 0x1C;
-				dualShock4HidReport[8] = 0x00;
-			} else {
-				dualShock4HidReport[6] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x1C : 0x00);
-				dualShock4HidReport[7] = 0;
-				dualShock4HidReport[8] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x00 : 0x1C);
-			}
-
-			sendDualShock4HidReport();
-		}
 	}
 }

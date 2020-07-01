@@ -22,6 +22,7 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThr
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static de.bwravencl.controllerbuddy.input.Input.normalize;
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
 import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
 import static org.apache.batik.constants.XMLConstants.XLINK_NAMESPACE_URI;
@@ -440,7 +441,7 @@ public final class Main implements SingletonApp {
 
 			for (final var detentValue : dententValues) {
 				g.setColor(Color.RED);
-				final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
+				final var y = (int) normalize(detentValue, -1f, 1f, 0, height);
 				g.drawLine(0, y, width, y);
 			}
 		}
@@ -904,7 +905,7 @@ public final class Main implements SingletonApp {
 	private static final Options options = new Options();
 	private static final String SINGLETON_ID;
 	private static final Logger log = Logger.getLogger(Main.class.getName());
-	public static final boolean windows = Platform.isWindows() && !Platform.isWindowsCE();
+	public static final boolean isWindows = Platform.isWindows() && !Platform.isWindowsCE();
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	private static final String PROFILE_FILE_EXTENSION = "json";
 	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
@@ -946,7 +947,7 @@ public final class Main implements SingletonApp {
 	static {
 		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
 				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
-				Main.windows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
+				isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
 		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
@@ -1220,7 +1221,7 @@ public final class Main implements SingletonApp {
 		fileMenu.add(quitAction);
 		menuBar.add(deviceMenu);
 
-		if (windows) {
+		if (isWindows) {
 			menuBar.add(localMenu, 2);
 
 			final var buttonGroupLocalState = new ButtonGroup();
@@ -1292,7 +1293,7 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
-		if (windows) {
+		if (isWindows) {
 			final var vJoyDirectoryPanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(vJoyDirectoryPanel, settingsPanelGridBagConstraints);
 
@@ -1386,7 +1387,7 @@ public final class Main implements SingletonApp {
 		});
 		darkThemePanel.add(darkThemeCheckBox);
 
-		if (windows) {
+		if (isWindows) {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(defaultFlowLayout);
 			globalSettingsPanel.add(preventPowerSaveModeSettingsPanel, settingsPanelGridBagConstraints);
 
@@ -1450,7 +1451,7 @@ public final class Main implements SingletonApp {
 		if (!glfwInitialized) {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
 
-			if (windows)
+			if (isWindows)
 				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			else {
@@ -1509,7 +1510,7 @@ public final class Main implements SingletonApp {
 		});
 
 		if (glfwInitialized && presentJids.isEmpty()) {
-			if (windows)
+			if (isWindows)
 				JOptionPane.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			else
@@ -1562,7 +1563,7 @@ public final class Main implements SingletonApp {
 			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
 					MessageFormat.format(
 							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
-							input.getBatteryState() / 100f),
+							input.getDualShock4Extension().getBatteryState() / 100f),
 					MessageType.INFO);
 	}
 
@@ -1680,7 +1681,7 @@ public final class Main implements SingletonApp {
 		if (autostartOption == null)
 			return;
 
-		if (Main.windows)
+		if (isWindows)
 			if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
 				if (!isLocalThreadActive())
 					startLocal();
@@ -1698,7 +1699,7 @@ public final class Main implements SingletonApp {
 					MessageFormat.format(strings.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
 							OPTION_AUTOSTART, autostartOption,
 							MessageFormat.format(
-									Main.windows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+									isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
 											: strings.getString("SERVER"),
 									strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
 	}
@@ -1790,7 +1791,7 @@ public final class Main implements SingletonApp {
 	private void initVrOverlay() {
 		final var profile = input.getProfile();
 
-		if (!windows || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !profile.isShowOverlay()
+		if (!isWindows || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !profile.isShowOverlay()
 				|| !profile.isShowVrOverlay())
 			return;
 
@@ -1985,10 +1986,10 @@ public final class Main implements SingletonApp {
 				deviceMenu.add(new SelectControllerAction(jid));
 			menuBar.add(deviceMenu, 1);
 
-			if (windows)
+			if (isWindows)
 				menuBar.add(localMenu, 2);
 
-			menuBar.add(serverMenu, windows ? 4 : 2);
+			menuBar.add(serverMenu, isWindows ? 4 : 2);
 
 			modesPanel = new JPanel(new BorderLayout());
 			tabbedPane.insertTab(strings.getString("MODES_TAB"), null, modesPanel, null,
@@ -2363,7 +2364,7 @@ public final class Main implements SingletonApp {
 	}
 
 	public void stopAll() {
-		if (windows) {
+		if (isWindows) {
 			stopLocal(false);
 			stopClient(false);
 		}
@@ -2723,7 +2724,7 @@ public final class Main implements SingletonApp {
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
 
-			if (windows) {
+			if (isWindows) {
 				final var vrOverlaySettingsPanel = new JPanel(defaultFlowLayout);
 				profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
 
@@ -2819,11 +2820,11 @@ public final class Main implements SingletonApp {
 		if (trayIcon != null && input != null) {
 			final String toolTip;
 
-			if (input.getDualShock4ProductId() != null)
-				toolTip = MessageFormat.format(
-						strings.getString(
-								input.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
-						title, input.getBatteryState() / 100f);
+			final var dualShock4Support = input.getDualShock4Extension();
+			if (dualShock4Support != null)
+				toolTip = MessageFormat.format(strings.getString(
+						dualShock4Support.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
+						title, dualShock4Support.getBatteryState() / 100f);
 			else
 				toolTip = title;
 

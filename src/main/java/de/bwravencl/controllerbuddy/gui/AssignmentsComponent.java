@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.lang.Math.min;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -483,7 +484,7 @@ final class AssignmentsComponent extends JScrollPane {
 				}
 
 				private int getDiameter() {
-					return Math.min(getWidth(), getHeight());
+					return min(getWidth(), getHeight());
 				}
 
 				@Override

@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static java.lang.Math.round;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
@@ -46,7 +48,7 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 		else {
 			remainingD = 0f;
 
-			final var intD = Math.round(d);
+			final var intD = round(d);
 
 			if (axis.equals(MouseAxis.X))
 				input.setCursorDeltaX(input.getCursorDeltaX() + intD);

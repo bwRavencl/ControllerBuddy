@@ -17,6 +17,10 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
@@ -164,16 +168,16 @@ class OpenVrOverlay {
 	}
 
 	private static void makeTransformFacing(final HmdMatrix34 mat) {
-		rotate(mat, (float) Math.atan(mat.m(3) / mat.m(11)), 0f, 1f, 0f);
-		rotate(mat, (float) -Math.atan(mat.m(7) / mat.m(11)), 1f, 0f, 0f);
+		rotate(mat, (float) atan(mat.m(3) / mat.m(11)), 0f, 1f, 0f);
+		rotate(mat, (float) -atan(mat.m(7) / mat.m(11)), 1f, 0f, 0f);
 	}
 
 	private static void rotate(final HmdMatrix34 mat, final float angle, final float x, final float y, final float z) {
-		final var c = (float) Math.cos(angle);
-		final var s = (float) Math.sin(angle);
+		final var c = (float) cos(angle);
+		final var s = (float) sin(angle);
 
 		final var dot = x * x + y * y + z * z;
-		final var inv = 1f / (float) Math.sqrt(dot);
+		final var inv = 1f / (float) sqrt(dot);
 
 		final var aX = x * inv;
 		final var aY = y * inv;

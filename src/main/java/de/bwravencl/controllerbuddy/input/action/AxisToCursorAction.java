@@ -17,6 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.input.Input.normalize;
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.signum;
+
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -43,10 +48,10 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
-			final var d = Input.normalize(Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent),
-					(float) -Math.pow(100f, exponent), (float) Math.pow(100f, exponent), -maxCursorSpeed,
-					maxCursorSpeed) * input.getRateMultiplier();
+		if (!input.isAxisSuspended(component) && abs(value) > deadZone) {
+			final var d = normalize(signum(value) * (float) pow(abs(value) * 100f, exponent),
+					(float) -pow(100f, exponent), (float) pow(100f, exponent), -maxCursorSpeed, maxCursorSpeed)
+					* input.getRateMultiplier();
 			moveCursor(input, d);
 		} else
 			remainingD = 0f;

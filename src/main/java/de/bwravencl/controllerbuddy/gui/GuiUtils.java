@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,10 @@ package de.bwravencl.controllerbuddy.gui;
 
 import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_HGAP;
 import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_VGAP;
+import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -153,7 +156,7 @@ final class GuiUtils {
 	}
 
 	static void makeWindowTopmost(final Window window) {
-		if (Main.windows) {
+		if (isWindows) {
 			final var windowHwnd = new HWND(Native.getWindowPointer(window));
 			User32.INSTANCE.SetWindowPos(windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0,
 					WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
@@ -176,10 +179,10 @@ final class GuiUtils {
 
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
 			final Rectangle maxWindowBounds) {
-		location.x = Math.max(maxWindowBounds.x,
-				Math.min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
-		location.y = Math.max(maxWindowBounds.y,
-				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
+		location.x = max(maxWindowBounds.x,
+				min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
+		location.y = max(maxWindowBounds.y,
+				min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
 	}
 }

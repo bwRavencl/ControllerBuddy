@@ -62,8 +62,10 @@ spotbugs {
 }
 
 spotless {
+	encoding 'UTF-8'
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
+		encoding 'Cp1252'
 		eclipse().configFile 'spotless.eclipseformat.xml'
 		importOrderFile 'spotless.importorder'
 		licenseHeader '''/* Copyright (C) $YEAR  Matteo Hausner

@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.lang.Math.round;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -58,7 +59,7 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		else {
 			remainingD = 0f;
 
-			input.setScrollClicks(Math.round(d));
+			input.setScrollClicks(round(d));
 		}
 	}
 

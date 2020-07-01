@@ -21,6 +21,8 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThr
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -619,12 +621,12 @@ public final class OnScreenKeyboard extends JFrame {
 		var minDelta = Integer.MAX_VALUE;
 		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
 			final var width = keyboardButtons[selectedRow][i].getPreferredSize().width;
-			final var delta = Math.abs(targetX - (x + width / 2));
+			final var delta = abs(targetX - (x + width / 2));
 
 			if (delta > minDelta)
 				break;
 			else {
-				selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+				selectedColumn = min(i, keyboardButtons[selectedRow].length - 1);
 				minDelta = delta;
 			}
 
