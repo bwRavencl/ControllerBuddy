@@ -17,7 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static com.sun.jna.platform.win32.Ole32.COINIT_APARTMENTTHREADED;
 import static com.sun.jna.platform.win32.WTypes.CLSCTX_INPROC_SERVER;
+import static com.sun.jna.platform.win32.WinError.S_FALSE;
 import static com.sun.jna.platform.win32.WinError.S_OK;
 import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
@@ -36,15 +38,9 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -55,8 +51,14 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
+import purejavahidapi.PureJavaHidApi;
 
 public final class DualShock4Extension {
 
@@ -245,33 +247,49 @@ public final class DualShock4Extension {
 
 			for (var i = 0; i < cDevices.intValue(); i++) {
 				final var ppDevice = new PointerByReference();
-				if (!S_OK.equals(deviceCollection.Item(new UINT(i), ppDevice)))
-					throw new Exception("IMMDeviceCollection::Item failed");
+				if (!S_OK.equals(deviceCollection.Item(new UINT(i), ppDevice))) {
+					log.log(Level.SEVERE, "IMMDeviceCollection::Item failed");
+					continue;
+				}
 
 				final var device = new IMMDevice(ppDevice.getValue());
-
-				final var ppProperties = new PointerByReference();
-				if (!S_OK.equals(device.OpenPropertyStore(STGM_READ, ppProperties)))
-					throw new Exception("IMMDevice::OpenPropertyStore failed");
-
-				final var propertyStore = new IPropertyStore(ppProperties.getValue());
 				try {
+					final var ppProperties = new PointerByReference();
+					if (!S_OK.equals(device.OpenPropertyStore(STGM_READ, ppProperties))) {
+						log.log(Level.SEVERE, "IMMDevice::OpenPropertyStore failed");
+						continue;
+					}
 
-					final var pv = new PROPVARIANT.ByReference();
-					if (!S_OK.equals(propertyStore.GetValue(PKEY_Device_FriendlyName, pv)))
-						throw new Exception("IPropertyStore::GetValue failed");
+					final var propertyStore = new IPropertyStore(ppProperties.getValue());
+					try {
 
-					if (pv.vt == Variant.VT_EMPTY)
-						throw new Exception("PROPERTYKEY not present");
+						final var pv = new PROPVARIANT.ByReference();
+						if (!S_OK.equals(propertyStore.GetValue(PKEY_Device_FriendlyName, pv))) {
+							log.log(Level.SEVERE, "IPropertyStore::GetValue failed");
+							continue;
+						}
 
-					if (pv.vt != Variant.VT_LPWSTR)
-						throw new Exception("PROPERTYKEY has wrong variant");
+						if (pv.vt == Variant.VT_EMPTY) {
+							log.log(Level.SEVERE, "PROPERTYKEY not present");
+							continue;
+						}
 
-					final var currentFriendlyName = pv.pwszVal.toString();
-					if (currentFriendlyName.contains(FRIENDLY_NAME))
-						return device;
-				} finally {
-					propertyStore.Release();
+						if (pv.vt != Variant.VT_LPWSTR) {
+							log.log(Level.SEVERE, "PROPERTYKEY has wrong variant");
+							continue;
+						}
+
+						final var currentFriendlyName = pv.pwszVal.toString();
+						if (currentFriendlyName.contains(FRIENDLY_NAME))
+							return device;
+					} finally {
+						propertyStore.Release();
+					}
+
+					device.Release();
+				} catch (final Throwable t) {
+					device.Release();
+					throw t;
 				}
 			}
 
@@ -367,137 +385,179 @@ public final class DualShock4Extension {
 	private volatile int batteryState;
 	private IMMDevice earphoneDevice;
 	private IMMDevice microphoneDevice;
+	private boolean comLibraryInitialized;
 
 	private DualShock4Extension(final Input input, final HidDeviceInfo hidDeviceInfo, final boolean isDongle)
 			throws IOException {
 		this.input = input;
 
-		if (isWindows && isDongle)
-			if (!S_OK.equals(Ole32.INSTANCE.CoInitialize(null)))
-				log.log(Level.SEVERE, "CoInitialize failed");
-			else {
-				final var ppDeviceEnumerator = new PointerByReference();
-				if (!S_OK.equals(Ole32.INSTANCE.CoCreateInstance(MMDeviceEnumeratorCLSID, null, CLSCTX_INPROC_SERVER,
-						IMMDeviceEnumeratorIID, ppDeviceEnumerator)))
-					log.log(Level.SEVERE, "CoCreateInstance failed");
-				else {
-					final var deviceEnumerator = new IMMDeviceEnumerator(ppDeviceEnumerator.getValue());
-					try {
+		try {
+			if (isWindows && isDongle) {
+				final var coInitializeExResult = Ole32.INSTANCE.CoInitializeEx(null, COINIT_APARTMENTTHREADED);
+
+				if (S_OK.equals(coInitializeExResult))
+					comLibraryInitialized = true;
+				else if (S_FALSE.equals(coInitializeExResult)) {
+					comLibraryInitialized = true;
+					log.log(Level.WARNING, "COM library was already initialized");
+				} else {
+					comLibraryInitialized = false;
+					log.log(Level.SEVERE, "CoInitializeEx failed");
+				}
+
+				if (comLibraryInitialized) {
+					final var ppDeviceEnumerator = new PointerByReference();
+					if (!S_OK.equals(Ole32.INSTANCE.CoCreateInstance(MMDeviceEnumeratorCLSID, null,
+							CLSCTX_INPROC_SERVER, IMMDeviceEnumeratorIID, ppDeviceEnumerator)))
+						log.log(Level.SEVERE, "CoCreateInstance failed");
+					else {
+						final var deviceEnumerator = new IMMDeviceEnumerator(ppDeviceEnumerator.getValue());
 						try {
-							earphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eRender);
-							if (earphoneDevice != null)
-								log.log(Level.INFO, "Using DualShock 4 earphone device " + earphoneDevice);
+							try {
+								earphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eRender);
+								if (earphoneDevice != null)
+									log.log(Level.INFO, "Using DualShock 4 earphone device " + earphoneDevice);
+								else
+									log.log(Level.WARNING, "DualShock 4 earphone not device found");
+							} catch (final Exception e) {
+								log.log(Level.SEVERE, e.getMessage(), e);
+							}
+
+							microphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eCapture);
+							if (microphoneDevice != null)
+								log.log(Level.INFO, "Using DualShock 4 microphone device " + microphoneDevice);
 							else
-								log.log(Level.WARNING, "DualShock 4 earphone not device found");
+								log.log(Level.WARNING, "DualShock 4 microphone not device found");
 						} catch (final Exception e) {
 							log.log(Level.SEVERE, e.getMessage(), e);
+						} finally {
+							deviceEnumerator.Release();
+
+							if (earphoneDevice == null && microphoneDevice == null) {
+								Ole32.INSTANCE.CoUninitialize();
+								comLibraryInitialized = false;
+							}
+						}
+					}
+
+					if (earphoneDevice == null || microphoneDevice == null)
+						JOptionPane.showMessageDialog(input.getMain().getFrame(),
+								strings.getString("COULD_NOT_FIND_DUAL_SHOCK_4_AUDIO_DEVICE_DIALOG_TEXT"),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				} else
+					JOptionPane.showMessageDialog(input.getMain().getFrame(),
+							strings.getString("COULD_NOT_INITIALIZE_COM_LIBRARY_DIALOG_TEXT"),
+							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+
+			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
+			reset();
+
+			hidDevice.setInputReportListener(new InputReportListener() {
+
+				private static final int TOUCHPAD_MAX_DELTA = 150;
+				private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
+				private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
+
+				private boolean prevTouchpadButtonDown;
+				private boolean prevDown1;
+				private boolean prevDown2;
+				private int prevX1;
+				private int prevY1;
+
+				@Override
+				public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
+						final int reportLength) {
+					if (reportID != 0x01 || reportData.length != 64) {
+						log.log(Level.WARNING, "Received unknown HID input report with ID " + reportID + " and length "
+								+ reportLength);
+						return;
+					}
+
+					final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
+					var battery = reportData[30] & 0x0F;
+
+					setCharging(cableConnected);
+
+					if (!cableConnected)
+						battery++;
+
+					battery = min(battery, 10);
+					battery *= 10;
+
+					setBatteryState(battery);
+
+					final var main = input.getMain();
+					if (!main.isLocalThreadActive() && !main.isServerThreadActive())
+						return;
+
+					final var touchpadButtonDown = (reportData[7] & 1 << 2 - 1) != 0;
+					final var down1 = reportData[35] >> 7 != 0 ? false : true;
+					final var down2 = reportData[39] >> 7 != 0 ? false : true;
+					final var x1 = reportData[36] + (reportData[37] & 0xF) * 255;
+					final var y1 = ((reportData[37] & 0xF0) >> 4) + reportData[38] * 16;
+
+					final var downMouseButtons = input.getDownMouseButtons();
+					if (touchpadButtonDown)
+						synchronized (downMouseButtons) {
+							downMouseButtons.add(down2 ? 2 : 1);
+						}
+					else if (prevTouchpadButtonDown)
+						synchronized (downMouseButtons) {
+							downMouseButtons.clear();
 						}
 
-						microphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eCapture);
-						if (microphoneDevice != null)
-							log.log(Level.INFO, "Using DualShock 4 microphone device " + microphoneDevice);
-						else
-							log.log(Level.WARNING, "DualShock 4 microphone not device found");
-					} catch (final Exception e) {
-						log.log(Level.SEVERE, e.getMessage(), e);
-					} finally {
-						deviceEnumerator.Release();
-					}
-				}
-			}
+					if (down1 && prevDown1) {
+						final var dX1 = x1 - prevX1;
+						final var dY1 = y1 - prevY1;
 
-		hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-		reset();
+						if (!prevDown2 || touchpadButtonDown) {
+							if (prevX1 > 0 && abs(dX1) < TOUCHPAD_MAX_DELTA)
+								input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
 
-		hidDevice.setInputReportListener(new InputReportListener() {
-
-			private static final int TOUCHPAD_MAX_DELTA = 150;
-			private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
-			private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
-
-			private boolean prevTouchpadButtonDown;
-			private boolean prevDown1;
-			private boolean prevDown2;
-			private int prevX1;
-			private int prevY1;
-
-			@Override
-			public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
-					final int reportLength) {
-				if (reportID != 0x01 || reportData.length != 64) {
-					log.log(Level.WARNING,
-							"Received unknown HID input report with ID " + reportID + " and length " + reportLength);
-					return;
-				}
-
-				final var cableConnected = (reportData[30] >> 4 & 0x01) != 0;
-				var battery = reportData[30] & 0x0F;
-
-				setCharging(cableConnected);
-
-				if (!cableConnected)
-					battery++;
-
-				battery = min(battery, 10);
-				battery *= 10;
-
-				setBatteryState(battery);
-
-				final var main = input.getMain();
-				if (!main.isLocalThreadActive() && !main.isServerThreadActive())
-					return;
-
-				final var touchpadButtonDown = (reportData[7] & 1 << 2 - 1) != 0;
-				final var down1 = reportData[35] >> 7 != 0 ? false : true;
-				final var down2 = reportData[39] >> 7 != 0 ? false : true;
-				final var x1 = reportData[36] + (reportData[37] & 0xF) * 255;
-				final var y1 = ((reportData[37] & 0xF0) >> 4) + reportData[38] * 16;
-
-				final var downMouseButtons = input.getDownMouseButtons();
-				if (touchpadButtonDown)
-					synchronized (downMouseButtons) {
-						downMouseButtons.add(down2 ? 2 : 1);
-					}
-				else if (prevTouchpadButtonDown)
-					synchronized (downMouseButtons) {
-						downMouseButtons.clear();
+							if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
+								input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
+						} else if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
+							input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
 					}
 
-				if (down1 && prevDown1) {
-					final var dX1 = x1 - prevX1;
-					final var dY1 = y1 - prevY1;
-
-					if (!prevDown2 || touchpadButtonDown) {
-						if (prevX1 > 0 && abs(dX1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
-
-						if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
-					} else if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
-						input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
+					prevTouchpadButtonDown = touchpadButtonDown;
+					prevDown1 = down1;
+					prevDown2 = down2;
+					prevX1 = x1;
+					prevY1 = y1;
 				}
-
-				prevTouchpadButtonDown = touchpadButtonDown;
-				prevDown1 = down1;
-				prevDown2 = down2;
-				prevX1 = x1;
-				prevY1 = y1;
-			}
-		});
+			});
+		} catch (final Throwable t) {
+			deInit();
+			throw t;
+		}
 	}
 
 	void deInit() {
-		if (hidDevice != null) {
-			reset();
-			try {
-				hidDevice.close();
-			} catch (final IllegalStateException e) {
+		try {
+			if (hidDevice != null) {
+				reset();
+				try {
+					hidDevice.close();
+				} catch (final IllegalStateException e) {
+				}
+				hidDevice = null;
 			}
-			hidDevice = null;
+		} finally {
+			try {
+				if (earphoneDevice != null)
+					earphoneDevice.Release();
+			} finally {
+				try {
+					if (microphoneDevice != null)
+						microphoneDevice.Release();
+				} finally {
+					if (comLibraryInitialized)
+						Ole32.INSTANCE.CoUninitialize();
+				}
+			}
 		}
-
-		if (isWindows)
-			Ole32.INSTANCE.CoUninitialize();
 	}
 
 	public int getBatteryState() {
