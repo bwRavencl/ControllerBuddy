@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.util.logging.Level.SEVERE;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,10 +32,13 @@ import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -45,6 +49,51 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
 public final class KeystrokeEditorBuilder extends EditorBuilder {
+
+	private static final class CheckboxJList<E> extends JList<E> {
+
+		private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
+
+			private static final long serialVersionUID = -7958791166718006570L;
+
+			@Override
+			public Component getListCellRendererComponent(final JList<? extends E> list, final E value, final int index,
+					final boolean isSelected, final boolean cellHasFocus) {
+				setComponentOrientation(list.getComponentOrientation());
+
+				setFont(list.getFont());
+				setText(String.valueOf(value));
+
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+
+				setSelected(isSelected);
+				setEnabled(list.isEnabled());
+
+				return this;
+			}
+		}
+
+		private static final long serialVersionUID = 5413881551745215922L;
+
+		private CheckboxJList(final E[] listData) {
+			super(listData);
+
+			setCellRenderer(new CheckboxListCellRenderer<>());
+			setSelectionModel(new DefaultListSelectionModel() {
+
+				private static final long serialVersionUID = 8997996268575032389L;
+
+				@Override
+				public void setSelectionInterval(final int index0, final int index1) {
+					if (super.isSelectedIndex(index0))
+						super.removeSelectionInterval(index0, index1);
+					else
+						super.addSelectionInterval(index0, index1);
+				}
+			});
+		}
+	}
 
 	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
@@ -115,7 +164,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
-		final var modifierList = new JList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		final var modifierList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
 		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
 		final var addedModifiers = new ArrayList<String>();
@@ -138,7 +187,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));
-		final var keyList = new JList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		final var keyList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
 		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
 		final var addedKeys = new ArrayList<String>();
