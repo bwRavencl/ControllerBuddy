@@ -21,6 +21,7 @@ import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static java.util.logging.Level.SEVERE;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
@@ -84,7 +85,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
@@ -329,7 +329,7 @@ class OpenVrOverlay {
 				executorService = Executors.newSingleThreadScheduledExecutor();
 				executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 			} catch (final Throwable t) {
-				log.log(Level.SEVERE, t.getMessage(), t);
+				log.log(SEVERE, t.getMessage(), t);
 				deInit();
 				throw t;
 			}
@@ -365,7 +365,7 @@ class OpenVrOverlay {
 
 			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
 		} catch (final Throwable t) {
-			log.log(Level.SEVERE, t.getMessage(), t);
+			log.log(SEVERE, t.getMessage(), t);
 		} finally {
 			if (wglGetCurrentContext() == hglrc)
 				wglMakeCurrent(NULL, NULL);

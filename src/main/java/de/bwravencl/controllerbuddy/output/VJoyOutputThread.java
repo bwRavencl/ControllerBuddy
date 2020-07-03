@@ -19,6 +19,9 @@ package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -28,7 +31,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -121,7 +123,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 					INSTALL_LOCATION_REGISTRY_VALUE);
 		} catch (final Throwable t) {
 			final var defaultPath = System.getenv("ProgramFiles") + File.separator + "vJoy";
-			log.log(Level.WARNING, "Could not retrieve vJoy installation path from registry", t);
+			log.log(WARNING, "Could not retrieve vJoy installation path from registry", t);
 
 			return defaultPath;
 		}
@@ -259,7 +261,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		final var vJoyPath = main.getPreferences().get(PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath());
 		final var libraryPath = new File(vJoyPath, getArchFolderName()).getAbsolutePath();
 
-		log.log(Level.INFO, "Using vJoy library path: " + libraryPath);
+		log.log(INFO, "Using vJoy library path: " + libraryPath);
 		System.setProperty("jna.library.path", libraryPath);
 
 		try {
@@ -268,7 +270,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final var dllVersion = new Memory(WinDef.WORD.SIZE);
 			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.vJoyEnabled().booleanValue()) {
-				log.log(Level.WARNING, "vJoy driver is not enabled");
+				log.log(WARNING, "vJoy driver is not enabled");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
@@ -277,7 +279,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 				return false;
 			}
 			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
-				log.log(Level.WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
+				log.log(WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
 						+ drvVersion.toString());
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
@@ -288,10 +290,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 				return false;
 			}
 
-			log.log(Level.INFO, "Using vJoy device: " + vJoyDevice.toString());
+			log.log(INFO, "Using vJoy device: " + vJoyDevice.toString());
 
 			if (vJoy.GetVJDStatus(vJoyDevice) != IVjoyInterface.VJD_STAT_FREE) {
-				log.log(Level.WARNING, "vJoy device is not available");
+				log.log(WARNING, "vJoy device is not available");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							MessageFormat.format(strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
@@ -330,7 +332,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 					missingAxes.add("Dial/Slider2");
 
 				final var missingAxesString = String.join(", ", missingAxes);
-				log.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
+				log.log(WARNING, "vJoy device is missing the following axes: " + missingAxesString);
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							MessageFormat.format(strings.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice.intValue(),
@@ -341,7 +343,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			}
 
 			if (!vJoy.AcquireVJD(vJoyDevice).booleanValue()) {
-				log.log(Level.WARNING, "Could not acquire vJoy device");
+				log.log(WARNING, "Could not acquire vJoy device");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							MessageFormat.format(strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
@@ -352,7 +354,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			}
 
 			if (!vJoy.ResetVJD(vJoyDevice).booleanValue()) {
-				log.log(Level.WARNING, "Could not reset vJoy device");
+				log.log(WARNING, "Could not reset vJoy device");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							MessageFormat.format(strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
@@ -386,7 +388,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final var requiredButtons = maxButtonId + 1;
 
 			if (nButtons < requiredButtons) {
-				log.log(Level.WARNING, "vJoy device has not enough buttons");
+				log.log(WARNING, "vJoy device has not enough buttons");
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(),
 							MessageFormat.format(strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
@@ -428,7 +430,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
@@ -587,7 +589,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 					else
 						forceStop = true;
 				} catch (final ExecutionException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					log.log(SEVERE, e.getMessage(), e);
 				}
 
 				stopOutput();

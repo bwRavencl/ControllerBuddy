@@ -26,21 +26,29 @@ import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static de.bwravencl.controllerbuddy.input.Input.normalize;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
+import purejavahidapi.PureJavaHidApi;
+
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -51,14 +59,8 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.PointerByReference;
-
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
 
 public final class DualShock4Extension {
 
@@ -109,7 +111,7 @@ public final class DualShock4Extension {
 			final var ppstrId = new PointerByReference();
 
 			if (!S_OK.equals(GetId(ppstrId))) {
-				log.log(Level.SEVERE, "IMMDevice::GetId failed");
+				log.log(SEVERE, "IMMDevice::GetId failed");
 				return super.toString();
 			}
 
@@ -248,7 +250,7 @@ public final class DualShock4Extension {
 			for (var i = 0; i < cDevices.intValue(); i++) {
 				final var ppDevice = new PointerByReference();
 				if (!S_OK.equals(deviceCollection.Item(new UINT(i), ppDevice))) {
-					log.log(Level.SEVERE, "IMMDeviceCollection::Item failed");
+					log.log(SEVERE, "IMMDeviceCollection::Item failed");
 					continue;
 				}
 
@@ -256,7 +258,7 @@ public final class DualShock4Extension {
 				try {
 					final var ppProperties = new PointerByReference();
 					if (!S_OK.equals(device.OpenPropertyStore(STGM_READ, ppProperties))) {
-						log.log(Level.SEVERE, "IMMDevice::OpenPropertyStore failed");
+						log.log(SEVERE, "IMMDevice::OpenPropertyStore failed");
 						continue;
 					}
 
@@ -265,17 +267,17 @@ public final class DualShock4Extension {
 
 						final var pv = new PROPVARIANT.ByReference();
 						if (!S_OK.equals(propertyStore.GetValue(PKEY_Device_FriendlyName, pv))) {
-							log.log(Level.SEVERE, "IPropertyStore::GetValue failed");
+							log.log(SEVERE, "IPropertyStore::GetValue failed");
 							continue;
 						}
 
 						if (pv.vt == Variant.VT_EMPTY) {
-							log.log(Level.SEVERE, "PROPERTYKEY not present");
+							log.log(SEVERE, "PROPERTYKEY not present");
 							continue;
 						}
 
 						if (pv.vt != Variant.VT_LPWSTR) {
-							log.log(Level.SEVERE, "PROPERTYKEY has wrong variant");
+							log.log(SEVERE, "PROPERTYKEY has wrong variant");
 							continue;
 						}
 
@@ -358,7 +360,7 @@ public final class DualShock4Extension {
 		if (count < 1)
 			return null;
 
-		log.log(Level.INFO, "Found " + count + " DualShock 4 controller(s): "
+		log.log(INFO, "Found " + count + " DualShock 4 controller(s): "
 				+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(Collectors.joining(", ")));
 
 		if (count > 1)
@@ -367,12 +369,12 @@ public final class DualShock4Extension {
 					strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 
 		final var hidDeviceInfo = dualShock4Devices.get(0);
-		log.log(Level.INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
+		log.log(INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
 
 		try {
 			return new DualShock4Extension(input, hidDeviceInfo, isDongle);
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 		}
 
 		return null;
@@ -399,37 +401,37 @@ public final class DualShock4Extension {
 					comLibraryInitialized = true;
 				else if (S_FALSE.equals(coInitializeExResult)) {
 					comLibraryInitialized = true;
-					log.log(Level.WARNING, "COM library was already initialized");
+					log.log(WARNING, "COM library was already initialized");
 				} else {
 					comLibraryInitialized = false;
-					log.log(Level.SEVERE, "CoInitializeEx failed");
+					log.log(SEVERE, "CoInitializeEx failed");
 				}
 
 				if (comLibraryInitialized) {
 					final var ppDeviceEnumerator = new PointerByReference();
 					if (!S_OK.equals(Ole32.INSTANCE.CoCreateInstance(MMDeviceEnumeratorCLSID, null,
 							CLSCTX_INPROC_SERVER, IMMDeviceEnumeratorIID, ppDeviceEnumerator)))
-						log.log(Level.SEVERE, "CoCreateInstance failed");
+						log.log(SEVERE, "CoCreateInstance failed");
 					else {
 						final var deviceEnumerator = new IMMDeviceEnumerator(ppDeviceEnumerator.getValue());
 						try {
 							try {
 								earphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eRender);
 								if (earphoneDevice != null)
-									log.log(Level.INFO, "Using DualShock 4 earphone device " + earphoneDevice);
+									log.log(INFO, "Using DualShock 4 earphone device " + earphoneDevice);
 								else
-									log.log(Level.WARNING, "DualShock 4 earphone not device found");
+									log.log(WARNING, "DualShock 4 earphone not device found");
 							} catch (final Exception e) {
-								log.log(Level.SEVERE, e.getMessage(), e);
+								log.log(SEVERE, e.getMessage(), e);
 							}
 
 							microphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eCapture);
 							if (microphoneDevice != null)
-								log.log(Level.INFO, "Using DualShock 4 microphone device " + microphoneDevice);
+								log.log(INFO, "Using DualShock 4 microphone device " + microphoneDevice);
 							else
-								log.log(Level.WARNING, "DualShock 4 microphone not device found");
+								log.log(WARNING, "DualShock 4 microphone not device found");
 						} catch (final Exception e) {
-							log.log(Level.SEVERE, e.getMessage(), e);
+							log.log(SEVERE, e.getMessage(), e);
 						} finally {
 							deviceEnumerator.Release();
 
@@ -469,7 +471,7 @@ public final class DualShock4Extension {
 				public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
 						final int reportLength) {
 					if (reportID != 0x01 || reportData.length != 64) {
-						log.log(Level.WARNING, "Received unknown HID input report with ID " + reportID + " and length "
+						log.log(WARNING, "Received unknown HID input report with ID " + reportID + " and length "
 								+ reportLength);
 						return;
 					}
@@ -595,14 +597,14 @@ public final class DualShock4Extension {
 			try {
 				dualShock4HidReport[19] = dualShock4HidReport[20] = getNormalizedVolumeValue(earphoneDevice, 19);
 			} catch (final Exception e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 
 		if (microphoneDevice != null)
 			try {
 				dualShock4HidReport[21] = getNormalizedVolumeValue(microphoneDevice, 21);
 			} catch (final Exception e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 
 		final var dataLength = dualShock4HidReport.length - hidReportOffset;

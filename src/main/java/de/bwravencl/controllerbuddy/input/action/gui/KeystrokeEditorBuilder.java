@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.logging.Level.SEVERE;
 
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +26,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Box;
@@ -76,7 +76,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				setterMethod.invoke(action, keyStroke);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

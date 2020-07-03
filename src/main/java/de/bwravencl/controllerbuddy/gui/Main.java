@@ -23,6 +23,10 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.input.Input.normalize;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
 import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
 import static org.apache.batik.constants.XMLConstants.XLINK_NAMESPACE_URI;
@@ -121,7 +125,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -367,7 +370,7 @@ public final class Main implements SingletonApp {
 					transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
 				}
 			} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e);
+				log.log(SEVERE, e1.getMessage(), e);
 				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
@@ -807,7 +810,7 @@ public final class Main implements SingletonApp {
 				scrollPane.setPreferredSize(new Dimension(600, 400));
 				JOptionPane.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
 			} catch (final IOException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
@@ -1023,7 +1026,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private static void handleUncaughtException(final Throwable e, final Component parentComponent) {
-		log.log(Level.SEVERE, e.getMessage(), e);
+		log.log(SEVERE, e.getMessage(), e);
 
 		if (parentComponent != null)
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
@@ -1054,7 +1057,7 @@ public final class Main implements SingletonApp {
 		if (!Singleton.invoke(SINGLETON_ID, args)) {
 			Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
 
-			log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+			log.log(INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
 			SwingUtilities.invokeLater(() -> {
 				try {
@@ -1076,7 +1079,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private static void terminate(final int status) {
-		log.log(Level.INFO, "Terminated (" + status + ")");
+		log.log(INFO, "Terminated (" + status + ")");
 		System.exit(status);
 	}
 
@@ -1431,7 +1434,7 @@ public final class Main implements SingletonApp {
 			try {
 				SystemTray.getSystemTray().add(trayIcon);
 			} catch (final AWTException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 		}
 
@@ -1449,7 +1452,7 @@ public final class Main implements SingletonApp {
 
 		final var glfwInitialized = glfwInit();
 		if (!glfwInitialized) {
-			log.log(Level.SEVERE, "Could not initialize GLFW");
+			log.log(SEVERE, "Could not initialize GLFW");
 
 			if (isWindows)
 				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
@@ -1476,10 +1479,10 @@ public final class Main implements SingletonApp {
 				selectedJid = jid;
 
 			if (lastControllerFound) {
-				log.log(Level.INFO, assembleControllerLoggingMessage("Selected previously used", jid));
+				log.log(INFO, assembleControllerLoggingMessage("Selected previously used", jid));
 				break;
 			} else
-				log.log(Level.INFO, "Previously used controller is not present");
+				log.log(INFO, "Previously used controller is not present");
 		}
 
 		newProfile();
@@ -1493,7 +1496,7 @@ public final class Main implements SingletonApp {
 				final var disconnected = event == GLFW_DISCONNECTED;
 				if (disconnected || glfwJoystickIsGamepad(jid)) {
 					if (disconnected) {
-						log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", jid));
+						log.log(INFO, assembleControllerLoggingMessage("Disconnected", jid));
 						if (selectedJid == jid) {
 							selectedJid = INVALID_JID;
 							input.deInit();
@@ -1502,7 +1505,7 @@ public final class Main implements SingletonApp {
 								serverThread.controllerDisconnected();
 						}
 					} else if (event == GLFW_CONNECTED)
-						log.log(Level.INFO, assembleControllerLoggingMessage("Connected", jid));
+						log.log(INFO, assembleControllerLoggingMessage("Connected", jid));
 
 					SwingUtilities.invokeLater(() -> onControllersChanged(false));
 				}
@@ -1522,7 +1525,7 @@ public final class Main implements SingletonApp {
 			if (profilePath != null) {
 				loadProfile(new File(profilePath));
 				if (loadedProfile == null && cmdProfilePath == null) {
-					log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+					log.log(INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 					preferences.remove(PREFERENCES_LAST_PROFILE);
 				}
 			}
@@ -1821,7 +1824,7 @@ public final class Main implements SingletonApp {
 	private void loadProfile(final File file) {
 		stopAll();
 
-		log.log(Level.INFO, "Loading profile " + file.getAbsolutePath());
+		log.log(INFO, "Loading profile " + file.getAbsolutePath());
 
 		var profileLoaded = false;
 
@@ -1835,7 +1838,7 @@ public final class Main implements SingletonApp {
 				final var profile = gson.fromJson(jsonString, Profile.class);
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
-					log.log(Level.WARNING, "Trying to load a profile without version information");
+					log.log(WARNING, "Trying to load a profile without version information");
 					JOptionPane.showMessageDialog(frame,
 							MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 									strings.getString("AN_UNKNOWN")),
@@ -1843,13 +1846,13 @@ public final class Main implements SingletonApp {
 				} else {
 					final var v = versionsComparisonResult.get();
 					if (v < 0) {
-						log.log(Level.WARNING, "Trying to load a profile for an older release");
+						log.log(WARNING, "Trying to load a profile for an older release");
 						JOptionPane.showMessageDialog(frame,
 								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("AN_OLDER")),
 								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					} else if (v > 0) {
-						log.log(Level.WARNING, "Trying to load a profile for a newer release");
+						log.log(WARNING, "Trying to load a profile for a newer release");
 						JOptionPane.showMessageDialog(frame,
 								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("A_NEWER")),
@@ -1859,7 +1862,7 @@ public final class Main implements SingletonApp {
 
 				final var unknownActionClasses = actionAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty()) {
-					log.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
+					log.log(WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
 					JOptionPane.showMessageDialog(frame,
 							MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
@@ -1884,16 +1887,16 @@ public final class Main implements SingletonApp {
 					restartLast();
 				}
 			} catch (final JsonParseException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 		} catch (final NoSuchFileException | InvalidPathException e) {
-			log.log(Level.FINE, e.getMessage(), e);
+			log.log(FINE, e.getMessage(), e);
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 		}
 
 		if (!profileLoaded) {
-			log.log(Level.SEVERE, "Could load profile");
+			log.log(SEVERE, "Could load profile");
 			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
@@ -1901,7 +1904,7 @@ public final class Main implements SingletonApp {
 
 	@Override
 	public void newActivation(final String... args) {
-		log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+		log.log(INFO, "New activation with arguments: " + Arrays.toString(args));
 
 		if (args.length > 0)
 			try {
@@ -1916,7 +1919,7 @@ public final class Main implements SingletonApp {
 					handleTrayAndAutostartCommandLine(commandLine);
 				});
 			} catch (final ParseException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 		else
 			SwingUtilities.invokeLater(
@@ -2067,7 +2070,7 @@ public final class Main implements SingletonApp {
 			tabbedPane.insertTab(strings.getString("PROFILE_SETTINGS_TAB"), null, profileSettingsScrollPane, null,
 					tabbedPane.indexOfComponent(globalSettingsScrollPane));
 		} else
-			log.log(Level.INFO, "No controllers connected");
+			log.log(INFO, "No controllers connected");
 
 		if (selectFirstTab || !controllerConnected)
 			tabbedPane.setSelectedIndex(0);
@@ -2135,7 +2138,7 @@ public final class Main implements SingletonApp {
 			try {
 				serverSocket.close();
 			} catch (final IOException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 
 		if (input != null)
@@ -2184,7 +2187,7 @@ public final class Main implements SingletonApp {
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX))
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 
-		log.log(Level.INFO, "Saving profile " + file.getAbsolutePath());
+		log.log(INFO, "Saving profile " + file.getAbsolutePath());
 
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
@@ -2200,7 +2203,7 @@ public final class Main implements SingletonApp {
 			setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
 			scheduleStatusBarText(strings.getString("STATUS_READY"));
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
@@ -2251,7 +2254,7 @@ public final class Main implements SingletonApp {
 
 		final var guid = glfwGetJoystickGUID(jid);
 		if (guid != null) {
-			log.log(Level.INFO, "Selected controller " + selectedJid + "(" + guid + ")");
+			log.log(INFO, "Selected controller " + selectedJid + "(" + guid + ")");
 			preferences.put(PREFERENCES_LAST_CONTROLLER, guid);
 		}
 

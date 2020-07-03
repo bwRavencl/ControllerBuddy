@@ -22,6 +22,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
+import static java.util.logging.Level.WARNING;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -38,7 +39,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
@@ -460,7 +460,7 @@ public final class Input {
 		if (id < buttons.length)
 			buttons[id] = value;
 		else
-			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
+			log.log(WARNING, "Unable to set value for non-existent button " + id);
 	}
 
 	public void setCursorDeltaX(final int cursorDeltaX) {

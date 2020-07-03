@@ -18,6 +18,10 @@
 package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,7 +33,6 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -75,7 +78,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 		switch (clientState) {
 		case Connecting -> {
-			log.log(Level.INFO, "Connecting to " + host + ":" + port);
+			log.log(INFO, "Connecting to " + host + ":" + port);
 			SwingUtilities.invokeLater(() -> {
 				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
@@ -109,7 +112,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
 							final var clientVersion = VersionUtils.getMajorAndMinorVersion();
-							log.log(Level.WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
+							log.log(WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
 									+ serverProtocolVersion);
 							SwingUtilities.invokeLater(() -> {
 								JOptionPane.showMessageDialog(main.getFrame(),
@@ -132,7 +135,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 						});
 					}
 				} catch (final SocketTimeoutException e) {
-					log.log(Level.INFO, e.getMessage(), e);
+					log.log(INFO, e.getMessage(), e);
 					retry--;
 					final var finalRetry = retry;
 					SwingUtilities.invokeLater(() -> {
@@ -144,14 +147,14 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 			if (success) {
 				clientState = ClientState.Connected;
-				log.log(Level.INFO, "Successfully connected");
+				log.log(INFO, "Successfully connected");
 				SwingUtilities.invokeLater(() -> {
 					main.setStatusBarText(
 							MessageFormat.format(strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
 				});
 			} else {
 				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
-					log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
+					log.log(INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
 					SwingUtilities.invokeLater(() -> {
 						JOptionPane.showMessageDialog(main.getFrame(),
 								MessageFormat.format(strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
@@ -336,7 +339,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
-				log.log(Level.FINE, e.getMessage(), e);
+				log.log(FINE, e.getMessage(), e);
 				SwingUtilities.invokeLater(() -> {
 					JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -367,14 +370,14 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 			} else
 				forceStop = true;
 		} catch (final UnknownHostException e) {
-			log.log(Level.INFO, "Could not resolve host " + host);
+			log.log(INFO, "Could not resolve host " + host);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						MessageFormat.format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
 				JOptionPane.showMessageDialog(main.getFrame(),
 						strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),

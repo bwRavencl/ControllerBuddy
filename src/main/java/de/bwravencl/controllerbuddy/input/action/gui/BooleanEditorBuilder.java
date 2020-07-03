@@ -17,10 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static java.util.logging.Level.SEVERE;
+
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
@@ -45,7 +46,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 				setterMethod.invoke(action, selected);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

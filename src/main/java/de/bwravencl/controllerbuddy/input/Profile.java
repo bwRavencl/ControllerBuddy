@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.logging.Level.SEVERE;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 
@@ -26,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -82,7 +82,7 @@ public final class Profile implements Cloneable {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) action.clone());
 				} catch (final CloneNotSupportedException e1) {
-					log.log(Level.SEVERE, e1.getMessage(), e1);
+					log.log(SEVERE, e1.getMessage(), e1);
 				}
 			clonedButtonToModeActionsMap.put(e.getKey(), buttonToModeActions);
 		}
@@ -93,7 +93,7 @@ public final class Profile implements Cloneable {
 			try {
 				clonedModes.add((Mode) mode.clone());
 			} catch (final CloneNotSupportedException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				log.log(SEVERE, e.getMessage(), e);
 			}
 		profile.setModes(clonedModes);
 

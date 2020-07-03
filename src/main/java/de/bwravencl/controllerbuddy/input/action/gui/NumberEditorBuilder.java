@@ -17,11 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static java.util.logging.Level.SEVERE;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFormattedTextField;
@@ -53,7 +54,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 				setterMethod.invoke(action, value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

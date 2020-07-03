@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.logging.Level.SEVERE;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -38,7 +39,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -111,7 +111,7 @@ public final class EditActionsDialog extends JDialog {
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
@@ -318,7 +318,7 @@ public final class EditActionsDialog extends JDialog {
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -351,7 +351,7 @@ public final class EditActionsDialog extends JDialog {
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			log.log(SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -513,7 +513,7 @@ public final class EditActionsDialog extends JDialog {
 						editorBuilder.buildEditor(propertyPanel);
 					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 							| IllegalArgumentException | InvocationTargetException e1) {
-						log.log(Level.SEVERE, e1.getMessage(), e1);
+						log.log(SEVERE, e1.getMessage(), e1);
 					}
 				}
 			}

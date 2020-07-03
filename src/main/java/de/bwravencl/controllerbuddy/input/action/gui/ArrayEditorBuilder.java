@@ -17,10 +17,11 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static java.util.logging.Level.SEVERE;
+
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
@@ -44,7 +45,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				log.log(SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
