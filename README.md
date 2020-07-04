@@ -159,8 +159,8 @@ If an instance of ControllerBuddy is already running, launching a second instanc
 This can be used to integrate ControllerBuddy into third party applications.  
 For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration) exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
 
-#### Dependencies:
-ControllerBuddy depends on the following awesome software technologies and libraries:
+#### Attribution:
+ControllerBuddy uses the following awesome software technologies and libraries:
 - [OpenJDK 14](https://jdk.java.net/14)
 - [Apache Batik](https://xmlgraphics.apache.org/batik)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
