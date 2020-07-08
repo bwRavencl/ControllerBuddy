@@ -165,6 +165,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -225,25 +226,6 @@ import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public final class Main implements SingletonApp {
-
-	private final class AddModeAction extends AbstractAction {
-
-		private static final long serialVersionUID = -4881923833724315489L;
-
-		private AddModeAction() {
-			putValue(NAME, strings.getString("ADD_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("ADD_MODE_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final var mode = new Mode();
-			input.getProfile().getModes().add(mode);
-
-			setUnsavedChanges(true);
-			updateModesPanel();
-		}
-	}
 
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
@@ -506,6 +488,25 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			newProfile();
+		}
+	}
+
+	private final class NewModeAction extends AbstractAction {
+
+		private static final long serialVersionUID = -4881923833724315489L;
+
+		private NewModeAction() {
+			putValue(NAME, strings.getString("NEW_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("NEW_MODE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var mode = new Mode();
+			input.getProfile().getModes().add(mode);
+
+			setUnsavedChanges(true);
+			updateModesPanel();
 		}
 	}
 
@@ -915,7 +916,7 @@ public final class Main implements SingletonApp {
 	private static final int DIALOG_BOUNDS_X = 100;
 	private static final int DIALOG_BOUNDS_Y = 100;
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
-	private static final int DIALOG_BOUNDS_HEIGHT = 640;
+	private static final int DIALOG_BOUNDS_HEIGHT = 650;
 	private static final int SVG_VIEWBOX_MARGIN = 20;
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
@@ -923,6 +924,12 @@ public final class Main implements SingletonApp {
 	static final int DEFAULT_VGAP = 10;
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
+	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP,
+			DEFAULT_VGAP);
+	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
+	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
+	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
+	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
 	private static final String OPTION_TRAY = "tray";
@@ -947,6 +954,7 @@ public final class Main implements SingletonApp {
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
+
 	static {
 		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
 				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
@@ -1123,7 +1131,7 @@ public final class Main implements SingletonApp {
 	private JPanel modesPanel;
 	private JScrollPane modesScrollPane;
 	private JPanel modesListPanel;
-	private JPanel addModePanel;
+	private JPanel newModePanel;
 	private JPanel overlayPanel;
 	private JPanel visualizationPanel;
 	private AssignmentsComponent assignmentsComponent;
@@ -1152,7 +1160,6 @@ public final class Main implements SingletonApp {
 	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Rectangle prevMaxWindowBounds;
-	private final FlowLayout defaultFlowLayout = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP, DEFAULT_VGAP);
 	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
 			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 			new Insets(0, 0, 0, 0), 0, 5);
@@ -1279,7 +1286,7 @@ public final class Main implements SingletonApp {
 		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
 		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
 
-		final var pollIntervalPanel = new JPanel(defaultFlowLayout);
+		final var pollIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(pollIntervalPanel, settingsPanelGridBagConstraints);
 
 		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
@@ -1297,7 +1304,7 @@ public final class Main implements SingletonApp {
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (isWindows) {
-			final var vJoyDirectoryPanel = new JPanel(defaultFlowLayout);
+			final var vJoyDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			globalSettingsPanel.add(vJoyDirectoryPanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
@@ -1311,7 +1318,7 @@ public final class Main implements SingletonApp {
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
 
-			final var vJoyDevicePanel = new JPanel(defaultFlowLayout);
+			final var vJoyDevicePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			globalSettingsPanel.add(vJoyDevicePanel, settingsPanelGridBagConstraints);
 
 			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
@@ -1327,7 +1334,7 @@ public final class Main implements SingletonApp {
 					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
-			final var hostPanel = new JPanel(defaultFlowLayout);
+			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			globalSettingsPanel.add(hostPanel, settingsPanelGridBagConstraints);
 
 			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
@@ -1341,7 +1348,7 @@ public final class Main implements SingletonApp {
 			hostPanel.add(hostTextField);
 		}
 
-		final var portPanel = new JPanel(defaultFlowLayout);
+		final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(portPanel, settingsPanelGridBagConstraints);
 
 		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
@@ -1357,7 +1364,7 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
-		final var timeoutPanel = new JPanel(defaultFlowLayout);
+		final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(timeoutPanel, settingsPanelGridBagConstraints);
 
 		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
@@ -1374,7 +1381,7 @@ public final class Main implements SingletonApp {
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
-		final var darkThemePanel = new JPanel(defaultFlowLayout);
+		final var darkThemePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(darkThemePanel, settingsPanelGridBagConstraints);
 
 		final var darkThemeLabel = new JLabel(strings.getString("DARK_THEME_LABEL"));
@@ -1391,7 +1398,7 @@ public final class Main implements SingletonApp {
 		darkThemePanel.add(darkThemeCheckBox);
 
 		if (isWindows) {
-			final var preventPowerSaveModeSettingsPanel = new JPanel(defaultFlowLayout);
+			final var preventPowerSaveModeSettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			globalSettingsPanel.add(preventPowerSaveModeSettingsPanel, settingsPanelGridBagConstraints);
 
 			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
@@ -2004,11 +2011,11 @@ public final class Main implements SingletonApp {
 			modesScrollPane = new JScrollPane();
 			modesPanel.add(modesScrollPane, BorderLayout.CENTER);
 
-			addModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			final var addButton = new JButton(new AddModeAction());
-			addButton.setPreferredSize(BUTTON_DIMENSION);
-			addModePanel.add(addButton);
-			modesPanel.add(addModePanel, BorderLayout.SOUTH);
+			newModePanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
+			final var newModeButton = new JButton(new NewModeAction());
+			newModeButton.setPreferredSize(BUTTON_DIMENSION);
+			newModePanel.add(newModeButton);
+			modesPanel.add(newModePanel, BorderLayout.SOUTH);
 
 			assignmentsComponent = new AssignmentsComponent(this);
 			tabbedPane.insertTab(strings.getString("ASSIGNMENTS_TAB"), null, assignmentsComponent, null,
@@ -2054,7 +2061,7 @@ public final class Main implements SingletonApp {
 				svgCanvas.setBackground(TRANSPARENT);
 				visualizationPanel.add(new JScrollPane(svgCanvas), BorderLayout.CENTER);
 
-				final var exportPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+				final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
 				final var exportButton = new JButton(new ExportAction());
 				exportButton.setPreferredSize(BUTTON_DIMENSION);
 				exportPanel.add(exportButton);
@@ -2475,43 +2482,45 @@ public final class Main implements SingletonApp {
 
 		modesListPanel.removeAll();
 
+		final var buttonGridBagConstraints = new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0);
+
 		final var modes = input.getProfile().getModes();
 		for (var i = 0; i < modes.size(); i++) {
 			final var mode = modes.get(i);
 
 			final var modePanel = new JPanel(new GridBagLayout());
-			modesListPanel.add(modePanel,
-					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-							new Insets(DEFAULT_VGAP, DEFAULT_HGAP, 0, DEFAULT_HGAP), 0, 5));
+			modePanel.setBorder(LIST_ITEM_BORDER);
+			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
 
 			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
-			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
-			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			if (Profile.defaultMode.equals(mode) || OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
 				descriptionTextField.setEditable(false);
-				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width));
+				descriptionTextField.setFocusable(false);
+				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width), buttonGridBagConstraints);
 			} else {
 				final var deleteButton = new JButton(new RemoveModeAction(mode));
 				deleteButton.setPreferredSize(BUTTON_DIMENSION);
-				modePanel.add(deleteButton, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-						GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+				modePanel.add(deleteButton, buttonGridBagConstraints);
 			}
 		}
 
@@ -2603,16 +2612,15 @@ public final class Main implements SingletonApp {
 		final var borderColor = UIManager.getColor("Component.borderColor");
 		for (final var virtualAxis : Input.VirtualAxis.values()) {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
-			indicatorsListPanel.add(indicatorPanel,
-					new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-							GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL,
-							new Insets(DEFAULT_VGAP, DEFAULT_HGAP, 0, DEFAULT_HGAP), 0, 5));
+			indicatorPanel.setBorder(LIST_ITEM_BORDER);
+			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
 
 			final var virtualAxisLabel = new JLabel(
 					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
-			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -2628,25 +2636,25 @@ public final class Main implements SingletonApp {
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
-			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
 			colorButton.setPreferredSize(BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
-			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var invertedCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
 			invertedCheckBox.setSelected(enabled && overlayAxis.inverted);
 			invertedCheckBox.setEnabled(enabled);
-			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1d, 0d, GridBagConstraints.BASELINE,
-					GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var displayCheckBox = new JCheckBox(new DisplayIndicatorAction(virtualAxis));
 			displayCheckBox.setSelected(enabled);
 			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.BASELINE, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 		}
 
 		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
@@ -2659,7 +2667,7 @@ public final class Main implements SingletonApp {
 		final var panelsEnabled = !isLocalThreadActive() && !isClientThreadActive() && !isServerThreadActive();
 
 		setEnabledRecursive(modesListPanel, panelsEnabled);
-		setEnabledRecursive(addModePanel, panelsEnabled);
+		setEnabledRecursive(newModePanel, panelsEnabled);
 
 		if (assignmentsComponent != null)
 			assignmentsComponent.setEnabled(panelsEnabled);
@@ -2680,7 +2688,7 @@ public final class Main implements SingletonApp {
 		profileSettingsPanel.removeAll();
 		showVrOverlayCheckBox = null;
 
-		final var keyRepeatIntervalPanel = new JPanel(defaultFlowLayout);
+		final var keyRepeatIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		profileSettingsPanel.add(keyRepeatIntervalPanel, settingsPanelGridBagConstraints);
 
 		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
@@ -2703,7 +2711,7 @@ public final class Main implements SingletonApp {
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
 
 		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()) {
-			final var overlaySettingsPanel = new JPanel(defaultFlowLayout);
+			final var overlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
 
 			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
@@ -2728,7 +2736,7 @@ public final class Main implements SingletonApp {
 			overlaySettingsPanel.add(showOverlayCheckBox);
 
 			if (isWindows) {
-				final var vrOverlaySettingsPanel = new JPanel(defaultFlowLayout);
+				final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 				profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
 
 				final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
