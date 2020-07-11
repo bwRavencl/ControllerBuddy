@@ -48,10 +48,13 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && abs(value) > deadZone) {
-			final var d = normalize(signum(value) * (float) pow(abs(value) * 100f, exponent),
-					(float) -pow(100f, exponent), (float) pow(100f, exponent), -maxCursorSpeed, maxCursorSpeed)
-					* input.getRateMultiplier();
+		final var absValue = abs(value);
+
+		if (!input.isAxisSuspended(component) && absValue > deadZone) {
+			final var inMax = (float) pow((1f - deadZone) * 100f, exponent);
+
+			final var d = normalize(signum(value) * (float) pow((absValue - deadZone) * 100f, exponent), -inMax, inMax,
+					-maxCursorSpeed, maxCursorSpeed) * input.getRateMultiplier();
 			moveCursor(input, d);
 		} else
 			remainingD = 0f;

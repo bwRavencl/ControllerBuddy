@@ -38,6 +38,8 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
+	private static final float MIN_STEP = 1e-4f;
+
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
 	private float exponent = DEFAULT_EXPONENT;
 
@@ -50,17 +52,30 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
 	private Float detentValue = null;
 
+	transient float remainingD;
+
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && abs(value) > deadZone) {
-			final var d = normalize(signum(value) * (float) pow(abs(value) * 100f, exponent),
-					(float) -pow(100f, exponent), (float) pow(100f, exponent), -maxRelativeSpeed, maxRelativeSpeed)
-					* input.getRateMultiplier();
+		final var absValue = abs(value);
 
-			final var oldValue = normalize(input.getAxes().get(virtualAxis), input.getOutputThread().getMinAxisValue(),
-					input.getOutputThread().getMaxAxisValue(), -1f, 1f);
+		if (!input.isAxisSuspended(component) && absValue > deadZone) {
+			final var inMax = (float) pow((1f - deadZone) * 100f, exponent);
 
-			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
+			var d = normalize(signum(value) * (float) pow((absValue - deadZone) * 100f, exponent), -inMax, inMax,
+					-maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
+
+			d += remainingD;
+
+			if (abs(d) < MIN_STEP)
+				remainingD = d;
+			else {
+				remainingD = 0f;
+
+				final var oldValue = normalize(input.getAxes().get(virtualAxis),
+						input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1f, 1f);
+
+				input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
+			}
 		}
 	}
 
