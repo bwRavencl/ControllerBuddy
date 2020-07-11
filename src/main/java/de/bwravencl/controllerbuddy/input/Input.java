@@ -145,6 +145,7 @@ public final class Input {
 	private float rateMultiplier = 0f;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
 	private final DualShock4Extension dualShock4Extension;
+	private float planckLength;
 
 	public Input(final Main main, final int jid) {
 		this.main = main;
@@ -229,6 +230,10 @@ public final class Input {
 		return outputThread;
 	}
 
+	public float getPlanckLength() {
+		return planckLength;
+	}
+
 	public Profile getProfile() {
 		return profile;
 	}
@@ -242,6 +247,8 @@ public final class Input {
 	}
 
 	public void init() {
+		planckLength = 2f / (outputThread.getMaxAxisValue() - outputThread.getMinAxisValue());
+
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
 				if (action instanceof IInitializationAction)

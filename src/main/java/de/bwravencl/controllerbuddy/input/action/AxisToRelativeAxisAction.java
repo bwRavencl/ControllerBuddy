@@ -38,7 +38,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
-	private static final float MIN_STEP = 1e-4f;
+	// private static final float MIN_STEP = 1e-4f;
 
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
 	private float exponent = DEFAULT_EXPONENT;
@@ -66,13 +66,14 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 			d += remainingD;
 
-			if (abs(d) < MIN_STEP)
+			if (abs(d) < input.getPlanckLength())
 				remainingD = d;
 			else {
 				remainingD = 0f;
 
-				final var oldValue = normalize(input.getAxes().get(virtualAxis),
-						input.getOutputThread().getMinAxisValue(), input.getOutputThread().getMaxAxisValue(), -1f, 1f);
+				final var outputThread = input.getOutputThread();
+				final var oldValue = normalize(input.getAxes().get(virtualAxis), outputThread.getMinAxisValue(),
+						outputThread.getMaxAxisValue(), -1f, 1f);
 
 				input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
 			}
