@@ -111,10 +111,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 	}
 
 	public static String getArchFolderName() {
-		if (Platform.is64Bit())
-			return "x64";
-		else
-			return "x86";
+		return Platform.is64Bit() ? "x64" : "x86";
 	}
 
 	public static String getDefaultInstallationPath() {

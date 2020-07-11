@@ -114,17 +114,13 @@ public final class Input {
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
 			final float outMax) {
-		final float newValue;
 		final var oldRange = inMax - inMin;
-
 		if (oldRange == 0f)
-			newValue = outMin;
-		else {
-			final var newRange = outMax - outMin;
-			newValue = (value - inMin) * newRange / oldRange + outMin;
-		}
+			return outMin;
 
-		return newValue;
+		final var newRange = outMax - outMin;
+
+		return (value - inMin) * newRange / oldRange + outMin;
 	}
 
 	private final Main main;
@@ -173,6 +169,7 @@ public final class Input {
 
 		final var minAxisValue = outputThread.getMinAxisValue();
 		final var maxAxisValue = outputThread.getMaxAxisValue();
+
 		return (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue);
 	}
 
