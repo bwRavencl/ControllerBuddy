@@ -40,11 +40,6 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -61,6 +56,11 @@ import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import purejavahidapi.HidDevice;
+import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
+import purejavahidapi.PureJavaHidApi;
 
 public final class DualShock4Extension {
 
