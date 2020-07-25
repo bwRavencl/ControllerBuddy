@@ -27,6 +27,17 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import static javax.swing.JOptionPane.CLOSED_OPTION;
+import static javax.swing.JOptionPane.DEFAULT_OPTION;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static javax.swing.JOptionPane.NO_OPTION;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static javax.swing.JOptionPane.YES_NO_CANCEL_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import static javax.swing.JOptionPane.showMessageDialog;
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
 import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
 import static org.apache.batik.constants.XMLConstants.XLINK_NAMESPACE_URI;
@@ -240,9 +251,9 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			final var vJoyDirectoryFileChooser = new JFileChooser(
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
-			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			vJoyDirectoryFileChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
-			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != APPROVE_OPTION)
 				return;
 
 			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
@@ -253,10 +264,10 @@ public final class Main implements SingletonApp {
 				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
 				vJoyDirectoryLabel1.setText(vjoyPath);
 			} else
-				JOptionPane.showMessageDialog(frame,
+				showMessageDialog(frame,
 						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
 								VJoyOutputThread.getDefaultInstallationPath()),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 		}
 	}
 
@@ -298,7 +309,7 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			final var htmlFileChooser = new HtmlFileChooser(currentFile);
 
-			if (htmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION)
+			if (htmlFileChooser.showSaveDialog(frame) != APPROVE_OPTION)
 				return;
 
 			try {
@@ -353,8 +364,8 @@ public final class Main implements SingletonApp {
 				}
 			} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e1) {
 				log.log(SEVERE, e1.getMessage(), e);
-				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			}
 		}
 	}
@@ -380,13 +391,13 @@ public final class Main implements SingletonApp {
 		public void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var result = JOptionPane.showConfirmDialog(this,
+				final var result = showConfirmDialog(this,
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
-						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.CANCEL_OPTION:
 					cancelSelection();
-				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
+				case NO_OPTION, CLOSED_OPTION:
 					return;
 				default:
 					break;
@@ -521,7 +532,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+			if (profileFileChooser.showOpenDialog(frame) == APPROVE_OPTION)
 				loadProfile(profileFileChooser.getSelectedFile());
 		}
 	}
@@ -544,13 +555,13 @@ public final class Main implements SingletonApp {
 		public void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var result = JOptionPane.showConfirmDialog(this,
+				final var result = showConfirmDialog(this,
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
-						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.CANCEL_OPTION:
 					cancelSelection();
-				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
+				case NO_OPTION, CLOSED_OPTION:
 					return;
 				default:
 					break;
@@ -766,9 +777,8 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
-					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
+			showMessageDialog(frame, MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
+					(String) getValue(NAME), INFORMATION_MESSAGE, icon);
 		}
 	}
 
@@ -809,7 +819,7 @@ public final class Main implements SingletonApp {
 				textArea.setEditable(false);
 				final var scrollPane = new JScrollPane(textArea);
 				scrollPane.setPreferredSize(new Dimension(600, 400));
-				JOptionPane.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
+				showMessageDialog(frame, scrollPane, (String) getValue(NAME), DEFAULT_OPTION);
 			} catch (final IOException e1) {
 				log.log(SEVERE, e1.getMessage(), e1);
 			}
@@ -1041,9 +1051,9 @@ public final class Main implements SingletonApp {
 				final var sw = new StringWriter();
 				e.printStackTrace(new PrintWriter(sw));
 
-				JOptionPane.showMessageDialog(parentComponent,
+				showMessageDialog(parentComponent,
 						MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 
 				terminate(1);
 			});
@@ -1462,11 +1472,11 @@ public final class Main implements SingletonApp {
 			log.log(SEVERE, "Could not initialize GLFW");
 
 			if (isWindows)
-				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_WINDOWS"),
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			else {
-				JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				quit();
 			}
 		}
@@ -1521,11 +1531,11 @@ public final class Main implements SingletonApp {
 
 		if (glfwInitialized && presentJids.isEmpty()) {
 			if (isWindows)
-				JOptionPane.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
-						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
+						strings.getString("INFORMATION_DIALOG_TITLE"), INFORMATION_MESSAGE);
 			else
-				JOptionPane.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
-						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+						strings.getString("INFORMATION_DIALOG_TITLE"), INFORMATION_MESSAGE);
 		} else {
 			final var profilePath = cmdProfilePath != null ? cmdProfilePath
 					: preferences.get(PREFERENCES_LAST_PROFILE, null);
@@ -1705,13 +1715,13 @@ public final class Main implements SingletonApp {
 			if (!isServerThreadActive())
 				startServer();
 		} else
-			JOptionPane.showMessageDialog(frame,
+			showMessageDialog(frame,
 					MessageFormat.format(strings.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
 							OPTION_AUTOSTART, autostartOption,
 							MessageFormat.format(
 									isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
 											: strings.getString("SERVER"),
-									strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
+									strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE)));
 	}
 
 	private void initOverlay() {
@@ -1846,24 +1856,24 @@ public final class Main implements SingletonApp {
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
 					log.log(WARNING, "Trying to load a profile without version information");
-					JOptionPane.showMessageDialog(frame,
+					showMessageDialog(frame,
 							MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 									strings.getString("AN_UNKNOWN")),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+							strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 				} else {
 					final var v = versionsComparisonResult.get();
 					if (v < 0) {
 						log.log(WARNING, "Trying to load a profile for an older release");
-						JOptionPane.showMessageDialog(frame,
+						showMessageDialog(frame,
 								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("AN_OLDER")),
-								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 					} else if (v > 0) {
 						log.log(WARNING, "Trying to load a profile for a newer release");
-						JOptionPane.showMessageDialog(frame,
+						showMessageDialog(frame,
 								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("A_NEWER")),
-								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 					}
 				}
 
@@ -1871,10 +1881,10 @@ public final class Main implements SingletonApp {
 				if (!unknownActionClasses.isEmpty()) {
 					log.log(WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
-					JOptionPane.showMessageDialog(frame,
+					showMessageDialog(frame,
 							MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 									String.join("\n", unknownActionClasses)),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+							strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 				}
 
 				profileLoaded = input.setProfile(profile, input.getJid());
@@ -1904,8 +1914,8 @@ public final class Main implements SingletonApp {
 
 		if (!profileLoaded) {
 			log.log(SEVERE, "Could load profile");
-			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 		}
 	}
 
@@ -1929,9 +1939,8 @@ public final class Main implements SingletonApp {
 				log.log(SEVERE, e.getMessage(), e);
 			}
 		else
-			SwingUtilities.invokeLater(
-					() -> JOptionPane.showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+			SwingUtilities.invokeLater(() -> showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE));
 	}
 
 	private void newProfile() {
@@ -2211,14 +2220,14 @@ public final class Main implements SingletonApp {
 			scheduleStatusBarText(strings.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
-			JOptionPane.showMessageDialog(frame, strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(frame, strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 		}
 	}
 
 	private void saveProfileAs() {
 		profileFileChooser.setSelectedFile(currentFile);
-		if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
+		if (profileFileChooser.showSaveDialog(frame) == APPROVE_OPTION)
 			saveProfile(profileFileChooser.getSelectedFile());
 	}
 

@@ -22,6 +22,8 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,7 +37,6 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -115,10 +116,10 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 							log.log(WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
 									+ serverProtocolVersion);
 							SwingUtilities.invokeLater(() -> {
-								JOptionPane.showMessageDialog(main.getFrame(),
+								showMessageDialog(main.getFrame(),
 										MessageFormat.format(strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
 												clientVersion, serverProtocolVersion),
-										strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+										strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 							});
 							retry = -1;
 						} else {
@@ -156,10 +157,9 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
 					log.log(INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
 					SwingUtilities.invokeLater(() -> {
-						JOptionPane.showMessageDialog(main.getFrame(),
-								MessageFormat.format(strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
-										N_CONNECTION_RETRIES),
-								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						showMessageDialog(main.getFrame(), MessageFormat
+								.format(strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"), N_CONNECTION_RETRIES),
+								strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 					});
 				}
 
@@ -341,8 +341,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 			} catch (final SocketTimeoutException e) {
 				log.log(FINE, e.getMessage(), e);
 				SwingUtilities.invokeLater(() -> {
-					JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
-							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
+							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
 
 				forceStop = true;
@@ -372,16 +372,15 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 		} catch (final UnknownHostException e) {
 			log.log(INFO, "Could not resolve host " + host);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(),
+				showMessageDialog(main.getFrame(),
 						MessageFormat.format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(),
-						strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final InterruptedException e) {
 		} finally {

@@ -29,6 +29,9 @@ import static java.lang.Math.min;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 import java.io.IOException;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import com.sun.jna.Pointer;
@@ -364,9 +366,9 @@ public final class DualShock4Extension {
 				+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(Collectors.joining(", ")));
 
 		if (count > 1)
-			JOptionPane.showMessageDialog(input.getMain().getFrame(),
+			showMessageDialog(input.getMain().getFrame(),
 					strings.getString("MULTIPLE_DUAL_SHOCK_4_CONTROLLERS_CONNECTED_DIALOG_TEXT"),
-					strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 
 		final var hidDeviceInfo = dualShock4Devices.get(0);
 		log.log(INFO, "Using DualShock 4 controller " + hidDeviceInfo.getDeviceId());
@@ -443,13 +445,13 @@ public final class DualShock4Extension {
 					}
 
 					if (earphoneDevice == null || microphoneDevice == null)
-						JOptionPane.showMessageDialog(input.getMain().getFrame(),
+						showMessageDialog(input.getMain().getFrame(),
 								strings.getString("COULD_NOT_FIND_DUAL_SHOCK_4_AUDIO_DEVICE_DIALOG_TEXT"),
-								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+								strings.getString("WARNING_DIALOG_TITLE"), ERROR_MESSAGE);
 				} else
-					JOptionPane.showMessageDialog(input.getMain().getFrame(),
+					showMessageDialog(input.getMain().getFrame(),
 							strings.getString("COULD_NOT_INITIALIZE_COM_LIBRARY_DIALOG_TEXT"),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+							strings.getString("WARNING_DIALOG_TITLE"), ERROR_MESSAGE);
 			}
 
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

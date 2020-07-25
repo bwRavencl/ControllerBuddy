@@ -21,6 +21,8 @@ import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -34,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -256,18 +257,17 @@ public final class ServerOutputThread extends OutputThread {
 		} catch (final BindException e) {
 			log.log(WARNING, "Could not bind socket on port " + port);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(),
+				showMessageDialog(main.getFrame(),
 						MessageFormat.format(strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
 			log.log(FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
 			SwingUtilities.invokeLater(() -> {
-				JOptionPane.showMessageDialog(main.getFrame(),
-						strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final InterruptedException e) {
 		} finally {

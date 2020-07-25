@@ -20,10 +20,11 @@ package de.bwravencl.controllerbuddy.output;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -59,8 +60,8 @@ public abstract class OutputThread extends Thread {
 
 		log.log(WARNING, "Could not read from controller");
 		SwingUtilities.invokeLater(() -> {
-			JOptionPane.showMessageDialog(main.getFrame(), strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			showMessageDialog(main.getFrame(), strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 		});
 	}
 
