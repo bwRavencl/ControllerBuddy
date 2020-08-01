@@ -17,8 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Collectors;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
@@ -38,8 +39,7 @@ public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 	Mode[] getValues() {
 		final var profile = editActionsDialog.getInput().getProfile();
 
-		final var modes = profile.getModes().stream().filter(m -> !Profile.defaultMode.equals(m))
-				.collect(Collectors.toList());
+		final var modes = profile.getModes().stream().filter(m -> !Profile.defaultMode.equals(m)).collect(toList());
 
 		if (!profile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
 			modes.add(OnScreenKeyboard.onScreenKeyboardMode);

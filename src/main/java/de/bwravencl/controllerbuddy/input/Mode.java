@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
@@ -141,7 +141,7 @@ public final class Mode implements Cloneable {
 
 	public Set<IAction<?>> getAllActions() {
 		return Stream.concat(axisToActionsMap.values().stream(), buttonToActionsMap.values().stream())
-				.flatMap(List::stream).collect(Collectors.toUnmodifiableSet());
+				.flatMap(List::stream).collect(toUnmodifiableSet());
 	}
 
 	public Map<Integer, List<IAction<Float>>> getAxisToActionsMap() {

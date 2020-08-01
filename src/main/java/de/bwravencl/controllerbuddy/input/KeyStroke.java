@@ -17,9 +17,10 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public final class KeyStroke implements Cloneable {
 
@@ -73,6 +74,6 @@ public final class KeyStroke implements Cloneable {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
 		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
 		return collectedKeyCodes.stream().map(keyCode -> DirectInputKeyCode.keyCodeToNameMap.get(keyCode))
-				.collect(Collectors.joining(" + "));
+				.collect(joining(" + "));
 	}
 }

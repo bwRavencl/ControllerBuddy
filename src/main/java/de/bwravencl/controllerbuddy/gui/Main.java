@@ -27,6 +27,7 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static java.util.stream.Collectors.joining;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import static javax.swing.JOptionPane.CLOSED_OPTION;
@@ -138,7 +139,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -813,7 +813,7 @@ public final class Main implements SingletonApp {
 		public void actionPerformed(final ActionEvent e) {
 			try (final var bufferedReader = new BufferedReader(new InputStreamReader(
 					ClassLoader.getSystemResourceAsStream(Main.LICENSES_FILENAME), StandardCharsets.UTF_8))) {
-				final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
+				final var text = bufferedReader.lines().collect(joining("\n"));
 				final var textArea = new JTextArea(text);
 				textArea.setLineWrap(true);
 				textArea.setEditable(false);
@@ -2778,7 +2778,7 @@ public final class Main implements SingletonApp {
 			return;
 
 		final var textContent = actions.stream().map(action -> action.getDescription(input)).distinct()
-				.collect(Collectors.joining(", "));
+				.collect(joining(", "));
 		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
 		final var tSpanElement = textElement.getFirstChild();
 		tSpanElement.setTextContent(textContent);

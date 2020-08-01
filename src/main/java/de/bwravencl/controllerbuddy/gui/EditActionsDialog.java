@@ -21,6 +21,7 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.util.logging.Level.SEVERE;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -40,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -475,7 +475,7 @@ public final class EditActionsDialog extends JDialog {
 					final var a2 = e2.getValue();
 
 					return a1.order() - a2.order();
-				}).collect(Collectors.toUnmodifiableList());
+				}).collect(toUnmodifiableList());
 
 				for (final var entry : sortedEntires) {
 					final var field = entry.getKey();

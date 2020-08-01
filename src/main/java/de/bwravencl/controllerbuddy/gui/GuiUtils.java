@@ -23,6 +23,7 @@ import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.stream.Collectors.joining;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -37,7 +38,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.prefs.Preferences;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -123,7 +123,7 @@ final class GuiUtils {
 			if (c == ' ')
 				return "_";
 			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
-		}).collect(Collectors.joining());
+		}).collect(joining());
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return underscoreTitle + "_location";

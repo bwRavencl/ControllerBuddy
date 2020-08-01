@@ -29,6 +29,8 @@ import static java.lang.Math.min;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -38,7 +40,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -356,14 +357,14 @@ public final class DualShock4Extension {
 		final var dualShock4Devices = PureJavaHidApi.enumerateDevices().stream()
 				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
 						&& hidDeviceInfo.getProductId() == productId)
-				.collect(Collectors.toUnmodifiableList());
+				.collect(toUnmodifiableList());
 		final var count = dualShock4Devices.size();
 
 		if (count < 1)
 			return null;
 
 		log.log(INFO, "Found " + count + " DualShock 4 controller(s): "
-				+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(Collectors.joining(", ")));
+				+ dualShock4Devices.stream().map(HidDeviceInfo::getDeviceId).collect(joining(", ")));
 
 		if (count > 1)
 			showMessageDialog(input.getMain().getFrame(),
