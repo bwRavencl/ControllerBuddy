@@ -17,9 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import static java.util.stream.Collectors.toUnmodifiableSet;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 public final class DirectInputKeyCode {
@@ -243,6 +247,7 @@ public final class DirectInputKeyCode {
 
 	public static final Map<String, Integer> nameToKeyCodeMap;
 	public static final Map<Integer, String> keyCodeToNameMap;
+	public static final Set<Integer> extendedKeyScanCodesSet;
 
 	static {
 		final var modifiableNameToKeyCodeMap = new TreeMap<String, Integer>();
@@ -255,6 +260,15 @@ public final class DirectInputKeyCode {
 
 		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
 		keyCodeToNameMap = Collections.unmodifiableMap(modifiableKeyCodeToNameMap);
+
+		extendedKeyScanCodesSet = keyCodeToNameMap.entrySet().stream().filter(e -> {
+			final var name = e.getValue();
+			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
+					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
+					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)
+					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_PAUSE.equals(name)
+					|| DIK_SYSRQ.equals(name) || DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name);
+		}).map(Entry::getKey).collect(toUnmodifiableSet());
 	}
 
 	private final int keyCode;

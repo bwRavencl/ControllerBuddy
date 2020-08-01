@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static de.bwravencl.controllerbuddy.input.DirectInputKeyCode.extendedKeyScanCodesSet;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
@@ -94,7 +95,10 @@ public abstract class VJoyOutputThread extends OutputThread {
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wScan = new WORD(scanCode);
-		input.input.ki.dwFlags = new DWORD((down ? 0 : KEYBDINPUT.KEYEVENTF_KEYUP) | KEYBDINPUT.KEYEVENTF_SCANCODE);
+		var flags = (down ? 0 : KEYBDINPUT.KEYEVENTF_KEYUP) | KEYBDINPUT.KEYEVENTF_SCANCODE;
+		if (extendedKeyScanCodesSet.contains(scanCode))
+			flags |= KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
+		input.input.ki.dwFlags = new DWORD(flags);
 
 		User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 	}
