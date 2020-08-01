@@ -65,6 +65,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private static final int BASE_BUTTON_SIZE = 55;
 
+		volatile boolean pressed;
+
 		Color defaultBackground;
 		Color defaultForeground;
 
@@ -86,7 +88,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		abstract boolean poll(final Input input);
 
-		abstract void press();
+		abstract void press(final boolean lock);
 
 		abstract void release();
 
@@ -174,7 +176,7 @@ public final class OnScreenKeyboard extends JFrame {
 				public void mousePressed(final MouseEvent e) {
 					if (SwingUtilities.isLeftMouseButton(e)) {
 						mouseDown = true;
-						press();
+						press(false);
 					}
 				}
 
@@ -238,7 +240,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void press() {
+		void press(final boolean lock) {
 			invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this))
@@ -246,6 +248,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 			changed = true;
 			anyChanges = true;
+			pressed = !lock;
 		}
 
 		@Override
@@ -260,6 +263,8 @@ public final class OnScreenKeyboard extends JFrame {
 				changed = true;
 				anyChanges = true;
 			}
+
+			pressed = false;
 		}
 
 		@Override
@@ -267,7 +272,7 @@ public final class OnScreenKeyboard extends JFrame {
 			if (heldButtons.contains(this))
 				release();
 			else {
-				press();
+				press(true);
 				beginPress = 0L;
 			}
 		}
@@ -319,16 +324,19 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void press() {
+		void press(final boolean lock) {
 			if (wasUp) {
 				toggleLock();
 				wasUp = false;
 			}
+
+			pressed = true;
 		}
 
 		@Override
 		void release() {
 			wasUp = true;
+			pressed = false;
 		}
 
 		@Override
@@ -544,7 +552,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorDown() {
 		SwingUtilities.invokeLater(() -> {
-			unfocusCurrentButton();
+			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();
 			if (selectedRow < keyboardButtons.length - 1)
@@ -557,7 +565,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorLeft() {
 		SwingUtilities.invokeLater(() -> {
-			unfocusCurrentButton();
+			unselectCurrentButton();
+
 			if (selectedColumn > 0)
 				selectedColumn--;
 			else
@@ -568,7 +577,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorRight() {
 		SwingUtilities.invokeLater(() -> {
-			unfocusCurrentButton();
+			unselectCurrentButton();
+
 			if (selectedColumn < keyboardButtons[selectedRow].length - 1)
 				selectedColumn++;
 			else
@@ -579,7 +589,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorUp() {
 		SwingUtilities.invokeLater(() -> {
-			unfocusCurrentButton();
+			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();
 			if (selectedRow > 0)
@@ -603,7 +613,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void pressSelected() {
-		keyboardButtons[selectedRow][selectedColumn].press();
+		keyboardButtons[selectedRow][selectedColumn].press(false);
 	}
 
 	private void releaseAll() {
@@ -652,8 +662,13 @@ public final class OnScreenKeyboard extends JFrame {
 		keyboardButtons[selectedRow][selectedColumn].toggleLock();
 	}
 
-	private void unfocusCurrentButton() {
-		keyboardButtons[selectedRow][selectedColumn].setFocus(false);
+	private void unselectCurrentButton() {
+		final var currentButton = keyboardButtons[selectedRow][selectedColumn];
+
+		if (currentButton.pressed)
+			currentButton.release();
+
+		currentButton.setFocus(false);
 	}
 
 	void updateLocation() {
