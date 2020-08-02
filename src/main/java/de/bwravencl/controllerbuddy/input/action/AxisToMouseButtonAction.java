@@ -37,23 +37,8 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue) {
-			if (downUp) {
-				if (wasUp) {
-					input.getDownUpMouseButtons().add(mouseButton);
-					initiator = true;
-					wasUp = false;
-				}
-			} else {
-				input.getDownMouseButtons().add(mouseButton);
-				initiator = true;
-			}
-		} else if (downUp)
-			wasUp = true;
-		else if (initiator) {
-			input.getDownMouseButtons().remove(mouseButton);
-			initiator = false;
-		}
+		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
+		handleAction(inZone, input);
 	}
 
 	public float getMaxAxisValue() {

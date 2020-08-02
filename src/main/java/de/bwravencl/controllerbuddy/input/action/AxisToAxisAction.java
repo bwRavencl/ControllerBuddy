@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 
 @Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
-public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction {
+public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;
 	private static final float DEFAULT_INITIAL_VALUE = 0f;

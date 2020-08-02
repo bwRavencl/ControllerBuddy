@@ -32,24 +32,7 @@ public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Byte> i
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
-
-		if (value == 0) {
-			if (downUp)
-				wasUp = true;
-			else if (initiator) {
-				input.getDownMouseButtons().remove(mouseButton);
-				initiator = false;
-			}
-		} else if (downUp) {
-			if (wasUp) {
-				input.getDownUpMouseButtons().add(mouseButton);
-				initiator = true;
-				wasUp = false;
-			}
-		} else {
-			input.getDownMouseButtons().add(mouseButton);
-			initiator = true;
-		}
+		handleAction(value != 0, input);
 	}
 
 	@Override

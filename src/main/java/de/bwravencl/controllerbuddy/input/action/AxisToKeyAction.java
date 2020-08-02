@@ -37,18 +37,8 @@ public final class AxisToKeyAction extends ToKeyAction<Float> implements IAxisTo
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue) {
-			if (downUp) {
-				if (wasUp) {
-					input.getDownUpKeyStrokes().add(keystroke);
-					wasUp = false;
-				}
-			} else
-				input.getDownKeyStrokes().add(keystroke);
-		} else if (downUp)
-			wasUp = true;
-		else
-			input.getDownKeyStrokes().remove(keystroke);
+		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
+		handleAction(inZone, input);
 	}
 
 	public float getMaxAxisValue() {

@@ -32,19 +32,7 @@ public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButto
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, value);
-
-		if (value == 0) {
-			if (downUp)
-				wasUp = true;
-			else
-				input.getDownKeyStrokes().remove(keystroke);
-		} else if (downUp) {
-			if (wasUp) {
-				input.getDownUpKeyStrokes().add(keystroke);
-				wasUp = false;
-			}
-		} else
-			input.getDownKeyStrokes().add(keystroke);
+		handleAction(value != 0, input);
 	}
 
 	@Override

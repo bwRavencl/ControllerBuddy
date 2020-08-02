@@ -52,6 +52,8 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
 
+	JComboBox<T> comboBox;
+
 	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
 			final Class<?> fieldType) throws NoSuchFieldException, SecurityException, NoSuchMethodException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -60,7 +62,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		final var comboBox = new JComboBox<>(getValues());
+		comboBox = new JComboBox<>(getValues());
 		comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
 		comboBox.setSelectedItem(initialValue);
 		parentPanel.add(comboBox);

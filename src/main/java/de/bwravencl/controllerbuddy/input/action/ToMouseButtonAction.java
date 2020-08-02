@@ -23,25 +23,31 @@ import java.text.MessageFormat;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 
-abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> {
+abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
-	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class, order = 11)
-	boolean downUp = false;
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	Activation activation = Activation.REPEAT;
 
 	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	int mouseButton = DEFAULT_MOUSE_BUTTON;
 
-	transient boolean wasUp = true;
-	transient boolean initiator = false;
+	private transient boolean canActivate = true;
+
+	private transient boolean initiator = false;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	@Override
+	public Activation getActivation() {
+		return activation;
 	}
 
 	@Override
@@ -56,12 +62,52 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 		return mouseButton;
 	}
 
-	public boolean isDownUp() {
-		return downUp;
+	void handleAction(final boolean hot, final Input input) {
+		switch (activation) {
+		case REPEAT:
+			final var downMouseButtons = input.getDownMouseButtons();
+			if (!hot) {
+				if (initiator) {
+					initiator = false;
+					downMouseButtons.remove(mouseButton);
+				}
+			} else {
+				initiator = true;
+				downMouseButtons.add(mouseButton);
+			}
+			break;
+		case SINGLE_STROKE:
+			if (!hot)
+				canActivate = true;
+			else if (canActivate) {
+				canActivate = false;
+				input.getDownUpMouseButtons().add(mouseButton);
+			}
+			break;
+		case SINGLE_STROKE_ON_RELEASE:
+			if (hot)
+				canActivate = true;
+			else if (canActivate) {
+				canActivate = false;
+				input.getDownUpMouseButtons().add(mouseButton);
+			}
+			break;
+		}
 	}
 
-	public void setDownUp(final boolean downUp) {
-		this.downUp = downUp;
+	@Override
+	public boolean isCanActivate() {
+		return canActivate;
+	}
+
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
+	}
+
+	@Override
+	public void setCanActivate(final boolean canActivate) {
+		this.canActivate = canActivate;
 	}
 
 	public void setMouseButton(final int mouseButton) {

@@ -24,18 +24,18 @@ import java.text.MessageFormat;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.DownUpEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
-abstract class ToKeyAction<V extends Number> extends DescribableAction<V> {
+public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
 
-	@ActionProperty(label = "DOWN_UP", editorBuilder = DownUpEditorBuilder.class, order = 11)
-	boolean downUp = false;
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	Activation activation = Activation.REPEAT;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	KeyStroke keystroke = new KeyStroke();
 
-	transient boolean wasUp = true;
+	private transient boolean canActivate;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -43,6 +43,11 @@ abstract class ToKeyAction<V extends Number> extends DescribableAction<V> {
 		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
 
 		return toKeyAction;
+	}
+
+	@Override
+	public Activation getActivation() {
+		return activation;
 	}
 
 	@Override
@@ -57,16 +62,47 @@ abstract class ToKeyAction<V extends Number> extends DescribableAction<V> {
 		return keystroke;
 	}
 
-	public boolean isDownUp() {
-		return downUp;
+	void handleAction(final boolean hot, final Input input) {
+		switch (activation) {
+		case REPEAT:
+			final var downKeyStrokes = input.getDownKeyStrokes();
+			if (!hot)
+				downKeyStrokes.remove(keystroke);
+			else
+				downKeyStrokes.add(keystroke);
+			break;
+		case SINGLE_STROKE:
+			if (!hot)
+				canActivate = true;
+			else if (canActivate) {
+				canActivate = false;
+				input.getDownUpKeyStrokes().add(keystroke);
+			}
+			break;
+		case SINGLE_STROKE_ON_RELEASE:
+			if (hot)
+				canActivate = true;
+			else if (canActivate) {
+				canActivate = false;
+				input.getDownUpKeyStrokes().add(keystroke);
+			}
+			break;
+		}
 	}
 
-	void resetWasUp() {
-		wasUp = false;
+	@Override
+	public boolean isCanActivate() {
+		return canActivate;
 	}
 
-	public void setDownUp(final boolean downUp) {
-		this.downUp = downUp;
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
+	}
+
+	@Override
+	public void setCanActivate(final boolean canActivate) {
+		this.canActivate = canActivate;
 	}
 
 	public void setKeystroke(final KeyStroke keystroke) {

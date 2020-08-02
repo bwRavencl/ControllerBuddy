@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@ import javax.swing.JPanel;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 
-public final class DownUpEditorBuilder extends BooleanEditorBuilder {
+public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
-	public DownUpEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+	public ActivationEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
 			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
@@ -37,11 +38,16 @@ public final class DownUpEditorBuilder extends BooleanEditorBuilder {
 		final var cycleEditor = editActionsDialog.isCycleEditor();
 
 		if (cycleEditor)
-			initialValue = true;
+			initialValue = Activation.SINGLE_STROKE;
 
 		super.buildEditor(parentPanel);
 
 		if (cycleEditor)
-			checkBox.setEnabled(false);
+			comboBox.setEnabled(false);
+	}
+
+	@Override
+	Activation[] getValues() {
+		return Activation.values();
 	}
 }
