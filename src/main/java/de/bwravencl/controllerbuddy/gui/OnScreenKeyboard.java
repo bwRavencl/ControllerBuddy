@@ -505,6 +505,7 @@ public final class OnScreenKeyboard extends JFrame {
 		frameDragListener = new FrameDragListener(main, this);
 
 		rootPane.setWindowDecorationStyle(JRootPane.NONE);
+		setUndecorated(true);
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);

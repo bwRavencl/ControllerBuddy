@@ -1743,6 +1743,7 @@ public final class Main implements SingletonApp {
 
 		overlayFrame = new JFrame("Overlay");
 		overlayFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+		overlayFrame.setUndecorated(true);
 		overlayFrame.setType(JFrame.Type.UTILITY);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
