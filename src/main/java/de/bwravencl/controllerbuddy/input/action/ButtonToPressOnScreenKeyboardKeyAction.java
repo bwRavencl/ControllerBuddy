@@ -46,7 +46,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 
 		final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 

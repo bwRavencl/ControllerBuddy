@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
-public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
+public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableInputAction<V> {
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.REPEAT;
@@ -35,7 +35,7 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	KeyStroke keystroke = new KeyStroke();
 
-	private transient boolean canActivate;
+	private transient Activatable activatable;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -43,6 +43,11 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
 
 		return toKeyAction;
+	}
+
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
 	}
 
 	@Override
@@ -73,17 +78,20 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 			break;
 		case SINGLE_STROKE:
 			if (!hot)
-				canActivate = true;
-			else if (canActivate) {
-				canActivate = false;
+				activatable = Activatable.YES;
+			else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
 				input.getDownUpKeyStrokes().add(keystroke);
 			}
 			break;
 		case SINGLE_STROKE_ON_RELEASE:
-			if (hot)
-				canActivate = true;
-			else if (canActivate) {
-				canActivate = false;
+			if (hot) {
+				if (activatable == Activatable.NO)
+					activatable = Activatable.YES;
+				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
+					activatable = Activatable.NO;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
 				input.getDownUpKeyStrokes().add(keystroke);
 			}
 			break;
@@ -91,18 +99,13 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 	}
 
 	@Override
-	public boolean isCanActivate() {
-		return canActivate;
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
 	}
 
 	@Override
 	public void setActivation(final Activation activation) {
 		this.activation = activation;
-	}
-
-	@Override
-	public void setCanActivate(final boolean canActivate) {
-		this.canActivate = canActivate;
 	}
 
 	public void setKeystroke(final KeyStroke keystroke) {

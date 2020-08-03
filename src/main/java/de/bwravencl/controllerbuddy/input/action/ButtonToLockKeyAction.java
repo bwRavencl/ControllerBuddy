@@ -49,7 +49,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 
 		if (value != 0) {
 			if (wasUp) {

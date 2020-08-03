@@ -80,7 +80,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 
 		if (value != 0) {
 			final var currentTime = System.currentTimeMillis();

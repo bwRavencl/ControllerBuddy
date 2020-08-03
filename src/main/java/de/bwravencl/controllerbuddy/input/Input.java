@@ -252,7 +252,7 @@ public final class Input {
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
 				if (action instanceof IInitializationAction)
-					((IInitializationAction) action).init(this);
+					((IInitializationAction<?>) action).init(this);
 	}
 
 	public boolean isAxisSuspended(final int axis) {

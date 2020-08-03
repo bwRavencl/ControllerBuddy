@@ -31,7 +31,7 @@ public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButto
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 		handleAction(value != 0, input);
 	}
 

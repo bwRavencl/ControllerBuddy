@@ -26,7 +26,8 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 
-abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
+abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V>
+		implements IActivatableInputAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
@@ -36,13 +37,18 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	int mouseButton = DEFAULT_MOUSE_BUTTON;
 
-	private transient boolean canActivate = true;
-
 	private transient boolean initiator = false;
+
+	private transient Activatable activatable;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
 	}
 
 	@Override
@@ -78,17 +84,20 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 			break;
 		case SINGLE_STROKE:
 			if (!hot)
-				canActivate = true;
-			else if (canActivate) {
-				canActivate = false;
+				activatable = Activatable.YES;
+			else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
 				input.getDownUpMouseButtons().add(mouseButton);
 			}
 			break;
 		case SINGLE_STROKE_ON_RELEASE:
-			if (hot)
-				canActivate = true;
-			else if (canActivate) {
-				canActivate = false;
+			if (hot) {
+				if (activatable == Activatable.NO)
+					activatable = Activatable.YES;
+				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
+					activatable = Activatable.NO;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
 				input.getDownUpMouseButtons().add(mouseButton);
 			}
 			break;
@@ -96,18 +105,13 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	}
 
 	@Override
-	public boolean isCanActivate() {
-		return canActivate;
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
 	}
 
 	@Override
 	public void setActivation(final Activation activation) {
 		this.activation = activation;
-	}
-
-	@Override
-	public void setCanActivate(final boolean canActivate) {
-		this.canActivate = canActivate;
 	}
 
 	public void setMouseButton(final int mouseButton) {

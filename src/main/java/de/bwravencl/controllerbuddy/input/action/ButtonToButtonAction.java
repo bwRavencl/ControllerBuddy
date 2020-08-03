@@ -34,7 +34,7 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 		if (isAlreadyPressed(input))
 			return;
 
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 
 		input.setButton(buttonId, value != 0);
 	}

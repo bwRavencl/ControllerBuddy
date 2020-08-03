@@ -32,9 +32,10 @@ import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 140)
-public final class ButtonToCycleAction extends DescribableAction<Byte> implements IButtonToAction, IResetableAction {
+public final class ButtonToCycleAction extends DescribableAction<Byte>
+		implements IButtonToAction, IResetableAction, IActivatableAction {
 
-	private transient boolean wasUp = true;
+	private transient Activatable activatable = Activatable.YES;
 
 	private transient int index = 0;
 
@@ -59,26 +60,31 @@ public final class ButtonToCycleAction extends DescribableAction<Byte> implement
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
 
 		if (value == 0) {
 			actions.get(index).doAction(input, component, value);
-			if (!wasUp) {
+			if (activatable != Activatable.YES) {
 				if (index == actions.size() - 1)
 					index = 0;
 				else
 					index++;
 
-				wasUp = true;
+				activatable = Activatable.YES;
 			}
-		} else if (wasUp) {
+		} else if (activatable == Activatable.YES) {
 			actions.get(index).doAction(input, component, Byte.MAX_VALUE);
-			wasUp = false;
+			activatable = Activatable.NO;
 		}
 	}
 
 	public List<IAction<Byte>> getActions() {
 		return actions;
+	}
+
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
 	}
 
 	@Override
@@ -102,6 +108,11 @@ public final class ButtonToCycleAction extends DescribableAction<Byte> implement
 
 	public void setActions(final List<IAction<Byte>> actions) {
 		this.actions = actions;
+	}
+
+	@Override
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
 	}
 
 	@Override

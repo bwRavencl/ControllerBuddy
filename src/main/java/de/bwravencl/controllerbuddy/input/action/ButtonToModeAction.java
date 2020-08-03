@@ -123,7 +123,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 
 		for (final var action : activeMode.getAllActions())
 			if (action instanceof IActivatableAction)
-				((IActivatableAction<?>) action).init(input);
+				((IActivatableInputAction<?>) action).init(input);
 
 		final var axes = activeMode.getAxisToActionsMap().keySet();
 		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
@@ -143,7 +143,8 @@ public final class ButtonToModeAction implements IButtonToAction {
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, value);
+		value = handleLongPress(input, component, value);
+
 		final var profile = input.getProfile();
 
 		if (value == 0) {

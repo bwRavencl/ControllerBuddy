@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2020  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
+import de.bwravencl.controllerbuddy.input.action.IActivatableInputAction.Activation;
 
 public interface IButtonToAction extends IAction<Byte> {
 
@@ -28,15 +30,19 @@ public interface IButtonToAction extends IAction<Byte> {
 
 	boolean DEFAULT_LONG_PRESS = false;
 
-	Map<IAction<?>, Boolean> actionToIsDownUpActionMap = new HashMap<>();
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
-	static void reset() {
-		actionToIsDownUpActionMap.clear();
-		actionToDownSinceMap.clear();
+	private static boolean isOnReleaseAction(final IActivatableInputAction<?> action) {
+		return action.getActivation() == Activation.SINGLE_STROKE_ON_RELEASE;
 	}
 
-	default byte handleLongPress(final Input input, final byte value) {
+	static void reset() {
+		actionToDownSinceMap.clear();
+		actionToMustDenyActivationMap.clear();
+	}
+
+	default byte handleLongPress(final Input input, final int component, final byte value) {
 		if (!isLongPress())
 			return value;
 
@@ -45,8 +51,50 @@ public interface IButtonToAction extends IAction<Byte> {
 		if (value != 0) {
 			if (!actionToDownSinceMap.containsKey(this))
 				actionToDownSinceMap.put(this, currentTime);
-			else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME)
+			else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+				for (final var mode : input.getProfile().getModes()) {
+					final var actions = mode.getButtonToActionsMap().get(component);
+
+					if (actions != null && actions.contains(this)) {
+						for (final IAction<?> action : actions) {
+							if (action == this)
+								continue;
+
+							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
+
+							if (isUndelayedOnReleaseAction == null) {
+								isUndelayedOnReleaseAction = false;
+
+								if (action instanceof ButtonToKeyAction) {
+									final var buttonToKeyAction = (ButtonToKeyAction) action;
+
+									if (!buttonToKeyAction.isLongPress())
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
+								} else if (action instanceof ButtonToMouseButtonAction) {
+									final var buttonToMouseButtonAction = (ButtonToMouseButtonAction) action;
+
+									if (!buttonToMouseButtonAction.isLongPress())
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
+								} else if (action instanceof ButtonToCycleAction) {
+									final var buttonToCycleAction = (ButtonToCycleAction) action;
+
+									if (!buttonToCycleAction.isLongPress())
+										isUndelayedOnReleaseAction = true;
+								}
+
+								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
+							}
+
+							if (isUndelayedOnReleaseAction)
+								((IActivatableAction) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+						}
+
+						break;
+					}
+				}
+
 				return value;
+			}
 		} else if (actionToDownSinceMap.containsKey(this))
 			actionToDownSinceMap.remove(this);
 

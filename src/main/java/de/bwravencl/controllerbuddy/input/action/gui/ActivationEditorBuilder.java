@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.IActivatableInputAction.Activation;
 
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 

@@ -17,9 +17,42 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import static de.bwravencl.controllerbuddy.gui.Main.strings;
+
 import de.bwravencl.controllerbuddy.input.Input;
 
-public interface IInitializationAction<V extends Number> extends IAction<V> {
+public interface IActivatableInputAction<V extends Number> extends IActivatableAction, IInitializationAction<V> {
 
-	void init(final Input input);
+	enum Activation {
+		REPEAT {
+
+			@Override
+			public String toString() {
+				return strings.getString("ACTIVATION_REPEAT");
+			}
+		},
+		SINGLE_STROKE {
+
+			@Override
+			public String toString() {
+				return strings.getString("ACTIVATION_SINGLE_STROKE");
+			}
+		},
+		SINGLE_STROKE_ON_RELEASE {
+
+			@Override
+			public String toString() {
+				return strings.getString("ACTIVATION_SINGLE_STROKE_ON_RELEASE");
+			}
+		}
+	}
+
+	Activation getActivation();
+
+	@Override
+	default void init(final Input input) {
+		setActivatable(getActivation() == Activation.SINGLE_STROKE_ON_RELEASE ? Activatable.NO : Activatable.YES);
+	}
+
+	void setActivation(final Activation activation);
 }
