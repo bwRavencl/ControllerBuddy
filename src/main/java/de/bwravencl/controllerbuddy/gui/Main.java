@@ -2814,9 +2814,7 @@ public final class Main implements SingletonApp {
 			throw new RuntimeException(e);
 		}
 
-		SwingUtilities.updateComponentTreeUI(frame);
-		SwingUtilities.updateComponentTreeUI(profileFileChooser);
-		SwingUtilities.updateComponentTreeUI(onScreenKeyboard);
+		FlatLaf.updateUI();
 
 		updateVisualizationPanel();
 	}
