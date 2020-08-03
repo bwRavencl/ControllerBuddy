@@ -93,7 +93,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 			return super.getDescription(input);
 
 		return MessageFormat.format(strings.getString("CYCLE"),
-				actions.stream().map(action -> action.getDescription(input)).collect(joining(" → ")));
+				actions.stream().map(action -> action.getDescription(input)).collect(joining(" \u2192 ")));
 	}
 
 	@Override
