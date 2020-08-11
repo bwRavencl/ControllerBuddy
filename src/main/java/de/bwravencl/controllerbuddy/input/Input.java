@@ -455,8 +455,8 @@ public final class Input {
 		if (hapticFeedback && dualShock4Extension != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
 				dualShock4Extension.rumble(80L, Byte.MAX_VALUE);
-			else if (dententValue != null && (prevValue > dententValue && value < dententValue
-					|| prevValue < dententValue && value > dententValue))
+			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
+					|| prevValue < dententValue && value >= dententValue))
 				dualShock4Extension.rumble(20L, (byte) 1);
 	}
 
