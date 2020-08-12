@@ -54,6 +54,7 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -102,6 +103,10 @@ public final class DualShock4Extension {
 
 		private HRESULT GetId(final PointerByReference ppstrId) {
 			return (HRESULT) _invokeNativeObject(5, new Object[] { getPointer(), ppstrId }, HRESULT.class);
+		}
+
+		private HRESULT GetState(final DWORDByReference pdwState) {
+			return (HRESULT) _invokeNativeObject(6, new Object[] { getPointer(), pdwState }, HRESULT.class);
 		}
 
 		private HRESULT OpenPropertyStore(final int stgmAccess, final PointerByReference ppProperties) {
@@ -307,6 +312,14 @@ public final class DualShock4Extension {
 	private static byte getNormalizedVolumeValue(final IMMDevice device, final int maxOutputValueIndex)
 			throws Exception {
 		final var ppAudioEndpointVolume = new PointerByReference();
+
+		final var pdwState = new DWORDByReference();
+		if (!S_OK.equals(device.GetState(pdwState)))
+			throw new Exception("IMMDevice::GetState failed");
+
+		if (pdwState.getValue().intValue() != DEVICE_STATE_ACTIVE)
+			throw new Exception("Device is not active");
+
 		if (!S_OK.equals(device.Activate(IAudioEndpointVolumeIID, CLSCTX_INPROC_SERVER, null, ppAudioEndpointVolume)))
 			throw new Exception("IMMDevice::Activate failed");
 
@@ -551,12 +564,16 @@ public final class DualShock4Extension {
 			}
 		} finally {
 			try {
-				if (earphoneDevice != null)
+				if (earphoneDevice != null) {
 					earphoneDevice.Release();
+					earphoneDevice = null;
+				}
 			} finally {
 				try {
-					if (microphoneDevice != null)
+					if (microphoneDevice != null) {
 						microphoneDevice.Release();
+						microphoneDevice = null;
+					}
 				} finally {
 					if (comLibraryInitialized)
 						Ole32.INSTANCE.CoUninitialize();
@@ -596,6 +613,9 @@ public final class DualShock4Extension {
 	}
 
 	private boolean sendHidReport() {
+		if (hidDevice == null)
+			return false;
+
 		if (earphoneDevice != null)
 			try {
 				hidReport[19] = hidReport[20] = getNormalizedVolumeValue(earphoneDevice, 19);
