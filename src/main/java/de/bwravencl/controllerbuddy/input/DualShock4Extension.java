@@ -229,8 +229,8 @@ public final class DualShock4Extension {
 
 	private static final String FRIENDLY_NAME = "DUALSHOCK\u00AE4 USB Wireless Adaptor";
 
-	private static final byte[] DEFAULT_DUAL_SHOCK_4_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x0, 0x0, 0x0,
-			0x0, (byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, (byte) 0x50,
+	private static final byte[] DEFAULT_HID_REPORT = new byte[] { (byte) 0x05, (byte) 0xFF, 0x0, 0x0, 0x0, 0x0,
+			(byte) 0x0C, (byte) 0x18, (byte) 0x1C, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, (byte) 0x50,
 			(byte) 0x50, (byte) 0x40, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
 
 	private static final int hidReportOffset = isWindows ? 1 : 0;
@@ -331,7 +331,7 @@ public final class DualShock4Extension {
 		final var flVolumeMindB = pflVolumeMindB.getValue();
 		final var fLevel = pfLevel.getValue();
 
-		final var alignedMaxOutputValue = DEFAULT_DUAL_SHOCK_4_HID_REPORT[maxOutputValueIndex] + 0.01f;
+		final var alignedMaxOutputValue = DEFAULT_HID_REPORT[maxOutputValueIndex] + 0.01f;
 
 		return (byte) Math
 				.round(normalize(fLevel, flVolumeMindB, pflVolumeMaxdB.getValue(), 1.0f, alignedMaxOutputValue));
@@ -385,7 +385,7 @@ public final class DualShock4Extension {
 
 	private final Input input;
 	private HidDevice hidDevice;
-	private byte[] dualShock4HidReport;
+	private byte[] hidReport;
 	private volatile boolean charging = true;
 	private volatile int batteryState;
 	private IMMDevice earphoneDevice;
@@ -574,21 +574,21 @@ public final class DualShock4Extension {
 	}
 
 	private void reset() {
-		dualShock4HidReport = Arrays.copyOf(DEFAULT_DUAL_SHOCK_4_HID_REPORT, DEFAULT_DUAL_SHOCK_4_HID_REPORT.length);
+		hidReport = Arrays.copyOf(DEFAULT_HID_REPORT, DEFAULT_HID_REPORT.length);
 		sendHidReport();
 	}
 
 	void rumble(final long duration, final byte strength) {
 		new Thread(() -> {
-			synchronized (dualShock4HidReport) {
-				dualShock4HidReport[5] = strength;
+			synchronized (hidReport) {
+				hidReport[5] = strength;
 				if (sendHidReport()) {
 					try {
 						Thread.sleep(duration);
 					} catch (final InterruptedException e) {
 						Thread.currentThread().interrupt();
 					}
-					dualShock4HidReport[5] = 0;
+					hidReport[5] = 0;
 					sendHidReport();
 				}
 			}
@@ -598,25 +598,24 @@ public final class DualShock4Extension {
 	private boolean sendHidReport() {
 		if (earphoneDevice != null)
 			try {
-				dualShock4HidReport[19] = dualShock4HidReport[20] = getNormalizedVolumeValue(earphoneDevice, 19);
+				hidReport[19] = hidReport[20] = getNormalizedVolumeValue(earphoneDevice, 19);
 			} catch (final Exception e) {
 				log.log(SEVERE, e.getMessage(), e);
 			}
 
 		if (microphoneDevice != null)
 			try {
-				dualShock4HidReport[21] = getNormalizedVolumeValue(microphoneDevice, 21);
+				hidReport[21] = getNormalizedVolumeValue(microphoneDevice, 21);
 			} catch (final Exception e) {
 				log.log(SEVERE, e.getMessage(), e);
 			}
 
-		final var dataLength = dualShock4HidReport.length - hidReportOffset;
+		final var dataLength = hidReport.length - hidReportOffset;
 
 		try {
 			for (var i = 0; i < 5; i++) {
-				final var dataSent = hidDevice.setOutputReport(dualShock4HidReport[0],
-						Arrays.copyOfRange(dualShock4HidReport, 0 + hidReportOffset, dualShock4HidReport.length),
-						dataLength);
+				final var dataSent = hidDevice.setOutputReport(hidReport[0],
+						Arrays.copyOfRange(hidReport, 0 + hidReportOffset, hidReport.length), dataLength);
 				if (dataSent == dataLength)
 					return true;
 			}
@@ -658,15 +657,15 @@ public final class DualShock4Extension {
 	}
 
 	private void updateLightbarColor() {
-		synchronized (dualShock4HidReport) {
+		synchronized (hidReport) {
 			if (charging) {
-				dualShock4HidReport[6] = (byte) (batteryState >= 100 ? 0x0 : 0x1C);
-				dualShock4HidReport[7] = (byte) 0x1C;
-				dualShock4HidReport[8] = 0x0;
+				hidReport[6] = (byte) (batteryState >= 100 ? 0x0 : 0x1C);
+				hidReport[7] = (byte) 0x1C;
+				hidReport[8] = 0x0;
 			} else {
-				dualShock4HidReport[6] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x1C : 0x0);
-				dualShock4HidReport[7] = 0;
-				dualShock4HidReport[8] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x0 : 0x1C);
+				hidReport[6] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x1C : 0x0);
+				hidReport[7] = 0;
+				hidReport[8] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x0 : 0x1C);
 			}
 
 			sendHidReport();
