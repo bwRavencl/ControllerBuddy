@@ -65,6 +65,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private static final int BASE_BUTTON_SIZE = 55;
 
+		volatile boolean changed;
 		volatile boolean pressed;
 
 		Color defaultBackground;
@@ -122,8 +123,6 @@ public final class OnScreenKeyboard extends JFrame {
 		private static final long MIN_REPEAT_PRESS_TIME = 150L;
 
 		private volatile boolean mouseDown;
-
-		private volatile boolean changed;
 
 		private volatile boolean doDownUp;
 
@@ -281,8 +280,6 @@ public final class OnScreenKeyboard extends JFrame {
 	private final class LockKeyButton extends AbstractKeyboardButton {
 
 		private static final long serialVersionUID = 4014130700331413635L;
-
-		private volatile boolean changed;
 
 		private volatile boolean locked;
 
@@ -541,6 +538,14 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private void focusCurrentButton() {
 		keyboardButtons[selectedRow][selectedColumn].setFocus(true);
+	}
+
+	public void forceRepoll() {
+		anyChanges = true;
+
+		for (final var row : keyboardButtons)
+			for (final var keyboardButton : row)
+				keyboardButton.changed = true;
 	}
 
 	private int getCurrentButtonX() {

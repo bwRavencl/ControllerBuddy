@@ -291,14 +291,17 @@ public final class Input {
 			for (var i = 0; i < buttons.length; i++)
 				buttons[i] = false;
 
+			final var onScreenKeyboard = main.getOnScreenKeyboard();
+
 			if (clearOnNextPoll) {
 				downKeyStrokes.clear();
 				downMouseButtons.clear();
 
+				onScreenKeyboard.forceRepoll();
+
 				clearOnNextPoll = false;
 			}
 
-			final var onScreenKeyboard = main.getOnScreenKeyboard();
 			if (onScreenKeyboard.isVisible())
 				onScreenKeyboard.poll(this);
 
