@@ -29,11 +29,12 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Byte>
-		implements IButtonToAction, IResetableAction, IActivatableAction {
+		implements IButtonToAction, IResetableAction, IActivatableAction<Byte> {
 
 	private transient Activatable activatable = Activatable.YES;
 
@@ -44,6 +45,9 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 
 	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
 	private List<IAction<Byte>> actions = new ArrayList<>();
+
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	Activation activation = Activation.SINGLE_IMMEDIATELY;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -62,20 +66,40 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	public void doAction(final Input input, final int component, Byte value) {
 		value = handleLongPress(input, component, value);
 
-		if (value == 0) {
-			actions.get(index).doAction(input, component, value);
-			if (activatable != Activatable.YES) {
-				if (index == actions.size() - 1)
-					index = 0;
-				else
-					index++;
+		final var hot = value != 0;
 
+		switch (activation) {
+		case REPEAT:
+			throw new IllegalStateException();
+		case SINGLE_IMMEDIATELY:
+			if (!hot)
 				activatable = Activatable.YES;
+			else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				doActionAndAdvanceIndex(input, component);
 			}
-		} else if (activatable == Activatable.YES) {
-			actions.get(index).doAction(input, component, Byte.MAX_VALUE);
-			activatable = Activatable.NO;
+			break;
+		case SINGLE_ON_RELEASE:
+			if (hot) {
+				if (activatable == Activatable.NO)
+					activatable = Activatable.YES;
+				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
+					activatable = Activatable.NO;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				doActionAndAdvanceIndex(input, component);
+			}
+			break;
 		}
+	}
+
+	private void doActionAndAdvanceIndex(final Input input, final int component) {
+		actions.get(index).doAction(input, component, Byte.MAX_VALUE);
+
+		if (index == actions.size() - 1)
+			index = 0;
+		else
+			index++;
 	}
 
 	public List<IAction<Byte>> getActions() {
@@ -88,12 +112,30 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	}
 
 	@Override
+	public Activation getActivation() {
+		return activation;
+	}
+
+	@Override
 	public String getDescription(final Input input) {
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
 		return MessageFormat.format(strings.getString("CYCLE"),
 				actions.stream().map(action -> action.getDescription(input)).collect(joining(" \u2192 ")));
+	}
+
+	@Override
+	public void init(final Input input) {
+		IActivatableAction.super.init(input);
+
+		for (final var action : actions) {
+			if (action instanceof IInitializationAction)
+				((IInitializationAction<?>) action).init(input);
+
+			if (action instanceof IActivatableAction)
+				((IActivatableAction<?>) action).setActivatable(Activatable.ALWAYS);
+		}
 	}
 
 	@Override
@@ -113,6 +155,11 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	@Override
 	public void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
+	}
+
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
 	}
 
 	@Override

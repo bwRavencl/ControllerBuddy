@@ -399,6 +399,10 @@ public final class EditActionsDialog extends JDialog {
 		return assignedActions.toArray(new AssignedAction[assignedActions.size()]);
 	}
 
+	public ButtonToCycleAction getCycleAction() {
+		return cycleAction;
+	}
+
 	public Input getInput() {
 		return input;
 	}

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
-import de.bwravencl.controllerbuddy.input.action.IActivatableInputAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 
 public interface IButtonToAction extends IAction<Byte> {
 
@@ -33,8 +33,8 @@ public interface IButtonToAction extends IAction<Byte> {
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
-	private static boolean isOnReleaseAction(final IActivatableInputAction<?> action) {
-		return action.getActivation() == Activation.SINGLE_STROKE_ON_RELEASE;
+	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
+		return action.getActivation() == Activation.SINGLE_ON_RELEASE;
 	}
 
 	static void reset() {
@@ -86,7 +86,7 @@ public interface IButtonToAction extends IAction<Byte> {
 							}
 
 							if (isUndelayedOnReleaseAction)
-								((IActivatableAction) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+								((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
 						}
 
 						break;

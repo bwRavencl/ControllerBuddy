@@ -22,8 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import de.bwravencl.controllerbuddy.input.action.IActivatableInputAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
@@ -38,7 +39,7 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 		final var cycleEditor = editActionsDialog.isCycleEditor();
 
 		if (cycleEditor)
-			initialValue = Activation.SINGLE_STROKE;
+			initialValue = Activation.SINGLE_IMMEDIATELY;
 
 		super.buildEditor(parentPanel);
 
@@ -48,6 +49,9 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 
 	@Override
 	Activation[] getValues() {
+		if (action instanceof ButtonToCycleAction)
+			return new Activation[] { Activation.SINGLE_IMMEDIATELY, Activation.SINGLE_ON_RELEASE };
+
 		return Activation.values();
 	}
 }

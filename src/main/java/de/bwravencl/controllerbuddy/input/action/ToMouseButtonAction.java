@@ -26,8 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 
-abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V>
-		implements IActivatableInputAction<V> {
+abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
@@ -69,6 +68,11 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	}
 
 	void handleAction(final boolean hot, final Input input) {
+		if (activatable == Activatable.ALWAYS) {
+			input.getDownUpMouseButtons().add(mouseButton);
+			return;
+		}
+
 		switch (activation) {
 		case REPEAT:
 			final var downMouseButtons = input.getDownMouseButtons();
@@ -82,7 +86,7 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 				downMouseButtons.add(mouseButton);
 			}
 			break;
-		case SINGLE_STROKE:
+		case SINGLE_IMMEDIATELY:
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
@@ -90,7 +94,7 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 				input.getDownUpMouseButtons().add(mouseButton);
 			}
 			break;
-		case SINGLE_STROKE_ON_RELEASE:
+		case SINGLE_ON_RELEASE:
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;

@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 
-public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableInputAction<V> {
+public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.REPEAT;
@@ -68,6 +68,11 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 	}
 
 	void handleAction(final boolean hot, final Input input) {
+		if (activatable == Activatable.ALWAYS) {
+			input.getDownUpKeyStrokes().add(keystroke);
+			return;
+		}
+
 		switch (activation) {
 		case REPEAT:
 			final var downKeyStrokes = input.getDownKeyStrokes();
@@ -76,7 +81,7 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 			else
 				downKeyStrokes.add(keystroke);
 			break;
-		case SINGLE_STROKE:
+		case SINGLE_IMMEDIATELY:
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
@@ -84,7 +89,7 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 				input.getDownUpKeyStrokes().add(keystroke);
 			}
 			break;
-		case SINGLE_STROKE_ON_RELEASE:
+		case SINGLE_ON_RELEASE:
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
