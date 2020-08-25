@@ -535,14 +535,17 @@ public abstract class VJoyOutputThread extends OutputThread {
 					doMouseButtonInput(b, false);
 				}
 
-				for (final var e : offLockKeys)
-					setLockKeyState(e, false);
-
 				for (final var c : newUpNormalKeys)
 					doKeyboardInput(c, false);
 
 				for (final var c : newUpModifiers)
 					doKeyboardInput(c, false);
+
+				for (final var e : offLockKeys)
+					setLockKeyState(e, false);
+
+				for (final var e : onLockKeys)
+					setLockKeyState(e, true);
 
 				for (final var c : newDownModifiers)
 					doKeyboardInput(c, true);
@@ -554,9 +557,6 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 					prevKeyInputTime = currentTime;
 				}
-
-				for (final var e : onLockKeys)
-					setLockKeyState(e, true);
 
 				for (final var keyStroke : downUpKeyStrokes) {
 					for (final var c : keyStroke.getModifierCodes())
