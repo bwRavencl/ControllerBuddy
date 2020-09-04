@@ -317,15 +317,19 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 						scrollClicks = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
 
+						onLockKeys.clear();
 						final var nOnLockKeys = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
 						for (var i = 1; i <= nOnLockKeys; i++)
-							onLockKeys.add(i);
+							onLockKeys.add(Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
+									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + i]));
 
+						offLockKeys.clear();
 						final var nOffLockKeys = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys]);
 						for (var i = 1; i <= nOffLockKeys; i++)
-							offLockKeys.add(i);
+							offLockKeys.add(Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
+									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys + i]));
 
 						counter = newCounter;
 						retVal = true;
