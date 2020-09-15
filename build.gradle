@@ -9,10 +9,12 @@ plugins {
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
-sourceCompatibility = 14
-targetCompatibility = 14
+sourceCompatibility = 15
+targetCompatibility = 15
 
 ext {
+	versionWithoutHash = version.substring(0, version.indexOf('-'))
+
 	jnaVersion = '5.5.0'
 	lwjglVersion = '3.2.3'
 
@@ -178,7 +180,7 @@ task jpackage(type: Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
 	dependsOn copyLibs, customizeLoggingProperties
 	doFirst { delete "$appImageDir" }
-	commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$version", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+	commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$versionWithoutHash", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
 }
 
 startScripts.enabled = false
