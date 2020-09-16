@@ -20,6 +20,7 @@ Remove unnecessary casts
 Remove redundant modifiers
 Remove redundant semicolons
 Remove unnecessary array creation for varargs
+Use Objects.equals() in the equals method implementation
 Remove unnecessary '$NON-NLS$' tags
 Sort members excluding fields, enum constants, and initializers
 Remove trailing white spaces on all lines

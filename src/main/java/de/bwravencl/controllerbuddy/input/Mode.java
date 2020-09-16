@@ -131,10 +131,7 @@ public final class Mode implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		final var other = (Mode) obj;
-		if (uuid == null) {
-			if (other.uuid != null)
-				return false;
-		} else if (!uuid.equals(other.uuid))
+		if (!Objects.equals(uuid, other.uuid))
 			return false;
 		return true;
 	}
