@@ -24,6 +24,7 @@ import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.joining;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -31,6 +32,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -40,11 +42,14 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -54,7 +59,7 @@ import com.sun.jna.platform.win32.WinUser;
 
 import de.bwravencl.controllerbuddy.input.Mode;
 
-final class GuiUtils {
+public final class GuiUtils {
 
 	static class FrameDragListener extends MouseAdapter {
 
@@ -185,5 +190,24 @@ final class GuiUtils {
 		location.y = max(maxWindowBounds.y,
 				min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
+	}
+
+	public static void showMessageDialog(final Component parentComponent, final Object message)
+			throws HeadlessException {
+		showMessageDialog(parentComponent, message,
+				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()), INFORMATION_MESSAGE);
+	}
+
+	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,
+			final int messageType) throws HeadlessException {
+		showMessageDialog(parentComponent, message, title, messageType, null);
+	}
+
+	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,
+			final int messageType, final Icon icon) throws HeadlessException {
+		if (Main.skipMessageDialogs)
+			return;
+
+		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
 	}
 }

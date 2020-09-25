@@ -17,12 +17,12 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.io.IOException;
 import java.io.StringWriter;

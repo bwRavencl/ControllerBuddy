@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static de.bwravencl.controllerbuddy.input.DirectInputKeyCode.extendedKeyScanCodesSet;
@@ -27,7 +28,6 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
-import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.Toolkit;
 import java.io.File;

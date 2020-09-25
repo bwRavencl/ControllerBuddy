@@ -148,12 +148,16 @@ Server-Client mode:
 
 #### Command Line Parameters:
 
-| Parameter  | Arguments               | Description                                          | Available for scripting |
-| ---------- | ----------------------- | ---------------------------------------------------- | :---------------------: |
-| -autostart | local / client / server | starts the specified mode of operation after launch  | yes                     |
-| -profile   | path of a profile-file  | loads the specified profile after launch             | yes                     |
-| -tray      |                         | launches the application in the system tray          | yes                     |
-| -version   |                         | prints the version information and quits             | no                      |
+| Parameter           | Arguments               | Description                                                          | Available for scripting |
+| ------------------- | ----------------------- | -------------------------------------------------------------------- | :---------------------: |
+| -autostart          | local / client / server | starts the specified mode of operation after launch                  | yes                     |
+| -export             | file destination        | exports a visualization of the current profile to the specified path | yes                     |
+| -profile            | file source             | loads the specified profile after launch                             | yes                     |
+| -quit               |                         | quits the application                                                | yes                     |
+| -save               | file destination        | save the current profile to the specified path                       | yes                     |
+| -skipMessageDialogs |                         | skips all message dialogs                                            | no                      |
+| -tray               |                         | launches the application in the system tray                          | yes                     |
+| -version            |                         | prints the version information and quits                             | no                      |
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
 This can be used to integrate ControllerBuddy into third party applications.  

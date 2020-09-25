@@ -22,6 +22,7 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThr
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.input.Input.normalize;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
@@ -38,7 +39,6 @@ import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_CANCEL_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
-import static javax.swing.JOptionPane.showMessageDialog;
 import static javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC;
 import static javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM;
 import static org.apache.batik.constants.XMLConstants.XLINK_NAMESPACE_URI;
@@ -312,61 +312,7 @@ public final class Main implements SingletonApp {
 			if (htmlFileChooser.showSaveDialog(frame) != APPROVE_OPTION)
 				return;
 
-			try {
-				final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
-						.getDOMImplementation();
-				final var htmlDocumentType = domImplementation.createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN",
-						"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
-				final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html",
-						htmlDocumentType);
-
-				final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
-				htmlDocument.getDocumentElement().appendChild(headElement);
-
-				final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
-				final var title = currentFile != null ? currentFile.getName() : strings.getString("UNSAVED");
-				titleElement.setTextContent(title);
-				headElement.appendChild(titleElement);
-
-				final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
-				htmlDocument.getDocumentElement().appendChild(bodyElement);
-
-				final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
-				profileHeaderElement.setTextContent(title);
-				bodyElement.appendChild(profileHeaderElement);
-
-				for (final var mode : input.getProfile().getModes()) {
-					final var modeDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
-					modeDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px");
-					bodyElement.appendChild(modeDivElement);
-
-					final var modeHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h2");
-					modeHeaderElement.setTextContent(
-							MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription()));
-					modeDivElement.appendChild(modeHeaderElement);
-
-					final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
-					svgDivElement.setAttribute("style", "height:450px");
-					modeDivElement.appendChild(svgDivElement);
-
-					final var svgDocument = generateSvgDocument(mode, false);
-					final var importedSvgNode = htmlDocument.importNode(svgDocument.getRootElement(), true);
-					svgDivElement.appendChild(importedSvgNode);
-				}
-
-				final var transformerFactory = TransformerFactory.newInstance();
-				final var transformer = transformerFactory.newTransformer();
-				transformer.setOutputProperty(DOCTYPE_PUBLIC, htmlDocumentType.getPublicId());
-				transformer.setOutputProperty(DOCTYPE_SYSTEM, htmlDocumentType.getSystemId());
-
-				try (final var fileOutputStream = new FileOutputStream(htmlFileChooser.getSelectedFile())) {
-					transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
-				}
-			} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e1) {
-				log.log(SEVERE, e1.getMessage(), e);
-				showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
-			}
+			exportVisualization(htmlFileChooser.getSelectedFile());
 		}
 	}
 
@@ -621,7 +567,7 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (currentFile != null)
-				saveProfile(currentFile);
+				saveProfile(currentFile, true);
 			else
 				saveProfileAs();
 		}
@@ -920,6 +866,7 @@ public final class Main implements SingletonApp {
 	private static final String SINGLETON_ID;
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 	public static final boolean isWindows = Platform.isWindows() && !Platform.isWindowsCE();
+	static boolean skipMessageDialogs;
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	private static final String PROFILE_FILE_EXTENSION = "json";
 	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
@@ -943,6 +890,10 @@ public final class Main implements SingletonApp {
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
 	private static final String OPTION_TRAY = "tray";
+	private static final String OPTION_SAVE = "save";
+	private static final String OPTION_EXPORT = "export";
+	private static final String OPTION_SKIP_MESSAGE_DIALOGS = "skipMessageDialogs";
+	private static final String OPTION_QUIT = "quit";
 	private static final String OPTION_VERSION = "version";
 	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
 	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
@@ -971,6 +922,11 @@ public final class Main implements SingletonApp {
 				isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
 		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_SAVE, true, strings.getString("SAVE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_EXPORT, true, strings.getString("EXPORT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_SKIP_MESSAGE_DIALOGS, false,
+				strings.getString("SKIP_MESSAGE_DIALOGS_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_QUIT, false, strings.getString("QUIT_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
 
 		final var mainClassPackageName = Main.class.getPackageName();
@@ -1083,10 +1039,12 @@ public final class Main implements SingletonApp {
 					if (commandLine.hasOption(OPTION_VERSION))
 						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					else {
+						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
+
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 						final var main = new Main(cmdProfilePath);
 
-						main.handleTrayAndAutostartCommandLine(commandLine);
+						main.handleRemainingCommandLine(commandLine);
 					}
 				} catch (final ParseException e) {
 					final var helpFormatter = new HelpFormatter();
@@ -1111,6 +1069,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
+
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private volatile LocalVJoyOutputThread localThread;
 	private volatile ClientVJoyOutputThread clientThread;
@@ -1595,6 +1554,63 @@ public final class Main implements SingletonApp {
 		});
 	}
 
+	public void exportVisualization(final File file) {
+		try {
+			final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
+					.getDOMImplementation();
+			final var htmlDocumentType = domImplementation.createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN",
+					"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
+			final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html", htmlDocumentType);
+
+			final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
+			htmlDocument.getDocumentElement().appendChild(headElement);
+
+			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
+			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNSAVED");
+			titleElement.setTextContent(title);
+			headElement.appendChild(titleElement);
+
+			final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
+			htmlDocument.getDocumentElement().appendChild(bodyElement);
+
+			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
+			profileHeaderElement.setTextContent(title);
+			bodyElement.appendChild(profileHeaderElement);
+
+			for (final var mode : input.getProfile().getModes()) {
+				final var modeDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+				modeDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px");
+				bodyElement.appendChild(modeDivElement);
+
+				final var modeHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h2");
+				modeHeaderElement
+						.setTextContent(MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription()));
+				modeDivElement.appendChild(modeHeaderElement);
+
+				final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+				svgDivElement.setAttribute("style", "height:450px");
+				modeDivElement.appendChild(svgDivElement);
+
+				final var svgDocument = generateSvgDocument(mode, false);
+				final var importedSvgNode = htmlDocument.importNode(svgDocument.getRootElement(), true);
+				svgDivElement.appendChild(importedSvgNode);
+			}
+
+			final var transformerFactory = TransformerFactory.newInstance();
+			final var transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(DOCTYPE_PUBLIC, htmlDocumentType.getPublicId());
+			transformer.setOutputProperty(DOCTYPE_SYSTEM, htmlDocumentType.getSystemId());
+
+			try (final var fileOutputStream = new FileOutputStream(file)) {
+				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
+			}
+		} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e) {
+			log.log(SEVERE, e.getMessage(), e);
+			showMessageDialog(frame, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		}
+	}
+
 	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
 		if (templateSvgDocument == null)
 			return null;
@@ -1694,34 +1710,40 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private void handleTrayAndAutostartCommandLine(final CommandLine commandLine) {
+	private void handleRemainingCommandLine(final CommandLine commandLine) {
 		frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
 
-		final var autostartOption = commandLine.getOptionValue(OPTION_AUTOSTART);
-		if (autostartOption == null)
-			return;
-
-		if (isWindows)
-			if (OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOption)) {
+		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+		if (autostartOptionValue != null)
+			if (isWindows && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
 				if (!isLocalThreadActive())
 					startLocal();
-				return;
-			} else if (OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOption)) {
+			} else if (isWindows && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
 				if (!isClientThreadActive())
 					startClient();
-				return;
-			}
-		if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOption)) {
-			if (!isServerThreadActive())
-				startServer();
-		} else
-			showMessageDialog(frame,
-					MessageFormat.format(strings.getString("INVALID_VALUE_FOR_OPTION_AUTOSTART_DIALOG_TEXT"),
-							OPTION_AUTOSTART, autostartOption,
-							MessageFormat.format(
-									isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-											: strings.getString("SERVER"),
-									strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE)));
+			} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
+				if (!isServerThreadActive())
+					startServer();
+			} else
+				showMessageDialog(frame,
+						MessageFormat.format(
+								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
+								OPTION_AUTOSTART, autostartOptionValue,
+								MessageFormat.format(
+										isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+												: strings.getString("SERVER"),
+										strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE)));
+
+		final var saveOptionValue = commandLine.getOptionValue(OPTION_SAVE);
+		if (saveOptionValue != null)
+			saveProfile(new File(saveOptionValue), false);
+
+		final var exportOptionValue = commandLine.getOptionValue(OPTION_EXPORT);
+		if (exportOptionValue != null)
+			exportVisualization(new File(exportOptionValue));
+
+		if (commandLine.hasOption(OPTION_QUIT))
+			quit();
 	}
 
 	private void initOverlay() {
@@ -1934,7 +1956,7 @@ public final class Main implements SingletonApp {
 					if (cmdProfilePath != null)
 						loadProfile(new File(cmdProfilePath));
 
-					handleTrayAndAutostartCommandLine(commandLine);
+					handleRemainingCommandLine(commandLine);
 				});
 			} catch (final ParseException e) {
 				log.log(SEVERE, e.getMessage(), e);
@@ -2198,7 +2220,7 @@ public final class Main implements SingletonApp {
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
 	}
 
-	private void saveProfile(File file) {
+	private void saveProfile(File file, final boolean saveAsLastProfile) {
 		input.reset();
 
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX))
@@ -2214,7 +2236,10 @@ public final class Main implements SingletonApp {
 		final var jsonString = gson.toJson(profile);
 		try {
 			Files.writeString(file.toPath(), jsonString);
-			saveLastProfile(file);
+
+			if (saveAsLastProfile)
+				saveLastProfile(file);
+
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
 			setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
@@ -2229,7 +2254,7 @@ public final class Main implements SingletonApp {
 	private void saveProfileAs() {
 		profileFileChooser.setSelectedFile(currentFile);
 		if (profileFileChooser.showSaveDialog(frame) == APPROVE_OPTION)
-			saveProfile(profileFileChooser.getSelectedFile());
+			saveProfile(profileFileChooser.getSelectedFile(), true);
 	}
 
 	public void scheduleStatusBarText(final String text) {

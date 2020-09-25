@@ -21,6 +21,7 @@ import static com.sun.jna.platform.win32.Ole32.COINIT_APARTMENTTHREADED;
 import static com.sun.jna.platform.win32.WTypes.CLSCTX_INPROC_SERVER;
 import static com.sun.jna.platform.win32.WinError.S_FALSE;
 import static com.sun.jna.platform.win32.WinError.S_OK;
+import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static de.bwravencl.controllerbuddy.input.Input.normalize;
@@ -33,7 +34,6 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
-import static javax.swing.JOptionPane.showMessageDialog;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 import java.io.IOException;
