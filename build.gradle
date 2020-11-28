@@ -153,7 +153,7 @@ task jlink(type: Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
+	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--compress=2', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
 }
 
 task copyLibs(type: Copy) {
