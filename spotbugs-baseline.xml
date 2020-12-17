@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.1.1" sequence="0" timestamp="1604601295722" analysisTimestamp="1604601296040" release="0.19.17-3739825">
+<BugCollection version="4.2.0" sequence="0" timestamp="1608243711418" analysisTimestamp="1608243711442" release="0.19.30-ab13886">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -200,10 +200,10 @@
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.4\c51c00206bb913cd8612b24abd9fa98ae89719b1\commons-cli-1.4.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\0.43\388e54cf3ce9ea4a45047b7189595240f406b332\flatlaf-0.43.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\0.45\d7fe6f3b4085d27f19ef0c745fc3733b3f203eb8\flatlaf-0.45.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.6\9180733b7df8542621dc12e21e87557e8c99b8cb\gson-2.8.6.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.90\6167e1626143621df535fe14cf16cf215f2246e\classgraph-4.8.90.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.95\cf1ac450e0e53be1ed72095a1e1962349afe90a1\classgraph-4.8.95.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.5.0\af38e7c4d0fc73c23ecd785443705bfdee5b90bf\jna-platform-5.5.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.5.0\e0845217c4907822403912ad6828d8e0b256208\jna-5.5.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.3\5e520d5c290c8b012545a8d34fa5db5ab051ea53\lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
@@ -339,23 +339,6 @@
     </Method>
     <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable" primary="true" start="420" end="420" startBytecode="39" endBytecode="39" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java">
       <Message>At Singleton.java:[line 420]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="6b81ed1be170a4af6c36cc8e4f39c402" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method com.oracle.si.Singleton$SingletonServerRunnable.removeSiFile(String, int) is never called</LongMessage>
-    <Class classname="com.oracle.si.Singleton$SingletonServerRunnable" primary="true">
-      <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable" start="384" end="584" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java">
-        <Message>At Singleton.java:[lines 384-584]</Message>
-      </SourceLine>
-      <Message>In class com.oracle.si.Singleton$SingletonServerRunnable</Message>
-    </Class>
-    <Method classname="com.oracle.si.Singleton$SingletonServerRunnable" name="removeSiFile" signature="(Ljava/lang/String;I)V" isStatic="false" primary="true">
-      <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable" start="412" end="414" startBytecode="0" endBytecode="101" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java"/>
-      <Message>In method com.oracle.si.Singleton$SingletonServerRunnable.removeSiFile(String, int)</Message>
-    </Method>
-    <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable" start="412" end="414" startBytecode="0" endBytecode="101" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java" synthetic="true">
-      <Message>At Singleton.java:[lines 412-414]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_DEFAULT_ENCODING" priority="1" rank="19" abbrev="Dm" category="I18N" instanceHash="81e278d28b1294211166a9cb7c1c3d32" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
@@ -519,33 +502,6 @@
     <Property name="edu.umd.cs.findbugs.detect.NullArgumentWarningProperty.ARG_DEFINITELY_NULL" value="true"/>
     <Property name="edu.umd.cs.findbugs.detect.NullArgumentWarningProperty.MONOMORPHIC_CALL_SITE" value="true"/>
   </BugInstance>
-  <BugInstance type="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" priority="2" rank="11" abbrev="RCN" category="CORRECTNESS" instanceHash="c5131a00b2a2563305bacec19a8a6cb1" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-    <ShortMessage>Nullcheck of value previously dereferenced</ShortMessage>
-    <LongMessage>Nullcheck of os at line 552 of value previously dereferenced in com.oracle.si.Singleton$SingletonServerRunnable$2.run()</LongMessage>
-    <Class classname="com.oracle.si.Singleton$SingletonServerRunnable$2" primary="true">
-      <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable$2" start="459" end="581" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java">
-        <Message>At Singleton.java:[lines 459-581]</Message>
-      </SourceLine>
-      <Message>In class com.oracle.si.Singleton$SingletonServerRunnable$2</Message>
-    </Class>
-    <Method classname="com.oracle.si.Singleton$SingletonServerRunnable$2" name="run" signature="()Ljava/lang/Void;" isStatic="false" primary="true">
-      <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable$2" start="462" end="581" startBytecode="0" endBytecode="4541" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java"/>
-      <Message>In method com.oracle.si.Singleton$SingletonServerRunnable$2.run()</Message>
-    </Method>
-    <LocalVariable name="os" register="17" pc="1616" role="LOCAL_VARIABLE_VALUE_OF">
-      <Message>Value loaded from os</Message>
-    </LocalVariable>
-    <Method classname="java.net.Socket" name="getOutputStream" signature="()Ljava/io/OutputStream;" isStatic="false" role="METHOD_RETURN_VALUE_OF">
-      <SourceLine classname="java.net.Socket" start="1013" end="1027" startBytecode="0" endBytecode="209" sourcefile="Socket.java" sourcepath="java/net/Socket.java"/>
-      <Message>Return value of java.net.Socket.getOutputStream() of type java.io.OutputStream</Message>
-    </Method>
-    <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable$2" primary="true" start="552" end="552" startBytecode="1569" endBytecode="1569" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java">
-      <Message>At Singleton.java:[line 552]</Message>
-    </SourceLine>
-    <SourceLine classname="com.oracle.si.Singleton$SingletonServerRunnable$2" start="557" end="557" startBytecode="1618" endBytecode="1618" sourcefile="Singleton.java" sourcepath="com/oracle/si/Singleton.java" relSourcepath="java\com\oracle\si\Singleton.java" role="SOURCE_REDUNDANT_NULL_CHECK">
-      <Message>Redundant null check at Singleton.java:[line 557]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" priority="3" rank="20" abbrev="ST" category="STYLE" instanceHash="68f31bf550d2f24e78074038737946d2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Write to static field from instance method</ShortMessage>
     <LongMessage>Write to static field com.oracle.si.Singleton.serverStarted from instance method com.oracle.si.Singleton$SingletonServerRunnable$2.run()</LongMessage>
@@ -569,34 +525,17 @@
       <Message>At Singleton.java:[line 498]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="2b944cdb3e302acce6396bd09bcae35f" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.AssignmentsComponent.checkDimensionIsSquare(Dimension) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" start="464" end="646" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-        <Message>At AssignmentsComponent.java:[lines 464-646]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsComponent</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" name="checkDimensionIsSquare" signature="(Ljava/awt/Dimension;)V" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" start="464" end="466" startBytecode="0" endBytecode="78" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.AssignmentsComponent.checkDimensionIsSquare(Dimension)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" start="464" end="466" startBytecode="0" endBytecode="78" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" synthetic="true">
-      <Message>At AssignmentsComponent.java:[lines 464-466]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="d381611bc5294f101fea550fa85e31d6" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
     <LongMessage>Unchecked/unconfirmed cast from java.awt.Graphics to java.awt.Graphics2D in de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1.paintComponent(Graphics)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" start="476" end="554" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-        <Message>At AssignmentsComponent.java:[lines 476-554]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" start="474" end="552" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+        <Message>At AssignmentsComponent.java:[lines 474-552]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" name="paintComponent" signature="(Ljava/awt/Graphics;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" start="505" end="536" startBytecode="0" endBytecode="120" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" start="503" end="534" startBytecode="0" endBytecode="120" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1.paintComponent(Graphics)</Message>
     </Method>
     <Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
@@ -614,21 +553,21 @@
     <LocalVariable name="g" register="1" pc="23" role="LOCAL_VARIABLE_VALUE_OF">
       <Message>Value loaded from g</Message>
     </LocalVariable>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" primary="true" start="511" end="511" startBytecode="24" endBytecode="24" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-      <Message>At AssignmentsComponent.java:[line 511]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" primary="true" start="509" end="509" startBytecode="24" endBytecode="24" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+      <Message>At AssignmentsComponent.java:[line 509]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="a8c382d3464691bc98afff91f110d6bb" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
     <LongMessage>Unchecked/unconfirmed cast from java.awt.Graphics to java.awt.Graphics2D in de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1.paintIcon(Component, Graphics, int, int)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" start="141" end="184" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-        <Message>At AssignmentsComponent.java:[lines 141-184]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" start="139" end="182" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+        <Message>At AssignmentsComponent.java:[lines 139-182]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" name="paintIcon" signature="(Ljava/awt/Component;Ljava/awt/Graphics;II)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" start="155" end="184" startBytecode="0" endBytecode="114" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" start="153" end="182" startBytecode="0" endBytecode="114" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1.paintIcon(Component, Graphics, int, int)</Message>
     </Method>
     <Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
@@ -646,16 +585,16 @@
     <LocalVariable name="g" register="2" pc="35" role="LOCAL_VARIABLE_VALUE_OF">
       <Message>Value loaded from g</Message>
     </LocalVariable>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" primary="true" start="158" end="158" startBytecode="36" endBytecode="36" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-      <Message>At AssignmentsComponent.java:[line 158]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" primary="true" start="156" end="156" startBytecode="36" endBytecode="36" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+      <Message>At AssignmentsComponent.java:[line 156]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SE_BAD_FIELD" priority="3" rank="19" abbrev="Se" category="BAD_PRACTICE" instanceHash="34113f7da4d41010034fecbd767bb58b" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction defines non-transient non-serializable instance field component</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" start="377" end="391" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-        <Message>At AssignmentsComponent.java:[lines 377-391]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" start="375" end="389" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+        <Message>At AssignmentsComponent.java:[lines 375-389]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction</Message>
     </Class>
@@ -666,8 +605,8 @@
       <Message>Field de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction.component</Message>
     </Field>
     <Type descriptor="Lde/bwravencl/controllerbuddy/input/Mode$Component;" role="TYPE_FOUND">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode$Component" start="47" end="74" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
-        <Message>At Mode.java:[lines 47-74]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode$Component" start="47" end="70" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+        <Message>At Mode.java:[lines 47-70]</Message>
       </SourceLine>
       <Message>Actual type de.bwravencl.controllerbuddy.input.Mode$Component</Message>
     </Type>
@@ -679,8 +618,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction defines non-transient non-serializable instance field main</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" start="377" end="391" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
-        <Message>At AssignmentsComponent.java:[lines 377-391]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction" start="375" end="389" sourcefile="AssignmentsComponent.java" sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+        <Message>At AssignmentsComponent.java:[lines 375-389]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction</Message>
     </Class>
@@ -704,8 +643,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field component</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -716,8 +655,8 @@
       <Message>Field de.bwravencl.controllerbuddy.gui.EditActionsDialog.component</Message>
     </Field>
     <Type descriptor="Lde/bwravencl/controllerbuddy/input/Mode$Component;" role="TYPE_FOUND">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode$Component" start="47" end="74" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
-        <Message>At Mode.java:[lines 47-74]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode$Component" start="47" end="70" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+        <Message>At Mode.java:[lines 47-70]</Message>
       </SourceLine>
       <Message>Actual type de.bwravencl.controllerbuddy.input.Mode$Component</Message>
     </Type>
@@ -729,8 +668,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field cycleAction</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -754,8 +693,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field input</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -766,8 +705,8 @@
       <Message>Field de.bwravencl.controllerbuddy.gui.EditActionsDialog.input</Message>
     </Field>
     <Type descriptor="Lde/bwravencl/controllerbuddy/input/Input;" role="TYPE_FOUND">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="62" end="566" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-        <Message>At Input.java:[lines 62-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="63" end="564" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+        <Message>At Input.java:[lines 63-564]</Message>
       </SourceLine>
       <Message>Actual type de.bwravencl.controllerbuddy.input.Input</Message>
     </Type>
@@ -779,8 +718,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field main</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -804,8 +743,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field selectedAssignedAction</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -829,8 +768,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field selectedAvailableAction</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -854,8 +793,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field selectedMode</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -866,8 +805,8 @@
       <Message>Field de.bwravencl.controllerbuddy.gui.EditActionsDialog.selectedMode</Message>
     </Field>
     <Type descriptor="Lde/bwravencl/controllerbuddy/input/Mode;" role="TYPE_FOUND">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode" start="81" end="178" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
-        <Message>At Mode.java:[lines 81-178]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Mode" start="77" end="174" sourcefile="Mode.java" sourcepath="de/bwravencl/controllerbuddy/input/Mode.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+        <Message>At Mode.java:[lines 77-174]</Message>
       </SourceLine>
       <Message>Actual type de.bwravencl.controllerbuddy.input.Mode</Message>
     </Type>
@@ -879,8 +818,8 @@
     <ShortMessage>Non-transient non-serializable instance field in serializable class</ShortMessage>
     <LongMessage>Class de.bwravencl.controllerbuddy.gui.EditActionsDialog defines non-transient non-serializable instance field unsavedProfile</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="601" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+        <Message>At EditActionsDialog.java:[lines 235-601]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
     </Class>
@@ -898,57 +837,6 @@
     </Type>
     <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" synthetic="true">
       <Message>In EditActionsDialog.java</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="c5f357362c735943028b078bfb977440" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.EditActionsDialog.closeDialog() is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" name="closeDialog" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="359" end="361" startBytecode="0" endBytecode="70" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.EditActionsDialog.closeDialog()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="359" end="361" startBytecode="0" endBytecode="70" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" synthetic="true">
-      <Message>At EditActionsDialog.java:[lines 359-361]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="2efe2d70310751fb958726e456cbbb0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.EditActionsDialog.getActionClassInstance(Class) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" name="getActionClassInstance" signature="(Ljava/lang/Class;)Lde/bwravencl/controllerbuddy/input/action/IAction;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="366" end="373" startBytecode="0" endBytecode="167" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.EditActionsDialog.getActionClassInstance(Class)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="366" end="373" startBytecode="0" endBytecode="167" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" synthetic="true">
-      <Message>At EditActionsDialog.java:[lines 366-373]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="2da5171b83e7cf7475322b22a52801ac" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.EditActionsDialog.hasModeAction() is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="235" end="599" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
-        <Message>At EditActionsDialog.java:[lines 235-599]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" name="hasModeAction" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="411" end="417" startBytecode="0" endBytecode="155" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.EditActionsDialog.hasModeAction()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog" start="411" end="417" startBytecode="0" endBytecode="155" sourcefile="EditActionsDialog.java" sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" synthetic="true">
-      <Message>At EditActionsDialog.java:[lines 411-417]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_EXIT" priority="3" rank="19" abbrev="Dm" category="BAD_PRACTICE" instanceHash="387c709e4ecebe684170b4639f8a94" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="382">
@@ -983,40 +871,6 @@
     </Method>
     <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="2418" end="2418" startBytecode="21" endBytecode="21" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
       <Message>At Main.java:[line 2418]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="933e3edb125b804518dd20b730bcc888" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.Main.isModalDialogShowing() is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="865" end="2887" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 865-2887]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="isModalDialogShowing" signature="()Z" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1021" end="1027" startBytecode="0" endBytecode="164" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.Main.isModalDialogShowing()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1021" end="1027" startBytecode="0" endBytecode="164" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 1021-1027]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="328c3730638f16cac21633992a74ef9d" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.Main.saveProfileAs() is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="865" end="2887" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 865-2887]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="saveProfileAs" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2255" end="2258" startBytecode="0" endBytecode="100" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.Main.saveProfileAs()</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2255" end="2258" startBytecode="0" endBytecode="100" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 2255-2258]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2" rank="17" abbrev="SF" category="STYLE" instanceHash="4e015ff371b9d119c54b346f56b9e4dc" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="484">
@@ -1128,57 +982,6 @@
       <Message>In OnScreenKeyboard.java</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="45c737d591fe3cbb4c3db8cf5f36667d" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.getShortDefaultKeyName(String) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="350" end="691" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 350-691]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="getShortDefaultKeyName" signature="(Ljava/lang/String;)Ljava/lang/String;" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="384" startBytecode="0" endBytecode="230" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.getShortDefaultKeyName(String)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="368" end="384" startBytecode="0" endBytecode="230" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" synthetic="true">
-      <Message>At OnScreenKeyboard.java:[lines 368-384]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="989a1be8073a489e0fc5a10f4e7ce23" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.getShortLockKeyName(String) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="350" end="691" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 350-691]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" name="getShortLockKeyName" signature="(Ljava/lang/String;)Ljava/lang/String;" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="388" end="393" startBytecode="0" endBytecode="99" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.getShortLockKeyName(String)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" start="388" end="393" startBytecode="0" endBytecode="99" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" synthetic="true">
-      <Message>At OnScreenKeyboard.java:[lines 388-393]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="ccde18a46afcc482d20b114c7b072506" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton.setFocus(boolean) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" start="77" end="116" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-        <Message>At OnScreenKeyboard.java:[lines 77-116]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" name="setFocus" signature="(Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" start="97" end="100" startBytecode="0" endBytecode="124" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton.setFocus(boolean)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" start="97" end="100" startBytecode="0" endBytecode="124" sourcefile="OnScreenKeyboard.java" sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" synthetic="true">
-      <Message>At OnScreenKeyboard.java:[lines 97-100]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" priority="3" rank="20" abbrev="RCN" category="STYLE" instanceHash="57b4e9974eb02306ed5983ee8767a9ae" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
     <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
     <LongMessage>Redundant nullcheck of stack, which is known to be non-null in new de.bwravencl.controllerbuddy.gui.OpenVrOverlay(Main)</LongMessage>
@@ -1201,9 +1004,6 @@
     </Method>
     <SourceLine classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay" primary="true" start="249" end="249" startBytecode="682" endBytecode="682" sourcefile="OpenVrOverlay.java" sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java" role="SOURCE_REDUNDANT_NULL_CHECK">
       <Message>Redundant null check at OpenVrOverlay.java:[line 249]</Message>
-    </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay" start="336" end="336" startBytecode="670" endBytecode="670" sourcefile="OpenVrOverlay.java" sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
-      <Message>Another occurrence at OpenVrOverlay.java:[line 336]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="14" abbrev="NP" category="STYLE" instanceHash="9ad209baef5a6ac292d55a2e7b262b96" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
@@ -1269,40 +1069,6 @@
       <Message>At DualShock4Extension.java:[line 604]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="f80aa21ce708eda40401d1a9cc5218c9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension.setBatteryState(int) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="207" end="693" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 207-693]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" name="setBatteryState" signature="(I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="649" end="663" startBytecode="0" endBytecode="134" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension.setBatteryState(int)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="649" end="663" startBytecode="0" endBytecode="134" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[lines 649-663]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="8e5b1fffe41f1b077230609556c9381f" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension.setCharging(boolean) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="207" end="693" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 207-693]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" name="setCharging" signature="(Z)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="666" end="677" startBytecode="0" endBytecode="126" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension.setCharging(boolean)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension" start="666" end="677" startBytecode="0" endBytecode="126" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[lines 666-677]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="5fbd3d046ea442add255bca244c8547e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetMasterVolumeLevel(FloatByReference) doesn&apos;t start with a lower case letter</LongMessage>
@@ -1340,57 +1106,6 @@
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="445d4b6f4b36adbda79c585512d0da76" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetVolumeRange(FloatByReference, FloatByReference, FloatByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="74" end="88" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 74-88]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" name="GetVolumeRange" signature="(Lcom/sun/jna/ptr/FloatByReference;Lcom/sun/jna/ptr/FloatByReference;Lcom/sun/jna/ptr/FloatByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="87" end="87" startBytecode="0" endBytecode="114" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetVolumeRange(FloatByReference, FloatByReference, FloatByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="87" end="87" startBytecode="0" endBytecode="114" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 87]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="1df7d2af66d6847c15a1e657e58ed802" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetMasterVolumeLevel(FloatByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="74" end="88" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 74-88]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" name="GetMasterVolumeLevel" signature="(Lcom/sun/jna/ptr/FloatByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="78" end="78" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetMasterVolumeLevel(FloatByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="78" end="78" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 78]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="1d85a1ab8adda16627239bca6976e1df" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetMute(WinDef$BOOLByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="74" end="88" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 74-88]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" name="GetMute" signature="(Lcom/sun/jna/platform/win32/WinDef$BOOLByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="82" end="82" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetMute(WinDef$BOOLByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="82" end="82" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 82]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="e349abed39590d090736bc924a7fd2c1" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume.GetVolumeRange(FloatByReference, FloatByReference, FloatByReference) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" primary="true">
       <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" start="74" end="88" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
         <Message>At DualShock4Extension.java:[lines 74-88]</Message>
@@ -1473,57 +1188,6 @@
       <Message>At DualShock4Extension.java:[line 113]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="cc695d1c976c926c9eafc8574329dd7b" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.Activate(Guid$IID, int, Pointer, PointerByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="95" end="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 95-131]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" name="Activate" signature="(Lcom/sun/jna/platform/win32/Guid$IID;ILcom/sun/jna/Pointer;Lcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="100" end="100" startBytecode="0" endBytecode="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.Activate(Guid$IID, int, Pointer, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="100" end="100" startBytecode="0" endBytecode="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 100]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="216660944eba2b5bd3597aebe9c96c20" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.GetState(WinDef$DWORDByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="95" end="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 95-131]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" name="GetState" signature="(Lcom/sun/jna/platform/win32/WinDef$DWORDByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="109" end="109" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.GetState(WinDef$DWORDByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="109" end="109" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 109]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="8b537920bf1140dd91b26b07e2ac5859" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.OpenPropertyStore(int, PointerByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="95" end="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 95-131]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" name="OpenPropertyStore" signature="(ILcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="113" end="113" startBytecode="0" endBytecode="94" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice.OpenPropertyStore(int, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" start="113" end="113" startBytecode="0" endBytecode="94" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 113]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="d4b37c7fb2c4e61332aabfe5929b5893" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection.GetCount(WinDef$UINTByReference) doesn&apos;t start with a lower case letter</LongMessage>
@@ -1558,40 +1222,6 @@
       <Message>At DualShock4Extension.java:[line 146]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="b10b1cd7cfca7120fbe37a210a580466" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection.GetCount(WinDef$UINTByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="138" end="146" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 138-146]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" name="GetCount" signature="(Lcom/sun/jna/platform/win32/WinDef$UINTByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="142" end="142" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection.GetCount(WinDef$UINTByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="142" end="142" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 142]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="1ad6356cebf008819216bec96aa5eea9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection.Item(WinDef$UINT, PointerByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="138" end="146" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 138-146]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" name="Item" signature="(Lcom/sun/jna/platform/win32/WinDef$UINT;Lcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="146" end="146" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection.Item(WinDef$UINT, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" start="146" end="146" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 146]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="e662715dc81d54122369b6eb9432173e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator.EnumAudioEndpoints(int, int, PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
@@ -1609,43 +1239,9 @@
       <Message>At DualShock4Extension.java:[line 158]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="fdd6e1cfe33e6a7e00bfbbe2b6aa209" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator.EnumAudioEndpoints(int, int, PointerByReference) is never called</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" start="153" end="158" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 153-158]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" name="EnumAudioEndpoints" signature="(IILcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" start="158" end="158" startBytecode="0" endBytecode="111" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator.EnumAudioEndpoints(int, int, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" start="158" end="158" startBytecode="0" endBytecode="111" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 158]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="436ed2378a83d7b255ab22870278e185" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method names should start with a lower case letter</ShortMessage>
     <LongMessage>The method name de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore.GetValue(DualShock4Extension$PROPERTYKEY$ByReference, DualShock4Extension$PROPVARIANT$ByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" start="166" end="170" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 166-170]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" name="GetValue" signature="(Lde/bwravencl/controllerbuddy/input/DualShock4Extension$PROPERTYKEY$ByReference;Lde/bwravencl/controllerbuddy/input/DualShock4Extension$PROPVARIANT$ByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" start="170" end="170" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore.GetValue(DualShock4Extension$PROPERTYKEY$ByReference, DualShock4Extension$PROPVARIANT$ByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" start="170" end="170" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 170]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UPM_UNCALLED_PRIVATE_METHOD" priority="3" rank="20" abbrev="UPM" category="PERFORMANCE" instanceHash="270546f108cd418b3bdee24eb1fde9d8" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Private method is never called</ShortMessage>
-    <LongMessage>Private method de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore.GetValue(DualShock4Extension$PROPERTYKEY$ByReference, DualShock4Extension$PROPVARIANT$ByReference) is never called</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" primary="true">
       <SourceLine classname="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" start="166" end="170" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\DualShock4Extension.java">
         <Message>At DualShock4Extension.java:[lines 166-170]</Message>
@@ -1797,13 +1393,13 @@
     <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.input.Input.getButtons() may expose internal representation by returning Input.buttons</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="62" end="566" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-        <Message>At Input.java:[lines 62-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="63" end="564" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+        <Message>At Input.java:[lines 63-564]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="getButtons" signature="()[Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="182" end="182" startBytecode="0" endBytecode="46" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="183" end="183" startBytecode="0" endBytecode="46" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.getButtons()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.input.Input" name="buttons" signature="[Z" isStatic="false" primary="true">
@@ -1812,35 +1408,32 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.input.Input.buttons</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="182" end="182" startBytecode="4" endBytecode="4" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-      <Message>At Input.java:[line 182]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="183" end="183" startBytecode="4" endBytecode="4" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+      <Message>At Input.java:[line 183]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" priority="3" rank="20" abbrev="RCN" category="STYLE" instanceHash="c732bd786aad13e29295d95fd8261844" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
     <ShortMessage>Redundant nullcheck of value known to be non-null</ShortMessage>
     <LongMessage>Redundant nullcheck of stack, which is known to be non-null in de.bwravencl.controllerbuddy.input.Input.poll()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.Input" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="62" end="566" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-        <Message>At Input.java:[lines 62-566]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="63" end="564" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+        <Message>At Input.java:[lines 63-564]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.Input" name="poll" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="270" end="412" startBytecode="0" endBytecode="2389" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="271" end="412" startBytecode="0" endBytecode="2345" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.Input.poll()</Message>
     </Method>
-    <LocalVariable name="stack" register="6" pc="1046" role="LOCAL_VARIABLE_VALUE_OF">
+    <LocalVariable name="stack" register="6" pc="1027" role="LOCAL_VARIABLE_VALUE_OF">
       <Message>Value loaded from stack</Message>
     </LocalVariable>
     <Method classname="org.lwjgl.system.MemoryStack" name="stackPush" signature="()Lorg/lwjgl/system/MemoryStack;" isStatic="true" role="METHOD_RETURN_VALUE_OF">
       <SourceLine classname="org.lwjgl.system.MemoryStack" start="799" end="799" startBytecode="0" endBytecode="30" sourcefile="MemoryStack.java" sourcepath="org/lwjgl/system/MemoryStack.java"/>
       <Message>Return value of org.lwjgl.system.MemoryStack.stackPush() of type org.lwjgl.system.MemoryStack</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="286" end="286" startBytecode="1048" endBytecode="1048" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" role="SOURCE_REDUNDANT_NULL_CHECK">
-      <Message>Redundant null check at Input.java:[line 286]</Message>
-    </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" start="405" end="405" startBytecode="129" endBytecode="129" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
-      <Message>Another occurrence at Input.java:[line 405]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.Input" primary="true" start="287" end="287" startBytecode="1029" endBytecode="1029" sourcefile="Input.java" sourcepath="de/bwravencl/controllerbuddy/input/Input.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" role="SOURCE_REDUNDANT_NULL_CHECK">
+      <Message>Redundant null check at Input.java:[line 287]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE" instanceHash="a9fdceea83e22c397d861e673969bd87" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
@@ -2101,6 +1694,17 @@
       
    ]]></Details>
   </BugPattern>
+  <BugPattern type="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" abbrev="UrF" category="STYLE">
+    <ShortDescription>Unread public/protected field</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This field is never read.&nbsp;
+The field is public or protected, so perhaps
+    it is intended to be used with classes not seen as part of the analysis. If not,
+consider removing it from the class.</p>
+
+    ]]></Details>
+  </BugPattern>
   <BugPattern type="EI_EXPOSE_REP2" abbrev="EI2" category="MALICIOUS_CODE" cweid="374">
     <ShortDescription>May expose internal representation by incorporating reference to mutable object</ShortDescription>
     <Details><![CDATA[
@@ -2146,6 +1750,17 @@ dereferencing this value will generate a null pointer exception.
 
     ]]></Details>
   </BugPattern>
+  <BugPattern type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" abbrev="UuF" category="STYLE">
+    <ShortDescription>Unused public or protected field</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This field is never used.&nbsp;
+The field is public or protected, so perhaps
+    it is intended to be used with classes not seen as part of the analysis. If not,
+consider removing it from the class.</p>
+
+    ]]></Details>
+  </BugPattern>
   <BugPattern type="NM_METHOD_NAMING_CONVENTION" abbrev="Nm" category="BAD_PRACTICE">
     <ShortDescription>Method names should start with a lower case letter</ShortDescription>
     <Details><![CDATA[
@@ -2186,16 +1801,28 @@ the constant null.</p>
 
     ]]></Details>
   </BugPattern>
-  <BugPattern type="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" abbrev="RCN" category="CORRECTNESS">
-    <ShortDescription>Nullcheck of value previously dereferenced</ShortDescription>
+  <BugPattern type="MS_MUTABLE_ARRAY" abbrev="MS" category="MALICIOUS_CODE">
+    <ShortDescription>Field is a mutable array</ShortDescription>
     <Details><![CDATA[
 
-<p> A value is checked here to see whether it is null, but this value can't
-be null because it was previously dereferenced and if it were null a null pointer
-exception would have occurred at the earlier dereference.
-Essentially, this code and the previous dereference
-disagree as to whether this value is allowed to be null. Either the check is redundant
-or the previous dereference is erroneous.</p>
+<p> A final static field references an array
+   and can be accessed by malicious code or
+        by accident from another package.
+   This code can freely modify the contents of the array.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DM_GC" abbrev="Dm" category="PERFORMANCE">
+    <ShortDescription>Explicit garbage collection; extremely dubious except in benchmarking code</ShortDescription>
+    <Details><![CDATA[
+
+  <p> Code explicitly invokes garbage collection.
+  Except for specific use in benchmarking, this is very dubious.</p>
+  <p>In the past, situations where people have explicitly invoked
+  the garbage collector in routines such as close or finalize methods
+  has led to huge performance black holes. Garbage collection
+   can be expensive. Any situation that forces hundreds or thousands
+   of garbage collections will bring the machine to a crawl.</p>
 
     ]]></Details>
   </BugPattern>
@@ -2209,6 +1836,20 @@ and generally bad practice.
 </p>
 
     ]]></Details>
+  </BugPattern>
+  <BugPattern type="SWL_SLEEP_WITH_LOCK_HELD" abbrev="SWL" category="MT_CORRECTNESS">
+    <ShortDescription>Method calls Thread.sleep() with a lock held</ShortDescription>
+    <Details><![CDATA[
+      
+      <p>
+      This method calls Thread.sleep() with a lock held.  This may result
+      in very poor performance and scalability, or a deadlock, since other threads may
+      be waiting to acquire the lock.  It is a much better idea to call
+      wait() on the lock, which releases the lock and allows other threads
+      to run.
+      </p>
+      
+   ]]></Details>
   </BugPattern>
   <BugPattern type="EI_EXPOSE_REP" abbrev="EI" category="MALICIOUS_CODE" cweid="374">
     <ShortDescription>May expose internal representation by returning reference to mutable object</ShortDescription>
@@ -2276,79 +1917,6 @@ Objects of this class will not be deserialized correctly if a non-Serializable
 object is stored in this field.</p>
 
     ]]></Details>
-  </BugPattern>
-  <BugPattern type="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" abbrev="UrF" category="STYLE">
-    <ShortDescription>Unread public/protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> This field is never read.&nbsp;
-The field is public or protected, so perhaps
-    it is intended to be used with classes not seen as part of the analysis. If not,
-consider removing it from the class.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" abbrev="UuF" category="STYLE">
-    <ShortDescription>Unused public or protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> This field is never used.&nbsp;
-The field is public or protected, so perhaps
-    it is intended to be used with classes not seen as part of the analysis. If not,
-consider removing it from the class.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="UPM_UNCALLED_PRIVATE_METHOD" abbrev="UPM" category="PERFORMANCE">
-    <ShortDescription>Private method is never called</ShortDescription>
-    <Details><![CDATA[
-
-<p> This private method is never called. Although it is
-possible that the method will be invoked through reflection,
-it is more likely that the method is never used, and should be
-removed.
-</p>
-
-]]></Details>
-  </BugPattern>
-  <BugPattern type="MS_MUTABLE_ARRAY" abbrev="MS" category="MALICIOUS_CODE">
-    <ShortDescription>Field is a mutable array</ShortDescription>
-    <Details><![CDATA[
-
-<p> A final static field references an array
-   and can be accessed by malicious code or
-        by accident from another package.
-   This code can freely modify the contents of the array.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="DM_GC" abbrev="Dm" category="PERFORMANCE">
-    <ShortDescription>Explicit garbage collection; extremely dubious except in benchmarking code</ShortDescription>
-    <Details><![CDATA[
-
-  <p> Code explicitly invokes garbage collection.
-  Except for specific use in benchmarking, this is very dubious.</p>
-  <p>In the past, situations where people have explicitly invoked
-  the garbage collector in routines such as close or finalize methods
-  has led to huge performance black holes. Garbage collection
-   can be expensive. Any situation that forces hundreds or thousands
-   of garbage collections will bring the machine to a crawl.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="SWL_SLEEP_WITH_LOCK_HELD" abbrev="SWL" category="MT_CORRECTNESS">
-    <ShortDescription>Method calls Thread.sleep() with a lock held</ShortDescription>
-    <Details><![CDATA[
-      
-      <p>
-      This method calls Thread.sleep() with a lock held.  This may result
-      in very poor performance and scalability, or a deadlock, since other threads may
-      be waiting to acquire the lock.  It is a much better idea to call
-      wait() on the lock, which releases the lock and allows other threads
-      to run.
-      </p>
-      
-   ]]></Details>
   </BugPattern>
   <BugPattern type="DM_EXIT" abbrev="Dm" category="BAD_PRACTICE" cweid="382">
     <ShortDescription>Method invokes System.exit(...)</ShortDescription>
@@ -2432,9 +2000,6 @@ signals unexpected behavior by returning an atypical return value.
   <BugCode abbrev="Se">
     <Description>Incorrect definition of Serializable class</Description>
   </BugCode>
-  <BugCode abbrev="UPM">
-    <Description>Private method is never called</Description>
-  </BugCode>
   <BugCode abbrev="SF">
     <Description>Switch case falls through</Description>
   </BugCode>
@@ -2445,20 +2010,20 @@ signals unexpected behavior by returning an atypical return value.
     <Description>Confusing method name</Description>
   </BugCode>
   <Errors errors="0" missingClasses="0"></Errors>
-  <FindBugsSummary timestamp="Thu, 5 Nov 2020 19:34:55 +0100" total_classes="197" referenced_classes="1076" total_bugs="89" total_size="8180" num_packages="9" java_version="15" vm_version="15+36-1562" cpu_seconds="32.44" clock_seconds="7.30" peak_mbytes="567.07" alloc_mbytes="512.00" gc_seconds="0.10" priority_3="58" priority_2="26" priority_1="5">
-    <FileStats path="com/oracle/si/Singleton.java" bugCount="15" size="363" bugHash="42a2c0474a940c94977553caa7c8cfc7"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" bugCount="5" size="410" bugHash="e9ab8b18f03cbee70f00c9c363e149c8"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" bugCount="11" size="375" bugHash="a600a892f4ec43f53e090d5d6656e6c5"/>
+  <FindBugsSummary timestamp="Thu, 17 Dec 2020 23:21:51 +0100" total_classes="197" referenced_classes="1076" total_bugs="66" total_size="8175" num_packages="9" java_version="15" vm_version="15+36-1562" cpu_seconds="32.12" clock_seconds="7.26" peak_mbytes="577.65" alloc_mbytes="512.00" gc_seconds="0.12" priority_3="36" priority_2="25" priority_1="5">
+    <FileStats path="com/oracle/si/Singleton.java" bugCount="13" size="363" bugHash="b540ea982e58280bec5374d4a938b225"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" bugCount="4" size="410" bugHash="5a425fed625ca8d22de8c2ea0ef02ccb"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" bugCount="8" size="376" bugHash="869323b7d1f64916584304eff417298a"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0" size="106"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="7" size="2018" bugHash="472369550de984fa711c0d12b6285844"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="5" size="387" bugHash="9469cee24815e4efe65e3ebd49f7d177"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="5" size="2018" bugHash="251bc36171952e1b999ad987d274a3f1"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="2" size="387" bugHash="bee45d302ca5c0ac7a60e01da28b06f1"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java" bugCount="1" size="251" bugHash="864a38bf11df4ec215d04169f024c54a"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/DirectInputKeyCode.java" bugCount="0" size="177"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" bugCount="33" size="428" bugHash="a5fd7752b4a95a9a81f30a46321a7146"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="2" size="376" bugHash="c3ded3d07f0c413f8ad47c9a0b36462b"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/DualShock4Extension.java" bugCount="21" size="428" bugHash="ed22e22fe74a3d198291922075b869e4"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="2" size="374" bugHash="0161da81f04cc221c2dbcf889c250e6a"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6" size="38" bugHash="d64c96fc34b29143713d5ad41eb4e724"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/LockKey.java" bugCount="1" size="28" bugHash="26ba181e19a761bd4690cbbf2fa96149"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/Mode.java" bugCount="0" size="106"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/Mode.java" bugCount="0" size="102"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/OverlayAxis.java" bugCount="0" size="13"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/Profile.java" bugCount="0" size="128"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/AxisToAxisAction.java" bugCount="0" size="39"/>
@@ -2531,17 +2096,17 @@ signals unexpected behavior by returning an atypical return value.
     <FileStats path="de/bwravencl/controllerbuddy/output/VJoyOutputThread.java" bugCount="1" size="428" bugHash="b5c2abc06f56999b28aad40baa29bacb"/>
     <FileStats path="de/bwravencl/controllerbuddy/version/Version.java" bugCount="0" size="4"/>
     <FileStats path="de/bwravencl/controllerbuddy/version/VersionUtils.java" bugCount="0" size="23"/>
-    <PackageStats package="com.oracle.si" total_bugs="15" total_types="7" total_size="363" priority_3="6" priority_2="6" priority_1="3">
+    <PackageStats package="com.oracle.si" total_bugs="13" total_types="7" total_size="363" priority_3="5" priority_2="5" priority_1="3">
       <ClassStats class="com.oracle.si.Singleton" sourceFile="Singleton.java" interface="false" size="167" bugs="2" priority_3="1" priority_1="1"/>
       <ClassStats class="com.oracle.si.Singleton$1" sourceFile="Singleton.java" interface="false" size="33" bugs="1" priority_3="1"/>
       <ClassStats class="com.oracle.si.Singleton$SingletonApp" sourceFile="Singleton.java" interface="true" size="2" bugs="0"/>
       <ClassStats class="com.oracle.si.Singleton$SingletonServer" sourceFile="Singleton.java" interface="false" size="17" bugs="0"/>
-      <ClassStats class="com.oracle.si.Singleton$SingletonServerRunnable" sourceFile="Singleton.java" interface="false" size="33" bugs="3" priority_3="2" priority_2="1"/>
+      <ClassStats class="com.oracle.si.Singleton$SingletonServerRunnable" sourceFile="Singleton.java" interface="false" size="33" bugs="2" priority_3="1" priority_2="1"/>
       <ClassStats class="com.oracle.si.Singleton$SingletonServerRunnable$1" sourceFile="Singleton.java" interface="false" size="29" bugs="5" priority_3="1" priority_2="3" priority_1="1"/>
-      <ClassStats class="com.oracle.si.Singleton$SingletonServerRunnable$2" sourceFile="Singleton.java" interface="false" size="82" bugs="4" priority_3="1" priority_2="2" priority_1="1"/>
+      <ClassStats class="com.oracle.si.Singleton$SingletonServerRunnable$2" sourceFile="Singleton.java" interface="false" size="82" bugs="3" priority_3="1" priority_2="1" priority_1="1"/>
     </PackageStats>
-    <PackageStats package="de.bwravencl.controllerbuddy.gui" total_bugs="29" total_types="63" total_size="3547" priority_3="26" priority_2="2" priority_1="1">
-      <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" sourceFile="AssignmentsComponent.java" interface="false" size="70" bugs="1" priority_3="1"/>
+    <PackageStats package="de.bwravencl.controllerbuddy.gui" total_bugs="20" total_types="63" total_size="3548" priority_3="17" priority_2="2" priority_1="1">
+      <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent" sourceFile="AssignmentsComponent.java" interface="false" size="70" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1" sourceFile="AssignmentsComponent.java" interface="false" size="53" bugs="1" priority_3="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton" sourceFile="AssignmentsComponent.java" interface="false" size="81" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1" sourceFile="AssignmentsComponent.java" interface="false" size="29" bugs="1" priority_3="1"/>
@@ -2551,7 +2116,7 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$FourWay" sourceFile="AssignmentsComponent.java" interface="false" size="21" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$Stick" sourceFile="AssignmentsComponent.java" interface="false" size="21" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$Stick$StickType" sourceFile="AssignmentsComponent.java" interface="false" size="11" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog" sourceFile="EditActionsDialog.java" interface="false" size="254" bugs="11" priority_3="11"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog" sourceFile="EditActionsDialog.java" interface="false" size="255" bugs="8" priority_3="8"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$1" sourceFile="EditActionsDialog.java" interface="false" size="10" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$AddActionAction" sourceFile="EditActionsDialog.java" interface="false" size="30" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$AssignedAction" sourceFile="EditActionsDialog.java" interface="false" size="8" bugs="0"/>
@@ -2561,7 +2126,7 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$RemoveActionAction" sourceFile="EditActionsDialog.java" interface="false" size="24" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.GuiUtils" sourceFile="GuiUtils.java" interface="false" size="78" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener" sourceFile="GuiUtils.java" interface="false" size="28" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.gui.Main" sourceFile="Main.java" interface="false" size="1460" bugs="4" priority_3="3" priority_1="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.gui.Main" sourceFile="Main.java" interface="false" size="1460" bugs="2" priority_3="1" priority_1="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$1" sourceFile="Main.java" interface="false" size="25" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$1StatusBarTextTimerTask" sourceFile="Main.java" interface="false" size="16" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$2" sourceFile="Main.java" interface="false" size="19" bugs="0"/>
@@ -2597,33 +2162,33 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$StopClientAction" sourceFile="Main.java" interface="false" size="11" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$StopLocalAction" sourceFile="Main.java" interface="false" size="11" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.Main$StopServerAction" sourceFile="Main.java" interface="false" size="11" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" sourceFile="OnScreenKeyboard.java" interface="false" size="192" bugs="4" priority_3="4"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" sourceFile="OnScreenKeyboard.java" interface="false" size="38" bugs="1" priority_3="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard" sourceFile="OnScreenKeyboard.java" interface="false" size="192" bugs="2" priority_3="2"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton" sourceFile="OnScreenKeyboard.java" interface="false" size="38" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton" sourceFile="OnScreenKeyboard.java" interface="false" size="87" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton$1" sourceFile="OnScreenKeyboard.java" interface="false" size="23" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton" sourceFile="OnScreenKeyboard.java" interface="false" size="47" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.OpenVrOverlay" sourceFile="OpenVrOverlay.java" interface="false" size="245" bugs="1" priority_3="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.gui.OpenVrOverlay$TextureData" sourceFile="OpenVrOverlay.java" interface="false" size="6" bugs="0"/>
     </PackageStats>
-    <PackageStats package="de.bwravencl.controllerbuddy.input" total_bugs="42" total_types="21" total_size="1294" priority_3="25" priority_2="16" priority_1="1">
+    <PackageStats package="de.bwravencl.controllerbuddy.input" total_bugs="30" total_types="21" total_size="1288" priority_3="13" priority_2="16" priority_1="1">
       <ClassStats class="de.bwravencl.controllerbuddy.input.DirectInputKeyCode" sourceFile="DirectInputKeyCode.java" interface="false" size="177" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension" sourceFile="DualShock4Extension.java" interface="false" size="294" bugs="9" priority_3="3" priority_2="6"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension" sourceFile="DualShock4Extension.java" interface="false" size="294" bugs="7" priority_3="1" priority_2="6"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$1" sourceFile="DualShock4Extension.java" interface="false" size="58" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" sourceFile="DualShock4Extension.java" interface="false" size="11" bugs="6" priority_3="6"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" sourceFile="DualShock4Extension.java" interface="false" size="22" bugs="7" priority_3="7"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" sourceFile="DualShock4Extension.java" interface="false" size="8" bugs="4" priority_3="4"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="2" priority_3="2"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="2" priority_3="2"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IAudioEndpointVolume" sourceFile="DualShock4Extension.java" interface="false" size="11" bugs="3" priority_3="3"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDevice" sourceFile="DualShock4Extension.java" interface="false" size="22" bugs="4" priority_3="4"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceCollection" sourceFile="DualShock4Extension.java" interface="false" size="8" bugs="2" priority_3="2"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IMMDeviceEnumerator" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="1" priority_3="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$IPropertyStore" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="1" priority_3="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$PROPERTYKEY" sourceFile="DualShock4Extension.java" interface="false" size="7" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$PROPERTYKEY$ByReference" sourceFile="DualShock4Extension.java" interface="false" size="3" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$PROPVARIANT" sourceFile="DualShock4Extension.java" interface="false" size="10" bugs="3" priority_2="3"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.DualShock4Extension$PROPVARIANT$ByReference" sourceFile="DualShock4Extension.java" interface="false" size="3" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.Input" sourceFile="Input.java" interface="false" size="359" bugs="2" priority_3="1" priority_2="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.Input" sourceFile="Input.java" interface="false" size="357" bugs="2" priority_3="1" priority_2="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.Input$VirtualAxis" sourceFile="Input.java" interface="false" size="17" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.KeyStroke" sourceFile="KeyStroke.java" interface="false" size="38" bugs="6" priority_2="6"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.LockKey" sourceFile="LockKey.java" interface="false" size="28" bugs="1" priority_1="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.Mode" sourceFile="Mode.java" interface="false" size="68" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.Mode$Component" sourceFile="Mode.java" interface="false" size="27" bugs="0"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.Mode$Component" sourceFile="Mode.java" interface="false" size="23" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.Mode$Component$ComponentType" sourceFile="Mode.java" interface="false" size="11" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.OverlayAxis" sourceFile="OverlayAxis.java" interface="false" size="13" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.Profile" sourceFile="Profile.java" interface="false" size="128" bugs="0"/>
@@ -2747,32 +2312,32 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.version.VersionUtils" sourceFile="VersionUtils.java" interface="false" size="23" bugs="0"/>
     </PackageStats>
     <FindBugsProfile>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="692" invocations="3943" avgMicrosecondsPerInvocation="175" maxMicrosecondsPerInvocation="16774" standardDeviationMicrosecondsPerInvocation="551"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="427" invocations="1076" avgMicrosecondsPerInvocation="396" maxMicrosecondsPerInvocation="21315" standardDeviationMicrosecondsPerInvocation="1082"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="418" invocations="1076" avgMicrosecondsPerInvocation="389" maxMicrosecondsPerInvocation="15882" standardDeviationMicrosecondsPerInvocation="941"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="351" invocations="1125" avgMicrosecondsPerInvocation="312" maxMicrosecondsPerInvocation="20547" standardDeviationMicrosecondsPerInvocation="1516"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="274" invocations="1037" avgMicrosecondsPerInvocation="264" maxMicrosecondsPerInvocation="22764" standardDeviationMicrosecondsPerInvocation="1253"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="271" invocations="1073" avgMicrosecondsPerInvocation="252" maxMicrosecondsPerInvocation="17365" standardDeviationMicrosecondsPerInvocation="1020"/>
-      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="264" invocations="993" avgMicrosecondsPerInvocation="266" maxMicrosecondsPerInvocation="31076" standardDeviationMicrosecondsPerInvocation="1250"/>
-      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="258" invocations="2635" avgMicrosecondsPerInvocation="98" maxMicrosecondsPerInvocation="6435" standardDeviationMicrosecondsPerInvocation="214"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="255" invocations="1114" avgMicrosecondsPerInvocation="229" maxMicrosecondsPerInvocation="17023" standardDeviationMicrosecondsPerInvocation="847"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="205" invocations="3953" avgMicrosecondsPerInvocation="51" maxMicrosecondsPerInvocation="36327" standardDeviationMicrosecondsPerInvocation="579"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="178" invocations="1076" avgMicrosecondsPerInvocation="166" maxMicrosecondsPerInvocation="9074" standardDeviationMicrosecondsPerInvocation="508"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="152" invocations="858" avgMicrosecondsPerInvocation="177" maxMicrosecondsPerInvocation="15248" standardDeviationMicrosecondsPerInvocation="724"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="139" invocations="1073" avgMicrosecondsPerInvocation="129" maxMicrosecondsPerInvocation="18944" standardDeviationMicrosecondsPerInvocation="687"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="131" invocations="1076" avgMicrosecondsPerInvocation="122" maxMicrosecondsPerInvocation="8859" standardDeviationMicrosecondsPerInvocation="433"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="121" invocations="1296" avgMicrosecondsPerInvocation="94" maxMicrosecondsPerInvocation="10749" standardDeviationMicrosecondsPerInvocation="447"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.ReflectiveClasses" totalMilliseconds="106" invocations="1076" avgMicrosecondsPerInvocation="99" maxMicrosecondsPerInvocation="8638" standardDeviationMicrosecondsPerInvocation="358"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="85" invocations="1076" avgMicrosecondsPerInvocation="79" maxMicrosecondsPerInvocation="8939" standardDeviationMicrosecondsPerInvocation="369"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="78" invocations="1076" avgMicrosecondsPerInvocation="73" maxMicrosecondsPerInvocation="2119" standardDeviationMicrosecondsPerInvocation="138"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph" totalMilliseconds="74" invocations="1076" avgMicrosecondsPerInvocation="69" maxMicrosecondsPerInvocation="8498" standardDeviationMicrosecondsPerInvocation="334"/>
-      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="72" invocations="3854" avgMicrosecondsPerInvocation="18" maxMicrosecondsPerInvocation="808" standardDeviationMicrosecondsPerInvocation="41"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="69" invocations="1076" avgMicrosecondsPerInvocation="64" maxMicrosecondsPerInvocation="8942" standardDeviationMicrosecondsPerInvocation="326"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory" totalMilliseconds="67" invocations="1073" avgMicrosecondsPerInvocation="62" maxMicrosecondsPerInvocation="5297" standardDeviationMicrosecondsPerInvocation="262"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.ExplicitSerialization" totalMilliseconds="65" invocations="1076" avgMicrosecondsPerInvocation="60" maxMicrosecondsPerInvocation="16927" standardDeviationMicrosecondsPerInvocation="599"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="60" invocations="1129" avgMicrosecondsPerInvocation="53" maxMicrosecondsPerInvocation="27072" standardDeviationMicrosecondsPerInvocation="806"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.StreamResourceTracker" totalMilliseconds="58" invocations="39" avgMicrosecondsPerInvocation="1506" maxMicrosecondsPerInvocation="3348" standardDeviationMicrosecondsPerInvocation="1052"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis" totalMilliseconds="56" invocations="1076" avgMicrosecondsPerInvocation="52" maxMicrosecondsPerInvocation="8885" standardDeviationMicrosecondsPerInvocation="334"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="750" invocations="3945" avgMicrosecondsPerInvocation="190" maxMicrosecondsPerInvocation="18469" standardDeviationMicrosecondsPerInvocation="587"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="457" invocations="1076" avgMicrosecondsPerInvocation="425" maxMicrosecondsPerInvocation="20058" standardDeviationMicrosecondsPerInvocation="1138"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="432" invocations="1076" avgMicrosecondsPerInvocation="401" maxMicrosecondsPerInvocation="21356" standardDeviationMicrosecondsPerInvocation="1050"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="327" invocations="1125" avgMicrosecondsPerInvocation="290" maxMicrosecondsPerInvocation="18312" standardDeviationMicrosecondsPerInvocation="1419"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="266" invocations="1114" avgMicrosecondsPerInvocation="239" maxMicrosecondsPerInvocation="22685" standardDeviationMicrosecondsPerInvocation="1169"/>
+      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="261" invocations="2636" avgMicrosecondsPerInvocation="99" maxMicrosecondsPerInvocation="5281" standardDeviationMicrosecondsPerInvocation="207"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="252" invocations="1037" avgMicrosecondsPerInvocation="243" maxMicrosecondsPerInvocation="19685" standardDeviationMicrosecondsPerInvocation="1236"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="239" invocations="1073" avgMicrosecondsPerInvocation="223" maxMicrosecondsPerInvocation="15377" standardDeviationMicrosecondsPerInvocation="881"/>
+      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="239" invocations="993" avgMicrosecondsPerInvocation="241" maxMicrosecondsPerInvocation="18653" standardDeviationMicrosecondsPerInvocation="1034"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="218" invocations="3955" avgMicrosecondsPerInvocation="55" maxMicrosecondsPerInvocation="38934" standardDeviationMicrosecondsPerInvocation="620"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="162" invocations="1076" avgMicrosecondsPerInvocation="151" maxMicrosecondsPerInvocation="10638" standardDeviationMicrosecondsPerInvocation="525"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="128" invocations="1073" avgMicrosecondsPerInvocation="119" maxMicrosecondsPerInvocation="20136" standardDeviationMicrosecondsPerInvocation="671"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="126" invocations="858" avgMicrosecondsPerInvocation="147" maxMicrosecondsPerInvocation="5848" standardDeviationMicrosecondsPerInvocation="476"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="120" invocations="1076" avgMicrosecondsPerInvocation="111" maxMicrosecondsPerInvocation="10339" standardDeviationMicrosecondsPerInvocation="460"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="111" invocations="1296" avgMicrosecondsPerInvocation="85" maxMicrosecondsPerInvocation="10373" standardDeviationMicrosecondsPerInvocation="328"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ReflectiveClasses" totalMilliseconds="93" invocations="1076" avgMicrosecondsPerInvocation="86" maxMicrosecondsPerInvocation="8840" standardDeviationMicrosecondsPerInvocation="369"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="91" invocations="1076" avgMicrosecondsPerInvocation="84" maxMicrosecondsPerInvocation="8979" standardDeviationMicrosecondsPerInvocation="367"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="86" invocations="1076" avgMicrosecondsPerInvocation="79" maxMicrosecondsPerInvocation="2791" standardDeviationMicrosecondsPerInvocation="159"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="80" invocations="1076" avgMicrosecondsPerInvocation="75" maxMicrosecondsPerInvocation="13131" standardDeviationMicrosecondsPerInvocation="448"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph" totalMilliseconds="77" invocations="1076" avgMicrosecondsPerInvocation="72" maxMicrosecondsPerInvocation="8877" standardDeviationMicrosecondsPerInvocation="347"/>
+      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="71" invocations="3856" avgMicrosecondsPerInvocation="18" maxMicrosecondsPerInvocation="975" standardDeviationMicrosecondsPerInvocation="40"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis" totalMilliseconds="61" invocations="1076" avgMicrosecondsPerInvocation="57" maxMicrosecondsPerInvocation="8994" standardDeviationMicrosecondsPerInvocation="336"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="61" invocations="1129" avgMicrosecondsPerInvocation="54" maxMicrosecondsPerInvocation="27244" standardDeviationMicrosecondsPerInvocation="817"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory" totalMilliseconds="56" invocations="1073" avgMicrosecondsPerInvocation="52" maxMicrosecondsPerInvocation="3852" standardDeviationMicrosecondsPerInvocation="196"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ExplicitSerialization" totalMilliseconds="54" invocations="1076" avgMicrosecondsPerInvocation="50" maxMicrosecondsPerInvocation="6589" standardDeviationMicrosecondsPerInvocation="335"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods" totalMilliseconds="47" invocations="197" avgMicrosecondsPerInvocation="240" maxMicrosecondsPerInvocation="1366" standardDeviationMicrosecondsPerInvocation="291"/>
     </FindBugsProfile>
   </FindBugsSummary>
   <ClassFeatures></ClassFeatures>
