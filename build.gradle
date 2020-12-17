@@ -28,6 +28,9 @@ ext {
 
 	jdtUiPrefsFile = '.settings/org.eclipse.jdt.ui.prefs'
 	spotbugsPrefsFile = '.settings/edu.umd.cs.findbugs.core.prefs'
+	spotbugsBaselineFile = 'spotbugs-baseline.xml'
+	spotlessFormatFile = 'spotless.eclipseformat.xml'
+	spotlessImportOrderFile = 'spotless.importorder'
 }
 
 repositories {
@@ -62,7 +65,7 @@ dependencies {
 
 spotbugs {
 	effort = 'max'
-	baselineFile = file("$projectDir/spotbugs-baseline.xml")
+	baselineFile = file(spotbugsBaselineFile)
 	reportLevel = 'low'
 }
 
@@ -71,8 +74,8 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		encoding 'Cp1252'
-		eclipse().configFile 'spotless.eclipseformat.xml'
-		importOrderFile 'spotless.importorder'
+		eclipse().configFile spotlessFormatFile
+		importOrderFile spotlessImportOrderFile
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
 			 *
@@ -95,7 +98,7 @@ spotless {
 	}
 	groovyGradle {
 		target '*.gradle'
-		greclipse().configFile('spotless.eclipseformat.xml')
+		greclipse().configFile(spotlessFormatFile)
 	}
 	format 'newlineAndTrailingWhitespace', {
 		target '.github/workflows/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
@@ -145,6 +148,10 @@ tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
 
 tasks.eclipse.dependsOn generateVersion
 
+def formatterProfile() {
+	return new XmlParser().parse(file(spotlessFormatFile)).profile[0]
+}
+
 eclipse {
 	classpath {
 		file {
@@ -156,9 +163,7 @@ eclipse {
 	jdt {
 		file {
 			withProperties { properties ->
-				new XmlParser().parse(file('spotless.eclipseformat.xml')).profile[0].'setting'.each {
-					properties[it.'@id'] = it.'@value'
-				}
+				formatterProfile().'setting'.each { properties[it.'@id'] = it.'@value' }
 			}
 		}
 	}
@@ -169,90 +174,37 @@ tasks.eclipse.doLast {
 	if (uiPrefs.exists())
 		logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
 	else {
-		uiPrefs.append('''\
+		def importOrder = file(spotlessImportOrderFile).readLines().findAll { it ==~ /^\d+=.*$/ }.collect { it.substring(it.indexOf('=') + 1) }.join(';')
+
+		uiPrefs.append("""\
 			eclipse.preferences.version=1
 			editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
-			formatter_settings_version=20
-			sp_cleanup.add_default_serial_version_id=true
-			sp_cleanup.add_generated_serial_version_id=false
-			sp_cleanup.add_missing_annotations=true
-			sp_cleanup.add_missing_deprecated_annotations=true
-			sp_cleanup.add_missing_methods=false
-			sp_cleanup.add_missing_nls_tags=false
-			sp_cleanup.add_missing_override_annotations=true
-			sp_cleanup.add_missing_override_annotations_interface_methods=true
-			sp_cleanup.add_serial_version_id=false
-			sp_cleanup.always_use_blocks=false
-			sp_cleanup.always_use_parentheses_in_expressions=false
-			sp_cleanup.always_use_this_for_non_static_field_access=false
-			sp_cleanup.always_use_this_for_non_static_method_access=false
-			sp_cleanup.convert_functional_interfaces=true
-			sp_cleanup.convert_to_enhanced_for_loop=true
-			sp_cleanup.convert_to_enhanced_for_loop_if_loop_var_used=false
-			sp_cleanup.correct_indentation=true
-			sp_cleanup.format_source_code=true
-			sp_cleanup.format_source_code_changes_only=false
-			sp_cleanup.insert_inferred_type_arguments=false
-			sp_cleanup.lazy_logical_operator=true
-			sp_cleanup.make_local_variable_final=true
-			sp_cleanup.make_parameters_final=true
-			sp_cleanup.make_private_fields_final=true
-			sp_cleanup.make_type_abstract_if_missing_method=false
-			sp_cleanup.make_variable_declarations_final=true
-			sp_cleanup.merge_conditional_blocks=true
-			sp_cleanup.never_use_blocks=true
-			sp_cleanup.never_use_parentheses_in_expressions=true
-			sp_cleanup.number_suffix=true
-			sp_cleanup.objects_equals=true
+			org.eclipse.jdt.ui.ignorelowercasenames=true
+			org.eclipse.jdt.ui.importorder=$importOrder
+			org.eclipse.jdt.ui.ondemandthreshold=99
+			org.eclipse.jdt.ui.staticondemandthreshold=99
 			sp_cleanup.on_save_use_additional_actions=true
-			sp_cleanup.organize_imports=true
-			sp_cleanup.precompile_regex=true
-			sp_cleanup.push_down_negation=true
-			sp_cleanup.qualify_static_field_accesses_with_declaring_class=false
-			sp_cleanup.qualify_static_member_accesses_through_instances_with_declaring_class=true
-			sp_cleanup.qualify_static_member_accesses_through_subtypes_with_declaring_class=true
-			sp_cleanup.qualify_static_member_accesses_with_declaring_class=true
-			sp_cleanup.qualify_static_method_accesses_with_declaring_class=false
-			sp_cleanup.remove_private_constructors=true
-			sp_cleanup.remove_redundant_modifiers=true
-			sp_cleanup.remove_redundant_semicolons=true
-			sp_cleanup.remove_redundant_type_arguments=true
-			sp_cleanup.remove_trailing_whitespaces=true
-			sp_cleanup.remove_trailing_whitespaces_all=true
-			sp_cleanup.remove_trailing_whitespaces_ignore_empty=false
-			sp_cleanup.remove_unnecessary_array_creation=true
-			sp_cleanup.remove_unnecessary_casts=true
-			sp_cleanup.remove_unnecessary_nls_tags=true
-			sp_cleanup.remove_unused_imports=true
-			sp_cleanup.remove_unused_local_variables=false
-			sp_cleanup.remove_unused_private_fields=true
-			sp_cleanup.remove_unused_private_members=false
-			sp_cleanup.remove_unused_private_methods=true
-			sp_cleanup.remove_unused_private_types=true
-			sp_cleanup.simplify_lambda_expression_and_method_ref=true
-			sp_cleanup.sort_members=true
-			sp_cleanup.sort_members_all=false
-			sp_cleanup.use_anonymous_class_creation=false
-			sp_cleanup.use_autoboxing=true
-			sp_cleanup.use_blocks=true
-			sp_cleanup.use_blocks_only_for_return_and_throw=false
-			sp_cleanup.use_directly_map_method=true
-			sp_cleanup.use_lambda=true
-			sp_cleanup.use_parentheses_in_expressions=true
-			sp_cleanup.use_this_for_non_static_field_access=true
-			sp_cleanup.use_this_for_non_static_field_access_only_if_necessary=true
-			sp_cleanup.use_this_for_non_static_method_access=true
-			sp_cleanup.use_this_for_non_static_method_access_only_if_necessary=true
-			sp_cleanup.use_unboxing=true
-			sp_cleanup.use_var=true
-			'''.stripIndent())
+			""".stripIndent())
+
+		def formatterProfile = formatterProfile()
+		uiPrefs.append("formatter_profile=_${formatterProfile.'@name'}\n")
+		uiPrefs.append("formatter_settings_version=${formatterProfile.'@version'}\n")
+
+		def cleanupProfile = new XmlParser().parse(file('cleanup.xml')).profile[0];
+		uiPrefs.append("cleanup_profile=_${cleanupProfile.'@name'}\n")
+		uiPrefs.append("cleanup_settings_version=${cleanupProfile.'@version'}\n")
+		cleanupProfile.'setting'.each {
+			def configLine = "${it.'@id'}=${it.'@value'}\n"
+			uiPrefs.append(configLine)
+			uiPrefs.append("sp_$configLine")
+		}
 	}
 
 	def spotbugsPrefs = file(spotbugsPrefsFile)
 	if (spotbugsPrefs.exists())
 		logger.warn("SpotBugs preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
 	else {
-		spotbugsPrefs.append('''\
+		spotbugsPrefs.append("""\
 			detectorExplicitSerialization=ExplicitSerialization|true
 			detectorMultithreadedInstanceAccess=MultithreadedInstanceAccess|true
 			detectorConfusionBetweenInheritedAndOuterMethod=ConfusionBetweenInheritedAndOuterMethod|true
@@ -348,7 +300,7 @@ tasks.eclipse.doLast {
 			detectorSynchronizingOnContentsOfFieldToProtectField=SynchronizingOnContentsOfFieldToProtectField|true
 			detectorFindUselessObjects=FindUselessObjects|true
 			detectorBadAppletConstructor=BadAppletConstructor|false
-			excludebugs0=spotbugs-baseline.xml|true
+			excludebugs0=$spotbugsBaselineFile|true
 			detectorInheritanceUnsafeGetResource=InheritanceUnsafeGetResource|true
 			detectorSerializableIdiom=SerializableIdiom|true
 			detectorNaming=Naming|true
@@ -396,7 +348,7 @@ tasks.eclipse.doLast {
 			detector_threshold=3
 			detectorPublicSemaphores=PublicSemaphores|false
 			detectorDumbMethods=DumbMethods|true
-			'''.stripIndent())
+			""".stripIndent())
 	}
 }
 
