@@ -26,7 +26,6 @@ import static java.util.logging.Level.WARNING;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -84,16 +83,16 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
-			final var sw = new StringWriter();
-			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_HELLO);
-			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
-			sw.append(String.valueOf(minAxisValue));
-			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
-			sw.append(String.valueOf(maxAxisValue));
-			sw.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
-			sw.append(String.valueOf(nButtons));
+			final var sb = new StringBuilder();
+			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_HELLO);
+			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(String.valueOf(minAxisValue));
+			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(String.valueOf(maxAxisValue));
+			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(String.valueOf(nButtons));
 
-			final var helloBuf = sw.toString().getBytes("ASCII");
+			final var helloBuf = sb.toString().getBytes("ASCII");
 			final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
 
 			var success = false;
