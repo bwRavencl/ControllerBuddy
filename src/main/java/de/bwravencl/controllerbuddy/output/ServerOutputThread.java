@@ -25,7 +25,6 @@ import static java.util.logging.Level.WARNING;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -128,14 +127,14 @@ public final class ServerOutputThread extends OutputThread {
 							maxAxisValue = Integer.parseInt(messageParts[2]);
 							setnButtons(Integer.parseInt(messageParts[3]));
 
-							final var sw = new StringWriter();
-							sw.append(PROTOCOL_MESSAGE_SERVER_HELLO);
-							sw.append(PROTOCOL_MESSAGE_DELIMITER);
-							sw.append(VersionUtils.getMajorAndMinorVersion());
-							sw.append(PROTOCOL_MESSAGE_DELIMITER);
-							sw.append(String.valueOf(pollInterval));
+							final var sb = new StringBuilder();
+							sb.append(PROTOCOL_MESSAGE_SERVER_HELLO);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER);
+							sb.append(VersionUtils.getMajorAndMinorVersion());
+							sb.append(PROTOCOL_MESSAGE_DELIMITER);
+							sb.append(String.valueOf(pollInterval));
 
-							final var sendBuf = sw.toString().getBytes("ASCII");
+							final var sendBuf = sb.toString().getBytes("ASCII");
 							final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
 									clientPort);
 							serverSocket.send(sendPacket);
@@ -152,80 +151,80 @@ public final class ServerOutputThread extends OutputThread {
 				case Connected -> {
 					Thread.sleep(pollInterval);
 
-					final var sw = new StringWriter();
+					final var sb = new StringBuilder();
 					var doAliveCheck = false;
 					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
-						sw.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
+						sb.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
 						doAliveCheck = true;
 					} else
-						sw.append(PROTOCOL_MESSAGE_UPDATE);
-					sw.append(PROTOCOL_MESSAGE_DELIMITER + counter);
+						sb.append(PROTOCOL_MESSAGE_UPDATE);
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
 					if (!input.poll())
 						controllerDisconnected();
 					else {
 						for (final var v : input.getAxes().values())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + v);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + v);
 
 						for (var i = 0; i < nButtons; i++) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
 							input.getButtons()[i] = false;
 						}
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
 								+ input.getCursorDeltaY());
 						input.setCursorDeltaX(0);
 						input.setCursorDeltaY(0);
 
 						final var downMouseButtons = input.getDownMouseButtons();
 						synchronized (downMouseButtons) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
 							for (final var b : downMouseButtons)
-								sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+								sb.append(PROTOCOL_MESSAGE_DELIMITER + b);
 						}
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpMouseButtons().size());
 						for (final var b : input.getDownUpMouseButtons())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + b);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + b);
 						input.getDownUpMouseButtons().clear();
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownKeyStrokes().size());
 						for (final var keyStroke : input.getDownKeyStrokes()) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
 							for (final var c : keyStroke.getModifierCodes())
-								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+								sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
 							for (final var c : keyStroke.getKeyCodes())
-								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+								sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getDownUpKeyStrokes().size());
 						for (final var keyStroke : input.getDownUpKeyStrokes()) {
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getModifierCodes().length);
 							for (final var c : keyStroke.getModifierCodes())
-								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+								sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyStroke.getKeyCodes().length);
 							for (final var c : keyStroke.getKeyCodes())
-								sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+								sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						}
 						input.getDownUpKeyStrokes().clear();
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
 						input.setScrollClicks(0);
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOnLockKeys().size());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getOnLockKeys().size());
 						for (final var c : input.getOnLockKeys())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOnLockKeys().clear();
 
-						sw.append(PROTOCOL_MESSAGE_DELIMITER + input.getOffLockKeys().size());
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getOffLockKeys().size());
 						for (final var c : input.getOffLockKeys())
-							sw.append(PROTOCOL_MESSAGE_DELIMITER + c);
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + c);
 						input.getOffLockKeys().clear();
 
-						final var sendBuf = sw.toString().getBytes("ASCII");
+						final var sendBuf = sb.toString().getBytes("ASCII");
 
 						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
 						serverSocket.send(sendPacket);
