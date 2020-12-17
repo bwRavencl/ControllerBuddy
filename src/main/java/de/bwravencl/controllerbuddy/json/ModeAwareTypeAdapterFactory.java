@@ -62,12 +62,12 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 
 				String prevDescription = null;
 				try {
-					if (value instanceof Mode)
-						if (Profile.defaultMode.equals(value) || OnScreenKeyboard.onScreenKeyboardMode.equals(value)) {
-							final var mode = (Mode) value;
-							prevDescription = mode.getDescription();
-							mode.setDescription(null);
-						}
+					if (value instanceof Mode && (Profile.defaultMode.equals(value)
+							|| OnScreenKeyboard.onScreenKeyboardMode.equals(value))) {
+						final var mode = (Mode) value;
+						prevDescription = mode.getDescription();
+						mode.setDescription(null);
+					}
 
 					delegate.write(out, value);
 				} finally {

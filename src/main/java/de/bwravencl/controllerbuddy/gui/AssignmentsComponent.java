@@ -106,8 +106,6 @@ final class AssignmentsComponent extends JScrollPane {
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
-			super();
-
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
 			this.peer = peer;
