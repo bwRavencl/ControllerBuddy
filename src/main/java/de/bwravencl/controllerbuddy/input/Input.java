@@ -32,6 +32,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -288,8 +289,7 @@ public final class Input {
 			if (!glfwGetGamepadState(jid, state))
 				return false;
 
-			for (var i = 0; i < buttons.length; i++)
-				buttons[i] = false;
+			Arrays.fill(buttons, false);
 
 			final var onScreenKeyboard = main.getOnScreenKeyboard();
 
@@ -545,8 +545,6 @@ public final class Input {
 							return -1;
 						if (!o1IsLongPress && o2IsLongPress)
 							return 1;
-
-						return 0;
 					}
 
 					return 0;

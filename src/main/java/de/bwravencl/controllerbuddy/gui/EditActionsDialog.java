@@ -411,8 +411,10 @@ public final class EditActionsDialog extends JDialog {
 		var hasModeAction = false;
 
 		for (final var assignedAction : getAssignedActions())
-			if (assignedAction.action instanceof ButtonToModeAction)
+			if (assignedAction.action instanceof ButtonToModeAction) {
 				hasModeAction = true;
+				break;
+			}
 
 		return hasModeAction;
 	}

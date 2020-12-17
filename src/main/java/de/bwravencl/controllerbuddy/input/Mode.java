@@ -67,11 +67,7 @@ public final class Mode implements Cloneable {
 
 		@Override
 		public int hashCode() {
-			final var prime = 31;
-			var result = 1;
-			result = prime * result + index;
-			result = prime * result + (type == null ? 0 : type.hashCode());
-			return result;
+			return Objects.hash(index, type);
 		}
 	}
 
