@@ -61,6 +61,7 @@ dependencies {
 			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-windows",
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+	spotbugs 'com.github.spotbugs:spotbugs:4.2.0'
 }
 
 spotbugs {
