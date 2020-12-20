@@ -17,6 +17,9 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static com.sun.jna.Platform.WINDOWS;
+import static com.sun.jna.Platform.getOSType;
+import static com.sun.jna.Platform.isMac;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
@@ -24,6 +27,8 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.makeWindowTopmost;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.input.Input.normalize;
+import static java.awt.EventQueue.invokeLater;
+import static java.text.MessageFormat.format;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
@@ -76,11 +81,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadName;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwJoystickIsGamepad;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwUpdateGamepadMappings;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
@@ -115,17 +120,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -137,6 +146,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
@@ -172,7 +182,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -203,7 +212,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.lwjgl.glfw.GLFWJoystickCallback;
+import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.svg.SVGDocument;
 
@@ -214,7 +223,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.oracle.si.Singleton;
 import com.oracle.si.Singleton.SingletonApp;
-import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
@@ -227,12 +235,11 @@ import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
-import de.bwravencl.controllerbuddy.output.ClientVJoyOutputThread;
-import de.bwravencl.controllerbuddy.output.LocalVJoyOutputThread;
-import de.bwravencl.controllerbuddy.output.OutputThread;
-import de.bwravencl.controllerbuddy.output.ServerOutputThread;
-import de.bwravencl.controllerbuddy.output.ServerOutputThread.ServerState;
-import de.bwravencl.controllerbuddy.output.VJoyOutputThread;
+import de.bwravencl.controllerbuddy.output.ClientOutput;
+import de.bwravencl.controllerbuddy.output.LocalOutput;
+import de.bwravencl.controllerbuddy.output.Output;
+import de.bwravencl.controllerbuddy.output.ServerOutput;
+import de.bwravencl.controllerbuddy.output.VJoyOutput;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
@@ -250,7 +257,7 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var vJoyDirectoryFileChooser = new JFileChooser(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutput.getDefaultInstallationPath()));
 			vJoyDirectoryFileChooser.setFileSelectionMode(DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != APPROVE_OPTION)
@@ -258,16 +265,29 @@ public final class Main implements SingletonApp {
 
 			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
 			final var dllFile = new File(vjoyDirectory,
-					VJoyOutputThread.getArchFolderName() + File.separator + VJoyOutputThread.LIBRARY_FILENAME);
+					VJoyOutput.getArchFolderName() + File.separator + VJoyOutput.LIBRARY_FILENAME);
 			if (dllFile.exists()) {
 				final var vjoyPath = vjoyDirectory.getAbsolutePath();
 				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
 				vJoyDirectoryLabel1.setText(vjoyPath);
 			} else
 				showMessageDialog(frame,
-						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
-								VJoyOutputThread.getDefaultInstallationPath()),
+						format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+								VJoyOutput.getDefaultInstallationPath()),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		}
+	}
+
+	private static final class ControllerInfo {
+
+		private final int jid;
+		private final String name;
+		private final String guid;
+
+		private ControllerInfo(final int jid) {
+			this.jid = jid;
+			name = glfwGetGamepadName(jid);
+			guid = glfwGetJoystickGUID(jid);
 		}
 	}
 
@@ -338,7 +358,7 @@ public final class Main implements SingletonApp {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final var result = showConfirmDialog(this,
-						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.CANCEL_OPTION:
@@ -502,7 +522,7 @@ public final class Main implements SingletonApp {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final var result = showConfirmDialog(this,
-						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), YES_NO_CANCEL_OPTION);
 				switch (result) {
 				case JOptionPane.CANCEL_OPTION:
@@ -543,7 +563,7 @@ public final class Main implements SingletonApp {
 
 			putValue(NAME, strings.getString("REMOVE_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(strings.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
+					format(strings.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
 		}
 
 		@Override
@@ -592,20 +612,22 @@ public final class Main implements SingletonApp {
 
 		private static final long serialVersionUID = -2043467156713598592L;
 
-		private final int jid;
+		private final ControllerInfo controller;
 
-		private SelectControllerAction(final int jid) {
-			this.jid = jid;
+		private SelectControllerAction(final ControllerInfo controller) {
+			this.controller = controller;
 
-			final var name = glfwGetGamepadName(jid);
-			putValue(NAME, name);
+			putValue(NAME, controller.name);
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), name));
+					format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), controller.name));
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			setSelectedJid(jid);
+			if (selectedJid == controller.jid)
+				return;
+
+			setSelectedControllerAndUpdateInput(controller);
 		}
 	}
 
@@ -665,7 +687,7 @@ public final class Main implements SingletonApp {
 			if (host != null && host.length() > 0)
 				preferences.put(PREFERENCES_HOST, host);
 			else
-				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST));
+				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST));
 		}
 	}
 
@@ -723,7 +745,7 @@ public final class Main implements SingletonApp {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
-			showMessageDialog(frame, MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
+			showMessageDialog(frame, format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
 					(String) getValue(NAME), INFORMATION_MESSAGE, icon);
 		}
 	}
@@ -862,65 +884,252 @@ public final class Main implements SingletonApp {
 		}
 	}
 
+	private static final class TaskRunner {
+
+		private Thread thread = isMac() ? null : Thread.currentThread();
+
+		private volatile boolean pollGLFWEvents = false;
+
+		private volatile Object result;
+
+		private volatile Object task;
+
+		private void enterLoop() {
+			if (isMac())
+				return;
+
+			log.log(INFO, "Entering main loop");
+
+			for (;;)
+				if (task != null) {
+					result = null;
+					var notify = false;
+
+					try {
+						if (task instanceof Callable) {
+							notify = true;
+							result = ((Callable<?>) task).call();
+						} else if (task instanceof Runnable)
+							((Runnable) task).run();
+					} catch (final Throwable t) {
+						throw new RuntimeException(t);
+					} finally {
+						if (notify)
+							synchronized (this) {
+								notifyAll();
+							}
+
+						task = null;
+					}
+				} else {
+					if (pollGLFWEvents)
+						glfwPollEvents();
+
+					try {
+						Thread.sleep(10L);
+					} catch (final InterruptedException e) {
+						log.log(INFO, "Exiting main loop");
+
+						return;
+					}
+				}
+		}
+
+		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
+			if (task == null || isMac() && (thread == null || !thread.isAlive()))
+				return false;
+
+			return clazz.isAssignableFrom(task.getClass());
+		}
+
+		@SuppressWarnings("unchecked")
+		private <V> V run(final Callable<V> callable) {
+			if (isMac())
+				try {
+					return callable.call();
+				} catch (final Exception e) {
+					throw new RuntimeException(e);
+				}
+
+			waitForTask();
+
+			task = callable;
+
+			try {
+				synchronized (this) {
+					this.wait();
+				}
+				return (V) result;
+			} catch (final InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+
+			return null;
+
+		}
+
+		private void run(final Runnable runnable) {
+			waitForTask();
+			task = runnable;
+
+			if (isMac())
+				if (runnable instanceof Output) {
+					thread = new Thread(runnable);
+					thread.start();
+				} else
+					runnable.run();
+		}
+
+		private void shutdown() {
+			pollGLFWEvents = false;
+
+			if (thread != null) {
+				thread.interrupt();
+
+				while (thread.isAlive())
+					try {
+						Thread.sleep(10L);
+					} catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+			}
+		}
+
+		private void stopTask() {
+			if (thread == null)
+				return;
+
+			thread.interrupt();
+
+			waitForTask();
+		}
+
+		private void waitForTask() {
+			while (isMac() ? thread != null && thread.isAlive() : task != null)
+				try {
+					Thread.sleep(10L);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+		}
+	}
+
 	private static final Options options = new Options();
+
 	private static final String SINGLETON_ID;
+
 	private static final Logger log = Logger.getLogger(Main.class.getName());
-	public static final boolean isWindows = Platform.isWindows() && !Platform.isWindowsCE();
+
+	public static final boolean isWindows = getOSType() == WINDOWS;
+
 	static boolean skipMessageDialogs;
+
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
+
 	private static final String PROFILE_FILE_EXTENSION = "json";
+
 	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
+
 	private static final int DIALOG_BOUNDS_X = 100;
+
 	private static final int DIALOG_BOUNDS_Y = 100;
+
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
+
 	private static final int DIALOG_BOUNDS_HEIGHT = 650;
+
 	private static final int SVG_VIEWBOX_MARGIN = 20;
+
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
+
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
+
 	static final int DEFAULT_HGAP = 10;
+
 	static final int DEFAULT_VGAP = 10;
+
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
+
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
+
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP,
 			DEFAULT_VGAP);
+
 	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
+
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
+
 	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
+
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 	private static final String OPTION_AUTOSTART = "autostart";
+
 	private static final String OPTION_PROFILE = "profile";
+
+	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
+
 	private static final String OPTION_TRAY = "tray";
+
 	private static final String OPTION_SAVE = "save";
+
 	private static final String OPTION_EXPORT = "export";
+
 	private static final String OPTION_SKIP_MESSAGE_DIALOGS = "skipMessageDialogs";
+
 	private static final String OPTION_QUIT = "quit";
+
 	private static final String OPTION_VERSION = "version";
+
+	private static final String OPTION_HELP = "help";
+
 	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
+
 	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
+
 	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
+
 	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
+
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
+
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+
 	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
+
 	private static final String PREFERENCES_HOST = "host";
+
 	private static final String PREFERENCES_PORT = "port";
+
 	private static final String PREFERENCES_TIMEOUT = "timeout";
+
 	private static final String PREFERENCES_DARK_THEME = "dark_theme";
+
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
+
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
+
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+
 	private static final String LICENSES_FILENAME = "licenses.txt";
+
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
+
+	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
+
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
+
 	private static final int INVALID_JID = GLFW_JOYSTICK_1 - 1;
 
+	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
+
 	static {
-		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
-				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
+		options.addOption(OPTION_AUTOSTART, true, format(strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
 				isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
 		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_GAME_CONTROLLER_DB, true, strings.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_SAVE, true, strings.getString("SAVE_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_EXPORT, true, strings.getString("EXPORT_OPTION_DESCRIPTION"));
@@ -928,6 +1137,7 @@ public final class Main implements SingletonApp {
 				strings.getString("SKIP_MESSAGE_DIALOGS_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_QUIT, false, strings.getString("QUIT_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_HELP, false, strings.getString("HELP_OPTION_DESCRIPTION"));
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
@@ -942,24 +1152,22 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private static String assembleControllerLoggingMessage(final String prefix, final int jid) {
+	private static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix + " controller ");
 
-		final var gamepadName = glfwGetGamepadName(jid);
-		final var appendGamepadName = gamepadName != null;
+		final var appendGamepadName = controller.name != null;
 
 		if (appendGamepadName)
-			sb.append(gamepadName + " (");
+			sb.append(controller.name + " (");
 
-		sb.append(String.valueOf(jid));
+		sb.append(String.valueOf(controller.jid));
 
 		if (appendGamepadName)
 			sb.append(")");
 
-		final var joystickGuid = glfwGetJoystickGUID(jid);
-		if (joystickGuid != null)
-			sb.append(" [" + glfwGetJoystickGUID(jid) + "]");
+		if (controller.guid != null)
+			sb.append(" [" + controller.guid + "]");
 
 		return sb.toString();
 	}
@@ -999,16 +1207,25 @@ public final class Main implements SingletonApp {
 		return KeyEvent.VK_UNDEFINED;
 	}
 
+	private static List<ControllerInfo> getPresentControllers() {
+		final var presentControllers = new ArrayList<ControllerInfo>();
+		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
+			if (glfwJoystickPresent(jid) && glfwJoystickIsGamepad(jid))
+				presentControllers.add(new ControllerInfo(jid));
+
+		return presentControllers;
+	}
+
 	private static void handleUncaughtException(final Throwable e, final Component parentComponent) {
 		log.log(SEVERE, e.getMessage(), e);
 
 		if (parentComponent != null)
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+			invokeOnEventDispatchThreadIfRequired(() -> {
 				final var sw = new StringWriter();
 				e.printStackTrace(new PrintWriter(sw));
 
 				showMessageDialog(parentComponent,
-						MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
+						format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 
 				terminate(1);
@@ -1033,24 +1250,33 @@ public final class Main implements SingletonApp {
 
 			log.log(INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
-			SwingUtilities.invokeLater(() -> {
-				try {
-					final var commandLine = new DefaultParser().parse(options, args);
-					if (commandLine.hasOption(OPTION_VERSION))
-						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
-					else {
+			final var taskRunner = new TaskRunner();
+
+			try {
+				final var commandLine = new DefaultParser().parse(options, args);
+				if (commandLine.hasOption(OPTION_VERSION)) {
+					System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+					return;
+				} else if (!commandLine.hasOption(OPTION_HELP)) {
+					invokeLater(() -> {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-						final var main = new Main(cmdProfilePath);
+						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+						final var main = new Main(taskRunner, cmdProfilePath, gameControllerDbPath);
 
 						main.handleRemainingCommandLine(commandLine);
-					}
-				} catch (final ParseException e) {
-					final var helpFormatter = new HelpFormatter();
-					helpFormatter.printHelp(strings.getString("APPLICATION_NAME"), options, true);
+
+						taskRunner.pollGLFWEvents = true;
+					});
+
+					taskRunner.enterLoop();
+					return;
 				}
-			});
+			} catch (final ParseException e) {
+			}
+
+			new HelpFormatter().printHelp(strings.getString("APPLICATION_NAME"), options, true);
 		}
 	}
 
@@ -1059,87 +1285,143 @@ public final class Main implements SingletonApp {
 		System.exit(status);
 	}
 
-	private static void waitForThreadToFinish(final Thread thread) {
-		while (thread != null && thread.isAlive())
-			try {
-				Thread.sleep(100L);
-			} catch (final InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-	}
+	private final TaskRunner taskRunner;
 
 	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
 
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	private volatile LocalVJoyOutputThread localThread;
-	private volatile ClientVJoyOutputThread clientThread;
-	private volatile ServerOutputThread serverThread;
+
+	private volatile Output output;
+
 	private int selectedJid = INVALID_JID;
+
 	private Input input;
+
 	private OutputType lastOutputType = OutputType.NONE;
+
 	private final JFrame frame;
+
 	private final OpenAction openAction = new OpenAction();
+
 	private final JMenuBar menuBar = new JMenuBar();
+
 	private final JMenu fileMenu = new JMenu(strings.getString("FILE_MENU"));
+
 	private final JMenu deviceMenu = new JMenu(strings.getString("DEVICE_MENU"));
+
 	private final JMenu localMenu = new JMenu(strings.getString("LOCAL_MENU"));
+
 	private final JMenu clientMenu = new JMenu(strings.getString("CLIENT_MENU"));
+
 	private final JMenu serverMenu = new JMenu(strings.getString("SERVER_MENU"));
+
 	private final JMenuItem newMenuItem = fileMenu.add(new NewAction());
+
 	private final JMenuItem openMenuItem = fileMenu.add(openAction);
+
 	private final JMenuItem saveMenuItem = fileMenu.add(new SaveAction());
+
 	private final JMenuItem saveAsMenuItem = fileMenu.add(new SaveAsAction());
+
 	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
+
 	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
+
 	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
+
 	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
+
 	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
+
 	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+
 	private MenuItem showMenuItem;
+
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
+
 	private JPanel modesPanel;
+
 	private JScrollPane modesScrollPane;
+
 	private JPanel modesListPanel;
+
 	private JPanel newModePanel;
+
 	private JPanel overlayPanel;
+
 	private JPanel visualizationPanel;
+
 	private AssignmentsComponent assignmentsComponent;
+
 	private JScrollPane profileSettingsScrollPane;
+
 	private JPanel profileSettingsPanel;
+
 	private JCheckBox showVrOverlayCheckBox;
+
 	private final JScrollPane globalSettingsScrollPane = new JScrollPane();
+
 	private final JPanel globalSettingsPanel;
+
 	private JScrollPane indicatorsScrollPane;
+
 	private JPanel indicatorsListPanel;
+
 	private TimerTask overlayTimerTask;
+
 	private JLabel vJoyDirectoryLabel1;
+
 	private JTextField hostTextField;
+
 	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
+
 	private TrayIcon trayIcon;
+
 	private boolean unsavedChanges = false;
+
 	private String loadedProfile = null;
+
 	private File currentFile;
+
 	private ServerSocket serverSocket;
+
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
+
 	private JLabel currentModeLabel;
+
 	private final JFileChooser profileFileChooser = new ProfileFileChooser();
+
 	private final Timer timer = new Timer();
+
 	private volatile OpenVrOverlay openVrOverlay;
+
 	private FrameDragListener overlayFrameDragListener;
+
 	private FlowLayout indicatorPanelFlowLayout;
+
 	private JPanel indicatorPanel;
+
 	private Rectangle prevMaxWindowBounds;
+
 	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
 			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 			new Insets(0, 0, 0, 0), 0, 5);
+
 	private volatile JFrame overlayFrame;
+
 	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
+
 	private JComboBox<Mode> modeComboBox;
+
 	private JSVGCanvas svgCanvas;
+
 	private SVGDocument templateSvgDocument;
+
 	private FlatLaf lookAndFeel;
 
-	private Main(final String cmdProfilePath) {
+	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
+		this.taskRunner = taskRunner;
+
 		Singleton.start(this, SINGLETON_ID);
 
 		frame = new JFrame();
@@ -1203,43 +1485,43 @@ public final class Main implements SingletonApp {
 		if (isWindows) {
 			menuBar.add(localMenu, 2);
 
-			final var buttonGroupLocalState = new ButtonGroup();
+			final var localStateButtonGroup = new ButtonGroup();
 			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 			startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
-			buttonGroupLocalState.add(startLocalRadioButtonMenuItem);
+			localStateButtonGroup.add(startLocalRadioButtonMenuItem);
 			localMenu.add(startLocalRadioButtonMenuItem);
 
 			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 			stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
-			buttonGroupLocalState.add(stopLocalRadioButtonMenuItem);
+			localStateButtonGroup.add(stopLocalRadioButtonMenuItem);
 			localMenu.add(stopLocalRadioButtonMenuItem);
 
 			menuBar.add(clientMenu);
 
-			final var buttonGroupClientState = new ButtonGroup();
+			final var clientStateButtonGroup = new ButtonGroup();
 
 			startClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 			startClientRadioButtonMenuItem.setAction(new StartClientAction());
-			buttonGroupClientState.add(startClientRadioButtonMenuItem);
+			clientStateButtonGroup.add(startClientRadioButtonMenuItem);
 			clientMenu.add(startClientRadioButtonMenuItem);
 
 			stopClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 			stopClientRadioButtonMenuItem.setAction(new StopClientAction());
-			buttonGroupClientState.add(stopClientRadioButtonMenuItem);
+			clientStateButtonGroup.add(stopClientRadioButtonMenuItem);
 			clientMenu.add(stopClientRadioButtonMenuItem);
 		}
 
 		menuBar.add(serverMenu);
 
-		final var buttonGroupServerState = new ButtonGroup();
+		final var serverStateButtonGroup = new ButtonGroup();
 		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
 		startServerRadioButtonMenuItem.setAction(new StartServerAction());
-		buttonGroupServerState.add(startServerRadioButtonMenuItem);
+		serverStateButtonGroup.add(startServerRadioButtonMenuItem);
 		serverMenu.add(startServerRadioButtonMenuItem);
 
 		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
 		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
-		buttonGroupServerState.add(stopServerRadioButtonMenuItem);
+		serverStateButtonGroup.add(stopServerRadioButtonMenuItem);
 		serverMenu.add(stopServerRadioButtonMenuItem);
 
 		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
@@ -1263,7 +1545,7 @@ public final class Main implements SingletonApp {
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL), 1, 100, 1));
+				preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL), 1, 100, 1));
 		final var pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1281,7 +1563,7 @@ public final class Main implements SingletonApp {
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			vJoyDirectoryLabel1 = new JLabel(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutputThread.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutput.getDefaultInstallationPath()));
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel1);
 
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
@@ -1295,7 +1577,7 @@ public final class Main implements SingletonApp {
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
-					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE), 1, 16, 1));
+					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE), 1, 16, 1));
 			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
@@ -1310,7 +1592,7 @@ public final class Main implements SingletonApp {
 			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			hostPanel.add(hostLabel);
 
-			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientVJoyOutputThread.DEFAULT_HOST), 15);
+			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST), 15);
 			final var setHostAction = new SetHostAction(hostTextField);
 			hostTextField.addActionListener(setHostAction);
 			hostTextField.addFocusListener(setHostAction);
@@ -1325,7 +1607,7 @@ public final class Main implements SingletonApp {
 		portPanel.add(portLabel);
 
 		final var portSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT), 1024, 65535, 1));
+				preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT), 1024, 65535, 1));
 		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		portSpinner.setEditor(portSpinnerEditor);
@@ -1341,7 +1623,7 @@ public final class Main implements SingletonApp {
 		timeoutPanel.add(timeoutLabel);
 
 		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT), 10, 60000, 1));
+				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT), 10, 60000, 1));
 		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1426,7 +1708,7 @@ public final class Main implements SingletonApp {
 
 		updateTheme();
 
-		final var glfwInitialized = glfwInit();
+		final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
 		if (!glfwInitialized) {
 			log.log(SEVERE, "Could not initialize GLFW");
 
@@ -1440,22 +1722,35 @@ public final class Main implements SingletonApp {
 			}
 		}
 
-		final var presentJids = new HashSet<Integer>();
-		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
-			if (glfwJoystickPresent(jid) && glfwJoystickIsGamepad(jid))
-				presentJids.add(jid);
+		var mappingsUpdated = updateGameControllerMappings(
+				ClassLoader.getSystemResourceAsStream(Main.GAME_CONTROLLER_DATABASE_FILENAME));
+		log.log(mappingsUpdated ? INFO : WARNING, (mappingsUpdated ? "Successfully updated" : "Failed to update")
+				+ " game controller mappings from internal file " + Main.GAME_CONTROLLER_DATABASE_FILENAME);
+
+		if (gameControllerDbPath != null)
+			mappingsUpdated &= updateGameControllerMappingsFromFile(gameControllerDbPath);
+
+		if (!mappingsUpdated) {
+			log.log(WARNING, "An error occurred while updating the SDL game controller mappings");
+
+			showMessageDialog(frame, strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		}
+
+		final var presentControllers = taskRunner.run(Main::getPresentControllers);
+		if (!isSelectedJidValid() && !presentControllers.isEmpty())
+			setSelectedController(presentControllers.get(0));
 
 		final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-		for (final var jid : presentJids) {
-			final var lastControllerFound = lastControllerGuid != null
-					? lastControllerGuid.equals(glfwGetJoystickGUID(jid))
+		for (final var controller : presentControllers) {
+			final var lastControllerFound = lastControllerGuid != null ? lastControllerGuid.equals(controller.guid)
 					: false;
 
 			if (!isSelectedJidValid() || lastControllerFound)
-				selectedJid = jid;
+				selectedJid = controller.jid;
 
 			if (lastControllerFound) {
-				log.log(INFO, assembleControllerLoggingMessage("Selected previously used", jid));
+				log.log(INFO, assembleControllerLoggingMessage("Selected previously used", controller));
 				break;
 			} else
 				log.log(INFO, "Previously used controller is not present");
@@ -1463,32 +1758,28 @@ public final class Main implements SingletonApp {
 
 		newProfile();
 
-		onControllersChanged(true);
+		onControllersChanged(presentControllers, true);
 
-		glfwSetJoystickCallback(new GLFWJoystickCallback() {
+		taskRunner.run(() -> glfwSetJoystickCallback((jid, event) -> {
+			final var disconnected = event == GLFW_DISCONNECTED;
+			if (disconnected || glfwJoystickIsGamepad(jid)) {
+				if (disconnected) {
+					log.log(INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
-			@Override
-			public void invoke(final int jid, final int event) {
-				final var disconnected = event == GLFW_DISCONNECTED;
-				if (disconnected || glfwJoystickIsGamepad(jid)) {
-					if (disconnected) {
-						log.log(INFO, assembleControllerLoggingMessage("Disconnected", jid));
-						if (selectedJid == jid) {
-							selectedJid = INVALID_JID;
-							input.deInit();
+					if (selectedJid == jid) {
+						selectedJid = INVALID_JID;
+						input.deInit(true);
+					}
+				} else if (event == GLFW_CONNECTED)
+					log.log(INFO, assembleControllerLoggingMessage("Connected", new ControllerInfo(jid)));
 
-							if (isServerThreadActive() && serverThread.getServerState() != ServerState.Connected)
-								serverThread.controllerDisconnected();
-						}
-					} else if (event == GLFW_CONNECTED)
-						log.log(INFO, assembleControllerLoggingMessage("Connected", jid));
+				final var presentControllers1 = getPresentControllers();
 
-					SwingUtilities.invokeLater(() -> onControllersChanged(false));
-				}
+				invokeLater(() -> onControllersChanged(presentControllers1, false));
 			}
-		});
+		}));
 
-		if (glfwInitialized && presentJids.isEmpty()) {
+		if (glfwInitialized && presentControllers.isEmpty()) {
 			if (isWindows)
 				showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), INFORMATION_MESSAGE);
@@ -1540,17 +1831,16 @@ public final class Main implements SingletonApp {
 	public void displayChargingStateInfo(final boolean charging) {
 		if (trayIcon != null && input != null)
 			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
-					MessageFormat.format(
-							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
-							input.getDualShock4Extension().getBatteryState() / 100f),
+					format(strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
+							input.getSonyExtension().getBatteryState() / 100f),
 					MessageType.INFO);
 	}
 
 	public void displayLowBatteryWarning(final float batteryCharge) {
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			if (trayIcon != null)
 				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"),
-						MessageFormat.format("{0,number,percent}", batteryCharge), MessageType.WARNING);
+						format("{0,number,percent}", batteryCharge), MessageType.WARNING);
 		});
 	}
 
@@ -1583,8 +1873,7 @@ public final class Main implements SingletonApp {
 				bodyElement.appendChild(modeDivElement);
 
 				final var modeHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h2");
-				modeHeaderElement
-						.setTextContent(MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription()));
+				modeHeaderElement.setTextContent(format(strings.getString("MODE_NAME"), mode.getDescription()));
 				modeDivElement.appendChild(modeHeaderElement);
 
 				final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
@@ -1716,23 +2005,21 @@ public final class Main implements SingletonApp {
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 		if (autostartOptionValue != null)
 			if (isWindows && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
-				if (!isLocalThreadActive())
+				if (!isLocalRunning())
 					startLocal();
 			} else if (isWindows && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
-				if (!isClientThreadActive())
+				if (!isClientRunning())
 					startClient();
 			} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
-				if (!isServerThreadActive())
+				if (!isServerRunning())
 					startServer();
 			} else
 				showMessageDialog(frame,
-						MessageFormat.format(
-								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
+						format(strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
 								OPTION_AUTOSTART, autostartOptionValue,
-								MessageFormat.format(
-										isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-												: strings.getString("SERVER"),
-										strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE)));
+								format(isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+										: strings.getString("SERVER"), strings.getString("ERROR_DIALOG_TITLE"),
+										ERROR_MESSAGE)));
 
 		final var saveOptionValue = commandLine.getOptionValue(OPTION_SAVE);
 		if (saveOptionValue != null)
@@ -1845,24 +2132,24 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private boolean isClientThreadActive() {
-		return clientThread != null && clientThread.isAlive();
+	private boolean isClientRunning() {
+		return taskRunner.isTaskOfTypeRunning(ClientOutput.class);
 	}
 
-	public boolean isLocalThreadActive() {
-		return localThread != null && localThread.isAlive();
+	public boolean isLocalRunning() {
+		return taskRunner.isTaskOfTypeRunning(LocalOutput.class);
 	}
 
 	private boolean isSelectedJidValid() {
 		return selectedJid >= GLFW_JOYSTICK_1 && selectedJid <= GLFW_JOYSTICK_LAST;
 	}
 
-	public boolean isServerThreadActive() {
-		return serverThread != null && serverThread.isAlive();
+	public boolean isServerRunning() {
+		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
 	}
 
 	private void loadProfile(final File file) {
-		stopAll();
+		stopAll(true);
 
 		log.log(INFO, "Loading profile " + file.getAbsolutePath());
 
@@ -1880,7 +2167,7 @@ public final class Main implements SingletonApp {
 				if (versionsComparisonResult.isEmpty()) {
 					log.log(WARNING, "Trying to load a profile without version information");
 					showMessageDialog(frame,
-							MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+							format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 									strings.getString("AN_UNKNOWN")),
 							strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 				} else {
@@ -1888,13 +2175,13 @@ public final class Main implements SingletonApp {
 					if (v < 0) {
 						log.log(WARNING, "Trying to load a profile for an older release");
 						showMessageDialog(frame,
-								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+								format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("AN_OLDER")),
 								strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 					} else if (v > 0) {
 						log.log(WARNING, "Trying to load a profile for a newer release");
 						showMessageDialog(frame,
-								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+								format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										strings.getString("A_NEWER")),
 								strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 					}
@@ -1905,7 +2192,7 @@ public final class Main implements SingletonApp {
 					log.log(WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
 					showMessageDialog(frame,
-							MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+							format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 									String.join("\n", unknownActionClasses)),
 							strings.getString("WARNING_DIALOG_TITLE"), WARNING_MESSAGE);
 				}
@@ -1919,8 +2206,7 @@ public final class Main implements SingletonApp {
 					updateProfileSettingsPanel();
 					loadedProfile = file.getName();
 					setUnsavedChanges(false);
-					setStatusBarText(
-							MessageFormat.format(strings.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
+					setStatusBarText(format(strings.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
 					scheduleStatusBarText(strings.getString("STATUS_READY"));
 					profileFileChooser.setSelectedFile(file);
 
@@ -1952,9 +2238,14 @@ public final class Main implements SingletonApp {
 
 				final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 
-				SwingUtilities.invokeLater(() -> {
+				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+
+				invokeLater(() -> {
 					if (cmdProfilePath != null)
 						loadProfile(new File(cmdProfilePath));
+
+					if (gameControllerDbPath != null)
+						updateGameControllerMappingsFromFile(gameControllerDbPath);
 
 					handleRemainingCommandLine(commandLine);
 				});
@@ -1962,17 +2253,17 @@ public final class Main implements SingletonApp {
 				log.log(SEVERE, e.getMessage(), e);
 			}
 		else
-			SwingUtilities.invokeLater(() -> showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+			invokeLater(() -> showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE));
 	}
 
 	private void newProfile() {
-		stopAll();
+		stopAll(true);
 
 		currentFile = null;
 
 		if (input != null)
-			input.deInit();
+			input.deInit(false);
 
 		input = new Input(this, selectedJid);
 
@@ -1986,19 +2277,12 @@ public final class Main implements SingletonApp {
 		profileFileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
-	private void onControllersChanged(final boolean selectFirstTab) {
-		final var presentJids = new HashSet<Integer>();
-		for (var jid = GLFW_JOYSTICK_1; jid <= GLFW_JOYSTICK_LAST; jid++)
-			if (glfwJoystickPresent(jid) && glfwJoystickIsGamepad(jid)) {
-				presentJids.add(jid);
-
-				if (!isSelectedJidValid())
-					setSelectedJid(jid);
-			}
-
-		final var controllerConnected = !presentJids.isEmpty();
+	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
+		final var controllerConnected = !presentControllers.isEmpty();
 		if (!controllerConnected)
 			selectedJid = INVALID_JID;
+		else if (!isSelectedJidValid())
+			setSelectedControllerAndUpdateInput(presentControllers.get(0));
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
 		fileMenu.remove(newMenuItem);
@@ -2024,8 +2308,12 @@ public final class Main implements SingletonApp {
 			fileMenu.insert(saveAsMenuItem, 3);
 			fileMenu.insertSeparator(4);
 
-			for (final var jid : presentJids)
-				deviceMenu.add(new SelectControllerAction(jid));
+			final var devicesButtonGroup = new ButtonGroup();
+			for (final var controller : presentControllers) {
+				final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
+				devicesButtonGroup.add(deviceRadioButtonMenuItem);
+				deviceMenu.add(deviceRadioButtonMenuItem);
+			}
 			menuBar.add(deviceMenu, 1);
 
 			if (isWindows)
@@ -2111,6 +2399,15 @@ public final class Main implements SingletonApp {
 		} else
 			log.log(INFO, "No controllers connected");
 
+		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
+			final var menuItem = deviceMenu.getItem(i);
+			final var action = (SelectControllerAction) menuItem.getAction();
+			if (selectedJid == action.controller.jid) {
+				menuItem.setSelected(true);
+				break;
+			}
+		}
+
 		if (selectFirstTab || !controllerConnected)
 			tabbedPane.setSelectedIndex(0);
 		else if (previousSelectedTabIndex < tabbedPane.getTabCount())
@@ -2127,10 +2424,10 @@ public final class Main implements SingletonApp {
 		frame.getContentPane().repaint();
 	}
 
-	private void onOutputThreadsChanged() {
-		final var localActive = isLocalThreadActive();
-		final var clientActive = isClientThreadActive();
-		final var serverActive = isServerThreadActive();
+	private void onOutputChanged() {
+		final var localActive = isLocalRunning();
+		final var clientActive = isClientRunning();
+		final var serverActive = isServerRunning();
 
 		final var noneActive = !localActive && !clientActive && !serverActive;
 
@@ -2181,10 +2478,14 @@ public final class Main implements SingletonApp {
 			}
 
 		if (input != null)
-			input.deInit();
+			input.deInit(false);
 
-		stopAll();
-		glfwTerminate();
+		stopAll(false);
+
+		taskRunner.shutdown();
+
+		taskRunner.run(GLFW::glfwTerminate);
+
 		Singleton.stop();
 		terminate(0);
 	}
@@ -2242,7 +2543,7 @@ public final class Main implements SingletonApp {
 
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
-			setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
+			setStatusBarText(format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
 			scheduleStatusBarText(strings.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
@@ -2270,7 +2571,7 @@ public final class Main implements SingletonApp {
 
 			@Override
 			public void run() {
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					if (statusLabel.getText().equals(originalText))
 						setStatusBarText(newText);
 				});
@@ -2288,27 +2589,27 @@ public final class Main implements SingletonApp {
 			});
 	}
 
-	private void setSelectedJid(final int jid) {
-		if (selectedJid == jid)
-			return;
+	private void setSelectedController(final ControllerInfo controller) {
+		selectedJid = controller.jid;
 
-		selectedJid = jid;
-
-		final var guid = glfwGetJoystickGUID(jid);
-		if (guid != null) {
-			log.log(INFO, "Selected controller " + selectedJid + "(" + guid + ")");
-			preferences.put(PREFERENCES_LAST_CONTROLLER, guid);
+		if (controller.guid != null) {
+			log.log(INFO, "Selected controller " + selectedJid + " (" + controller.guid + ")");
+			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
 		}
+	}
 
-		stopAll();
+	private void setSelectedControllerAndUpdateInput(final ControllerInfo controller) {
+		stopAll(true);
+
+		setSelectedController(controller);
 
 		Profile previousProfile = null;
 		if (input != null) {
-			input.deInit();
+			input.deInit(false);
 			previousProfile = input.getProfile();
 		}
 
-		input = new Input(this, selectedJid);
+		input = new Input(Main.this, selectedJid);
 
 		if (previousProfile != null)
 			input.setProfile(previousProfile, selectedJid);
@@ -2328,15 +2629,17 @@ public final class Main implements SingletonApp {
 
 	private void startClient() {
 		lastOutputType = OutputType.CLIENT;
-		clientThread = new ClientVJoyOutputThread(Main.this, input);
-		clientThread.setvJoyDevice(
-				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
+		final var clientThread = new ClientOutput(Main.this, input);
+		clientThread
+				.setvJoyDevice(new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE)));
 		clientThread.setHost(hostTextField.getText());
-		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
-		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
-		clientThread.start();
+		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT));
+		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT));
 
-		onOutputThreadsChanged();
+		output = clientThread;
+		taskRunner.run(clientThread);
+
+		onOutputChanged();
 	}
 
 	private void startLocal() {
@@ -2344,13 +2647,15 @@ public final class Main implements SingletonApp {
 			return;
 
 		lastOutputType = OutputType.LOCAL;
-		localThread = new LocalVJoyOutputThread(Main.this, input);
-		localThread.setvJoyDevice(
-				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutputThread.DEFAULT_VJOY_DEVICE)));
-		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
-		localThread.start();
+		final var localThread = new LocalOutput(Main.this, input);
+		localThread
+				.setvJoyDevice(new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE)));
+		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL));
 
-		onOutputThreadsChanged();
+		output = localThread;
+		taskRunner.run(localThread);
+
+		onOutputChanged();
 
 		initOverlay();
 		initVrOverlay();
@@ -2364,7 +2669,7 @@ public final class Main implements SingletonApp {
 
 			@Override
 			public void run() {
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					if (!isModalDialogShowing()) {
 						if (overlayFrame != null)
 							makeWindowTopmost(overlayFrame);
@@ -2396,45 +2701,46 @@ public final class Main implements SingletonApp {
 			return;
 
 		lastOutputType = OutputType.SERVER;
-		serverThread = new ServerOutputThread(Main.this, input);
-		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutputThread.DEFAULT_PORT));
-		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutputThread.DEFAULT_TIMEOUT));
-		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, OutputThread.DEFAULT_POLL_INTERVAL));
-		serverThread.start();
+		final var serverThread = new ServerOutput(Main.this, input);
+		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT));
+		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT));
+		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL));
 
-		onOutputThreadsChanged();
+		taskRunner.run(serverThread);
+		output = serverThread;
+
+		onOutputChanged();
 
 		initOverlay();
 		startOverlayTimerTask();
 	}
 
-	public void stopAll() {
+	public void stopAll(final boolean performGarbageCollection) {
 		if (isWindows) {
 			stopLocal(false);
 			stopClient(false);
 		}
 		stopServer(false);
 
-		System.gc();
+		if (performGarbageCollection)
+			System.gc();
 	}
 
 	private void stopClient(final boolean resetLastOutputType) {
-		if (clientThread != null)
-			clientThread.stopOutput();
+		if (isClientRunning())
+			taskRunner.stopTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
 
-		waitForThreadToFinish(clientThread);
-
 		invokeOnEventDispatchThreadIfRequired(() -> {
-			onOutputThreadsChanged();
+			onOutputChanged();
 		});
 	}
 
 	private void stopLocal(final boolean resetLastOutputType) {
-		if (localThread != null)
-			localThread.stopOutput();
+		if (isLocalRunning())
+			taskRunner.stopTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
@@ -2442,12 +2748,7 @@ public final class Main implements SingletonApp {
 		invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
 			deInitOverlay();
-		});
-
-		waitForThreadToFinish(localThread);
-
-		invokeOnEventDispatchThreadIfRequired(() -> {
-			onOutputThreadsChanged();
+			onOutputChanged();
 		});
 	}
 
@@ -2457,8 +2758,11 @@ public final class Main implements SingletonApp {
 	}
 
 	private void stopServer(final boolean resetLastOutputType) {
-		if (serverThread != null)
-			serverThread.stopOutput();
+		if (output instanceof ServerOutput)
+			((ServerOutput) output).close();
+
+		if (isServerRunning())
+			taskRunner.stopTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
@@ -2466,22 +2770,78 @@ public final class Main implements SingletonApp {
 		invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
 			deInitOverlay();
-		});
-
-		waitForThreadToFinish(serverThread);
-
-		invokeOnEventDispatchThreadIfRequired(() -> {
-			onOutputThreadsChanged();
+			onOutputChanged();
 		});
 	}
 
 	public void toggleOnScreenKeyboard() {
-		if (isLocalThreadActive() || isServerThreadActive())
-			SwingUtilities.invokeLater(() -> {
+		if (isLocalRunning() || isServerRunning())
+			invokeLater(() -> {
 				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
 				repaintOnScreenKeyboard();
 				repaintOverlay();
 			});
+	}
+
+	private boolean updateGameControllerMappings(final InputStream is) {
+		var mappingsUpdated = false;
+
+		final var defaultCharset = Charset.defaultCharset();
+		try (var bufferedReader = new BufferedReader(new InputStreamReader(is, defaultCharset))) {
+			final var sb = new StringBuilder();
+
+			while (bufferedReader.ready()) {
+				final var line = bufferedReader.readLine();
+				if (line != null && !line.startsWith(VJOY_GUID)) {
+					sb.append(line);
+					sb.append("\n");
+				}
+			}
+
+			if (sb.charAt(sb.length() - 1) != 0)
+				sb.append((char) 0);
+
+			final var content = sb.toString().getBytes(defaultCharset);
+			final var byteBuffer = ByteBuffer.allocateDirect(content.length).put(content).flip();
+			mappingsUpdated = taskRunner.run(() -> glfwUpdateGamepadMappings(byteBuffer));
+		} catch (final IOException e) {
+			log.log(SEVERE, e.getMessage(), e);
+		}
+
+		return mappingsUpdated;
+	}
+
+	private boolean updateGameControllerMappingsFromFile(final String path) {
+		if (isLocalRunning())
+			stopLocal(false);
+		else if (isServerRunning())
+			stopServer(false);
+
+		var mappingsUpdated = false;
+
+		try (var fileInputStream = new FileInputStream(path)) {
+			mappingsUpdated = updateGameControllerMappings(fileInputStream);
+
+			log.log(mappingsUpdated ? INFO : WARNING, (mappingsUpdated ? "Successfully updated" : "Failed to update")
+					+ " game controller mappings from external file " + path);
+		} catch (final FileNotFoundException e) {
+			log.log(WARNING, "Could not read external game controller mappings file " + path);
+
+			showMessageDialog(frame,
+					format(strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		} catch (final IOException e) {
+			log.log(WARNING, e.getMessage(), e);
+		}
+
+		if (!mappingsUpdated) {
+			log.log(WARNING, "An error occurred while updating the SDL game controller mappings");
+
+			showMessageDialog(frame, strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		}
+
+		return mappingsUpdated;
 	}
 
 	private void updateMenuShortcuts() {
@@ -2529,7 +2889,7 @@ public final class Main implements SingletonApp {
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
 
-			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
+			final var modeNoLabel = new JLabel(format(strings.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
@@ -2592,38 +2952,31 @@ public final class Main implements SingletonApp {
 
 	public void updateOverlayAxisIndicators() {
 		for (final var virtualAxis : Input.VirtualAxis.values())
-			if (virtualAxisToProgressBarMap.containsKey(virtualAxis)) {
-				OutputThread outputThread = null;
-				if (isLocalThreadActive())
-					outputThread = localThread;
-				else if (isServerThreadActive())
-					outputThread = serverThread;
+			if (virtualAxisToProgressBarMap.containsKey(virtualAxis) && output != null
+					&& (isLocalRunning() || isServerRunning())) {
+				final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
+				var changed = false;
 
-				if (outputThread != null) {
-					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
-					var changed = false;
-
-					final var newMinimum = -outputThread.getMaxAxisValue();
-					if (progressBar.getMinimum() != newMinimum) {
-						progressBar.setMinimum(newMinimum);
-						changed = true;
-					}
-
-					final var newMaximum = outputThread.getMinAxisValue();
-					if (progressBar.getMaximum() != newMaximum) {
-						progressBar.setMaximum(newMaximum);
-						changed = true;
-					}
-
-					final var newValue = -input.getAxes().get(virtualAxis);
-					if (progressBar.getValue() != newValue) {
-						progressBar.setValue(newValue);
-						changed = true;
-					}
-
-					if (changed)
-						repaintOverlay();
+				final var newMinimum = -output.getMaxAxisValue();
+				if (progressBar.getMinimum() != newMinimum) {
+					progressBar.setMinimum(newMinimum);
+					changed = true;
 				}
+
+				final var newMaximum = output.getMinAxisValue();
+				if (progressBar.getMaximum() != newMaximum) {
+					progressBar.setMaximum(newMaximum);
+					changed = true;
+				}
+
+				final var newValue = -input.getAxes().get(virtualAxis);
+				if (progressBar.getValue() != newValue) {
+					progressBar.setValue(newValue);
+					changed = true;
+				}
+
+				if (changed)
+					repaintOverlay();
 			}
 	}
 
@@ -2651,8 +3004,7 @@ public final class Main implements SingletonApp {
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
 
-			final var virtualAxisLabel = new JLabel(
-					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
+			final var virtualAxisLabel = new JLabel(format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
 			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
@@ -2699,7 +3051,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void updatePanelAccess() {
-		final var panelsEnabled = !isLocalThreadActive() && !isClientThreadActive() && !isServerThreadActive();
+		final var panelsEnabled = !isLocalRunning() && !isClientRunning() && !isServerRunning();
 
 		setEnabledRecursive(modesListPanel, panelsEnabled);
 		setEnabledRecursive(newModePanel, panelsEnabled);
@@ -2856,7 +3208,7 @@ public final class Main implements SingletonApp {
 			else
 				profile = strings.getString("UNSAVED");
 
-			title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profile);
+			title = format(strings.getString("MAIN_FRAME_TITLE"), profile);
 		}
 
 		frame.setTitle(title);
@@ -2864,11 +3216,11 @@ public final class Main implements SingletonApp {
 		if (trayIcon != null && input != null) {
 			final String toolTip;
 
-			final var dualShock4Support = input.getDualShock4Extension();
-			if (dualShock4Support != null)
-				toolTip = MessageFormat.format(strings.getString(
-						dualShock4Support.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"),
-						title, dualShock4Support.getBatteryState() / 100f);
+			final var sonyExtension = input.getSonyExtension();
+			if (sonyExtension != null)
+				toolTip = format(strings.getString(
+						sonyExtension.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"), title,
+						sonyExtension.getBatteryState() / 100f);
 			else
 				toolTip = title;
 

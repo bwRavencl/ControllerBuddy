@@ -18,8 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
-import java.text.MessageFormat;
+import static java.text.MessageFormat.format;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -36,7 +35,7 @@ abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return MessageFormat.format(strings.getString("VJOY_AXIS_NAME"), virtualAxis);
+		return format(strings.getString("VJOY_AXIS_NAME"), virtualAxis);
 	}
 
 	public VirtualAxis getVirtualAxis() {

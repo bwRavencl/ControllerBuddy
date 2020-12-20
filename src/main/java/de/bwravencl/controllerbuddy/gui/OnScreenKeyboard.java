@@ -21,8 +21,11 @@ import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThr
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
 import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static javax.swing.SwingUtilities.isLeftMouseButton;
+import static javax.swing.SwingUtilities.isRightMouseButton;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,7 +48,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
@@ -173,7 +175,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 				@Override
 				public void mousePressed(final MouseEvent e) {
-					if (SwingUtilities.isLeftMouseButton(e)) {
+					if (isLeftMouseButton(e)) {
 						mouseDown = true;
 						press(false);
 					}
@@ -181,10 +183,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 				@Override
 				public void mouseReleased(final MouseEvent e) {
-					if (SwingUtilities.isLeftMouseButton(e)) {
+					if (isLeftMouseButton(e)) {
 						mouseDown = false;
 						release();
-					} else if (SwingUtilities.isRightMouseButton(e))
+					} else if (isRightMouseButton(e))
 						toggleLock();
 				}
 			});
@@ -557,7 +559,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorDown() {
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();
@@ -570,7 +572,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorLeft() {
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			unselectCurrentButton();
 
 			if (selectedColumn > 0)
@@ -582,7 +584,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorRight() {
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			unselectCurrentButton();
 
 			if (selectedColumn < keyboardButtons[selectedRow].length - 1)
@@ -594,7 +596,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorUp() {
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();

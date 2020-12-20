@@ -42,6 +42,7 @@ ControllerBuddy's goal is to enable the user to control target applications sole
   - Xbox One Controller
   - Dual Shock 3
   - Dual Shock 4 (with special support for the touchpad, haptic feedback and lightbar)
+  - Dual Sense (with special support for the touchpad, haptic feedback and lightbar)
   - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
 - Supported operating systems:
   - Windows x64 (local / client / server)
@@ -148,16 +149,18 @@ Server-Client mode:
 
 #### Command Line Parameters:
 
-| Parameter           | Arguments               | Description                                                          | Available for scripting |
-| ------------------- | ----------------------- | -------------------------------------------------------------------- | :---------------------: |
-| -autostart          | local / client / server | starts the specified mode of operation after launch                  | yes                     |
-| -export             | file destination        | exports a visualization of the current profile to the specified path | yes                     |
-| -profile            | file source             | loads the specified profile after launch                             | yes                     |
-| -quit               |                         | quits the application                                                | yes                     |
-| -save               | file destination        | save the current profile to the specified path                       | yes                     |
-| -skipMessageDialogs |                         | skips all message dialogs                                            | no                      |
-| -tray               |                         | launches the application in the system tray                          | yes                     |
-| -version            |                         | prints the version information and quits                             | no                      |
+| Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | :---------------------: |
+| -autostart          | local / client / server | starts the specified mode of operation after launch                                                         | yes                     |
+| -export             | file destination        | exports a visualization of the current profile to the specified path                                        | yes                     |
+| -help               |                         | prints the help and exits                                                                                   | no                      |
+| -profile            | file source             | loads the specified profile after launch                                                                    | yes                     |
+| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) | yes                     |
+| -quit               |                         | quits the application                                                                                       | yes                     |
+| -save               | file destination        | save the current profile to the specified path                                                              | yes                     |
+| -skipMessageDialogs |                         | skips all message dialogs                                                                                   | no                      |
+| -tray               |                         | launches the application in the system tray                                                                 | yes                     |
+| -version            |                         | prints the version information and exits                                                                    | no                      |
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
 This can be used to integrate ControllerBuddy into third party applications.  
@@ -174,6 +177,7 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
+- [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
 
 #### Building:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  

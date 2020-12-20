@@ -17,10 +17,13 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static com.sun.jna.Platform.isMac;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static de.bwravencl.controllerbuddy.input.DirectInputKeyCode.extendedKeyScanCodesSet;
+import static java.awt.EventQueue.invokeLater;
+import static java.text.MessageFormat.format;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
@@ -28,9 +31,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,8 +43,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
-
-import javax.swing.SwingUtilities;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -66,9 +69,9 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 
-public abstract class VJoyOutputThread extends OutputThread {
+public abstract class VJoyOutput extends Output {
 
-	private static final Logger log = Logger.getLogger(VJoyOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(VJoyOutput.class.getName());
 
 	public static final int DEFAULT_VJOY_DEVICE = 1;
 	private static final String LIBRARY_NAME = "vJoyInterface";
@@ -230,11 +233,13 @@ public abstract class VJoyOutputThread extends OutputThread {
 	final Set<Integer> offLockKeys = new HashSet<>();
 	final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
-	VJoyOutputThread(final Main main, final Input input) {
+	VJoyOutput(final Main main, final Input input) {
 		super(main, input);
 	}
 
 	final void deInit() {
+		input.reset();
+
 		if (main.preventPowerSaveMode())
 			Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
 
@@ -248,15 +253,15 @@ public abstract class VJoyOutputThread extends OutputThread {
 			for (final var c : oldDownModifiers)
 				doKeyboardInput(c, false);
 
-			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"),
-						vJoyDevice.intValue()));
+			invokeLater(() -> {
+				main.setStatusBarText(
+						format(strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice.intValue()));
 			});
 		}
 
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			if (forceStop || restart)
-				main.stopAll();
+				main.stopAll(true);
 			if (restart)
 				main.restartLast();
 		});
@@ -276,7 +281,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.vJoyEnabled().booleanValue()) {
 				log.log(WARNING, "vJoy driver is not enabled");
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(main.getFrame(), strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
@@ -285,9 +290,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
 				log.log(WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
 						+ drvVersion.toString());
-				SwingUtilities.invokeLater(() -> {
-					showMessageDialog(main.getFrame(),
-							MessageFormat.format(strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
+				invokeLater(() -> {
+					showMessageDialog(
+							main.getFrame(), format(strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.getShort(0L), drvVersion.getShort(0L)),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
@@ -298,7 +303,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			if (vJoy.GetVJDStatus(vJoyDevice) != IVjoyInterface.VJD_STAT_FREE) {
 				log.log(WARNING, "vJoy device is not available");
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(main.getFrame(), MessageFormat
 							.format(strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"), vJoyDevice.intValue()),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
@@ -336,9 +341,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 				final var missingAxesString = String.join(", ", missingAxes);
 				log.log(WARNING, "vJoy device is missing the following axes: " + missingAxesString);
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(
-							main.getFrame(), MessageFormat.format(strings.getString("MISSING_AXES_DIALOG_TEXT"),
+							main.getFrame(), format(strings.getString("MISSING_AXES_DIALOG_TEXT"),
 									vJoyDevice.intValue(), missingAxesString),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
@@ -347,9 +352,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			if (!vJoy.AcquireVJD(vJoyDevice).booleanValue()) {
 				log.log(WARNING, "Could not acquire vJoy device");
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(main.getFrame(),
-							MessageFormat.format(strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
+							format(strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
 									vJoyDevice.intValue()),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
@@ -358,10 +363,9 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			if (!vJoy.ResetVJD(vJoyDevice).booleanValue()) {
 				log.log(WARNING, "Could not reset vJoy device");
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(main.getFrame(),
-							MessageFormat.format(strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
-									vJoyDevice.intValue()),
+							format(strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice.intValue()),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
 				return false;
@@ -392,18 +396,18 @@ public abstract class VJoyOutputThread extends OutputThread {
 
 			if (nButtons < requiredButtons) {
 				log.log(WARNING, "vJoy device has not enough buttons");
-				SwingUtilities.invokeLater(() -> {
-					showMessageDialog(main.getFrame(),
-							MessageFormat.format(strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
+				invokeLater(() -> {
+					showMessageDialog(
+							main.getFrame(), format(strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
 									vJoyDevice.intValue(), nButtons, requiredButtons),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
 				return false;
 			}
 
-			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"),
-						vJoyDevice.intValue()));
+			invokeLater(() -> {
+				main.setStatusBarText(
+						format(strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue()));
 			});
 
 			if (main.preventPowerSaveMode())
@@ -434,7 +438,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
 			log.log(SEVERE, e.getMessage(), e);
-			SwingUtilities.invokeLater(() -> {
+			invokeLater(() -> {
 				showMessageDialog(main.getFrame(), strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
@@ -442,7 +446,12 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 	}
 
-	abstract boolean readInput() throws Exception;
+	boolean readInput() throws IOException {
+		if (!isMac())
+			glfwPollEvents();
+
+		return true;
+	}
 
 	@Override
 	void setnButtons(final int nButtons) {
@@ -462,140 +471,139 @@ public abstract class VJoyOutputThread extends OutputThread {
 		this.vJoyDevice = vJoyDevice;
 	}
 
-	final void writeOutput() throws InterruptedException {
-		if (!Thread.currentThread().isInterrupted()) {
-			var res = true;
+	final void writeOutput() {
+		var res = true;
 
-			if (axisXChanged) {
-				res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
-				axisXChanged = false;
+		if (axisXChanged) {
+			res &= vJoy.SetAxis(axisX, vJoyDevice, IVjoyInterface.HID_USAGE_X).booleanValue();
+			axisXChanged = false;
+		}
+
+		if (axisYChanged) {
+			res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
+			axisYChanged = false;
+		}
+
+		if (axisZChanged) {
+			res &= vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
+			axisZChanged = false;
+		}
+
+		if (axisRXChanged) {
+			res &= vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
+			axisRXChanged = false;
+		}
+
+		if (axisRYChanged) {
+			res &= vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
+			axisRYChanged = false;
+		}
+
+		if (axisRZChanged) {
+			res &= vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
+			axisRZChanged = false;
+		}
+
+		if (axisS0Changed) {
+			res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
+			axisS0Changed = false;
+		}
+
+		if (axisS1Changed) {
+			res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
+			axisS1Changed = false;
+		}
+
+		for (var i = 0; i < buttons.length; i++)
+			if (buttonsChanged[i]) {
+				res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
+				buttonsChanged[i] = false;
 			}
 
-			if (axisYChanged) {
-				res &= vJoy.SetAxis(axisY, vJoyDevice, IVjoyInterface.HID_USAGE_Y).booleanValue();
-				axisYChanged = false;
+		if (res) {
+			if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+				final var input = new INPUT();
+				input.type = new DWORD(INPUT.INPUT_MOUSE);
+				input.input.setType(MOUSEINPUT.class);
+				input.input.mi.dx = new LONG(cursorDeltaX);
+				input.input.mi.dy = new LONG(cursorDeltaY);
+				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
+
+				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
 
-			if (axisZChanged) {
-				res &= vJoy.SetAxis(axisZ, vJoyDevice, IVjoyInterface.HID_USAGE_Z).booleanValue();
-				axisZChanged = false;
+			for (final var b : newUpMouseButtons)
+				doMouseButtonInput(b, false);
+
+			for (final var b : newDownMouseButtons)
+				doMouseButtonInput(b, true);
+
+			for (final var b : downUpMouseButtons) {
+				doMouseButtonInput(b, true);
+				doMouseButtonInput(b, false);
 			}
 
-			if (axisRXChanged) {
-				res &= vJoy.SetAxis(axisRX, vJoyDevice, IVjoyInterface.HID_USAGE_RX).booleanValue();
-				axisRXChanged = false;
-			}
+			for (final var c : newUpNormalKeys)
+				doKeyboardInput(c, false);
 
-			if (axisRYChanged) {
-				res &= vJoy.SetAxis(axisRY, vJoyDevice, IVjoyInterface.HID_USAGE_RY).booleanValue();
-				axisRYChanged = false;
-			}
+			for (final var c : newUpModifiers)
+				doKeyboardInput(c, false);
 
-			if (axisRZChanged) {
-				res &= vJoy.SetAxis(axisRZ, vJoyDevice, IVjoyInterface.HID_USAGE_RZ).booleanValue();
-				axisRZChanged = false;
-			}
+			for (final var e : offLockKeys)
+				setLockKeyState(e, false);
 
-			if (axisS0Changed) {
-				res &= vJoy.SetAxis(axisS0, vJoyDevice, IVjoyInterface.HID_USAGE_SL0).booleanValue();
-				axisS0Changed = false;
-			}
+			for (final var e : onLockKeys)
+				setLockKeyState(e, true);
 
-			if (axisS1Changed) {
-				res &= vJoy.SetAxis(axisS1, vJoyDevice, IVjoyInterface.HID_USAGE_SL1).booleanValue();
-				axisS1Changed = false;
-			}
+			for (final var c : newDownModifiers)
+				doKeyboardInput(c, true);
 
-			for (var i = 0; i < buttons.length; i++)
-				if (buttonsChanged[i]) {
-					res &= vJoy.SetBtn(buttons[i], vJoyDevice, new UCHAR(i + 1)).booleanValue();
-					buttonsChanged[i] = false;
-				}
-
-			if (res) {
-				if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-					final var input = new INPUT();
-					input.type = new DWORD(INPUT.INPUT_MOUSE);
-					input.input.setType(MOUSEINPUT.class);
-					input.input.mi.dx = new LONG(cursorDeltaX);
-					input.input.mi.dy = new LONG(cursorDeltaY);
-					input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
-
-					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
-				}
-
-				for (final var b : newUpMouseButtons)
-					doMouseButtonInput(b, false);
-
-				for (final var b : newDownMouseButtons)
-					doMouseButtonInput(b, true);
-
-				for (final var b : downUpMouseButtons) {
-					doMouseButtonInput(b, true);
-					doMouseButtonInput(b, false);
-				}
-
-				for (final var c : newUpNormalKeys)
-					doKeyboardInput(c, false);
-
-				for (final var c : newUpModifiers)
-					doKeyboardInput(c, false);
-
-				for (final var e : offLockKeys)
-					setLockKeyState(e, false);
-
-				for (final var e : onLockKeys)
-					setLockKeyState(e, true);
-
-				for (final var c : newDownModifiers)
+			final var currentTime = System.currentTimeMillis();
+			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
+				for (final var c : newDownNormalKeys)
 					doKeyboardInput(c, true);
 
-				final var currentTime = System.currentTimeMillis();
-				if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
-					for (final var c : newDownNormalKeys)
-						doKeyboardInput(c, true);
-
-					prevKeyInputTime = currentTime;
-				}
-
-				for (final var keyStroke : downUpKeyStrokes) {
-					for (final var c : keyStroke.getModifierCodes())
-						doKeyboardInput(c, true);
-
-					for (final var c : keyStroke.getKeyCodes()) {
-						doKeyboardInput(c, true);
-						doKeyboardInput(c, false);
-					}
-
-					for (final var c : keyStroke.getModifierCodes())
-						doKeyboardInput(c, false);
-				}
-
-				if (scrollClicks != 0) {
-					final var input = new INPUT();
-					input.type = new DWORD(INPUT.INPUT_MOUSE);
-					input.input.setType(MOUSEINPUT.class);
-					input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
-					input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
-
-					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
-				}
-			} else {
-				final var confirmDialogTask = new FutureTask<>(() -> showConfirmDialog(main.getFrame(),
-						strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), YES_NO_OPTION));
-				SwingUtilities.invokeLater(confirmDialogTask);
-				try {
-					if (confirmDialogTask.get() == YES_OPTION)
-						restart = true;
-					else
-						forceStop = true;
-				} catch (final ExecutionException e) {
-					log.log(SEVERE, e.getMessage(), e);
-				}
-
-				stopOutput();
+				prevKeyInputTime = currentTime;
 			}
+
+			for (final var keyStroke : downUpKeyStrokes) {
+				for (final var c : keyStroke.getModifierCodes())
+					doKeyboardInput(c, true);
+
+				for (final var c : keyStroke.getKeyCodes()) {
+					doKeyboardInput(c, true);
+					doKeyboardInput(c, false);
+				}
+
+				for (final var c : keyStroke.getModifierCodes())
+					doKeyboardInput(c, false);
+			}
+
+			if (scrollClicks != 0) {
+				final var input = new INPUT();
+				input.type = new DWORD(INPUT.INPUT_MOUSE);
+				input.input.setType(MOUSEINPUT.class);
+				input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
+				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
+
+				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+			}
+		} else {
+			final var confirmDialogTask = new FutureTask<>(() -> showConfirmDialog(main.getFrame(),
+					strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), YES_NO_OPTION));
+			invokeLater(confirmDialogTask);
+			try {
+				if (confirmDialogTask.get() == YES_OPTION)
+					restart = true;
+				else
+					forceStop = true;
+			} catch (final InterruptedException e) {
+			} catch (final ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+
+			Thread.currentThread().interrupt();
 		}
 	}
 }

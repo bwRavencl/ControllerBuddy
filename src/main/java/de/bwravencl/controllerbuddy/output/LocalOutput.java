@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
@@ -24,11 +25,11 @@ import java.util.logging.Logger;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public final class LocalVJoyOutputThread extends VJoyOutputThread {
+public final class LocalOutput extends VJoyOutput {
 
-	private static final Logger log = Logger.getLogger(LocalVJoyOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(LocalOutput.class.getName());
 
-	public LocalVJoyOutputThread(final Main main, final Input input) {
+	public LocalOutput(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -39,6 +40,11 @@ public final class LocalVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	boolean readInput() {
+		try {
+			super.readInput();
+		} catch (final IOException e) {
+		}
+
 		if (!input.poll()) {
 			controllerDisconnected();
 

@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -86,8 +87,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import javax.swing.SwingUtilities;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
@@ -357,7 +356,7 @@ class OpenVrOverlay {
 			final var vrEvent = VREvent.mallocStack(renderingMemoryStack);
 			while (VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent))
 				if (vrEvent.eventType() == EVREventType_VREvent_Quit)
-					SwingUtilities.invokeLater(this::stop);
+					invokeLater(this::stop);
 
 			final var overlayFrame = main.getOverlayFrame();
 			if (overlayFrame != null)

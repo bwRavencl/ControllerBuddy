@@ -17,12 +17,16 @@
 
 package de.bwravencl.controllerbuddy.output;
 
+import static com.sun.jna.Platform.isMac;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.awt.EventQueue.invokeLater;
+import static java.text.MessageFormat.format;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -32,22 +36,19 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.util.logging.Logger;
-
-import javax.swing.SwingUtilities;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public final class ServerOutputThread extends OutputThread {
+public final class ServerOutput extends Output {
 
 	public enum ServerState {
 		Listening, Connected
 	}
 
-	private static final Logger log = Logger.getLogger(ServerOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(ServerOutput.class.getName());
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
@@ -65,20 +66,12 @@ public final class ServerOutputThread extends OutputThread {
 	private InetAddress clientIPAddress;
 	private ServerState serverState;
 
-	public ServerOutputThread(final Main main, final Input input) {
+	public ServerOutput(final Main main, final Input input) {
 		super(main, input);
 	}
 
-	private void deInit() {
-		if (serverSocket != null)
-			serverSocket.close();
-
-		SwingUtilities.invokeLater(() -> {
-			main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
-
-			if (ServerOutputThread.this.isAlive())
-				main.stopAll();
-		});
+	public void close() {
+		serverSocket.close();
 	}
 
 	@Override
@@ -104,11 +97,14 @@ public final class ServerOutputThread extends OutputThread {
 			serverSocket = new DatagramSocket(port);
 			final var receiveBuf = new byte[1024];
 
-			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_LISTENING"), port));
+			invokeLater(() -> {
+				main.setStatusBarText(format(strings.getString("STATUS_LISTENING"), port));
 			});
 
-			while (!Thread.currentThread().isInterrupted())
+			for (;;) {
+				if (!isMac())
+					glfwPollEvents();
+
 				switch (serverState) {
 				case Listening -> {
 					counter = 0;
@@ -141,8 +137,8 @@ public final class ServerOutputThread extends OutputThread {
 
 							serverState = ServerState.Connected;
 							input.init();
-							SwingUtilities.invokeLater(() -> {
-								main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTED_TO"),
+							invokeLater(() -> {
+								main.setStatusBarText(format(strings.getString("STATUS_CONNECTED_TO"),
 										clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
 							});
 						}
@@ -244,8 +240,7 @@ public final class ServerOutputThread extends OutputThread {
 								}
 							} catch (final SocketTimeoutException e) {
 								serverState = ServerState.Listening;
-								main.scheduleStatusBarText(
-										MessageFormat.format(strings.getString("STATUS_LISTENING"), port));
+								main.scheduleStatusBarText(format(strings.getString("STATUS_LISTENING"), port));
 							}
 						} else
 							counter++;
@@ -253,24 +248,32 @@ public final class ServerOutputThread extends OutputThread {
 
 				}
 				}
+			}
 		} catch (final BindException e) {
 			log.log(WARNING, "Could not bind socket on port " + port);
-			SwingUtilities.invokeLater(() -> {
-				showMessageDialog(main.getFrame(),
-						MessageFormat.format(strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+			invokeLater(() -> {
+				showMessageDialog(main.getFrame(), format(strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
 			log.log(FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
-			SwingUtilities.invokeLater(() -> {
+			invokeLater(() -> {
 				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final InterruptedException e) {
 		} finally {
-			deInit();
+			input.reset();
+
+			if (serverSocket != null)
+				serverSocket.close();
+
+			invokeLater(() -> {
+				main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
+				main.stopAll(true);
+			});
 		}
 
 		logStop();
@@ -282,11 +285,5 @@ public final class ServerOutputThread extends OutputThread {
 
 	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
-	}
-
-	@Override
-	public void stopOutput() {
-		super.stopOutput();
-		serverSocket.close();
 	}
 }
