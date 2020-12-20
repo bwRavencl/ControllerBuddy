@@ -18,14 +18,15 @@ ext {
 	jnaVersion = '5.5.0'
 	lwjglVersion = '3.2.3'
 
+	resourcesDir = 'src/main/resources'
 	genDir = 'gen'
 	versionDir = "$genDir/main/java"
-
 	libsDir = "$buildDir/$libsDirName"
 	tmpDir = "$buildDir/tmp"
 	appImageDir = "$tmpDir/$project.name"
 	runtimeDir = "$tmpDir/runtime"
 
+	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
 	jdtUiPrefsFile = '.settings/org.eclipse.jdt.ui.prefs'
 	spotbugsPrefsFile = '.settings/edu.umd.cs.findbugs.core.prefs'
 	spotbugsBaselineFile = 'spotbugs-baseline.xml'
@@ -107,7 +108,8 @@ spotless {
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', 'src/main/resources/**/*.txt', '*.txt', '*.xml'
+		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', '*.xml', 'src/main/resources/**/*.txt'
+		targetExclude gamecontrollerdbFile
 		endWithNewline()
 	}
 }
@@ -115,16 +117,21 @@ spotless {
 jar.dependsOn check
 
 task cleanGenDirectory {
-	description = 'Removes the \'gen\' directory'
+	description = "Removes the \'$genDir\' directory."
 	doLast { delete genDir }
 }
 
-clean.dependsOn cleanGenDirectory
+task cleanGameControllerDB {
+	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
+	doLast { delete gamecontrollerdbFile }
+}
+
+clean.dependsOn cleanGenDirectory, cleanGameControllerDB
 
 task generateVersion {
-	description = 'Creates a source directory named \'gen\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory.'
+	description = "Creates a source directory named \'$genDir\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory."
 	dependsOn cleanGenDirectory
-	def outputDir = file("$versionDir")
+	def outputDir = file(versionDir)
 	outputs.dir outputDir
 	doLast {
 		def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
@@ -140,14 +147,22 @@ task generateVersion {
 	}
 }
 
+task copyGameControllerDB(type: Copy) {
+	description = "Places a copy of the \'gamecontrollerdb.txt\' file from the SDL_GameControllerDB Git Submodule folder into the \'$resourcesDir' directory."
+	from 'SDL_GameControllerDB/gamecontrollerdb.txt'
+	into resourcesDir
+}
+
+classes.dependsOn copyGameControllerDB
+
 task cleanJdtUiPrefs {
-	description = 'Removes the \'org.eclipse.jdt.ui.prefs\' settings file'
+	description = "Removes the \'$jdtUiPrefsFile\' settings file."
 	doLast { delete jdtUiPrefsFile, spotbugsPrefsFile }
 }
 
 tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
 
-tasks.eclipse.dependsOn generateVersion
+tasks.eclipse.dependsOn generateVersion, copyGameControllerDB
 
 def formatterProfile() {
 	return new XmlParser().parse(file(spotlessFormatFile)).profile[0]
@@ -157,7 +172,7 @@ eclipse {
 	classpath {
 		file {
 			whenMerged { cp ->
-				cp.entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder("$versionDir", null) )
+				cp.entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder(versionDir, null) )
 			}
 		}
 	}
@@ -363,14 +378,14 @@ task jlink(type: Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', "$runtimeDir", '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
+	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
 }
 
 task copyLibs(type: Copy) {
 	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
 	dependsOn jar
 	from configurations.runtimeClasspath
-	into "$libsDir"
+	into libsDir
 }
 
 task customizeLoggingProperties {
@@ -389,8 +404,8 @@ task customizeLoggingProperties {
 task jpackage(type: Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
 	dependsOn copyLibs, customizeLoggingProperties
-	doFirst { delete "$appImageDir" }
-	commandLine 'jpackage', '--input', "$libsDir", '--dest', "$tmpDir", '--type', 'app-image', '--name', "$project.name", '--runtime-image', "$runtimeDir", '--main-class', "$mainClassName", '--main-jar', "${project.name}-${version}.jar", '--app-version', "$versionWithoutHash", '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+	doFirst { delete appImageDir }
+	commandLine 'jpackage', '--input', libsDir, '--dest', tmpDir, '--type', 'app-image', '--name', project.name, '--runtime-image', runtimeDir, '--main-class', mainClassName, '--main-jar', "${project.name}-${version}.jar", '--app-version', versionWithoutHash, '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
 }
 
 startScripts.enabled = false
@@ -398,13 +413,13 @@ distTar.enabled = false
 
 task distZip(type: Zip, overwrite: true) {
 	dependsOn jpackage
-	from "$tmpDir"
+	from tmpDir
 	include "$project.name/**"
 }
 
 task installDist(type: Sync, overwrite: true) {
 	dependsOn jpackage
-	from "$tmpDir"
+	from tmpDir
 	into "$buildDir/install"
 	include "$project.name/**"
 }

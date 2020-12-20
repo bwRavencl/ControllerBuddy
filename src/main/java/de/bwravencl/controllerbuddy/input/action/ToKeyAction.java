@@ -18,8 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
-import java.text.MessageFormat;
+import static java.text.MessageFormat.format;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -60,7 +59,7 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return MessageFormat.format(strings.getString("PRESS"), keystroke);
+		return format(strings.getString("PRESS"), keystroke);
 	}
 
 	public KeyStroke getKeystroke() {

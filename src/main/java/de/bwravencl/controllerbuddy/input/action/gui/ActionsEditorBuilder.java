@@ -18,10 +18,10 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.text.MessageFormat.format;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -40,8 +40,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 
 		private EditActionsAction() {
 			putValue(NAME, strings.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
-					IAction.getLabel(action.getClass())));
+			putValue(SHORT_DESCRIPTION,
+					format(strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"), IAction.getLabel(action.getClass())));
 		}
 
 		@Override

@@ -19,20 +19,19 @@ package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.awt.EventQueue.invokeLater;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public abstract class OutputThread extends Thread {
+public abstract class Output implements Runnable {
 
-	private static final Logger log = Logger.getLogger(OutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(Output.class.getName());
 
 	public static final int DEFAULT_POLL_INTERVAL = 1;
 
@@ -43,23 +42,23 @@ public abstract class OutputThread extends Thread {
 	int maxAxisValue;
 	int nButtons;
 
-	OutputThread(final Main main, final Input input) {
+	Output(final Main main, final Input input) {
 		this.main = main;
 		this.input = input;
-		input.setOutputThread(this);
+		input.setOutput(this);
 	}
 
-	public final void controllerDisconnected() {
+	final void controllerDisconnected() {
 		new Thread() {
 
 			@Override
 			public void run() {
-				main.stopAll();
+				main.stopAll(true);
 			}
 		}.start();
 
 		log.log(WARNING, "Could not read from controller");
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			showMessageDialog(main.getFrame(), strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
 					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 		});
@@ -98,10 +97,5 @@ public abstract class OutputThread extends Thread {
 
 	public final void setPollInterval(final long pollInterval) {
 		this.pollInterval = pollInterval;
-	}
-
-	public void stopOutput() {
-		input.reset();
-		interrupt();
 	}
 }

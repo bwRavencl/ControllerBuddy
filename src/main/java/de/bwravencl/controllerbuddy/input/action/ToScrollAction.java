@@ -19,8 +19,8 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.lang.Math.round;
+import static java.text.MessageFormat.format;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 
 import de.bwravencl.controllerbuddy.input.Input;
@@ -45,7 +45,7 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return MessageFormat.format(strings.getString("SCROLL_DIRECTION"),
+		return format(strings.getString("SCROLL_DIRECTION"),
 				strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
 	}
 

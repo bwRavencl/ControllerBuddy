@@ -18,8 +18,8 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.text.MessageFormat.format;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 
 import de.bwravencl.controllerbuddy.input.Input;
@@ -101,7 +101,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	@Override
 	public String getDescription(final Input input) {
-		return MessageFormat.format(strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+		return format(strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
 				direction.toString().toLowerCase(Locale.ROOT));
 	}
 
