@@ -341,7 +341,6 @@ library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
 
 
-
 Oracle OpenJDK:
 
 GNU General Public License, version 2,
@@ -695,7 +694,6 @@ exception as provided by Oracle in the LICENSE file that accompanied this code."
     so, delete this exception statement from your version.
 
 
-
 Apache Batik:
 
                                   Apache License
@@ -899,7 +897,6 @@ Apache Batik:
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
 
 
 Apache Commons CLI:
@@ -1107,7 +1104,6 @@ Apache Commons CLI:
    limitations under the License.
 
 
-
 ClassGraph:
 
 The MIT License (MIT)
@@ -1131,7 +1127,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 
 
 FlatLaf:
@@ -1339,7 +1334,6 @@ FlatLaf:
    limitations under the License.
 
 
-
 Google Gson:
 
                                  Apache License
@@ -1545,7 +1539,6 @@ Google Gson:
    limitations under the License.
 
 
-
 Java Native Access (JNA):
 
 Java Native Access project (JNA) is dual-licensed under 2 
@@ -1605,7 +1598,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-
 Pure Java HID-API:
 
 PureJavaHidApi is Copyright (c) 2014, Kustaa Nyholm / SpareTimeLabs
@@ -1637,3 +1629,25 @@ OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABIL
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
+
+
+SDL_GameControllerDB:
+
+Simple DirectMedia Layer
+Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
+  
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+  
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required. 
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.

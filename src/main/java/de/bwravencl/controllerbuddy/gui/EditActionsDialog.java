@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
 import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.text.MessageFormat.format;
 import static java.util.logging.Level.SEVERE;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -33,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -313,7 +313,7 @@ public final class EditActionsDialog extends JDialog {
 				cycleActions.add((IAction<Byte>) action.clone());
 
 			preInit(parentComponent);
-			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
+			setTitle(format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
 					IAction.getLabel(cycleAction.getClass())));
 
 			init();
@@ -332,7 +332,7 @@ public final class EditActionsDialog extends JDialog {
 			unsavedProfile = (Profile) input.getProfile().clone();
 
 			preInit(main.getFrame());
-			setTitle(MessageFormat.format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
+			setTitle(format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 			final var modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);

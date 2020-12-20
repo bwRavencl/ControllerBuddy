@@ -21,6 +21,8 @@ import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_HGAP;
 import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_VGAP;
 import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.awt.EventQueue.invokeLater;
+import static java.awt.EventQueue.isDispatchThread;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.joining;
@@ -48,7 +50,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.sun.jna.Native;
@@ -135,10 +136,10 @@ public final class GuiUtils {
 	}
 
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
-		if (SwingUtilities.isEventDispatchThread())
+		if (isDispatchThread())
 			runnable.run();
 		else
-			SwingUtilities.invokeLater(runnable);
+			invokeLater(runnable);
 	}
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,

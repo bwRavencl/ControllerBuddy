@@ -18,9 +18,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.joining;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +121,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return MessageFormat.format(strings.getString("CYCLE"),
+		return format(strings.getString("CYCLE"),
 				actions.stream().map(action -> action.getDescription(input)).collect(joining(" \u2192 ")));
 	}
 

@@ -19,6 +19,8 @@ package de.bwravencl.controllerbuddy.output;
 
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
+import static java.awt.EventQueue.invokeLater;
+import static java.text.MessageFormat.format;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
@@ -36,34 +38,32 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public final class ClientVJoyOutputThread extends VJoyOutputThread {
+public final class ClientOutput extends VJoyOutput {
 
 	private enum ClientState {
 		Connecting, Connected
 	}
 
-	private static final Logger log = Logger.getLogger(ClientVJoyOutputThread.class.getName());
+	private static final Logger log = Logger.getLogger(ClientOutput.class.getName());
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	private static final int N_CONNECTION_RETRIES = 10;
 
 	private String host = DEFAULT_HOST;
-	private int port = ServerOutputThread.DEFAULT_PORT;
-	private int timeout = ServerOutputThread.DEFAULT_TIMEOUT;
+	private int port = ServerOutput.DEFAULT_PORT;
+	private int timeout = ServerOutput.DEFAULT_TIMEOUT;
 	private ClientState clientState = ClientState.Connecting;
 	private InetAddress hostAddress;
 	private DatagramSocket clientSocket;
 	private final byte[] receiveBuf = new byte[1024];
 	private long counter = -1;
 
-	public ClientVJoyOutputThread(final Main main, final Input input) {
+	public ClientOutput(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -74,22 +74,24 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 
 	@Override
 	boolean readInput() throws IOException {
+		super.readInput();
+
 		var retVal = false;
 
 		switch (clientState) {
 		case Connecting -> {
 			log.log(INFO, "Connecting to " + host + ":" + port);
-			SwingUtilities.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
+			invokeLater(() -> {
+				main.setStatusBarText(format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
 			final var sb = new StringBuilder();
-			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_HELLO);
-			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerOutput.PROTOCOL_MESSAGE_CLIENT_HELLO);
+			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(minAxisValue));
-			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(maxAxisValue));
-			sb.append(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(nButtons));
 
 			final var helloBuf = sb.toString().getBytes("ASCII");
@@ -106,17 +108,17 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
 							StandardCharsets.US_ASCII);
 
-					if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_SERVER_HELLO)) {
-						final var messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+					if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_SERVER_HELLO)) {
+						final var messageParts = message.split(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
 						final var serverProtocolVersion = messageParts[1];
 						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
 							final var clientVersion = VersionUtils.getMajorAndMinorVersion();
 							log.log(WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
 									+ serverProtocolVersion);
-							SwingUtilities.invokeLater(() -> {
+							invokeLater(() -> {
 								showMessageDialog(main.getFrame(),
-										MessageFormat.format(strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+										format(strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
 												clientVersion, serverProtocolVersion),
 										strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 							});
@@ -128,18 +130,17 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					} else {
 						retry--;
 						final var finalRetry = retry;
-						SwingUtilities.invokeLater(() -> {
-							main.setStatusBarText(
-									MessageFormat.format(strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
-											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
+						invokeLater(() -> {
+							main.setStatusBarText(format(strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+									N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 						});
 					}
 				} catch (final SocketTimeoutException e) {
 					log.log(INFO, e.getMessage(), e);
 					retry--;
 					final var finalRetry = retry;
-					SwingUtilities.invokeLater(() -> {
-						main.setStatusBarText(MessageFormat.format(strings.getString("STATUS_TIMEOUT_RETRYING"),
+					invokeLater(() -> {
+						main.setStatusBarText(format(strings.getString("STATUS_TIMEOUT_RETRYING"),
 								N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 					});
 				}
@@ -148,14 +149,13 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 			if (success) {
 				clientState = ClientState.Connected;
 				log.log(INFO, "Successfully connected");
-				SwingUtilities.invokeLater(() -> {
-					main.setStatusBarText(
-							MessageFormat.format(strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
+				invokeLater(() -> {
+					main.setStatusBarText(format(strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
 				});
 			} else {
 				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
 					log.log(INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
-					SwingUtilities.invokeLater(() -> {
+					invokeLater(() -> {
 						showMessageDialog(main.getFrame(), MessageFormat
 								.format(strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"), N_CONNECTION_RETRIES),
 								strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
@@ -163,7 +163,7 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				}
 
 				forceStop = true;
-				interrupt();
+				Thread.currentThread().interrupt();
 			}
 		}
 		case Connected -> {
@@ -173,8 +173,8 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
 						StandardCharsets.US_ASCII);
 
-				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE)) {
-					final var messageParts = message.split(ServerOutputThread.PROTOCOL_MESSAGE_DELIMITER);
+				if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_UPDATE)) {
+					final var messageParts = message.split(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
 
 					final var newCounter = Long.parseLong(messageParts[1]);
 					if (newCounter > counter) {
@@ -335,21 +335,21 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 					}
 				}
 
-				if (message.startsWith(ServerOutputThread.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
-					final var keepAliveBuf = ServerOutputThread.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
+				if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
+					final var keepAliveBuf = ServerOutput.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
 					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress,
 							port);
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
 				log.log(FINE, e.getMessage(), e);
-				SwingUtilities.invokeLater(() -> {
+				invokeLater(() -> {
 					showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
 							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 				});
 
 				forceStop = true;
-				interrupt();
+				Thread.currentThread().interrupt();
 			}
 		}
 		}
@@ -367,25 +367,23 @@ public final class ClientVJoyOutputThread extends VJoyOutputThread {
 				clientSocket = new DatagramSocket(port + 1);
 				clientSocket.setSoTimeout(timeout);
 
-				while (!Thread.currentThread().isInterrupted())
+				while (!Thread.interrupted())
 					if (readInput())
 						writeOutput();
 			} else
 				forceStop = true;
 		} catch (final UnknownHostException e) {
 			log.log(INFO, "Could not resolve host " + host);
-			SwingUtilities.invokeLater(() -> {
-				showMessageDialog(main.getFrame(),
-						MessageFormat.format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
+			invokeLater(() -> {
+				showMessageDialog(main.getFrame(), format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
 			log.log(SEVERE, e.getMessage(), e);
-			SwingUtilities.invokeLater(() -> {
+			invokeLater(() -> {
 				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
 			});
-		} catch (final InterruptedException e) {
 		} finally {
 			if (clientSocket != null)
 				clientSocket.close();

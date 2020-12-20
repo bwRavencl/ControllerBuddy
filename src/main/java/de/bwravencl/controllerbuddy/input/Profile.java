@@ -155,7 +155,7 @@ public final class Profile implements Cloneable {
 
 			final var newMode = modes.get(index);
 
-			if (input.getOutputThread() != null)
+			if (input.getOutput() != null)
 				for (final var axis : newMode.getAxisToActionsMap().keySet()) {
 					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
 					if (currentAxisToActionsMap.containsKey(axis))

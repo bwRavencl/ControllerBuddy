@@ -71,9 +71,9 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 			else {
 				remainingD = 0f;
 
-				final var outputThread = input.getOutputThread();
-				final var oldValue = normalize(input.getAxes().get(virtualAxis), outputThread.getMinAxisValue(),
-						outputThread.getMaxAxisValue(), -1f, 1f);
+				final var output = input.getOutput();
+				final var oldValue = normalize(input.getAxes().get(virtualAxis), output.getMinAxisValue(),
+						output.getMaxAxisValue(), -1f, 1f);
 
 				input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
 			}

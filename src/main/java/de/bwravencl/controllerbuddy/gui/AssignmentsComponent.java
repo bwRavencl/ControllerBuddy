@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import static de.bwravencl.controllerbuddy.gui.GuiUtils.setEnabledRecursive;
 import static de.bwravencl.controllerbuddy.gui.Main.strings;
 import static java.lang.Math.min;
+import static java.text.MessageFormat.format;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -58,7 +59,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -378,8 +378,7 @@ final class AssignmentsComponent extends JScrollPane {
 			this.component = component;
 
 			putValue(NAME, name);
-			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(strings.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
+			putValue(SHORT_DESCRIPTION, format(strings.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
 		@Override

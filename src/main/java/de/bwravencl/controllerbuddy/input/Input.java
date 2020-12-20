@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static de.bwravencl.controllerbuddy.input.DualShock4Extension.handleDualShock4;
+import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -42,8 +42,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import org.lwjgl.glfw.GLFWGamepadState;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -52,7 +50,8 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
-import de.bwravencl.controllerbuddy.output.OutputThread;
+import de.bwravencl.controllerbuddy.input.sony.SonyExtension;
+import de.bwravencl.controllerbuddy.output.Output;
 
 public final class Input {
 
@@ -128,7 +127,7 @@ public final class Input {
 	private final int jid;
 	private final EnumMap<VirtualAxis, Integer> axes = new EnumMap<>(VirtualAxis.class);
 	private Profile profile;
-	private OutputThread outputThread;
+	private Output output;
 	private boolean[] buttons;
 	private volatile int cursorDeltaX = 5;
 	private volatile int cursorDeltaY = 5;
@@ -145,7 +144,7 @@ public final class Input {
 	private long lastCallTime = 0L;
 	private float rateMultiplier = 0f;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
-	private final DualShock4Extension dualShock4Extension;
+	private final SonyExtension sonyExtension;
 	private float planckLength;
 
 	public Input(final Main main, final int jid) {
@@ -157,20 +156,20 @@ public final class Input {
 
 		profile = new Profile();
 
-		dualShock4Extension = handleDualShock4(this, jid);
+		sonyExtension = SonyExtension.getIfAvailable(this, jid);
 	}
 
-	public void deInit() {
-		if (dualShock4Extension != null)
-			dualShock4Extension.deInit();
+	public void deInit(final boolean deviceDisconnected) {
+		if (sonyExtension != null)
+			sonyExtension.deInit(deviceDisconnected);
 	}
 
 	public int floatToIntAxisValue(float value) {
 		value = max(value, -1f);
 		value = min(value, 1f);
 
-		final var minAxisValue = outputThread.getMinAxisValue();
-		final var maxAxisValue = outputThread.getMaxAxisValue();
+		final var minAxisValue = output.getMinAxisValue();
+		final var maxAxisValue = output.getMaxAxisValue();
 
 		return (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue);
 	}
@@ -207,10 +206,6 @@ public final class Input {
 		return downUpMouseButtons;
 	}
 
-	public DualShock4Extension getDualShock4Extension() {
-		return dualShock4Extension;
-	}
-
 	public int getJid() {
 		return jid;
 	}
@@ -227,8 +222,8 @@ public final class Input {
 		return onLockKeys;
 	}
 
-	public OutputThread getOutputThread() {
-		return outputThread;
+	public Output getOutput() {
+		return output;
 	}
 
 	public float getPlanckLength() {
@@ -247,8 +242,12 @@ public final class Input {
 		return scrollClicks;
 	}
 
+	public SonyExtension getSonyExtension() {
+		return sonyExtension;
+	}
+
 	public void init() {
-		planckLength = 2f / (outputThread.getMaxAxisValue() - outputThread.getMinAxisValue());
+		planckLength = 2f / (output.getMaxAxisValue() - output.getMinAxisValue());
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
@@ -278,7 +277,7 @@ public final class Input {
 				axisToEndSuspensionTimestampMapIterator.remove();
 		}
 
-		var elapsedTime = outputThread.getPollInterval();
+		var elapsedTime = output.getPollInterval();
 		if (lastCallTime > 0L)
 			elapsedTime = currentTime - lastCallTime;
 		lastCallTime = currentTime;
@@ -286,7 +285,14 @@ public final class Input {
 
 		try (var stack = stackPush()) {
 			final var state = GLFWGamepadState.callocStack(stack);
-			if (!glfwGetGamepadState(jid, state))
+
+			final boolean gotState;
+			if (sonyExtension != null)
+				gotState = sonyExtension.getGamepadState(state);
+			else
+				gotState = glfwGetGamepadState(jid, state);
+
+			if (!gotState)
 				return false;
 
 			Arrays.fill(buttons, false);
@@ -314,7 +320,7 @@ public final class Input {
 				final var currentValue = axes.get(virtualAxis);
 				final var delta = targetValue - currentValue;
 				if (delta != 0) {
-					final var axisRange = outputThread.getMaxAxisValue() - outputThread.getMinAxisValue();
+					final var axisRange = output.getMaxAxisValue() - output.getMinAxisValue();
 
 					final var deltaFactor = normalize(abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
 							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
@@ -404,7 +410,7 @@ public final class Input {
 			}
 		}
 
-		SwingUtilities.invokeLater(() -> {
+		invokeLater(() -> {
 			main.updateOverlayAxisIndicators();
 		});
 		main.handleOnScreenKeyboardModeChange();
@@ -447,20 +453,20 @@ public final class Input {
 
 	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
 			final Integer dententValue) {
-		final var minAxisValue = outputThread.getMinAxisValue();
-		final var maxAxisValue = outputThread.getMaxAxisValue();
+		final var minAxisValue = output.getMinAxisValue();
+		final var maxAxisValue = output.getMaxAxisValue();
 
 		value = max(value, minAxisValue);
 		value = min(value, maxAxisValue);
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && dualShock4Extension != null && prevValue != value)
+		if (hapticFeedback && sonyExtension != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
-				dualShock4Extension.rumble(80L, Byte.MAX_VALUE);
+				sonyExtension.rumbleStrong();
 			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
 					|| prevValue < dententValue && value >= dententValue))
-				dualShock4Extension.rumble(20L, (byte) 1);
+				sonyExtension.rumbleLight();
 	}
 
 	public void setButton(final int id, final boolean value) {
@@ -479,11 +485,11 @@ public final class Input {
 	}
 
 	public void setnButtons(final int nButtons) {
-		buttons = new boolean[min(outputThread.getnButtons(), MAX_N_BUTTONS)];
+		buttons = new boolean[min(output.getnButtons(), MAX_N_BUTTONS)];
 	}
 
-	public void setOutputThread(final OutputThread outputThread) {
-		this.outputThread = outputThread;
+	public void setOutput(final Output output) {
+		this.output = output;
 	}
 
 	public boolean setProfile(final Profile profile, final int jid) {
