@@ -373,7 +373,7 @@ public final class ClientOutput extends VJoyOutput {
 			} else
 				forceStop = true;
 		} catch (final UnknownHostException e) {
-			log.log(INFO, "Could not resolve host " + host);
+			log.log(INFO, "Could not resolve host: " + host);
 			invokeLater(() -> {
 				showMessageDialog(main.getFrame(), format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
