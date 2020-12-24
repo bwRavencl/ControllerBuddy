@@ -2151,7 +2151,7 @@ public final class Main implements SingletonApp {
 	private void loadProfile(final File file) {
 		stopAll(true);
 
-		log.log(INFO, "Loading profile " + file.getAbsolutePath());
+		log.log(INFO, "Loading profile: " + file.getAbsolutePath());
 
 		var profileLoaded = false;
 
@@ -2527,7 +2527,7 @@ public final class Main implements SingletonApp {
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX))
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 
-		log.log(INFO, "Saving profile " + file.getAbsolutePath());
+		log.log(INFO, "Saving profile: " + file.getAbsolutePath());
 
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
@@ -2593,7 +2593,7 @@ public final class Main implements SingletonApp {
 		selectedJid = controller.jid;
 
 		if (controller.guid != null) {
-			log.log(INFO, "Selected controller " + selectedJid + " (" + controller.guid + ")");
+			log.log(INFO, "Selected controller: " + selectedJid + " (" + controller.guid + ")");
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
 		}
 	}
@@ -2823,9 +2823,9 @@ public final class Main implements SingletonApp {
 			mappingsUpdated = updateGameControllerMappings(fileInputStream);
 
 			log.log(mappingsUpdated ? INFO : WARNING, (mappingsUpdated ? "Successfully updated" : "Failed to update")
-					+ " game controller mappings from external file " + path);
+					+ " game controller mappings from external file: " + path);
 		} catch (final FileNotFoundException e) {
-			log.log(WARNING, "Could not read external game controller mappings file " + path);
+			log.log(WARNING, "Could not read external game controller mappings file: " + path);
 
 			showMessageDialog(frame,
 					format(strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),

@@ -444,7 +444,7 @@ final class DualShock4Extension extends SonyExtension {
 										earphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eRender,
 												(DualShock4Connection) DualShock4Extension.this.connection);
 										if (earphoneDevice != null)
-											log.log(INFO, "Using DualShock 4 earphone device " + earphoneDevice);
+											log.log(INFO, "Using DualShock 4 earphone device: " + earphoneDevice);
 										else
 											log.log(WARNING, "DualShock 4 earphone not device found");
 									} catch (final Exception e) {
@@ -454,7 +454,7 @@ final class DualShock4Extension extends SonyExtension {
 									microphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eCapture,
 											(DualShock4Connection) DualShock4Extension.this.connection);
 									if (microphoneDevice != null)
-										log.log(INFO, "Using DualShock 4 microphone device " + microphoneDevice);
+										log.log(INFO, "Using DualShock 4 microphone device: " + microphoneDevice);
 									else
 										log.log(WARNING, "DualShock 4 microphone not device found");
 								} catch (final Exception e) {
