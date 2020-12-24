@@ -277,7 +277,7 @@ public abstract class SonyExtension {
 
 		final var hidDeviceInfo = devices.get(deviceIndex);
 
-		log.log(INFO, "Using " + humanReadableName + " controller " + hidDeviceInfo.getDeviceId());
+		log.log(INFO, "Using " + humanReadableName + " controller: " + hidDeviceInfo.getDeviceId());
 
 		return hidDeviceInfo;
 	}
