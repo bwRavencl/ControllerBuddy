@@ -10,7 +10,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
       - name: Install JDK
         uses: actions/setup-java@v1
         with:
