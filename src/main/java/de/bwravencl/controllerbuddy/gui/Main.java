@@ -2784,6 +2784,9 @@ public final class Main implements SingletonApp {
 	}
 
 	private boolean updateGameControllerMappings(final InputStream is) {
+		if (is == null)
+			return false;
+
 		var mappingsUpdated = false;
 
 		final var defaultCharset = Charset.defaultCharset();
