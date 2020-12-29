@@ -17,17 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import static com.sun.jna.Platform.isMac;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.awt.EventQueue.invokeLater;
-import static java.text.MessageFormat.format;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.DatagramPacket;
@@ -36,8 +26,17 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+import org.lwjgl.glfw.GLFW;
+
+import com.sun.jna.Platform;
+
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
@@ -97,13 +96,13 @@ public final class ServerOutput extends Output {
 			serverSocket = new DatagramSocket(port);
 			final var receiveBuf = new byte[1024];
 
-			invokeLater(() -> {
-				main.setStatusBarText(format(strings.getString("STATUS_LISTENING"), port));
+			EventQueue.invokeLater(() -> {
+				main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
 			});
 
 			for (;;) {
-				if (!isMac())
-					glfwPollEvents();
+				if (!Platform.isMac())
+					GLFW.glfwPollEvents();
 
 				switch (serverState) {
 				case Listening -> {
@@ -137,9 +136,10 @@ public final class ServerOutput extends Output {
 
 							serverState = ServerState.Connected;
 							input.init();
-							invokeLater(() -> {
-								main.setStatusBarText(format(strings.getString("STATUS_CONNECTED_TO"),
-										clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
+							EventQueue.invokeLater(() -> {
+								main.setStatusBarText(
+										MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
+												clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
 							});
 						}
 					}
@@ -240,7 +240,8 @@ public final class ServerOutput extends Output {
 								}
 							} catch (final SocketTimeoutException e) {
 								serverState = ServerState.Listening;
-								main.scheduleStatusBarText(format(strings.getString("STATUS_LISTENING"), port));
+								main.scheduleStatusBarText(
+										MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
 							}
 						} else
 							counter++;
@@ -250,18 +251,20 @@ public final class ServerOutput extends Output {
 				}
 			}
 		} catch (final BindException e) {
-			log.log(WARNING, "Could not bind socket on port " + port);
-			invokeLater(() -> {
-				showMessageDialog(main.getFrame(), format(strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+			log.log(Level.WARNING, "Could not bind socket on port " + port);
+			EventQueue.invokeLater(() -> {
+				GuiUtils.showMessageDialog(main.getFrame(),
+						MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final SocketException e) {
-			log.log(FINE, e.getMessage(), e);
+			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
-			log.log(SEVERE, e.getMessage(), e);
-			invokeLater(() -> {
-				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+			log.log(Level.SEVERE, e.getMessage(), e);
+			EventQueue.invokeLater(() -> {
+				GuiUtils.showMessageDialog(main.getFrame(),
+						Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final InterruptedException e) {
 		} finally {
@@ -270,8 +273,8 @@ public final class ServerOutput extends Output {
 			if (serverSocket != null)
 				serverSocket.close();
 
-			invokeLater(() -> {
-				main.setStatusBarText(strings.getString("STATUS_SOCKET_CLOSED"));
+			EventQueue.invokeLater(() -> {
+				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
 				main.stopAll(true);
 			});
 		}

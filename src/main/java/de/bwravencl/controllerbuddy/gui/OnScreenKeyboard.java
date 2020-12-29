@@ -17,18 +17,9 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.invokeOnEventDispatchThreadIfRequired;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.loadFrameLocation;
-import static de.bwravencl.controllerbuddy.gui.Main.TRANSPARENT;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.awt.EventQueue.invokeLater;
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-import static javax.swing.SwingUtilities.isLeftMouseButton;
-import static javax.swing.SwingUtilities.isRightMouseButton;
-
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -48,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
@@ -175,7 +167,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 				@Override
 				public void mousePressed(final MouseEvent e) {
-					if (isLeftMouseButton(e)) {
+					if (SwingUtilities.isLeftMouseButton(e)) {
 						mouseDown = true;
 						press(false);
 					}
@@ -183,10 +175,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 				@Override
 				public void mouseReleased(final MouseEvent e) {
-					if (isLeftMouseButton(e)) {
+					if (SwingUtilities.isLeftMouseButton(e)) {
 						mouseDown = false;
 						release();
-					} else if (isRightMouseButton(e))
+					} else if (SwingUtilities.isRightMouseButton(e))
 						toggleLock();
 				}
 			});
@@ -242,7 +234,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void press(final boolean lock) {
-			invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this))
 				beginPress = System.currentTimeMillis();
@@ -254,7 +246,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		@Override
 		void release() {
-			invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
 
 			if (heldButtons.remove(this)) {
 				if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME)
@@ -341,7 +333,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Override
 		void toggleLock() {
 			locked = !locked;
-			invokeOnEventDispatchThreadIfRequired(() -> {
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 				setForeground(locked ? Color.GREEN : defaultForeground);
 			});
 			changed = true;
@@ -363,7 +355,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	static {
 		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		onScreenKeyboardMode.setDescription(strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+		onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	private static String getShortDefaultKeyName(final String directInputKeyCodeName) {
@@ -508,7 +500,7 @@ public final class OnScreenKeyboard extends JFrame {
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
-		setBackground(TRANSPARENT);
+		setBackground(Main.TRANSPARENT);
 		setAlwaysOnTop(true);
 
 		addMouseListener(frameDragListener);
@@ -516,7 +508,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		final var parentPanel = new JPanel();
 		parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
-		parentPanel.setBackground(TRANSPARENT);
+		parentPanel.setBackground(Main.TRANSPARENT);
 
 		for (var row = 0; row < keyboardButtons.length; row++) {
 			final var flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -559,7 +551,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorDown() {
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();
@@ -572,7 +564,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorLeft() {
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			unselectCurrentButton();
 
 			if (selectedColumn > 0)
@@ -584,7 +576,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorRight() {
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			unselectCurrentButton();
 
 			if (selectedColumn < keyboardButtons[selectedRow].length - 1)
@@ -596,7 +588,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void moveSelectorUp() {
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			unselectCurrentButton();
 
 			final var x = getCurrentButtonX();
@@ -639,12 +631,12 @@ public final class OnScreenKeyboard extends JFrame {
 		var minDelta = Integer.MAX_VALUE;
 		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
 			final var width = keyboardButtons[selectedRow][i].getPreferredSize().width;
-			final var delta = abs(targetX - (x + width / 2));
+			final var delta = Math.abs(targetX - (x + width / 2));
 
 			if (delta > minDelta)
 				break;
 			else {
-				selectedColumn = min(i, keyboardButtons[selectedRow].length - 1);
+				selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
 				minDelta = delta;
 			}
 
@@ -689,6 +681,6 @@ public final class OnScreenKeyboard extends JFrame {
 		final var x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
 		final var y = (int) maxWindowBounds.getMaxY() - getHeight();
 		final var defaultLocation = new Point(x, y);
-		loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
+		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
 	}
 }

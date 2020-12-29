@@ -17,8 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
 public interface IActivatableAction<V extends Number> extends IInitializationAction<V> {
@@ -32,21 +31,21 @@ public interface IActivatableAction<V extends Number> extends IInitializationAct
 
 			@Override
 			public String toString() {
-				return strings.getString("ACTIVATION_REPEAT");
+				return Main.strings.getString("ACTIVATION_REPEAT");
 			}
 		},
 		SINGLE_IMMEDIATELY {
 
 			@Override
 			public String toString() {
-				return strings.getString("ACTIVATION_SINGLE_IMMEDIATELY");
+				return Main.strings.getString("ACTIVATION_SINGLE_IMMEDIATELY");
 			}
 		},
 		SINGLE_ON_RELEASE {
 
 			@Override
 			public String toString() {
-				return strings.getString("ACTIVATION_SINGLE_ON_RELEASE");
+				return Main.strings.getString("ACTIVATION_SINGLE_ON_RELEASE");
 			}
 		}
 	}

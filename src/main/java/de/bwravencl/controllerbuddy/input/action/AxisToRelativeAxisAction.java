@@ -17,11 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.input.Input.normalize;
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
-import static java.lang.Math.signum;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -56,23 +51,23 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		final var absValue = abs(value);
+		final var absValue = Math.abs(value);
 
 		if (!input.isAxisSuspended(component) && absValue > deadZone) {
-			final var inMax = (float) pow((1f - deadZone) * 100f, exponent);
+			final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-			var d = normalize(signum(value) * (float) pow((absValue - deadZone) * 100f, exponent), -inMax, inMax,
-					-maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
+			var d = Input.normalize(Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent),
+					-inMax, inMax, -maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
 
 			d += remainingD;
 
-			if (abs(d) < input.getPlanckLength())
+			if (Math.abs(d) < input.getPlanckLength())
 				remainingD = d;
 			else {
 				remainingD = 0f;
 
 				final var output = input.getOutput();
-				final var oldValue = normalize(input.getAxes().get(virtualAxis), output.getMinAxisValue(),
+				final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), output.getMinAxisValue(),
 						output.getMaxAxisValue(), -1f, 1f);
 
 				input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);

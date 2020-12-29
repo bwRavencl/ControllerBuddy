@@ -17,21 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static java.awt.EventQueue.invokeLater;
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
-import static java.util.logging.Level.WARNING;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LAST;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
-import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
-import static org.lwjgl.system.MemoryStack.stackPush;
-
+import java.awt.EventQueue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -40,9 +26,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
+import org.lwjgl.system.MemoryStack;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
@@ -68,7 +57,7 @@ public final class Input {
 	public static final int MAX_N_BUTTONS = 128;
 
 	private static float clamp(final float v) {
-		return max(min(v, 1f), -1f);
+		return Math.max(Math.min(v, 1f), -1f);
 	}
 
 	private static double correctNumericalImprecision(final double d) {
@@ -79,7 +68,7 @@ public final class Input {
 	}
 
 	private static boolean isValidButton(final int button) {
-		return button >= 0 && button <= GLFW_GAMEPAD_BUTTON_LAST;
+		return button >= 0 && button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST;
 	}
 
 	private static void mapCircularAxesToSquareAxes(final GLFWGamepadState state, final int xAxisIndex,
@@ -93,7 +82,7 @@ public final class Input {
 		final var subtermX = 2d + u2 - v2;
 		final var subtermY = 2d - u2 + v2;
 
-		final var twoSqrt2 = 2d * sqrt(2d);
+		final var twoSqrt2 = 2d * Math.sqrt(2d);
 
 		var termX1 = subtermX + u * twoSqrt2;
 		var termX2 = subtermX - u * twoSqrt2;
@@ -105,8 +94,8 @@ public final class Input {
 		termX2 = correctNumericalImprecision(termX2);
 		termY2 = correctNumericalImprecision(termY2);
 
-		final var x = 0.5 * sqrt(termX1) - 0.5 * sqrt(termX2);
-		final var y = 0.5 * sqrt(termY1) - 0.5 * sqrt(termY2);
+		final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
+		final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
 
 		state.axes(xAxisIndex, clamp((float) x));
 		state.axes(yAxisIndex, clamp((float) y));
@@ -165,8 +154,8 @@ public final class Input {
 	}
 
 	public int floatToIntAxisValue(float value) {
-		value = max(value, -1f);
-		value = min(value, 1f);
+		value = Math.max(value, -1f);
+		value = Math.min(value, 1f);
 
 		final var minAxisValue = output.getMinAxisValue();
 		final var maxAxisValue = output.getMaxAxisValue();
@@ -283,14 +272,14 @@ public final class Input {
 		lastCallTime = currentTime;
 		rateMultiplier = (float) elapsedTime / (float) 1000L;
 
-		try (var stack = stackPush()) {
+		try (var stack = MemoryStack.stackPush()) {
 			final var state = GLFWGamepadState.callocStack(stack);
 
 			final boolean gotState;
 			if (sonyExtension != null)
 				gotState = sonyExtension.getGamepadState(state);
 			else
-				gotState = glfwGetGamepadState(jid, state);
+				gotState = GLFW.glfwGetGamepadState(jid, state);
 
 			if (!gotState)
 				return false;
@@ -322,16 +311,16 @@ public final class Input {
 				if (delta != 0) {
 					final var axisRange = output.getMaxAxisValue() - output.getMinAxisValue();
 
-					final var deltaFactor = normalize(abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
+					final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
 							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
 
 					final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
 
 					var newValue = currentValue + d;
 					if (delta > 0)
-						newValue = min(newValue, targetValue);
+						newValue = Math.min(newValue, targetValue);
 					else
-						newValue = max(newValue, targetValue);
+						newValue = Math.max(newValue, targetValue);
 
 					setAxis(virtualAxis, newValue, false, (Integer) null);
 
@@ -347,13 +336,13 @@ public final class Input {
 			final var axisToActionMap = activeMode.getAxisToActionsMap();
 			final var buttonToActionMap = activeMode.getButtonToActionsMap();
 
-			mapCircularAxesToSquareAxes(state, GLFW_GAMEPAD_AXIS_LEFT_X, GLFW_GAMEPAD_AXIS_LEFT_Y);
-			mapCircularAxesToSquareAxes(state, GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW_GAMEPAD_AXIS_RIGHT_Y);
+			mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
+			mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
 
-			for (var axis = 0; axis <= GLFW_GAMEPAD_AXIS_LAST; axis++) {
+			for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
 				final var axisValue = state.axes(axis);
 
-				if (abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
+				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
 					axisToEndSuspensionTimestampMap.remove(axis);
 
 				var actions = axisToActionMap.get(axis);
@@ -375,7 +364,7 @@ public final class Input {
 						action.doAction(this, axis, axisValue);
 			}
 
-			for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+			for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
 				var actions = buttonToActionMap.get(button);
 				if (actions == null) {
 					final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
@@ -396,7 +385,7 @@ public final class Input {
 			}
 
 			for (;;) {
-				for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+				for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
 					final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 					if (buttonToModeActions != null)
 						for (final var action : buttonToModeActions)
@@ -410,7 +399,7 @@ public final class Input {
 			}
 		}
 
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			main.updateOverlayAxisIndicators();
 		});
 		main.handleOnScreenKeyboardModeChange();
@@ -456,8 +445,8 @@ public final class Input {
 		final var minAxisValue = output.getMinAxisValue();
 		final var maxAxisValue = output.getMaxAxisValue();
 
-		value = max(value, minAxisValue);
-		value = min(value, maxAxisValue);
+		value = Math.max(value, minAxisValue);
+		value = Math.min(value, maxAxisValue);
 
 		final var prevValue = axes.put(virtualAxis, value);
 
@@ -473,7 +462,7 @@ public final class Input {
 		if (id < buttons.length)
 			buttons[id] = value;
 		else
-			log.log(WARNING, "Unable to set value for non-existent button " + id);
+			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
 	}
 
 	public void setCursorDeltaX(final int cursorDeltaX) {
@@ -485,7 +474,7 @@ public final class Input {
 	}
 
 	public void setnButtons(final int nButtons) {
-		buttons = new boolean[min(output.getnButtons(), MAX_N_BUTTONS)];
+		buttons = new boolean[Math.min(output.getnButtons(), MAX_N_BUTTONS)];
 	}
 
 	public void setOutput(final Output output) {
@@ -531,7 +520,7 @@ public final class Input {
 
 		for (final var mode : modes) {
 			for (final var axis : mode.getAxisToActionsMap().keySet())
-				if (axis < 0 || axis > GLFW_GAMEPAD_AXIS_LAST)
+				if (axis < 0 || axis > GLFW.GLFW_GAMEPAD_AXIS_LAST)
 					return false;
 
 			for (final var button : mode.getButtonToActionsMap().keySet())

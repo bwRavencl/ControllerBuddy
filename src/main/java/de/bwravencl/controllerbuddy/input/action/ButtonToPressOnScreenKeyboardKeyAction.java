@@ -17,8 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -71,7 +70,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 
 	@Override
 	public String getDescription(final Input input) {
-		return strings
+		return Main.strings
 				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
 
 	}

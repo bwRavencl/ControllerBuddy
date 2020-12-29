@@ -17,11 +17,10 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.text.MessageFormat.format;
-
+import java.text.MessageFormat;
 import java.util.Locale;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -37,28 +36,28 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 			@Override
 			public String toString() {
-				return strings.getString("DIRECTION_UP");
+				return Main.strings.getString("DIRECTION_UP");
 			}
 		},
 		DOWN {
 
 			@Override
 			public String toString() {
-				return strings.getString("DIRECTION_DOWN");
+				return Main.strings.getString("DIRECTION_DOWN");
 			}
 		},
 		LEFT {
 
 			@Override
 			public String toString() {
-				return strings.getString("DIRECTION_LEFT");
+				return Main.strings.getString("DIRECTION_LEFT");
 			}
 		},
 		RIGHT {
 
 			@Override
 			public String toString() {
-				return strings.getString("DIRECTION_RIGHT");
+				return Main.strings.getString("DIRECTION_RIGHT");
 			}
 		}
 	}
@@ -101,7 +100,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	@Override
 	public String getDescription(final Input input) {
-		return format(strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+		return MessageFormat.format(Main.strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
 				direction.toString().toLowerCase(Locale.ROOT));
 	}
 

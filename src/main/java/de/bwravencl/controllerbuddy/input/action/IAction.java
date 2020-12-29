@@ -17,8 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 
@@ -34,7 +33,7 @@ public interface IAction<V extends Number> extends Cloneable {
 			throw new RuntimeException(
 					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
 
-		return strings.getString(annotation.label());
+		return Main.strings.getString(annotation.label());
 	}
 
 	Object clone() throws CloneNotSupportedException;

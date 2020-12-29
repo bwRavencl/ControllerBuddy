@@ -17,15 +17,13 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.awt.EventQueue.invokeLater;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-
+import java.awt.EventQueue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 
@@ -57,10 +55,10 @@ public abstract class Output implements Runnable {
 			}
 		}.start();
 
-		log.log(WARNING, "Could not read from controller");
-		invokeLater(() -> {
-			showMessageDialog(main.getFrame(), strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+		log.log(Level.WARNING, "Could not read from controller");
+		EventQueue.invokeLater(() -> {
+			GuiUtils.showMessageDialog(main.getFrame(), Main.strings.getString("CONTROLLER_DISCONNECTED_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		});
 	}
 
@@ -83,11 +81,11 @@ public abstract class Output implements Runnable {
 	}
 
 	final void logStart() {
-		getLogger().log(INFO, "Starting output");
+		getLogger().log(Level.INFO, "Starting output");
 	}
 
 	final void logStop() {
-		getLogger().log(INFO, "Stopped output");
+		getLogger().log(Level.INFO, "Stopped output");
 	}
 
 	void setnButtons(final int nButtons) {

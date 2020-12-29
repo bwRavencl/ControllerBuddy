@@ -17,12 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.sony;
 
-import static java.util.logging.Level.SEVERE;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.lwjgl.glfw.GLFW;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDeviceInfo;
@@ -39,7 +39,7 @@ final class DualSenseExtension extends SonyExtension {
 	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
 	public static DualSenseExtension getIfAvailable(final Input input, final int jid) {
-		final var guid = glfwGetJoystickGUID(jid);
+		final var guid = GLFW.glfwGetJoystickGUID(jid);
 		if (guid == null || !guid.startsWith("030000004c050000e60c"))
 			return null;
 
@@ -48,7 +48,7 @@ final class DualSenseExtension extends SonyExtension {
 			try {
 				return new DualSenseExtension(input, hidDeviceInfo);
 			} catch (final IOException e) {
-				log.log(SEVERE, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 		return null;

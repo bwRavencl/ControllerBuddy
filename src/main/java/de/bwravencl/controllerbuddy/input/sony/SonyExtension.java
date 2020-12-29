@@ -17,49 +17,20 @@
 
 package de.bwravencl.controllerbuddy.input.sony;
 
-import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
-import static de.bwravencl.controllerbuddy.input.Input.normalize;
-import static java.awt.EventQueue.invokeLater;
-import static java.lang.Math.abs;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_CROSS;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_GUIDE;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_SQUARE;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_TRIANGLE;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
-
+import java.awt.EventQueue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
@@ -222,12 +193,12 @@ public abstract class SonyExtension {
 				final var dY1 = y1 - prevY1;
 
 				if (!prevDown2 || touchpadButtonDown) {
-					if (prevX1 > 0 && abs(dX1) < TOUCHPAD_MAX_DELTA)
+					if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
 						input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
 
-					if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
+					if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
 						input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
-				} else if (prevY1 > 0 && abs(dY1) < TOUCHPAD_MAX_DELTA)
+				} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
 					input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
 			}
 
@@ -244,23 +215,23 @@ public abstract class SonyExtension {
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
 
 	private static final int LOW_BATTERY_WARNING = 20;
-	private static final int hidReportPlatformOffset = isWindows ? 1 : 0;
+	private static final int hidReportPlatformOffset = Main.isWindows ? 1 : 0;
 
 	static HidDeviceInfo getHidDeviceInfo(final int jid, final String guid, final short productId,
 			final String humanReadableName, final Logger log) {
 		final var devices = PureJavaHidApi.enumerateDevices().stream()
 				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
 						&& hidDeviceInfo.getProductId() == productId)
-				.collect(toUnmodifiableList());
+				.collect(Collectors.toUnmodifiableList());
 
-		log.log(INFO,
+		log.log(Level.INFO,
 				"Found " + devices.size() + " " + humanReadableName + " controller(s): " + devices.stream().map(d -> {
 					var deviceId = d.getDeviceId();
 					if (deviceId != null && deviceId.endsWith("\0"))
 						deviceId = deviceId.substring(0, deviceId.indexOf('\0'));
 
 					return deviceId;
-				}).collect(joining(", ")));
+				}).collect(Collectors.joining(", ")));
 
 		final var count = devices.size();
 		if (count < 1)
@@ -269,15 +240,15 @@ public abstract class SonyExtension {
 		var deviceIndex = 0;
 		if (count > 1) {
 			final var presentJidsWithSameGuid = new ArrayList<Integer>();
-			for (var i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++)
-				if (glfwJoystickPresent(i) && guid.equals(glfwGetJoystickGUID(i)))
+			for (var i = GLFW.GLFW_JOYSTICK_1; i <= GLFW.GLFW_JOYSTICK_LAST; i++)
+				if (GLFW.glfwJoystickPresent(i) && guid.equals(GLFW.glfwGetJoystickGUID(i)))
 					presentJidsWithSameGuid.add(i);
 			deviceIndex = presentJidsWithSameGuid.indexOf(jid);
 		}
 
 		final var hidDeviceInfo = devices.get(deviceIndex);
 
-		log.log(INFO, "Using " + humanReadableName + " controller: " + hidDeviceInfo.getDeviceId());
+		log.log(Level.INFO, "Using " + humanReadableName + " controller: " + hidDeviceInfo.getDeviceId());
 
 		return hidDeviceInfo;
 	}
@@ -295,7 +266,7 @@ public abstract class SonyExtension {
 	}
 
 	private static float mapRawAxisToFloat(final byte value) {
-		return value < 0 ? normalize(value, -128, -1, 0f, 1f) : normalize(value, 0, 127, -1f, 0f);
+		return value < 0 ? Input.normalize(value, -128, -1, 0f, 1f) : Input.normalize(value, 0, 127, -1f, 0f);
 	}
 
 	final Input input;
@@ -362,28 +333,28 @@ public abstract class SonyExtension {
 		if (disconnected)
 			return false;
 
-		state.axes(GLFW_GAMEPAD_AXIS_LEFT_X, mapRawAxisToFloat(lx));
-		state.axes(GLFW_GAMEPAD_AXIS_LEFT_Y, mapRawAxisToFloat(ly));
-		state.axes(GLFW_GAMEPAD_AXIS_RIGHT_X, mapRawAxisToFloat(rx));
-		state.axes(GLFW_GAMEPAD_AXIS_RIGHT_Y, mapRawAxisToFloat(ry));
-		state.axes(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, mapRawAxisToFloat(l2));
-		state.axes(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, mapRawAxisToFloat(r2));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, mapRawAxisToFloat(lx));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, mapRawAxisToFloat(ly));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, mapRawAxisToFloat(rx));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y, mapRawAxisToFloat(ry));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, mapRawAxisToFloat(l2));
+		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, mapRawAxisToFloat(r2));
 
-		state.buttons(GLFW_GAMEPAD_BUTTON_CROSS, (byte) (cross ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_CIRCLE, (byte) (circle ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_SQUARE, (byte) (square ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_TRIANGLE, (byte) (triangle ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, (byte) (l1 ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, (byte) (r1 ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_BACK, (byte) (share ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_START, (byte) (options ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_GUIDE, (byte) (ps ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_LEFT_THUMB, (byte) (l3 ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, (byte) (r3 ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_UP, (byte) (dpadUp ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, (byte) (dpadRight ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_LEFT, (byte) (dpadLeft ? 0x1 : 0x0));
-		state.buttons(GLFW_GAMEPAD_BUTTON_DPAD_DOWN, (byte) (dpadDown ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, (byte) (cross ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE, (byte) (circle ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_SQUARE, (byte) (square ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_TRIANGLE, (byte) (triangle ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, (byte) (l1 ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, (byte) (r1 ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_BACK, (byte) (share ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_START, (byte) (options ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, (byte) (ps ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, (byte) (l3 ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, (byte) (r3 ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, (byte) (dpadUp ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, (byte) (dpadRight ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, (byte) (dpadLeft ? 0x1 : 0x0));
+		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, (byte) (dpadDown ? 0x1 : 0x0));
 
 		return true;
 	}
@@ -418,7 +389,7 @@ public abstract class SonyExtension {
 
 		if (reportId != connection.inputReportId
 				|| (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH : reportLength != USB_REPORT_LENGTH)) {
-			getLogger().log(WARNING,
+			getLogger().log(Level.WARNING,
 					"Received unexpected HID input report with ID " + reportId + " and length " + reportLength);
 
 			return false;
@@ -439,7 +410,7 @@ public abstract class SonyExtension {
 			final var receivedCrc32Value = byteBuffer.getInt() & 0xFFFFFFFFL;
 
 			if (receivedCrc32Value != calculatedCrc32Value) {
-				getLogger().log(WARNING, "Received faulty HID input report");
+				getLogger().log(Level.WARNING, "Received faulty HID input report");
 				return false;
 			}
 		}
@@ -517,7 +488,7 @@ public abstract class SonyExtension {
 
 			final var main = input.getMain();
 			if (main != null)
-				invokeLater(() -> {
+				EventQueue.invokeLater(() -> {
 					main.updateTitleAndTooltip();
 
 					if (batteryState == LOW_BATTERY_WARNING)
@@ -533,7 +504,7 @@ public abstract class SonyExtension {
 			updateLightbarColor();
 
 			final var main = input.getMain();
-			invokeLater(() -> {
+			EventQueue.invokeLater(() -> {
 				main.updateTitleAndTooltip();
 				main.displayChargingStateInfo(charging);
 			});

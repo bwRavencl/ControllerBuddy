@@ -17,18 +17,17 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.util.logging.Level.SEVERE;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.glfw.GLFW;
+
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
@@ -50,7 +49,7 @@ public final class Profile implements Cloneable {
 
 	static {
 		defaultMode = new Mode(DEFAULT_MODE_UUID);
-		defaultMode.setDescription(strings.getString("DEFAULT_MODE_DESCRIPTION"));
+		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	private String version;
@@ -82,7 +81,7 @@ public final class Profile implements Cloneable {
 				try {
 					buttonToModeActions.add((ButtonToModeAction) action.clone());
 				} catch (final CloneNotSupportedException e1) {
-					log.log(SEVERE, e1.getMessage(), e1);
+					log.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 			clonedButtonToModeActionsMap.put(e.getKey(), buttonToModeActions);
 		}
@@ -93,7 +92,7 @@ public final class Profile implements Cloneable {
 			try {
 				clonedModes.add((Mode) mode.clone());
 			} catch (final CloneNotSupportedException e) {
-				log.log(SEVERE, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 		profile.setModes(clonedModes);
 
@@ -162,8 +161,8 @@ public final class Profile implements Cloneable {
 						for (final var action : currentAxisToActionsMap.get(axis))
 							if (action instanceof AxisToAxisAction && !(action instanceof AxisToRelativeAxisAction)) {
 								final var axisToAxisAction = (AxisToAxisAction) action;
-								final var value = axis == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
-										|| axis == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
+								final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
+										|| axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
 							}
 				}

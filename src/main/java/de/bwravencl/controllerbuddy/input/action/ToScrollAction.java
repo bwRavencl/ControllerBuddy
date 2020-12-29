@@ -17,12 +17,10 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.lang.Math.round;
-import static java.text.MessageFormat.format;
-
+import java.text.MessageFormat;
 import java.util.Locale;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
@@ -45,8 +43,8 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return format(strings.getString("SCROLL_DIRECTION"),
-				strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
+		return MessageFormat.format(Main.strings.getString("SCROLL_DIRECTION"),
+				Main.strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
 	}
 
 	void scroll(final Input input, float d) {
@@ -59,7 +57,7 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 		else {
 			remainingD = 0f;
 
-			input.setScrollClicks(round(d));
+			input.setScrollClicks(Math.round(d));
 		}
 	}
 

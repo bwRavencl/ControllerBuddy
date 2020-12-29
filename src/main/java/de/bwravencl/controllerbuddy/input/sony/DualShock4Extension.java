@@ -17,44 +17,38 @@
 
 package de.bwravencl.controllerbuddy.input.sony;
 
-import static com.sun.jna.platform.win32.Ole32.COINIT_APARTMENTTHREADED;
-import static com.sun.jna.platform.win32.WTypes.CLSCTX_INPROC_SERVER;
-import static com.sun.jna.platform.win32.WinError.S_FALSE;
-import static com.sun.jna.platform.win32.WinError.S_OK;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
-import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static de.bwravencl.controllerbuddy.input.Input.normalize;
-import static java.lang.Math.min;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+
+import org.lwjgl.glfw.GLFW;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.PureJavaHidApi;
@@ -122,8 +116,8 @@ final class DualShock4Extension extends SonyExtension {
 		public String toString() {
 			final var ppstrId = new PointerByReference();
 
-			if (!S_OK.equals(GetId(ppstrId))) {
-				log.log(SEVERE, "IMMDevice::GetId failed");
+			if (!WinError.S_OK.equals(GetId(ppstrId))) {
+				log.log(Level.SEVERE, "IMMDevice::GetId failed");
 				return super.toString();
 			}
 
@@ -250,30 +244,30 @@ final class DualShock4Extension extends SonyExtension {
 	private static IMMDevice getFirstMatchingIMMDevice(final IMMDeviceEnumerator deviceEnumerator, final int dataFlow,
 			final DualShock4Connection connection) throws Exception {
 		final var ppDevices = new PointerByReference();
-		if (!S_OK.equals(
+		if (!WinError.S_OK.equals(
 				deviceEnumerator.EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE | DEVICE_STATE_DISABLED, ppDevices)))
 			throw new Exception("IMMDeviceEnumerator::EnumAudioEndpoints failed");
 
 		final var deviceCollection = new IMMDeviceCollection(ppDevices.getValue());
 		try {
 			final var pcDevices = new UINTByReference();
-			if (!S_OK.equals(deviceCollection.GetCount(pcDevices)))
+			if (!WinError.S_OK.equals(deviceCollection.GetCount(pcDevices)))
 				throw new Exception("IMMDeviceCollection::GetCount failed");
 
 			final var cDevices = pcDevices.getValue();
 
 			for (var i = 0; i < cDevices.intValue(); i++) {
 				final var ppDevice = new PointerByReference();
-				if (!S_OK.equals(deviceCollection.Item(new UINT(i), ppDevice))) {
-					log.log(SEVERE, "IMMDeviceCollection::Item failed");
+				if (!WinError.S_OK.equals(deviceCollection.Item(new UINT(i), ppDevice))) {
+					log.log(Level.SEVERE, "IMMDeviceCollection::Item failed");
 					continue;
 				}
 
 				final var device = new IMMDevice(ppDevice.getValue());
 				try {
 					final var ppProperties = new PointerByReference();
-					if (!S_OK.equals(device.OpenPropertyStore(STGM_READ, ppProperties))) {
-						log.log(SEVERE, "IMMDevice::OpenPropertyStore failed");
+					if (!WinError.S_OK.equals(device.OpenPropertyStore(STGM_READ, ppProperties))) {
+						log.log(Level.SEVERE, "IMMDevice::OpenPropertyStore failed");
 						continue;
 					}
 
@@ -281,18 +275,18 @@ final class DualShock4Extension extends SonyExtension {
 					try {
 
 						final var pv = new PROPVARIANT.ByReference();
-						if (!S_OK.equals(propertyStore.GetValue(PKEY_Device_FriendlyName, pv))) {
-							log.log(SEVERE, "IPropertyStore::GetValue failed");
+						if (!WinError.S_OK.equals(propertyStore.GetValue(PKEY_Device_FriendlyName, pv))) {
+							log.log(Level.SEVERE, "IPropertyStore::GetValue failed");
 							continue;
 						}
 
 						if (pv.vt == Variant.VT_EMPTY) {
-							log.log(SEVERE, "PROPERTYKEY not present");
+							log.log(Level.SEVERE, "PROPERTYKEY not present");
 							continue;
 						}
 
 						if (pv.vt != Variant.VT_LPWSTR) {
-							log.log(SEVERE, "PROPERTYKEY has wrong variant");
+							log.log(Level.SEVERE, "PROPERTYKEY has wrong variant");
 							continue;
 						}
 
@@ -317,7 +311,7 @@ final class DualShock4Extension extends SonyExtension {
 	}
 
 	public static DualShock4Extension getIfAvailable(final Input input, final int jid) {
-		final var guid = glfwGetJoystickGUID(jid);
+		final var guid = GLFW.glfwGetJoystickGUID(jid);
 		if (guid == null)
 			return null;
 
@@ -338,7 +332,7 @@ final class DualShock4Extension extends SonyExtension {
 			try {
 				return new DualShock4Extension(input, hidDeviceInfo, connection);
 			} catch (final IOException e) {
-				log.log(SEVERE, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 		return null;
@@ -348,19 +342,20 @@ final class DualShock4Extension extends SonyExtension {
 		final var ppAudioEndpointVolume = new PointerByReference();
 
 		final var pdwState = new DWORDByReference();
-		if (!S_OK.equals(device.GetState(pdwState)))
+		if (!WinError.S_OK.equals(device.GetState(pdwState)))
 			throw new Exception("IMMDevice::GetState failed");
 
 		if (pdwState.getValue().intValue() != DEVICE_STATE_ACTIVE)
 			throw new Exception("Device is not active");
 
-		if (!S_OK.equals(device.Activate(IAudioEndpointVolumeIID, CLSCTX_INPROC_SERVER, null, ppAudioEndpointVolume)))
+		if (!WinError.S_OK.equals(
+				device.Activate(IAudioEndpointVolumeIID, WTypes.CLSCTX_INPROC_SERVER, null, ppAudioEndpointVolume)))
 			throw new Exception("IMMDevice::Activate failed");
 
 		final var audioEndpointVolume = new IAudioEndpointVolume(ppAudioEndpointVolume.getValue());
 
 		final var pbMute = new BOOLByReference();
-		if (!S_OK.equals(audioEndpointVolume.GetMute(pbMute)))
+		if (!WinError.S_OK.equals(audioEndpointVolume.GetMute(pbMute)))
 			throw new Exception("IAudioEndpointVolume::GetMute failed");
 
 		if (pbMute.getValue().booleanValue())
@@ -368,11 +363,12 @@ final class DualShock4Extension extends SonyExtension {
 
 		final var pflVolumeMindB = new FloatByReference();
 		final var pflVolumeMaxdB = new FloatByReference();
-		if (!S_OK.equals(audioEndpointVolume.GetVolumeRange(pflVolumeMindB, pflVolumeMaxdB, new FloatByReference())))
+		if (!WinError.S_OK
+				.equals(audioEndpointVolume.GetVolumeRange(pflVolumeMindB, pflVolumeMaxdB, new FloatByReference())))
 			throw new Exception("IAudioEndpointVolume::GetVolumeRange failed");
 
 		final var pfLevel = new FloatByReference();
-		if (!S_OK.equals(audioEndpointVolume.GetMasterVolumeLevel(pfLevel)))
+		if (!WinError.S_OK.equals(audioEndpointVolume.GetMasterVolumeLevel(pfLevel)))
 			throw new Exception("IAudioEndpointVolume::GetMasterVolumeLevel failed");
 
 		final var flVolumeMindB = pflVolumeMindB.getValue();
@@ -381,7 +377,7 @@ final class DualShock4Extension extends SonyExtension {
 		final var alignedMaxOutputValue = maxOutputValue + 0.01f;
 
 		return (byte) Math
-				.round(normalize(fLevel, flVolumeMindB, pflVolumeMaxdB.getValue(), 1.0f, alignedMaxOutputValue));
+				.round(Input.normalize(fLevel, flVolumeMindB, pflVolumeMaxdB.getValue(), 1.0f, alignedMaxOutputValue));
 	}
 
 	private IMMDevice earphoneDevice;
@@ -408,7 +404,7 @@ final class DualShock4Extension extends SonyExtension {
 					if (!cableConnected)
 						battery++;
 
-					battery = min(battery, 10);
+					battery = Math.min(battery, 10);
 					battery *= 10;
 
 					setBatteryState(battery);
@@ -419,24 +415,25 @@ final class DualShock4Extension extends SonyExtension {
 					DualShock4Extension.this.connection = connection != null ? connection
 							: isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
 
-					if (isWindows && !DualShock4Extension.this.connection.isBluetooth()) {
-						final var coInitializeExResult = Ole32.INSTANCE.CoInitializeEx(null, COINIT_APARTMENTTHREADED);
+					if (Main.isWindows && !DualShock4Extension.this.connection.isBluetooth()) {
+						final var coInitializeExResult = Ole32.INSTANCE.CoInitializeEx(null,
+								Ole32.COINIT_APARTMENTTHREADED);
 
-						if (S_OK.equals(coInitializeExResult))
+						if (WinError.S_OK.equals(coInitializeExResult))
 							comLibraryInitialized = true;
-						else if (S_FALSE.equals(coInitializeExResult)) {
+						else if (WinError.S_FALSE.equals(coInitializeExResult)) {
 							comLibraryInitialized = true;
-							log.log(WARNING, "COM library was already initialized");
+							log.log(Level.WARNING, "COM library was already initialized");
 						} else {
 							comLibraryInitialized = false;
-							log.log(SEVERE, "CoInitializeEx failed");
+							log.log(Level.SEVERE, "CoInitializeEx failed");
 						}
 
 						if (comLibraryInitialized) {
 							final var ppDeviceEnumerator = new PointerByReference();
-							if (!S_OK.equals(Ole32.INSTANCE.CoCreateInstance(MMDeviceEnumeratorCLSID, null,
-									CLSCTX_INPROC_SERVER, IMMDeviceEnumeratorIID, ppDeviceEnumerator)))
-								log.log(SEVERE, "CoCreateInstance failed");
+							if (!WinError.S_OK.equals(Ole32.INSTANCE.CoCreateInstance(MMDeviceEnumeratorCLSID, null,
+									WTypes.CLSCTX_INPROC_SERVER, IMMDeviceEnumeratorIID, ppDeviceEnumerator)))
+								log.log(Level.SEVERE, "CoCreateInstance failed");
 							else {
 								final var deviceEnumerator = new IMMDeviceEnumerator(ppDeviceEnumerator.getValue());
 								try {
@@ -444,21 +441,21 @@ final class DualShock4Extension extends SonyExtension {
 										earphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eRender,
 												(DualShock4Connection) DualShock4Extension.this.connection);
 										if (earphoneDevice != null)
-											log.log(INFO, "Using DualShock 4 earphone device: " + earphoneDevice);
+											log.log(Level.INFO, "Using DualShock 4 earphone device: " + earphoneDevice);
 										else
-											log.log(WARNING, "DualShock 4 earphone not device found");
+											log.log(Level.WARNING, "DualShock 4 earphone not device found");
 									} catch (final Exception e) {
-										log.log(SEVERE, e.getMessage(), e);
+										log.log(Level.SEVERE, e.getMessage(), e);
 									}
 
 									microphoneDevice = getFirstMatchingIMMDevice(deviceEnumerator, eCapture,
 											(DualShock4Connection) DualShock4Extension.this.connection);
 									if (microphoneDevice != null)
-										log.log(INFO, "Using DualShock 4 microphone device: " + microphoneDevice);
+										log.log(Level.INFO, "Using DualShock 4 microphone device: " + microphoneDevice);
 									else
-										log.log(WARNING, "DualShock 4 microphone not device found");
+										log.log(Level.WARNING, "DualShock 4 microphone not device found");
 								} catch (final Exception e) {
-									log.log(SEVERE, e.getMessage(), e);
+									log.log(Level.SEVERE, e.getMessage(), e);
 								} finally {
 									deviceEnumerator.Release();
 
@@ -470,13 +467,13 @@ final class DualShock4Extension extends SonyExtension {
 							}
 
 							if (earphoneDevice == null || microphoneDevice == null)
-								showMessageDialog(input.getMain().getFrame(),
-										strings.getString("COULD_NOT_FIND_DUAL_SHOCK_4_AUDIO_DEVICE_DIALOG_TEXT"),
-										strings.getString("WARNING_DIALOG_TITLE"), ERROR_MESSAGE);
+								GuiUtils.showMessageDialog(input.getMain().getFrame(),
+										Main.strings.getString("COULD_NOT_FIND_DUAL_SHOCK_4_AUDIO_DEVICE_DIALOG_TEXT"),
+										Main.strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						} else
-							showMessageDialog(input.getMain().getFrame(),
-									strings.getString("COULD_NOT_INITIALIZE_COM_LIBRARY_DIALOG_TEXT"),
-									strings.getString("WARNING_DIALOG_TITLE"), ERROR_MESSAGE);
+							GuiUtils.showMessageDialog(input.getMain().getFrame(),
+									Main.strings.getString("COULD_NOT_INITIALIZE_COM_LIBRARY_DIALOG_TEXT"),
+									Main.strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
@@ -598,14 +595,14 @@ final class DualShock4Extension extends SonyExtension {
 			try {
 				hidReport[19] = hidReport[20] = getNormalizedVolumeValue(earphoneDevice, MAX_EARPHONE_VOLUME);
 			} catch (final Exception e) {
-				log.log(SEVERE, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 		if (microphoneDevice != null)
 			try {
 				hidReport[21] = getNormalizedVolumeValue(microphoneDevice, MAX_MICROPHONE_VOLUME);
 			} catch (final Exception e) {
-				log.log(SEVERE, e.getMessage(), e);
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 		super.sendHidReport();

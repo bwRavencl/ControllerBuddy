@@ -17,13 +17,6 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.addModePanel;
-import static de.bwravencl.controllerbuddy.gui.Main.BUTTON_DIMENSION;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.text.MessageFormat.format;
-import static java.util.logging.Level.SEVERE;
-import static java.util.stream.Collectors.toUnmodifiableList;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,13 +27,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -76,8 +72,8 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = -7713175853948284887L;
 
 		private AddActionAction() {
-			putValue(NAME, strings.getString("ADD_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("ADD_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, Main.strings.getString("ADD_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -111,7 +107,7 @@ public final class EditActionsDialog extends JDialog {
 						- (hasModeAction() && !(action instanceof ButtonToModeAction) ? 1 : 0));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
-				log.log(SEVERE, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
@@ -150,7 +146,7 @@ public final class EditActionsDialog extends JDialog {
 
 		private CancelAction() {
 			putValue(NAME, UIManager.getString("OptionPane.cancelButtonText"));
-			putValue(SHORT_DESCRIPTION, strings.getString("CANCEL_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -165,7 +161,7 @@ public final class EditActionsDialog extends JDialog {
 
 		private OKAction() {
 			putValue(NAME, UIManager.getString("OptionPane.okButtonText"));
-			putValue(SHORT_DESCRIPTION, strings.getString("OK_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("OK_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -204,8 +200,8 @@ public final class EditActionsDialog extends JDialog {
 		private static final long serialVersionUID = -5681740772832902238L;
 
 		private RemoveActionAction() {
-			putValue(NAME, strings.getString("REMOVE_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, Main.strings.getString("REMOVE_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -313,12 +309,12 @@ public final class EditActionsDialog extends JDialog {
 				cycleActions.add((IAction<Byte>) action.clone());
 
 			preInit(parentComponent);
-			setTitle(format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
+			setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
 					IAction.getLabel(cycleAction.getClass())));
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(SEVERE, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -332,11 +328,11 @@ public final class EditActionsDialog extends JDialog {
 			unsavedProfile = (Profile) input.getProfile().clone();
 
 			preInit(main.getFrame());
-			setTitle(format(strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
+			setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 			final var modes = unsavedProfile.getModes();
 			selectedMode = modes.get(0);
-			addModePanel(getContentPane(), modes, new AbstractAction() {
+			GuiUtils.addModePanel(getContentPane(), modes, new AbstractAction() {
 
 				private static final long serialVersionUID = -9107064465015662054L;
 
@@ -351,7 +347,7 @@ public final class EditActionsDialog extends JDialog {
 
 			init();
 		} catch (final CloneNotSupportedException e) {
-			log.log(SEVERE, e.getMessage(), e);
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -424,17 +420,17 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
-		actionsPanel.add(new JLabel(strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1, 1,
-				0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(Main.strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
+				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final var addButton = new JButton(new AddActionAction());
-		addButton.setPreferredSize(BUTTON_DIMENSION);
+		addButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		addButton.setEnabled(false);
 		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 		final var removeButton = new JButton(new RemoveActionAction());
-		removeButton.setPreferredSize(BUTTON_DIMENSION);
+		removeButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		removeButton.setEnabled(false);
 		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
@@ -451,10 +447,10 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, .1d, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		actionsPanel.add(new JLabel(strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1, 1, 0d,
-				0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(Main.strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1,
+				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var propertiesLabel = new JLabel(strings.getString("PROPERTIES_LABEL"));
+		final var propertiesLabel = new JLabel(Main.strings.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
@@ -481,7 +477,7 @@ public final class EditActionsDialog extends JDialog {
 					final var a2 = e2.getValue();
 
 					return a1.order() - a2.order();
-				}).collect(toUnmodifiableList());
+				}).collect(Collectors.toUnmodifiableList());
 
 				for (final var entry : sortedEntires) {
 					final var field = entry.getKey();
@@ -496,7 +492,7 @@ public final class EditActionsDialog extends JDialog {
 									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 									new Insets(5, 5, 5, 5), 0, 10));
 
-					final var propertyNameLabel = new JLabel(strings.getString(annotation.label()));
+					final var propertyNameLabel = new JLabel(Main.strings.getString(annotation.label()));
 					propertyNameLabel.setPreferredSize(new Dimension(175, 15));
 					propertyPanel.add(propertyNameLabel);
 
@@ -519,7 +515,7 @@ public final class EditActionsDialog extends JDialog {
 						editorBuilder.buildEditor(propertyPanel);
 					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 							| IllegalArgumentException | InvocationTargetException e1) {
-						log.log(SEVERE, e1.getMessage(), e1);
+						log.log(Level.SEVERE, e1.getMessage(), e1);
 					}
 				}
 			}
@@ -543,12 +539,12 @@ public final class EditActionsDialog extends JDialog {
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
 		final var okButton = new JButton(new OKAction());
-		okButton.setPreferredSize(BUTTON_DIMENSION);
+		okButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		buttonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
 		final var cancelButton = new JButton(new CancelAction());
-		cancelButton.setPreferredSize(BUTTON_DIMENSION);
+		cancelButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		buttonPanel.add(cancelButton);
 
 		updateAssignedActions();

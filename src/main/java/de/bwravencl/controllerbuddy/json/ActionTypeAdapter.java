@@ -17,11 +17,10 @@
 
 package de.bwravencl.controllerbuddy.json;
 
-import static java.util.logging.Level.WARNING;
-
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gson.JsonDeserializationContext;
@@ -66,7 +65,7 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
 			if (typeOfT == IAction.class) {
-				log.log(WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
+				log.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
 						+ NullAction.class.getSimpleName() + "'");
 				unknownActionClasses.add(typeNameString);
 

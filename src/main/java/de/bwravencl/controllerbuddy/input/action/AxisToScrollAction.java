@@ -17,11 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.input.Input.normalize;
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
-import static java.lang.Math.signum;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -43,12 +38,13 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {
-		if (!input.isAxisSuspended(component) && abs(value) > deadZone) {
+		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
 			final var rateMultiplier = input.getRateMultiplier();
 
-			final var d = -normalize(signum(value) * (float) pow(abs(value) * 100f, exponent) * rateMultiplier,
-					(float) -pow(99.9f, exponent) * rateMultiplier, (float) pow(99.9f, exponent) * rateMultiplier,
-					-clicks, clicks);
+			final var d = -Input.normalize(
+					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
+					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
+					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
 			scroll(input, d);
 		} else

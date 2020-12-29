@@ -17,8 +17,6 @@
 
 package de.bwravencl.controllerbuddy.json;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-
 import java.io.IOException;
 
 import com.google.gson.Gson;
@@ -28,6 +26,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
@@ -48,9 +47,9 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 					final var mode = (Mode) obj;
 
 					if (Profile.defaultMode.equals(mode))
-						mode.setDescription(strings.getString("DEFAULT_MODE_DESCRIPTION"));
+						mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
 					else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode))
-						mode.setDescription(strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+						mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 				}
 
 				return obj;

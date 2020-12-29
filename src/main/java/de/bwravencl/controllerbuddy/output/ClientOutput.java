@@ -17,16 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.awt.EventQueue.invokeLater;
-import static java.text.MessageFormat.format;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -36,8 +27,12 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -80,9 +75,10 @@ public final class ClientOutput extends VJoyOutput {
 
 		switch (clientState) {
 		case Connecting -> {
-			log.log(INFO, "Connecting to " + host + ":" + port);
-			invokeLater(() -> {
-				main.setStatusBarText(format(strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
+			log.log(Level.INFO, "Connecting to " + host + ":" + port);
+			EventQueue.invokeLater(() -> {
+				main.setStatusBarText(
+						MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
 			final var sb = new StringBuilder();
@@ -114,13 +110,14 @@ public final class ClientOutput extends VJoyOutput {
 						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
 							final var clientVersion = VersionUtils.getMajorAndMinorVersion();
-							log.log(WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
+							log.log(Level.WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
 									+ serverProtocolVersion);
-							invokeLater(() -> {
-								showMessageDialog(main.getFrame(),
-										format(strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+							EventQueue.invokeLater(() -> {
+								GuiUtils.showMessageDialog(main.getFrame(),
+										MessageFormat.format(
+												Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
 												clientVersion, serverProtocolVersion),
-										strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+										Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 							});
 							retry = -1;
 						} else {
@@ -130,17 +127,18 @@ public final class ClientOutput extends VJoyOutput {
 					} else {
 						retry--;
 						final var finalRetry = retry;
-						invokeLater(() -> {
-							main.setStatusBarText(format(strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
-									N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
+						EventQueue.invokeLater(() -> {
+							main.setStatusBarText(
+									MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 						});
 					}
 				} catch (final SocketTimeoutException e) {
-					log.log(INFO, e.getMessage(), e);
+					log.log(Level.INFO, e.getMessage(), e);
 					retry--;
 					final var finalRetry = retry;
-					invokeLater(() -> {
-						main.setStatusBarText(format(strings.getString("STATUS_TIMEOUT_RETRYING"),
+					EventQueue.invokeLater(() -> {
+						main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
 								N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 					});
 				}
@@ -148,17 +146,19 @@ public final class ClientOutput extends VJoyOutput {
 
 			if (success) {
 				clientState = ClientState.Connected;
-				log.log(INFO, "Successfully connected");
-				invokeLater(() -> {
-					main.setStatusBarText(format(strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval));
+				log.log(Level.INFO, "Successfully connected");
+				EventQueue.invokeLater(() -> {
+					main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host,
+							port, pollInterval));
 				});
 			} else {
 				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
-					log.log(INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
-					invokeLater(() -> {
-						showMessageDialog(main.getFrame(), MessageFormat
-								.format(strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"), N_CONNECTION_RETRIES),
-								strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+					log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
+					EventQueue.invokeLater(() -> {
+						GuiUtils.showMessageDialog(main.getFrame(),
+								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
+										N_CONNECTION_RETRIES),
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 					});
 				}
 
@@ -342,10 +342,10 @@ public final class ClientOutput extends VJoyOutput {
 					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
-				log.log(FINE, e.getMessage(), e);
-				invokeLater(() -> {
-					showMessageDialog(main.getFrame(), strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+				log.log(Level.FINE, e.getMessage(), e);
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(), Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 
 				forceStop = true;
@@ -373,16 +373,18 @@ public final class ClientOutput extends VJoyOutput {
 			} else
 				forceStop = true;
 		} catch (final UnknownHostException e) {
-			log.log(INFO, "Could not resolve host: " + host);
-			invokeLater(() -> {
-				showMessageDialog(main.getFrame(), format(strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+			log.log(Level.INFO, "Could not resolve host: " + host);
+			EventQueue.invokeLater(() -> {
+				GuiUtils.showMessageDialog(main.getFrame(),
+						MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
-			log.log(SEVERE, e.getMessage(), e);
-			invokeLater(() -> {
-				showMessageDialog(main.getFrame(), strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+			log.log(Level.SEVERE, e.getMessage(), e);
+			EventQueue.invokeLater(() -> {
+				GuiUtils.showMessageDialog(main.getFrame(),
+						Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} finally {
 			if (clientSocket != null)

@@ -17,16 +17,15 @@
 
 package de.bwravencl.controllerbuddy.input.action.annotation;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder;
 
-@Retention(RUNTIME)
-@Target(FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface ActionProperty {
 
 	Class<? extends EditorBuilder> editorBuilder();

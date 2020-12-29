@@ -17,9 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.input.Input.normalize;
-import static java.lang.Math.abs;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -42,12 +39,12 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	@Override
 	public void doAction(final Input input, final int component, Float value) {
 		if (!input.isAxisSuspended(component)) {
-			if (abs(value) <= deadZone)
+			if (Math.abs(value) <= deadZone)
 				value = 0f;
 			else if (value >= 0f)
-				value = normalize(value, deadZone, 1f, 0f, 1f);
+				value = Input.normalize(value, deadZone, 1f, 0f, 1f);
 			else
-				value = normalize(value, -1f, -deadZone, -1f, 0f);
+				value = Input.normalize(value, -1f, -deadZone, -1f, 0f);
 
 			input.setAxis(virtualAxis, invert ? -value : value, false, null);
 		}

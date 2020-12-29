@@ -17,13 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.text.MessageFormat.format;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LAST;
-
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import org.lwjgl.glfw.GLFW;
+
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -78,7 +78,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 		final var profile = input.getProfile();
 
 		Integer myButton = null;
-		buttonLoop: for (var button = 0; button <= GLFW_GAMEPAD_BUTTON_LAST; button++) {
+		buttonLoop: for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
 			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 			if (buttonToModeActions != null)
 				for (final var action : buttonToModeActions)
@@ -167,7 +167,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 	@Override
 	public String getDescription(final Input input) {
 		final var mode = getMode(input);
-		return format(strings.getString("MODE_NAME"), mode.getDescription());
+		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
 	}
 
 	public Mode getMode(final Input input) {

@@ -17,22 +17,7 @@
 
 package de.bwravencl.controllerbuddy.output;
 
-import static com.sun.jna.Platform.isMac;
-import static de.bwravencl.controllerbuddy.gui.GuiUtils.showMessageDialog;
-import static de.bwravencl.controllerbuddy.gui.Main.PREFERENCES_VJOY_DIRECTORY;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static de.bwravencl.controllerbuddy.input.DirectInputKeyCode.extendedKeyScanCodesSet;
-import static java.awt.EventQueue.invokeLater;
-import static java.text.MessageFormat.format;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static javax.swing.JOptionPane.YES_NO_OPTION;
-import static javax.swing.JOptionPane.YES_OPTION;
-import static javax.swing.JOptionPane.showConfirmDialog;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +27,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+
+import org.lwjgl.glfw.GLFW;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -63,7 +53,9 @@ import com.sun.jna.platform.win32.WinUser.INPUT;
 import com.sun.jna.platform.win32.WinUser.KEYBDINPUT;
 import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -99,7 +91,7 @@ public abstract class VJoyOutput extends Output {
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wScan = new WORD(scanCode);
 		var flags = (down ? 0 : KEYBDINPUT.KEYEVENTF_KEYUP) | KEYBDINPUT.KEYEVENTF_SCANCODE;
-		if (extendedKeyScanCodesSet.contains(scanCode))
+		if (DirectInputKeyCode.extendedKeyScanCodesSet.contains(scanCode))
 			flags |= KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
 		input.input.ki.dwFlags = new DWORD(flags);
 
@@ -131,7 +123,7 @@ public abstract class VJoyOutput extends Output {
 					INSTALL_LOCATION_REGISTRY_VALUE);
 		} catch (final Throwable t) {
 			final var defaultPath = System.getenv("ProgramFiles") + File.separator + "vJoy";
-			log.log(WARNING, "Could not retrieve vJoy installation path from registry", t);
+			log.log(Level.WARNING, "Could not retrieve vJoy installation path from registry", t);
 
 			return defaultPath;
 		}
@@ -253,13 +245,13 @@ public abstract class VJoyOutput extends Output {
 			for (final var c : oldDownModifiers)
 				doKeyboardInput(c, false);
 
-			invokeLater(() -> {
-				main.setStatusBarText(
-						format(strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice.intValue()));
+			EventQueue.invokeLater(() -> {
+				main.setStatusBarText(MessageFormat
+						.format(Main.strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice.intValue()));
 			});
 		}
 
-		invokeLater(() -> {
+		EventQueue.invokeLater(() -> {
 			if (forceStop || restart)
 				main.stopAll(true);
 			if (restart)
@@ -268,10 +260,10 @@ public abstract class VJoyOutput extends Output {
 	}
 
 	final boolean init() {
-		final var vJoyPath = main.getPreferences().get(PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath());
+		final var vJoyPath = main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultInstallationPath());
 		final var libraryPath = new File(vJoyPath, getArchFolderName()).getAbsolutePath();
 
-		log.log(INFO, "Using vJoy library path: " + libraryPath);
+		log.log(Level.INFO, "Using vJoy library path: " + libraryPath);
 		System.setProperty("jna.library.path", libraryPath);
 
 		try {
@@ -280,33 +272,35 @@ public abstract class VJoyOutput extends Output {
 			final var dllVersion = new Memory(WinDef.WORD.SIZE);
 			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.vJoyEnabled().booleanValue()) {
-				log.log(WARNING, "vJoy driver is not enabled");
-				invokeLater(() -> {
-					showMessageDialog(main.getFrame(), strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+				log.log(Level.WARNING, "vJoy driver is not enabled");
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							Main.strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
-				log.log(WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
+				log.log(Level.WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
 						+ drvVersion.toString());
-				invokeLater(() -> {
-					showMessageDialog(
-							main.getFrame(), format(strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.getShort(0L), drvVersion.getShort(0L)),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 
-			log.log(INFO, "Using vJoy device: " + vJoyDevice.toString());
+			log.log(Level.INFO, "Using vJoy device: " + vJoyDevice.toString());
 
 			if (vJoy.GetVJDStatus(vJoyDevice) != IVjoyInterface.VJD_STAT_FREE) {
-				log.log(WARNING, "vJoy device is not available");
-				invokeLater(() -> {
-					showMessageDialog(main.getFrame(), MessageFormat
-							.format(strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"), vJoyDevice.intValue()),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+				log.log(Level.WARNING, "vJoy device is not available");
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
+									vJoyDevice.intValue()),
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -340,33 +334,34 @@ public abstract class VJoyOutput extends Output {
 					missingAxes.add("Dial/Slider2");
 
 				final var missingAxesString = String.join(", ", missingAxes);
-				log.log(WARNING, "vJoy device is missing the following axes: " + missingAxesString);
-				invokeLater(() -> {
-					showMessageDialog(
-							main.getFrame(), format(strings.getString("MISSING_AXES_DIALOG_TEXT"),
+				log.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("MISSING_AXES_DIALOG_TEXT"),
 									vJoyDevice.intValue(), missingAxesString),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 
 			if (!vJoy.AcquireVJD(vJoyDevice).booleanValue()) {
-				log.log(WARNING, "Could not acquire vJoy device");
-				invokeLater(() -> {
-					showMessageDialog(main.getFrame(),
-							format(strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
+				log.log(Level.WARNING, "Could not acquire vJoy device");
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
 									vJoyDevice.intValue()),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 
 			if (!vJoy.ResetVJD(vJoyDevice).booleanValue()) {
-				log.log(WARNING, "Could not reset vJoy device");
-				invokeLater(() -> {
-					showMessageDialog(main.getFrame(),
-							format(strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice.intValue()),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+				log.log(Level.WARNING, "Could not reset vJoy device");
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
+									vJoyDevice.intValue()),
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
@@ -395,19 +390,19 @@ public abstract class VJoyOutput extends Output {
 			final var requiredButtons = maxButtonId + 1;
 
 			if (nButtons < requiredButtons) {
-				log.log(WARNING, "vJoy device has not enough buttons");
-				invokeLater(() -> {
-					showMessageDialog(
-							main.getFrame(), format(strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
+				log.log(Level.WARNING, "vJoy device has not enough buttons");
+				EventQueue.invokeLater(() -> {
+					GuiUtils.showMessageDialog(main.getFrame(),
+							MessageFormat.format(Main.strings.getString("TOO_FEW_BUTTONS_DIALOG_TEXT"),
 									vJoyDevice.intValue(), nButtons, requiredButtons),
-							strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				});
 				return false;
 			}
 
-			invokeLater(() -> {
-				main.setStatusBarText(
-						format(strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue()));
+			EventQueue.invokeLater(() -> {
+				main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"),
+						vJoyDevice.intValue()));
 			});
 
 			if (main.preventPowerSaveMode())
@@ -437,18 +432,19 @@ public abstract class VJoyOutput extends Output {
 
 			return true;
 		} catch (final UnsatisfiedLinkError e) {
-			log.log(SEVERE, e.getMessage(), e);
-			invokeLater(() -> {
-				showMessageDialog(main.getFrame(), strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
-						strings.getString("ERROR_DIALOG_TITLE"), ERROR_MESSAGE);
+			log.log(Level.SEVERE, e.getMessage(), e);
+			EventQueue.invokeLater(() -> {
+				GuiUtils.showMessageDialog(main.getFrame(),
+						Main.strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 			return false;
 		}
 	}
 
 	boolean readInput() throws IOException {
-		if (!isMac())
-			glfwPollEvents();
+		if (!Platform.isMac())
+			GLFW.glfwPollEvents();
 
 		return true;
 	}
@@ -589,12 +585,12 @@ public abstract class VJoyOutput extends Output {
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
 		} else {
-			final var confirmDialogTask = new FutureTask<>(() -> showConfirmDialog(main.getFrame(),
-					strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), YES_NO_OPTION));
-			invokeLater(confirmDialogTask);
+			final var confirmDialogTask = new FutureTask<>(() -> JOptionPane.showConfirmDialog(main.getFrame(),
+					Main.strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
+			EventQueue.invokeLater(confirmDialogTask);
 			try {
-				if (confirmDialogTask.get() == YES_OPTION)
+				if (confirmDialogTask.get() == JOptionPane.YES_OPTION)
 					restart = true;
 				else
 					forceStop = true;

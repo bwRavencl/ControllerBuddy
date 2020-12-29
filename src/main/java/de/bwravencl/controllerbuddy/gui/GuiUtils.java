@@ -17,20 +17,10 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
-import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_HGAP;
-import static de.bwravencl.controllerbuddy.gui.Main.DEFAULT_VGAP;
-import static de.bwravencl.controllerbuddy.gui.Main.isWindows;
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.awt.EventQueue.invokeLater;
-import static java.awt.EventQueue.isDispatchThread;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.util.stream.Collectors.joining;
-import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
@@ -42,6 +32,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -108,10 +99,10 @@ public final class GuiUtils {
 
 	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
 			final AbstractAction actionListener) {
-		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, DEFAULT_HGAP, DEFAULT_VGAP));
+		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
 		container.add(modePanel, BorderLayout.NORTH);
 
-		modePanel.add(new JLabel(strings.getString("MODE_LABEL")));
+		modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
 
 		final var modeComboBox = new JComboBox<>(modes.toArray(new Mode[modes.size()]));
 		modeComboBox.addActionListener(actionListener);
@@ -129,17 +120,17 @@ public final class GuiUtils {
 			if (c == ' ')
 				return "_";
 			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
-		}).collect(joining());
+		}).collect(Collectors.joining());
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
 		return underscoreTitle + "_location";
 	}
 
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
-		if (isDispatchThread())
+		if (EventQueue.isDispatchThread())
 			runnable.run();
 		else
-			invokeLater(runnable);
+			EventQueue.invokeLater(runnable);
 	}
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
@@ -163,7 +154,7 @@ public final class GuiUtils {
 	}
 
 	static void makeWindowTopmost(final Window window) {
-		if (isWindows) {
+		if (Main.isWindows) {
 			final var windowHwnd = new HWND(Native.getWindowPointer(window));
 			User32.INSTANCE.SetWindowPos(windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0,
 					WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
@@ -186,17 +177,18 @@ public final class GuiUtils {
 
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
 			final Rectangle maxWindowBounds) {
-		location.x = max(maxWindowBounds.x,
-				min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
-		location.y = max(maxWindowBounds.y,
-				min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
+		location.x = Math.max(maxWindowBounds.x,
+				Math.min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
+		location.y = Math.max(maxWindowBounds.y,
+				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
 		frame.setLocation(location);
 	}
 
 	public static void showMessageDialog(final Component parentComponent, final Object message)
 			throws HeadlessException {
 		showMessageDialog(parentComponent, message,
-				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()), INFORMATION_MESSAGE);
+				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,

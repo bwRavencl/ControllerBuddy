@@ -17,9 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.util.logging.Level.SEVERE;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Box;
@@ -44,6 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -125,7 +124,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				setterMethod.invoke(action, keyStroke);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(SEVERE, e1.getMessage(), e1);
+				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
@@ -160,7 +159,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var modifiersPanel = new JPanel();
 		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
-		final var modifiersLabel = new JLabel(strings.getString("MODIFIERS_LABEL"));
+		final var modifiersLabel = new JLabel(Main.strings.getString("MODIFIERS_LABEL"));
 		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
@@ -183,7 +182,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var keysPanel = new JPanel();
 		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
-		final var keysLabel = new JLabel(strings.getString("KEYS_LABEL"));
+		final var keysLabel = new JLabel(Main.strings.getString("KEYS_LABEL"));
 		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));

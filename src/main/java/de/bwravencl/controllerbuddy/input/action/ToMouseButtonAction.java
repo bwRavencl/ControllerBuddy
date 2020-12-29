@@ -17,9 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import static de.bwravencl.controllerbuddy.gui.Main.strings;
-import static java.text.MessageFormat.format;
+import java.text.MessageFormat;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
@@ -59,7 +59,7 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 		if (!isDescriptionEmpty())
 			return super.getDescription(input);
 
-		return format(strings.getString("MOUSE_BUTTON_NO"), mouseButton);
+		return MessageFormat.format(Main.strings.getString("MOUSE_BUTTON_NO"), mouseButton);
 	}
 
 	public int getMouseButton() {
