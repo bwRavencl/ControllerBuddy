@@ -191,6 +191,8 @@ public abstract class SonyExtension {
 
 			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
 
+			handleBattery(reportData);
+
 			final var main = input.getMain();
 			if (!main.isLocalRunning() && !main.isServerRunning())
 				return;
@@ -234,8 +236,6 @@ public abstract class SonyExtension {
 			prevDown2 = down2;
 			prevX1 = x1;
 			prevY1 = y1;
-
-			handleBattery(reportData);
 		}
 	}
 
