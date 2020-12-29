@@ -40,7 +40,6 @@ import java.util.logging.Logger;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -52,6 +51,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.FloatByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -526,7 +526,7 @@ final class DualShock4Extension extends SonyExtension {
 
 			defaultHidReport[0] = 0x15;
 			defaultHidReport[1] = (byte) 0xC0;
-			defaultHidReport[3] = (byte) 0xf7;
+			defaultHidReport[3] = (byte) 0xF7;
 		} else {
 			defaultHidReport = new byte[32];
 
