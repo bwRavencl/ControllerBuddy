@@ -64,14 +64,32 @@ final class DualSenseExtension extends SonyExtension {
 
 				@Override
 				void handleBattery(final byte[] reportData) {
-					setCharging((reportData[54 + connection.offset] & 0x8) != 0);
+					final var chargingStatus = (reportData[53 + connection.offset] & 0xF0) >> 4;
+					final var batteryData = reportData[53 + connection.offset] & 0xF;
 
-					final int battery;
-					if ((reportData[53 + connection.offset] & 0x20) != 0)
-						battery = 100;
-					else
-						battery = Math.min((reportData[53 + connection.offset] & 0xF) * 100 / 8, 100);
-					setBatteryState(battery);
+					final int batteryCapacity;
+					final boolean charging;
+					switch (chargingStatus) {
+					case 0x0:
+						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+						charging = false;
+						break;
+					case 0x1:
+						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+						charging = true;
+						break;
+					case 0x2:
+						batteryCapacity = 100;
+						charging = false;
+						break;
+					default:
+						batteryCapacity = 0;
+						charging = false;
+						break;
+					}
+
+					setCharging(charging);
+					setBatteryState(batteryCapacity);
 				}
 
 				@Override
