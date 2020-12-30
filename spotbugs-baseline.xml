@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.2.0" sequence="0" timestamp="1609286456773" analysisTimestamp="1609286456798" release="0.19.42-1ef14db">
+<BugCollection version="4.2.0" sequence="0" timestamp="1609334015964" analysisTimestamp="1609334015990" release="0.19.43-9ccdb64">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -176,16 +176,6 @@
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension$1.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$1.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$DualShock4Connection.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$IAudioEndpointVolume.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$IMMDevice.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$IMMDeviceCollection.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$IMMDeviceEnumerator.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$IPropertyStore.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$PROPERTYKEY$ByReference.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$PROPERTYKEY.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$PROPVARIANT$ByReference.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$PROPVARIANT.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$Connection.class</Jar>
     <Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$SonyInputReportListener.class</Jar>
@@ -1335,425 +1325,21 @@
       <Message>At DualSenseExtension.java:[line 114]</Message>
     </SourceLine>
   </BugInstance>
-  <BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="14" abbrev="NP" category="STYLE" instanceHash="b319ceebab36b88ddf84c7d63ce7a42a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-    <ShortMessage>Read of unwritten public or protected field</ShortMessage>
-    <LongMessage>Read of unwritten public or protected field fmtid in de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.&lt;static initializer for DualShock4Extension&gt;()</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="208" end="609" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 208-609]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" name="&lt;clinit&gt;" signature="()V" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="208" end="242" startBytecode="0" endBytecode="287" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.&lt;static initializer for DualShock4Extension&gt;()</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" name="fmtid" signature="Lcom/sun/jna/platform/win32/Guid$GUID;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY.fmtid</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="236" end="236" startBytecode="113" endBytecode="113" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 236]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="14" abbrev="NP" category="STYLE" instanceHash="b49dda69160ae7a5e6686f85d246c13b" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-    <ShortMessage>Read of unwritten public or protected field</ShortMessage>
-    <LongMessage>Read of unwritten public or protected field pwszVal in de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getFirstMatchingIMMDevice(DualShock4Extension$IMMDeviceEnumerator, int, DualShock4Extension$DualShock4Connection)</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="208" end="609" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 208-609]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" name="getFirstMatchingIMMDevice" signature="(Lde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$IMMDeviceEnumerator;ILde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$DualShock4Connection;)Lde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$IMMDevice;" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="246" end="310" startBytecode="0" endBytecode="1073" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getFirstMatchingIMMDevice(DualShock4Extension$IMMDeviceEnumerator, int, DualShock4Extension$DualShock4Connection)</Message>
-    </Method>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="pwszVal" signature="Lcom/sun/jna/WString;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.pwszVal</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="293" end="293" startBytecode="330" endBytecode="330" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 293]</Message>
-    </SourceLine>
-  </BugInstance>
   <BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS" priority="3" rank="20" abbrev="PZLA" category="STYLE" instanceHash="58c4b1b961985672c9ec90ecab5029fe" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Consider returning a zero length array rather than null</ShortMessage>
     <LongMessage>Should de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getDefaultHidReport() return a zero length array rather than null?</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="208" end="609" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 208-609]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="35" end="180" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
+        <Message>At DualShock4Extension.java:[lines 35-180]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" name="getDefaultHidReport" signature="()[B" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="517" end="541" startBytecode="0" endBytecode="284" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" start="114" end="135" startBytecode="0" endBytecode="230" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getDefaultHidReport()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="518" end="518" startBytecode="8" endBytecode="8" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 518]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="BC_UNCONFIRMED_CAST" priority="3" rank="20" abbrev="BC" category="STYLE" instanceHash="bc816b1ef5486bde4c12266a3eee44c0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unchecked/unconfirmed cast</ShortMessage>
-    <LongMessage>Unchecked/unconfirmed cast from de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection to de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$DualShock4Connection in de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleNewConnection(int)</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" start="394" end="478" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 394-478]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" name="handleNewConnection" signature="(I)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" start="415" end="478" startBytecode="0" endBytecode="242" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleNewConnection(int)</Message>
-    </Method>
-    <Type descriptor="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension$Connection;" role="TYPE_FOUND">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection" start="47" end="53" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-        <Message>At SonyExtension.java:[lines 47-53]</Message>
-      </SourceLine>
-      <Message>Actual type de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection</Message>
-    </Type>
-    <Type descriptor="Lde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$DualShock4Connection;" role="TYPE_EXPECTED">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$DualShock4Connection" start="63" end="66" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 63-66]</Message>
-      </SourceLine>
-      <Message>Expected de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$DualShock4Connection</Message>
-    </Type>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" name="connection" signature="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension$Connection;" isStatic="false" primary="true" role="FIELD_VALUE_OF">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-        <Message>In SonyExtension.java</Message>
-      </SourceLine>
-      <Message>Value loaded from field de.bwravencl.controllerbuddy.input.sony.SonyExtension.connection</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" primary="true" start="441" end="441" startBytecode="224" endBytecode="224" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 441]</Message>
-    </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" start="451" end="451" startBytecode="313" endBytecode="313" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
-      <Message>Another occurrence at DualShock4Extension.java:[line 451]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="679eff09467c0a8fad8cfcb774f4c01a" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetMasterVolumeLevel(FloatByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="72" end="86" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 72-86]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" name="GetMasterVolumeLevel" signature="(Lcom/sun/jna/ptr/FloatByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="76" end="76" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetMasterVolumeLevel(FloatByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="76" end="76" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 76]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="cd2d69b005b3b9f3baded5c89d1a7b03" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetMute(WinDef$BOOLByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="72" end="86" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 72-86]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" name="GetMute" signature="(Lcom/sun/jna/platform/win32/WinDef$BOOLByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="80" end="80" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetMute(WinDef$BOOLByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="80" end="80" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 80]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="58bd6df64b5cf0900e03423f0795c4fe" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetVolumeRange(FloatByReference, FloatByReference, FloatByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="72" end="86" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 72-86]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" name="GetVolumeRange" signature="(Lcom/sun/jna/ptr/FloatByReference;Lcom/sun/jna/ptr/FloatByReference;Lcom/sun/jna/ptr/FloatByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="85" end="85" startBytecode="0" endBytecode="114" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume.GetVolumeRange(FloatByReference, FloatByReference, FloatByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" start="85" end="85" startBytecode="0" endBytecode="114" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 85]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="3f5a309d02b1eaef971d7135fbe8965" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.Activate(Guid$IID, int, Pointer, PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="93" end="129" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 93-129]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" name="Activate" signature="(Lcom/sun/jna/platform/win32/Guid$IID;ILcom/sun/jna/Pointer;Lcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="98" end="98" startBytecode="0" endBytecode="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.Activate(Guid$IID, int, Pointer, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="98" end="98" startBytecode="0" endBytecode="131" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 98]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="6d7e291d4d7518a1df60021d0e3143f1" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.GetId(PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="93" end="129" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 93-129]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" name="GetId" signature="(Lcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="103" end="103" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.GetId(PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="103" end="103" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 103]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="5eb3c0529076986734687280aea18872" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.GetState(WinDef$DWORDByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="93" end="129" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 93-129]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" name="GetState" signature="(Lcom/sun/jna/platform/win32/WinDef$DWORDByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="107" end="107" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.GetState(WinDef$DWORDByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="107" end="107" startBytecode="0" endBytecode="78" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 107]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="76781247844c62d5e9a584c03721e11e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.OpenPropertyStore(int, PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="93" end="129" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 93-129]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" name="OpenPropertyStore" signature="(ILcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="111" end="111" startBytecode="0" endBytecode="94" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice.OpenPropertyStore(int, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" start="111" end="111" startBytecode="0" endBytecode="94" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 111]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="e5e50ee3b52eb12014b3ed0c1ac936a0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection.GetCount(WinDef$UINTByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="136" end="144" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 136-144]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" name="GetCount" signature="(Lcom/sun/jna/platform/win32/WinDef$UINTByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="140" end="140" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection.GetCount(WinDef$UINTByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="140" end="140" startBytecode="0" endBytecode="77" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 140]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="3a3ed906f422ab98392d95869c0ec5f2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection.Item(WinDef$UINT, PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="136" end="144" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 136-144]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" name="Item" signature="(Lcom/sun/jna/platform/win32/WinDef$UINT;Lcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="144" end="144" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection.Item(WinDef$UINT, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" start="144" end="144" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 144]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="4b87ddf8c0313e20520a207eb91ee17b" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator.EnumAudioEndpoints(int, int, PointerByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" start="151" end="156" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 151-156]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" name="EnumAudioEndpoints" signature="(IILcom/sun/jna/ptr/PointerByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" start="156" end="156" startBytecode="0" endBytecode="111" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator.EnumAudioEndpoints(int, int, PointerByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" start="156" end="156" startBytecode="0" endBytecode="111" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 156]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="b3fe815bb7c79262595a867348a38d10" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Method names should start with a lower case letter</ShortMessage>
-    <LongMessage>The method name de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore.GetValue(DualShock4Extension$PROPERTYKEY$ByReference, DualShock4Extension$PROPVARIANT$ByReference) doesn&apos;t start with a lower case letter</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" start="164" end="168" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 164-168]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore</Message>
-    </Class>
-    <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" name="GetValue" signature="(Lde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$PROPERTYKEY$ByReference;Lde/bwravencl/controllerbuddy/input/sony/DualShock4Extension$PROPVARIANT$ByReference;)Lcom/sun/jna/platform/win32/WinNT$HRESULT;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" start="168" end="168" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
-      <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore.GetValue(DualShock4Extension$PROPERTYKEY$ByReference, DualShock4Extension$PROPVARIANT$ByReference)</Message>
-    </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" start="168" end="168" startBytecode="0" endBytecode="91" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>At DualShock4Extension.java:[line 168]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="18" abbrev="UrF" category="STYLE" instanceHash="56b8117bba7563c5905419d6ffb2459" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unread public/protected field</ShortMessage>
-    <LongMessage>Unread public/protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY.pid</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" start="172" end="183" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 172-183]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" name="pid" signature="Lcom/sun/jna/platform/win32/WinDef$DWORD;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY.pid</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="241" end="241" startBytecode="208" endBytecode="208" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 241]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="17" abbrev="UwF" category="STYLE" instanceHash="bdd09a24628eb095062639dd9a2bb47f" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unwritten public or protected field</ShortMessage>
-    <LongMessage>Unwritten public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY.fmtid</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" start="172" end="183" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 172-183]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" name="fmtid" signature="Lcom/sun/jna/platform/win32/Guid$GUID;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY.fmtid</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="236" end="236" startBytecode="107" endBytecode="107" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 236]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="17" abbrev="UuF" category="STYLE" instanceHash="9b032b5048e533f7121d14581c1006e2" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unused public or protected field</ShortMessage>
-    <LongMessage>Unused public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r1</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" start="187" end="201" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 187-201]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="r1" signature="B" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r1</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>In DualShock4Extension.java</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="17" abbrev="UuF" category="STYLE" instanceHash="900de05535dda4fe6fe84d713e1f79c0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unused public or protected field</ShortMessage>
-    <LongMessage>Unused public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r2</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" start="187" end="201" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 187-201]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="r2" signature="B" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r2</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>In DualShock4Extension.java</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="17" abbrev="UuF" category="STYLE" instanceHash="94ac54ba6392f4e562b8968badcc2ec9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unused public or protected field</ShortMessage>
-    <LongMessage>Unused public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r3</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" start="187" end="201" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 187-201]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="r3" signature="B" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.r3</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" synthetic="true">
-      <Message>In DualShock4Extension.java</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="2" rank="17" abbrev="UwF" category="STYLE" instanceHash="77ce9527e09fb6479998dba3c77a93cc" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unwritten public or protected field</ShortMessage>
-    <LongMessage>Unwritten public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.pwszVal</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" start="187" end="201" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 187-201]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="pwszVal" signature="Lcom/sun/jna/WString;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.pwszVal</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="293" end="293" startBytecode="327" endBytecode="327" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 293]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="a2b43e99101ce3b8119ce5ac1d2ca15f" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Unwritten public or protected field</ShortMessage>
-    <LongMessage>Unwritten public or protected field: de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.vt</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" start="187" end="201" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>At DualShock4Extension.java:[lines 187-201]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT</Message>
-    </Class>
-    <Field classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" name="vt" signature="I" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-        <Message>In DualShock4Extension.java</Message>
-      </SourceLine>
-      <Message>Field de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT.vt</Message>
-    </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="283" end="283" startBytecode="269" endBytecode="269" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 283]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" primary="true" start="115" end="115" startBytecode="8" endBytecode="8" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
+      <Message>At DualShock4Extension.java:[line 115]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2" rank="14" abbrev="SWL" category="MT_CORRECTNESS" instanceHash="b2a30be255aa38ba0cd55dc65fd691cf" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
@@ -1812,11 +1398,60 @@
       <Message>Field de.bwravencl.controllerbuddy.input.sony.SonyExtension.connection</Message>
     </Field>
     <Method classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" name="handleBattery" signature="([B)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" start="398" end="411" startBytecode="0" endBytecode="202" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" start="80" end="93" startBytecode="0" endBytecode="202" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java"/>
       <Message>In method de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleBattery(byte[])</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" primary="true" start="398" end="398" startBytecode="10" endBytecode="10" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-      <Message>At DualShock4Extension.java:[line 398]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" primary="true" start="80" end="80" startBytecode="10" endBytecode="10" sourcefile="DualShock4Extension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
+      <Message>At DualShock4Extension.java:[line 80]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="cb5a7eda4454cf374aacec5ba33279c5" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
+    <LongMessage>SonyExtension.hidReport not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int, byte, long)</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" start="218" end="535" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+        <Message>At SonyExtension.java:[lines 218-535]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+    </Class>
+    <Field classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" name="hidReport" signature="[B" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+        <Message>In SonyExtension.java</Message>
+      </SourceLine>
+      <Message>Field de.bwravencl.controllerbuddy.input.sony.SonyExtension.hidReport</Message>
+    </Field>
+    <Method classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" name="lambda$rumble$2" signature="(IBJ)V" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" start="437" end="448" startBytecode="0" endBytecode="240" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int, byte, long)</Message>
+    </Method>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" primary="true" start="445" end="445" startBytecode="40" endBytecode="40" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+      <Message>At SonyExtension.java:[line 445]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="89e39bdf9e758bf4a3e813950fc09433" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
+    <LongMessage>SonyExtension.hidReport not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.input.sony.SonyExtension.sendHidReport()</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" start="218" end="535" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+        <Message>At SonyExtension.java:[lines 218-535]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+    </Class>
+    <Field classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" name="hidReport" signature="[B" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+        <Message>In SonyExtension.java</Message>
+      </SourceLine>
+      <Message>Field de.bwravencl.controllerbuddy.input.sony.SonyExtension.hidReport</Message>
+    </Field>
+    <Method classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" name="sendHidReport" signature="()V" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" start="460" end="481" startBytecode="0" endBytecode="344" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"/>
+      <Message>In method de.bwravencl.controllerbuddy.input.sony.SonyExtension.sendHidReport()</Message>
+    </Method>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" primary="true" start="466" end="466" startBytecode="43" endBytecode="43" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+      <Message>At SonyExtension.java:[line 466]</Message>
+    </SourceLine>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension" start="475" end="475" startBytecode="127" endBytecode="127" sourcefile="SonyExtension.java" sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
+      <Message>Another occurrence at SonyExtension.java:[line 475]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NM_METHOD_NAMING_CONVENTION" priority="3" rank="19" abbrev="Nm" category="BAD_PRACTICE" instanceHash="50bd2250c92b484b60ee8767ad3f2523" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
@@ -1907,18 +1542,6 @@ to read, readLine() will return null and dereferencing that will generate a null
 
     ]]></Details>
   </BugPattern>
-  <BugPattern type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" abbrev="NP" category="STYLE">
-    <ShortDescription>Read of unwritten public or protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> The program is dereferencing a public or protected
-field that does not seem to ever have a non-null value written to it.
-Unless the field is initialized via some mechanism not seen by the analysis,
-dereferencing this value will generate a null pointer exception.
-</p>
-
-    ]]></Details>
-  </BugPattern>
   <BugPattern type="SF_SWITCH_FALLTHROUGH" abbrev="SF" category="STYLE" cweid="484">
     <ShortDescription>Switch statement found where one case falls through to the next case</ShortDescription>
     <Details><![CDATA[
@@ -1935,15 +1558,6 @@ dereferencing this value will generate a null pointer exception.
   <p>
 Methods should be verbs, in mixed case with the first letter lowercase, with the first letter of each internal word capitalized.
 </p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" abbrev="UwF" category="STYLE">
-    <ShortDescription>Unwritten public or protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> No writes were seen to this public/protected field.&nbsp; All reads of it will return the default
-value. Check for errors (should it have been initialized?), or remove it if it is useless.</p>
 
     ]]></Details>
   </BugPattern>
@@ -1968,6 +1582,31 @@ the constant null.</p>
 
     ]]></Details>
   </BugPattern>
+  <BugPattern type="MS_MUTABLE_ARRAY" abbrev="MS" category="MALICIOUS_CODE">
+    <ShortDescription>Field is a mutable array</ShortDescription>
+    <Details><![CDATA[
+
+<p> A final static field references an array
+   and can be accessed by malicious code or
+        by accident from another package.
+   This code can freely modify the contents of the array.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="DM_GC" abbrev="Dm" category="PERFORMANCE">
+    <ShortDescription>Explicit garbage collection; extremely dubious except in benchmarking code</ShortDescription>
+    <Details><![CDATA[
+
+  <p> Code explicitly invokes garbage collection.
+  Except for specific use in benchmarking, this is very dubious.</p>
+  <p>In the past, situations where people have explicitly invoked
+  the garbage collector in routines such as close or finalize methods
+  has led to huge performance black holes. Garbage collection
+   can be expensive. Any situation that forces hundreds or thousands
+   of garbage collections will bring the machine to a crawl.</p>
+
+    ]]></Details>
+  </BugPattern>
   <BugPattern type="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" abbrev="ST" category="STYLE">
     <ShortDescription>Write to static field from instance method</ShortDescription>
     <Details><![CDATA[
@@ -1978,6 +1617,31 @@ and generally bad practice.
 </p>
 
     ]]></Details>
+  </BugPattern>
+  <BugPattern type="WA_NOT_IN_LOOP" abbrev="Wa" category="MT_CORRECTNESS">
+    <ShortDescription>Wait not in loop</ShortDescription>
+    <Details><![CDATA[
+
+  <p> This method contains a call to <code>java.lang.Object.wait()</code>
+  which is not in a loop.&nbsp; If the monitor is used for multiple conditions,
+  the condition the caller intended to wait for might not be the one
+  that actually occurred.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="SWL_SLEEP_WITH_LOCK_HELD" abbrev="SWL" category="MT_CORRECTNESS">
+    <ShortDescription>Method calls Thread.sleep() with a lock held</ShortDescription>
+    <Details><![CDATA[
+      
+      <p>
+      This method calls Thread.sleep() with a lock held.  This may result
+      in very poor performance and scalability, or a deadlock, since other threads may
+      be waiting to acquire the lock.  It is a much better idea to call
+      wait() on the lock, which releases the lock and allows other threads
+      to run.
+      </p>
+      
+   ]]></Details>
   </BugPattern>
   <BugPattern type="EI_EXPOSE_REP" abbrev="EI" category="MALICIOUS_CODE" cweid="374">
     <ShortDescription>May expose internal representation by returning reference to mutable object</ShortDescription>
@@ -1990,6 +1654,23 @@ and generally bad practice.
    the mutable object would compromise security or other
    important properties, you will need to do something different.
   Returning a new copy of the object is better approach in many situations.</p>
+
+    ]]></Details>
+  </BugPattern>
+  <BugPattern type="PZLA_PREFER_ZERO_LENGTH_ARRAYS" abbrev="PZLA" category="STYLE">
+    <ShortDescription>Consider returning a zero length array rather than null</ShortDescription>
+    <Details><![CDATA[
+
+<p> It is often a better design to
+return a length zero array rather than a null reference to indicate that there
+are no results (i.e., an empty list of results).
+This way, no explicit check for null is needed by clients of the method.</p>
+
+<p>On the other hand, using null to indicate
+"there is no answer to this question" is probably appropriate.
+For example, <code>File.listFiles()</code> returns an empty list
+if given a directory containing no files, and returns null if the file
+is not a directory.</p>
 
     ]]></Details>
   </BugPattern>
@@ -2046,112 +1727,6 @@ object is stored in this field.</p>
 
     ]]></Details>
   </BugPattern>
-  <BugPattern type="NN_NAKED_NOTIFY" abbrev="NN" category="MT_CORRECTNESS">
-    <ShortDescription>Naked notify</ShortDescription>
-    <Details><![CDATA[
-
-  <p> A call to <code>notify()</code> or <code>notifyAll()</code>
-  was made without any (apparent) accompanying
-  modification to mutable object state.&nbsp; In general, calling a notify
-  method on a monitor is done because some condition another thread is
-  waiting for has become true.&nbsp; However, for the condition to be meaningful,
-  it must involve a heap object that is visible to both threads.</p>
-
-  <p> This bug does not necessarily indicate an error, since the change to
-  mutable object state may have taken place in a method which then called
-  the method containing the notification.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" abbrev="UrF" category="STYLE">
-    <ShortDescription>Unread public/protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> This field is never read.&nbsp;
-The field is public or protected, so perhaps
-    it is intended to be used with classes not seen as part of the analysis. If not,
-consider removing it from the class.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" abbrev="UuF" category="STYLE">
-    <ShortDescription>Unused public or protected field</ShortDescription>
-    <Details><![CDATA[
-
-  <p> This field is never used.&nbsp;
-The field is public or protected, so perhaps
-    it is intended to be used with classes not seen as part of the analysis. If not,
-consider removing it from the class.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="MS_MUTABLE_ARRAY" abbrev="MS" category="MALICIOUS_CODE">
-    <ShortDescription>Field is a mutable array</ShortDescription>
-    <Details><![CDATA[
-
-<p> A final static field references an array
-   and can be accessed by malicious code or
-        by accident from another package.
-   This code can freely modify the contents of the array.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="DM_GC" abbrev="Dm" category="PERFORMANCE">
-    <ShortDescription>Explicit garbage collection; extremely dubious except in benchmarking code</ShortDescription>
-    <Details><![CDATA[
-
-  <p> Code explicitly invokes garbage collection.
-  Except for specific use in benchmarking, this is very dubious.</p>
-  <p>In the past, situations where people have explicitly invoked
-  the garbage collector in routines such as close or finalize methods
-  has led to huge performance black holes. Garbage collection
-   can be expensive. Any situation that forces hundreds or thousands
-   of garbage collections will bring the machine to a crawl.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="WA_NOT_IN_LOOP" abbrev="Wa" category="MT_CORRECTNESS">
-    <ShortDescription>Wait not in loop</ShortDescription>
-    <Details><![CDATA[
-
-  <p> This method contains a call to <code>java.lang.Object.wait()</code>
-  which is not in a loop.&nbsp; If the monitor is used for multiple conditions,
-  the condition the caller intended to wait for might not be the one
-  that actually occurred.</p>
-
-    ]]></Details>
-  </BugPattern>
-  <BugPattern type="SWL_SLEEP_WITH_LOCK_HELD" abbrev="SWL" category="MT_CORRECTNESS">
-    <ShortDescription>Method calls Thread.sleep() with a lock held</ShortDescription>
-    <Details><![CDATA[
-      
-      <p>
-      This method calls Thread.sleep() with a lock held.  This may result
-      in very poor performance and scalability, or a deadlock, since other threads may
-      be waiting to acquire the lock.  It is a much better idea to call
-      wait() on the lock, which releases the lock and allows other threads
-      to run.
-      </p>
-      
-   ]]></Details>
-  </BugPattern>
-  <BugPattern type="PZLA_PREFER_ZERO_LENGTH_ARRAYS" abbrev="PZLA" category="STYLE">
-    <ShortDescription>Consider returning a zero length array rather than null</ShortDescription>
-    <Details><![CDATA[
-
-<p> It is often a better design to
-return a length zero array rather than a null reference to indicate that there
-are no results (i.e., an empty list of results).
-This way, no explicit check for null is needed by clients of the method.</p>
-
-<p>On the other hand, using null to indicate
-"there is no answer to this question" is probably appropriate.
-For example, <code>File.listFiles()</code> returns an empty list
-if given a directory containing no files, and returns null if the file
-is not a directory.</p>
-
-    ]]></Details>
-  </BugPattern>
   <BugPattern type="DM_EXIT" abbrev="Dm" category="BAD_PRACTICE" cweid="382">
     <ShortDescription>Method invokes System.exit(...)</ShortDescription>
     <Details><![CDATA[
@@ -2204,6 +1779,23 @@ signals unexpected behavior by returning an atypical return value.
 
     ]]></Details>
   </BugPattern>
+  <BugPattern type="NN_NAKED_NOTIFY" abbrev="NN" category="MT_CORRECTNESS">
+    <ShortDescription>Naked notify</ShortDescription>
+    <Details><![CDATA[
+
+  <p> A call to <code>notify()</code> or <code>notifyAll()</code>
+  was made without any (apparent) accompanying
+  modification to mutable object state.&nbsp; In general, calling a notify
+  method on a monitor is done because some condition another thread is
+  waiting for has become true.&nbsp; However, for the condition to be meaningful,
+  it must involve a heap object that is visible to both threads.</p>
+
+  <p> This bug does not necessarily indicate an error, since the change to
+  mutable object state may have taken place in a method which then called
+  the method containing the notification.</p>
+
+    ]]></Details>
+  </BugPattern>
   <BugCode abbrev="NN">
     <Description>Naked notify</Description>
   </BugCode>
@@ -2230,12 +1822,6 @@ signals unexpected behavior by returning an atypical return value.
   </BugCode>
   <BugCode abbrev="MS" cweid="218">
     <Description>Mutable static field</Description>
-  </BugCode>
-  <BugCode abbrev="UuF">
-    <Description>Unused field</Description>
-  </BugCode>
-  <BugCode abbrev="UrF">
-    <Description>Unread field</Description>
   </BugCode>
   <BugCode abbrev="Dm">
     <Description>Dubious method used</Description>
@@ -2311,7 +1897,7 @@ signals unexpected behavior by returning an atypical return value.
       <StackTrace>java.base/java.lang.Thread.run(Thread.java:832)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Wed, 30 Dec 2020 01:00:56 +0100" total_classes="204" referenced_classes="1059" total_bugs="74" total_size="8746" num_packages="10" java_version="15.0.1" vm_version="15.0.1+9" cpu_seconds="32.44" clock_seconds="7.36" peak_mbytes="577.03" alloc_mbytes="512.00" gc_seconds="0.13" priority_3="41" priority_2="28" priority_1="5">
+  <FindBugsSummary timestamp="Wed, 30 Dec 2020 14:13:35 +0100" total_classes="194" referenced_classes="999" total_bugs="55" total_size="8492" num_packages="10" java_version="15.0.1" vm_version="15.0.1+9" cpu_seconds="31.81" clock_seconds="7.42" peak_mbytes="573.88" alloc_mbytes="512.00" gc_seconds="0.13" priority_3="30" priority_2="20" priority_1="5">
     <FileStats path="com/oracle/si/Singleton.java" bugCount="13" size="363" bugHash="b540ea982e58280bec5374d4a938b225"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" bugCount="4" size="410" bugHash="fa891c52246fab7722d96c1ff6748b96"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" bugCount="8" size="376" bugHash="869323b7d1f64916584304eff417298a"/>
@@ -2387,8 +1973,8 @@ signals unexpected behavior by returning an atypical return value.
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/StringEditorBuilder.java" bugCount="0" size="36"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/VirtualAxisEditorBuilder.java" bugCount="0" size="9"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java" bugCount="2" size="99" bugHash="c1ab46036c1347280617134d33052f7f"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" bugCount="23" size="348" bugHash="351e145721f46b81329a738a2243064b"/>
-    <FileStats path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" bugCount="1" size="371" bugHash="44210b073b391121fc2d1812cfbd2938"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" bugCount="2" size="94" bugHash="c168e960319616e186d3ed95799e38b9"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" bugCount="3" size="371" bugHash="47b4b758b7a758ade2fd461459d118d7"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java" bugCount="0" size="38"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/ModeAwareTypeAdapterFactory.java" bugCount="0" size="35"/>
     <FileStats path="de/bwravencl/controllerbuddy/output/ClientOutput.java" bugCount="0" size="286"/>
@@ -2582,22 +2168,12 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder$MyDocumentListener" sourceFile="StringEditorBuilder.java" interface="false" size="23" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder" sourceFile="VirtualAxisEditorBuilder.java" interface="false" size="9" bugs="0"/>
     </PackageStats>
-    <PackageStats package="de.bwravencl.controllerbuddy.input.sony" total_bugs="26" total_types="17" total_size="818" priority_3="17" priority_2="9">
+    <PackageStats package="de.bwravencl.controllerbuddy.input.sony" total_bugs="7" total_types="7" total_size="564" priority_3="6" priority_2="1">
       <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension" sourceFile="DualSenseExtension.java" interface="false" size="74" bugs="1" priority_3="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1" sourceFile="DualSenseExtension.java" interface="false" size="25" bugs="1" priority_3="1"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" sourceFile="DualShock4Extension.java" interface="false" size="206" bugs="7" priority_3="2" priority_2="5"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" sourceFile="DualShock4Extension.java" interface="false" size="60" bugs="2" priority_3="2"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$DualShock4Connection" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IAudioEndpointVolume" sourceFile="DualShock4Extension.java" interface="false" size="11" bugs="3" priority_3="3"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDevice" sourceFile="DualShock4Extension.java" interface="false" size="22" bugs="4" priority_3="4"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceCollection" sourceFile="DualShock4Extension.java" interface="false" size="8" bugs="2" priority_3="2"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IMMDeviceEnumerator" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="1" priority_3="1"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$IPropertyStore" sourceFile="DualShock4Extension.java" interface="false" size="6" bugs="1" priority_3="1"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY" sourceFile="DualShock4Extension.java" interface="false" size="7" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPERTYKEY$ByReference" sourceFile="DualShock4Extension.java" interface="false" size="3" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT" sourceFile="DualShock4Extension.java" interface="false" size="10" bugs="3" priority_2="3"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$PROPVARIANT$ByReference" sourceFile="DualShock4Extension.java" interface="false" size="3" bugs="0"/>
-      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.SonyExtension" sourceFile="SonyExtension.java" interface="false" size="243" bugs="1" priority_2="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension" sourceFile="DualShock4Extension.java" interface="false" size="75" bugs="1" priority_3="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1" sourceFile="DualShock4Extension.java" interface="false" size="19" bugs="1" priority_3="1"/>
+      <ClassStats class="de.bwravencl.controllerbuddy.input.sony.SonyExtension" sourceFile="SonyExtension.java" interface="false" size="243" bugs="3" priority_3="2" priority_2="1"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection" sourceFile="SonyExtension.java" interface="false" size="10" bugs="0"/>
       <ClassStats class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$SonyInputReportListener" sourceFile="SonyExtension.java" interface="false" size="118" bugs="0"/>
     </PackageStats>
@@ -2624,32 +2200,31 @@ signals unexpected behavior by returning an atypical return value.
       <ClassStats class="de.bwravencl.controllerbuddy.version.VersionUtils" sourceFile="VersionUtils.java" interface="false" size="23" bugs="0"/>
     </PackageStats>
     <FindBugsProfile>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="781" invocations="3932" avgMicrosecondsPerInvocation="198" maxMicrosecondsPerInvocation="18868" standardDeviationMicrosecondsPerInvocation="659"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="408" invocations="1059" avgMicrosecondsPerInvocation="385" maxMicrosecondsPerInvocation="16564" standardDeviationMicrosecondsPerInvocation="1090"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="393" invocations="1059" avgMicrosecondsPerInvocation="371" maxMicrosecondsPerInvocation="17537" standardDeviationMicrosecondsPerInvocation="989"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="364" invocations="1188" avgMicrosecondsPerInvocation="306" maxMicrosecondsPerInvocation="17463" standardDeviationMicrosecondsPerInvocation="1464"/>
-      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="282" invocations="1051" avgMicrosecondsPerInvocation="268" maxMicrosecondsPerInvocation="20632" standardDeviationMicrosecondsPerInvocation="1175"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="272" invocations="1131" avgMicrosecondsPerInvocation="240" maxMicrosecondsPerInvocation="17634" standardDeviationMicrosecondsPerInvocation="995"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="257" invocations="1095" avgMicrosecondsPerInvocation="235" maxMicrosecondsPerInvocation="24372" standardDeviationMicrosecondsPerInvocation="1152"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="253" invocations="1175" avgMicrosecondsPerInvocation="215" maxMicrosecondsPerInvocation="15358" standardDeviationMicrosecondsPerInvocation="827"/>
-      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="251" invocations="2692" avgMicrosecondsPerInvocation="93" maxMicrosecondsPerInvocation="12871" standardDeviationMicrosecondsPerInvocation="317"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="189" invocations="3941" avgMicrosecondsPerInvocation="48" maxMicrosecondsPerInvocation="1332" standardDeviationMicrosecondsPerInvocation="53"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="154" invocations="1059" avgMicrosecondsPerInvocation="146" maxMicrosecondsPerInvocation="11429" standardDeviationMicrosecondsPerInvocation="535"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="143" invocations="1131" avgMicrosecondsPerInvocation="127" maxMicrosecondsPerInvocation="24127" standardDeviationMicrosecondsPerInvocation="776"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="138" invocations="893" avgMicrosecondsPerInvocation="154" maxMicrosecondsPerInvocation="8089" standardDeviationMicrosecondsPerInvocation="544"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="114" invocations="1275" avgMicrosecondsPerInvocation="89" maxMicrosecondsPerInvocation="11603" standardDeviationMicrosecondsPerInvocation="364"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="112" invocations="1059" avgMicrosecondsPerInvocation="105" maxMicrosecondsPerInvocation="10823" standardDeviationMicrosecondsPerInvocation="470"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.ReflectiveClasses" totalMilliseconds="86" invocations="1059" avgMicrosecondsPerInvocation="81" maxMicrosecondsPerInvocation="11473" standardDeviationMicrosecondsPerInvocation="418"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="84" invocations="1059" avgMicrosecondsPerInvocation="79" maxMicrosecondsPerInvocation="15506" standardDeviationMicrosecondsPerInvocation="518"/>
-      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="74" invocations="3843" avgMicrosecondsPerInvocation="19" maxMicrosecondsPerInvocation="1536" standardDeviationMicrosecondsPerInvocation="46"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph" totalMilliseconds="70" invocations="1059" avgMicrosecondsPerInvocation="66" maxMicrosecondsPerInvocation="11066" standardDeviationMicrosecondsPerInvocation="391"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="69" invocations="1059" avgMicrosecondsPerInvocation="65" maxMicrosecondsPerInvocation="11590" standardDeviationMicrosecondsPerInvocation="404"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="66" invocations="1059" avgMicrosecondsPerInvocation="62" maxMicrosecondsPerInvocation="1322" standardDeviationMicrosecondsPerInvocation="115"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="64" invocations="1199" avgMicrosecondsPerInvocation="53" maxMicrosecondsPerInvocation="29881" standardDeviationMicrosecondsPerInvocation="863"/>
-      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory" totalMilliseconds="63" invocations="1131" avgMicrosecondsPerInvocation="56" maxMicrosecondsPerInvocation="3375" standardDeviationMicrosecondsPerInvocation="219"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis" totalMilliseconds="56" invocations="1059" avgMicrosecondsPerInvocation="53" maxMicrosecondsPerInvocation="11721" standardDeviationMicrosecondsPerInvocation="416"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.UnreadFields" totalMilliseconds="53" invocations="204" avgMicrosecondsPerInvocation="264" maxMicrosecondsPerInvocation="19081" standardDeviationMicrosecondsPerInvocation="1343"/>
-      <ClassProfile name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods" totalMilliseconds="51" invocations="204" avgMicrosecondsPerInvocation="253" maxMicrosecondsPerInvocation="1380" standardDeviationMicrosecondsPerInvocation="317"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="793" invocations="3876" avgMicrosecondsPerInvocation="204" maxMicrosecondsPerInvocation="19137" standardDeviationMicrosecondsPerInvocation="616"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="416" invocations="999" avgMicrosecondsPerInvocation="416" maxMicrosecondsPerInvocation="20547" standardDeviationMicrosecondsPerInvocation="1124"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="384" invocations="999" avgMicrosecondsPerInvocation="384" maxMicrosecondsPerInvocation="21819" standardDeviationMicrosecondsPerInvocation="1012"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="340" invocations="1159" avgMicrosecondsPerInvocation="293" maxMicrosecondsPerInvocation="24977" standardDeviationMicrosecondsPerInvocation="1486"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="262" invocations="1067" avgMicrosecondsPerInvocation="246" maxMicrosecondsPerInvocation="25671" standardDeviationMicrosecondsPerInvocation="1270"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="258" invocations="1103" avgMicrosecondsPerInvocation="234" maxMicrosecondsPerInvocation="17720" standardDeviationMicrosecondsPerInvocation="1052"/>
+      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="252" invocations="1023" avgMicrosecondsPerInvocation="246" maxMicrosecondsPerInvocation="20897" standardDeviationMicrosecondsPerInvocation="1035"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="240" invocations="3885" avgMicrosecondsPerInvocation="61" maxMicrosecondsPerInvocation="13955" standardDeviationMicrosecondsPerInvocation="233"/>
+      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="238" invocations="2630" avgMicrosecondsPerInvocation="90" maxMicrosecondsPerInvocation="6510" standardDeviationMicrosecondsPerInvocation="211"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="236" invocations="1146" avgMicrosecondsPerInvocation="206" maxMicrosecondsPerInvocation="12768" standardDeviationMicrosecondsPerInvocation="781"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="147" invocations="1103" avgMicrosecondsPerInvocation="133" maxMicrosecondsPerInvocation="23861" standardDeviationMicrosecondsPerInvocation="837"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="143" invocations="999" avgMicrosecondsPerInvocation="143" maxMicrosecondsPerInvocation="11125" standardDeviationMicrosecondsPerInvocation="459"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="143" invocations="865" avgMicrosecondsPerInvocation="165" maxMicrosecondsPerInvocation="14782" standardDeviationMicrosecondsPerInvocation="682"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="112" invocations="1214" avgMicrosecondsPerInvocation="92" maxMicrosecondsPerInvocation="11254" standardDeviationMicrosecondsPerInvocation="359"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="101" invocations="999" avgMicrosecondsPerInvocation="101" maxMicrosecondsPerInvocation="8334" standardDeviationMicrosecondsPerInvocation="341"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ReflectiveClasses" totalMilliseconds="75" invocations="999" avgMicrosecondsPerInvocation="75" maxMicrosecondsPerInvocation="4515" standardDeviationMicrosecondsPerInvocation="224"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="72" invocations="999" avgMicrosecondsPerInvocation="73" maxMicrosecondsPerInvocation="2469" standardDeviationMicrosecondsPerInvocation="146"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.StreamResourceTracker" totalMilliseconds="72" invocations="39" avgMicrosecondsPerInvocation="1860" maxMicrosecondsPerInvocation="5805" standardDeviationMicrosecondsPerInvocation="1794"/>
+      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="70" invocations="3787" avgMicrosecondsPerInvocation="18" maxMicrosecondsPerInvocation="781" standardDeviationMicrosecondsPerInvocation="40"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="70" invocations="999" avgMicrosecondsPerInvocation="70" maxMicrosecondsPerInvocation="3628" standardDeviationMicrosecondsPerInvocation="227"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="68" invocations="999" avgMicrosecondsPerInvocation="68" maxMicrosecondsPerInvocation="12524" standardDeviationMicrosecondsPerInvocation="440"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="66" invocations="1171" avgMicrosecondsPerInvocation="56" maxMicrosecondsPerInvocation="32599" standardDeviationMicrosecondsPerInvocation="953"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory" totalMilliseconds="63" invocations="1103" avgMicrosecondsPerInvocation="57" maxMicrosecondsPerInvocation="4753" standardDeviationMicrosecondsPerInvocation="260"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph" totalMilliseconds="60" invocations="999" avgMicrosecondsPerInvocation="60" maxMicrosecondsPerInvocation="3132" standardDeviationMicrosecondsPerInvocation="198"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ExplicitSerialization" totalMilliseconds="51" invocations="999" avgMicrosecondsPerInvocation="51" maxMicrosecondsPerInvocation="6728" standardDeviationMicrosecondsPerInvocation="355"/>
     </FindBugsProfile>
   </FindBugsSummary>
   <ClassFeatures></ClassFeatures>

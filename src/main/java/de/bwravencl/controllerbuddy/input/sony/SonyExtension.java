@@ -39,7 +39,7 @@ import purejavahidapi.PureJavaHidApi;
 
 public abstract class SonyExtension {
 
-	static class Connection {
+	static final class Connection {
 
 		final int offset;
 		final byte inputReportId;
