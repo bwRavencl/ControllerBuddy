@@ -265,8 +265,8 @@ public final class DirectInputKeyCode {
 			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
 					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
 					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)
-					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_PAUSE.equals(name)
-					|| DIK_SYSRQ.equals(name) || DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name);
+					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_SYSRQ.equals(name)
+					|| DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name);
 		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
 	}
 
