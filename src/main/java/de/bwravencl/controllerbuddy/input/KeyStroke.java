@@ -72,7 +72,7 @@ public final class KeyStroke implements Cloneable {
 	public String toString() {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
 		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
-		return collectedKeyCodes.stream().map(keyCode -> DirectInputKeyCode.keyCodeToNameMap.get(keyCode))
+		return collectedKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToNameMap.get(keyCode))
 				.collect(Collectors.joining(" + "));
 	}
 }

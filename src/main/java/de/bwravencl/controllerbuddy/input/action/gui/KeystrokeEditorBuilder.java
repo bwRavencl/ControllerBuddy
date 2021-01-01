@@ -43,8 +43,8 @@ import javax.swing.event.ListSelectionListener;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
 public final class KeystrokeEditorBuilder extends EditorBuilder {
@@ -113,7 +113,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				final Set<Integer> scanCodes = new HashSet<>();
 
 				for (final Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
-					scanCodes.add(DirectInputKeyCode.nameToKeyCodeMap.get(o));
+					scanCodes.add(ScanCode.nameToKeyCodeMap.get(o));
 
 				final var scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
 
@@ -155,7 +155,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	public void buildEditor(final JPanel parentPanel) {
 		final var keyStroke = (KeyStroke) initialValue;
 
-		final var availableScanCodes = DirectInputKeyCode.nameToKeyCodeMap.keySet();
+		final var availableScanCodes = ScanCode.nameToKeyCodeMap.keySet();
 
 		final var modifiersPanel = new JPanel();
 		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
@@ -168,7 +168,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var addedModifiers = new ArrayList<String>();
 		for (final int c1 : keyStroke.getModifierCodes())
-			addedModifiers.add(DirectInputKeyCode.keyCodeToNameMap.get(c1));
+			addedModifiers.add(ScanCode.keyCodeToNameMap.get(c1));
 		for (final var s1 : addedModifiers) {
 			final var index1 = getListModelIndex(modifierList.getModel(), s1);
 			if (index1 >= 0)
@@ -191,7 +191,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var addedKeys = new ArrayList<String>();
 		for (final int c2 : keyStroke.getKeyCodes())
-			addedKeys.add(DirectInputKeyCode.keyCodeToNameMap.get(c2));
+			addedKeys.add(ScanCode.keyCodeToNameMap.get(c2));
 		for (final var s2 : addedKeys) {
 			final var index2 = getListModelIndex(keyList.getModel(), s2);
 			if (index2 >= 0)

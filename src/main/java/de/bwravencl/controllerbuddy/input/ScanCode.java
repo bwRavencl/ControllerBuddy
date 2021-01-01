@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public final class DirectInputKeyCode {
+public final class ScanCode {
 
 	public static final String DIK_0 = "0";
 	public static final String DIK_1 = "1";
@@ -172,77 +172,52 @@ public final class DirectInputKeyCode {
 	private static final String DIK_YEN = "jYen";
 	public static final String DIK_Z = "Z";
 
-	private static final DirectInputKeyCode[] KEY_CODES = { new DirectInputKeyCode(DIK_ESCAPE, 0x1),
-			new DirectInputKeyCode(DIK_1, 0x2), new DirectInputKeyCode(DIK_2, 0x3), new DirectInputKeyCode(DIK_3, 0x4),
-			new DirectInputKeyCode(DIK_4, 0x5), new DirectInputKeyCode(DIK_5, 0x6), new DirectInputKeyCode(DIK_6, 0x7),
-			new DirectInputKeyCode(DIK_7, 0x8), new DirectInputKeyCode(DIK_8, 0x9), new DirectInputKeyCode(DIK_9, 0xA),
-			new DirectInputKeyCode(DIK_0, 0xB), new DirectInputKeyCode(DIK_MINUS, 0xC),
-			new DirectInputKeyCode(DIK_EQUALS, 0xD), new DirectInputKeyCode(DIK_BACK, 0xE),
-			new DirectInputKeyCode(DIK_TAB, 0xF), new DirectInputKeyCode(DIK_Q, 0x10),
-			new DirectInputKeyCode(DIK_W, 0x11), new DirectInputKeyCode(DIK_E, 0x12),
-			new DirectInputKeyCode(DIK_R, 0x13), new DirectInputKeyCode(DIK_T, 0x14),
-			new DirectInputKeyCode(DIK_Y, 0x15), new DirectInputKeyCode(DIK_U, 0x16),
-			new DirectInputKeyCode(DIK_I, 0x17), new DirectInputKeyCode(DIK_O, 0x18),
-			new DirectInputKeyCode(DIK_P, 0x19), new DirectInputKeyCode(DIK_LBRACKET, 0x1A),
-			new DirectInputKeyCode(DIK_RBRACKET, 0x1B), new DirectInputKeyCode(DIK_RETURN, 0x1C),
-			new DirectInputKeyCode(DIK_LCONTROL, 0x1D), new DirectInputKeyCode(DIK_A, 0x1E),
-			new DirectInputKeyCode(DIK_S, 0x1F), new DirectInputKeyCode(DIK_D, 0x20),
-			new DirectInputKeyCode(DIK_F, 0x21), new DirectInputKeyCode(DIK_G, 0x22),
-			new DirectInputKeyCode(DIK_H, 0x23), new DirectInputKeyCode(DIK_J, 0x24),
-			new DirectInputKeyCode(DIK_K, 0x25), new DirectInputKeyCode(DIK_L, 0x26),
-			new DirectInputKeyCode(DIK_SEMICOLON, 0x27), new DirectInputKeyCode(DIK_APOSTROPHE, 0x28),
-			new DirectInputKeyCode(DIK_GRAVE, 0x29), new DirectInputKeyCode(DIK_LSHIFT, 0x2A),
-			new DirectInputKeyCode(DIK_BACKSLASH, 0x2B), new DirectInputKeyCode(DIK_Z, 0x2C),
-			new DirectInputKeyCode(DIK_X, 0x2D), new DirectInputKeyCode(DIK_C, 0x2E),
-			new DirectInputKeyCode(DIK_V, 0x2F), new DirectInputKeyCode(DIK_B, 0x30),
-			new DirectInputKeyCode(DIK_N, 0x31), new DirectInputKeyCode(DIK_M, 0x32),
-			new DirectInputKeyCode(DIK_COMMA, 0x33), new DirectInputKeyCode(DIK_PERIOD, 0x34),
-			new DirectInputKeyCode(DIK_SLASH, 0x35), new DirectInputKeyCode(DIK_RSHIFT, 0x36),
-			new DirectInputKeyCode(DIK_MULTIPLY, 0x37), new DirectInputKeyCode(DIK_LMENU, 0x38),
-			new DirectInputKeyCode(DIK_SPACE, 0x39), new DirectInputKeyCode(DIK_CAPITAL, 0x3A),
-			new DirectInputKeyCode(DIK_F1, 0x3B), new DirectInputKeyCode(DIK_F2, 0x3C),
-			new DirectInputKeyCode(DIK_F3, 0x3D), new DirectInputKeyCode(DIK_F4, 0x3E),
-			new DirectInputKeyCode(DIK_F5, 0x3F), new DirectInputKeyCode(DIK_F6, 0x40),
-			new DirectInputKeyCode(DIK_F7, 0x41), new DirectInputKeyCode(DIK_F8, 0x42),
-			new DirectInputKeyCode(DIK_F9, 0x43), new DirectInputKeyCode(DIK_F10, 0x44),
-			new DirectInputKeyCode(DIK_NUMLOCK, 0x45), new DirectInputKeyCode(DIK_SCROLL, 0x46),
-			new DirectInputKeyCode(DIK_NUMPAD7, 0x47), new DirectInputKeyCode(DIK_NUMPAD8, 0x48),
-			new DirectInputKeyCode(DIK_NUMPAD9, 0x49), new DirectInputKeyCode(DIK_SUBTRACT, 0x4A),
-			new DirectInputKeyCode(DIK_NUMPAD4, 0x4B), new DirectInputKeyCode(DIK_NUMPAD5, 0x4C),
-			new DirectInputKeyCode(DIK_NUMPAD6, 0x4D), new DirectInputKeyCode(DIK_ADD, 0x4E),
-			new DirectInputKeyCode(DIK_NUMPAD1, 0x4F), new DirectInputKeyCode(DIK_NUMPAD2, 0x50),
-			new DirectInputKeyCode(DIK_NUMPAD3, 0x51), new DirectInputKeyCode(DIK_NUMPAD0, 0x52),
-			new DirectInputKeyCode(DIK_DECIMAL, 0x53), new DirectInputKeyCode(DIK_OEM_102, 0x56),
-			new DirectInputKeyCode(DIK_F11, 0x57), new DirectInputKeyCode(DIK_F12, 0x58),
-			new DirectInputKeyCode(DIK_F13, 0x64), new DirectInputKeyCode(DIK_F14, 0x65),
-			new DirectInputKeyCode(DIK_F15, 0x66), new DirectInputKeyCode(DIK_KANA, 0x70),
-			new DirectInputKeyCode(DIK_ABNT_C1, 0x73), new DirectInputKeyCode(DIK_CONVERT, 0x79),
-			new DirectInputKeyCode(DIK_NOCONVERT, 0x7B), new DirectInputKeyCode(DIK_YEN, 0x7D),
-			new DirectInputKeyCode(DIK_ABNT_C2, 0x7E), new DirectInputKeyCode(DIK_NUMPADEQUALS, 0x8D),
-			new DirectInputKeyCode(DIK_PREVTRACK, 0x90), new DirectInputKeyCode(DIK_AT, 0x91),
-			new DirectInputKeyCode(DIK_COLON, 0x92), new DirectInputKeyCode(DIK_UNDERLINE, 0x93),
-			new DirectInputKeyCode(DIK_KANJI, 0x94), new DirectInputKeyCode(DIK_STOP, 0x95),
-			new DirectInputKeyCode(DIK_AX, 0x96), new DirectInputKeyCode(DIK_UNLABELED, 0x97),
-			new DirectInputKeyCode(DIK_NEXTTRACK, 0x99), new DirectInputKeyCode(DIK_NUMPADENTER, 0x9C),
-			new DirectInputKeyCode(DIK_RCONTROL, 0x9D), new DirectInputKeyCode(DIK_MUTE, 0xA0),
-			new DirectInputKeyCode(DIK_CALCULATOR, 0xA1), new DirectInputKeyCode(DIK_PLAYPAUSE, 0xA2),
-			new DirectInputKeyCode(DIK_MEDIASTOP, 0xA4), new DirectInputKeyCode(DIK_VOLUMEDOWN, 0xAE),
-			new DirectInputKeyCode(DIK_VOLUMEUP, 0xB0), new DirectInputKeyCode(DIK_WEBHOME, 0xB2),
-			new DirectInputKeyCode(DIK_NUMPADCOMMA, 0xB3), new DirectInputKeyCode(DIK_DIVIDE, 0xB5),
-			new DirectInputKeyCode(DIK_SYSRQ, 0xB7), new DirectInputKeyCode(DIK_RMENU, 0xB8),
-			new DirectInputKeyCode(DIK_PAUSE, 0xC5), new DirectInputKeyCode(DIK_HOME, 0xC7),
-			new DirectInputKeyCode(DIK_UP, 0xC8), new DirectInputKeyCode(DIK_PRIOR, 0xC9),
-			new DirectInputKeyCode(DIK_LEFT, 0xCB), new DirectInputKeyCode(DIK_RIGHT, 0xCD),
-			new DirectInputKeyCode(DIK_END, 0xCF), new DirectInputKeyCode(DIK_DOWN, 0xD0),
-			new DirectInputKeyCode(DIK_NEXT, 0xD1), new DirectInputKeyCode(DIK_INSERT, 0xD2),
-			new DirectInputKeyCode(DIK_DELETE, 0xD3), new DirectInputKeyCode(DIK_LWIN, 0xDB),
-			new DirectInputKeyCode(DIK_RWIN, 0xDC), new DirectInputKeyCode(DIK_APPS, 0xDD),
-			new DirectInputKeyCode(DIK_POWER, 0xDE), new DirectInputKeyCode(DIK_SLEEP, 0xDF),
-			new DirectInputKeyCode(DIK_WAKE, 0xE3), new DirectInputKeyCode(DIK_WEBSEARCH, 0xE5),
-			new DirectInputKeyCode(DIK_WEBFAVORITES, 0xE6), new DirectInputKeyCode(DIK_WEBREFRESH, 0xE7),
-			new DirectInputKeyCode(DIK_WEBSTOP, 0xE8), new DirectInputKeyCode(DIK_WEBFORWARD, 0xE9),
-			new DirectInputKeyCode(DIK_WEBBACK, 0xEA), new DirectInputKeyCode(DIK_MYCOMPUTER, 0xEB),
-			new DirectInputKeyCode(DIK_MAIL, 0xEC), new DirectInputKeyCode(DIK_MEDIASELECT, 0xED) };
+	private static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1), new ScanCode(DIK_1, 0x2),
+			new ScanCode(DIK_2, 0x3), new ScanCode(DIK_3, 0x4), new ScanCode(DIK_4, 0x5), new ScanCode(DIK_5, 0x6),
+			new ScanCode(DIK_6, 0x7), new ScanCode(DIK_7, 0x8), new ScanCode(DIK_8, 0x9), new ScanCode(DIK_9, 0xA),
+			new ScanCode(DIK_0, 0xB), new ScanCode(DIK_MINUS, 0xC), new ScanCode(DIK_EQUALS, 0xD),
+			new ScanCode(DIK_BACK, 0xE), new ScanCode(DIK_TAB, 0xF), new ScanCode(DIK_Q, 0x10),
+			new ScanCode(DIK_W, 0x11), new ScanCode(DIK_E, 0x12), new ScanCode(DIK_R, 0x13), new ScanCode(DIK_T, 0x14),
+			new ScanCode(DIK_Y, 0x15), new ScanCode(DIK_U, 0x16), new ScanCode(DIK_I, 0x17), new ScanCode(DIK_O, 0x18),
+			new ScanCode(DIK_P, 0x19), new ScanCode(DIK_LBRACKET, 0x1A), new ScanCode(DIK_RBRACKET, 0x1B),
+			new ScanCode(DIK_RETURN, 0x1C), new ScanCode(DIK_LCONTROL, 0x1D), new ScanCode(DIK_A, 0x1E),
+			new ScanCode(DIK_S, 0x1F), new ScanCode(DIK_D, 0x20), new ScanCode(DIK_F, 0x21), new ScanCode(DIK_G, 0x22),
+			new ScanCode(DIK_H, 0x23), new ScanCode(DIK_J, 0x24), new ScanCode(DIK_K, 0x25), new ScanCode(DIK_L, 0x26),
+			new ScanCode(DIK_SEMICOLON, 0x27), new ScanCode(DIK_APOSTROPHE, 0x28), new ScanCode(DIK_GRAVE, 0x29),
+			new ScanCode(DIK_LSHIFT, 0x2A), new ScanCode(DIK_BACKSLASH, 0x2B), new ScanCode(DIK_Z, 0x2C),
+			new ScanCode(DIK_X, 0x2D), new ScanCode(DIK_C, 0x2E), new ScanCode(DIK_V, 0x2F), new ScanCode(DIK_B, 0x30),
+			new ScanCode(DIK_N, 0x31), new ScanCode(DIK_M, 0x32), new ScanCode(DIK_COMMA, 0x33),
+			new ScanCode(DIK_PERIOD, 0x34), new ScanCode(DIK_SLASH, 0x35), new ScanCode(DIK_RSHIFT, 0x36),
+			new ScanCode(DIK_MULTIPLY, 0x37), new ScanCode(DIK_LMENU, 0x38), new ScanCode(DIK_SPACE, 0x39),
+			new ScanCode(DIK_CAPITAL, 0x3A), new ScanCode(DIK_F1, 0x3B), new ScanCode(DIK_F2, 0x3C),
+			new ScanCode(DIK_F3, 0x3D), new ScanCode(DIK_F4, 0x3E), new ScanCode(DIK_F5, 0x3F),
+			new ScanCode(DIK_F6, 0x40), new ScanCode(DIK_F7, 0x41), new ScanCode(DIK_F8, 0x42),
+			new ScanCode(DIK_F9, 0x43), new ScanCode(DIK_F10, 0x44), new ScanCode(DIK_NUMLOCK, 0x45),
+			new ScanCode(DIK_SCROLL, 0x46), new ScanCode(DIK_NUMPAD7, 0x47), new ScanCode(DIK_NUMPAD8, 0x48),
+			new ScanCode(DIK_NUMPAD9, 0x49), new ScanCode(DIK_SUBTRACT, 0x4A), new ScanCode(DIK_NUMPAD4, 0x4B),
+			new ScanCode(DIK_NUMPAD5, 0x4C), new ScanCode(DIK_NUMPAD6, 0x4D), new ScanCode(DIK_ADD, 0x4E),
+			new ScanCode(DIK_NUMPAD1, 0x4F), new ScanCode(DIK_NUMPAD2, 0x50), new ScanCode(DIK_NUMPAD3, 0x51),
+			new ScanCode(DIK_NUMPAD0, 0x52), new ScanCode(DIK_DECIMAL, 0x53), new ScanCode(DIK_OEM_102, 0x56),
+			new ScanCode(DIK_F11, 0x57), new ScanCode(DIK_F12, 0x58), new ScanCode(DIK_F13, 0x64),
+			new ScanCode(DIK_F14, 0x65), new ScanCode(DIK_F15, 0x66), new ScanCode(DIK_KANA, 0x70),
+			new ScanCode(DIK_ABNT_C1, 0x73), new ScanCode(DIK_CONVERT, 0x79), new ScanCode(DIK_NOCONVERT, 0x7B),
+			new ScanCode(DIK_YEN, 0x7D), new ScanCode(DIK_ABNT_C2, 0x7E), new ScanCode(DIK_NUMPADEQUALS, 0x8D),
+			new ScanCode(DIK_PREVTRACK, 0x90), new ScanCode(DIK_AT, 0x91), new ScanCode(DIK_COLON, 0x92),
+			new ScanCode(DIK_UNDERLINE, 0x93), new ScanCode(DIK_KANJI, 0x94), new ScanCode(DIK_STOP, 0x95),
+			new ScanCode(DIK_AX, 0x96), new ScanCode(DIK_UNLABELED, 0x97), new ScanCode(DIK_NEXTTRACK, 0x99),
+			new ScanCode(DIK_NUMPADENTER, 0x9C), new ScanCode(DIK_RCONTROL, 0x9D), new ScanCode(DIK_MUTE, 0xA0),
+			new ScanCode(DIK_CALCULATOR, 0xA1), new ScanCode(DIK_PLAYPAUSE, 0xA2), new ScanCode(DIK_MEDIASTOP, 0xA4),
+			new ScanCode(DIK_VOLUMEDOWN, 0xAE), new ScanCode(DIK_VOLUMEUP, 0xB0), new ScanCode(DIK_WEBHOME, 0xB2),
+			new ScanCode(DIK_NUMPADCOMMA, 0xB3), new ScanCode(DIK_DIVIDE, 0xB5), new ScanCode(DIK_SYSRQ, 0xB7),
+			new ScanCode(DIK_RMENU, 0xB8), new ScanCode(DIK_PAUSE, 0xC5), new ScanCode(DIK_HOME, 0xC7),
+			new ScanCode(DIK_UP, 0xC8), new ScanCode(DIK_PRIOR, 0xC9), new ScanCode(DIK_LEFT, 0xCB),
+			new ScanCode(DIK_RIGHT, 0xCD), new ScanCode(DIK_END, 0xCF), new ScanCode(DIK_DOWN, 0xD0),
+			new ScanCode(DIK_NEXT, 0xD1), new ScanCode(DIK_INSERT, 0xD2), new ScanCode(DIK_DELETE, 0xD3),
+			new ScanCode(DIK_LWIN, 0xDB), new ScanCode(DIK_RWIN, 0xDC), new ScanCode(DIK_APPS, 0xDD),
+			new ScanCode(DIK_POWER, 0xDE), new ScanCode(DIK_SLEEP, 0xDF), new ScanCode(DIK_WAKE, 0xE3),
+			new ScanCode(DIK_WEBSEARCH, 0xE5), new ScanCode(DIK_WEBFAVORITES, 0xE6), new ScanCode(DIK_WEBREFRESH, 0xE7),
+			new ScanCode(DIK_WEBSTOP, 0xE8), new ScanCode(DIK_WEBFORWARD, 0xE9), new ScanCode(DIK_WEBBACK, 0xEA),
+			new ScanCode(DIK_MYCOMPUTER, 0xEB), new ScanCode(DIK_MAIL, 0xEC), new ScanCode(DIK_MEDIASELECT, 0xED) };
 
 	public static final Map<String, Integer> nameToKeyCodeMap;
 	public static final Map<Integer, String> keyCodeToNameMap;
@@ -252,9 +227,9 @@ public final class DirectInputKeyCode {
 		final var modifiableNameToKeyCodeMap = new TreeMap<String, Integer>();
 		final var modifiableKeyCodeToNameMap = new HashMap<Integer, String>();
 
-		for (final DirectInputKeyCode sc : KEY_CODES) {
-			modifiableNameToKeyCodeMap.put(sc.name, sc.keyCode);
-			modifiableKeyCodeToNameMap.put(sc.keyCode, sc.name);
+		for (final ScanCode sc : KEY_CODES) {
+			modifiableNameToKeyCodeMap.put(sc.name, sc.scanCode);
+			modifiableKeyCodeToNameMap.put(sc.scanCode, sc.name);
 		}
 
 		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
@@ -270,12 +245,12 @@ public final class DirectInputKeyCode {
 		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
 	}
 
-	private final int keyCode;
+	private final int scanCode;
 	private final String name;
 
-	private DirectInputKeyCode(final String name, final int DirectInputKeyCode) {
+	private ScanCode(final String name, final int scanCode) {
 		this.name = name;
-		keyCode = DirectInputKeyCode;
+		this.scanCode = scanCode;
 	}
 
 	@Override

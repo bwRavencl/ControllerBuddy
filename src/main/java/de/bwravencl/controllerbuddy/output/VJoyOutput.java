@@ -55,10 +55,10 @@ import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.DirectInputKeyCode;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 
 public abstract class VJoyOutput extends Output {
@@ -91,7 +91,7 @@ public abstract class VJoyOutput extends Output {
 		input.input.setType(KEYBDINPUT.class);
 		input.input.ki.wScan = new WORD(scanCode);
 		var flags = (down ? 0 : KEYBDINPUT.KEYEVENTF_KEYUP) | KEYBDINPUT.KEYEVENTF_SCANCODE;
-		if (DirectInputKeyCode.extendedKeyScanCodesSet.contains(scanCode))
+		if (ScanCode.extendedKeyScanCodesSet.contains(scanCode))
 			flags |= KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
 		input.input.ki.dwFlags = new DWORD(flags);
 
