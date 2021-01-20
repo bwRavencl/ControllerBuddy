@@ -102,6 +102,10 @@ spotless {
 		target '*.gradle'
 		greclipse().configFile(spotlessFormatFile)
 	}
+	format 'xml', {
+		target '*.xml', 'src/main/resources/**/*.svg'
+		eclipseWtp('xml')
+	}
 	format 'newlineAndTrailingWhitespace', {
 		target '.github/workflows/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
 		endWithNewline()
