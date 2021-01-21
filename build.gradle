@@ -192,7 +192,12 @@ tasks.eclipse.doLast {
 	if (uiPrefs.exists())
 		logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
 	else {
-		def importOrder = file(spotlessImportOrderFile).readLines().findAll { it ==~ /^\d+=.*$/ }.collect { it.substring(it.indexOf('=') + 1) }.join(';')
+		def importOrder = file(spotlessImportOrderFile).readLines().findAll { it ==~ /^\d+=.*$/ }.collectEntries {
+			def elements = it.split('=').toList()
+			if (elements.size() < 2)
+				elements << ''
+			return elements
+		}.sort().values().join(';')
 
 		uiPrefs.append("""\
 			eclipse.preferences.version=1
