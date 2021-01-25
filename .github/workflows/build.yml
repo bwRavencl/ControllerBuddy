@@ -18,7 +18,7 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 15.0.1
+          java-version: 15.0.2
       - name: Build
         uses: eskatos/gradle-command-action@v1
         env:
