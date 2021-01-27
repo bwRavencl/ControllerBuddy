@@ -49,7 +49,7 @@ dependencies {
 			'com.formdev:flatlaf:1.0-rc1',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
 			'com.google.code.gson:gson:2.8.6',
-			'io.github.classgraph:classgraph:4.8.100',
+			'io.github.classgraph:classgraph:4.8.102',
 			"net.java.dev.jna:jna:$jnaVersion",
 			"net.java.dev.jna:jna-platform:$jnaVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion",
