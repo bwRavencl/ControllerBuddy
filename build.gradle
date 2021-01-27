@@ -28,8 +28,13 @@ ext {
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
 	jdtUiPrefsFile = '.settings/org.eclipse.jdt.ui.prefs'
+
 	spotbugsPrefsFile = '.settings/edu.umd.cs.findbugs.core.prefs'
 	spotbugsBaselineFile = 'spotbugs-baseline.xml'
+	spotbugsEffort = 'max'
+	spotbugsMaxRank = '20'
+	spotbugsReportLevel = 'Low'
+
 	spotlessFormatFile = 'spotless.eclipseformat.xml'
 	spotlessImportOrderFile = 'spotless.importorder'
 }
@@ -66,9 +71,11 @@ dependencies {
 }
 
 spotbugs {
-	effort = 'max'
 	baselineFile = file(spotbugsBaselineFile)
-	reportLevel = 'low'
+	effort = spotbugsEffort
+	extraArgs = ['-maxRank', spotbugsMaxRank]
+	onlyAnalyze = ['de.bwravencl.-']
+	reportLevel = spotbugsReportLevel
 }
 
 spotless {
@@ -234,7 +241,7 @@ tasks.eclipse.doLast {
 			detectorWrongMapIterator=WrongMapIterator|true
 			detectorUnnecessaryMath=UnnecessaryMath|true
 			detectorUselessSubclassMethod=UselessSubclassMethod|false
-			filter_settings=Low|BAD_PRACTICE,CORRECTNESS,EXPERIMENTAL,I18N,MALICIOUS_CODE,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false|20
+			filter_settings=$spotbugsReportLevel|BAD_PRACTICE,CORRECTNESS,EXPERIMENTAL,I18N,MALICIOUS_CODE,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false|$spotbugsMaxRank
 			detectorURLProblems=URLProblems|true
 			detectorIteratorIdioms=IteratorIdioms|true
 			detectorMutableEnum=MutableEnum|true
@@ -341,7 +348,7 @@ tasks.eclipse.doLast {
 			detectorStartInConstructor=StartInConstructor|true
 			detectorFindUnsatisfiedObligation=FindUnsatisfiedObligation|true
 			detectorRedundantConditions=RedundantConditions|true
-			effort=max
+			effort=$spotbugsEffort
 			detectorRedundantInterfaces=RedundantInterfaces|true
 			detectorDuplicateBranches=DuplicateBranches|true
 			detectorCheckTypeQualifiers=CheckTypeQualifiers|true
