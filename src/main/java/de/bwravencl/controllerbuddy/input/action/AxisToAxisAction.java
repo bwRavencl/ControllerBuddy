@@ -60,7 +60,8 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 
 	@Override
 	public void init(final Input input) {
-		input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
+		if (!input.isSkipAxisInitialization())
+			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
 	}
 
 	public void setDeadZone(final float deadZone) {

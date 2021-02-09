@@ -33,8 +33,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
-	// private static final float MIN_STEP = 1e-4f;
-
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
 	private float exponent = DEFAULT_EXPONENT;
 

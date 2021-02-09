@@ -56,7 +56,6 @@ import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
@@ -373,9 +372,6 @@ public abstract class VJoyOutput extends Output {
 			final var Max = new Memory(LONG.SIZE);
 			vJoy.GetVJDAxisMax(vJoyDevice, IVjoyInterface.HID_USAGE_X, Max);
 			maxAxisValue = Max.getInt(0L);
-
-			for (final var virtualAxis : VirtualAxis.values())
-				input.setAxis(virtualAxis, 0f, false, null);
 
 			final var nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
 			var maxButtonId = -1;

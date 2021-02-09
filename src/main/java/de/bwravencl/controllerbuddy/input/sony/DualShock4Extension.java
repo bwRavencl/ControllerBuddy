@@ -58,7 +58,7 @@ final class DualShock4Extension extends SonyExtension {
 		final var hidDeviceInfo = getHidDeviceInfo(jid, guid, productId, "DualShock 4", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualShock4Extension(input, hidDeviceInfo, connection);
+				return new DualShock4Extension(jid, input, hidDeviceInfo, connection);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -66,9 +66,9 @@ final class DualShock4Extension extends SonyExtension {
 		return null;
 	}
 
-	private DualShock4Extension(final Input input, final HidDeviceInfo hidDeviceInfo, final Connection connection)
-			throws IOException {
-		super(input);
+	private DualShock4Extension(final int jid, final Input input, final HidDeviceInfo hidDeviceInfo,
+			final Connection connection) throws IOException {
+		super(jid, input);
 
 		try {
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

@@ -21,6 +21,7 @@ import java.awt.EventQueue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.lwjgl.glfw.GLFWGamepadState;
 import org.lwjgl.system.MemoryStack;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
@@ -51,13 +53,21 @@ public final class Input {
 	private static final Logger log = Logger.getLogger(Input.class.getName());
 
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
+
 	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
+
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
+
 	private static final long SUSPENSION_TIME = 500L;
+
 	public static final int MAX_N_BUTTONS = 128;
 
+	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
+
+	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL = 2000L;
+
 	private static float clamp(final float v) {
-		return Math.max(Math.min(v, 1f), -1f);
+		return Math.min(Math.max(v, -1f), 1f);
 	}
 
 	private static double correctNumericalImprecision(final double d) {
@@ -114,38 +124,51 @@ public final class Input {
 
 	private final Main main;
 	private final int jid;
-	private final EnumMap<VirtualAxis, Integer> axes = new EnumMap<>(VirtualAxis.class);
+	private final EnumMap<VirtualAxis, Integer> axes;
 	private Profile profile;
 	private Output output;
 	private boolean[] buttons;
 	private volatile int cursorDeltaX = 5;
 	private volatile int cursorDeltaY = 5;
-	private volatile int scrollClicks = 0;
+	private volatile int scrollClicks;
 	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 	private final Set<Integer> onLockKeys = new HashSet<>();
 	private final Set<Integer> offLockKeys = new HashSet<>();
-	private boolean clearOnNextPoll = false;
-	private boolean repeatModeActionWalk = false;
+	private boolean clearOnNextPoll;
+	private boolean repeatModeActionWalk;
 	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
-	private long lastCallTime = 0L;
-	private float rateMultiplier = 0f;
+	private long lastPollTime;
+	private long lastHotSwapPollTime;
+	private float rateMultiplier;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
-	private final SonyExtension sonyExtension;
+	private SonyExtension sonyExtension;
+	private final Map<Integer, SonyExtension> jidToSonyExtensionMap = new HashMap<>();
+	private final Set<Integer> hotSwappingButtonDownJids = new HashSet<>();
 	private float planckLength;
+	private int hotSwappingButtonId = HotSwappingButton.None.id;
+	private boolean skipAxisInitialization;
+	private boolean initialized;
 
-	public Input(final Main main, final int jid) {
+	public Input(final Main main, final int jid, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;
 		this.jid = jid;
 
-		for (final var virtualAxis : VirtualAxis.values())
-			axes.put(virtualAxis, 0);
+		skipAxisInitialization = axes != null;
+
+		if (skipAxisInitialization)
+			this.axes = axes;
+		else {
+			this.axes = new EnumMap<>(VirtualAxis.class);
+			for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class))
+				this.axes.put(virtualAxis, 0);
+		}
+
+		resetLastHotSwapPollTime();
 
 		profile = new Profile();
-
-		sonyExtension = SonyExtension.getIfAvailable(this, jid);
 	}
 
 	public void deInit(final boolean deviceDisconnected) {
@@ -236,16 +259,48 @@ public final class Input {
 	}
 
 	public void init() {
+		sonyExtension = SonyExtension.getIfAvailable(this, jid);
+
+		final var presentControllers = Main.getPresentControllers();
+
+		if (presentControllers.size() > 1) {
+			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
+
+			if (hotSwappingButtonId != HotSwappingButton.None.id) {
+				if (sonyExtension != null)
+					jidToSonyExtensionMap.put(jid, sonyExtension);
+
+				for (final var controller : presentControllers) {
+					if (controller.jid == jid)
+						continue;
+
+					final var sonyExtension = SonyExtension.getIfAvailable(this, controller.jid);
+					if (sonyExtension != null)
+						jidToSonyExtensionMap.put(controller.jid, sonyExtension);
+				}
+			}
+		}
+
 		planckLength = 2f / (output.getMaxAxisValue() - output.getMinAxisValue());
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
 				if (action instanceof IInitializationAction)
 					((IInitializationAction<?>) action).init(this);
+
+		initialized = true;
 	}
 
 	public boolean isAxisSuspended(final int axis) {
 		return axisToEndSuspensionTimestampMap.containsKey(axis);
+	}
+
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	public boolean isSkipAxisInitialization() {
+		return skipAxisInitialization;
 	}
 
 	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
@@ -267,13 +322,47 @@ public final class Input {
 		}
 
 		var elapsedTime = output.getPollInterval();
-		if (lastCallTime > 0L)
-			elapsedTime = currentTime - lastCallTime;
-		lastCallTime = currentTime;
+		if (lastPollTime > 0L)
+			elapsedTime = currentTime - lastPollTime;
+		lastPollTime = currentTime;
 		rateMultiplier = (float) elapsedTime / (float) 1000L;
 
 		try (var stack = MemoryStack.stackPush()) {
 			final var state = GLFWGamepadState.callocStack(stack);
+
+			if (hotSwappingButtonId != HotSwappingButton.None.id
+					&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
+				for (final var controller : Main.getPresentControllers()) {
+					if (controller.jid == jid)
+						continue;
+
+					final boolean gotState;
+					final var sonyExtension = jidToSonyExtensionMap.get(controller.jid);
+					if (sonyExtension != null)
+						gotState = sonyExtension.getGamepadState(state);
+					else
+						gotState = GLFW.glfwGetGamepadState(controller.jid, state);
+
+					if (gotState)
+						if (state.buttons(hotSwappingButtonId) != 0)
+							hotSwappingButtonDownJids.add(controller.jid);
+						else if (hotSwappingButtonDownJids.contains(controller.jid)) {
+							log.log(Level.INFO,
+									Main.assembleControllerLoggingMessage("Initiating hot swap to ", controller));
+
+							hotSwappingButtonId = HotSwappingButton.None.id;
+							EventQueue.invokeLater(() -> {
+								main.setSelectedControllerAndUpdateInput(controller, axes);
+								main.updateDeviceMenuSelection();
+								main.restartLast();
+							});
+
+							break;
+						}
+				}
+
+				lastHotSwapPollTime = currentTime;
+			}
 
 			final boolean gotState;
 			if (sonyExtension != null)
@@ -414,10 +503,17 @@ public final class Input {
 	public void reset() {
 		clearOnNextPoll = false;
 		repeatModeActionWalk = false;
-		lastCallTime = 0;
+		skipAxisInitialization = false;
+		initialized = false;
+		lastPollTime = 0;
 		rateMultiplier = 0f;
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
+		jidToSonyExtensionMap.clear();
+		hotSwappingButtonDownJids.clear();
+		hotSwappingButtonId = HotSwappingButton.None.id;
+
+		resetLastHotSwapPollTime();
 
 		profile.setActiveMode(this, 0);
 
@@ -428,6 +524,10 @@ public final class Input {
 			for (final var action : mode.getAllActions())
 				if (action instanceof IResetableAction)
 					((IResetableAction) action).reset();
+	}
+
+	private void resetLastHotSwapPollTime() {
+		lastHotSwapPollTime = System.currentTimeMillis() + HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL;
 	}
 
 	void scheduleClearOnNextPoll() {

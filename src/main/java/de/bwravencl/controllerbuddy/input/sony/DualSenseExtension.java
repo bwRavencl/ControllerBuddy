@@ -46,7 +46,7 @@ final class DualSenseExtension extends SonyExtension {
 		final var hidDeviceInfo = getHidDeviceInfo(jid, guid, (short) 0xCE6, "DualSense", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualSenseExtension(input, hidDeviceInfo);
+				return new DualSenseExtension(jid, input, hidDeviceInfo);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -54,8 +54,8 @@ final class DualSenseExtension extends SonyExtension {
 		return null;
 	}
 
-	private DualSenseExtension(final Input input, final HidDeviceInfo hidDeviceInfo) throws IOException {
-		super(input);
+	private DualSenseExtension(final int jid, final Input input, final HidDeviceInfo hidDeviceInfo) throws IOException {
+		super(jid, input);
 
 		try {
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

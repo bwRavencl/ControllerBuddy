@@ -162,6 +162,9 @@ public abstract class SonyExtension {
 
 			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
 
+			if (jid != input.getJid())
+				return;
+
 			handleBattery(reportData);
 
 			final var main = input.getMain();
@@ -269,6 +272,7 @@ public abstract class SonyExtension {
 		return value < 0 ? Input.normalize(value, -128, -1, 0f, 1f) : Input.normalize(value, 0, 127, -1f, 0f);
 	}
 
+	final int jid;
 	final Input input;
 
 	HidDevice hidDevice;
@@ -303,7 +307,8 @@ public abstract class SonyExtension {
 	boolean ps;
 	boolean disconnected;
 
-	SonyExtension(final Input input) {
+	SonyExtension(final int jid, final Input input) {
+		this.jid = jid;
 		this.input = input;
 	}
 

@@ -69,6 +69,8 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -207,7 +209,7 @@ public final class Main implements SingletonApp {
 			if (dllFile.exists()) {
 				final var vjoyPath = vjoyDirectory.getAbsolutePath();
 				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
-				vJoyDirectoryLabel1.setText(vjoyPath);
+				vJoyDirectoryLabel.setText(vjoyPath);
 			} else
 				GuiUtils.showMessageDialog(frame,
 						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
@@ -216,11 +218,11 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private static final class ControllerInfo {
+	public static final class ControllerInfo {
 
-		private final int jid;
-		private final String name;
-		private final String guid;
+		public final int jid;
+		public final String name;
+		public final String guid;
 
 		private ControllerInfo(final int jid) {
 			this.jid = jid;
@@ -271,6 +273,44 @@ public final class Main implements SingletonApp {
 				return;
 
 			exportVisualization(htmlFileChooser.getSelectedFile());
+		}
+	}
+
+	public enum HotSwappingButton {
+
+		None(-1, "NONE"), A(GLFW.GLFW_GAMEPAD_BUTTON_A, "A_BUTTON"), B(GLFW.GLFW_GAMEPAD_BUTTON_B, "B_BUTTON"),
+		X(GLFW.GLFW_GAMEPAD_BUTTON_X, "X_BUTTON"), Y(GLFW.GLFW_GAMEPAD_BUTTON_Y, "Y_BUTTON"),
+		LEFT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "LEFT_BUMPER"),
+		RIGHT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "RIGHT_BUMPER"),
+		BACK(GLFW.GLFW_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"), START(GLFW.GLFW_GAMEPAD_BUTTON_START, "START_BUTTON"),
+		GUIDE(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
+		LEFT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "LEFT_THUMB"),
+		RIGHT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "RIGHT_THUMB"),
+		DPAD_UP(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
+		DPAD_RIGHT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
+		DPAD_DOWN(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
+		DPAD_LEFT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
+
+		private static HotSwappingButton getById(final int id) {
+			for (final var hotSwappingButton : EnumSet.allOf(HotSwappingButton.class))
+				if (hotSwappingButton.id == id)
+					return hotSwappingButton;
+
+			return None;
+		}
+
+		public final int id;
+
+		private final String label;
+
+		HotSwappingButton(final int id, final String labelKey) {
+			this.id = id;
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
 		}
 	}
 
@@ -565,7 +605,8 @@ public final class Main implements SingletonApp {
 			if (selectedJid == controller.jid)
 				return;
 
-			setSelectedControllerAndUpdateInput(controller);
+			setSelectedControllerAndUpdateInput(controller, input.isInitialized() ? input.getAxes() : null);
+			restartLast();
 		}
 	}
 
@@ -626,6 +667,17 @@ public final class Main implements SingletonApp {
 				preferences.put(PREFERENCES_HOST, host);
 			else
 				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST));
+		}
+	}
+
+	private final class SetHotSwapButtonAction extends AbstractAction {
+
+		private static final long serialVersionUID = 6854936097922617928L;
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var hotSwappingButton = (HotSwappingButton) ((JComboBox<?>) e.getSource()).getSelectedItem();
+			preferences.putInt(PREFERENCES_HOT_SWAPPING_BUTTON, hotSwappingButton.id);
 		}
 	}
 
@@ -999,8 +1051,8 @@ public final class Main implements SingletonApp {
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
 	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
-
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
+
 	private static final String OPTION_AUTOSTART = "autostart";
 
 	private static final String OPTION_PROFILE = "profile";
@@ -1047,6 +1099,8 @@ public final class Main implements SingletonApp {
 
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 
+	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
+
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
@@ -1092,7 +1146,7 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
+	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix + " controller ");
 
@@ -1147,7 +1201,7 @@ public final class Main implements SingletonApp {
 		return KeyEvent.VK_UNDEFINED;
 	}
 
-	private static List<ControllerInfo> getPresentControllers() {
+	public static List<ControllerInfo> getPresentControllers() {
 		final var presentControllers = new ArrayList<ControllerInfo>();
 		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++)
 			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid))
@@ -1309,7 +1363,7 @@ public final class Main implements SingletonApp {
 
 	private TimerTask overlayTimerTask;
 
-	private JLabel vJoyDirectoryLabel1;
+	private JLabel vJoyDirectoryLabel;
 
 	private JTextField hostTextField;
 
@@ -1502,9 +1556,9 @@ public final class Main implements SingletonApp {
 			vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
-			vJoyDirectoryLabel1 = new JLabel(
+			this.vJoyDirectoryLabel = new JLabel(
 					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutput.getDefaultInstallationPath()));
-			vJoyDirectoryPanel.add(vJoyDirectoryLabel1);
+			vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
 
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
@@ -1571,6 +1625,22 @@ public final class Main implements SingletonApp {
 		timeoutSpinner.addChangeListener(
 				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
+
+		final var hotSwapPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		globalSettingsPanel.add(hotSwapPanel, settingsPanelGridBagConstraints);
+
+		final var hotSwappingLabel = new JLabel(strings.getString("HOT_SWAPPING_LABEL"));
+		hotSwappingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		hotSwapPanel.add(hotSwappingLabel);
+
+		final var hotSwappingButtonLabel = new JLabel(strings.getString("HOT_SWAPPING_BUTTON_LABEL"));
+		hotSwapPanel.add(hotSwappingButtonLabel);
+
+		final var hotSwapButtonComboBox = new JComboBox<>(HotSwappingButton.values());
+		final var selectedHotSwappingButton = HotSwappingButton.getById(getSelectedHotSwappingButtonId());
+		hotSwapButtonComboBox.setSelectedItem(selectedHotSwappingButton);
+		hotSwapPanel.add(hotSwapButtonComboBox);
+		hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
 
 		final var darkThemePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(darkThemePanel, settingsPanelGridBagConstraints);
@@ -1915,6 +1985,11 @@ public final class Main implements SingletonApp {
 		return frame;
 	}
 
+	public int getSelectedHotSwappingButtonId() {
+		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
+				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
+	}
+
 	Input getInput() {
 		return input;
 	}
@@ -2021,7 +2096,7 @@ public final class Main implements SingletonApp {
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
-		for (final var virtualAxis : Input.VirtualAxis.values()) {
+		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class)) {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
 				final var dententValues = new HashSet<Float>();
@@ -2214,7 +2289,7 @@ public final class Main implements SingletonApp {
 		if (input != null)
 			input.deInit(false);
 
-		input = new Input(this, selectedJid);
+		input = new Input(this, selectedJid, null);
 
 		loadedProfile = null;
 		updateTitleAndTooltip();
@@ -2231,7 +2306,7 @@ public final class Main implements SingletonApp {
 		if (!controllerConnected)
 			selectedJid = INVALID_JID;
 		else if (!isSelectedJidValid())
-			setSelectedControllerAndUpdateInput(presentControllers.get(0));
+			setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
 		fileMenu.remove(newMenuItem);
@@ -2348,14 +2423,7 @@ public final class Main implements SingletonApp {
 		} else
 			log.log(Level.INFO, "No controllers connected");
 
-		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
-			final var menuItem = deviceMenu.getItem(i);
-			final var action = (SelectControllerAction) menuItem.getAction();
-			if (selectedJid == action.controller.jid) {
-				menuItem.setSelected(true);
-				break;
-			}
-		}
+		updateDeviceMenuSelection();
 
 		if (selectFirstTab || !controllerConnected)
 			tabbedPane.setSelectedIndex(0);
@@ -2547,7 +2615,8 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private void setSelectedControllerAndUpdateInput(final ControllerInfo controller) {
+	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
+			final EnumMap<VirtualAxis, Integer> axes) {
 		stopAll(true);
 
 		setSelectedController(controller);
@@ -2558,7 +2627,7 @@ public final class Main implements SingletonApp {
 			previousProfile = input.getProfile();
 		}
 
-		input = new Input(Main.this, selectedJid);
+		input = new Input(Main.this, selectedJid, axes);
 
 		if (previousProfile != null)
 			input.setProfile(previousProfile, selectedJid);
@@ -2730,6 +2799,17 @@ public final class Main implements SingletonApp {
 				repaintOnScreenKeyboard();
 				repaintOverlay();
 			});
+	}
+
+	public void updateDeviceMenuSelection() {
+		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
+			final var menuItem = deviceMenu.getItem(i);
+			final var action = (SelectControllerAction) menuItem.getAction();
+			if (selectedJid == action.controller.jid) {
+				menuItem.setSelected(true);
+				break;
+			}
+		}
 	}
 
 	private boolean updateGameControllerMappings(final InputStream is) {
@@ -2904,7 +2984,7 @@ public final class Main implements SingletonApp {
 	}
 
 	public void updateOverlayAxisIndicators() {
-		for (final var virtualAxis : Input.VirtualAxis.values())
+		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class))
 			if (virtualAxisToProgressBarMap.containsKey(virtualAxis) && output != null
 					&& (isLocalRunning() || isServerRunning())) {
 				final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
@@ -2951,7 +3031,7 @@ public final class Main implements SingletonApp {
 		indicatorsListPanel.removeAll();
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
-		for (final var virtualAxis : Input.VirtualAxis.values()) {
+		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class)) {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,

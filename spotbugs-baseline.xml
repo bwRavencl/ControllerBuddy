@@ -1,239 +1,234 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.2.0" sequence="0"
-	timestamp="1611741776056" analysisTimestamp="1611741776058"
-	release="0.19.55-71fafa0">
+	timestamp="1613080866760" analysisTimestamp="1613080866786"
+	release="0.19.65-a3f3914">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode$Component.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/LockKey.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode$Component$ComponentType.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/OverlayAxis.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Mode.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/KeyStroke.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Profile.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/ScanCode.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Input.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToScrollAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToLockKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IButtonToAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToCursorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToMouseButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToCursorAction$MouseAxis.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/NullAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToRelativeAxisAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToPressOnScreenKeyboardKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToMouseButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToScrollAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/DescribableAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction$Activation.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToAxisAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/InvertableAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/annotation/Action$ActionCategory.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/annotation/ActionProperty.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/annotation/Action.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$Direction$3.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IInitializationAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$Direction$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToScrollAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction$Activatable.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction$Activation$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder$CheckboxJList.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/NumberEditorBuilder$JSpinnerSetPropertyChangeListener.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/BooleanEditorBuilder$JCheckBoxSetPropertyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/AxisValueEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/DetentValueEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/NumberEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/EditorBuilder$PropertySetterAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/StringEditorBuilder$MyDocumentListener.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/EditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/BooleanEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ActionsEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ActionsEditorBuilder$EditActionsAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/VirtualAxisEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder$CheckboxJList$CheckboxListCellRenderer.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder$JListSetPropertyListSelectionListener.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/LockKeyEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/MaxCursorSpeedEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/DistanceEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/DeadZoneEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ButtonEditorBuilder$ZeroBasedFormatterFactory.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/DetentValueEditorBuilder$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/StringEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ButtonEditorBuilder$ZeroBasedFormatter.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/InitialValueEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/MouseAxisEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/EditorBuilder$PropertySetter.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/LongPressEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ArrayEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder$CheckboxJList$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ModeEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/DirectionEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ArrayEditorBuilder$JComboBoxSetPropertyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ActivationEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ClicksEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/MouseButtonEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ButtonEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/ExponentEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/gui/MaxRelativeSpeedEditorBuilder.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction$Activation$3.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToCursorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IResetableAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToKeyAction$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$Direction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToMouseButtonAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToAxisResetAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IAxisToAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$Direction$2.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToAxisAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/IActivatableAction$Activation$2.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/AxisToCursorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ToMouseButtonAction$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToKeyAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction$Direction$4.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/Input$VirtualAxis.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/SonyExtension$SonyInputReportListener.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/SonyExtension.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/input/sony/SonyExtension$Connection.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ClientOutput$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ServerOutput$ServerState.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/LocalOutput.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/Output.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/Output$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ClientOutput$ClientState.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ServerOutput$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/VJoyOutput.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/IVjoyInterface.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ServerOutput.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/output/ClientOutput.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/json/ActionTypeAdapter.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/json/ModeAwareTypeAdapterFactory.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/json/ModeAwareTypeAdapterFactory$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/version/VersionUtils.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/version/Version.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StopLocalAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SaveAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SetModeDescriptionAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$DefaultKeyboardButton$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$2.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SelectControllerAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StartClientAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$DisplayIndicatorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/GuiUtils$FrameDragListener.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$NewModeAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OpenVrOverlay$TextureData.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$DefaultKeyboardButton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$4.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$1StatusBarTextTimerTask.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ChangeVJoyDirectoryAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SaveAsAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$AvailableAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$3.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$OKAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$CustomButton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StartServerAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$RemoveActionAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$5.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$InvertIndicatorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$OpenAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$QuitAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$FourWay.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$LockKeyButton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$NewAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$EditComponentAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ShowAboutDialogAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ExportAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$AddActionAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StopClientAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$RemoveModeAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$TaskRunner.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ShowLicensesAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$AssignedAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton$CompoundButtonLocation.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$HtmlFileChooser.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$Stick$StickType.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StartLocalAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SelectIndicatorColorAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/EditActionsDialog$CancelAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$IndicatorProgressBar.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$StopServerAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/OpenVrOverlay.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/GuiUtils.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$OutputType.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ControllerInfo.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ProfileFileChooser.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$Stick.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$ShowAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/Main$SetHostAction.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/de/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$SingletonServer.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$SingletonServerRunnable.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$1.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$SingletonServerRunnable$2.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$SingletonApp.class</Jar>
-		<Jar>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/build/classes/java/main/com/oracle/si/Singleton$SingletonServerRunnable$1.class</Jar>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.4/c51c00206bb913cd8612b24abd9fa98ae89719b1/commons-cli-1.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/1.0-rc1/6d2aea7d59bb99c278a32256b17753c4f8507b3c/flatlaf-1.0-rc1.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/com.github.nyholku/purejavahidapi/ef5679619d/9170f7e18f897be429e1f2c5edd44807a7d7044a/purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.6/9180733b7df8542621dc12e21e87557e8c99b8cb/gson-2.8.6.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.8.100/a4dea8116f5f59a0b8b6c27de502c1ed0c62a198/classgraph-4.8.100.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.5.0/af38e7c4d0fc73c23ecd785443705bfdee5b90bf/jna-platform-5.5.0.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.5.0/e0845217c4907822403912ad6828d8e0b256208/jna-5.5.0.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-glfw/3.2.3/5e520d5c290c8b012545a8d34fa5db5ab051ea53/lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-opengl/3.2.3/bdd534a323d0c8f54969b95e424b6ac8984f7d6e/lwjgl-opengl-3.2.3.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-openvr/3.2.3/ea19076fc886f2e8a95b50a7f95401606b5282ff/lwjgl-openvr-3.2.3.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.2.3/17a59ba0fe8d474ec9dbe0d5db40d2cfe59c4c08/lwjgl-3.2.3.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-swing/1.13/232653b04333483431cce9cdece2978fc6577c27/batik-swing-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.13/fe5e35b253b859e6a0a67fe3595bc8c3ad6faa52/batik-bridge-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.13/4579ef2a459f3574bd85236892c6af9c4d821ef0/batik-script-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.13/a5d06a4fbaf9cf2015c76d95d9a5dcf3a5bcf9e2/batik-anim-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.13/e324b1b5bb23649c67579b8c2ee45f33de42e539/batik-gvt-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.13/ad16f601df77e9230a5a6a78ec7bfaf3ee2767d4/batik-svg-dom-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.13/33169dfb1155b76705b8640a1aa9a222564b3a62/batik-parser-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.13/d6dca71c2e3e48901a5a3cab9477f0b7a7c53c8/batik-awt-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.13/818605a4cffadb5ec0db39b2f560c2206d65f691/batik-dom-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.13/90d83f11998260ad0f7ac784f90181f41ccd5bcd/batik-css-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.13/ea55108b070051c5440613cfbbe91414010d183e/batik-ext-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gui-util/1.13/a74a998205a316ff1ab2cab5240c9973de5fda69/batik-gui-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.13/1384efa56d6047a6d87e955a3a81a8e85061a74d/batik-xml-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.13/341818ceb5f7088c9ff5b35fac419ad9a74d8b6f/batik-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.13/2778851f7c8e7023578e7b76c4e4f11e4b183a13/batik-constants-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.13/e08aab4a78a5825144d7f1772356c0ee059a8d46/batik-i18n-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-shared-resources/1.13/5b886d1a3327b1bf09e377d359c5d2392cccfed0/batik-shared-resources-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis-ext/1.3.04/41a8b86b358e87f3f13cf46069721719105aff66/xml-apis-ext-1.3.04.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.4/8d261df049a23d40a053d2700399ea76080fe0a8/xmlgraphics-commons-2.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/d55d3f02a56ec4c25695fe67e1334ff8c2ecea23/xalan-2.7.2.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.1/b90b6ac57cf27a2858eaa490d02ba7945d18ca7b/commons-io-1.3.1.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.0.4/f029a2aefe2b3e1517573c580f948caac31b1056/commons-logging-1.0.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>/Users/matteo.hausner/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/24247f3bb052ee068971393bdb83e04512bb1c3c/serializer-2.7.2.jar</AuxClasspathEntry>
-		<SrcDir>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/src/main/resources</SrcDir>
-		<SrcDir>/Users/matteo.hausner/Projekte/ControllerBuddy/workspace-ControllerBuddy/ControllerBuddy/src/main/java</SrcDir>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonServer.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonServerRunnable$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonServerRunnable$2.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonServerRunnable.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$CompoundButtonLocation.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CustomButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$EditComponentAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$FourWay.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$Stick$StickType.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$Stick.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$AddActionAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$AssignedAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$AvailableAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$CancelAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$OKAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog$RemoveActionAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\EditActionsDialog.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\GuiUtils$FrameDragListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\GuiUtils.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$1StatusBarTextTimerTask.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$2.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$3.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$4.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$5.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ChangeVJoyDirectoryAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ControllerInfo.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$DisplayIndicatorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ExportAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$HotSwappingButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$HtmlFileChooser.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$IndicatorProgressBar.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$InvertIndicatorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$NewAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$NewModeAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$OpenAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$OutputType.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ProfileFileChooser.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$QuitAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$RemoveModeAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SaveAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SaveAsAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SelectControllerAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SelectIndicatorColorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SetHostAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SetHotSwapButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$SetModeDescriptionAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ShowAboutDialogAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ShowAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$ShowLicensesAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StartClientAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StartLocalAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StartServerAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StopClientAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StopLocalAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StopServerAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$TaskRunner.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$LockKeyButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay$TextureData.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\annotation\Action$ActionCategory.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\annotation\Action.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\annotation\ActionProperty.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToAxisAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToCursorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToMouseButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToRelativeAxisAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToScrollAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToAxisResetAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToCursorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToLockKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToMouseButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToPressOnScreenKeyboardKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToScrollAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToSelectOnScreenKeyboardKeyAction$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToSelectOnScreenKeyboardKeyAction$Direction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToSelectOnScreenKeyboardKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\DescribableAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ActionsEditorBuilder$EditActionsAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ActionsEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ActivationEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ArrayEditorBuilder$JComboBoxSetPropertyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ArrayEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\AxisValueEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\BooleanEditorBuilder$JCheckBoxSetPropertyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\BooleanEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ButtonEditorBuilder$ZeroBasedFormatter.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ButtonEditorBuilder$ZeroBasedFormatterFactory.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ButtonEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ClicksEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DeadZoneEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DetentValueEditorBuilder$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DetentValueEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DirectionEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DistanceEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder$PropertySetter.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder$PropertySetterAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ExponentEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\InitialValueEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList$CheckboxListCellRenderer.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$JListSetPropertyListSelectionListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\LockKeyEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\LongPressEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MaxCursorSpeedEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MaxRelativeSpeedEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ModeEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MouseAxisEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MouseButtonEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\NumberEditorBuilder$JSpinnerSetPropertyChangeListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\NumberEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\StringEditorBuilder$MyDocumentListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\StringEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\VirtualAxisEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IActivatableAction$Activatable.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IActivatableAction$Activation.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IActivatableAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IAxisToAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IButtonToAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IInitializationAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\InvertableAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\IResetableAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\NullAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToAxisAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToCursorAction$MouseAxis.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToCursorAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToKeyAction$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToMouseButtonAction$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToMouseButtonAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToScrollAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input$VirtualAxis.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\KeyStroke.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\LockKey.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Mode$Component$ComponentType.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Mode$Component.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Mode.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\OverlayAxis.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Profile.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\ScanCode.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$Connection.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$SonyInputReportListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ModeAwareTypeAdapterFactory$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ModeAwareTypeAdapterFactory.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ClientOutput$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ClientOutput$ClientState.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ClientOutput.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\IVjoyInterface.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\LocalOutput.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\Output$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\Output.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ServerOutput$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ServerOutput$ServerState.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\ServerOutput.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\VJoyOutput.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.4\c51c00206bb913cd8612b24abd9fa98ae89719b1\commons-cli-1.4.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.0-rc3\a5b5311234f6a98c0a4dc15a7a02053ebd0879d\flatlaf-1.0-rc3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.6\9180733b7df8542621dc12e21e87557e8c99b8cb\gson-2.8.6.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.102\675fb5745b5d6fd5f7eda3628d91aade981f2e6c\classgraph-4.8.102.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.5.0\af38e7c4d0fc73c23ecd785443705bfdee5b90bf\jna-platform-5.5.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.5.0\e0845217c4907822403912ad6828d8e0b256208\jna-5.5.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.3\5e520d5c290c8b012545a8d34fa5db5ab051ea53\lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.3\bdd534a323d0c8f54969b95e424b6ac8984f7d6e\lwjgl-opengl-3.2.3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.2.3\ea19076fc886f2e8a95b50a7f95401606b5282ff\lwjgl-openvr-3.2.3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.2.3\17a59ba0fe8d474ec9dbe0d5db40d2cfe59c4c08\lwjgl-3.2.3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-swing\1.13\232653b04333483431cce9cdece2978fc6577c27\batik-swing-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.13\fe5e35b253b859e6a0a67fe3595bc8c3ad6faa52\batik-bridge-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.13\4579ef2a459f3574bd85236892c6af9c4d821ef0\batik-script-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.13\a5d06a4fbaf9cf2015c76d95d9a5dcf3a5bcf9e2\batik-anim-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gvt\1.13\e324b1b5bb23649c67579b8c2ee45f33de42e539\batik-gvt-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-svg-dom\1.13\ad16f601df77e9230a5a6a78ec7bfaf3ee2767d4\batik-svg-dom-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-parser\1.13\33169dfb1155b76705b8640a1aa9a222564b3a62\batik-parser-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-awt-util\1.13\d6dca71c2e3e48901a5a3cab9477f0b7a7c53c8\batik-awt-util-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-dom\1.13\818605a4cffadb5ec0db39b2f560c2206d65f691\batik-dom-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-css\1.13\90d83f11998260ad0f7ac784f90181f41ccd5bcd\batik-css-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-ext\1.13\ea55108b070051c5440613cfbbe91414010d183e\batik-ext-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gui-util\1.13\a74a998205a316ff1ab2cab5240c9973de5fda69\batik-gui-util-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-xml\1.13\1384efa56d6047a6d87e955a3a81a8e85061a74d\batik-xml-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-util\1.13\341818ceb5f7088c9ff5b35fac419ad9a74d8b6f\batik-util-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-constants\1.13\2778851f7c8e7023578e7b76c4e4f11e4b183a13\batik-constants-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-i18n\1.13\e08aab4a78a5825144d7f1772356c0ee059a8d46\batik-i18n-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-shared-resources\1.13\5b886d1a3327b1bf09e377d359c5d2392cccfed0\batik-shared-resources-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xml-apis\xml-apis-ext\1.3.04\41a8b86b358e87f3f13cf46069721719105aff66\xml-apis-ext-1.3.04.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.4\8d261df049a23d40a053d2700399ea76080fe0a8\xmlgraphics-commons-2.4.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xalan\xalan\2.7.2\d55d3f02a56ec4c25695fe67e1334ff8c2ecea23\xalan-2.7.2.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\1.3.1\b90b6ac57cf27a2858eaa490d02ba7945d18ca7b\commons-io-1.3.1.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.0.4\f029a2aefe2b3e1517573c580f948caac31b1056\commons-logging-1.0.4.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xalan\serializer\2.7.2\24247f3bb052ee068971393bdb83e04512bb1c3c\serializer-2.7.2.jar</AuxClasspathEntry>
+		<SrcDir>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\src\main\resources</SrcDir>
+		<SrcDir>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\src\main\java</SrcDir>
 	</Project>
 	<BugInstance type="BC_UNCONFIRMED_CAST" priority="3"
 		rank="20" abbrev="BC" category="STYLE"
@@ -250,7 +245,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1"
 				start="452" end="530" sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>At AssignmentsComponent.java:[lines 452-530]</Message>
 			</SourceLine>
 			<Message>In class
@@ -265,7 +260,7 @@
 				start="481" end="512" startBytecode="0" endBytecode="120"
 				sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1.paintComponent(Graphics)</Message>
 		</Method>
@@ -294,7 +289,7 @@
 			primary="true" start="487" end="487" startBytecode="24"
 			endBytecode="24" sourcefile="AssignmentsComponent.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 			<Message>At AssignmentsComponent.java:[line 487]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -314,7 +309,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1"
 				start="116" end="159" sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>At AssignmentsComponent.java:[lines 116-159]</Message>
 			</SourceLine>
 			<Message>In class
@@ -330,7 +325,7 @@
 				start="130" end="159" startBytecode="0" endBytecode="114"
 				sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1.paintIcon(Component,
 				Graphics, int, int)</Message>
@@ -360,7 +355,7 @@
 			primary="true" start="133" end="133" startBytecode="36"
 			endBytecode="36" sourcefile="AssignmentsComponent.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 			<Message>At AssignmentsComponent.java:[line 133]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -380,7 +375,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 				start="352" end="366" sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>At AssignmentsComponent.java:[lines 352-366]</Message>
 			</SourceLine>
 			<Message>In class
@@ -395,7 +390,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 				sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>In AssignmentsComponent.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -408,7 +403,7 @@
 				classname="de.bwravencl.controllerbuddy.input.Mode$Component"
 				start="46" end="69" sourcefile="Mode.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Mode.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
 				<Message>At Mode.java:[lines 46-69]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -418,7 +413,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 			sourcefile="AssignmentsComponent.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"
 			synthetic="true">
 			<Message>In AssignmentsComponent.java</Message>
 		</SourceLine>
@@ -439,7 +434,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 				start="352" end="366" sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>At AssignmentsComponent.java:[lines 352-366]</Message>
 			</SourceLine>
 			<Message>In class
@@ -453,7 +448,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 				sourcefile="AssignmentsComponent.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 				<Message>In AssignmentsComponent.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -462,11 +457,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="956"
-				end="3194" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
+				end="3274" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 956-3194]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1008-3274]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -474,7 +469,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$EditComponentAction"
 			sourcefile="AssignmentsComponent.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"
 			synthetic="true">
 			<Message>In AssignmentsComponent.java</Message>
 		</SourceLine>
@@ -494,7 +489,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -508,7 +503,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -521,7 +516,7 @@
 				classname="de.bwravencl.controllerbuddy.input.Mode$Component"
 				start="46" end="69" sourcefile="Mode.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Mode.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
 				<Message>At Mode.java:[lines 46-69]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -531,7 +526,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -551,7 +546,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -565,7 +560,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -578,7 +573,7 @@
 				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
 				start="34" end="167" sourcefile="ButtonToCycleAction.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
 				<Message>At ButtonToCycleAction.java:[lines 34-167]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -588,7 +583,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -608,7 +603,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -621,7 +616,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -630,11 +625,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/input/Input;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="51"
-				end="559" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
+				end="659" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-				<Message>At Input.java:[lines 51-559]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 53-659]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Input</Message>
 		</Type>
@@ -642,7 +637,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -662,7 +657,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -675,7 +670,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -684,11 +679,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="956"
-				end="3194" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
+				end="3274" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 956-3194]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1008-3274]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -696,7 +691,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -717,7 +712,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -731,7 +726,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -744,7 +739,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog$AssignedAction"
 				start="119" end="125" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 119-125]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -754,7 +749,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -775,7 +770,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -789,7 +784,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -802,7 +797,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog$AvailableAction"
 				start="133" end="139" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 133-139]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -812,7 +807,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -832,7 +827,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -846,7 +841,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -858,7 +853,7 @@
 				classname="de.bwravencl.controllerbuddy.input.Mode" start="76"
 				end="173" sourcefile="Mode.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Mode.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
 				<Message>At Mode.java:[lines 76-173]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Mode</Message>
@@ -867,7 +862,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -887,7 +882,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				start="231" end="597" sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>At EditActionsDialog.java:[lines 231-597]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
@@ -901,7 +896,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourcefile="EditActionsDialog.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 				<Message>In EditActionsDialog.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -913,7 +908,7 @@
 				classname="de.bwravencl.controllerbuddy.input.Profile" start="38"
 				end="206" sourcefile="Profile.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Profile.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
 				<Message>At Profile.java:[lines 38-206]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Profile</Message>
@@ -922,7 +917,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 			sourcefile="EditActionsDialog.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
 			synthetic="true">
 			<Message>In EditActionsDialog.java</Message>
 		</SourceLine>
@@ -937,31 +932,31 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="956"
-				end="3194" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
+				end="3274" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 956-3194]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1008-3274]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="terminate" signature="(I)V" isStatic="true" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1224"
-				end="1226" startBytecode="0" endBytecode="69" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1278"
+				end="1280" startBytecode="0" endBytecode="69" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main.terminate(int)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="1225" end="1225" startBytecode="16" endBytecode="16"
+			start="1279" end="1279" startBytecode="16" endBytecode="16"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[line 1225]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 1279]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DM_GC" priority="1" rank="16"
@@ -976,32 +971,32 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="956"
-				end="3194" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
+				end="3274" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 956-3194]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1008-3274]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(Z)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2668"
-				end="2676" startBytecode="0" endBytecode="114"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2737"
+				end="2745" startBytecode="0" endBytecode="114"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2675" end="2675" startBytecode="25" endBytecode="25"
+			start="2744" end="2744" startBytecode="25" endBytecode="25"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[line 2675]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 2744]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1018,10 +1013,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser"
-				start="281" end="311" sourcefile="Main.java"
+				start="321" end="351" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 281-311]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 321-351]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser</Message>
@@ -1032,20 +1027,20 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser"
-				start="296" end="311" startBytecode="0" endBytecode="218"
+				start="336" end="351" startBytecode="0" endBytecode="218"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser.approveSelection()</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser"
-			primary="true" start="303" end="305" startBytecode="89"
+			primary="true" start="343" end="345" startBytecode="89"
 			endBytecode="92" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[lines 303-305]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[lines 343-345]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -1062,10 +1057,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$IndicatorProgressBar"
-				start="323" end="368" sourcefile="Main.java"
+				start="363" end="408" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 323-368]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 363-408]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.Main$IndicatorProgressBar</Message>
@@ -1079,7 +1074,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.Main$IndicatorProgressBar"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
 				<Message>In Main.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1092,7 +1087,7 @@
 				classname="de.bwravencl.controllerbuddy.input.OverlayAxis"
 				start="29" end="39" sourcefile="OverlayAxis.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/OverlayAxis.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/OverlayAxis.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\OverlayAxis.java">
 				<Message>At OverlayAxis.java:[lines 29-39]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.OverlayAxis</Message>
@@ -1101,7 +1096,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.Main$IndicatorProgressBar"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
 			synthetic="true">
 			<Message>In Main.java</Message>
 		</SourceLine>
@@ -1120,10 +1115,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-				start="452" end="475" sourcefile="Main.java"
+				start="492" end="515" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 452-475]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 492-515]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser</Message>
@@ -1134,20 +1129,20 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-				start="460" end="475" startBytecode="0" endBytecode="218"
+				start="500" end="515" startBytecode="0" endBytecode="218"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser.approveSelection()</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-			primary="true" start="467" end="469" startBytecode="89"
+			primary="true" start="507" end="509" startBytecode="89"
 			endBytecode="92" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[lines 467-469]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[lines 507-509]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="NN_NAKED_NOTIFY" priority="2" rank="14"
@@ -1162,10 +1157,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="826" end="953" sourcefile="Main.java"
+				start="878" end="1005" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 826-953]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 878-1005]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1174,20 +1169,20 @@
 			name="enterLoop" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="837" end="872" startBytecode="0" endBytecode="544"
+				start="889" end="924" startBytecode="0" endBytecode="544"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main$TaskRunner.enterLoop()</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="858" end="858" startBytecode="94"
+			primary="true" start="910" end="910" startBytecode="94"
 			endBytecode="94" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[line 858]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 910]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="UW_UNCOND_WAIT" priority="2" rank="14"
@@ -1202,10 +1197,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="826" end="953" sourcefile="Main.java"
+				start="878" end="1005" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 826-953]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 878-1005]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1216,20 +1211,20 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="886" end="906" startBytecode="0" endBytecode="272"
+				start="938" end="958" startBytecode="0" endBytecode="272"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="899" end="899" startBytecode="37"
+			primary="true" start="951" end="951" startBytecode="37"
 			endBytecode="37" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[line 899]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 951]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="WA_NOT_IN_LOOP" priority="2" rank="14"
@@ -1244,10 +1239,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="826" end="953" sourcefile="Main.java"
+				start="878" end="1005" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 826-953]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 878-1005]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1258,20 +1253,20 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="886" end="906" startBytecode="0" endBytecode="272"
+				start="938" end="958" startBytecode="0" endBytecode="272"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="899" end="899" startBytecode="37"
+			primary="true" start="951" end="951" startBytecode="37"
 			endBytecode="37" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-			<Message>At Main.java:[line 899]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 951]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -1290,7 +1285,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				start="342" end="642" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
 				<Message>At OnScreenKeyboard.java:[lines 342-642]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
@@ -1304,7 +1299,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
 				<Message>In OnScreenKeyboard.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1317,7 +1312,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				start="60" end="95" sourcefile="GuiUtils.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/GuiUtils.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/GuiUtils.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\GuiUtils.java">
 				<Message>At GuiUtils.java:[lines 60-95]</Message>
 			</SourceLine>
 			<Message>Actual type
@@ -1327,7 +1322,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 			sourcefile="OnScreenKeyboard.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"
 			synthetic="true">
 			<Message>In OnScreenKeyboard.java</Message>
 		</SourceLine>
@@ -1347,7 +1342,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				start="342" end="642" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
 				<Message>At OnScreenKeyboard.java:[lines 342-642]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
@@ -1360,7 +1355,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
 				<Message>In OnScreenKeyboard.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.main</Message>
@@ -1368,11 +1363,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="956"
-				end="3194" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
+				end="3274" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/Main.java">
-				<Message>At Main.java:[lines 956-3194]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1008-3274]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1380,7 +1375,7 @@
 			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 			sourcefile="OnScreenKeyboard.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"
 			synthetic="true">
 			<Message>In OnScreenKeyboard.java</Message>
 		</SourceLine>
@@ -1400,7 +1395,7 @@
 				classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
 				start="63" end="394" sourcefile="OpenVrOverlay.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java">
 				<Message>At OpenVrOverlay.java:[lines 63-394]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OpenVrOverlay</Message>
@@ -1415,7 +1410,7 @@
 				start="194" end="291" startBytecode="0" endBytecode="1346"
 				sourcefile="OpenVrOverlay.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java" />
 			<Message>In method new
 				de.bwravencl.controllerbuddy.gui.OpenVrOverlay(Main)</Message>
 		</Method>
@@ -1438,7 +1433,7 @@
 			primary="true" start="198" end="198" startBytecode="682"
 			endBytecode="682" sourcefile="OpenVrOverlay.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java"
 			role="SOURCE_REDUNDANT_NULL_CHECK">
 			<Message>Redundant null check at OpenVrOverlay.java:[line 198]</Message>
 		</SourceLine>
@@ -1454,21 +1449,21 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="51"
-				end="559" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
+				end="659" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-				<Message>At Input.java:[lines 51-559]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 53-659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="getButtons" signature="()[Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="171"
-				end="171" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="194"
+				end="194" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.Input.getButtons()</Message>
 		</Method>
@@ -1478,18 +1473,18 @@
 				classname="de.bwravencl.controllerbuddy.input.Input"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
 				<Message>In Input.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.input.Input.buttons</Message>
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="171" end="171" startBytecode="4" endBytecode="4"
+			start="194" end="194" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-			<Message>At Input.java:[line 171]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 194]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -1503,25 +1498,25 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="51"
-				end="559" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
+				end="659" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java">
-				<Message>At Input.java:[lines 51-559]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 53-659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="poll" signature="()Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="259"
-				end="407" startBytecode="0" endBytecode="2413"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="314"
+				end="496" startBytecode="0" endBytecode="2820"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.poll()</Message>
 		</Method>
-		<LocalVariable name="stack" register="6" pc="1052"
+		<LocalVariable name="stack" register="6" pc="1283"
 			role="LOCAL_VARIABLE_VALUE_OF">
 			<Message>Value loaded from stack</Message>
 		</LocalVariable>
@@ -1537,12 +1532,12 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="275" end="275" startBytecode="1054" endBytecode="1054"
+			start="330" end="330" startBytecode="1285" endBytecode="1285"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"
 			role="SOURCE_REDUNDANT_NULL_CHECK">
-			<Message>Redundant null check at Input.java:[line 275]</Message>
+			<Message>Redundant null check at Input.java:[line 330]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1559,7 +1554,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1573,7 +1568,7 @@
 				end="56" startBytecode="0" endBytecode="46"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.KeyStroke.getKeyCodes()</Message>
 		</Method>
@@ -1584,7 +1579,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.input.KeyStroke.keyCodes</Message>
@@ -1594,7 +1589,7 @@
 			primary="true" start="56" end="56" startBytecode="4" endBytecode="4"
 			sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 56]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1613,7 +1608,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1627,7 +1622,7 @@
 				end="60" startBytecode="0" endBytecode="46"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.KeyStroke.getModifierCodes()</Message>
 		</Method>
@@ -1638,7 +1633,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1649,7 +1644,7 @@
 			primary="true" start="60" end="60" startBytecode="4" endBytecode="4"
 			sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 60]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1669,7 +1664,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1684,7 +1679,7 @@
 				end="36" startBytecode="0" endBytecode="88"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method new
 				de.bwravencl.controllerbuddy.input.KeyStroke(Integer[], Integer[])</Message>
 		</Method>
@@ -1695,7 +1690,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.input.KeyStroke.keyCodes</Message>
@@ -1709,7 +1704,7 @@
 			primary="true" start="34" end="34" startBytecode="6" endBytecode="6"
 			sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 34]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1729,7 +1724,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1744,7 +1739,7 @@
 				end="36" startBytecode="0" endBytecode="88"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method new
 				de.bwravencl.controllerbuddy.input.KeyStroke(Integer[], Integer[])</Message>
 		</Method>
@@ -1755,7 +1750,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1770,7 +1765,7 @@
 			primary="true" start="35" end="35" startBytecode="11"
 			endBytecode="11" sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 35]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1789,7 +1784,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1803,7 +1798,7 @@
 				end="65" startBytecode="0" endBytecode="61"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.KeyStroke.setKeyCodes(Integer[])</Message>
 		</Method>
@@ -1814,7 +1809,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.input.KeyStroke.keyCodes</Message>
@@ -1828,7 +1823,7 @@
 			primary="true" start="64" end="64" startBytecode="2" endBytecode="2"
 			sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 64]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1847,7 +1842,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke" start="30"
 				end="76" sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>At KeyStroke.java:[lines 30-76]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.KeyStroke</Message>
@@ -1861,7 +1856,7 @@
 				end="69" startBytecode="0" endBytecode="61"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.KeyStroke.setModifierCodes(Integer[])</Message>
 		</Method>
@@ -1872,7 +1867,7 @@
 				classname="de.bwravencl.controllerbuddy.input.KeyStroke"
 				sourcefile="KeyStroke.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 				<Message>In KeyStroke.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1887,7 +1882,7 @@
 			primary="true" start="68" end="68" startBytecode="2" endBytecode="2"
 			sourcefile="KeyStroke.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/KeyStroke.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/KeyStroke.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\KeyStroke.java">
 			<Message>At KeyStroke.java:[line 68]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1904,7 +1899,7 @@
 				classname="de.bwravencl.controllerbuddy.input.LockKey" start="33"
 				end="63" sourcefile="LockKey.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/LockKey.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java">
 				<Message>At LockKey.java:[lines 33-63]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.LockKey</Message>
@@ -1917,7 +1912,7 @@
 				classname="de.bwravencl.controllerbuddy.input.LockKey"
 				sourcefile="LockKey.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/LockKey.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java">
 				<Message>In LockKey.java</Message>
 			</SourceLine>
 			<Message>Field de.bwravencl.controllerbuddy.input.LockKey.LOCK_KEYS</Message>
@@ -1927,7 +1922,7 @@
 			start="33" end="33" startBytecode="63" endBytecode="63"
 			sourcefile="LockKey.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/LockKey.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java">
 			<Message>At LockKey.java:[line 33]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1946,7 +1941,7 @@
 				classname="de.bwravencl.controllerbuddy.input.action.IButtonToAction"
 				start="33" end="101" sourcefile="IButtonToAction.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 				<Message>At IButtonToAction.java:[lines 33-101]</Message>
 			</SourceLine>
 			<Message>In class
@@ -1960,7 +1955,7 @@
 				classname="de.bwravencl.controllerbuddy.input.action.IButtonToAction"
 				sourcefile="IButtonToAction.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 				<Message>In IButtonToAction.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -1971,7 +1966,7 @@
 			primary="true" start="33" end="33" startBytecode="7" endBytecode="7"
 			sourcefile="IButtonToAction.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 			<Message>At IButtonToAction.java:[line 33]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -1990,7 +1985,7 @@
 				classname="de.bwravencl.controllerbuddy.input.action.IButtonToAction"
 				start="33" end="101" sourcefile="IButtonToAction.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 				<Message>At IButtonToAction.java:[lines 33-101]</Message>
 			</SourceLine>
 			<Message>In class
@@ -2004,7 +1999,7 @@
 				classname="de.bwravencl.controllerbuddy.input.action.IButtonToAction"
 				sourcefile="IButtonToAction.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 				<Message>In IButtonToAction.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -2015,7 +2010,7 @@
 			primary="true" start="34" end="34" startBytecode="17"
 			endBytecode="17" sourcefile="IButtonToAction.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/action/IButtonToAction.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 			<Message>At IButtonToAction.java:[line 34]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -2034,7 +2029,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
 				start="33" end="197" sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
 				<Message>At DualSenseExtension.java:[lines 33-197]</Message>
 			</SourceLine>
 			<Message>In class
@@ -2049,7 +2044,7 @@
 				start="113" end="135" startBytecode="0" endBytecode="240"
 				sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension.getDefaultHidReport()</Message>
 		</Method>
@@ -2058,7 +2053,7 @@
 			primary="true" start="114" end="114" startBytecode="8"
 			endBytecode="8" sourcefile="DualSenseExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
 			<Message>At DualSenseExtension.java:[line 114]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -2077,7 +2072,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
 				start="35" end="180" sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
 				<Message>At DualShock4Extension.java:[lines 35-180]</Message>
 			</SourceLine>
 			<Message>In class
@@ -2092,7 +2087,7 @@
 				start="114" end="135" startBytecode="0" endBytecode="230"
 				sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getDefaultHidReport()</Message>
 		</Method>
@@ -2101,7 +2096,7 @@
 			primary="true" start="115" end="115" startBytecode="8"
 			endBytecode="8" sourcefile="DualShock4Extension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
 			<Message>At DualShock4Extension.java:[line 115]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -2117,10 +2112,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="218" end="535" sourcefile="SonyExtension.java"
+				start="221" end="540" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 218-535]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 221-540]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2131,21 +2126,21 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="437" end="448" startBytecode="0" endBytecode="240"
+				start="442" end="453" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="441" end="441" startBytecode="20"
+			primary="true" start="446" end="446" startBytecode="20"
 			endBytecode="20" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-			<Message>At SonyExtension.java:[line 441]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 446]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -2163,10 +2158,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="218" end="535" sourcefile="SonyExtension.java"
+				start="221" end="540" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 218-535]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 221-540]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2180,7 +2175,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -2195,7 +2190,7 @@
 				start="67" end="93" startBytecode="0" endBytecode="395"
 				sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1.handleBattery(byte[])</Message>
 		</Method>
@@ -2204,7 +2199,7 @@
 			primary="true" start="67" end="67" startBytecode="10"
 			endBytecode="10" sourcefile="DualSenseExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
 			<Message>At DualSenseExtension.java:[line 67]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -2223,10 +2218,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="218" end="535" sourcefile="SonyExtension.java"
+				start="221" end="540" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 218-535]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 221-540]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2240,7 +2235,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -2255,7 +2250,7 @@
 				start="80" end="93" startBytecode="0" endBytecode="202"
 				sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleBattery(byte[])</Message>
 		</Method>
@@ -2264,7 +2259,7 @@
 			primary="true" start="80" end="80" startBytecode="10"
 			endBytecode="10" sourcefile="DualShock4Extension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java">
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
 			<Message>At DualShock4Extension.java:[line 80]</Message>
 		</SourceLine>
 	</BugInstance>
@@ -2284,10 +2279,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="218" end="535" sourcefile="SonyExtension.java"
+				start="221" end="540" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 218-535]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 221-540]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2299,7 +2294,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -2311,21 +2306,21 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="437" end="448" startBytecode="0" endBytecode="240"
+				start="442" end="453" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="445" end="445" startBytecode="40"
+			primary="true" start="450" end="450" startBytecode="40"
 			endBytecode="40" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-			<Message>At SonyExtension.java:[line 445]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 450]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -2343,10 +2338,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="218" end="535" sourcefile="SonyExtension.java"
+				start="221" end="540" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 218-535]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 221-540]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2358,7 +2353,7 @@
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
@@ -2369,29 +2364,29 @@
 			name="sendHidReport" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="460" end="481" startBytecode="0" endBytecode="344"
+				start="465" end="486" startBytecode="0" endBytecode="344"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension.sendHidReport()</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="466" end="466" startBytecode="43"
+			primary="true" start="471" end="471" startBytecode="43"
 			endBytecode="43" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java">
-			<Message>At SonyExtension.java:[line 466]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 471]</Message>
 		</SourceLine>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			start="475" end="475" startBytecode="127" endBytecode="127"
+			start="480" end="480" startBytecode="127" endBytecode="127"
 			sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"
 			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at SonyExtension.java:[line 475]</Message>
+			<Message>Another occurrence at SonyExtension.java:[line 480]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="NM_METHOD_NAMING_CONVENTION"
@@ -2407,10 +2402,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
-				start="66" end="604" sourcefile="VJoyOutput.java"
+				start="65" end="600" sourcefile="VJoyOutput.java"
 				sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/output/VJoyOutput.java">
-				<Message>At VJoyOutput.java:[lines 66-604]</Message>
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java">
+				<Message>At VJoyOutput.java:[lines 65-600]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.output.VJoyOutput</Message>
 		</Class>
@@ -2421,7 +2416,7 @@
 				classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
 				sourcefile="VJoyOutput.java"
 				sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
-				relSourcepath="java/de/bwravencl/controllerbuddy/output/VJoyOutput.java" />
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java" />
 			<Message>In method
 				de.bwravencl.controllerbuddy.output.VJoyOutput.GetKeyState(int)</Message>
 		</Method>
@@ -2429,7 +2424,7 @@
 			classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
 			sourcefile="VJoyOutput.java"
 			sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
-			relSourcepath="java/de/bwravencl/controllerbuddy/output/VJoyOutput.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java"
 			synthetic="true">
 			<Message>In VJoyOutput.java</Message>
 		</SourceLine>
@@ -2737,13 +2732,61 @@ object is stored in this field.</p>
 	<BugCode abbrev="Nm">
 		<Description>Confusing method name</Description>
 	</BugCode>
-	<Errors errors="0" missingClasses="0"></Errors>
+	<Errors errors="1" missingClasses="0">
+		<Error>
+			<ErrorMessage>Unable to read filter:
+				C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\spotbugs-baseline.xml
+				: Failing reading
+				C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\spotbugs-baseline.xml</ErrorMessage>
+			<Exception>org.dom4j.DocumentException: Failing reading
+				C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\spotbugs-baseline.xml</Exception>
+			<StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:279)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.SortedBugCollection.readXML(SortedBugCollection.java:260)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.addToExcludedInstanceHashes(ExcludingHashesBugReporter.java:57)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.ExcludingHashesBugReporter.&lt;init&gt;(ExcludingHashesBugReporter.java:44)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.FindBugs.configureBaselineFilter(FindBugs.java:488)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.FindBugs2.excludeBaselineBugs(FindBugs2.java:409)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.FindBugs2.configureFilters(FindBugs2.java:516)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.FindBugs2.setUserPreferences(FindBugs2.java:505)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.TextUICommandLine.configureEngine(TextUICommandLine.java:683)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.FindBugs.processCommandLine(FindBugs.java:359)</StackTrace>
+			<StackTrace>com.github.spotbugs.snom.internal.SpotBugsRunnerForWorker$SpotBugsExecutor.execute(SpotBugsRunnerForWorker.java:96)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:49)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:43)</StackTrace>
+			<StackTrace>org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:97)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.AbstractClassLoaderWorker.executeInClassLoader(AbstractClassLoaderWorker.java:43)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.IsolatedClassloaderWorker.run(IsolatedClassloaderWorker.java:49)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.IsolatedClassloaderWorker.run(IsolatedClassloaderWorker.java:30)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:85)</StackTrace>
+			<StackTrace>org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:55)</StackTrace>
+			<StackTrace>org.gradle.process.internal.worker.request.WorkerAction$1.call(WorkerAction.java:138)</StackTrace>
+			<StackTrace>org.gradle.process.internal.worker.child.WorkerLogEventListener.withWorkerLoggingProtocol(WorkerLogEventListener.java:41)</StackTrace>
+			<StackTrace>org.gradle.process.internal.worker.request.WorkerAction.run(WorkerAction.java:135)</StackTrace>
+			<StackTrace>java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native
+				Method)</StackTrace>
+			<StackTrace>java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:64)</StackTrace>
+			<StackTrace>java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</StackTrace>
+			<StackTrace>java.base/java.lang.reflect.Method.invoke(Method.java:564)</StackTrace>
+			<StackTrace>org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)</StackTrace>
+			<StackTrace>org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)</StackTrace>
+			<StackTrace>org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)</StackTrace>
+			<StackTrace>org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)</StackTrace>
+			<StackTrace>org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:414)</StackTrace>
+			<StackTrace>org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)</StackTrace>
+			<StackTrace>org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)</StackTrace>
+			<StackTrace>java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)</StackTrace>
+			<StackTrace>java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)</StackTrace>
+			<StackTrace>org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)</StackTrace>
+			<StackTrace>java.base/java.lang.Thread.run(Thread.java:832)</StackTrace>
+		</Error>
+	</Errors>
 	<FindBugsSummary
-		timestamp="Wed, 27 Jan 2021 11:02:56 +0100" total_classes="194"
-		referenced_classes="999" total_bugs="42" total_size="8490"
-		num_packages="10" java_version="15.0.1" vm_version="15.0.1+9"
-		cpu_seconds="11.51" clock_seconds="5.56" peak_mbytes="717.16"
-		alloc_mbytes="512.00" gc_seconds="0.19" priority_3="25"
+		timestamp="Thu, 11 Feb 2021 23:01:06 +0100" total_classes="189"
+		referenced_classes="995" total_bugs="42" total_size="8605"
+		num_packages="10" java_version="15.0.2" vm_version="15.0.2+7-27"
+		cpu_seconds="29.61" clock_seconds="6.69" peak_mbytes="575.41"
+		alloc_mbytes="512.00" gc_seconds="0.12" priority_3="25"
 		priority_2="15" priority_1="2">
 		<FileStats path="com/oracle/si/Singleton.java" bugCount="0"
 			size="363" />
@@ -2757,7 +2800,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0"
 			size="106" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="8" size="2181" bugHash="e8dc6a1205574ff9ad0d1be39ddeeb22" />
+			bugCount="8" size="2260" bugHash="ae8568984662922bc9d6a1d451056917" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="2" size="385" bugHash="bee45d302ca5c0ac7a60e01da28b06f1" />
@@ -2766,7 +2809,7 @@ object is stored in this field.</p>
 			bugCount="1" size="254" bugHash="3a7e1c9523d18f42a36b7ca12186b081" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="2"
-			size="377" bugHash="a4db0815e67e86f16d44ffcfd3a67bc3" />
+			size="438" bugHash="1c33c032260f33641897d7f5e4d5de4e" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6"
 			size="38" bugHash="cb95e6b7d2dec063fd84527bc403acbb" />
@@ -2787,7 +2830,7 @@ object is stored in this field.</p>
 			size="177" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/AxisToAxisAction.java"
-			bugCount="0" size="39" />
+			bugCount="0" size="40" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/AxisToButtonAction.java"
 			bugCount="0" size="27" />
@@ -2838,7 +2881,7 @@ object is stored in this field.</p>
 			bugCount="0" size="26" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToSelectOnScreenKeyboardKeyAction.java"
-			bugCount="0" size="79" />
+			bugCount="0" size="62" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/DescribableAction.java"
 			bugCount="0" size="17" />
@@ -2847,7 +2890,7 @@ object is stored in this field.</p>
 			bugCount="0" size="12" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/IActivatableAction.java"
-			bugCount="0" size="50" />
+			bugCount="0" size="39" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/IAxisToAction.java"
 			bugCount="0" size="1" />
@@ -2973,7 +3016,7 @@ object is stored in this field.</p>
 			bugCount="2" size="94" bugHash="c168e960319616e186d3ed95799e38b9" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			bugCount="3" size="371" bugHash="47b4b758b7a758ade2fd461459d118d7" />
+			bugCount="3" size="375" bugHash="e50a126d6a526d9f7d1d3403d93d2dd1" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="0" size="38" />
@@ -2997,7 +3040,7 @@ object is stored in this field.</p>
 			bugCount="0" size="201" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
-			bugCount="1" size="435" bugHash="fc01866f22b9daa313199c39da7aff35" />
+			bugCount="1" size="433" bugHash="fc01866f22b9daa313199c39da7aff35" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/version/Version.java" bugCount="0"
 			size="4" />
@@ -3026,7 +3069,7 @@ object is stored in this field.</p>
 				sourceFile="Singleton.java" interface="false" size="82" bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.gui"
-			total_bugs="23" total_types="64" total_size="3712" priority_3="17"
+			total_bugs="23" total_types="66" total_size="3791" priority_3="17"
 			priority_2="5" priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent"
@@ -3107,7 +3150,7 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				sourceFile="GuiUtils.java" interface="false" size="28" bugs="0" />
 			<ClassStats class="de.bwravencl.controllerbuddy.gui.Main"
-				sourceFile="Main.java" interface="false" size="1543" bugs="2"
+				sourceFile="Main.java" interface="false" size="1563" bugs="2"
 				priority_3="1" priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$1"
@@ -3139,6 +3182,9 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$ExportAction"
 				sourceFile="Main.java" interface="false" size="14" bugs="0" />
+			<ClassStats
+				class="de.bwravencl.controllerbuddy.gui.Main$HotSwappingButton"
+				sourceFile="Main.java" interface="false" size="49" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$HtmlFileChooser"
 				sourceFile="Main.java" interface="false" size="22" bugs="1"
@@ -3180,13 +3226,16 @@ object is stored in this field.</p>
 				sourceFile="Main.java" interface="false" size="11" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SelectControllerAction"
-				sourceFile="Main.java" interface="false" size="16" bugs="0" />
+				sourceFile="Main.java" interface="false" size="17" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SelectIndicatorColorAction"
 				sourceFile="Main.java" interface="false" size="18" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SetHostAction"
 				sourceFile="Main.java" interface="false" size="22" bugs="0" />
+			<ClassStats
+				class="de.bwravencl.controllerbuddy.gui.Main$SetHotSwapButtonAction"
+				sourceFile="Main.java" interface="false" size="9" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SetModeDescriptionAction"
 				sourceFile="Main.java" interface="false" size="28" bugs="0" />
@@ -3251,11 +3300,11 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input" total_bugs="9"
-			total_types="10" total_size="863" priority_3="1" priority_2="7"
+			total_types="10" total_size="924" priority_3="1" priority_2="7"
 			priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Input"
-				sourceFile="Input.java" interface="false" size="360" bugs="2"
+				sourceFile="Input.java" interface="false" size="421" bugs="2"
 				priority_3="1" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Input$VirtualAxis"
@@ -3289,10 +3338,10 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.action" total_bugs="2"
-			total_types="48" total_size="1171" priority_2="2">
+			total_types="41" total_size="1144" priority_2="2">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.AxisToAxisAction"
-				sourceFile="AxisToAxisAction.java" interface="false" size="39"
+				sourceFile="AxisToAxisAction.java" interface="false" size="40"
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.AxisToButtonAction"
@@ -3373,23 +3422,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction$Direction"
 				sourceFile="ButtonToSelectOnScreenKeyboardKeyAction.java"
-				interface="false" size="16" bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction$Direction$1"
-				sourceFile="ButtonToSelectOnScreenKeyboardKeyAction.java"
-				interface="false" size="5" bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction$Direction$2"
-				sourceFile="ButtonToSelectOnScreenKeyboardKeyAction.java"
-				interface="false" size="5" bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction$Direction$3"
-				sourceFile="ButtonToSelectOnScreenKeyboardKeyAction.java"
-				interface="false" size="5" bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction$Direction$4"
-				sourceFile="ButtonToSelectOnScreenKeyboardKeyAction.java"
-				interface="false" size="5" bugs="0" />
+				interface="false" size="19" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.DescribableAction"
 				sourceFile="DescribableAction.java" interface="false" size="17"
@@ -3407,19 +3440,7 @@ object is stored in this field.</p>
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.IActivatableAction$Activation"
-				sourceFile="IActivatableAction.java" interface="false" size="14"
-				bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.IActivatableAction$Activation$1"
-				sourceFile="IActivatableAction.java" interface="false" size="5"
-				bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.IActivatableAction$Activation$2"
-				sourceFile="IActivatableAction.java" interface="false" size="5"
-				bugs="0" />
-			<ClassStats
-				class="de.bwravencl.controllerbuddy.input.action.IActivatableAction$Activation$3"
-				sourceFile="IActivatableAction.java" interface="false" size="5"
+				sourceFile="IActivatableAction.java" interface="false" size="18"
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.IAxisToAction"
@@ -3649,7 +3670,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.sony" total_bugs="7"
-			total_types="7" total_size="564" priority_3="6" priority_2="1">
+			total_types="7" total_size="568" priority_3="6" priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
 				sourceFile="DualSenseExtension.java" interface="false" size="74"
@@ -3668,14 +3689,14 @@ object is stored in this field.</p>
 				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				sourceFile="SonyExtension.java" interface="false" size="243"
+				sourceFile="SonyExtension.java" interface="false" size="245"
 				bugs="3" priority_3="2" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
 				sourceFile="SonyExtension.java" interface="false" size="10" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$SonyInputReportListener"
-				sourceFile="SonyExtension.java" interface="false" size="118"
+				sourceFile="SonyExtension.java" interface="false" size="120"
 				bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.json"
@@ -3695,7 +3716,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.output" total_bugs="1"
-			total_types="11" total_size="1129" priority_3="1">
+			total_types="11" total_size="1127" priority_3="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.ClientOutput"
 				sourceFile="ClientOutput.java" interface="false" size="271" bugs="0" />
@@ -3728,7 +3749,7 @@ object is stored in this field.</p>
 				sourceFile="ServerOutput.java" interface="false" size="11" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.VJoyOutput"
-				sourceFile="VJoyOutput.java" interface="false" size="435" bugs="1"
+				sourceFile="VJoyOutput.java" interface="false" size="433" bugs="1"
 				priority_3="1" />
 		</PackageStats>
 		<PackageStats
@@ -3744,165 +3765,153 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="464" invocations="3876"
-				avgMicrosecondsPerInvocation="119"
-				maxMicrosecondsPerInvocation="15660"
-				standardDeviationMicrosecondsPerInvocation="407" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="338" invocations="3885"
-				avgMicrosecondsPerInvocation="87"
-				maxMicrosecondsPerInvocation="17289"
-				standardDeviationMicrosecondsPerInvocation="322" />
+				totalMilliseconds="807" invocations="3875"
+				avgMicrosecondsPerInvocation="208"
+				maxMicrosecondsPerInvocation="18860"
+				standardDeviationMicrosecondsPerInvocation="700" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="331" invocations="999"
-				avgMicrosecondsPerInvocation="332"
-				maxMicrosecondsPerInvocation="19207"
-				standardDeviationMicrosecondsPerInvocation="1020" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="300" invocations="1124"
-				avgMicrosecondsPerInvocation="267"
-				maxMicrosecondsPerInvocation="28509"
-				standardDeviationMicrosecondsPerInvocation="1624" />
+				totalMilliseconds="383" invocations="995"
+				avgMicrosecondsPerInvocation="385"
+				maxMicrosecondsPerInvocation="16774"
+				standardDeviationMicrosecondsPerInvocation="944" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="280" invocations="999"
-				avgMicrosecondsPerInvocation="281"
-				maxMicrosecondsPerInvocation="19801"
-				standardDeviationMicrosecondsPerInvocation="802" />
+				totalMilliseconds="377" invocations="995"
+				avgMicrosecondsPerInvocation="378"
+				maxMicrosecondsPerInvocation="17874"
+				standardDeviationMicrosecondsPerInvocation="907" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="264" invocations="996"
-				avgMicrosecondsPerInvocation="265"
-				maxMicrosecondsPerInvocation="24397"
-				standardDeviationMicrosecondsPerInvocation="1319" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="240" invocations="1073"
-				avgMicrosecondsPerInvocation="223"
-				maxMicrosecondsPerInvocation="27581"
-				standardDeviationMicrosecondsPerInvocation="1261" />
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
+				totalMilliseconds="302" invocations="1127"
+				avgMicrosecondsPerInvocation="268"
+				maxMicrosecondsPerInvocation="17485"
+				standardDeviationMicrosecondsPerInvocation="1353" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="225" invocations="1040"
-				avgMicrosecondsPerInvocation="216"
-				maxMicrosecondsPerInvocation="28215"
-				standardDeviationMicrosecondsPerInvocation="1236" />
+				totalMilliseconds="252" invocations="1043"
+				avgMicrosecondsPerInvocation="241"
+				maxMicrosecondsPerInvocation="33017"
+				standardDeviationMicrosecondsPerInvocation="1391" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="194" invocations="1111"
-				avgMicrosecondsPerInvocation="175"
-				maxMicrosecondsPerInvocation="23179"
-				standardDeviationMicrosecondsPerInvocation="894" />
+				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
+				totalMilliseconds="249" invocations="999"
+				avgMicrosecondsPerInvocation="249"
+				maxMicrosecondsPerInvocation="17172"
+				standardDeviationMicrosecondsPerInvocation="1095" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
+				totalMilliseconds="242" invocations="1076"
+				avgMicrosecondsPerInvocation="225"
+				maxMicrosecondsPerInvocation="20773"
+				standardDeviationMicrosecondsPerInvocation="1062" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="169" invocations="2600"
-				avgMicrosecondsPerInvocation="65"
-				maxMicrosecondsPerInvocation="2209"
-				standardDeviationMicrosecondsPerInvocation="125" />
+				totalMilliseconds="239" invocations="2607"
+				avgMicrosecondsPerInvocation="91"
+				maxMicrosecondsPerInvocation="5892"
+				standardDeviationMicrosecondsPerInvocation="210" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
+				totalMilliseconds="217" invocations="1114"
+				avgMicrosecondsPerInvocation="195"
+				maxMicrosecondsPerInvocation="12917"
+				standardDeviationMicrosecondsPerInvocation="799" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
+				totalMilliseconds="179" invocations="3884"
+				avgMicrosecondsPerInvocation="46"
+				maxMicrosecondsPerInvocation="1346"
+				standardDeviationMicrosecondsPerInvocation="52" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="128" invocations="999"
-				avgMicrosecondsPerInvocation="128"
-				maxMicrosecondsPerInvocation="17758"
-				standardDeviationMicrosecondsPerInvocation="691" />
+				totalMilliseconds="148" invocations="995"
+				avgMicrosecondsPerInvocation="148"
+				maxMicrosecondsPerInvocation="9209"
+				standardDeviationMicrosecondsPerInvocation="421" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="117" invocations="837"
-				avgMicrosecondsPerInvocation="139"
-				maxMicrosecondsPerInvocation="9647"
-				standardDeviationMicrosecondsPerInvocation="524" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
-				totalMilliseconds="95" invocations="1198"
-				avgMicrosecondsPerInvocation="79"
-				maxMicrosecondsPerInvocation="2430"
-				standardDeviationMicrosecondsPerInvocation="153" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="88" invocations="999"
-				avgMicrosecondsPerInvocation="88"
-				maxMicrosecondsPerInvocation="11122"
-				standardDeviationMicrosecondsPerInvocation="386" />
+				totalMilliseconds="119" invocations="834"
+				avgMicrosecondsPerInvocation="142"
+				maxMicrosecondsPerInvocation="5535"
+				standardDeviationMicrosecondsPerInvocation="459" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="84" invocations="1073"
-				avgMicrosecondsPerInvocation="78"
-				maxMicrosecondsPerInvocation="3327"
-				standardDeviationMicrosecondsPerInvocation="191" />
+				totalMilliseconds="112" invocations="1076"
+				avgMicrosecondsPerInvocation="104"
+				maxMicrosecondsPerInvocation="7857"
+				standardDeviationMicrosecondsPerInvocation="385" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="74" invocations="999"
-				avgMicrosecondsPerInvocation="74"
-				maxMicrosecondsPerInvocation="17434"
-				standardDeviationMicrosecondsPerInvocation="578" />
+				name="edu.umd.cs.findbugs.detect.CalledMethods"
+				totalMilliseconds="108" invocations="995"
+				avgMicrosecondsPerInvocation="109"
+				maxMicrosecondsPerInvocation="8716"
+				standardDeviationMicrosecondsPerInvocation="351" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
+				totalMilliseconds="107" invocations="1195"
+				avgMicrosecondsPerInvocation="89"
+				maxMicrosecondsPerInvocation="11015"
+				standardDeviationMicrosecondsPerInvocation="353" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="64" invocations="999"
-				avgMicrosecondsPerInvocation="64"
-				maxMicrosecondsPerInvocation="6141"
-				standardDeviationMicrosecondsPerInvocation="236" />
+				totalMilliseconds="82" invocations="995"
+				avgMicrosecondsPerInvocation="83"
+				maxMicrosecondsPerInvocation="4618"
+				standardDeviationMicrosecondsPerInvocation="233" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
+				totalMilliseconds="78" invocations="1143"
+				avgMicrosecondsPerInvocation="68"
+				maxMicrosecondsPerInvocation="48105"
+				standardDeviationMicrosecondsPerInvocation="1422" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="56" invocations="999"
-				avgMicrosecondsPerInvocation="56"
-				maxMicrosecondsPerInvocation="1411"
-				standardDeviationMicrosecondsPerInvocation="104" />
+				totalMilliseconds="70" invocations="995"
+				avgMicrosecondsPerInvocation="70"
+				maxMicrosecondsPerInvocation="1844"
+				standardDeviationMicrosecondsPerInvocation="131" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindOpenStream"
-				totalMilliseconds="48" invocations="187"
-				avgMicrosecondsPerInvocation="259"
-				maxMicrosecondsPerInvocation="29605"
-				standardDeviationMicrosecondsPerInvocation="2321" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="47" invocations="1073"
-				avgMicrosecondsPerInvocation="44"
-				maxMicrosecondsPerInvocation="3560"
-				standardDeviationMicrosecondsPerInvocation="188" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
-				totalMilliseconds="47" invocations="999"
-				avgMicrosecondsPerInvocation="47"
-				maxMicrosecondsPerInvocation="3898"
-				standardDeviationMicrosecondsPerInvocation="175" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="46" invocations="999"
-				avgMicrosecondsPerInvocation="46"
-				maxMicrosecondsPerInvocation="3865"
-				standardDeviationMicrosecondsPerInvocation="148" />
+				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
+				totalMilliseconds="67" invocations="995"
+				avgMicrosecondsPerInvocation="67"
+				maxMicrosecondsPerInvocation="3028"
+				standardDeviationMicrosecondsPerInvocation="204" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="46" invocations="3787"
-				avgMicrosecondsPerInvocation="12" maxMicrosecondsPerInvocation="651"
-				standardDeviationMicrosecondsPerInvocation="25" />
+				totalMilliseconds="67" invocations="3785"
+				avgMicrosecondsPerInvocation="17" maxMicrosecondsPerInvocation="903"
+				standardDeviationMicrosecondsPerInvocation="39" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
-				totalMilliseconds="44" invocations="187"
-				avgMicrosecondsPerInvocation="237"
-				maxMicrosecondsPerInvocation="1607"
-				standardDeviationMicrosecondsPerInvocation="314" />
+				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
+				totalMilliseconds="60" invocations="995"
+				avgMicrosecondsPerInvocation="61"
+				maxMicrosecondsPerInvocation="3071"
+				standardDeviationMicrosecondsPerInvocation="202" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.impl.ZipCodeBaseFactory"
-				totalMilliseconds="40" invocations="34"
-				avgMicrosecondsPerInvocation="1205"
-				maxMicrosecondsPerInvocation="2399"
-				standardDeviationMicrosecondsPerInvocation="372" />
+				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
+				totalMilliseconds="56" invocations="995"
+				avgMicrosecondsPerInvocation="56"
+				maxMicrosecondsPerInvocation="4107"
+				standardDeviationMicrosecondsPerInvocation="195" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
+				totalMilliseconds="55" invocations="1076"
+				avgMicrosecondsPerInvocation="51"
+				maxMicrosecondsPerInvocation="5169"
+				standardDeviationMicrosecondsPerInvocation="226" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="38" invocations="999"
-				avgMicrosecondsPerInvocation="38"
-				maxMicrosecondsPerInvocation="4782"
-				standardDeviationMicrosecondsPerInvocation="254" />
+				totalMilliseconds="51" invocations="995"
+				avgMicrosecondsPerInvocation="52"
+				maxMicrosecondsPerInvocation="5671"
+				standardDeviationMicrosecondsPerInvocation="346" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.UnreadFields"
-				totalMilliseconds="36" invocations="187"
-				avgMicrosecondsPerInvocation="195"
-				maxMicrosecondsPerInvocation="4734"
-				standardDeviationMicrosecondsPerInvocation="424" />
+				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
+				totalMilliseconds="50" invocations="182"
+				avgMicrosecondsPerInvocation="277"
+				maxMicrosecondsPerInvocation="2724"
+				standardDeviationMicrosecondsPerInvocation="397" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>
