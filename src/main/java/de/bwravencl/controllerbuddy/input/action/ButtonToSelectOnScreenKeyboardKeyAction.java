@@ -32,33 +32,18 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
 
 	public enum Direction {
-		UP {
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("DIRECTION_UP");
-			}
-		},
-		DOWN {
+		UP("DIRECTION_UP"), DOWN("DIRECTION_DOWN"), LEFT("DIRECTION_LEFT"), RIGHT("DIRECTION_RIGHT");
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("DIRECTION_DOWN");
-			}
-		},
-		LEFT {
+		private final String label;
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("DIRECTION_LEFT");
-			}
-		},
-		RIGHT {
+		Direction(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("DIRECTION_RIGHT");
-			}
+		@Override
+		public String toString() {
+			return label;
 		}
 	}
 

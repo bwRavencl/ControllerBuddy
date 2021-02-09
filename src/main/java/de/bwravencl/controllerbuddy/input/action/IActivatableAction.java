@@ -27,26 +27,18 @@ public interface IActivatableAction<V extends Number> extends IInitializationAct
 	}
 
 	enum Activation {
-		REPEAT {
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("ACTIVATION_REPEAT");
-			}
-		},
-		SINGLE_IMMEDIATELY {
+		REPEAT("DIRECTION_UP"), SINGLE_IMMEDIATELY("DIRECTION_DOWN"), SINGLE_ON_RELEASE("DIRECTION_LEFT");
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("ACTIVATION_SINGLE_IMMEDIATELY");
-			}
-		},
-		SINGLE_ON_RELEASE {
+		private final String label;
 
-			@Override
-			public String toString() {
-				return Main.strings.getString("ACTIVATION_SINGLE_ON_RELEASE");
-			}
+		Activation(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
 		}
 	}
 
