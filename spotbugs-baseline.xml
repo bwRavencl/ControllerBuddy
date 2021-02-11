@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.2.0" sequence="0"
-	timestamp="1613080866760" analysisTimestamp="1613080866786"
-	release="0.19.65-a3f3914">
+	timestamp="1613084201084" analysisTimestamp="1613084201109"
+	release="0.19.62-3835598">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -458,10 +458,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3274" sourcefile="Main.java"
+				end="3270" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3274]</Message>
+				<Message>At Main.java:[lines 1008-3270]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -625,11 +625,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/input/Input;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
-				end="659" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="660" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 53-659]</Message>
+				<Message>At Input.java:[lines 54-660]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Input</Message>
 		</Type>
@@ -680,10 +680,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3274" sourcefile="Main.java"
+				end="3270" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3274]</Message>
+				<Message>At Main.java:[lines 1008-3270]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -933,10 +933,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3274" sourcefile="Main.java"
+				end="3270" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3274]</Message>
+				<Message>At Main.java:[lines 1008-3270]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -972,18 +972,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3274" sourcefile="Main.java"
+				end="3270" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3274]</Message>
+				<Message>At Main.java:[lines 1008-3270]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(Z)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2737"
-				end="2745" startBytecode="0" endBytecode="114"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2733"
+				end="2741" startBytecode="0" endBytecode="114"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -992,11 +992,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2744" end="2744" startBytecode="25" endBytecode="25"
+			start="2740" end="2740" startBytecode="25" endBytecode="25"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2744]</Message>
+			<Message>At Main.java:[line 2740]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1364,10 +1364,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3274" sourcefile="Main.java"
+				end="3270" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3274]</Message>
+				<Message>At Main.java:[lines 1008-3270]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1449,19 +1449,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
-				end="659" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="660" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 53-659]</Message>
+				<Message>At Input.java:[lines 54-660]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="getButtons" signature="()[Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="194"
-				end="194" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="195"
+				end="195" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -1480,11 +1480,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="194" end="194" startBytecode="4" endBytecode="4"
+			start="195" end="195" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 194]</Message>
+			<Message>At Input.java:[line 195]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -1498,25 +1498,25 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="53"
-				end="659" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="660" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 53-659]</Message>
+				<Message>At Input.java:[lines 54-660]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="poll" signature="()Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="314"
-				end="496" startBytecode="0" endBytecode="2820"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="315"
+				end="497" startBytecode="0" endBytecode="2826"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.poll()</Message>
 		</Method>
-		<LocalVariable name="stack" register="6" pc="1283"
+		<LocalVariable name="stack" register="6" pc="1289"
 			role="LOCAL_VARIABLE_VALUE_OF">
 			<Message>Value loaded from stack</Message>
 		</LocalVariable>
@@ -1532,12 +1532,12 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="330" end="330" startBytecode="1285" endBytecode="1285"
+			start="331" end="331" startBytecode="1291" endBytecode="1291"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java"
 			role="SOURCE_REDUNDANT_NULL_CHECK">
-			<Message>Redundant null check at Input.java:[line 330]</Message>
+			<Message>Redundant null check at Input.java:[line 331]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2027,10 +2027,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-				start="33" end="197" sourcefile="DualSenseExtension.java"
+				start="34" end="198" sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-				<Message>At DualSenseExtension.java:[lines 33-197]</Message>
+				<Message>At DualSenseExtension.java:[lines 34-198]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension</Message>
@@ -2041,7 +2041,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-				start="113" end="135" startBytecode="0" endBytecode="240"
+				start="114" end="136" startBytecode="0" endBytecode="240"
 				sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
@@ -2050,11 +2050,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-			primary="true" start="114" end="114" startBytecode="8"
+			primary="true" start="115" end="115" startBytecode="8"
 			endBytecode="8" sourcefile="DualSenseExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 114]</Message>
+			<Message>At DualSenseExtension.java:[line 115]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
@@ -2070,10 +2070,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-				start="35" end="180" sourcefile="DualShock4Extension.java"
+				start="36" end="181" sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-				<Message>At DualShock4Extension.java:[lines 35-180]</Message>
+				<Message>At DualShock4Extension.java:[lines 36-181]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension</Message>
@@ -2084,7 +2084,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-				start="114" end="135" startBytecode="0" endBytecode="230"
+				start="115" end="136" startBytecode="0" endBytecode="230"
 				sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
@@ -2093,54 +2093,54 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-			primary="true" start="115" end="115" startBytecode="8"
+			primary="true" start="116" end="116" startBytecode="8"
 			endBytecode="8" sourcefile="DualShock4Extension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 115]</Message>
+			<Message>At DualShock4Extension.java:[line 116]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2"
 		rank="14" abbrev="SWL" category="MT_CORRECTNESS"
-		instanceHash="b2a30be255aa38ba0cd55dc65fd691cf"
+		instanceHash="79fc8deaa24e599a8de9d098e43a730b"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Method calls Thread.sleep() with a lock held</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
+		<LongMessage>de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
 			byte, long) calls Thread.sleep() with a lock held</LongMessage>
 		<Class
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="221" end="540" sourcefile="SonyExtension.java"
+				start="222" end="548" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 221-540]</Message>
+				<Message>At SonyExtension.java:[lines 222-548]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
 		</Class>
 		<Method
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
+			name="lambda$rumble$1" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="442" end="453" startBytecode="0" endBytecode="240"
+				start="450" end="461" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
+				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="446" end="446" startBytecode="20"
+			primary="true" start="454" end="454" startBytecode="20"
 			endBytecode="20" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 446]</Message>
+			<Message>At SonyExtension.java:[line 454]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -2158,10 +2158,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="221" end="540" sourcefile="SonyExtension.java"
+				start="222" end="548" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 221-540]</Message>
+				<Message>At SonyExtension.java:[lines 222-548]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2187,7 +2187,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1"
-				start="67" end="93" startBytecode="0" endBytecode="395"
+				start="68" end="94" startBytecode="0" endBytecode="395"
 				sourcefile="DualSenseExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
@@ -2196,11 +2196,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1"
-			primary="true" start="67" end="67" startBytecode="10"
+			primary="true" start="68" end="68" startBytecode="10"
 			endBytecode="10" sourcefile="DualSenseExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 67]</Message>
+			<Message>At DualSenseExtension.java:[line 68]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -2218,10 +2218,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="221" end="540" sourcefile="SonyExtension.java"
+				start="222" end="548" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 221-540]</Message>
+				<Message>At SonyExtension.java:[lines 222-548]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2247,7 +2247,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1"
-				start="80" end="93" startBytecode="0" endBytecode="202"
+				start="81" end="94" startBytecode="0" endBytecode="202"
 				sourcefile="DualShock4Extension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
@@ -2256,33 +2256,33 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1"
-			primary="true" start="80" end="80" startBytecode="10"
+			primary="true" start="81" end="81" startBytecode="10"
 			endBytecode="10" sourcefile="DualShock4Extension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 80]</Message>
+			<Message>At DualShock4Extension.java:[line 81]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="cb5a7eda4454cf374aacec5ba33279c5"
+		instanceHash="47a43ad62eb7024a88766a3b7fc1f147"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
 		<LongMessage>SonyExtension.hidReport not initialized in constructor
 			and dereferenced in
-			de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
+			de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
 			byte, long)</LongMessage>
 		<Class
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="221" end="540" sourcefile="SonyExtension.java"
+				start="222" end="548" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 221-540]</Message>
+				<Message>At SonyExtension.java:[lines 222-548]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2302,25 +2302,25 @@
 		</Field>
 		<Method
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
+			name="lambda$rumble$1" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="442" end="453" startBytecode="0" endBytecode="240"
+				start="450" end="461" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$2(int,
+				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="450" end="450" startBytecode="40"
+			primary="true" start="458" end="458" startBytecode="40"
 			endBytecode="40" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 450]</Message>
+			<Message>At SonyExtension.java:[line 458]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -2338,10 +2338,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="221" end="540" sourcefile="SonyExtension.java"
+				start="222" end="548" sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 221-540]</Message>
+				<Message>At SonyExtension.java:[lines 222-548]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
@@ -2364,7 +2364,7 @@
 			name="sendHidReport" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="465" end="486" startBytecode="0" endBytecode="344"
+				start="473" end="494" startBytecode="0" endBytecode="344"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
@@ -2373,20 +2373,20 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="471" end="471" startBytecode="43"
+			primary="true" start="479" end="479" startBytecode="43"
 			endBytecode="43" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 471]</Message>
+			<Message>At SonyExtension.java:[line 479]</Message>
 		</SourceLine>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			start="480" end="480" startBytecode="127" endBytecode="127"
+			start="488" end="488" startBytecode="127" endBytecode="127"
 			sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"
 			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at SonyExtension.java:[line 480]</Message>
+			<Message>Another occurrence at SonyExtension.java:[line 488]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="NM_METHOD_NAMING_CONVENTION"
@@ -2782,10 +2782,10 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Thu, 11 Feb 2021 23:01:06 +0100" total_classes="189"
-		referenced_classes="995" total_bugs="42" total_size="8605"
+		timestamp="Thu, 11 Feb 2021 23:56:41 +0100" total_classes="189"
+		referenced_classes="995" total_bugs="42" total_size="8604"
 		num_packages="10" java_version="15.0.2" vm_version="15.0.2+7-27"
-		cpu_seconds="29.61" clock_seconds="6.69" peak_mbytes="575.41"
+		cpu_seconds="30.09" clock_seconds="6.74" peak_mbytes="580.29"
 		alloc_mbytes="512.00" gc_seconds="0.12" priority_3="25"
 		priority_2="15" priority_1="2">
 		<FileStats path="com/oracle/si/Singleton.java" bugCount="0"
@@ -2800,7 +2800,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0"
 			size="106" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="8" size="2260" bugHash="ae8568984662922bc9d6a1d451056917" />
+			bugCount="8" size="2257" bugHash="1fb23e9e5923fa8bb447f263e8e6c253" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="2" size="385" bugHash="bee45d302ca5c0ac7a60e01da28b06f1" />
@@ -2809,7 +2809,7 @@ object is stored in this field.</p>
 			bugCount="1" size="254" bugHash="3a7e1c9523d18f42a36b7ca12186b081" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="2"
-			size="438" bugHash="1c33c032260f33641897d7f5e4d5de4e" />
+			size="438" bugHash="3092eef8f9ce20437171884a4573d349" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6"
 			size="38" bugHash="cb95e6b7d2dec063fd84527bc403acbb" />
@@ -3010,13 +3010,13 @@ object is stored in this field.</p>
 			bugCount="0" size="9" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			bugCount="2" size="99" bugHash="c1ab46036c1347280617134d33052f7f" />
+			bugCount="2" size="99" bugHash="1ff4b241d3d175d3ecf61817bf109dc8" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			bugCount="2" size="94" bugHash="c168e960319616e186d3ed95799e38b9" />
+			bugCount="2" size="94" bugHash="0f99091074d8ab60a5accc841e4f8ceb" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			bugCount="3" size="375" bugHash="e50a126d6a526d9f7d1d3403d93d2dd1" />
+			bugCount="3" size="377" bugHash="540b97dcc53d0a7a9bf92871e6b1eaff" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="0" size="38" />
@@ -3069,7 +3069,7 @@ object is stored in this field.</p>
 				sourceFile="Singleton.java" interface="false" size="82" bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.gui"
-			total_bugs="23" total_types="66" total_size="3791" priority_3="17"
+			total_bugs="23" total_types="66" total_size="3788" priority_3="17"
 			priority_2="5" priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent"
@@ -3150,7 +3150,7 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				sourceFile="GuiUtils.java" interface="false" size="28" bugs="0" />
 			<ClassStats class="de.bwravencl.controllerbuddy.gui.Main"
-				sourceFile="Main.java" interface="false" size="1563" bugs="2"
+				sourceFile="Main.java" interface="false" size="1560" bugs="2"
 				priority_3="1" priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$1"
@@ -3670,7 +3670,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.sony" total_bugs="7"
-			total_types="7" total_size="568" priority_3="6" priority_2="1">
+			total_types="7" total_size="570" priority_3="6" priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
 				sourceFile="DualSenseExtension.java" interface="false" size="74"
@@ -3689,7 +3689,7 @@ object is stored in this field.</p>
 				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				sourceFile="SonyExtension.java" interface="false" size="245"
+				sourceFile="SonyExtension.java" interface="false" size="247"
 				bugs="3" priority_3="2" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
@@ -3765,153 +3765,158 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="807" invocations="3875"
-				avgMicrosecondsPerInvocation="208"
-				maxMicrosecondsPerInvocation="18860"
-				standardDeviationMicrosecondsPerInvocation="700" />
+				totalMilliseconds="726" invocations="3875"
+				avgMicrosecondsPerInvocation="187"
+				maxMicrosecondsPerInvocation="21565"
+				standardDeviationMicrosecondsPerInvocation="628" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="383" invocations="995"
-				avgMicrosecondsPerInvocation="385"
-				maxMicrosecondsPerInvocation="16774"
-				standardDeviationMicrosecondsPerInvocation="944" />
+				totalMilliseconds="433" invocations="995"
+				avgMicrosecondsPerInvocation="435"
+				maxMicrosecondsPerInvocation="21108"
+				standardDeviationMicrosecondsPerInvocation="1104" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="377" invocations="995"
-				avgMicrosecondsPerInvocation="378"
-				maxMicrosecondsPerInvocation="17874"
-				standardDeviationMicrosecondsPerInvocation="907" />
+				totalMilliseconds="400" invocations="995"
+				avgMicrosecondsPerInvocation="402"
+				maxMicrosecondsPerInvocation="20812"
+				standardDeviationMicrosecondsPerInvocation="992" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="302" invocations="1127"
-				avgMicrosecondsPerInvocation="268"
-				maxMicrosecondsPerInvocation="17485"
-				standardDeviationMicrosecondsPerInvocation="1353" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="252" invocations="1043"
-				avgMicrosecondsPerInvocation="241"
-				maxMicrosecondsPerInvocation="33017"
-				standardDeviationMicrosecondsPerInvocation="1391" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="249" invocations="999"
-				avgMicrosecondsPerInvocation="249"
-				maxMicrosecondsPerInvocation="17172"
-				standardDeviationMicrosecondsPerInvocation="1095" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="242" invocations="1076"
-				avgMicrosecondsPerInvocation="225"
-				maxMicrosecondsPerInvocation="20773"
-				standardDeviationMicrosecondsPerInvocation="1062" />
+				totalMilliseconds="299" invocations="1128"
+				avgMicrosecondsPerInvocation="265"
+				maxMicrosecondsPerInvocation="18676"
+				standardDeviationMicrosecondsPerInvocation="1342" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="239" invocations="2607"
-				avgMicrosecondsPerInvocation="91"
-				maxMicrosecondsPerInvocation="5892"
-				standardDeviationMicrosecondsPerInvocation="210" />
+				totalMilliseconds="253" invocations="2606"
+				avgMicrosecondsPerInvocation="97"
+				maxMicrosecondsPerInvocation="6148"
+				standardDeviationMicrosecondsPerInvocation="213" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
+				totalMilliseconds="250" invocations="998"
+				avgMicrosecondsPerInvocation="250"
+				maxMicrosecondsPerInvocation="19028"
+				standardDeviationMicrosecondsPerInvocation="1188" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
+				totalMilliseconds="235" invocations="1075"
+				avgMicrosecondsPerInvocation="219"
+				maxMicrosecondsPerInvocation="18018"
+				standardDeviationMicrosecondsPerInvocation="985" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
+				totalMilliseconds="223" invocations="1042"
+				avgMicrosecondsPerInvocation="214"
+				maxMicrosecondsPerInvocation="23417"
+				standardDeviationMicrosecondsPerInvocation="1153" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="217" invocations="1114"
-				avgMicrosecondsPerInvocation="195"
-				maxMicrosecondsPerInvocation="12917"
-				standardDeviationMicrosecondsPerInvocation="799" />
+				totalMilliseconds="215" invocations="1115"
+				avgMicrosecondsPerInvocation="192"
+				maxMicrosecondsPerInvocation="13176"
+				standardDeviationMicrosecondsPerInvocation="773" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="179" invocations="3884"
-				avgMicrosecondsPerInvocation="46"
-				maxMicrosecondsPerInvocation="1346"
-				standardDeviationMicrosecondsPerInvocation="52" />
+				totalMilliseconds="174" invocations="3884"
+				avgMicrosecondsPerInvocation="44"
+				maxMicrosecondsPerInvocation="1283"
+				standardDeviationMicrosecondsPerInvocation="51" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="148" invocations="995"
-				avgMicrosecondsPerInvocation="148"
-				maxMicrosecondsPerInvocation="9209"
-				standardDeviationMicrosecondsPerInvocation="421" />
+				totalMilliseconds="170" invocations="995"
+				avgMicrosecondsPerInvocation="171"
+				maxMicrosecondsPerInvocation="14118"
+				standardDeviationMicrosecondsPerInvocation="704" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="119" invocations="834"
-				avgMicrosecondsPerInvocation="142"
-				maxMicrosecondsPerInvocation="5535"
-				standardDeviationMicrosecondsPerInvocation="459" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="112" invocations="1076"
-				avgMicrosecondsPerInvocation="104"
-				maxMicrosecondsPerInvocation="7857"
-				standardDeviationMicrosecondsPerInvocation="385" />
+				totalMilliseconds="114" invocations="834"
+				avgMicrosecondsPerInvocation="137"
+				maxMicrosecondsPerInvocation="7658"
+				standardDeviationMicrosecondsPerInvocation="478" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="108" invocations="995"
-				avgMicrosecondsPerInvocation="109"
-				maxMicrosecondsPerInvocation="8716"
-				standardDeviationMicrosecondsPerInvocation="351" />
+				totalMilliseconds="114" invocations="995"
+				avgMicrosecondsPerInvocation="115"
+				maxMicrosecondsPerInvocation="13898"
+				standardDeviationMicrosecondsPerInvocation="488" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
+				totalMilliseconds="111" invocations="1075"
+				avgMicrosecondsPerInvocation="103"
+				maxMicrosecondsPerInvocation="8562"
+				standardDeviationMicrosecondsPerInvocation="403" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
-				totalMilliseconds="107" invocations="1195"
-				avgMicrosecondsPerInvocation="89"
-				maxMicrosecondsPerInvocation="11015"
-				standardDeviationMicrosecondsPerInvocation="353" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="82" invocations="995"
-				avgMicrosecondsPerInvocation="83"
-				maxMicrosecondsPerInvocation="4618"
-				standardDeviationMicrosecondsPerInvocation="233" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
-				totalMilliseconds="78" invocations="1143"
-				avgMicrosecondsPerInvocation="68"
-				maxMicrosecondsPerInvocation="48105"
-				standardDeviationMicrosecondsPerInvocation="1422" />
+				totalMilliseconds="105" invocations="1195"
+				avgMicrosecondsPerInvocation="88"
+				maxMicrosecondsPerInvocation="10652"
+				standardDeviationMicrosecondsPerInvocation="340" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="70" invocations="995"
-				avgMicrosecondsPerInvocation="70"
-				maxMicrosecondsPerInvocation="1844"
-				standardDeviationMicrosecondsPerInvocation="131" />
+				totalMilliseconds="87" invocations="995"
+				avgMicrosecondsPerInvocation="88"
+				maxMicrosecondsPerInvocation="11602"
+				standardDeviationMicrosecondsPerInvocation="391" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
+				totalMilliseconds="84" invocations="995"
+				avgMicrosecondsPerInvocation="85"
+				maxMicrosecondsPerInvocation="6239"
+				standardDeviationMicrosecondsPerInvocation="270" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="67" invocations="995"
-				avgMicrosecondsPerInvocation="67"
-				maxMicrosecondsPerInvocation="3028"
-				standardDeviationMicrosecondsPerInvocation="204" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="67" invocations="3785"
-				avgMicrosecondsPerInvocation="17" maxMicrosecondsPerInvocation="903"
-				standardDeviationMicrosecondsPerInvocation="39" />
+				totalMilliseconds="74" invocations="995"
+				avgMicrosecondsPerInvocation="75"
+				maxMicrosecondsPerInvocation="3188"
+				standardDeviationMicrosecondsPerInvocation="222" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
-				totalMilliseconds="60" invocations="995"
-				avgMicrosecondsPerInvocation="61"
-				maxMicrosecondsPerInvocation="3071"
-				standardDeviationMicrosecondsPerInvocation="202" />
+				totalMilliseconds="67" invocations="995"
+				avgMicrosecondsPerInvocation="67"
+				maxMicrosecondsPerInvocation="3425"
+				standardDeviationMicrosecondsPerInvocation="227" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.util.TopologicalSort"
+				totalMilliseconds="66" invocations="3785"
+				avgMicrosecondsPerInvocation="17" maxMicrosecondsPerInvocation="857"
+				standardDeviationMicrosecondsPerInvocation="38" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
+				totalMilliseconds="60" invocations="1142"
+				avgMicrosecondsPerInvocation="53"
+				maxMicrosecondsPerInvocation="29635"
+				standardDeviationMicrosecondsPerInvocation="877" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="56" invocations="995"
-				avgMicrosecondsPerInvocation="56"
-				maxMicrosecondsPerInvocation="4107"
-				standardDeviationMicrosecondsPerInvocation="195" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="55" invocations="1076"
-				avgMicrosecondsPerInvocation="51"
-				maxMicrosecondsPerInvocation="5169"
-				standardDeviationMicrosecondsPerInvocation="226" />
+				totalMilliseconds="60" invocations="995"
+				avgMicrosecondsPerInvocation="61"
+				maxMicrosecondsPerInvocation="3866"
+				standardDeviationMicrosecondsPerInvocation="190" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="51" invocations="995"
-				avgMicrosecondsPerInvocation="52"
-				maxMicrosecondsPerInvocation="5671"
-				standardDeviationMicrosecondsPerInvocation="346" />
+				totalMilliseconds="57" invocations="995"
+				avgMicrosecondsPerInvocation="57"
+				maxMicrosecondsPerInvocation="6018"
+				standardDeviationMicrosecondsPerInvocation="372" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.DumbMethods" totalMilliseconds="50"
+				invocations="182" avgMicrosecondsPerInvocation="276"
+				maxMicrosecondsPerInvocation="14136"
+				standardDeviationMicrosecondsPerInvocation="1094" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
-				totalMilliseconds="50" invocations="182"
-				avgMicrosecondsPerInvocation="277"
-				maxMicrosecondsPerInvocation="2724"
-				standardDeviationMicrosecondsPerInvocation="397" />
+				totalMilliseconds="49" invocations="182"
+				avgMicrosecondsPerInvocation="274"
+				maxMicrosecondsPerInvocation="2790"
+				standardDeviationMicrosecondsPerInvocation="382" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
+				totalMilliseconds="49" invocations="1075"
+				avgMicrosecondsPerInvocation="45"
+				maxMicrosecondsPerInvocation="4254"
+				standardDeviationMicrosecondsPerInvocation="194" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>

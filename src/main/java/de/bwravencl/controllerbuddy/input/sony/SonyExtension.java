@@ -31,6 +31,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
@@ -162,7 +163,7 @@ public abstract class SonyExtension {
 
 			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
 
-			if (jid != input.getJid())
+			if (jid != input.getController().jid)
 				return;
 
 			handleBattery(reportData);
@@ -220,21 +221,15 @@ public abstract class SonyExtension {
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final int hidReportPlatformOffset = Main.isWindows ? 1 : 0;
 
-	static HidDeviceInfo getHidDeviceInfo(final int jid, final String guid, final short productId,
+	static HidDeviceInfo getHidDeviceInfo(final ControllerInfo controller, final String guid, final short productId,
 			final String humanReadableName, final Logger log) {
 		final var devices = PureJavaHidApi.enumerateDevices().stream()
 				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
 						&& hidDeviceInfo.getProductId() == productId)
 				.collect(Collectors.toUnmodifiableList());
 
-		log.log(Level.INFO,
-				"Found " + devices.size() + " " + humanReadableName + " controller(s): " + devices.stream().map(d -> {
-					var deviceId = d.getDeviceId();
-					if (deviceId != null && deviceId.endsWith("\0"))
-						deviceId = deviceId.substring(0, deviceId.indexOf('\0'));
-
-					return deviceId;
-				}).collect(Collectors.joining(", ")));
+		log.log(Level.INFO, "Found " + devices.size() + " " + humanReadableName + " controller(s): "
+				+ devices.stream().map(SonyExtension::getPrintableDeviceId).collect(Collectors.joining(", ")));
 
 		final var count = devices.size();
 		if (count < 1)
@@ -246,22 +241,35 @@ public abstract class SonyExtension {
 			for (var i = GLFW.GLFW_JOYSTICK_1; i <= GLFW.GLFW_JOYSTICK_LAST; i++)
 				if (GLFW.glfwJoystickPresent(i) && guid.equals(GLFW.glfwGetJoystickGUID(i)))
 					presentJidsWithSameGuid.add(i);
-			deviceIndex = presentJidsWithSameGuid.indexOf(jid);
+			deviceIndex = presentJidsWithSameGuid.indexOf(controller.jid);
 		}
 
 		final var hidDeviceInfo = devices.get(deviceIndex);
 
-		log.log(Level.INFO, "Using " + humanReadableName + " controller: " + hidDeviceInfo.getDeviceId());
+		log.log(Level.INFO, Main.assembleControllerLoggingMessage(
+				"Using " + humanReadableName + " controller with ID " + getPrintableDeviceId(hidDeviceInfo) + " as",
+				controller));
 
 		return hidDeviceInfo;
 	}
 
-	public static SonyExtension getIfAvailable(final Input input, final int jid) {
-		final var dualShock4Extension = DualShock4Extension.getIfAvailable(input, jid);
+	public static SonyExtension getIfAvailable(final Input input, final ControllerInfo controller) {
+		final var dualShock4Extension = DualShock4Extension.getIfAvailable(input, controller);
 		if (dualShock4Extension != null)
 			return dualShock4Extension;
 
-		return DualSenseExtension.getIfAvailable(input, jid);
+		return DualSenseExtension.getIfAvailable(input, controller);
+	}
+
+	private static String getPrintableDeviceId(final HidDeviceInfo device) {
+		var deviceId = device.getDeviceId();
+		if (deviceId == null)
+			return "?";
+
+		if (deviceId.endsWith("\0"))
+			deviceId = deviceId.substring(0, deviceId.indexOf('\0'));
+
+		return deviceId;
 	}
 
 	static boolean isBluetoothConnection(final int reportLength) {
@@ -272,8 +280,8 @@ public abstract class SonyExtension {
 		return value < 0 ? Input.normalize(value, -128, -1, 0f, 1f) : Input.normalize(value, 0, 127, -1f, 0f);
 	}
 
-	final int jid;
 	final Input input;
+	final int jid;
 
 	HidDevice hidDevice;
 
@@ -307,9 +315,9 @@ public abstract class SonyExtension {
 	boolean ps;
 	boolean disconnected;
 
-	SonyExtension(final int jid, final Input input) {
-		this.jid = jid;
+	SonyExtension(final Input input, final int jid) {
 		this.input = input;
+		this.jid = jid;
 	}
 
 	public void deInit(final boolean disconnected) {

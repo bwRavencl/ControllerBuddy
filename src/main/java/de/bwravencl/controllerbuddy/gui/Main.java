@@ -602,7 +602,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedJid == controller.jid)
+			if (selectedController != null && selectedController.jid == controller.jid)
 				return;
 
 			setSelectedControllerAndUpdateInput(controller, input.isInitialized() ? input.getAxes() : null);
@@ -1287,7 +1287,7 @@ public final class Main implements SingletonApp {
 
 	private volatile Output output;
 
-	private int selectedJid = INVALID_JID;
+	private ControllerInfo selectedController;
 
 	private Input input;
 
@@ -1750,7 +1750,7 @@ public final class Main implements SingletonApp {
 		}
 
 		final var presentControllers = taskRunner.run(Main::getPresentControllers);
-		if (!isSelectedJidValid() && !presentControllers.isEmpty())
+		if (selectedController == null && !presentControllers.isEmpty())
 			setSelectedController(presentControllers.get(0));
 
 		final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
@@ -1758,8 +1758,8 @@ public final class Main implements SingletonApp {
 			final var lastControllerFound = lastControllerGuid != null ? lastControllerGuid.equals(controller.guid)
 					: false;
 
-			if (!isSelectedJidValid() || lastControllerFound)
-				selectedJid = controller.jid;
+			if (selectedController == null || lastControllerFound)
+				selectedController = controller;
 
 			if (lastControllerFound) {
 				log.log(Level.INFO, assembleControllerLoggingMessage("Selected previously used", controller));
@@ -1778,8 +1778,8 @@ public final class Main implements SingletonApp {
 				if (disconnected) {
 					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
-					if (selectedJid == jid) {
-						selectedJid = INVALID_JID;
+					if (selectedController.jid == jid) {
+						selectedController = null;
 						input.deInit(true);
 					}
 				} else if (event == GLFW.GLFW_CONNECTED)
@@ -1985,11 +1985,6 @@ public final class Main implements SingletonApp {
 		return frame;
 	}
 
-	public int getSelectedHotSwappingButtonId() {
-		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
-				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
-	}
-
 	Input getInput() {
 		return input;
 	}
@@ -2004,6 +1999,11 @@ public final class Main implements SingletonApp {
 
 	public Preferences getPreferences() {
 		return preferences;
+	}
+
+	public int getSelectedHotSwappingButtonId() {
+		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
+				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
 	}
 
 	public void handleOnScreenKeyboardModeChange() {
@@ -2162,10 +2162,6 @@ public final class Main implements SingletonApp {
 		return taskRunner.isTaskOfTypeRunning(LocalOutput.class);
 	}
 
-	private boolean isSelectedJidValid() {
-		return selectedJid >= GLFW.GLFW_JOYSTICK_1 && selectedJid <= GLFW.GLFW_JOYSTICK_LAST;
-	}
-
 	public boolean isServerRunning() {
 		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
 	}
@@ -2219,7 +2215,7 @@ public final class Main implements SingletonApp {
 							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				}
 
-				profileLoaded = input.setProfile(profile, input.getJid());
+				profileLoaded = input.setProfile(profile);
 				if (profileLoaded) {
 					saveLastProfile(file);
 					updateModesPanel();
@@ -2289,7 +2285,7 @@ public final class Main implements SingletonApp {
 		if (input != null)
 			input.deInit(false);
 
-		input = new Input(this, selectedJid, null);
+		input = new Input(this, selectedController, null);
 
 		loadedProfile = null;
 		updateTitleAndTooltip();
@@ -2304,8 +2300,8 @@ public final class Main implements SingletonApp {
 	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
 		final var controllerConnected = !presentControllers.isEmpty();
 		if (!controllerConnected)
-			selectedJid = INVALID_JID;
-		else if (!isSelectedJidValid())
+			selectedController = null;
+		else if (selectedController == null)
 			setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
@@ -2607,10 +2603,10 @@ public final class Main implements SingletonApp {
 	}
 
 	private void setSelectedController(final ControllerInfo controller) {
-		selectedJid = controller.jid;
+		selectedController = controller;
 
 		if (controller.guid != null) {
-			log.log(Level.INFO, "Selected controller: " + selectedJid + " (" + controller.guid + ")");
+			log.log(Level.INFO, "Selected controller: " + selectedController.jid + " (" + controller.guid + ")");
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
 		}
 	}
@@ -2627,10 +2623,10 @@ public final class Main implements SingletonApp {
 			previousProfile = input.getProfile();
 		}
 
-		input = new Input(Main.this, selectedJid, axes);
+		input = new Input(Main.this, selectedController, axes);
 
 		if (previousProfile != null)
-			input.setProfile(previousProfile, selectedJid);
+			input.setProfile(previousProfile);
 	}
 
 	public void setStatusBarText(final String text) {
@@ -2661,7 +2657,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void startLocal() {
-		if (!isSelectedJidValid())
+		if (selectedController == null)
 			return;
 
 		lastOutputType = OutputType.LOCAL;
@@ -2715,7 +2711,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void startServer() {
-		if (!isSelectedJidValid())
+		if (selectedController == null)
 			return;
 
 		lastOutputType = OutputType.SERVER;
@@ -2805,7 +2801,7 @@ public final class Main implements SingletonApp {
 		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
 			final var menuItem = deviceMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
-			if (selectedJid == action.controller.jid) {
+			if (selectedController.jid == action.controller.jid) {
 				menuItem.setSelected(true);
 				break;
 			}
@@ -3234,7 +3230,7 @@ public final class Main implements SingletonApp {
 	public void updateTitleAndTooltip() {
 		final String title;
 
-		if (!isSelectedJidValid())
+		if (selectedController == null)
 			title = strings.getString("APPLICATION_NAME");
 		else {
 			final String profile;

@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import org.lwjgl.glfw.GLFW;
 
+import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.PureJavaHidApi;
@@ -38,8 +39,8 @@ final class DualShock4Extension extends SonyExtension {
 
 	private static final Logger log = Logger.getLogger(DualShock4Extension.class.getName());
 
-	public static DualShock4Extension getIfAvailable(final Input input, final int jid) {
-		final var guid = GLFW.glfwGetJoystickGUID(jid);
+	public static DualShock4Extension getIfAvailable(final Input input, final ControllerInfo controller) {
+		final var guid = GLFW.glfwGetJoystickGUID(controller.jid);
 		if (guid == null)
 			return null;
 
@@ -55,10 +56,10 @@ final class DualShock4Extension extends SonyExtension {
 		} else
 			return null;
 
-		final var hidDeviceInfo = getHidDeviceInfo(jid, guid, productId, "DualShock 4", log);
+		final var hidDeviceInfo = getHidDeviceInfo(controller, guid, productId, "DualShock 4", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualShock4Extension(jid, input, hidDeviceInfo, connection);
+				return new DualShock4Extension(input, controller.jid, hidDeviceInfo, connection);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -66,9 +67,9 @@ final class DualShock4Extension extends SonyExtension {
 		return null;
 	}
 
-	private DualShock4Extension(final int jid, final Input input, final HidDeviceInfo hidDeviceInfo,
+	private DualShock4Extension(final Input input, final int jid, final HidDeviceInfo hidDeviceInfo,
 			final Connection connection) throws IOException {
-		super(jid, input);
+		super(input, jid);
 
 		try {
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

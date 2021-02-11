@@ -35,6 +35,7 @@ import org.lwjgl.glfw.GLFWGamepadState;
 import org.lwjgl.system.MemoryStack;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -123,7 +124,7 @@ public final class Input {
 	}
 
 	private final Main main;
-	private final int jid;
+	private final ControllerInfo controller;
 	private final EnumMap<VirtualAxis, Integer> axes;
 	private Profile profile;
 	private Output output;
@@ -152,9 +153,9 @@ public final class Input {
 	private boolean skipAxisInitialization;
 	private boolean initialized;
 
-	public Input(final Main main, final int jid, final EnumMap<VirtualAxis, Integer> axes) {
+	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;
-		this.jid = jid;
+		this.controller = controller;
 
 		skipAxisInitialization = axes != null;
 
@@ -194,6 +195,10 @@ public final class Input {
 		return buttons;
 	}
 
+	public ControllerInfo getController() {
+		return controller;
+	}
+
 	public int getCursorDeltaX() {
 		return cursorDeltaX;
 	}
@@ -216,10 +221,6 @@ public final class Input {
 
 	public Set<Integer> getDownUpMouseButtons() {
 		return downUpMouseButtons;
-	}
-
-	public int getJid() {
-		return jid;
 	}
 
 	public Main getMain() {
@@ -259,7 +260,7 @@ public final class Input {
 	}
 
 	public void init() {
-		sonyExtension = SonyExtension.getIfAvailable(this, jid);
+		sonyExtension = SonyExtension.getIfAvailable(this, controller);
 
 		final var presentControllers = Main.getPresentControllers();
 
@@ -268,13 +269,13 @@ public final class Input {
 
 			if (hotSwappingButtonId != HotSwappingButton.None.id) {
 				if (sonyExtension != null)
-					jidToSonyExtensionMap.put(jid, sonyExtension);
+					jidToSonyExtensionMap.put(controller.jid, sonyExtension);
 
 				for (final var controller : presentControllers) {
-					if (controller.jid == jid)
+					if (controller.jid == this.controller.jid)
 						continue;
 
-					final var sonyExtension = SonyExtension.getIfAvailable(this, controller.jid);
+					final var sonyExtension = SonyExtension.getIfAvailable(this, controller);
 					if (sonyExtension != null)
 						jidToSonyExtensionMap.put(controller.jid, sonyExtension);
 				}
@@ -333,7 +334,7 @@ public final class Input {
 			if (hotSwappingButtonId != HotSwappingButton.None.id
 					&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
 				for (final var controller : Main.getPresentControllers()) {
-					if (controller.jid == jid)
+					if (controller.jid == this.controller.jid)
 						continue;
 
 					final boolean gotState;
@@ -368,7 +369,7 @@ public final class Input {
 			if (sonyExtension != null)
 				gotState = sonyExtension.getGamepadState(state);
 			else
-				gotState = GLFW.glfwGetGamepadState(jid, state);
+				gotState = GLFW.glfwGetGamepadState(controller.jid, state);
 
 			if (!gotState)
 				return false;
@@ -581,7 +582,7 @@ public final class Input {
 		this.output = output;
 	}
 
-	public boolean setProfile(final Profile profile, final int jid) {
+	public boolean setProfile(final Profile profile) {
 		if (profile == null)
 			throw new IllegalArgumentException();
 
