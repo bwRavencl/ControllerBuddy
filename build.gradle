@@ -56,7 +56,7 @@ dependencies {
 			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion"
-	implementation	('org.apache.xmlgraphics:batik-swing:1.13') {
+	implementation	('org.apache.xmlgraphics:batik-swing:1.14') {
 		exclude group: 'xml-apis', module: 'xml-apis'
 	}
 	runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:natives-linux",
