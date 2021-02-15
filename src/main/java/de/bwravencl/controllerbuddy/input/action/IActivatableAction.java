@@ -28,7 +28,8 @@ public interface IActivatableAction<V extends Number> extends IInitializationAct
 
 	enum Activation {
 
-		REPEAT("DIRECTION_UP"), SINGLE_IMMEDIATELY("DIRECTION_DOWN"), SINGLE_ON_RELEASE("DIRECTION_LEFT");
+		REPEAT("ACTIVATION_REPEAT"), SINGLE_IMMEDIATELY("ACTIVATION_SINGLE_IMMEDIATELY"),
+		SINGLE_ON_RELEASE("ACTIVATION_SINGLE_ON_RELEASE");
 
 		private final String label;
 
