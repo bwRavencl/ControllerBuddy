@@ -25,20 +25,22 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 
 @Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
-public final class ButtonToAxisResetAction extends DescribableAction<Byte> implements IButtonToAction {
+public final class ButtonToAxisResetAction extends DescribableAction<Byte>
+		implements IButtonToAction, IActivatableAction<Byte> {
 
 	private static final float DEFAULT_RESET_VALUE = 0f;
 
 	private static final boolean DEFAULT_FLUID = false;
 
 	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
-	VirtualAxis virtualAxis = VirtualAxis.X;
+	private VirtualAxis virtualAxis = VirtualAxis.X;
 
 	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
 	private float resetValue = DEFAULT_RESET_VALUE;
@@ -46,10 +48,13 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte> imple
 	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 50)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	private transient boolean wasUp = true;
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	private Activation activation = Activation.SINGLE_IMMEDIATELY;
+
+	private transient Activatable activatable;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -57,19 +62,44 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte> imple
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
+	public void doAction(final Input input, final int component, final Byte value) {
+		final var hot = handleLongPress(input, component, value) != 0;
 
-		if (value == 0)
-			wasUp = true;
-		else if (wasUp) {
-			if (fluid)
-				input.moveAxis(virtualAxis, resetValue);
-			else
-				input.setAxis(virtualAxis, resetValue, false, null);
-
-			wasUp = false;
+		switch (activation) {
+		case REPEAT:
+			if (hot)
+				resetAxis(input);
+			break;
+		case SINGLE_IMMEDIATELY:
+			if (!hot)
+				activatable = Activatable.YES;
+			else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				resetAxis(input);
+			}
+			break;
+		case SINGLE_ON_RELEASE:
+			if (hot) {
+				if (activatable == Activatable.NO)
+					activatable = Activatable.YES;
+				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
+					activatable = Activatable.NO;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				resetAxis(input);
+			}
+			break;
 		}
+	}
+
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
+	}
+
+	@Override
+	public Activation getActivation() {
+		return activation;
 	}
 
 	@Override
@@ -95,6 +125,23 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte> imple
 	@Override
 	public boolean isLongPress() {
 		return longPress;
+	}
+
+	private void resetAxis(final Input input) {
+		if (fluid)
+			input.moveAxis(virtualAxis, resetValue);
+		else
+			input.setAxis(virtualAxis, resetValue, false, null);
+	}
+
+	@Override
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
+	}
+
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
 	}
 
 	public void setFluid(final boolean fluid) {
