@@ -79,6 +79,11 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			super(listData);
 
 			setCellRenderer(new CheckboxListCellRenderer<>());
+
+			for (final var mouseMotionListener : getMouseMotionListeners())
+				if (mouseMotionListener instanceof ListSelectionListener)
+					removeMouseMotionListener(mouseMotionListener);
+
 			setSelectionModel(new DefaultListSelectionModel() {
 
 				private static final long serialVersionUID = 8997996268575032389L;
