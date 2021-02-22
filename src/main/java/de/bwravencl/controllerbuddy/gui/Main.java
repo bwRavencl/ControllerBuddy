@@ -431,7 +431,7 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private final class NewAction extends AbstractAction {
+	private final class NewAction extends UnsavedChangesAwareAction {
 
 		private static final long serialVersionUID = 5703987691203427504L;
 
@@ -441,7 +441,7 @@ public final class Main implements SingletonApp {
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
+		protected void doAction(final ActionEvent e) {
 			newProfile();
 		}
 	}
@@ -465,7 +465,7 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private final class OpenAction extends AbstractAction {
+	private final class OpenAction extends UnsavedChangesAwareAction {
 
 		private static final long serialVersionUID = -8932510785275935297L;
 
@@ -475,7 +475,7 @@ public final class Main implements SingletonApp {
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
+		protected void doAction(final ActionEvent e) {
 			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 				loadProfile(profileFileChooser.getSelectedFile());
 		}
@@ -515,7 +515,7 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	private final class QuitAction extends AbstractAction {
+	private final class QuitAction extends UnsavedChangesAwareAction {
 
 		private static final long serialVersionUID = 8952460723177800923L;
 
@@ -525,7 +525,7 @@ public final class Main implements SingletonApp {
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
+		protected void doAction(final ActionEvent e) {
 			quit();
 		}
 	}
@@ -564,10 +564,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (currentFile != null)
-				saveProfile(currentFile, true);
-			else
-				saveProfileAs();
+			saveProfile();
 		}
 	}
 
@@ -1005,6 +1002,37 @@ public final class Main implements SingletonApp {
 		}
 	}
 
+	private abstract class UnsavedChangesAwareAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1387266903295357716L;
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (unsavedChanges) {
+				final var path = currentFile != null ? currentFile.getAbsolutePath() : strings.getString("UNTITLED");
+
+				final var selectedOption = JOptionPane.showConfirmDialog(frame,
+						MessageFormat.format(strings.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
+						strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+
+				switch (selectedOption) {
+				case JOptionPane.YES_OPTION:
+					saveProfile();
+					if (unsavedChanges)
+						return;
+				case JOptionPane.NO_OPTION:
+					break;
+				default:
+					return;
+				}
+			}
+
+			doAction(e);
+		}
+
+		protected abstract void doAction(final ActionEvent e);
+	}
+
 	private static final Options options = new Options();
 
 	private static final String SINGLETON_ID;
@@ -1051,8 +1079,8 @@ public final class Main implements SingletonApp {
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
 	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
-	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 
+	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 	private static final String OPTION_AUTOSTART = "autostart";
 
 	private static final String OPTION_PROFILE = "profile";
@@ -1113,8 +1141,6 @@ public final class Main implements SingletonApp {
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
 
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
-
-	private static final int INVALID_JID = GLFW.GLFW_JOYSTICK_1 - 1;
 
 	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
 
@@ -1870,7 +1896,7 @@ public final class Main implements SingletonApp {
 			htmlDocument.getDocumentElement().appendChild(headElement);
 
 			final var titleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "title");
-			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNSAVED");
+			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNTITLED");
 			titleElement.setTextContent(title);
 			headElement.appendChild(titleElement);
 
@@ -2288,6 +2314,7 @@ public final class Main implements SingletonApp {
 		input = new Input(this, selectedController, null);
 
 		loadedProfile = null;
+		unsavedChanges = false;
 		updateTitleAndTooltip();
 		updateModesPanel();
 		updateVisualizationPanel();
@@ -2534,6 +2561,13 @@ public final class Main implements SingletonApp {
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
 	}
 
+	private void saveProfile() {
+		if (currentFile != null)
+			saveProfile(currentFile, true);
+		else
+			saveProfileAs();
+	}
+
 	private void saveProfile(File file, final boolean saveAsLastProfile) {
 		input.reset();
 
@@ -2566,7 +2600,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void saveProfileAs() {
-		profileFileChooser.setSelectedFile(currentFile);
+		profileFileChooser.setSelectedFile(currentFile != null ? currentFile : new File("*." + PROFILE_FILE_EXTENSION));
 		if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
 			saveProfile(profileFileChooser.getSelectedFile(), true);
 	}
@@ -3233,13 +3267,9 @@ public final class Main implements SingletonApp {
 		if (selectedController == null)
 			title = strings.getString("APPLICATION_NAME");
 		else {
-			final String profile;
-			if (loadedProfile != null)
-				profile = (unsavedChanges ? "*" : "") + loadedProfile;
-			else
-				profile = strings.getString("UNSAVED");
-
-			title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profile);
+			final var profileTitle = (unsavedChanges ? "*" : "")
+					+ (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
+			title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle);
 		}
 
 		frame.setTitle(title);
