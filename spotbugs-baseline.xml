@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.2.0" sequence="0"
-	timestamp="1613084201084" analysisTimestamp="1613084201109"
-	release="0.19.62-3835598">
+	timestamp="1614009952795" analysisTimestamp="1614009952823"
+	release="0.19.69-0eb513d">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -87,6 +87,7 @@
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToMouseButtonAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToRelativeAxisAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\AxisToScrollAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToAxisResetAction$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToAxisResetAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToButtonAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToCursorAction.class</Jar>
@@ -194,35 +195,35 @@
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.4\c51c00206bb913cd8612b24abd9fa98ae89719b1\commons-cli-1.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.0-rc3\a5b5311234f6a98c0a4dc15a7a02053ebd0879d\flatlaf-1.0-rc3.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.0\a807c984f00b683c65503803720821f12e136e93\flatlaf-1.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.6\9180733b7df8542621dc12e21e87557e8c99b8cb\gson-2.8.6.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.102\675fb5745b5d6fd5f7eda3628d91aade981f2e6c\classgraph-4.8.102.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.5.0\af38e7c4d0fc73c23ecd785443705bfdee5b90bf\jna-platform-5.5.0.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.5.0\e0845217c4907822403912ad6828d8e0b256208\jna-5.5.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.7.0\7b3683e4fceb28433c1365250dbc1f58e4c1df2c\jna-platform-5.7.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.7.0\a04e3db7cf0011d1b6a4bcfaee30ab20f077014b\jna-5.7.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.3\5e520d5c290c8b012545a8d34fa5db5ab051ea53\lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.3\bdd534a323d0c8f54969b95e424b6ac8984f7d6e\lwjgl-opengl-3.2.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.2.3\ea19076fc886f2e8a95b50a7f95401606b5282ff\lwjgl-openvr-3.2.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.2.3\17a59ba0fe8d474ec9dbe0d5db40d2cfe59c4c08\lwjgl-3.2.3.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-swing\1.13\232653b04333483431cce9cdece2978fc6577c27\batik-swing-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.13\fe5e35b253b859e6a0a67fe3595bc8c3ad6faa52\batik-bridge-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.13\4579ef2a459f3574bd85236892c6af9c4d821ef0\batik-script-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.13\a5d06a4fbaf9cf2015c76d95d9a5dcf3a5bcf9e2\batik-anim-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gvt\1.13\e324b1b5bb23649c67579b8c2ee45f33de42e539\batik-gvt-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-svg-dom\1.13\ad16f601df77e9230a5a6a78ec7bfaf3ee2767d4\batik-svg-dom-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-parser\1.13\33169dfb1155b76705b8640a1aa9a222564b3a62\batik-parser-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-awt-util\1.13\d6dca71c2e3e48901a5a3cab9477f0b7a7c53c8\batik-awt-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-dom\1.13\818605a4cffadb5ec0db39b2f560c2206d65f691\batik-dom-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-css\1.13\90d83f11998260ad0f7ac784f90181f41ccd5bcd\batik-css-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-ext\1.13\ea55108b070051c5440613cfbbe91414010d183e\batik-ext-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gui-util\1.13\a74a998205a316ff1ab2cab5240c9973de5fda69\batik-gui-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-xml\1.13\1384efa56d6047a6d87e955a3a81a8e85061a74d\batik-xml-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-util\1.13\341818ceb5f7088c9ff5b35fac419ad9a74d8b6f\batik-util-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-constants\1.13\2778851f7c8e7023578e7b76c4e4f11e4b183a13\batik-constants-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-i18n\1.13\e08aab4a78a5825144d7f1772356c0ee059a8d46\batik-i18n-1.13.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-shared-resources\1.13\5b886d1a3327b1bf09e377d359c5d2392cccfed0\batik-shared-resources-1.13.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-swing\1.14\e73ec76aa7d5b0f01aa47a9970d9fc246c0821e7\batik-swing-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.14\5833c8b8dc292081e0db6bbaee935e7e1391daaf\batik-bridge-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.14\f39a410e0cb936d0538c4a7411e1ae45c0d0a10a\batik-script-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.14\135d69b4deb4569237e9ee9c508a13ba407a77bb\batik-anim-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gvt\1.14\93aacfbe75655c2900c9fb069ffa059370366c78\batik-gvt-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-svg-dom\1.14\916c216454503413ed4fc76dbfac55b30bbcae2b\batik-svg-dom-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-parser\1.14\4ac928fd781673c0b6a181fabaa89f0ee3b32f28\batik-parser-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-awt-util\1.14\8f30e4cfc76626e7786ce0991df351cd91cddec6\batik-awt-util-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-dom\1.14\66943d7b34766d0d270cce9c61fba4d769362af\batik-dom-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-css\1.14\3118d46f4879ec08c6c6471c7c0825652ed659ee\batik-css-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-ext\1.14\79fe8cc37676e7af4c85f2f7fd51e17f46bc75ed\batik-ext-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gui-util\1.14\4657a260ef8b6819d135b2d7c15fc0b97fc802c0\batik-gui-util-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-xml\1.14\b78b3e2f87579f02dcc342a147017cce8fc0ffc6\batik-xml-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-util\1.14\7ca55c864e5ddd690ba07f44e3ba8e68e9048a02\batik-util-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-constants\1.14\371acf696982f1c8e2689f5899b4e8453ccd74ff\batik-constants-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-i18n\1.14\a4e7b0cda9132904f21b25ab29a0b73e1867e7fd\batik-i18n-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-shared-resources\1.14\42e9d6345952575e8b2f4ee26108b2811c334305\batik-shared-resources-1.14.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xml-apis\xml-apis-ext\1.3.04\41a8b86b358e87f3f13cf46069721719105aff66\xml-apis-ext-1.3.04.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.4\8d261df049a23d40a053d2700399ea76080fe0a8\xmlgraphics-commons-2.4.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.6\8779b8d8f426f24fdb4a512f8bc4248cb3775bd2\xmlgraphics-commons-2.6.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xalan\xalan\2.7.2\d55d3f02a56ec4c25695fe67e1334ff8c2ecea23\xalan-2.7.2.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\1.3.1\b90b6ac57cf27a2858eaa490d02ba7945d18ca7b\commons-io-1.3.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.0.4\f029a2aefe2b3e1517573c580f948caac31b1056\commons-logging-1.0.4.jar</AuxClasspathEntry>
@@ -2782,10 +2783,10 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Thu, 11 Feb 2021 23:56:41 +0100" total_classes="189"
-		referenced_classes="995" total_bugs="42" total_size="8604"
+		timestamp="Mon, 22 Feb 2021 17:05:52 +0100" total_classes="190"
+		referenced_classes="996" total_bugs="42" total_size="8637"
 		num_packages="10" java_version="15.0.2" vm_version="15.0.2+7-27"
-		cpu_seconds="30.09" clock_seconds="6.74" peak_mbytes="580.29"
+		cpu_seconds="31.53" clock_seconds="7.27" peak_mbytes="563.89"
 		alloc_mbytes="512.00" gc_seconds="0.12" priority_3="25"
 		priority_2="15" priority_1="2">
 		<FileStats path="com/oracle/si/Singleton.java" bugCount="0"
@@ -2851,7 +2852,7 @@ object is stored in this field.</p>
 			bugCount="0" size="38" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToAxisResetAction.java"
-			bugCount="0" size="53" />
+			bugCount="0" size="82" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToButtonAction.java"
 			bugCount="0" size="18" />
@@ -2890,7 +2891,7 @@ object is stored in this field.</p>
 			bugCount="0" size="12" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/IActivatableAction.java"
-			bugCount="0" size="39" />
+			bugCount="0" size="40" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/IAxisToAction.java"
 			bugCount="0" size="1" />
@@ -2977,7 +2978,7 @@ object is stored in this field.</p>
 			bugCount="0" size="12" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java"
-			bugCount="0" size="114" />
+			bugCount="0" size="117" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/gui/LockKeyEditorBuilder.java"
 			bugCount="0" size="9" />
@@ -3338,7 +3339,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.action" total_bugs="2"
-			total_types="41" total_size="1144" priority_2="2">
+			total_types="42" total_size="1174" priority_2="2">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.AxisToAxisAction"
 				sourceFile="AxisToAxisAction.java" interface="false" size="40"
@@ -3370,7 +3371,11 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToAxisResetAction"
 				sourceFile="ButtonToAxisResetAction.java" interface="false"
-				size="53" bugs="0" />
+				size="78" bugs="0" />
+			<ClassStats
+				class="de.bwravencl.controllerbuddy.input.action.ButtonToAxisResetAction$1"
+				sourceFile="ButtonToAxisResetAction.java" interface="false" size="4"
+				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction"
 				sourceFile="ButtonToButtonAction.java" interface="false" size="18"
@@ -3440,7 +3445,7 @@ object is stored in this field.</p>
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.IActivatableAction$Activation"
-				sourceFile="IActivatableAction.java" interface="false" size="18"
+				sourceFile="IActivatableAction.java" interface="false" size="19"
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.IAxisToAction"
@@ -3513,7 +3518,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.action.gui"
-			total_bugs="0" total_types="39" total_size="564">
+			total_bugs="0" total_types="39" total_size="567">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder"
 				sourceFile="ActionsEditorBuilder.java" interface="false" size="9"
@@ -3605,7 +3610,7 @@ object is stored in this field.</p>
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
-				sourceFile="KeystrokeEditorBuilder.java" interface="false" size="7"
+				sourceFile="KeystrokeEditorBuilder.java" interface="false" size="10"
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList$1"
@@ -3765,158 +3770,154 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="726" invocations="3875"
-				avgMicrosecondsPerInvocation="187"
-				maxMicrosecondsPerInvocation="21565"
-				standardDeviationMicrosecondsPerInvocation="628" />
+				totalMilliseconds="820" invocations="3879"
+				avgMicrosecondsPerInvocation="211"
+				maxMicrosecondsPerInvocation="19024"
+				standardDeviationMicrosecondsPerInvocation="653" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="433" invocations="995"
-				avgMicrosecondsPerInvocation="435"
-				maxMicrosecondsPerInvocation="21108"
-				standardDeviationMicrosecondsPerInvocation="1104" />
+				totalMilliseconds="417" invocations="996"
+				avgMicrosecondsPerInvocation="419"
+				maxMicrosecondsPerInvocation="20459"
+				standardDeviationMicrosecondsPerInvocation="1222" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="400" invocations="995"
-				avgMicrosecondsPerInvocation="402"
-				maxMicrosecondsPerInvocation="20812"
-				standardDeviationMicrosecondsPerInvocation="992" />
+				totalMilliseconds="394" invocations="996"
+				avgMicrosecondsPerInvocation="396"
+				maxMicrosecondsPerInvocation="19315"
+				standardDeviationMicrosecondsPerInvocation="979" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="299" invocations="1128"
-				avgMicrosecondsPerInvocation="265"
-				maxMicrosecondsPerInvocation="18676"
-				standardDeviationMicrosecondsPerInvocation="1342" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="253" invocations="2606"
-				avgMicrosecondsPerInvocation="97"
-				maxMicrosecondsPerInvocation="6148"
-				standardDeviationMicrosecondsPerInvocation="213" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="250" invocations="998"
-				avgMicrosecondsPerInvocation="250"
-				maxMicrosecondsPerInvocation="19028"
-				standardDeviationMicrosecondsPerInvocation="1188" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="235" invocations="1075"
-				avgMicrosecondsPerInvocation="219"
-				maxMicrosecondsPerInvocation="18018"
-				standardDeviationMicrosecondsPerInvocation="985" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="223" invocations="1042"
-				avgMicrosecondsPerInvocation="214"
-				maxMicrosecondsPerInvocation="23417"
-				standardDeviationMicrosecondsPerInvocation="1153" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="215" invocations="1115"
-				avgMicrosecondsPerInvocation="192"
-				maxMicrosecondsPerInvocation="13176"
-				standardDeviationMicrosecondsPerInvocation="773" />
+				totalMilliseconds="299" invocations="1134"
+				avgMicrosecondsPerInvocation="264"
+				maxMicrosecondsPerInvocation="16605"
+				standardDeviationMicrosecondsPerInvocation="1310" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="174" invocations="3884"
-				avgMicrosecondsPerInvocation="44"
-				maxMicrosecondsPerInvocation="1283"
-				standardDeviationMicrosecondsPerInvocation="51" />
+				totalMilliseconds="275" invocations="3888"
+				avgMicrosecondsPerInvocation="70"
+				maxMicrosecondsPerInvocation="2384"
+				standardDeviationMicrosecondsPerInvocation="96" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
+				totalMilliseconds="250" invocations="2614"
+				avgMicrosecondsPerInvocation="95"
+				maxMicrosecondsPerInvocation="6432"
+				standardDeviationMicrosecondsPerInvocation="247" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
+				totalMilliseconds="235" invocations="1081"
+				avgMicrosecondsPerInvocation="218"
+				maxMicrosecondsPerInvocation="17488"
+				standardDeviationMicrosecondsPerInvocation="936" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
+				totalMilliseconds="229" invocations="1004"
+				avgMicrosecondsPerInvocation="228"
+				maxMicrosecondsPerInvocation="35514"
+				standardDeviationMicrosecondsPerInvocation="1288" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
+				totalMilliseconds="221" invocations="1121"
+				avgMicrosecondsPerInvocation="197"
+				maxMicrosecondsPerInvocation="14188"
+				standardDeviationMicrosecondsPerInvocation="822" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
+				totalMilliseconds="205" invocations="1048"
+				avgMicrosecondsPerInvocation="196"
+				maxMicrosecondsPerInvocation="22905"
+				standardDeviationMicrosecondsPerInvocation="1018" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="170" invocations="995"
-				avgMicrosecondsPerInvocation="171"
-				maxMicrosecondsPerInvocation="14118"
-				standardDeviationMicrosecondsPerInvocation="704" />
+				totalMilliseconds="159" invocations="996"
+				avgMicrosecondsPerInvocation="160"
+				maxMicrosecondsPerInvocation="11225"
+				standardDeviationMicrosecondsPerInvocation="567" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="114" invocations="834"
-				avgMicrosecondsPerInvocation="137"
-				maxMicrosecondsPerInvocation="7658"
-				standardDeviationMicrosecondsPerInvocation="478" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="114" invocations="995"
-				avgMicrosecondsPerInvocation="115"
-				maxMicrosecondsPerInvocation="13898"
-				standardDeviationMicrosecondsPerInvocation="488" />
+				totalMilliseconds="118" invocations="836"
+				avgMicrosecondsPerInvocation="141"
+				maxMicrosecondsPerInvocation="5532"
+				standardDeviationMicrosecondsPerInvocation="430" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="111" invocations="1075"
-				avgMicrosecondsPerInvocation="103"
-				maxMicrosecondsPerInvocation="8562"
-				standardDeviationMicrosecondsPerInvocation="403" />
+				totalMilliseconds="115" invocations="1081"
+				avgMicrosecondsPerInvocation="106"
+				maxMicrosecondsPerInvocation="7496"
+				standardDeviationMicrosecondsPerInvocation="356" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
-				totalMilliseconds="105" invocations="1195"
-				avgMicrosecondsPerInvocation="88"
-				maxMicrosecondsPerInvocation="10652"
-				standardDeviationMicrosecondsPerInvocation="340" />
+				totalMilliseconds="111" invocations="1196"
+				avgMicrosecondsPerInvocation="93"
+				maxMicrosecondsPerInvocation="10678"
+				standardDeviationMicrosecondsPerInvocation="349" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="87" invocations="995"
-				avgMicrosecondsPerInvocation="88"
-				maxMicrosecondsPerInvocation="11602"
-				standardDeviationMicrosecondsPerInvocation="391" />
+				name="edu.umd.cs.findbugs.detect.CalledMethods"
+				totalMilliseconds="110" invocations="996"
+				avgMicrosecondsPerInvocation="110"
+				maxMicrosecondsPerInvocation="9966"
+				standardDeviationMicrosecondsPerInvocation="393" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="84" invocations="995"
+				totalMilliseconds="84" invocations="996"
 				avgMicrosecondsPerInvocation="85"
-				maxMicrosecondsPerInvocation="6239"
-				standardDeviationMicrosecondsPerInvocation="270" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="74" invocations="995"
-				avgMicrosecondsPerInvocation="75"
-				maxMicrosecondsPerInvocation="3188"
-				standardDeviationMicrosecondsPerInvocation="222" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
-				totalMilliseconds="67" invocations="995"
-				avgMicrosecondsPerInvocation="67"
-				maxMicrosecondsPerInvocation="3425"
-				standardDeviationMicrosecondsPerInvocation="227" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="66" invocations="3785"
-				avgMicrosecondsPerInvocation="17" maxMicrosecondsPerInvocation="857"
-				standardDeviationMicrosecondsPerInvocation="38" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
-				totalMilliseconds="60" invocations="1142"
-				avgMicrosecondsPerInvocation="53"
-				maxMicrosecondsPerInvocation="29635"
-				standardDeviationMicrosecondsPerInvocation="877" />
+				maxMicrosecondsPerInvocation="5253"
+				standardDeviationMicrosecondsPerInvocation="266" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="60" invocations="995"
-				avgMicrosecondsPerInvocation="61"
-				maxMicrosecondsPerInvocation="3866"
-				standardDeviationMicrosecondsPerInvocation="190" />
+				totalMilliseconds="75" invocations="996"
+				avgMicrosecondsPerInvocation="75"
+				maxMicrosecondsPerInvocation="14449"
+				standardDeviationMicrosecondsPerInvocation="502" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="57" invocations="995"
-				avgMicrosecondsPerInvocation="57"
-				maxMicrosecondsPerInvocation="6018"
-				standardDeviationMicrosecondsPerInvocation="372" />
+				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
+				totalMilliseconds="74" invocations="996"
+				avgMicrosecondsPerInvocation="75"
+				maxMicrosecondsPerInvocation="1921"
+				standardDeviationMicrosecondsPerInvocation="144" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.DumbMethods" totalMilliseconds="50"
-				invocations="182" avgMicrosecondsPerInvocation="276"
-				maxMicrosecondsPerInvocation="14136"
-				standardDeviationMicrosecondsPerInvocation="1094" />
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
+				totalMilliseconds="74" invocations="1148"
+				avgMicrosecondsPerInvocation="64"
+				maxMicrosecondsPerInvocation="41635"
+				standardDeviationMicrosecondsPerInvocation="1228" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
-				totalMilliseconds="49" invocations="182"
-				avgMicrosecondsPerInvocation="274"
-				maxMicrosecondsPerInvocation="2790"
-				standardDeviationMicrosecondsPerInvocation="382" />
+				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
+				totalMilliseconds="72" invocations="996"
+				avgMicrosecondsPerInvocation="72"
+				maxMicrosecondsPerInvocation="3099"
+				standardDeviationMicrosecondsPerInvocation="216" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.util.TopologicalSort"
+				totalMilliseconds="68" invocations="3789"
+				avgMicrosecondsPerInvocation="17"
+				maxMicrosecondsPerInvocation="1437"
+				standardDeviationMicrosecondsPerInvocation="42" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
+				totalMilliseconds="64" invocations="996"
+				avgMicrosecondsPerInvocation="64"
+				maxMicrosecondsPerInvocation="3254"
+				standardDeviationMicrosecondsPerInvocation="215" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="49" invocations="1075"
-				avgMicrosecondsPerInvocation="45"
-				maxMicrosecondsPerInvocation="4254"
-				standardDeviationMicrosecondsPerInvocation="194" />
+				totalMilliseconds="61" invocations="1081"
+				avgMicrosecondsPerInvocation="57"
+				maxMicrosecondsPerInvocation="8465"
+				standardDeviationMicrosecondsPerInvocation="324" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
+				totalMilliseconds="50" invocations="996"
+				avgMicrosecondsPerInvocation="50"
+				maxMicrosecondsPerInvocation="6896"
+				standardDeviationMicrosecondsPerInvocation="361" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
+				totalMilliseconds="49" invocations="183"
+				avgMicrosecondsPerInvocation="272"
+				maxMicrosecondsPerInvocation="2487"
+				standardDeviationMicrosecondsPerInvocation="389" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>
