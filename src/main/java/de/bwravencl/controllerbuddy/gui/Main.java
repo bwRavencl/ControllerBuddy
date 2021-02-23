@@ -326,7 +326,7 @@ public final class Main implements SingletonApp {
 				filename = profileFile.getName();
 				filename = filename.substring(0, filename.lastIndexOf('.'));
 			} else
-				filename = "";
+				filename = "*";
 
 			setSelectedFile(new File(filename + ".html"));
 		}
@@ -1907,23 +1907,35 @@ public final class Main implements SingletonApp {
 			profileHeaderElement.setTextContent(title);
 			bodyElement.appendChild(profileHeaderElement);
 
+			final var labelElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "label");
+			labelElement.setTextContent("Mode: ");
+			labelElement.setAttribute("style", "font-size:1.17em;font-weight:bold");
+			bodyElement.appendChild(labelElement);
+
+			final var selectElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "select");
+			selectElement.setAttribute("onchange",
+					"Array.from(document.getElementsByClassName('svg-div')).forEach(e=>e.style.display=(e.id===this.value?'block':'none'))");
+			selectElement.setAttribute("style", "vertical-align:text-bottom");
+			labelElement.appendChild(selectElement);
+
 			for (final var mode : input.getProfile().getModes()) {
-				final var modeDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
-				modeDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px");
-				bodyElement.appendChild(modeDivElement);
-
-				final var modeHeaderElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "h2");
-				modeHeaderElement
-						.setTextContent(MessageFormat.format(strings.getString("MODE_NAME"), mode.getDescription()));
-				modeDivElement.appendChild(modeHeaderElement);
-
 				final var svgDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
-				svgDivElement.setAttribute("style", "height:450px");
-				modeDivElement.appendChild(svgDivElement);
+				final var svgDivElementId = mode.getUuid().toString();
+
+				svgDivElement.setAttribute("id", svgDivElementId);
+				svgDivElement.setAttribute("class", "svg-div");
+				svgDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px;height:450px;display:"
+						+ (Profile.defaultMode.equals(mode) ? "block" : "none"));
+				bodyElement.appendChild(svgDivElement);
 
 				final var svgDocument = generateSvgDocument(mode, false);
 				final var importedSvgNode = htmlDocument.importNode(svgDocument.getRootElement(), true);
 				svgDivElement.appendChild(importedSvgNode);
+
+				final var optionElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "option");
+				optionElement.setAttribute("value", svgDivElementId);
+				optionElement.setTextContent(mode.getDescription());
+				selectElement.appendChild(optionElement);
 			}
 
 			final var transformerFactory = TransformerFactory.newInstance();

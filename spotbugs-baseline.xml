@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.2.0" sequence="0"
-	timestamp="1614009952795" analysisTimestamp="1614009952823"
-	release="0.19.69-0eb513d">
+	timestamp="1614117586818" analysisTimestamp="1614117586845"
+	release="0.19.72-f7277cd">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -69,6 +69,7 @@
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StopLocalAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$StopServerAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$TaskRunner.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main$UnsavedChangesAwareAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton$1.class</Jar>
@@ -458,11 +459,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3270" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1036"
+				end="3312" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3270]</Message>
+				<Message>At Main.java:[lines 1036-3312]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -680,11 +681,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3270" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1036"
+				end="3312" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3270]</Message>
+				<Message>At Main.java:[lines 1036-3312]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -933,19 +934,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3270" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1036"
+				end="3312" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3270]</Message>
+				<Message>At Main.java:[lines 1036-3312]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="terminate" signature="(I)V" isStatic="true" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1278"
-				end="1280" startBytecode="0" endBytecode="69" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1304"
+				end="1306" startBytecode="0" endBytecode="69" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -953,11 +954,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="1279" end="1279" startBytecode="16" endBytecode="16"
+			start="1305" end="1305" startBytecode="16" endBytecode="16"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 1279]</Message>
+			<Message>At Main.java:[line 1305]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DM_GC" priority="1" rank="16"
@@ -972,19 +973,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3270" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1036"
+				end="3312" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3270]</Message>
+				<Message>At Main.java:[lines 1036-3312]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(Z)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2733"
-				end="2741" startBytecode="0" endBytecode="114"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2779"
+				end="2787" startBytecode="0" endBytecode="114"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -993,11 +994,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2740" end="2740" startBytecode="25" endBytecode="25"
+			start="2786" end="2786" startBytecode="25" endBytecode="25"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2740]</Message>
+			<Message>At Main.java:[line 2786]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1158,10 +1159,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="878" end="1005" sourcefile="Main.java"
+				start="875" end="1002" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 878-1005]</Message>
+				<Message>At Main.java:[lines 875-1002]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1170,7 +1171,7 @@
 			name="enterLoop" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="889" end="924" startBytecode="0" endBytecode="544"
+				start="886" end="921" startBytecode="0" endBytecode="544"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1179,11 +1180,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="910" end="910" startBytecode="94"
+			primary="true" start="907" end="907" startBytecode="94"
 			endBytecode="94" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 910]</Message>
+			<Message>At Main.java:[line 907]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="UW_UNCOND_WAIT" priority="2" rank="14"
@@ -1198,10 +1199,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="878" end="1005" sourcefile="Main.java"
+				start="875" end="1002" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 878-1005]</Message>
+				<Message>At Main.java:[lines 875-1002]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1212,7 +1213,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="938" end="958" startBytecode="0" endBytecode="272"
+				start="935" end="955" startBytecode="0" endBytecode="272"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1221,11 +1222,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="951" end="951" startBytecode="37"
+			primary="true" start="948" end="948" startBytecode="37"
 			endBytecode="37" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 951]</Message>
+			<Message>At Main.java:[line 948]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="WA_NOT_IN_LOOP" priority="2" rank="14"
@@ -1240,10 +1241,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="878" end="1005" sourcefile="Main.java"
+				start="875" end="1002" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 878-1005]</Message>
+				<Message>At Main.java:[lines 875-1002]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1254,7 +1255,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="938" end="958" startBytecode="0" endBytecode="272"
+				start="935" end="955" startBytecode="0" endBytecode="272"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1263,11 +1264,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="951" end="951" startBytecode="37"
+			primary="true" start="948" end="948" startBytecode="37"
 			endBytecode="37" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 951]</Message>
+			<Message>At Main.java:[line 948]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -1364,11 +1365,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1008"
-				end="3270" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1036"
+				end="3312" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1008-3270]</Message>
+				<Message>At Main.java:[lines 1036-3312]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -2783,10 +2784,10 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Mon, 22 Feb 2021 17:05:52 +0100" total_classes="190"
-		referenced_classes="996" total_bugs="42" total_size="8637"
+		timestamp="Tue, 23 Feb 2021 22:59:46 +0100" total_classes="191"
+		referenced_classes="997" total_bugs="42" total_size="8668"
 		num_packages="10" java_version="15.0.2" vm_version="15.0.2+7-27"
-		cpu_seconds="31.53" clock_seconds="7.27" peak_mbytes="563.89"
+		cpu_seconds="30.03" clock_seconds="7.11" peak_mbytes="581.68"
 		alloc_mbytes="512.00" gc_seconds="0.12" priority_3="25"
 		priority_2="15" priority_1="2">
 		<FileStats path="com/oracle/si/Singleton.java" bugCount="0"
@@ -2801,7 +2802,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0"
 			size="106" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="8" size="2257" bugHash="1fb23e9e5923fa8bb447f263e8e6c253" />
+			bugCount="8" size="2288" bugHash="5bd590b3cdfd7225e5ba56271fc9dc04" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="2" size="385" bugHash="bee45d302ca5c0ac7a60e01da28b06f1" />
@@ -3070,7 +3071,7 @@ object is stored in this field.</p>
 				sourceFile="Singleton.java" interface="false" size="82" bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.gui"
-			total_bugs="23" total_types="66" total_size="3788" priority_3="17"
+			total_bugs="23" total_types="67" total_size="3819" priority_3="17"
 			priority_2="5" priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent"
@@ -3151,7 +3152,7 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				sourceFile="GuiUtils.java" interface="false" size="28" bugs="0" />
 			<ClassStats class="de.bwravencl.controllerbuddy.gui.Main"
-				sourceFile="Main.java" interface="false" size="1560" bugs="2"
+				sourceFile="Main.java" interface="false" size="1573" bugs="2"
 				priority_3="1" priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$1"
@@ -3221,7 +3222,7 @@ object is stored in this field.</p>
 				sourceFile="Main.java" interface="false" size="17" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SaveAction"
-				sourceFile="Main.java" interface="false" size="13" bugs="0" />
+				sourceFile="Main.java" interface="false" size="11" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction"
 				sourceFile="Main.java" interface="false" size="11" bugs="0" />
@@ -3271,6 +3272,9 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
 				sourceFile="Main.java" interface="false" size="87" bugs="3"
 				priority_2="3" />
+			<ClassStats
+				class="de.bwravencl.controllerbuddy.gui.Main$UnsavedChangesAwareAction"
+				sourceFile="Main.java" interface="false" size="20" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				sourceFile="OnScreenKeyboard.java" interface="false" size="192"
@@ -3770,154 +3774,148 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="820" invocations="3879"
-				avgMicrosecondsPerInvocation="211"
-				maxMicrosecondsPerInvocation="19024"
-				standardDeviationMicrosecondsPerInvocation="653" />
+				totalMilliseconds="777" invocations="3880"
+				avgMicrosecondsPerInvocation="200"
+				maxMicrosecondsPerInvocation="19032"
+				standardDeviationMicrosecondsPerInvocation="645" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="417" invocations="996"
-				avgMicrosecondsPerInvocation="419"
-				maxMicrosecondsPerInvocation="20459"
-				standardDeviationMicrosecondsPerInvocation="1222" />
+				totalMilliseconds="389" invocations="997"
+				avgMicrosecondsPerInvocation="390"
+				maxMicrosecondsPerInvocation="16426"
+				standardDeviationMicrosecondsPerInvocation="1009" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="394" invocations="996"
-				avgMicrosecondsPerInvocation="396"
-				maxMicrosecondsPerInvocation="19315"
-				standardDeviationMicrosecondsPerInvocation="979" />
+				totalMilliseconds="383" invocations="997"
+				avgMicrosecondsPerInvocation="384"
+				maxMicrosecondsPerInvocation="17827"
+				standardDeviationMicrosecondsPerInvocation="1008" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="299" invocations="1134"
-				avgMicrosecondsPerInvocation="264"
-				maxMicrosecondsPerInvocation="16605"
-				standardDeviationMicrosecondsPerInvocation="1310" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="275" invocations="3888"
-				avgMicrosecondsPerInvocation="70"
-				maxMicrosecondsPerInvocation="2384"
-				standardDeviationMicrosecondsPerInvocation="96" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="250" invocations="2614"
-				avgMicrosecondsPerInvocation="95"
-				maxMicrosecondsPerInvocation="6432"
-				standardDeviationMicrosecondsPerInvocation="247" />
+				totalMilliseconds="310" invocations="1137"
+				avgMicrosecondsPerInvocation="273"
+				maxMicrosecondsPerInvocation="17840"
+				standardDeviationMicrosecondsPerInvocation="1336" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="235" invocations="1081"
-				avgMicrosecondsPerInvocation="218"
-				maxMicrosecondsPerInvocation="17488"
-				standardDeviationMicrosecondsPerInvocation="936" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="229" invocations="1004"
-				avgMicrosecondsPerInvocation="228"
-				maxMicrosecondsPerInvocation="35514"
-				standardDeviationMicrosecondsPerInvocation="1288" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="221" invocations="1121"
-				avgMicrosecondsPerInvocation="197"
-				maxMicrosecondsPerInvocation="14188"
-				standardDeviationMicrosecondsPerInvocation="822" />
+				totalMilliseconds="256" invocations="1084"
+				avgMicrosecondsPerInvocation="236"
+				maxMicrosecondsPerInvocation="25816"
+				standardDeviationMicrosecondsPerInvocation="1160" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="205" invocations="1048"
-				avgMicrosecondsPerInvocation="196"
-				maxMicrosecondsPerInvocation="22905"
-				standardDeviationMicrosecondsPerInvocation="1018" />
+				totalMilliseconds="245" invocations="1051"
+				avgMicrosecondsPerInvocation="233"
+				maxMicrosecondsPerInvocation="29330"
+				standardDeviationMicrosecondsPerInvocation="1396" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
+				totalMilliseconds="244" invocations="1007"
+				avgMicrosecondsPerInvocation="242"
+				maxMicrosecondsPerInvocation="21084"
+				standardDeviationMicrosecondsPerInvocation="1107" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
+				totalMilliseconds="228" invocations="2617"
+				avgMicrosecondsPerInvocation="87"
+				maxMicrosecondsPerInvocation="4524"
+				standardDeviationMicrosecondsPerInvocation="186" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
+				totalMilliseconds="218" invocations="1124"
+				avgMicrosecondsPerInvocation="194"
+				maxMicrosecondsPerInvocation="12581"
+				standardDeviationMicrosecondsPerInvocation="730" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
+				totalMilliseconds="209" invocations="3889"
+				avgMicrosecondsPerInvocation="53"
+				maxMicrosecondsPerInvocation="1359"
+				standardDeviationMicrosecondsPerInvocation="63" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="159" invocations="996"
-				avgMicrosecondsPerInvocation="160"
-				maxMicrosecondsPerInvocation="11225"
-				standardDeviationMicrosecondsPerInvocation="567" />
+				totalMilliseconds="150" invocations="997"
+				avgMicrosecondsPerInvocation="151"
+				maxMicrosecondsPerInvocation="8855"
+				standardDeviationMicrosecondsPerInvocation="458" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="118" invocations="836"
-				avgMicrosecondsPerInvocation="141"
-				maxMicrosecondsPerInvocation="5532"
-				standardDeviationMicrosecondsPerInvocation="430" />
+				totalMilliseconds="134" invocations="839"
+				avgMicrosecondsPerInvocation="160"
+				maxMicrosecondsPerInvocation="12328"
+				standardDeviationMicrosecondsPerInvocation="619" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="115" invocations="1081"
-				avgMicrosecondsPerInvocation="106"
-				maxMicrosecondsPerInvocation="7496"
-				standardDeviationMicrosecondsPerInvocation="356" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
-				totalMilliseconds="111" invocations="1196"
-				avgMicrosecondsPerInvocation="93"
-				maxMicrosecondsPerInvocation="10678"
-				standardDeviationMicrosecondsPerInvocation="349" />
+				totalMilliseconds="116" invocations="1084"
+				avgMicrosecondsPerInvocation="107"
+				maxMicrosecondsPerInvocation="8485"
+				standardDeviationMicrosecondsPerInvocation="397" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="110" invocations="996"
-				avgMicrosecondsPerInvocation="110"
-				maxMicrosecondsPerInvocation="9966"
-				standardDeviationMicrosecondsPerInvocation="393" />
+				totalMilliseconds="110" invocations="997"
+				avgMicrosecondsPerInvocation="111"
+				maxMicrosecondsPerInvocation="8389"
+				standardDeviationMicrosecondsPerInvocation="348" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
+				totalMilliseconds="103" invocations="1197"
+				avgMicrosecondsPerInvocation="86"
+				maxMicrosecondsPerInvocation="10448"
+				standardDeviationMicrosecondsPerInvocation="334" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="84" invocations="996"
-				avgMicrosecondsPerInvocation="85"
-				maxMicrosecondsPerInvocation="5253"
-				standardDeviationMicrosecondsPerInvocation="266" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="75" invocations="996"
-				avgMicrosecondsPerInvocation="75"
-				maxMicrosecondsPerInvocation="14449"
-				standardDeviationMicrosecondsPerInvocation="502" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="74" invocations="996"
-				avgMicrosecondsPerInvocation="75"
-				maxMicrosecondsPerInvocation="1921"
-				standardDeviationMicrosecondsPerInvocation="144" />
+				totalMilliseconds="86" invocations="997"
+				avgMicrosecondsPerInvocation="86"
+				maxMicrosecondsPerInvocation="4680"
+				standardDeviationMicrosecondsPerInvocation="247" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
-				totalMilliseconds="74" invocations="1148"
-				avgMicrosecondsPerInvocation="64"
-				maxMicrosecondsPerInvocation="41635"
-				standardDeviationMicrosecondsPerInvocation="1228" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="72" invocations="996"
-				avgMicrosecondsPerInvocation="72"
-				maxMicrosecondsPerInvocation="3099"
-				standardDeviationMicrosecondsPerInvocation="216" />
+				totalMilliseconds="78" invocations="1152"
+				avgMicrosecondsPerInvocation="68"
+				maxMicrosecondsPerInvocation="45027"
+				standardDeviationMicrosecondsPerInvocation="1326" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="68" invocations="3789"
-				avgMicrosecondsPerInvocation="17"
-				maxMicrosecondsPerInvocation="1437"
-				standardDeviationMicrosecondsPerInvocation="42" />
+				totalMilliseconds="71" invocations="3790"
+				avgMicrosecondsPerInvocation="18"
+				maxMicrosecondsPerInvocation="1034"
+				standardDeviationMicrosecondsPerInvocation="45" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
+				totalMilliseconds="67" invocations="997"
+				avgMicrosecondsPerInvocation="68"
+				maxMicrosecondsPerInvocation="1662"
+				standardDeviationMicrosecondsPerInvocation="129" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
+				totalMilliseconds="67" invocations="997"
+				avgMicrosecondsPerInvocation="67"
+				maxMicrosecondsPerInvocation="3871"
+				standardDeviationMicrosecondsPerInvocation="227" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
-				totalMilliseconds="64" invocations="996"
-				avgMicrosecondsPerInvocation="64"
-				maxMicrosecondsPerInvocation="3254"
-				standardDeviationMicrosecondsPerInvocation="215" />
+				totalMilliseconds="61" invocations="997"
+				avgMicrosecondsPerInvocation="61"
+				maxMicrosecondsPerInvocation="3075"
+				standardDeviationMicrosecondsPerInvocation="211" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="61" invocations="1081"
-				avgMicrosecondsPerInvocation="57"
-				maxMicrosecondsPerInvocation="8465"
-				standardDeviationMicrosecondsPerInvocation="324" />
+				totalMilliseconds="59" invocations="1084"
+				avgMicrosecondsPerInvocation="54"
+				maxMicrosecondsPerInvocation="4397"
+				standardDeviationMicrosecondsPerInvocation="226" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="50" invocations="996"
-				avgMicrosecondsPerInvocation="50"
-				maxMicrosecondsPerInvocation="6896"
-				standardDeviationMicrosecondsPerInvocation="361" />
+				name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis"
+				totalMilliseconds="55" invocations="997"
+				avgMicrosecondsPerInvocation="55"
+				maxMicrosecondsPerInvocation="13675"
+				standardDeviationMicrosecondsPerInvocation="475" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
-				totalMilliseconds="49" invocations="183"
-				avgMicrosecondsPerInvocation="272"
-				maxMicrosecondsPerInvocation="2487"
-				standardDeviationMicrosecondsPerInvocation="389" />
+				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
+				totalMilliseconds="54" invocations="997"
+				avgMicrosecondsPerInvocation="54"
+				maxMicrosecondsPerInvocation="4173"
+				standardDeviationMicrosecondsPerInvocation="195" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>
