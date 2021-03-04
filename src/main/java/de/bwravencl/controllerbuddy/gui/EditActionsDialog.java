@@ -436,7 +436,7 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		availableActionsList.addListSelectionListener(e -> {
+		availableActionsList.addListSelectionListener(event -> {
 			selectedAvailableAction = availableActionsList.getSelectedValue();
 			if (selectedAvailableAction == null)
 				addButton.setEnabled(false);
@@ -461,7 +461,7 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		assignedActionsList.addListSelectionListener(e -> {
+		assignedActionsList.addListSelectionListener(event -> {
 			selectedAssignedAction = assignedActionsList.getSelectedValue();
 			if (selectedAssignedAction == null)
 				removeButton.setEnabled(false);
@@ -472,11 +472,11 @@ public final class EditActionsDialog extends JDialog {
 			if (selectedAssignedAction != null) {
 				final var actionClass = selectedAssignedAction.action.getClass();
 				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
-				final var sortedEntires = fieldToActionPropertyMap.entrySet().stream().sorted((e1, e2) -> {
-					final var a1 = e1.getValue();
-					final var a2 = e2.getValue();
+				final var sortedEntires = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
+					final var action1 = entry1.getValue();
+					final var action2 = entry2.getValue();
 
-					return a1.order() - a2.order();
+					return action1.order() - action2.order();
 				}).collect(Collectors.toUnmodifiableList());
 
 				for (final var entry : sortedEntires) {

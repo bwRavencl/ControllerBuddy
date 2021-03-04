@@ -390,9 +390,7 @@ public final class Input {
 			if (onScreenKeyboard.isVisible())
 				onScreenKeyboard.poll(this);
 
-			final var axesToTargetValueMapIterator = virtualAxisToTargetValueMap.entrySet().iterator();
-			while (axesToTargetValueMapIterator.hasNext()) {
-				final var entry = axesToTargetValueMapIterator.next();
+			virtualAxisToTargetValueMap.entrySet().removeIf(entry -> {
 				final var virtualAxis = entry.getKey();
 				final var targetValue = entry.getValue();
 
@@ -415,11 +413,11 @@ public final class Input {
 					setAxis(virtualAxis, newValue, false, (Integer) null);
 
 					if (newValue != targetValue)
-						continue;
+						return false;
 				}
 
-				axesToTargetValueMapIterator.remove();
-			}
+				return true;
+			});
 
 			final var modes = profile.getModes();
 			final var activeMode = profile.getActiveMode();

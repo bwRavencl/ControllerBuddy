@@ -235,8 +235,8 @@ public final class ScanCode {
 		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
 		keyCodeToNameMap = Collections.unmodifiableMap(modifiableKeyCodeToNameMap);
 
-		extendedKeyScanCodesSet = keyCodeToNameMap.entrySet().stream().filter(e -> {
-			final var name = e.getValue();
+		extendedKeyScanCodesSet = keyCodeToNameMap.entrySet().stream().filter(entry -> {
+			final var name = entry.getValue();
 			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
 					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
 					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)

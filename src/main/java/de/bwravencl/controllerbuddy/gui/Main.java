@@ -1570,8 +1570,8 @@ public final class Main implements SingletonApp {
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
-		pollIntervalSpinner.addChangeListener(
-				e -> preferences.putInt(PREFERENCES_POLL_INTERVAL, (int) ((JSpinner) e.getSource()).getValue()));
+		pollIntervalSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_POLL_INTERVAL,
+				(int) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		if (isWindows) {
@@ -1601,8 +1601,8 @@ public final class Main implements SingletonApp {
 			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
-			vJoyDeviceSpinner.addChangeListener(
-					e -> preferences.putInt(PREFERENCES_VJOY_DEVICE, (int) ((JSpinner) e.getSource()).getValue()));
+			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
+					(int) ((JSpinner) event.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 
 			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -1632,7 +1632,7 @@ public final class Main implements SingletonApp {
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		portSpinner.setEditor(portSpinnerEditor);
 		portSpinner.addChangeListener(
-				e -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) e.getSource()).getValue()));
+				event -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) event.getSource()).getValue()));
 		portPanel.add(portSpinner);
 
 		final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -1649,7 +1649,7 @@ public final class Main implements SingletonApp {
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		timeoutSpinner.setEditor(timeoutSpinnerEditor);
 		timeoutSpinner.addChangeListener(
-				e -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) e.getSource()).getValue()));
+				event -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) event.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
 		final var hotSwapPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -1677,8 +1677,8 @@ public final class Main implements SingletonApp {
 
 		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
 		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
-		darkThemeCheckBox.addActionListener(e -> {
-			final var darkTheme = ((JCheckBox) e.getSource()).isSelected();
+		darkThemeCheckBox.addActionListener(event -> {
+			final var darkTheme = ((JCheckBox) event.getSource()).isSelected();
 			preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
 			updateTheme();
 		});
@@ -1695,8 +1695,8 @@ public final class Main implements SingletonApp {
 			final var preventPowerSaveModeCheckBox = new JCheckBox(
 					strings.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
 			preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
-			preventPowerSaveModeCheckBox.addActionListener(e -> {
-				final var preventPowerSaveMode = ((JCheckBox) e.getSource()).isSelected();
+			preventPowerSaveModeCheckBox.addActionListener(event -> {
+				final var preventPowerSaveMode = ((JCheckBox) event.getSource()).isSelected();
 				preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
 			});
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
@@ -3166,8 +3166,8 @@ public final class Main implements SingletonApp {
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) keyRepeatIntervalEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		keyRepeatIntervalSpinner.setEditor(keyRepeatIntervalEditor);
-		keyRepeatIntervalSpinner.addChangeListener(e -> {
-			final var keyRepeatInterval = (int) ((JSpinner) e.getSource()).getValue();
+		keyRepeatIntervalSpinner.addChangeListener(event -> {
+			final var keyRepeatInterval = (int) ((JSpinner) event.getSource()).getValue();
 			input.getProfile().setKeyRepeatInterval(keyRepeatInterval);
 			setUnsavedChanges(true);
 		});
@@ -3183,8 +3183,8 @@ public final class Main implements SingletonApp {
 
 			final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
 			showOverlayCheckBox.setSelected(profile.isShowOverlay());
-			showOverlayCheckBox.addActionListener(e -> {
-				final var showOverlay = ((JCheckBox) e.getSource()).isSelected();
+			showOverlayCheckBox.addActionListener(event -> {
+				final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
 				profile.setShowOverlay(showOverlay);
 				if (!showOverlay)
 					profile.setShowVrOverlay(false);
@@ -3208,8 +3208,8 @@ public final class Main implements SingletonApp {
 
 				showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
 				showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
-				showVrOverlayCheckBox.addActionListener(e -> {
-					final var showVrOverlay = ((JCheckBox) e.getSource()).isSelected();
+				showVrOverlayCheckBox.addActionListener(event -> {
+					final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
 					profile.setShowVrOverlay(showVrOverlay);
 					setUnsavedChanges(true);
 				});

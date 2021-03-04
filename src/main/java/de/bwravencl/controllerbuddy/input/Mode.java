@@ -74,17 +74,17 @@ public final class Mode implements Cloneable {
 	private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
 			final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
 		final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
-		for (final var e : actionMap.entrySet())
-			for (final var a : e.getValue()) {
-				final var key = e.getKey();
+		for (final var entry : actionMap.entrySet())
+			for (final var action : entry.getValue()) {
+				final var key = entry.getKey();
 
-				var actions = clonedActionMap.get(key);
-				if (actions == null) {
-					actions = new ArrayList<>();
-					clonedActionMap.put(key, actions);
+				var clonedActions = clonedActionMap.get(key);
+				if (clonedActions == null) {
+					clonedActions = new ArrayList<>();
+					clonedActionMap.put(key, clonedActions);
 				}
 
-				actions.add((IAction<V>) a.clone());
+				clonedActions.add((IAction<V>) action.clone());
 			}
 
 		return clonedActionMap;

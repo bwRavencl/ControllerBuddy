@@ -75,15 +75,15 @@ public final class Profile implements Cloneable {
 		profile.setKeyRepeatInterval(keyRepeatInterval);
 
 		final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
-		for (final var e : buttonToModeActionsMap.entrySet()) {
+		for (final var entry : buttonToModeActionsMap.entrySet()) {
 			final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
-			for (final var action : e.getValue())
+			for (final var action : entry.getValue())
 				try {
 					buttonToModeActions.add((ButtonToModeAction) action.clone());
 				} catch (final CloneNotSupportedException e1) {
 					log.log(Level.SEVERE, e1.getMessage(), e1);
 				}
-			clonedButtonToModeActionsMap.put(e.getKey(), buttonToModeActions);
+			clonedButtonToModeActionsMap.put(entry.getKey(), buttonToModeActions);
 		}
 		profile.setButtonToModeActionsMap(clonedButtonToModeActionsMap);
 
@@ -97,8 +97,8 @@ public final class Profile implements Cloneable {
 		profile.setModes(clonedModes);
 
 		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
-		for (final var e : virtualAxisToOverlayAxisMap.entrySet())
-			clonedVirtualAxisToOverlayAxisMap.put(e.getKey(), (OverlayAxis) e.getValue().clone());
+		for (final var entry : virtualAxisToOverlayAxisMap.entrySet())
+			clonedVirtualAxisToOverlayAxisMap.put(entry.getKey(), (OverlayAxis) entry.getValue().clone());
 		profile.virtualAxisToOverlayAxisMap = clonedVirtualAxisToOverlayAxisMap;
 
 		return profile;
@@ -137,8 +137,8 @@ public final class Profile implements Cloneable {
 	}
 
 	public void removeMode(final Input input, final Mode mode) {
-		buttonToModeActionsMap.entrySet().removeIf(e -> {
-			for (final var action : e.getValue())
+		buttonToModeActionsMap.entrySet().removeIf(entry -> {
+			for (final var action : entry.getValue())
 				if (action.getMode(input).equals(mode))
 					return true;
 
