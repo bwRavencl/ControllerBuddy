@@ -365,8 +365,7 @@ public final class EditActionsDialog extends JDialog {
 
 		if (actionClass == ButtonToModeAction.class)
 			return new ButtonToModeAction(input);
-		else
-			return (IAction<?>) actionClass.getConstructor().newInstance();
+		return (IAction<?>) actionClass.getConstructor().newInstance();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -589,8 +588,7 @@ public final class EditActionsDialog extends JDialog {
 			if (ButtonToModeAction.class.equals(availableAction.actionClass)
 					&& !Profile.defaultMode.equals(selectedMode))
 				continue;
-			else
-				availableActions.add(availableAction);
+			availableActions.add(availableAction);
 		}
 
 		availableActionsList.setListData(availableActions.toArray(new AvailableAction[availableActions.size()]));

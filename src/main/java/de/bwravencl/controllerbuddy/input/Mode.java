@@ -147,8 +147,7 @@ public final class Mode implements Cloneable {
 	public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
 		if (type == ComponentType.AXIS)
 			return axisToActionsMap;
-		else
-			return buttonToActionsMap;
+		return buttonToActionsMap;
 	}
 
 	public String getDescription() {

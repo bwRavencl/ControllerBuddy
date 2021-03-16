@@ -48,7 +48,7 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
 			final var intD = Math.round(d);
 
-			if (axis.equals(MouseAxis.X))
+			if (MouseAxis.X.equals(axis))
 				input.setCursorDeltaX(input.getCursorDeltaX() + intD);
 			else
 				input.setCursorDeltaY(input.getCursorDeltaY() + intD);

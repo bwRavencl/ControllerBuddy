@@ -74,8 +74,7 @@ public final class Input {
 	private static double correctNumericalImprecision(final double d) {
 		if (d < 0.0000001)
 			return 0d;
-		else
-			return d;
+		return d;
 	}
 
 	private static boolean isValidButton(final int button) {
@@ -480,10 +479,9 @@ public final class Input {
 							action.doAction(this, button, state.buttons(button));
 				}
 
-				if (repeatModeActionWalk)
-					repeatModeActionWalk = false;
-				else
+				if (!repeatModeActionWalk)
 					break;
+				repeatModeActionWalk = false;
 			}
 		}
 

@@ -9,8 +9,8 @@ plugins {
 mainClassName = 'de.bwravencl.controllerbuddy.gui.Main'
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
-sourceCompatibility = 15
-targetCompatibility = 15
+sourceCompatibility = 16
+targetCompatibility = 16
 
 ext {
 	versionWithoutHash = version.substring(0, version.indexOf('-'))
@@ -181,14 +181,15 @@ eclipse {
 	classpath {
 		file {
 			whenMerged { cp ->
-				cp.entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder(versionDir, null) )
+				cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.Library && it.path ==~ /.*lwjgl-$lwjglVersion-natives-.*.jar/ }.each { it.entryAttributes[org.gradle.plugins.ide.eclipse.internal.EclipsePluginConstants.MODULE_ATTRIBUTE_KEY] = 'false' }
+				cp.entries.add(3, new org.gradle.plugins.ide.eclipse.model.SourceFolder(versionDir, null))
 			}
 		}
 	}
 	jdt {
 		file {
 			withProperties { properties ->
-				formatterProfile().'setting'.findAll { it.'@id' ==~ /^org\.eclipse\.jdt\.core\.formatter\..*$/ }.each { properties[it.'@id'] = it.'@value' }
+				formatterProfile().setting.findAll { it.@id ==~ /^org\.eclipse\.jdt\.core\.formatter\..*$/ }.each { properties[it.@id] = it.@value }
 			}
 		}
 	}
@@ -217,14 +218,14 @@ tasks.eclipse.doLast {
 			""".stripIndent())
 
 		def formatterProfile = formatterProfile()
-		uiPrefs.append("formatter_profile=_${formatterProfile.'@name'}\n")
-		uiPrefs.append("formatter_settings_version=${formatterProfile.'@version'}\n")
+		uiPrefs.append("formatter_profile=_${formatterProfile.@name}\n")
+		uiPrefs.append("formatter_settings_version=${formatterProfile.@version}\n")
 
 		def cleanupProfile = new XmlParser().parse(file('cleanup.xml')).profile[0];
-		uiPrefs.append("cleanup_profile=_${cleanupProfile.'@name'}\n")
-		uiPrefs.append("cleanup_settings_version=${cleanupProfile.'@version'}\n")
-		cleanupProfile.'setting'.findAll { it.'@id' ==~ /^cleanup\..*$/ }.each {
-			def configLine = "${it.'@id'}=${it.'@value'}\n"
+		uiPrefs.append("cleanup_profile=_${cleanupProfile.@name}\n")
+		uiPrefs.append("cleanup_settings_version=${cleanupProfile.@version}\n")
+		cleanupProfile.setting.findAll { it.@id ==~ /^cleanup\..*$/ }.each {
+			def configLine = "${it.@id}=${it.@value}\n"
 			uiPrefs.append(configLine)
 			uiPrefs.append("sp_$configLine")
 		}
