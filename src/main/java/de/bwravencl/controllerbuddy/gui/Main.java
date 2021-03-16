@@ -174,6 +174,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
+import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
 import de.bwravencl.controllerbuddy.output.ClientOutput;
 import de.bwravencl.controllerbuddy.output.LocalOutput;
@@ -900,7 +901,7 @@ public final class Main implements SingletonApp {
 						} else if (task instanceof Runnable)
 							((Runnable) task).run();
 					} catch (final Throwable t) {
-						throw new RuntimeException(t);
+						result = t;
 					} finally {
 						if (notify)
 							synchronized (this) {
@@ -947,6 +948,10 @@ public final class Main implements SingletonApp {
 				synchronized (this) {
 					this.wait();
 				}
+
+				if (result instanceof Throwable)
+					throw new RuntimeException((Throwable) result);
+
 				return (V) result;
 			} catch (final InterruptedException e) {
 				Thread.currentThread().interrupt();
@@ -1210,19 +1215,20 @@ public final class Main implements SingletonApp {
 
 	private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
 		final var action = button.getAction();
-		if (action != null)
+		if (action != null) {
 			if (action instanceof NewAction)
 				return KeyEvent.VK_N;
-			else if (action instanceof OpenAction)
+			if (action instanceof OpenAction)
 				return KeyEvent.VK_O;
-			else if (action instanceof SaveAction)
+			if (action instanceof SaveAction)
 				return KeyEvent.VK_S;
-			else if (action instanceof StartLocalAction || action instanceof StopLocalAction)
+			if (action instanceof StartLocalAction || action instanceof StopLocalAction)
 				return KeyEvent.VK_L;
-			else if (action instanceof StartClientAction || action instanceof StopClientAction)
+			if (action instanceof StartClientAction || action instanceof StopClientAction)
 				return KeyEvent.VK_C;
-			else if (action instanceof StartServerAction || action instanceof StopServerAction)
+			if (action instanceof StartServerAction || action instanceof StopServerAction)
 				return KeyEvent.VK_E;
+		}
 
 		return KeyEvent.VK_UNDEFINED;
 	}
@@ -1277,7 +1283,8 @@ public final class Main implements SingletonApp {
 				if (commandLine.hasOption(OPTION_VERSION)) {
 					System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 					return;
-				} else if (!commandLine.hasOption(OPTION_HELP)) {
+				}
+				if (!commandLine.hasOption(OPTION_HELP)) {
 					EventQueue.invokeLater(() -> {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
@@ -1790,8 +1797,8 @@ public final class Main implements SingletonApp {
 			if (lastControllerFound) {
 				log.log(Level.INFO, assembleControllerLoggingMessage("Selected previously used", controller));
 				break;
-			} else
-				log.log(Level.INFO, "Previously used controller is not present");
+			}
+			log.log(Level.INFO, "Previously used controller is not present");
 		}
 
 		newProfile();
@@ -2215,7 +2222,8 @@ public final class Main implements SingletonApp {
 			final var jsonString = Files.readString(file.toPath());
 			final var actionAdapter = new ActionTypeAdapter();
 			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
-					.registerTypeAdapter(IAction.class, actionAdapter).create();
+					.registerTypeAdapter(IAction.class, actionAdapter)
+					.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
 
 			try {
 				final var profile = gson.fromJson(jsonString, Profile.class);

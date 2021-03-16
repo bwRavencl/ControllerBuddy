@@ -82,7 +82,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 			if (buttonToModeActions != null)
 				for (final var action : buttonToModeActions)
-					if (action.equals(this)) {
+					if (this.equals(action)) {
 						myButton = button;
 						break buttonLoop;
 					}

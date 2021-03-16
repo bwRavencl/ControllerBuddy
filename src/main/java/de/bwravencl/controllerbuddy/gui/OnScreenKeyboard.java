@@ -379,7 +379,7 @@ public final class OnScreenKeyboard extends JFrame {
 	private static String getShortLockKeyName(final String lockKeyName) {
 		var shortName = lockKeyName;
 
-		if (!lockKeyName.equals(LockKey.CAPS_LOCK))
+		if (!LockKey.CAPS_LOCK.equals(lockKeyName))
 			shortName = shortName.replaceFirst(LockKey.LOCK_SUFFIX, "Lk");
 
 		return shortName;
@@ -592,10 +592,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 			if (delta > minDelta)
 				break;
-			else {
-				selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
-				minDelta = delta;
-			}
+			selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+			minDelta = delta;
 
 			x += width;
 		}

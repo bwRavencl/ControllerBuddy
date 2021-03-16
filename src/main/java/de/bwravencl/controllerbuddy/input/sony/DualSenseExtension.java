@@ -69,26 +69,24 @@ final class DualSenseExtension extends SonyExtension {
 					final var batteryData = reportData[53 + connection.offset] & 0xF;
 
 					final int batteryCapacity;
-					final boolean charging;
-					switch (chargingStatus) {
-					case 0x0:
+					final var charging = switch (chargingStatus) {
+					case 0x0 -> {
 						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-						charging = false;
-						break;
-					case 0x1:
-						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-						charging = true;
-						break;
-					case 0x2:
-						batteryCapacity = 100;
-						charging = false;
-						break;
-					default:
-						batteryCapacity = 0;
-						charging = false;
-						break;
+						yield false;
 					}
-
+					case 0x1 -> {
+						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+						yield true;
+					}
+					case 0x2 -> {
+						batteryCapacity = 100;
+						yield false;
+					}
+					default -> {
+						batteryCapacity = 0;
+						yield false;
+					}
+					};
 					setCharging(charging);
 					setBatteryState(batteryCapacity);
 				}

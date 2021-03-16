@@ -96,63 +96,64 @@ public abstract class SonyExtension {
 			cross = (reportData[buttonsOffset + connection.offset] & 1 << 5) != 0;
 			square = (reportData[buttonsOffset + connection.offset] & 1 << 4) != 0;
 
-			switch ((byte) (reportData[buttonsOffset + connection.offset] & 0xF)) {
-			case 0:
+			final var dpadRightData = (byte) (reportData[buttonsOffset + connection.offset] & 0xF);
+			dpadRight = switch (dpadRightData) {
+			case 0 -> {
 				dpadUp = true;
 				dpadDown = false;
 				dpadLeft = false;
-				dpadRight = false;
-				break;
-			case 1:
-				dpadUp = true;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = true;
-				break;
-			case 2:
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = true;
-				break;
-			case 3:
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = false;
-				dpadRight = true;
-				break;
-			case 4:
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = false;
-				dpadRight = false;
-				break;
-			case 5:
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = true;
-				dpadRight = false;
-				break;
-			case 6:
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = true;
-				dpadRight = false;
-				break;
-			case 7:
-				dpadUp = true;
-				dpadDown = false;
-				dpadLeft = true;
-				dpadRight = false;
-				break;
-			case 8:
-			default:
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = false;
-				break;
+				yield false;
 			}
+			case 1 -> {
+				dpadUp = true;
+				dpadDown = false;
+				dpadLeft = false;
+				yield true;
+			}
+			case 2 -> {
+				dpadUp = false;
+				dpadDown = false;
+				dpadLeft = false;
+				yield true;
+			}
+			case 3 -> {
+				dpadUp = false;
+				dpadDown = true;
+				dpadLeft = false;
+				yield true;
+			}
+			case 4 -> {
+				dpadUp = false;
+				dpadDown = true;
+				dpadLeft = false;
+				yield false;
+			}
+			case 5 -> {
+				dpadUp = false;
+				dpadDown = true;
+				dpadLeft = true;
+				yield false;
+			}
+			case 6 -> {
+				dpadUp = false;
+				dpadDown = false;
+				dpadLeft = true;
+				yield false;
+			}
+			case 7 -> {
+				dpadUp = true;
+				dpadDown = false;
+				dpadLeft = true;
+				yield false;
+			}
+			case 8 -> {
+				dpadUp = false;
+				dpadDown = false;
+				dpadLeft = false;
+				yield false;
+			}
+			default -> throw new IllegalArgumentException("Unexpected value: " + dpadRightData);
+			};
 
 			r3 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 7) != 0;
 			l3 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 6) != 0;
@@ -175,8 +176,8 @@ public abstract class SonyExtension {
 			final var touchpadButtonDown = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 2 - 1) != 0;
 
 			final var touchpadOffset = getTouchpadOffset();
-			final var down1 = reportData[touchpadOffset + connection.offset] >> 7 != 0 ? false : true;
-			final var down2 = reportData[touchpadOffset + 4 + connection.offset] >> 7 != 0 ? false : true;
+			final var down1 = reportData[touchpadOffset + connection.offset] >> 7 != 0 == false;
+			final var down2 = reportData[touchpadOffset + 4 + connection.offset] >> 7 != 0 == false;
 			final var x1 = reportData[touchpadOffset + 1 + connection.offset]
 					+ (reportData[touchpadOffset + 2 + connection.offset] & 0xF) * 255;
 			final var y1 = ((reportData[touchpadOffset + 2 + connection.offset] & 0xF0) >> 4)
