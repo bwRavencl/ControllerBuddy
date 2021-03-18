@@ -40,15 +40,7 @@ import purejavahidapi.PureJavaHidApi;
 
 public abstract class SonyExtension {
 
-	static final class Connection {
-
-		final int offset;
-		final byte inputReportId;
-
-		Connection(final int offset, final byte inputReportId) {
-			this.offset = offset;
-			this.inputReportId = inputReportId;
-		}
+	static record Connection(int offset, byte inputReportId) {
 
 		boolean isBluetooth() {
 			return offset != 0;
@@ -164,7 +156,7 @@ public abstract class SonyExtension {
 
 			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
 
-			if (jid != input.getController().jid)
+			if (jid != input.getController().jid())
 				return;
 
 			handleBattery(reportData);
@@ -242,7 +234,7 @@ public abstract class SonyExtension {
 			for (var i = GLFW.GLFW_JOYSTICK_1; i <= GLFW.GLFW_JOYSTICK_LAST; i++)
 				if (GLFW.glfwJoystickPresent(i) && guid.equals(GLFW.glfwGetJoystickGUID(i)))
 					presentJidsWithSameGuid.add(i);
-			deviceIndex = presentJidsWithSameGuid.indexOf(controller.jid);
+			deviceIndex = presentJidsWithSameGuid.indexOf(controller.jid());
 		}
 
 		final var hidDeviceInfo = devices.get(deviceIndex);

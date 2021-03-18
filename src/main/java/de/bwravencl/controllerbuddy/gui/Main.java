@@ -219,16 +219,10 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	public static final class ControllerInfo {
-
-		public final int jid;
-		public final String name;
-		public final String guid;
+	public static record ControllerInfo(int jid, String name, String guid) {
 
 		private ControllerInfo(final int jid) {
-			this.jid = jid;
-			name = GLFW.glfwGetGamepadName(jid);
-			guid = GLFW.glfwGetJoystickGUID(jid);
+			this(jid, GLFW.glfwGetGamepadName(jid), GLFW.glfwGetJoystickGUID(jid));
 		}
 	}
 

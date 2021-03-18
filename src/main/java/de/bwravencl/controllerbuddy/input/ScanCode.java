@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public final class ScanCode {
+public record ScanCode(String name, int scanCode) {
 
 	public static final String DIK_0 = "0";
 	public static final String DIK_1 = "1";
@@ -243,14 +243,6 @@ public final class ScanCode {
 					|| DIK_LEFT.equals(name) || DIK_RIGHT.equals(name) || DIK_SYSRQ.equals(name)
 					|| DIK_DIVIDE.equals(name) || DIK_NUMPADENTER.equals(name);
 		}).map(Entry::getKey).collect(Collectors.toUnmodifiableSet());
-	}
-
-	private final int scanCode;
-	private final String name;
-
-	private ScanCode(final String name, final int scanCode) {
-		this.name = name;
-		this.scanCode = scanCode;
 	}
 
 	@Override

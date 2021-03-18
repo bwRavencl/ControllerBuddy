@@ -40,14 +40,14 @@ final class DualSenseExtension extends SonyExtension {
 	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
 	public static DualSenseExtension getIfAvailable(final Input input, final ControllerInfo controller) {
-		final var guid = GLFW.glfwGetJoystickGUID(controller.jid);
+		final var guid = GLFW.glfwGetJoystickGUID(controller.jid());
 		if (guid == null || !guid.startsWith("030000004c050000e60c"))
 			return null;
 
 		final var hidDeviceInfo = getHidDeviceInfo(controller, guid, (short) 0xCE6, "DualSense", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualSenseExtension(input, controller.jid, hidDeviceInfo);
+				return new DualSenseExtension(input, controller.jid(), hidDeviceInfo);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -65,8 +65,8 @@ final class DualSenseExtension extends SonyExtension {
 
 				@Override
 				void handleBattery(final byte[] reportData) {
-					final var chargingStatus = (reportData[53 + connection.offset] & 0xF0) >> 4;
-					final var batteryData = reportData[53 + connection.offset] & 0xF;
+					final var chargingStatus = (reportData[53 + connection.offset()] & 0xF0) >> 4;
+					final var batteryData = reportData[53 + connection.offset()] & 0xF;
 
 					final int batteryCapacity;
 					final var charging = switch (chargingStatus) {
@@ -124,12 +124,12 @@ final class DualSenseExtension extends SonyExtension {
 			defaultHidReport[0] = 0x2;
 		}
 
-		defaultHidReport[1 + connection.offset] = 0x3;
-		defaultHidReport[2 + connection.offset] = 0x15;
+		defaultHidReport[1 + connection.offset()] = 0x3;
+		defaultHidReport[2 + connection.offset()] = 0x15;
 
-		defaultHidReport[45 + connection.offset] = (byte) 0x0;
-		defaultHidReport[46 + connection.offset] = (byte) 0x0;
-		defaultHidReport[47 + connection.offset] = (byte) 0xFF;
+		defaultHidReport[45 + connection.offset()] = (byte) 0x0;
+		defaultHidReport[46 + connection.offset()] = (byte) 0x0;
+		defaultHidReport[47 + connection.offset()] = (byte) 0xFF;
 
 		return defaultHidReport;
 	}

@@ -34,7 +34,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "VIRTUAL_KEY_CODE", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
-	private int virtualKeyCode = LockKey.LOCK_KEYS[0].virtualKeyCode;
+	private int virtualKeyCode = LockKey.LOCK_KEYS[0].virtualKeyCode();
 
 	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;

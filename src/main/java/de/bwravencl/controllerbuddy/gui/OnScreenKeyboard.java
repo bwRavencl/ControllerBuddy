@@ -280,7 +280,7 @@ public final class OnScreenKeyboard extends JFrame {
 		private boolean wasUp = true;
 
 		private LockKeyButton(final int virtualKeyCode) {
-			super(getShortLockKeyName(LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode).name));
+			super(getShortLockKeyName(LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode).name()));
 			this.virtualKeyCode = virtualKeyCode;
 
 			addActionListener(arg0 -> {

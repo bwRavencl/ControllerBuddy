@@ -268,15 +268,15 @@ public final class Input {
 
 			if (hotSwappingButtonId != HotSwappingButton.None.id) {
 				if (sonyExtension != null)
-					jidToSonyExtensionMap.put(controller.jid, sonyExtension);
+					jidToSonyExtensionMap.put(controller.jid(), sonyExtension);
 
 				for (final var controller : presentControllers) {
-					if (controller.jid == this.controller.jid)
+					if (controller.jid() == this.controller.jid())
 						continue;
 
 					final var sonyExtension = SonyExtension.getIfAvailable(this, controller);
 					if (sonyExtension != null)
-						jidToSonyExtensionMap.put(controller.jid, sonyExtension);
+						jidToSonyExtensionMap.put(controller.jid(), sonyExtension);
 				}
 			}
 		}
@@ -333,20 +333,20 @@ public final class Input {
 			if (hotSwappingButtonId != HotSwappingButton.None.id
 					&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
 				for (final var controller : Main.getPresentControllers()) {
-					if (controller.jid == this.controller.jid)
+					if (controller.jid() == this.controller.jid())
 						continue;
 
 					final boolean gotState;
-					final var sonyExtension = jidToSonyExtensionMap.get(controller.jid);
+					final var sonyExtension = jidToSonyExtensionMap.get(controller.jid());
 					if (sonyExtension != null)
 						gotState = sonyExtension.getGamepadState(state);
 					else
-						gotState = GLFW.glfwGetGamepadState(controller.jid, state);
+						gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
 					if (gotState)
 						if (state.buttons(hotSwappingButtonId) != 0)
-							hotSwappingButtonDownJids.add(controller.jid);
-						else if (hotSwappingButtonDownJids.contains(controller.jid)) {
+							hotSwappingButtonDownJids.add(controller.jid());
+						else if (hotSwappingButtonDownJids.contains(controller.jid())) {
 							log.log(Level.INFO,
 									Main.assembleControllerLoggingMessage("Initiating hot swap to ", controller));
 
@@ -368,7 +368,7 @@ public final class Input {
 			if (sonyExtension != null)
 				gotState = sonyExtension.getGamepadState(state);
 			else
-				gotState = GLFW.glfwGetGamepadState(controller.jid, state);
+				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
 			if (!gotState)
 				return false;
@@ -626,10 +626,8 @@ public final class Input {
 
 			for (final var actions : mode.getButtonToActionsMap().values())
 				Collections.sort(actions, (o1, o2) -> {
-					if (o1 instanceof IButtonToAction && o2 instanceof IButtonToAction) {
-						final var buttonToAction1 = (IButtonToAction) o1;
-						final var buttonToAction2 = (IButtonToAction) o2;
-
+					if (o1 instanceof IButtonToAction buttonToAction1
+							&& o2 instanceof IButtonToAction buttonToAction2) {
 						final var o1IsLongPress = buttonToAction1.isLongPress();
 						final var o2IsLongPress = buttonToAction2.isLongPress();
 

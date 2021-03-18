@@ -40,7 +40,7 @@ final class DualShock4Extension extends SonyExtension {
 	private static final Logger log = Logger.getLogger(DualShock4Extension.class.getName());
 
 	public static DualShock4Extension getIfAvailable(final Input input, final ControllerInfo controller) {
-		final var guid = GLFW.glfwGetJoystickGUID(controller.jid);
+		final var guid = GLFW.glfwGetJoystickGUID(controller.jid());
 		if (guid == null)
 			return null;
 
@@ -59,7 +59,7 @@ final class DualShock4Extension extends SonyExtension {
 		final var hidDeviceInfo = getHidDeviceInfo(controller, guid, productId, "DualShock 4", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualShock4Extension(input, controller.jid, hidDeviceInfo, connection);
+				return new DualShock4Extension(input, controller.jid(), hidDeviceInfo, connection);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -78,9 +78,9 @@ final class DualShock4Extension extends SonyExtension {
 
 				@Override
 				void handleBattery(final byte[] reportData) {
-					final var cableConnected = (reportData[30 + DualShock4Extension.this.connection.offset] >> 4
+					final var cableConnected = (reportData[30 + DualShock4Extension.this.connection.offset()] >> 4
 							& 0x1) != 0;
-					var battery = reportData[30 + DualShock4Extension.this.connection.offset] & 0xF;
+					var battery = reportData[30 + DualShock4Extension.this.connection.offset()] & 0xF;
 
 					setCharging(cableConnected);
 
@@ -129,9 +129,9 @@ final class DualShock4Extension extends SonyExtension {
 			defaultHidReport[1] = (byte) 0xF;
 		}
 
-		defaultHidReport[6 + connection.offset] = (byte) 0xC;
-		defaultHidReport[7 + connection.offset] = (byte) 0x18;
-		defaultHidReport[8 + connection.offset] = (byte) 0x1C;
+		defaultHidReport[6 + connection.offset()] = (byte) 0xC;
+		defaultHidReport[7 + connection.offset()] = (byte) 0x18;
+		defaultHidReport[8 + connection.offset()] = (byte) 0x1C;
 
 		return defaultHidReport;
 	}
