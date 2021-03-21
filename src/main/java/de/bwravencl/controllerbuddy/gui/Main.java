@@ -2594,7 +2594,8 @@ public final class Main implements SingletonApp {
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
 
 		final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
-				.registerTypeAdapter(IAction.class, new ActionTypeAdapter()).setPrettyPrinting()					.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
+				.registerTypeAdapter(IAction.class, new ActionTypeAdapter()).setPrettyPrinting()
+				.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
 		final var jsonString = gson.toJson(profile);
 		try {
 			Files.writeString(file.toPath(), jsonString);
