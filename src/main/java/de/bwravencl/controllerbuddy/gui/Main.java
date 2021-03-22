@@ -158,6 +158,7 @@ import org.w3c.dom.svg.SVGDocument;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.oracle.si.Singleton;
@@ -423,6 +424,18 @@ public final class Main implements SingletonApp {
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
+		}
+	}
+
+	private static record JsonContext(Gson gson, ActionTypeAdapter actionTypeAdapter) {
+
+		private static JsonContext create() {
+			final var actionAdapter = new ActionTypeAdapter();
+			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
+					.registerTypeAdapter(IAction.class, actionAdapter)
+					.registerTypeAdapter(Color.class, new ColorTypeAdapter()).setPrettyPrinting().create();
+
+			return new JsonContext(gson, actionAdapter);
 		}
 	}
 
@@ -1080,8 +1093,8 @@ public final class Main implements SingletonApp {
 	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
-	private static final String OPTION_AUTOSTART = "autostart";
 
+	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
 
 	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
@@ -2214,13 +2227,10 @@ public final class Main implements SingletonApp {
 
 		try {
 			final var jsonString = Files.readString(file.toPath());
-			final var actionAdapter = new ActionTypeAdapter();
-			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
-					.registerTypeAdapter(IAction.class, actionAdapter)
-					.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
+			final var jsonContext = JsonContext.create();
 
 			try {
-				final var profile = gson.fromJson(jsonString, Profile.class);
+				final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
 					log.log(Level.WARNING, "Trying to load a profile without version information");
@@ -2245,7 +2255,7 @@ public final class Main implements SingletonApp {
 					}
 				}
 
-				final var unknownActionClasses = actionAdapter.getUnknownActionClasses();
+				final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty()) {
 					log.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
@@ -2593,10 +2603,7 @@ public final class Main implements SingletonApp {
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
 
-		final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
-				.registerTypeAdapter(IAction.class, new ActionTypeAdapter()).setPrettyPrinting()
-				.registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
-		final var jsonString = gson.toJson(profile);
+		final var jsonString = JsonContext.create().gson.toJson(profile);
 		try {
 			Files.writeString(file.toPath(), jsonString);
 
