@@ -1790,22 +1790,17 @@ public final class Main implements SingletonApp {
 		}
 
 		final var presentControllers = taskRunner.run(Main::getPresentControllers);
-		if (selectedController == null && !presentControllers.isEmpty())
-			setSelectedController(presentControllers.get(0));
-
-		final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-		for (final var controller : presentControllers) {
-			final var lastControllerFound = lastControllerGuid != null ? lastControllerGuid.equals(controller.guid)
-					: false;
-
-			if (selectedController == null || lastControllerFound)
-				selectedController = controller;
-
-			if (lastControllerFound) {
-				log.log(Level.INFO, assembleControllerLoggingMessage("Selected previously used", controller));
-				break;
-			}
-			log.log(Level.INFO, "Previously used controller is not present");
+		if (!presentControllers.isEmpty()) {
+			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
+			if (lastControllerGuid != null)
+				presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
+						.ifPresentOrElse(controller -> {
+							log.log(Level.INFO, assembleControllerLoggingMessage("Found previously used", controller));
+							setSelectedController(controller);
+						}, () -> {
+							log.log(Level.INFO, "Previously used controller is not present");
+							setSelectedController(presentControllers.get(0));
+						});
 		}
 
 		newProfile();
@@ -2661,10 +2656,10 @@ public final class Main implements SingletonApp {
 	private void setSelectedController(final ControllerInfo controller) {
 		selectedController = controller;
 
-		if (controller.guid != null) {
-			log.log(Level.INFO, "Selected controller: " + selectedController.jid + " (" + controller.guid + ")");
+		log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller", controller));
+
+		if (controller.guid != null)
 			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
-		}
 	}
 
 	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
