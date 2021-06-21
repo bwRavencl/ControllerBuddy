@@ -53,9 +53,8 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 			if (lockKey)
 				wasUp = true;
 			else {
-				if (wasDown) {
+				if (wasDown)
 					onScreenKeyboard.releaseSelected();
-				}
 				wasDown = false;
 			}
 		} else if (lockKey) {

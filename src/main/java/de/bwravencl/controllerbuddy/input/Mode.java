@@ -52,14 +52,10 @@ public final class Mode implements Cloneable {
 		public boolean equals(final Object obj) {
 			if (this == obj)
 				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
+			if (obj == null || getClass() != obj.getClass())
 				return false;
 			final var other = (Component) obj;
-			if (index != other.index)
-				return false;
-			if (type != other.type)
+			if ((index != other.index) || (type != other.type))
 				return false;
 			return true;
 		}
@@ -121,9 +117,7 @@ public final class Mode implements Cloneable {
 	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		final var other = (Mode) obj;
 		if (!Objects.equals(uuid, other.uuid))

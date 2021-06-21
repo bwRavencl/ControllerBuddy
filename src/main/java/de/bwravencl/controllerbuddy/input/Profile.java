@@ -159,8 +159,8 @@ public final class Profile implements Cloneable {
 					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
 					if (currentAxisToActionsMap.containsKey(axis))
 						for (final var action : currentAxisToActionsMap.get(axis))
-							if (action instanceof AxisToAxisAction && !(action instanceof AxisToRelativeAxisAction)) {
-								final var axisToAxisAction = (AxisToAxisAction) action;
+							if (action instanceof final AxisToAxisAction axisToAxisAction
+									&& !(action instanceof AxisToRelativeAxisAction)) {
 								final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
 										|| axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);

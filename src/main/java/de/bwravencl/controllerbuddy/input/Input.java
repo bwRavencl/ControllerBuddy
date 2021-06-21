@@ -626,8 +626,8 @@ public final class Input {
 
 			for (final var actions : mode.getButtonToActionsMap().values())
 				Collections.sort(actions, (o1, o2) -> {
-					if (o1 instanceof IButtonToAction buttonToAction1
-							&& o2 instanceof IButtonToAction buttonToAction2) {
+					if (o1 instanceof final IButtonToAction buttonToAction1
+							&& o2 instanceof final IButtonToAction buttonToAction2) {
 						final var o1IsLongPress = buttonToAction1.isLongPress();
 						final var o2IsLongPress = buttonToAction2.isLongPress();
 

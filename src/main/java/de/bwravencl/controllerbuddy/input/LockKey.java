@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public record LockKey(String name,int virtualKeyCode) {
+public record LockKey(String name, int virtualKeyCode) {
 
 	public static final String LOCK_SUFFIX = " Lock";
 	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;

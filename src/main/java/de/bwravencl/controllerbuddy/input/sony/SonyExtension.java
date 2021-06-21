@@ -168,8 +168,8 @@ public abstract class SonyExtension {
 			final var touchpadButtonDown = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 2 - 1) != 0;
 
 			final var touchpadOffset = getTouchpadOffset();
-			final var down1 = reportData[touchpadOffset + connection.offset] >> 7 != 0 == false;
-			final var down2 = reportData[touchpadOffset + 4 + connection.offset] >> 7 != 0 == false;
+			final var down1 = reportData[touchpadOffset + connection.offset] >> 7 == 0;
+			final var down2 = reportData[touchpadOffset + 4 + connection.offset] >> 7 == 0;
 			final var x1 = reportData[touchpadOffset + 1 + connection.offset]
 					+ (reportData[touchpadOffset + 2 + connection.offset] & 0xF) * 255;
 			final var y1 = ((reportData[touchpadOffset + 2 + connection.offset] & 0xF0) >> 4)

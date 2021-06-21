@@ -65,22 +65,15 @@ public interface IButtonToAction extends IAction<Byte> {
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof ButtonToKeyAction) {
-									final var buttonToKeyAction = (ButtonToKeyAction) action;
-
+								if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
 									if (!buttonToKeyAction.isLongPress())
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
-								} else if (action instanceof ButtonToMouseButtonAction) {
-									final var buttonToMouseButtonAction = (ButtonToMouseButtonAction) action;
-
+								} else if (action instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
 									if (!buttonToMouseButtonAction.isLongPress())
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
-								} else if (action instanceof ButtonToCycleAction) {
-									final var buttonToCycleAction = (ButtonToCycleAction) action;
-
+								} else if (action instanceof final ButtonToCycleAction buttonToCycleAction)
 									if (!buttonToCycleAction.isLongPress())
 										isUndelayedOnReleaseAction = true;
-								}
 
 								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
 							}
