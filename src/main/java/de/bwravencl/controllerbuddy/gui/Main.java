@@ -485,7 +485,7 @@ public final class Main implements SingletonApp {
 		@Override
 		protected void doAction(final ActionEvent e) {
 			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-				loadProfile(profileFileChooser.getSelectedFile());
+				loadProfile(profileFileChooser.getSelectedFile(), false);
 		}
 	}
 
@@ -1826,22 +1826,23 @@ public final class Main implements SingletonApp {
 			}
 		}));
 
-		if (glfwInitialized && presentControllers.isEmpty()) {
+		final var controllerConnected = glfwInitialized && presentControllers.isEmpty();
+
+		if (controllerConnected)
 			if (isWindows)
 				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			else
 				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			final var profilePath = cmdProfilePath != null ? cmdProfilePath
-					: preferences.get(PREFERENCES_LAST_PROFILE, null);
-			if (profilePath != null) {
-				loadProfile(new File(profilePath));
-				if (loadedProfile == null && cmdProfilePath == null) {
-					log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
-					preferences.remove(PREFERENCES_LAST_PROFILE);
-				}
+
+		final var profilePath = cmdProfilePath != null ? cmdProfilePath
+				: preferences.get(PREFERENCES_LAST_PROFILE, null);
+		if (profilePath != null) {
+			loadProfile(new File(profilePath), !controllerConnected);
+			if (loadedProfile == null && cmdProfilePath == null) {
+				log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
 		}
 	}
@@ -2213,7 +2214,7 @@ public final class Main implements SingletonApp {
 		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
 	}
 
-	private void loadProfile(final File file) {
+	private void loadProfile(final File file, final boolean skipMessageDialogs) {
 		stopAll(true);
 
 		log.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
@@ -2229,24 +2230,30 @@ public final class Main implements SingletonApp {
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
 					log.log(Level.WARNING, "Trying to load a profile without version information");
-					GuiUtils.showMessageDialog(frame,
-							MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-									strings.getString("AN_UNKNOWN")),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+
+					if (!skipMessageDialogs)
+						GuiUtils.showMessageDialog(frame,
+								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										strings.getString("AN_UNKNOWN")),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				} else {
 					final var v = versionsComparisonResult.get();
 					if (v < 0) {
 						log.log(Level.WARNING, "Trying to load a profile for an older release");
-						GuiUtils.showMessageDialog(frame,
-								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-										strings.getString("AN_OLDER")),
-								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+
+						if (!skipMessageDialogs)
+							GuiUtils.showMessageDialog(frame,
+									MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											strings.getString("AN_OLDER")),
+									strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					} else if (v > 0) {
 						log.log(Level.WARNING, "Trying to load a profile for a newer release");
-						GuiUtils.showMessageDialog(frame,
-								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-										strings.getString("A_NEWER")),
-								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+
+						if (!skipMessageDialogs)
+							GuiUtils.showMessageDialog(frame,
+									MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											strings.getString("A_NEWER")),
+									strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					}
 				}
 
@@ -2254,10 +2261,12 @@ public final class Main implements SingletonApp {
 				if (!unknownActionClasses.isEmpty()) {
 					log.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
-					GuiUtils.showMessageDialog(frame,
-							MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
-									String.join("\n", unknownActionClasses)),
-							strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+
+					if (!skipMessageDialogs)
+						GuiUtils.showMessageDialog(frame,
+								MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+										String.join("\n", unknownActionClasses)),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 				}
 
 				profileLoaded = input.setProfile(profile);
@@ -2287,8 +2296,10 @@ public final class Main implements SingletonApp {
 
 		if (!profileLoaded) {
 			log.log(Level.SEVERE, "Could load profile");
-			GuiUtils.showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+
+			if (!skipMessageDialogs)
+				GuiUtils.showMessageDialog(frame, strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2306,7 +2317,7 @@ public final class Main implements SingletonApp {
 
 				EventQueue.invokeLater(() -> {
 					if (cmdProfilePath != null)
-						loadProfile(new File(cmdProfilePath));
+						loadProfile(new File(cmdProfilePath), false);
 
 					if (gameControllerDbPath != null)
 						updateGameControllerMappingsFromFile(gameControllerDbPath);
@@ -2347,8 +2358,10 @@ public final class Main implements SingletonApp {
 		final var controllerConnected = !presentControllers.isEmpty();
 		if (!controllerConnected)
 			selectedController = null;
-		else if (selectedController == null)
+		else if (selectedController == null) {
 			setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
+			updateTitleAndTooltip();
+		}
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
 		fileMenu.remove(newMenuItem);
