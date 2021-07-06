@@ -70,7 +70,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 			profile.setActiveMode(input, modeUuid);
 
 			if (targetsOnScreenKeyboardMode())
-				input.getMain().toggleOnScreenKeyboard();
+				input.getMain().setOnScreenKeyboardVisible(true);
 		}
 	}
 
@@ -137,7 +137,7 @@ public final class ButtonToModeAction implements IButtonToAction {
 		profile.setActiveMode(input, previousMode.getUuid());
 
 		if (targetsOnScreenKeyboardMode())
-			main.toggleOnScreenKeyboard();
+			main.setOnScreenKeyboardVisible(false);
 	}
 
 	@Override

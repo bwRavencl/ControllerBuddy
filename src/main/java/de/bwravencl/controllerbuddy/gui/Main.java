@@ -1872,7 +1872,10 @@ public final class Main implements SingletonApp {
 
 		currentModeLabel = null;
 		virtualAxisToProgressBarMap.clear();
+	}
 
+	private void deInitOverlayAndHideOnScreenKeyboard() {
+		deInitOverlay();
 		onScreenKeyboard.setVisible(false);
 	}
 
@@ -2183,7 +2186,12 @@ public final class Main implements SingletonApp {
 		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
 
 		prevMaxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		updateOverlayLocation(prevMaxWindowBounds);
+		overlayFrame.pack();
+		final var x = prevMaxWindowBounds.width - overlayFrame.getWidth();
+		final var y = prevMaxWindowBounds.height - overlayFrame.getHeight();
+		final var defaultLocation = new Point(x, y);
+		GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, prevMaxWindowBounds);
+		updateOverlayAlignment(prevMaxWindowBounds);
 
 		overlayFrame.setVisible(true);
 	}
@@ -2658,6 +2666,15 @@ public final class Main implements SingletonApp {
 		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
 	}
 
+	public void setOnScreenKeyboardVisible(final boolean visible) {
+		if (isLocalRunning() || isServerRunning())
+			EventQueue.invokeLater(() -> {
+				onScreenKeyboard.setVisible(visible);
+				repaintOnScreenKeyboard();
+				repaintOverlay();
+			});
+	}
+
 	public void setOverlayText(final String text) {
 		if (currentModeLabel != null)
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
@@ -2761,7 +2778,12 @@ public final class Main implements SingletonApp {
 					if (!maxWindowBounds.equals(prevMaxWindowBounds)) {
 						prevMaxWindowBounds = maxWindowBounds;
 
-						updateOverlayLocation(maxWindowBounds);
+						if (overlayFrame != null && overlayFrameDragListener != null
+								&& !overlayFrameDragListener.isDragging()) {
+							deInitOverlay();
+							initOverlay();
+						}
+
 						onScreenKeyboard.updateLocation();
 					}
 
@@ -2825,7 +2847,7 @@ public final class Main implements SingletonApp {
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
-			deInitOverlay();
+			deInitOverlayAndHideOnScreenKeyboard();
 			onOutputChanged();
 		});
 	}
@@ -2847,18 +2869,9 @@ public final class Main implements SingletonApp {
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
-			deInitOverlay();
+			deInitOverlayAndHideOnScreenKeyboard();
 			onOutputChanged();
 		});
-	}
-
-	public void toggleOnScreenKeyboard() {
-		if (isLocalRunning() || isServerRunning())
-			EventQueue.invokeLater(() -> {
-				onScreenKeyboard.setVisible(!onScreenKeyboard.isVisible());
-				repaintOnScreenKeyboard();
-				repaintOverlay();
-			});
 	}
 
 	public void updateDeviceMenuSelection() {
@@ -3071,17 +3084,6 @@ public final class Main implements SingletonApp {
 				if (changed)
 					repaintOverlay();
 			}
-	}
-
-	private void updateOverlayLocation(final Rectangle maxWindowBounds) {
-		if (overlayFrame != null && overlayFrameDragListener != null && !overlayFrameDragListener.isDragging()) {
-			overlayFrame.pack();
-			final var x = maxWindowBounds.width - overlayFrame.getWidth();
-			final var y = maxWindowBounds.height - overlayFrame.getHeight();
-			final var defaultLocation = new Point(x, y);
-			GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, maxWindowBounds);
-			updateOverlayAlignment(maxWindowBounds);
-		}
 	}
 
 	private void updateOverlayPanel() {
