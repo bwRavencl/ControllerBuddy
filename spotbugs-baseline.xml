@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.2.0" sequence="0"
-	timestamp="1625607353275" analysisTimestamp="1625607353317"
-	release="0.19.110-1f282a9">
+<BugCollection version="4.3.0" sequence="0"
+	timestamp="1625811270189" analysisTimestamp="1625811270231"
+	release="0.19.112-563ae46">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\com\oracle\si\Singleton$SingletonApp.class</Jar>
@@ -201,7 +201,7 @@
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.3\3fffcb87b04bc8e0f38a150a85012432870e68e8\flatlaf-1.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.7\69d9503ea0a40ee16f0bcdac7e3eaf83d0fa914a\gson-2.8.7.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.109\fd32dc43540a38267142e67fb1a1dac23924fcd3\classgraph-4.8.109.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.110\892977fc6be6d049afd057b673bd42cdd4d74d5e\classgraph-4.8.110.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.8.0\2f12f6d7f7652270d13624cef1b82d8cd9a5398e\jna-platform-5.8.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.8.0\3551d8d827e54858214107541d3aff9c615cb615\jna-5.8.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.3\5e520d5c290c8b012545a8d34fa5db5ab051ea53\lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
@@ -477,6 +477,129 @@
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java"
 			synthetic="true">
 			<Message>In AssignmentsComponent.java</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="6bcfc5df4995ced34105c841b00052a4"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.gui.EditActionsDialog.getInput()
+			may expose internal representation by returning
+			EditActionsDialog.input</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="getInput"
+			signature="()Lde/bwravencl/controllerbuddy/input/Input;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="398" end="398" startBytecode="0" endBytecode="46"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog.getInput()</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="input" signature="Lde/bwravencl/controllerbuddy/input/Input;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>In EditActionsDialog.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog.input</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="398" end="398" startBytecode="4"
+			endBytecode="4" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+			<Message>At EditActionsDialog.java:[line 398]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="262f4c96d1d3cff747b4955d1cc66a5f"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>new
+			de.bwravencl.controllerbuddy.gui.EditActionsDialog(Component,
+			ButtonToCycleAction) may expose internal representation by storing an
+			externally mutable object into EditActionsDialog.cycleAction</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="&lt;init&gt;"
+			signature="(Ljava/awt/Component;Lde/bwravencl/controllerbuddy/input/action/ButtonToCycleAction;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="304" end="319" startBytecode="0" endBytecode="354"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog(Component,
+				ButtonToCycleAction)</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="cycleAction"
+			signature="Lde/bwravencl/controllerbuddy/input/action/ButtonToCycleAction;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>In EditActionsDialog.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog.cycleAction</Message>
+		</Field>
+		<LocalVariable name="cycleAction" register="2" pc="39"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named cycleAction</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="305" end="305" startBytecode="39"
+			endBytecode="39" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+			<Message>At EditActionsDialog.java:[line 305]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -1004,47 +1127,158 @@
 			<Message>At Main.java:[line 2826]</Message>
 		</SourceLine>
 	</BugInstance>
-	<BugInstance type="EQ_UNUSUAL" priority="2" rank="17"
-		abbrev="Eq" category="STYLE"
-		instanceHash="4bc2823fd2183cac7ba8ecbcc358ca54"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-		<ShortMessage>Unusual equals method</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.gui.Main$ControllerInfo.equals(Object)
-			is unusual</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="e8581828e4463dec0c6cfc57c648299b"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.gui.Main.getFrame() may
+			expose internal representation by returning Main.frame</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
-				start="223" end="227" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1048"
+				end="3332" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 223-227]</Message>
+				<Message>At Main.java:[lines 1048-3332]</Message>
 			</SourceLine>
-			<Message>In class
-				de.bwravencl.controllerbuddy.gui.Main$ControllerInfo</Message>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
-			name="equals" signature="(Ljava/lang/Object;)Z" isStatic="false"
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="getFrame" signature="()Ljavax/swing/JFrame;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
-				start="223" end="223" startBytecode="0" endBytecode="59"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2036"
+				end="2036" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method de.bwravencl.controllerbuddy.gui.Main.getFrame()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="frame" signature="Ljavax/swing/JFrame;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main"
 				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>In Main.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.gui.Main.frame</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="2036" end="2036" startBytecode="4" endBytecode="4"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 2036]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="2110736f7578d87f2632137f956c313a"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.gui.Main.getOnScreenKeyboard()
+			may expose internal representation by returning Main.onScreenKeyboard</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1048"
+				end="3332" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1048-3332]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="getOnScreenKeyboard"
+			signature="()Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2044"
+				end="2044" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.gui.Main$ControllerInfo.equals(Object)</Message>
+				de.bwravencl.controllerbuddy.gui.Main.getOnScreenKeyboard()</Message>
 		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="onScreenKeyboard"
+			signature="Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>In Main.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.gui.Main.onScreenKeyboard</Message>
+		</Field>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
-			start="223" end="223" startBytecode="0" endBytecode="59"
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="2044" end="2044" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
-			synthetic="true">
-			<Message>At Main.java:[line 223]</Message>
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 2044]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="b61eff00457858dcb199d814c052716"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.gui.Main.getPreferences()
+			may expose internal representation by returning Main.preferences</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1048"
+				end="3332" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1048-3332]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="getPreferences" signature="()Ljava/util/prefs/Preferences;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2052"
+				end="2052" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.gui.Main.getPreferences()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="preferences" signature="Ljava/util/prefs/Preferences;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>In Main.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.gui.Main.preferences</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="2052" end="2052" startBytecode="4" endBytecode="4"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 2052]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1147,48 +1381,6 @@
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
 			synthetic="true">
 			<Message>In Main.java</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="EQ_UNUSUAL" priority="2" rank="17"
-		abbrev="Eq" category="STYLE"
-		instanceHash="cf51bdfa4fbea718c0519e962796e13"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-		<ShortMessage>Unusual equals method</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.gui.Main$JsonContext.equals(Object)
-			is unusual</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-				start="430" end="438" sourcefile="Main.java"
-				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 430-438]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.gui.Main$JsonContext</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-			name="equals" signature="(Ljava/lang/Object;)Z" isStatic="false"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-				start="430" end="430" startBytecode="0" endBytecode="59"
-				sourcefile="Main.java"
-				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.gui.Main$JsonContext.equals(Object)</Message>
-		</Method>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-			start="430" end="430" startBytecode="0" endBytecode="59"
-			sourcefile="Main.java"
-			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
-			synthetic="true">
-			<Message>At Main.java:[line 430]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1530,6 +1722,56 @@
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
 		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="fdac99632d0f012f249174ef5ed7aebe"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getAxes() may
+			expose internal representation by returning Input.axes</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getAxes" signature="()Ljava/util/EnumMap;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="190"
+				end="190" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method de.bwravencl.controllerbuddy.input.Input.getAxes()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="axes" signature="Ljava/util/EnumMap;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.axes</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="190" end="190" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 190]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
 		instanceHash="b3856805b8c389df2d48ebf11e3243a2"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
 		<ShortMessage>May expose internal representation by returning
@@ -1575,6 +1817,761 @@
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
 			<Message>At Input.java:[line 194]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="389ed4ea99cc59ef27812f1c6f0d6c59"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getDownKeyStrokes()
+			may expose internal representation by returning Input.downKeyStrokes</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getDownKeyStrokes" signature="()Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="210"
+				end="210" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getDownKeyStrokes()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="downKeyStrokes" signature="Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Input.downKeyStrokes</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="210" end="210" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 210]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="b95d9f6e2d7ad3aa4aabab012ae15045"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getDownMouseButtons()
+			may expose internal representation by returning
+			Input.downMouseButtons</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getDownMouseButtons" signature="()Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="214"
+				end="214" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getDownMouseButtons()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="downMouseButtons" signature="Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Input.downMouseButtons</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="214" end="214" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 214]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="3bd4a59082131668870441a1961c1d28"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getDownUpKeyStrokes()
+			may expose internal representation by returning
+			Input.downUpKeyStrokes</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getDownUpKeyStrokes" signature="()Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="218"
+				end="218" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getDownUpKeyStrokes()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="downUpKeyStrokes" signature="Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Input.downUpKeyStrokes</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="218" end="218" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 218]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="7b57176ede88fcb69bb6844f0edd48b1"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getDownUpMouseButtons()
+			may expose internal representation by returning
+			Input.downUpMouseButtons</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getDownUpMouseButtons" signature="()Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="222"
+				end="222" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getDownUpMouseButtons()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="downUpMouseButtons" signature="Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Input.downUpMouseButtons</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="222" end="222" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 222]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="4d4533aa96ebf1d226033c8f914647e4"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getMain() may
+			expose internal representation by returning Input.main</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getMain" signature="()Lde/bwravencl/controllerbuddy/gui/Main;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="226"
+				end="226" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method de.bwravencl.controllerbuddy.input.Input.getMain()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="main" signature="Lde/bwravencl/controllerbuddy/gui/Main;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.main</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="226" end="226" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 226]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="af7007dc599fb8f3a06f2a1d69caf6cb"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getOffLockKeys()
+			may expose internal representation by returning Input.offLockKeys</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getOffLockKeys" signature="()Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="230"
+				end="230" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getOffLockKeys()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="offLockKeys" signature="Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.offLockKeys</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="230" end="230" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 230]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="227a6cdafb541993b02ceea75265a71e"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getOnLockKeys()
+			may expose internal representation by returning Input.onLockKeys</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getOnLockKeys" signature="()Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="234"
+				end="234" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getOnLockKeys()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="onLockKeys" signature="Ljava/util/Set;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.onLockKeys</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="234" end="234" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 234]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="1577b21bf4c32f2c171a61f821ab0b40"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getOutput() may
+			expose internal representation by returning Input.output</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getOutput"
+			signature="()Lde/bwravencl/controllerbuddy/output/Output;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="238"
+				end="238" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getOutput()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="output"
+			signature="Lde/bwravencl/controllerbuddy/output/Output;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.output</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="238" end="238" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 238]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="cbd69b1aef7ab0aa26c052a7915d0efd"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getProfile() may
+			expose internal representation by returning Input.profile</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getProfile"
+			signature="()Lde/bwravencl/controllerbuddy/input/Profile;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="246"
+				end="246" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getProfile()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="profile"
+			signature="Lde/bwravencl/controllerbuddy/input/Profile;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.profile</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="246" end="246" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 246]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="35e2b03a7b3268a2edb39af24bd440c4"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getSonyExtension()
+			may expose internal representation by returning Input.sonyExtension</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="getSonyExtension"
+			signature="()Lde/bwravencl/controllerbuddy/input/sony/SonyExtension;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="258"
+				end="258" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.getSonyExtension()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="sonyExtension"
+			signature="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.sonyExtension</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="258" end="258" startBytecode="4" endBytecode="4"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 258]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="58381ea2fc3270e32edef2103f7d4876"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>new de.bwravencl.controllerbuddy.input.Input(Main,
+			Main$ControllerInfo, EnumMap) may expose internal representation by
+			storing an externally mutable object into Input.axes</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/gui/Main$ControllerInfo;Ljava/util/EnumMap;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="155"
+				end="172" startBytecode="0" endBytecode="504"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method new de.bwravencl.controllerbuddy.input.Input(Main,
+				Main$ControllerInfo, EnumMap)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="axes" signature="Ljava/util/EnumMap;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.axes</Message>
+		</Field>
+		<LocalVariable name="axes" register="3" pc="162"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named axes</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="162" end="162" startBytecode="162" endBytecode="162"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 162]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="cce66e3a2ed8197917990642b68e5a6a"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>new de.bwravencl.controllerbuddy.input.Input(Main,
+			Main$ControllerInfo, EnumMap) may expose internal representation by
+			storing an externally mutable object into Input.main</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/gui/Main$ControllerInfo;Ljava/util/EnumMap;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="155"
+				end="172" startBytecode="0" endBytecode="504"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method new de.bwravencl.controllerbuddy.input.Input(Main,
+				Main$ControllerInfo, EnumMap)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="main" signature="Lde/bwravencl/controllerbuddy/gui/Main;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.main</Message>
+		</Field>
+		<LocalVariable name="main" register="1" pc="132"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named main</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="156" end="156" startBytecode="132" endBytecode="132"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 156]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="92ad4dcd3691d97c38c3a9b017d99196"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.setOutput(Output)
+			may expose internal representation by storing an externally mutable
+			object into Input.output</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="setOutput"
+			signature="(Lde/bwravencl/controllerbuddy/output/Output;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="578"
+				end="579" startBytecode="0" endBytecode="61" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.setOutput(Output)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="output"
+			signature="Lde/bwravencl/controllerbuddy/output/Output;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.output</Message>
+		</Field>
+		<LocalVariable name="output" register="1" pc="2"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named output</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="578" end="578" startBytecode="2" endBytecode="2"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 578]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="6de8254bbbfe4f92af48a18374cd3bc"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Input.setProfile(Profile)
+			may expose internal representation by storing an externally mutable
+			object into Input.profile</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Input"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
+				end="654" sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>At Input.java:[lines 54-654]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Input"
+			name="setProfile"
+			signature="(Lde/bwravencl/controllerbuddy/input/Profile;)Z"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input" start="582"
+				end="645" startBytecode="0" endBytecode="574"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Input.setProfile(Profile)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Input"
+			name="profile"
+			signature="Lde/bwravencl/controllerbuddy/input/Profile;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Input"
+				sourcefile="Input.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+				<Message>In Input.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Input.profile</Message>
+		</Field>
+		<LocalVariable name="profile" register="1" pc="275"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named profile</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
+			start="644" end="644" startBytecode="275" endBytecode="275"
+			sourcefile="Input.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
+			<Message>At Input.java:[line 644]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -1976,45 +2973,6 @@
 			<Message>At KeyStroke.java:[line 68]</Message>
 		</SourceLine>
 	</BugInstance>
-	<BugInstance type="EQ_UNUSUAL" priority="2" rank="17"
-		abbrev="Eq" category="STYLE"
-		instanceHash="c4155edfaf40571faef5c28dd98b483d"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-		<ShortMessage>Unusual equals method</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.LockKey.equals(Object)
-			is unusual</LongMessage>
-		<Class classname="de.bwravencl.controllerbuddy.input.LockKey"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.LockKey" start="25"
-				end="55" sourcefile="LockKey.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java">
-				<Message>At LockKey.java:[lines 25-55]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.input.LockKey</Message>
-		</Class>
-		<Method classname="de.bwravencl.controllerbuddy.input.LockKey"
-			name="equals" signature="(Ljava/lang/Object;)Z" isStatic="false"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.LockKey" start="25"
-				end="25" startBytecode="0" endBytecode="59"
-				sourcefile="LockKey.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.input.LockKey.equals(Object)</Message>
-		</Method>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.LockKey" start="25"
-			end="25" startBytecode="0" endBytecode="59" sourcefile="LockKey.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/LockKey.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\LockKey.java"
-			synthetic="true">
-			<Message>At LockKey.java:[line 25]</Message>
-		</SourceLine>
-	</BugInstance>
 	<BugInstance type="MS_MUTABLE_ARRAY" priority="1" rank="16"
 		abbrev="MS" category="MALICIOUS_CODE"
 		instanceHash="1c0d4b419445260a68b00ca55d23700e"
@@ -2055,44 +3013,555 @@
 			<Message>At LockKey.java:[line 33]</Message>
 		</SourceLine>
 	</BugInstance>
-	<BugInstance type="EQ_UNUSUAL" priority="2" rank="17"
-		abbrev="Eq" category="STYLE"
-		instanceHash="bc20948a8349d60960958ffe4a6ae544"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-		<ShortMessage>Unusual equals method</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.ScanCode.equals(Object)
-			is unusual</LongMessage>
-		<Class classname="de.bwravencl.controllerbuddy.input.ScanCode"
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="15f74b4fefba8a8519e28dd59b7307b1"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Mode.getAxisToActionsMap()
+			may expose internal representation by returning Mode.axisToActionsMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Mode"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.ScanCode" start="28"
-				end="250" sourcefile="ScanCode.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/ScanCode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\ScanCode.java">
-				<Message>At ScanCode.java:[lines 28-250]</Message>
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="72"
+				end="166" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>At Mode.java:[lines 72-166]</Message>
 			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.input.ScanCode</Message>
+			<Message>In class de.bwravencl.controllerbuddy.input.Mode</Message>
 		</Class>
-		<Method classname="de.bwravencl.controllerbuddy.input.ScanCode"
-			name="equals" signature="(Ljava/lang/Object;)Z" isStatic="false"
+		<Method classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="getAxisToActionsMap" signature="()Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="134"
+				end="134" startBytecode="0" endBytecode="46" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Mode.getAxisToActionsMap()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="axisToActionsMap" signature="Ljava/util/Map;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.ScanCode" start="28"
-				end="28" startBytecode="0" endBytecode="59"
-				sourcefile="ScanCode.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/ScanCode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\ScanCode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.input.ScanCode.equals(Object)</Message>
-		</Method>
+				classname="de.bwravencl.controllerbuddy.input.Mode"
+				sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>In Mode.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Mode.axisToActionsMap</Message>
+		</Field>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.ScanCode" start="28"
-			end="28" startBytecode="0" endBytecode="59"
-			sourcefile="ScanCode.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/ScanCode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\ScanCode.java"
-			synthetic="true">
-			<Message>At ScanCode.java:[line 28]</Message>
+			classname="de.bwravencl.controllerbuddy.input.Mode" primary="true"
+			start="134" end="134" startBytecode="4" endBytecode="4"
+			sourcefile="Mode.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+			<Message>At Mode.java:[line 134]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="99c31ea87d220093c58926ef1c23a296"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Mode.getButtonToActionsMap()
+			may expose internal representation by returning
+			Mode.buttonToActionsMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Mode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="72"
+				end="166" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>At Mode.java:[lines 72-166]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Mode</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="getButtonToActionsMap" signature="()Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="138"
+				end="138" startBytecode="0" endBytecode="46" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Mode.getButtonToActionsMap()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="buttonToActionsMap" signature="Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode"
+				sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>In Mode.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Mode.buttonToActionsMap</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Mode" primary="true"
+			start="138" end="138" startBytecode="4" endBytecode="4"
+			sourcefile="Mode.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+			<Message>At Mode.java:[line 138]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="75808bdfd98d5f24ff2e2ba50878f891"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Mode.getComponentToActionsMap(Mode$Component$ComponentType)
+			may expose internal representation by returning Mode.axisToActionsMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Mode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="72"
+				end="166" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>At Mode.java:[lines 72-166]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Mode</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="getComponentToActionsMap"
+			signature="(Lde/bwravencl/controllerbuddy/input/Mode$Component$ComponentType;)Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="142"
+				end="144" startBytecode="0" endBytecode="85" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Mode.getComponentToActionsMap(Mode$Component$ComponentType)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="axisToActionsMap" signature="Ljava/util/Map;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode"
+				sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>In Mode.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Mode.axisToActionsMap</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Mode" primary="true"
+			start="143" end="143" startBytecode="11" endBytecode="11"
+			sourcefile="Mode.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+			<Message>At Mode.java:[line 143]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="f9bb952c859323d090df7164dae5106c"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Mode.getComponentToActionsMap(Mode$Component$ComponentType)
+			may expose internal representation by returning
+			Mode.buttonToActionsMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Mode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="72"
+				end="166" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>At Mode.java:[lines 72-166]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Mode</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="getComponentToActionsMap"
+			signature="(Lde/bwravencl/controllerbuddy/input/Mode$Component$ComponentType;)Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode" start="142"
+				end="144" startBytecode="0" endBytecode="85" sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Mode.getComponentToActionsMap(Mode$Component$ComponentType)</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Mode"
+			name="buttonToActionsMap" signature="Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Mode"
+				sourcefile="Mode.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+				<Message>In Mode.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Mode.buttonToActionsMap</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Mode" primary="true"
+			start="144" end="144" startBytecode="16" endBytecode="16"
+			sourcefile="Mode.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Mode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Mode.java">
+			<Message>At Mode.java:[line 144]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="4e3262bebda89fbfb174bc87e429082f"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Profile.getButtonToModeActionsMap()
+			may expose internal representation by returning
+			Profile.buttonToModeActionsMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Profile"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="38"
+				end="202" sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>At Profile.java:[lines 38-202]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Profile</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="getButtonToModeActionsMap" signature="()Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="112"
+				end="112" startBytecode="0" endBytecode="46"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Profile.getButtonToModeActionsMap()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="buttonToModeActionsMap" signature="Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>In Profile.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Profile.buttonToModeActionsMap</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Profile" primary="true"
+			start="112" end="112" startBytecode="4" endBytecode="4"
+			sourcefile="Profile.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+			<Message>At Profile.java:[line 112]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="234b13ceb96b8e13525defbe736ba477"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Profile.getModes() may
+			expose internal representation by returning Profile.modes</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Profile"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="38"
+				end="202" sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>At Profile.java:[lines 38-202]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Profile</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="getModes" signature="()Ljava/util/List;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="120"
+				end="120" startBytecode="0" endBytecode="46"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Profile.getModes()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="modes" signature="Ljava/util/List;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>In Profile.java</Message>
+			</SourceLine>
+			<Message>Field de.bwravencl.controllerbuddy.input.Profile.modes</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Profile" primary="true"
+			start="120" end="120" startBytecode="4" endBytecode="4"
+			sourcefile="Profile.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+			<Message>At Profile.java:[line 120]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="43ec229bdcb5a9224a020eff692d8b37"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.Profile.getVirtualAxisToOverlayAxisMap()
+			may expose internal representation by returning
+			Profile.virtualAxisToOverlayAxisMap</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.input.Profile"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="38"
+				end="202" sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>At Profile.java:[lines 38-202]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.input.Profile</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="getVirtualAxisToOverlayAxisMap" signature="()Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile" start="128"
+				end="128" startBytecode="0" endBytecode="46"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.Profile.getVirtualAxisToOverlayAxisMap()</Message>
+		</Method>
+		<Field classname="de.bwravencl.controllerbuddy.input.Profile"
+			name="virtualAxisToOverlayAxisMap" signature="Ljava/util/Map;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.Profile"
+				sourcefile="Profile.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+				<Message>In Profile.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.Profile.virtualAxisToOverlayAxisMap</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.Profile" primary="true"
+			start="128" end="128" startBytecode="4" endBytecode="4"
+			sourcefile="Profile.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/Profile.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\Profile.java">
+			<Message>At Profile.java:[line 128]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="2dba3538433798aaf5a57b9929cbad44"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.getActions()
+			may expose internal representation by returning
+			ButtonToCycleAction.actions</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				start="34" end="167" sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+				<Message>At ButtonToCycleAction.java:[lines 34-167]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			name="getActions" signature="()Ljava/util/List;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				start="105" end="105" startBytecode="0" endBytecode="46"
+				sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.getActions()</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			name="actions" signature="Ljava/util/List;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+				<Message>In ButtonToCycleAction.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.actions</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			primary="true" start="105" end="105" startBytecode="4"
+			endBytecode="4" sourcefile="ButtonToCycleAction.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+			<Message>At ButtonToCycleAction.java:[line 105]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="48c7746a414856119fd2627ae52779ea"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.setActions(List)
+			may expose internal representation by storing an externally mutable
+			object into ButtonToCycleAction.actions</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				start="34" end="167" sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+				<Message>At ButtonToCycleAction.java:[lines 34-167]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			name="setActions" signature="(Ljava/util/List;)V" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				start="151" end="152" startBytecode="0" endBytecode="79"
+				sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.setActions(List)</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			name="actions" signature="Ljava/util/List;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+				sourcefile="ButtonToCycleAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+				<Message>In ButtonToCycleAction.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction.actions</Message>
+		</Field>
+		<LocalVariable name="actions" register="1" pc="2"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named actions</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
+			primary="true" start="151" end="151" startBytecode="2"
+			endBytecode="2" sourcefile="ButtonToCycleAction.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToCycleAction.java">
+			<Message>At ButtonToCycleAction.java:[line 151]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="MS_EXPOSE_REP" priority="2" rank="18"
+		abbrev="MS" category="MALICIOUS_CODE"
+		instanceHash="de01b336ba37dd6dd39407ba72a5660d"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="218">
+		<ShortMessage>Public static method may expose internal representation
+			by returning array</ShortMessage>
+		<LongMessage>Public static
+			de.bwravencl.controllerbuddy.input.action.ButtonToModeAction.getButtonToModeActionStack()
+			may expose internal representation by returning
+			ButtonToModeAction.buttonToModeActionStack</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+				start="38" end="207" sourcefile="ButtonToModeAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.java">
+				<Message>At ButtonToModeAction.java:[lines 38-207]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.ButtonToModeAction</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+			name="getButtonToModeActionStack"
+			signature="()Ljava/util/LinkedList;" isStatic="true" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+				start="44" end="44" startBytecode="0" endBytecode="27"
+				sourcefile="ButtonToModeAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.action.ButtonToModeAction.getButtonToModeActionStack()</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+			name="buttonToModeActionStack" signature="Ljava/util/LinkedList;"
+			isStatic="true" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+				sourcefile="ButtonToModeAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.java">
+				<Message>In ButtonToModeAction.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.action.ButtonToModeAction.buttonToModeActionStack</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
+			primary="true" start="44" end="44" startBytecode="3" endBytecode="3"
+			sourcefile="ButtonToModeAction.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.java">
+			<Message>At ButtonToModeAction.java:[line 44]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="MS_OOI_PKGPROTECT" priority="2"
@@ -2181,6 +3650,129 @@
 			sourcepath="de/bwravencl/controllerbuddy/input/action/IButtonToAction.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\IButtonToAction.java">
 			<Message>At IButtonToAction.java:[line 34]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="ec34c3c64d78ef22288508fb64ec7260"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.action.ToKeyAction.getKeystroke()
+			may expose internal representation by returning ToKeyAction.keystroke</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				start="29" end="117" sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+				<Message>At ToKeyAction.java:[lines 29-117]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			name="getKeystroke"
+			signature="()Lde/bwravencl/controllerbuddy/input/KeyStroke;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				start="66" end="66" startBytecode="0" endBytecode="64"
+				sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction.getKeystroke()</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			name="keystroke"
+			signature="Lde/bwravencl/controllerbuddy/input/KeyStroke;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+				<Message>In ToKeyAction.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction.keystroke</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			primary="true" start="66" end="66" startBytecode="4" endBytecode="4"
+			sourcefile="ToKeyAction.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+			<Message>At ToKeyAction.java:[line 66]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="10c0b9696a60348c234b0b0b7df32d96"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.action.ToKeyAction.setKeystroke(KeyStroke)
+			may expose internal representation by storing an externally mutable
+			object into ToKeyAction.keystroke</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				start="29" end="117" sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+				<Message>At ToKeyAction.java:[lines 29-117]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			name="setKeystroke"
+			signature="(Lde/bwravencl/controllerbuddy/input/KeyStroke;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				start="116" end="117" startBytecode="0" endBytecode="79"
+				sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction.setKeystroke(KeyStroke)</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			name="keystroke"
+			signature="Lde/bwravencl/controllerbuddy/input/KeyStroke;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+				sourcefile="ToKeyAction.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+				<Message>In ToKeyAction.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.input.action.ToKeyAction.keystroke</Message>
+		</Field>
+		<LocalVariable name="keystroke" register="1" pc="2"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named keystroke</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
+			primary="true" start="116" end="116" startBytecode="2"
+			endBytecode="2" sourcefile="ToKeyAction.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\ToKeyAction.java">
+			<Message>At ToKeyAction.java:[line 116]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
@@ -2558,47 +4150,61 @@
 			<Message>Another occurrence at SonyExtension.java:[line 481]</Message>
 		</SourceLine>
 	</BugInstance>
-	<BugInstance type="EQ_UNUSUAL" priority="2" rank="17"
-		abbrev="Eq" category="STYLE"
-		instanceHash="574c50e97d34f806a01aa613afc99505"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-		<ShortMessage>Unusual equals method</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection.equals(Object)
-			is unusual</LongMessage>
+	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
+		abbrev="EI" category="MALICIOUS_CODE"
+		instanceHash="9dcecf14a63620f1db507de0135d2c1e"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by returning
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.json.ActionTypeAdapter.getUnknownActionClasses()
+			may expose internal representation by returning
+			ActionTypeAdapter.unknownActionClasses</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
+			classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
-				start="43" end="46" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 43-46]</Message>
+				classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+				start="37" end="89" sourcefile="ActionTypeAdapter.java"
+				sourcepath="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.java">
+				<Message>At ActionTypeAdapter.java:[lines 37-89]</Message>
 			</SourceLine>
-			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection</Message>
+			<Message>In class de.bwravencl.controllerbuddy.json.ActionTypeAdapter</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
-			name="equals" signature="(Ljava/lang/Object;)Z" isStatic="false"
-			primary="true">
+			classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+			name="getUnknownActionClasses" signature="()Ljava/util/Set;"
+			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
-				start="43" end="43" startBytecode="0" endBytecode="59"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
+				classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+				start="80" end="80" startBytecode="0" endBytecode="46"
+				sourcefile="ActionTypeAdapter.java"
+				sourcepath="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection.equals(Object)</Message>
+				de.bwravencl.controllerbuddy.json.ActionTypeAdapter.getUnknownActionClasses()</Message>
 		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+			name="unknownActionClasses" signature="Ljava/util/Set;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+				sourcefile="ActionTypeAdapter.java"
+				sourcepath="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.java">
+				<Message>In ActionTypeAdapter.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.json.ActionTypeAdapter.unknownActionClasses</Message>
+		</Field>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
-			start="43" end="43" startBytecode="0" endBytecode="59"
-			sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"
-			synthetic="true">
-			<Message>At SonyExtension.java:[line 43]</Message>
+			classname="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
+			primary="true" start="80" end="80" startBytecode="4" endBytecode="4"
+			sourcefile="ActionTypeAdapter.java"
+			sourcepath="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.java">
+			<Message>At ActionTypeAdapter.java:[line 80]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="BC_UNCONFIRMED_CAST" priority="3"
@@ -2666,6 +4272,69 @@
 			sourcepath="de/bwravencl/controllerbuddy/json/ColorTypeAdapter.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\json\ColorTypeAdapter.java">
 			<Message>At ColorTypeAdapter.java:[line 38]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
+		abbrev="EI2" category="MALICIOUS_CODE"
+		instanceHash="d23fbadc99faebdf0c29e98743b63ea"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
+		<ShortMessage>May expose internal representation by incorporating
+			reference to mutable object</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.output.VJoyOutput.setvJoyDevice(WinDef$UINT)
+			may expose internal representation by storing an externally mutable
+			object into VJoyOutput.vJoyDevice</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+				start="65" end="600" sourcefile="VJoyOutput.java"
+				sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java">
+				<Message>At VJoyOutput.java:[lines 65-600]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.output.VJoyOutput</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+			name="setvJoyDevice"
+			signature="(Lcom/sun/jna/platform/win32/WinDef$UINT;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+				start="463" end="464" startBytecode="0" endBytecode="61"
+				sourcefile="VJoyOutput.java"
+				sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.output.VJoyOutput.setvJoyDevice(WinDef$UINT)</Message>
+		</Method>
+		<Field
+			classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+			name="vJoyDevice"
+			signature="Lcom/sun/jna/platform/win32/WinDef$UINT;" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+				sourcefile="VJoyOutput.java"
+				sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java">
+				<Message>In VJoyOutput.java</Message>
+			</SourceLine>
+			<Message>Field
+				de.bwravencl.controllerbuddy.output.VJoyOutput.vJoyDevice</Message>
+		</Field>
+		<LocalVariable name="vJoyDevice" register="1" pc="2"
+			role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named vJoyDevice</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.output.VJoyOutput"
+			primary="true" start="463" end="463" startBytecode="2"
+			endBytecode="2" sourcefile="VJoyOutput.java"
+			sourcepath="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\output\VJoyOutput.java">
+			<Message>At VJoyOutput.java:[line 463]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="NM_METHOD_NAMING_CONVENTION"
@@ -2789,6 +4458,20 @@ cast will not fail.
 
     ]]></Details>
 	</BugPattern>
+	<BugPattern type="MS_EXPOSE_REP" abbrev="MS"
+		category="MALICIOUS_CODE">
+		<ShortDescription>Public static method may expose internal
+			representation by returning array</ShortDescription>
+		<Details><![CDATA[
+
+  <p> A public static method returns a reference to
+   an array that is part of the static state of the class.
+   Any code that calls this method can freely modify
+   the underlying array.
+   One fix is to return a copy of the array.</p>
+
+    ]]></Details>
+	</BugPattern>
 	<BugPattern type="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"
 		abbrev="RCN" category="STYLE">
 		<ShortDescription>Redundant nullcheck of value known to be non-null</ShortDescription>
@@ -2885,17 +4568,6 @@ This way, no explicit check for null is needed by clients of the method.</p>
 For example, <code>File.listFiles()</code> returns an empty list
 if given a directory containing no files, and returns null if the file
 is not a directory.</p>
-
-    ]]></Details>
-	</BugPattern>
-	<BugPattern type="EQ_UNUSUAL" abbrev="Eq" category="STYLE">
-		<ShortDescription>Unusual equals method</ShortDescription>
-		<Details><![CDATA[
-
-  <p> This class doesn't do any of the patterns we recognize for checking that the type of the argument
-is compatible with the type of the <code>this</code> object. There might not be anything wrong with
-this code, but it is worth reviewing.
-</p>
 
     ]]></Details>
 	</BugPattern>
@@ -3004,9 +4676,6 @@ object is stored in this field.</p>
 	<BugCode abbrev="Wa">
 		<Description>Wait not in loop</Description>
 	</BugCode>
-	<BugCode abbrev="Eq">
-		<Description>Problems with implementation of equals()</Description>
-	</BugCode>
 	<BugCode abbrev="EI2">
 		<Description>Storing reference to mutable object</Description>
 	</BugCode>
@@ -3075,12 +4744,12 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Tue, 6 Jul 2021 23:35:53 +0200" total_classes="193"
-		referenced_classes="1003" total_bugs="48" total_size="8699"
+		timestamp="Fri, 9 Jul 2021 08:14:30 +0200" total_classes="193"
+		referenced_classes="1003" total_bugs="77" total_size="8699"
 		num_packages="10" java_version="16" vm_version="16+36-2231"
-		cpu_seconds="31.08" clock_seconds="7.07" peak_mbytes="574.63"
-		alloc_mbytes="512.00" gc_seconds="0.11" priority_3="26"
-		priority_2="20" priority_1="2">
+		cpu_seconds="32.61" clock_seconds="7.44" peak_mbytes="565.56"
+		alloc_mbytes="512.00" gc_seconds="0.12" priority_3="26"
+		priority_2="49" priority_1="2">
 		<FileStats path="com/oracle/si/Singleton.java" bugCount="0"
 			size="363" />
 		<FileStats
@@ -3088,12 +4757,12 @@ object is stored in this field.</p>
 			bugCount="4" size="410" bugHash="fa891c52246fab7722d96c1ff6748b96" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			bugCount="8" size="374" bugHash="869323b7d1f64916584304eff417298a" />
+			bugCount="10" size="374" bugHash="22763c6eaa11bf73d640d88432920876" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0"
 			size="106" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="10" size="2317" bugHash="cc33889dc3685bc97ea91c8d9f05dba1" />
+			bugCount="11" size="2317" bugHash="136b9684df1eca72197e94978473c22d" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="2" size="385" bugHash="bee45d302ca5c0ac7a60e01da28b06f1" />
@@ -3101,26 +4770,26 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
 			bugCount="1" size="254" bugHash="3a7e1c9523d18f42a36b7ca12186b081" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="2"
-			size="436" bugHash="9a01c0fa9b164ba8128d3a01edbaa47a" />
+			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="17"
+			size="436" bugHash="39663febc2a332ff22add0784ab6df48" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6"
 			size="38" bugHash="cb95e6b7d2dec063fd84527bc403acbb" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/LockKey.java" bugCount="2"
-			size="29" bugHash="7512d44b318b38e5df52c0a8e64a4674" />
+			path="de/bwravencl/controllerbuddy/input/LockKey.java" bugCount="1"
+			size="29" bugHash="26ba181e19a761bd4690cbbf2fa96149" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/Mode.java" bugCount="0"
-			size="96" />
+			path="de/bwravencl/controllerbuddy/input/Mode.java" bugCount="4"
+			size="96" bugHash="805dd5781b71a9d6d2625b7371b0d544" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/OverlayAxis.java"
 			bugCount="0" size="13" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/Profile.java" bugCount="0"
-			size="127" />
+			path="de/bwravencl/controllerbuddy/input/Profile.java" bugCount="3"
+			size="127" bugHash="3c16fd7650c89f4b9916ed0089e30a62" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/ScanCode.java" bugCount="1"
-			size="178" bugHash="074bff477e264b8a89e7d6cc577bfd7a" />
+			path="de/bwravencl/controllerbuddy/input/ScanCode.java" bugCount="0"
+			size="178" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/AxisToAxisAction.java"
 			bugCount="0" size="40" />
@@ -3153,7 +4822,7 @@ object is stored in this field.</p>
 			bugCount="0" size="28" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToCycleAction.java"
-			bugCount="0" size="89" />
+			bugCount="2" size="89" bugHash="48ba24729cb21bf895906737d019fdf1" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToKeyAction.java"
 			bugCount="0" size="16" />
@@ -3162,7 +4831,7 @@ object is stored in this field.</p>
 			bugCount="0" size="45" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToModeAction.java"
-			bugCount="0" size="120" />
+			bugCount="1" size="120" bugHash="b31e45a508519c5918eee19593e94f19" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ButtonToMouseButtonAction.java"
 			bugCount="0" size="24" />
@@ -3213,7 +4882,7 @@ object is stored in this field.</p>
 			bugCount="0" size="36" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
-			bugCount="0" size="59" />
+			bugCount="2" size="59" bugHash="f7c93d731e54fddb7def151548574db8" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/ToMouseButtonAction.java"
 			bugCount="0" size="63" />
@@ -3309,10 +4978,10 @@ object is stored in this field.</p>
 			bugCount="2" size="94" bugHash="0f99091074d8ab60a5accc841e4f8ceb" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			bugCount="4" size="373" bugHash="595bbb8ca90b660563a029570ef68581" />
+			bugCount="3" size="373" bugHash="3db100989f91f26f4c6703fa2fe14e2a" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
-			bugCount="0" size="38" />
+			bugCount="1" size="38" bugHash="9b647dac4523e6a2248306483c979be8" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ColorTypeAdapter.java"
 			bugCount="1" size="23" bugHash="a0b733d8011c6a479e2cf23550810cbe" />
@@ -3336,7 +5005,7 @@ object is stored in this field.</p>
 			bugCount="0" size="201" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/output/VJoyOutput.java"
-			bugCount="1" size="433" bugHash="fc01866f22b9daa313199c39da7aff35" />
+			bugCount="2" size="433" bugHash="e664ba0f59961f09012282f18d3c99c7" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/version/Version.java" bugCount="0"
 			size="4" />
@@ -3365,8 +5034,8 @@ object is stored in this field.</p>
 				sourceFile="Singleton.java" interface="false" size="82" bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.gui"
-			total_bugs="25" total_types="68" total_size="3846" priority_3="17"
-			priority_2="7" priority_1="1">
+			total_bugs="28" total_types="68" total_size="3846" priority_3="17"
+			priority_2="10" priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent"
 				sourceFile="AssignmentsComponent.java" interface="false" size="70"
@@ -3410,7 +5079,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourceFile="EditActionsDialog.java" interface="false" size="253"
-				bugs="8" priority_3="8" />
+				bugs="10" priority_3="8" priority_2="2" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$1"
 				sourceFile="EditActionsDialog.java" interface="false" size="10"
@@ -3446,8 +5115,8 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				sourceFile="GuiUtils.java" interface="false" size="28" bugs="0" />
 			<ClassStats class="de.bwravencl.controllerbuddy.gui.Main"
-				sourceFile="Main.java" interface="false" size="1576" bugs="2"
-				priority_3="1" priority_1="1" />
+				sourceFile="Main.java" interface="false" size="1576" bugs="5"
+				priority_3="1" priority_2="3" priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$1"
 				sourceFile="Main.java" interface="false" size="25" bugs="0" />
@@ -3471,8 +5140,7 @@ object is stored in this field.</p>
 				sourceFile="Main.java" interface="false" size="27" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$ControllerInfo"
-				sourceFile="Main.java" interface="false" size="15" bugs="1"
-				priority_2="1" />
+				sourceFile="Main.java" interface="false" size="15" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$DisplayIndicatorAction"
 				sourceFile="Main.java" interface="false" size="17" bugs="0" />
@@ -3495,8 +5163,7 @@ object is stored in this field.</p>
 				sourceFile="Main.java" interface="false" size="16" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$JsonContext"
-				sourceFile="Main.java" interface="false" size="16" bugs="1"
-				priority_2="1" />
+				sourceFile="Main.java" interface="false" size="16" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$NewAction"
 				sourceFile="Main.java" interface="false" size="11" bugs="0" />
@@ -3603,13 +5270,13 @@ object is stored in this field.</p>
 				sourceFile="OpenVrOverlay.java" interface="false" size="6" bugs="0" />
 		</PackageStats>
 		<PackageStats
-			package="de.bwravencl.controllerbuddy.input" total_bugs="11"
-			total_types="10" total_size="917" priority_3="1" priority_2="9"
+			package="de.bwravencl.controllerbuddy.input" total_bugs="31"
+			total_types="10" total_size="917" priority_3="1" priority_2="29"
 			priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Input"
-				sourceFile="Input.java" interface="false" size="419" bugs="2"
-				priority_3="1" priority_2="1" />
+				sourceFile="Input.java" interface="false" size="419" bugs="17"
+				priority_3="1" priority_2="16" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Input$VirtualAxis"
 				sourceFile="Input.java" interface="false" size="17" bugs="0" />
@@ -3619,11 +5286,12 @@ object is stored in this field.</p>
 				priority_2="6" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.LockKey"
-				sourceFile="LockKey.java" interface="false" size="29" bugs="2"
-				priority_2="1" priority_1="1" />
+				sourceFile="LockKey.java" interface="false" size="29" bugs="1"
+				priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Mode"
-				sourceFile="Mode.java" interface="false" size="66" bugs="0" />
+				sourceFile="Mode.java" interface="false" size="66" bugs="4"
+				priority_2="4" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Mode$Component"
 				sourceFile="Mode.java" interface="false" size="19" bugs="0" />
@@ -3635,15 +5303,15 @@ object is stored in this field.</p>
 				sourceFile="OverlayAxis.java" interface="false" size="13" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.Profile"
-				sourceFile="Profile.java" interface="false" size="127" bugs="0" />
+				sourceFile="Profile.java" interface="false" size="127" bugs="3"
+				priority_2="3" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.ScanCode"
-				sourceFile="ScanCode.java" interface="false" size="178" bugs="1"
-				priority_2="1" />
+				sourceFile="ScanCode.java" interface="false" size="178" bugs="0" />
 		</PackageStats>
 		<PackageStats
-			package="de.bwravencl.controllerbuddy.input.action" total_bugs="2"
-			total_types="42" total_size="1171" priority_2="2">
+			package="de.bwravencl.controllerbuddy.input.action" total_bugs="7"
+			total_types="42" total_size="1171" priority_2="7">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.AxisToAxisAction"
 				sourceFile="AxisToAxisAction.java" interface="false" size="40"
@@ -3691,7 +5359,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction"
 				sourceFile="ButtonToCycleAction.java" interface="false" size="85"
-				bugs="0" />
+				bugs="2" priority_2="2" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction$1"
 				sourceFile="ButtonToCycleAction.java" interface="false" size="4"
@@ -3707,7 +5375,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToModeAction"
 				sourceFile="ButtonToModeAction.java" interface="false" size="120"
-				bugs="0" />
+				bugs="1" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ButtonToMouseButtonAction"
 				sourceFile="ButtonToMouseButtonAction.java" interface="false"
@@ -3790,7 +5458,8 @@ object is stored in this field.</p>
 				bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ToKeyAction"
-				sourceFile="ToKeyAction.java" interface="false" size="55" bugs="0" />
+				sourceFile="ToKeyAction.java" interface="false" size="55" bugs="2"
+				priority_2="2" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.ToKeyAction$1"
 				sourceFile="ToKeyAction.java" interface="false" size="4" bugs="0" />
@@ -3978,8 +5647,8 @@ object is stored in this field.</p>
 				size="9" bugs="0" />
 		</PackageStats>
 		<PackageStats
-			package="de.bwravencl.controllerbuddy.input.sony" total_bugs="8"
-			total_types="7" total_size="563" priority_3="6" priority_2="2">
+			package="de.bwravencl.controllerbuddy.input.sony" total_bugs="7"
+			total_types="7" total_size="563" priority_3="6" priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
 				sourceFile="DualSenseExtension.java" interface="false" size="74"
@@ -4002,19 +5671,19 @@ object is stored in this field.</p>
 				bugs="3" priority_3="2" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$Connection"
-				sourceFile="SonyExtension.java" interface="false" size="12" bugs="1"
-				priority_2="1" />
+				sourceFile="SonyExtension.java" interface="false" size="12" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.sony.SonyExtension$SonyInputReportListener"
 				sourceFile="SonyExtension.java" interface="false" size="114"
 				bugs="0" />
 		</PackageStats>
 		<PackageStats package="de.bwravencl.controllerbuddy.json"
-			total_bugs="1" total_types="4" total_size="94" priority_3="1">
+			total_bugs="2" total_types="4" total_size="94" priority_3="1"
+			priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.json.ActionTypeAdapter"
 				sourceFile="ActionTypeAdapter.java" interface="false" size="38"
-				bugs="0" />
+				bugs="1" priority_2="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.json.ColorTypeAdapter"
 				sourceFile="ColorTypeAdapter.java" interface="false" size="23"
@@ -4029,8 +5698,8 @@ object is stored in this field.</p>
 				size="27" bugs="0" />
 		</PackageStats>
 		<PackageStats
-			package="de.bwravencl.controllerbuddy.output" total_bugs="1"
-			total_types="11" total_size="1127" priority_3="1">
+			package="de.bwravencl.controllerbuddy.output" total_bugs="2"
+			total_types="11" total_size="1127" priority_3="1" priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.ClientOutput"
 				sourceFile="ClientOutput.java" interface="false" size="271" bugs="0" />
@@ -4063,8 +5732,8 @@ object is stored in this field.</p>
 				sourceFile="ServerOutput.java" interface="false" size="11" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.VJoyOutput"
-				sourceFile="VJoyOutput.java" interface="false" size="433" bugs="1"
-				priority_3="1" />
+				sourceFile="VJoyOutput.java" interface="false" size="433" bugs="2"
+				priority_3="1" priority_2="1" />
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.version" total_bugs="0"
@@ -4079,153 +5748,177 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="816" invocations="3901"
-				avgMicrosecondsPerInvocation="209"
-				maxMicrosecondsPerInvocation="18951"
-				standardDeviationMicrosecondsPerInvocation="631" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="399" invocations="1003"
-				avgMicrosecondsPerInvocation="398"
-				maxMicrosecondsPerInvocation="16121"
-				standardDeviationMicrosecondsPerInvocation="952" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="392" invocations="1003"
-				avgMicrosecondsPerInvocation="391"
-				maxMicrosecondsPerInvocation="21614"
-				standardDeviationMicrosecondsPerInvocation="1028" />
+				totalMilliseconds="740" invocations="3901"
+				avgMicrosecondsPerInvocation="189"
+				maxMicrosecondsPerInvocation="17807"
+				standardDeviationMicrosecondsPerInvocation="670" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="369" invocations="1175"
-				avgMicrosecondsPerInvocation="314"
-				maxMicrosecondsPerInvocation="39880"
-				standardDeviationMicrosecondsPerInvocation="1876" />
+				totalMilliseconds="398" invocations="1175"
+				avgMicrosecondsPerInvocation="339"
+				maxMicrosecondsPerInvocation="32363"
+				standardDeviationMicrosecondsPerInvocation="1755" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="278" invocations="1121"
-				avgMicrosecondsPerInvocation="248"
-				maxMicrosecondsPerInvocation="20614"
-				standardDeviationMicrosecondsPerInvocation="1211" />
+				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
+				totalMilliseconds="375" invocations="1003"
+				avgMicrosecondsPerInvocation="374"
+				maxMicrosecondsPerInvocation="17363"
+				standardDeviationMicrosecondsPerInvocation="943" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="242" invocations="2658"
-				avgMicrosecondsPerInvocation="91"
-				maxMicrosecondsPerInvocation="4303"
-				standardDeviationMicrosecondsPerInvocation="189" />
+				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
+				totalMilliseconds="366" invocations="1003"
+				avgMicrosecondsPerInvocation="364"
+				maxMicrosecondsPerInvocation="20533"
+				standardDeviationMicrosecondsPerInvocation="956" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="238" invocations="1042"
-				avgMicrosecondsPerInvocation="228"
-				maxMicrosecondsPerInvocation="16367"
-				standardDeviationMicrosecondsPerInvocation="959" />
+				totalMilliseconds="301" invocations="1042"
+				avgMicrosecondsPerInvocation="289"
+				maxMicrosecondsPerInvocation="29316"
+				standardDeviationMicrosecondsPerInvocation="1204" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
+				totalMilliseconds="284" invocations="1121"
+				avgMicrosecondsPerInvocation="254"
+				maxMicrosecondsPerInvocation="20160"
+				standardDeviationMicrosecondsPerInvocation="1026" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="233" invocations="1162"
-				avgMicrosecondsPerInvocation="200"
-				maxMicrosecondsPerInvocation="18029"
-				standardDeviationMicrosecondsPerInvocation="846" />
+				totalMilliseconds="263" invocations="1162"
+				avgMicrosecondsPerInvocation="226"
+				maxMicrosecondsPerInvocation="15537"
+				standardDeviationMicrosecondsPerInvocation="899" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="215" invocations="1088"
-				avgMicrosecondsPerInvocation="198"
-				maxMicrosecondsPerInvocation="19615"
-				standardDeviationMicrosecondsPerInvocation="924" />
+				totalMilliseconds="257" invocations="1088"
+				avgMicrosecondsPerInvocation="237"
+				maxMicrosecondsPerInvocation="22009"
+				standardDeviationMicrosecondsPerInvocation="1060" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
+				totalMilliseconds="229" invocations="2658"
+				avgMicrosecondsPerInvocation="86"
+				maxMicrosecondsPerInvocation="4426"
+				standardDeviationMicrosecondsPerInvocation="183" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="185" invocations="3909"
-				avgMicrosecondsPerInvocation="47"
-				maxMicrosecondsPerInvocation="1540"
-				standardDeviationMicrosecondsPerInvocation="57" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="154" invocations="1003"
-				avgMicrosecondsPerInvocation="153"
-				maxMicrosecondsPerInvocation="9091"
-				standardDeviationMicrosecondsPerInvocation="478" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="131" invocations="853"
-				avgMicrosecondsPerInvocation="154"
-				maxMicrosecondsPerInvocation="12621"
-				standardDeviationMicrosecondsPerInvocation="599" />
+				totalMilliseconds="179" invocations="3909"
+				avgMicrosecondsPerInvocation="45"
+				maxMicrosecondsPerInvocation="2217"
+				standardDeviationMicrosecondsPerInvocation="65" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="129" invocations="1121"
-				avgMicrosecondsPerInvocation="115"
-				maxMicrosecondsPerInvocation="8445"
-				standardDeviationMicrosecondsPerInvocation="391" />
+				totalMilliseconds="151" invocations="1121"
+				avgMicrosecondsPerInvocation="135"
+				maxMicrosecondsPerInvocation="12725"
+				standardDeviationMicrosecondsPerInvocation="486" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
+				totalMilliseconds="146" invocations="853"
+				avgMicrosecondsPerInvocation="172"
+				maxMicrosecondsPerInvocation="10079"
+				standardDeviationMicrosecondsPerInvocation="628" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
+				totalMilliseconds="138" invocations="1003"
+				avgMicrosecondsPerInvocation="138"
+				maxMicrosecondsPerInvocation="9388"
+				standardDeviationMicrosecondsPerInvocation="416" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
 				totalMilliseconds="109" invocations="1203"
 				avgMicrosecondsPerInvocation="91"
-				maxMicrosecondsPerInvocation="12319"
-				standardDeviationMicrosecondsPerInvocation="388" />
+				maxMicrosecondsPerInvocation="12762"
+				standardDeviationMicrosecondsPerInvocation="398" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="105" invocations="1003"
-				avgMicrosecondsPerInvocation="105"
-				maxMicrosecondsPerInvocation="8603"
-				standardDeviationMicrosecondsPerInvocation="343" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="88" invocations="1003"
-				avgMicrosecondsPerInvocation="88"
-				maxMicrosecondsPerInvocation="11599"
-				standardDeviationMicrosecondsPerInvocation="392" />
+				totalMilliseconds="98" invocations="1003"
+				avgMicrosecondsPerInvocation="98"
+				maxMicrosecondsPerInvocation="8476"
+				standardDeviationMicrosecondsPerInvocation="330" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="83" invocations="3808"
+				totalMilliseconds="80" invocations="3808"
 				avgMicrosecondsPerInvocation="21"
-				maxMicrosecondsPerInvocation="10809"
-				standardDeviationMicrosecondsPerInvocation="179" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="77" invocations="1003"
-				avgMicrosecondsPerInvocation="77"
-				maxMicrosecondsPerInvocation="4690"
-				standardDeviationMicrosecondsPerInvocation="228" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="71" invocations="1003"
-				avgMicrosecondsPerInvocation="71"
-				maxMicrosecondsPerInvocation="3320"
-				standardDeviationMicrosecondsPerInvocation="225" />
+				maxMicrosecondsPerInvocation="10152"
+				standardDeviationMicrosecondsPerInvocation="169" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
-				totalMilliseconds="70" invocations="1189"
-				avgMicrosecondsPerInvocation="59"
-				maxMicrosecondsPerInvocation="34930"
-				standardDeviationMicrosecondsPerInvocation="1013" />
+				totalMilliseconds="79" invocations="1189"
+				avgMicrosecondsPerInvocation="67"
+				maxMicrosecondsPerInvocation="34959"
+				standardDeviationMicrosecondsPerInvocation="1015" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="63" invocations="1003"
-				avgMicrosecondsPerInvocation="62"
-				maxMicrosecondsPerInvocation="4745"
-				standardDeviationMicrosecondsPerInvocation="231" />
+				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
+				totalMilliseconds="73" invocations="1003"
+				avgMicrosecondsPerInvocation="73"
+				maxMicrosecondsPerInvocation="4627"
+				standardDeviationMicrosecondsPerInvocation="214" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
+				totalMilliseconds="71" invocations="1003"
+				avgMicrosecondsPerInvocation="70"
+				maxMicrosecondsPerInvocation="1908"
+				standardDeviationMicrosecondsPerInvocation="136" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
+				totalMilliseconds="70" invocations="1003"
+				avgMicrosecondsPerInvocation="70"
+				maxMicrosecondsPerInvocation="4460"
+				standardDeviationMicrosecondsPerInvocation="244" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
+				totalMilliseconds="64" invocations="186"
+				avgMicrosecondsPerInvocation="347"
+				maxMicrosecondsPerInvocation="3954"
+				standardDeviationMicrosecondsPerInvocation="523" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
 				totalMilliseconds="60" invocations="1003"
-				avgMicrosecondsPerInvocation="60"
-				maxMicrosecondsPerInvocation="2945"
-				standardDeviationMicrosecondsPerInvocation="190" />
+				avgMicrosecondsPerInvocation="59"
+				maxMicrosecondsPerInvocation="3042"
+				standardDeviationMicrosecondsPerInvocation="197" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="58" invocations="1121"
-				avgMicrosecondsPerInvocation="52"
-				maxMicrosecondsPerInvocation="8744"
-				standardDeviationMicrosecondsPerInvocation="310" />
+				totalMilliseconds="59" invocations="1121"
+				avgMicrosecondsPerInvocation="53"
+				maxMicrosecondsPerInvocation="3113"
+				standardDeviationMicrosecondsPerInvocation="200" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.DumbMethods" totalMilliseconds="55"
-				invocations="186" avgMicrosecondsPerInvocation="296"
-				maxMicrosecondsPerInvocation="11821"
-				standardDeviationMicrosecondsPerInvocation="1221" />
+				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
+				totalMilliseconds="57" invocations="1003"
+				avgMicrosecondsPerInvocation="57"
+				maxMicrosecondsPerInvocation="4634"
+				standardDeviationMicrosecondsPerInvocation="199" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.ba.obl.ObligationAnalysis"
+				totalMilliseconds="50" invocations="104"
+				avgMicrosecondsPerInvocation="484"
+				maxMicrosecondsPerInvocation="5420"
+				standardDeviationMicrosecondsPerInvocation="896" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.UnreadFields"
+				totalMilliseconds="49" invocations="186"
+				avgMicrosecondsPerInvocation="268"
+				maxMicrosecondsPerInvocation="5540"
+				standardDeviationMicrosecondsPerInvocation="548" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.DumbMethods" totalMilliseconds="49"
+				invocations="186" avgMicrosecondsPerInvocation="265"
+				maxMicrosecondsPerInvocation="9106"
+				standardDeviationMicrosecondsPerInvocation="743" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis"
+				totalMilliseconds="48" invocations="1003"
+				avgMicrosecondsPerInvocation="47"
+				maxMicrosecondsPerInvocation="8194"
+				standardDeviationMicrosecondsPerInvocation="288" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="54" invocations="1003"
-				avgMicrosecondsPerInvocation="54"
-				maxMicrosecondsPerInvocation="6146"
-				standardDeviationMicrosecondsPerInvocation="373" />
+				totalMilliseconds="47" invocations="1003"
+				avgMicrosecondsPerInvocation="47"
+				maxMicrosecondsPerInvocation="6371"
+				standardDeviationMicrosecondsPerInvocation="321" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>
