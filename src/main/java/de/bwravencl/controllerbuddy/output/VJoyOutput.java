@@ -252,7 +252,7 @@ public abstract class VJoyOutput extends Output {
 
 		EventQueue.invokeLater(() -> {
 			if (forceStop || restart)
-				main.stopAll(true);
+				main.stopAll(false, true);
 			if (restart)
 				main.restartLast();
 		});

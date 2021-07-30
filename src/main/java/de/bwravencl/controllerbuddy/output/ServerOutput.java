@@ -70,7 +70,8 @@ public final class ServerOutput extends Output {
 	}
 
 	public void close() {
-		serverSocket.close();
+		if (serverSocket != null)
+			serverSocket.close();
 	}
 
 	@Override
@@ -275,7 +276,7 @@ public final class ServerOutput extends Output {
 
 			EventQueue.invokeLater(() -> {
 				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
-				main.stopAll(true);
+				main.stopAll(false, true);
 			});
 		}
 

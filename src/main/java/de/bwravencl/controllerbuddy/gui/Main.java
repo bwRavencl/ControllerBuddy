@@ -846,7 +846,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			stopClient(true);
+			stopClient(true, true);
 		}
 	}
 
@@ -861,7 +861,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			stopLocal(true);
+			stopLocal(true, true);
 		}
 	}
 
@@ -876,7 +876,7 @@ public final class Main implements SingletonApp {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			stopServer(true);
+			stopServer(true, true);
 		}
 	}
 
@@ -2223,7 +2223,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs) {
-		stopAll(true);
+		stopAll(true, true);
 
 		log.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
 
@@ -2342,7 +2342,7 @@ public final class Main implements SingletonApp {
 	}
 
 	private void newProfile() {
-		stopAll(true);
+		stopAll(true, true);
 
 		currentFile = null;
 
@@ -2560,7 +2560,7 @@ public final class Main implements SingletonApp {
 		if (input != null)
 			input.deInit(false);
 
-		stopAll(false);
+		stopAll(true, false);
 
 		taskRunner.shutdown();
 
@@ -2694,7 +2694,7 @@ public final class Main implements SingletonApp {
 
 	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
 			final EnumMap<VirtualAxis, Integer> axes) {
-		stopAll(true);
+		stopAll(true, true);
 
 		setSelectedController(controller);
 
@@ -2806,8 +2806,8 @@ public final class Main implements SingletonApp {
 		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT));
 		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL));
 
-		taskRunner.run(serverThread);
 		output = serverThread;
+		taskRunner.run(serverThread);
 
 		onOutputChanged();
 
@@ -2815,20 +2815,25 @@ public final class Main implements SingletonApp {
 		startOverlayTimerTask();
 	}
 
-	public void stopAll(final boolean performGarbageCollection) {
+	public void stopAll(final boolean initiateStop, final boolean performGarbageCollection) {
 		if (isWindows) {
-			stopLocal(false);
-			stopClient(false);
+			stopLocal(initiateStop, false);
+			stopClient(initiateStop, false);
 		}
-		stopServer(false);
+		stopServer(initiateStop, false);
 
 		if (performGarbageCollection)
 			System.gc();
 	}
 
-	private void stopClient(final boolean resetLastOutputType) {
-		if (isClientRunning())
+	private void stopClient(final boolean initiateStop, final boolean resetLastOutputType) {
+		final var running = isClientRunning();
+
+		if (initiateStop && running)
 			taskRunner.stopTask();
+
+		if (running)
+			taskRunner.waitForTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
@@ -2838,9 +2843,14 @@ public final class Main implements SingletonApp {
 		});
 	}
 
-	private void stopLocal(final boolean resetLastOutputType) {
-		if (isLocalRunning())
+	private void stopLocal(final boolean initiateStop, final boolean resetLastOutputType) {
+		final var running = isLocalRunning();
+
+		if (initiateStop && running)
 			taskRunner.stopTask();
+
+		if (running)
+			taskRunner.waitForTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
@@ -2857,12 +2867,14 @@ public final class Main implements SingletonApp {
 			overlayTimerTask.cancel();
 	}
 
-	private void stopServer(final boolean resetLastOutputType) {
-		if (output instanceof ServerOutput)
+	private void stopServer(final boolean initiateStop, final boolean resetLastOutputType) {
+		final var running = output instanceof ServerOutput;
+
+		if (initiateStop && running)
 			((ServerOutput) output).close();
 
-		if (isServerRunning())
-			taskRunner.stopTask();
+		if (running)
+			taskRunner.waitForTask();
 
 		if (resetLastOutputType)
 			lastOutputType = OutputType.NONE;
@@ -2918,9 +2930,9 @@ public final class Main implements SingletonApp {
 
 	private boolean updateGameControllerMappingsFromFile(final String path) {
 		if (isLocalRunning())
-			stopLocal(false);
+			stopLocal(true, false);
 		else if (isServerRunning())
-			stopServer(false);
+			stopServer(true, false);
 
 		var mappingsUpdated = false;
 
