@@ -84,6 +84,8 @@ public abstract class VJoyOutput extends Output {
 		Native.register("User32");
 	}
 
+	private static IVjoyInterface vJoy;
+
 	private static void doKeyboardInput(final int scanCode, final boolean down) {
 		final var input = new INPUT();
 		input.type = new DWORD(INPUT.INPUT_KEYBOARD);
@@ -141,6 +143,10 @@ public abstract class VJoyOutput extends Output {
 		}
 	}
 
+	private static void setVJoy(final IVjoyInterface vJoy) {
+		VJoyOutput.vJoy = vJoy;
+	}
+
 	static void updateOutputSets(final Set<Integer> sourceSet, final Set<Integer> oldDownSet,
 			final Set<Integer> newUpSet, final Set<Integer> newDownSet, final boolean keepStillDown) {
 		final var stillDownSet = new HashSet<Integer>();
@@ -187,7 +193,6 @@ public abstract class VJoyOutput extends Output {
 	private boolean restart;
 	boolean forceStop;
 	private UINT vJoyDevice = new UINT(DEFAULT_VJOY_DEVICE);
-	private IVjoyInterface vJoy;
 	LONG axisX;
 	boolean axisXChanged;
 	LONG axisY;
@@ -266,7 +271,7 @@ public abstract class VJoyOutput extends Output {
 		System.setProperty("jna.library.path", libraryPath);
 
 		try {
-			vJoy = Native.load(LIBRARY_NAME, IVjoyInterface.class);
+			setVJoy(Native.load(LIBRARY_NAME, IVjoyInterface.class));
 
 			final var dllVersion = new Memory(WinDef.WORD.SIZE);
 			final var drvVersion = new Memory(WinDef.WORD.SIZE);
