@@ -91,7 +91,10 @@ public final class GuiUtils {
 			mouseDownLocation = null;
 
 			final var frameLocation = frame.getLocation();
-			main.getPreferences().put(getFrameLocationPreferencesKey(frame), frameLocation.x + "," + frameLocation.y);
+			final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			main.getPreferences().put(getFrameLocationPreferencesKey(frame),
+					(float) frameLocation.x / (float) maxWindowBounds.width + ","
+							+ (float) frameLocation.y / (float) maxWindowBounds.height);
 		}
 	}
 
@@ -139,13 +142,12 @@ public final class GuiUtils {
 
 		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
 		if (locationString != null) {
+
 			final var parts = locationString.split(",");
 			if (parts.length == 2)
 				try {
-					final var x = Integer.parseInt(parts[0]);
-					final var y = Integer.parseInt(parts[1]);
-					location.x = x;
-					location.y = y;
+					location.x = Math.round(Float.parseFloat(parts[0]) * maxWindowBounds.width);
+					location.y = Math.round(Float.parseFloat(parts[1]) * maxWindowBounds.height);
 				} catch (final NumberFormatException e) {
 				}
 		}
