@@ -71,7 +71,7 @@ dependencies {
 	implementation 'commons-cli:commons-cli:1.4',
 			'com.formdev:flatlaf:1.5',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
-			'com.google.code.gson:gson:2.8.7',
+			'com.google.code.gson:gson:2.8.8',
 			'io.github.classgraph:classgraph:4.8.115',
 			"net.java.dev.jna:jna:$jnaVersion",
 			"net.java.dev.jna:jna-platform:$jnaVersion",
