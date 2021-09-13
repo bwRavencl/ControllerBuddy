@@ -16,8 +16,9 @@ jobs:
           persist-credentials: false
           submodules: true
       - name: Install JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: zulu
           java-version: 16.0.2
       - name: Build
         uses: eskatos/gradle-command-action@v1
@@ -29,30 +30,18 @@ jobs:
         id: extract_release_variables
         shell: bash
         run: |
-          echo ::set-output name=release_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename {} .zip)
-          echo ::set-output name=asset_path::$(ls build/distributions/ControllerBuddy-*.zip)
-          echo ::set-output name=asset_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -n 1 basename)
+          echo ::set-output name=tag_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename {} .zip)
+          echo ::set-output name=zip_path::$(ls build/distributions/ControllerBuddy-*.zip)
       - name: Tag Commit
         uses: tvdias/github-tagger@v0.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.extract_release_variables.outputs.release_name }}
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.extract_release_variables.outputs.tag_name }}
+      - name: Release
+        id: release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.extract_release_variables.outputs.release_name }}
-          release_name: ${{ steps.extract_release_variables.outputs.release_name }}
+          tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.extract_release_variables.outputs.asset_path }}
-          asset_name: ${{ steps.extract_release_variables.outputs.asset_name }}
-          asset_content_type: application/zip
+          files: ${{ steps.extract_release_variables.outputs.zip_path }}
