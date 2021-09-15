@@ -55,7 +55,7 @@ public final class Mode implements Cloneable {
 			if (obj == null || getClass() != obj.getClass())
 				return false;
 			final var other = (Component) obj;
-			if ((index != other.index) || (type != other.type))
+			if (index != other.index || type != other.type)
 				return false;
 			return true;
 		}

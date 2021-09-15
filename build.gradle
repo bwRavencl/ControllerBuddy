@@ -11,8 +11,8 @@ plugins {
 
 version = "${org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')}"
 
-sourceCompatibility = 16
-targetCompatibility = 16
+sourceCompatibility = 17
+targetCompatibility = 17
 
 application {
 	mainClass = "de.bwravencl.controllerbuddy.gui.Main"

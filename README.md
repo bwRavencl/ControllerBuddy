@@ -168,7 +168,7 @@ For more information check out [this](https://github.com/bwRavencl/ControllerBud
 
 #### Attribution:
 ControllerBuddy uses the following awesome software technologies and libraries:
-- [OpenJDK 16](https://jdk.java.net/16)
+- [OpenJDK 17](https://jdk.java.net/17)
 - [Apache Batik](https://xmlgraphics.apache.org/batik)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)

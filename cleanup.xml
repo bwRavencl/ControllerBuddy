@@ -102,13 +102,18 @@
 		<setting
 			id="cleanup.qualify_static_field_accesses_with_declaring_class"
 			value="false" />
+		<setting id="cleanup.stringbuilder_for_local_vars"
+			value="false" />
 		<setting id="cleanup.add_generated_serial_version_id"
 			value="true" />
 		<setting id="cleanup.controlflow_merge" value="true" />
 		<setting id="cleanup.primitive_serialization" value="true" />
 		<setting id="cleanup.comparing_on_criteria" value="true" />
+		<setting id="cleanup.do_while_rather_than_while" value="true" />
 		<setting id="cleanup.comparison_statement" value="true" />
 		<setting id="cleanup.extract_increment" value="true" />
+		<setting id="cleanup.stringbuffer_to_stringbuilder"
+			value="true" />
 		<setting id="cleanup.insert_inferred_type_arguments"
 			value="false" />
 		<setting id="cleanup.make_private_fields_final" value="true" />
