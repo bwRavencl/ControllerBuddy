@@ -79,7 +79,8 @@ dependencies {
 			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
-			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
+			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform",
+			'com.github.prat-man:unique4j:7f04387584'
 
 	runtimeOnly "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
 

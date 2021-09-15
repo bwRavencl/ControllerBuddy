@@ -50,6 +50,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,6 +59,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
@@ -69,6 +73,7 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -161,8 +166,6 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import com.oracle.si.Singleton;
-import com.oracle.si.Singleton.SingletonApp;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
@@ -184,8 +187,10 @@ import de.bwravencl.controllerbuddy.output.ServerOutput;
 import de.bwravencl.controllerbuddy.output.VJoyOutput;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
+import tk.pratanumandal.unique4j.Unique4j;
+import tk.pratanumandal.unique4j.exception.Unique4jException;
 
-public final class Main implements SingletonApp {
+public final class Main {
 
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
@@ -1045,9 +1050,11 @@ public final class Main implements SingletonApp {
 		protected abstract void doAction(final ActionEvent e);
 	}
 
+	private static volatile Main main;
+
 	private static final Options options = new Options();
 
-	private static final String SINGLETON_ID;
+	private static final String APP_ID;
 
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 
@@ -1172,7 +1179,7 @@ public final class Main implements SingletonApp {
 		options.addOption(OPTION_HELP, false, strings.getString("HELP_OPTION_DESCRIPTION"));
 
 		final var mainClassPackageName = Main.class.getPackageName();
-		SINGLETON_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+		APP_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
@@ -1278,39 +1285,95 @@ public final class Main implements SingletonApp {
 	}
 
 	public static void main(final String[] args) {
-		if (!Singleton.invoke(SINGLETON_ID, args)) {
-			Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
+		final var unique = new Unique4j(APP_ID) {
 
-			log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
-
-			final var taskRunner = new TaskRunner();
-
-			try {
-				final var commandLine = new DefaultParser().parse(options, args);
-				if (commandLine.hasOption(OPTION_VERSION)) {
-					System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+			@Override
+			protected void receiveMessage(final String message) {
+				if (message == null || main == null)
 					return;
+
+				try (final var in = new ByteArrayInputStream(Base64.getDecoder().decode(message))) {
+					final var args = (String[]) new ObjectInputStream(in).readObject();
+
+					log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+
+					if (args.length > 0)
+						try {
+							final var commandLine = new DefaultParser().parse(options, args);
+							final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+							final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+
+							EventQueue.invokeLater(() -> {
+								if (cmdProfilePath != null)
+									main.loadProfile(new File(cmdProfilePath), false);
+
+								if (gameControllerDbPath != null)
+									main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+
+								main.handleRemainingCommandLine(commandLine);
+							});
+						} catch (final ParseException e) {
+							log.log(Level.SEVERE, e.getMessage(), e);
+						}
+					else
+						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
+								strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				} catch (ClassNotFoundException | IOException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
 				}
-				if (!commandLine.hasOption(OPTION_HELP)) {
-					EventQueue.invokeLater(() -> {
-						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
-
-						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
-						final var main = new Main(taskRunner, cmdProfilePath, gameControllerDbPath);
-
-						main.handleRemainingCommandLine(commandLine);
-
-						taskRunner.pollGLFWEvents = true;
-					});
-
-					taskRunner.enterLoop();
-					return;
-				}
-			} catch (final ParseException e) {
 			}
 
-			new HelpFormatter().printHelp(strings.getString("APPLICATION_NAME"), options, true);
+			@Override
+			protected String sendMessage() {
+				try (final var out = new ByteArrayOutputStream()) {
+					new ObjectOutputStream(out).writeObject(args);
+					return Base64.getEncoder().encodeToString(out.toByteArray());
+				} catch (final IOException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				}
+
+				return null;
+			}
+		};
+
+		try {
+			if (unique.acquireLock()) {
+				log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+
+				Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
+
+				final var taskRunner = new TaskRunner();
+
+				try {
+					final var commandLine = new DefaultParser().parse(options, args);
+					if (commandLine.hasOption(OPTION_VERSION)) {
+						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+						return;
+					}
+					if (!commandLine.hasOption(OPTION_HELP)) {
+						EventQueue.invokeLater(() -> {
+							skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
+
+							final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+							final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+							main = new Main(unique, taskRunner, cmdProfilePath, gameControllerDbPath);
+
+							main.handleRemainingCommandLine(commandLine);
+
+							taskRunner.pollGLFWEvents = true;
+						});
+
+						taskRunner.enterLoop();
+						return;
+					}
+				} catch (final ParseException e) {
+				}
+
+				new HelpFormatter().printHelp(strings.getString("APPLICATION_NAME"), options, true);
+			}
+		} catch (final Unique4jException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -1319,9 +1382,11 @@ public final class Main implements SingletonApp {
 		System.exit(status);
 	}
 
+	private final Unique4j unique;
+
 	private final TaskRunner taskRunner;
 
-	private final Preferences preferences = Preferences.userRoot().node("/" + SINGLETON_ID.replace('.', '/'));
+	private final Preferences preferences = Preferences.userRoot().node("/" + APP_ID.replace('.', '/'));
 
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 
@@ -1453,10 +1518,10 @@ public final class Main implements SingletonApp {
 
 	private FlatLaf lookAndFeel;
 
-	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
+	private Main(final Unique4j unique, final TaskRunner taskRunner, final String cmdProfilePath,
+			final String gameControllerDbPath) {
+		this.unique = unique;
 		this.taskRunner = taskRunner;
-
-		Singleton.start(this, SINGLETON_ID);
 
 		frame = new JFrame();
 
@@ -2311,36 +2376,6 @@ public final class Main implements SingletonApp {
 		}
 	}
 
-	@Override
-	public void newActivation(final String... args) {
-		log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
-
-		if (args.length > 0)
-			try {
-				final var commandLine = new DefaultParser().parse(options, args);
-
-				final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-
-				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
-
-				EventQueue.invokeLater(() -> {
-					if (cmdProfilePath != null)
-						loadProfile(new File(cmdProfilePath), false);
-
-					if (gameControllerDbPath != null)
-						updateGameControllerMappingsFromFile(gameControllerDbPath);
-
-					handleRemainingCommandLine(commandLine);
-				});
-			} catch (final ParseException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-		else
-			EventQueue.invokeLater(
-					() -> GuiUtils.showMessageDialog(frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-	}
-
 	private void newProfile() {
 		stopAll(true, true);
 
@@ -2566,7 +2601,11 @@ public final class Main implements SingletonApp {
 
 		taskRunner.run(GLFW::glfwTerminate);
 
-		Singleton.stop();
+		try {
+			unique.freeLock();
+		} catch (final Unique4jException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
 		terminate(0);
 	}
 
