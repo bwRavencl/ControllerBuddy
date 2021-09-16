@@ -50,8 +50,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,8 +57,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
@@ -73,7 +69,6 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -188,6 +183,7 @@ import de.bwravencl.controllerbuddy.output.VJoyOutput;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 import tk.pratanumandal.unique4j.Unique4j;
+import tk.pratanumandal.unique4j.Unique4jList;
 import tk.pratanumandal.unique4j.exception.Unique4jException;
 
 public final class Main {
@@ -1285,55 +1281,41 @@ public final class Main {
 	}
 
 	public static void main(final String[] args) {
-		final var unique = new Unique4j(APP_ID) {
+		final var unique = new Unique4jList(APP_ID) {
 
 			@Override
-			protected void receiveMessage(final String message) {
-				if (message == null || main == null)
-					return;
+			protected void receiveMessageList(final List<String> messageList) {
+				final var args = messageList.toArray(new String[0]);
 
-				try (final var in = new ByteArrayInputStream(Base64.getDecoder().decode(message))) {
-					final var args = (String[]) new ObjectInputStream(in).readObject();
+				log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
 
-					log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+				if (args.length > 0)
+					try {
+						final var commandLine = new DefaultParser().parse(options, args);
+						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
-					if (args.length > 0)
-						try {
-							final var commandLine = new DefaultParser().parse(options, args);
-							final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-							final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+						EventQueue.invokeLater(() -> {
+							if (cmdProfilePath != null)
+								main.loadProfile(new File(cmdProfilePath), false);
 
-							EventQueue.invokeLater(() -> {
-								if (cmdProfilePath != null)
-									main.loadProfile(new File(cmdProfilePath), false);
+							if (gameControllerDbPath != null)
+								main.updateGameControllerMappingsFromFile(gameControllerDbPath);
 
-								if (gameControllerDbPath != null)
-									main.updateGameControllerMappingsFromFile(gameControllerDbPath);
-
-								main.handleRemainingCommandLine(commandLine);
-							});
-						} catch (final ParseException e) {
-							log.log(Level.SEVERE, e.getMessage(), e);
-						}
-					else
-						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
-								strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-				} catch (ClassNotFoundException | IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
+							main.handleRemainingCommandLine(commandLine);
+						});
+					} catch (final ParseException e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+					}
+				else
+					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
+							strings.getString("ALREADY_RUNNING_DIALOG_TEXT"), strings.getString("ERROR_DIALOG_TITLE"),
+							JOptionPane.ERROR_MESSAGE));
 			}
 
 			@Override
-			protected String sendMessage() {
-				try (final var out = new ByteArrayOutputStream()) {
-					new ObjectOutputStream(out).writeObject(args);
-					return Base64.getEncoder().encodeToString(out.toByteArray());
-				} catch (final IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
-
-				return null;
+			protected List<String> sendMessageList() {
+				return Arrays.asList(args);
 			}
 		};
 
