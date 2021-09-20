@@ -2201,8 +2201,9 @@ public final class Main {
 				for (final var mode : input.getProfile().getModes())
 					for (final var actions : mode.getAxisToActionsMap().values())
 						for (final var action : actions)
-							if (action instanceof AxisToRelativeAxisAction) {
-								final var detentValue = ((AxisToRelativeAxisAction) action).getDetentValue();
+							if ((action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction)
+									&& (axisToRelativeAxisAction.getVirtualAxis() == virtualAxis)) {
+								final var detentValue = axisToRelativeAxisAction.getDetentValue();
 								if (detentValue != null)
 									dententValues.add(detentValue);
 							}
