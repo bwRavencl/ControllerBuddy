@@ -48,8 +48,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 			try {
 				var value = ((JSpinner) e.getSource()).getValue();
 
-				if (value instanceof Float)
-					value = roundFloat((Float) value);
+				if (value instanceof final Float floatValue)
+					value = roundFloat(floatValue);
 
 				setterMethod.invoke(action, value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {

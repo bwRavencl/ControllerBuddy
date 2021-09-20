@@ -382,8 +382,7 @@ public abstract class VJoyOutput extends Output {
 			var maxButtonId = -1;
 			for (final var mode : input.getProfile().getModes())
 				for (final var action : mode.getAllActions())
-					if (action instanceof ToButtonAction) {
-						final var toButtonAction = (ToButtonAction<?>) action;
+					if (action instanceof final ToButtonAction<?> toButtonAction) {
 						final var buttonId = toButtonAction.getButtonId();
 						if (buttonId > maxButtonId)
 							maxButtonId = buttonId;

@@ -285,8 +285,8 @@ public final class Input {
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
-				if (action instanceof IInitializationAction)
-					((IInitializationAction<?>) action).init(this);
+				if (action instanceof final IInitializationAction<?> initializationAction)
+					initializationAction.init(this);
 
 		initialized = true;
 	}
@@ -519,8 +519,8 @@ public final class Input {
 
 		for (final var mode : profile.getModes())
 			for (final var action : mode.getAllActions())
-				if (action instanceof IResetableAction)
-					((IResetableAction) action).reset();
+				if (action instanceof final IResetableAction resetableAction)
+					resetableAction.reset();
 	}
 
 	private void resetLastHotSwapPollTime() {

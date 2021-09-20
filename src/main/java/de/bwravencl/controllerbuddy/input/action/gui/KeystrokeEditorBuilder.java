@@ -140,8 +140,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		if (value == null)
 			return -1;
 
-		if (model instanceof DefaultListModel)
-			return ((DefaultListModel<?>) model).indexOf(value);
+		if (model instanceof final DefaultListModel<?> defaultListModel)
+			return defaultListModel.indexOf(value);
 
 		for (var i = 0; i < model.getSize(); i++)
 			if (value.equals(model.getElementAt(i)))

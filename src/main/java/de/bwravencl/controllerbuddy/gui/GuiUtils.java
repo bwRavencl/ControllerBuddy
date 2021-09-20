@@ -172,8 +172,8 @@ public final class GuiUtils {
 
 		component.setEnabled(enabled);
 
-		if (component instanceof Container)
-			for (final var child : ((Container) component).getComponents())
+		if (component instanceof final Container container)
+			for (final var child : container.getComponents())
 				setEnabledRecursive(child, enabled);
 	}
 

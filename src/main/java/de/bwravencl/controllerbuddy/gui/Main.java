@@ -903,11 +903,11 @@ public final class Main {
 					var notify = false;
 
 					try {
-						if (task instanceof Callable) {
+						if (task instanceof final Callable<?> callable) {
 							notify = true;
-							result = ((Callable<?>) task).call();
-						} else if (task instanceof Runnable)
-							((Runnable) task).run();
+							result = callable.call();
+						} else if (task instanceof final Runnable runnable)
+							runnable.run();
 					} catch (final Throwable t) {
 						result = t;
 					} finally {
@@ -957,8 +957,8 @@ public final class Main {
 					this.wait();
 				}
 
-				if (result instanceof Throwable)
-					throw new RuntimeException((Throwable) result);
+				if (result instanceof final Throwable throwable)
+					throw new RuntimeException(throwable);
 
 				return (V) result;
 			} catch (final InterruptedException e) {
@@ -1274,7 +1274,7 @@ public final class Main {
 		final var windows = Window.getWindows();
 		if (windows != null)
 			for (final Window w : windows)
-				if (w.isShowing() && w instanceof Dialog && ((Dialog) w).isModal())
+				if (w.isShowing() && w instanceof final Dialog dialog && dialog.isModal())
 					return true;
 
 		return false;
@@ -2201,8 +2201,8 @@ public final class Main {
 				for (final var mode : input.getProfile().getModes())
 					for (final var actions : mode.getAxisToActionsMap().values())
 						for (final var action : actions)
-							if ((action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction)
-									&& (axisToRelativeAxisAction.getVirtualAxis() == virtualAxis)) {
+							if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
+									&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
 								final var detentValue = axisToRelativeAxisAction.getDetentValue();
 								if (detentValue != null)
 									dententValues.add(detentValue);

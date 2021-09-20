@@ -82,12 +82,12 @@ public final class EditActionsDialog extends JDialog {
 			try {
 				final var action = getActionClassInstance(selectedAvailableAction.actionClass);
 
-				if (action instanceof ButtonToModeAction) {
+				if (action instanceof final ButtonToModeAction buttonToModeAction) {
 					final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
 					if (!buttonToModeActionsMap.containsKey(component.index))
 						buttonToModeActionsMap.put(component.index, new ArrayList<>());
 
-					buttonToModeActionsMap.get(component.index).add((ButtonToModeAction) action);
+					buttonToModeActionsMap.get(component.index).add(buttonToModeAction);
 				} else if (isCycleEditor())
 					cycleActions.add((IAction<Byte>) action);
 				else {

@@ -129,11 +129,11 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		IActivatableAction.super.init(input);
 
 		for (final var action : actions) {
-			if (action instanceof IInitializationAction)
-				((IInitializationAction<?>) action).init(input);
+			if (action instanceof final IInitializationAction<?> initializationAction)
+				initializationAction.init(input);
 
-			if (action instanceof IActivatableAction)
-				((IActivatableAction<?>) action).setActivatable(Activatable.ALWAYS);
+			if (action instanceof final IActivatableAction<?> activatableAction)
+				activatableAction.setActivatable(Activatable.ALWAYS);
 		}
 	}
 
