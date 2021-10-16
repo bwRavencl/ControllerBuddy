@@ -182,9 +182,9 @@ import de.bwravencl.controllerbuddy.output.ServerOutput;
 import de.bwravencl.controllerbuddy.output.VJoyOutput;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
-import tk.pratanumandal.unique4j.Unique4j;
-import tk.pratanumandal.unique4j.Unique4jList;
-import tk.pratanumandal.unique4j.exception.Unique4jException;
+import in.pratanumandal.unique4j.Unique4j;
+import in.pratanumandal.unique4j.Unique4jList;
+import in.pratanumandal.unique4j.exception.Unique4jException;
 
 public final class Main {
 
@@ -2585,7 +2585,7 @@ public final class Main {
 		taskRunner.run(GLFW::glfwTerminate);
 
 		try {
-			unique.freeLock();
+			unique.releaseLock();
 		} catch (final Unique4jException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
