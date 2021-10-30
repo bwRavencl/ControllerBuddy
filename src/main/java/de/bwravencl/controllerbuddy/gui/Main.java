@@ -2118,7 +2118,8 @@ public final class Main {
 	}
 
 	private void handleRemainingCommandLine(final CommandLine commandLine) {
-		frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
+		if (frame != null)
+			frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
 
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 		if (autostartOptionValue != null)
