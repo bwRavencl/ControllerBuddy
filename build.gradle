@@ -71,7 +71,7 @@ dependencies {
 	implementation 'commons-cli:commons-cli:1.5.0',
 			'com.formdev:flatlaf:1.6.1',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
-			'com.google.code.gson:gson:2.8.8',
+			'com.google.code.gson:gson:2.8.9',
 			'io.github.classgraph:classgraph:4.8.129',
 			"net.java.dev.jna:jna:$jnaVersion",
 			"net.java.dev.jna:jna-platform:$jnaVersion",
@@ -413,7 +413,7 @@ task jlink(type: Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.sql,jdk.unsupported,jdk.xml.dom'
+	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,jdk.unsupported,java.logging,jdk.xml.dom'
 }
 
 task copyLibs(type: Copy) {
