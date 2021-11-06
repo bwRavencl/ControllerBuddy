@@ -434,7 +434,7 @@ public abstract class SonyExtension {
 	}
 
 	private void rumble(final long duration, final byte strength) {
-		if (hidReport == null || connection == null)
+		if (hidDevice == null || hidReport == null || connection == null)
 			return;
 
 		final var actualRumbleOffset = getRumbleOffset() + connection.offset;
@@ -463,7 +463,7 @@ public abstract class SonyExtension {
 	}
 
 	void sendHidReport() {
-		if (connection == null)
+		if (hidDevice == null || connection == null)
 			return;
 
 		if (connection.isBluetooth()) {
@@ -518,7 +518,7 @@ public abstract class SonyExtension {
 	}
 
 	void updateLightbarColor() {
-		if (connection == null || hidReport == null)
+		if (hidDevice == null || connection == null || hidReport == null)
 			return;
 
 		synchronized (hidReport) {
