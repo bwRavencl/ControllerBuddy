@@ -152,6 +152,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.Configuration;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.svg.SVGDocument;
 
@@ -1246,7 +1247,8 @@ public final class Main {
 	public static List<ControllerInfo> getPresentControllers() {
 		final var presentControllers = new ArrayList<ControllerInfo>();
 		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++)
-			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid))
+			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
+					&& !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))
 				presentControllers.add(new ControllerInfo(jid));
 
 		return presentControllers;
@@ -1804,6 +1806,9 @@ public final class Main {
 		frame.add(statusLabel, BorderLayout.SOUTH);
 
 		updateTheme();
+
+		if (Platform.getOSType() == Platform.MAC)
+			Configuration.GLFW_CHECK_THREAD0.set(false);
 
 		final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
 		if (!glfwInitialized) {
@@ -2932,7 +2937,7 @@ public final class Main {
 
 			while (bufferedReader.ready()) {
 				final var line = bufferedReader.readLine();
-				if (line != null && !line.startsWith(VJOY_GUID)) {
+				if (line != null) {
 					sb.append(line);
 					sb.append("\n");
 				}

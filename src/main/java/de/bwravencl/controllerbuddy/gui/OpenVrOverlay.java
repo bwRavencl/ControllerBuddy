@@ -107,7 +107,7 @@ class OpenVrOverlay {
 	}
 
 	private static HmdMatrix34 createIdentityHmdMatrix34(final MemoryStack stack) {
-		final var mat = HmdMatrix34.callocStack(stack);
+		final var mat = HmdMatrix34.calloc(stack);
 
 		mat.m(0, 1f);
 		mat.m(5, 1f);
@@ -204,7 +204,7 @@ class OpenVrOverlay {
 
 			try {
 				OpenVR.create(token);
-				final var overlayTextureBounds = VRTextureBounds.mallocStack(stack);
+				final var overlayTextureBounds = VRTextureBounds.malloc(stack);
 				overlayTextureBounds.set(0f, 1f, 1f, 0f);
 
 				final var overlayFrame = main.getOverlayFrame();
@@ -246,7 +246,7 @@ class OpenVrOverlay {
 				checkOverlayError(VROverlay.VROverlay_SetOverlayTextureBounds(onScreenKeyboardOverlayHandle,
 						overlayTextureBounds));
 
-				final var wc = WNDCLASSEX.callocStack(stack).cbSize(WNDCLASSEX.SIZEOF)
+				final var wc = WNDCLASSEX.calloc(stack).cbSize(WNDCLASSEX.SIZEOF)
 						.style(User32.CS_HREDRAW | User32.CS_VREDRAW).hInstance(WindowsLibrary.HINSTANCE)
 						.lpszClassName(stack.UTF16("WGL"));
 
@@ -262,7 +262,7 @@ class OpenVrOverlay {
 
 				hdc = Checks.check(User32.GetDC(hwnd));
 
-				final var pfd = PIXELFORMATDESCRIPTOR.callocStack(stack).nSize((short) PIXELFORMATDESCRIPTOR.SIZEOF)
+				final var pfd = PIXELFORMATDESCRIPTOR.calloc(stack).nSize((short) PIXELFORMATDESCRIPTOR.SIZEOF)
 						.nVersion((short) 1).dwFlags(GDI32.PFD_SUPPORT_OPENGL);
 				final var pixelFormat = GDI32.ChoosePixelFormat(hdc, pfd);
 				if (pixelFormat == 0)
@@ -309,7 +309,7 @@ class OpenVrOverlay {
 	private void render() {
 		renderingMemoryStack.push();
 		try {
-			final var vrEvent = VREvent.mallocStack(renderingMemoryStack);
+			final var vrEvent = VREvent.malloc(renderingMemoryStack);
 			while (VROverlay.VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent))
 				if (vrEvent.eventType() == VR.EVREventType_VREvent_Quit)
 					EventQueue.invokeLater(this::stop);
@@ -381,7 +381,7 @@ class OpenVrOverlay {
 					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-					final var texture = Texture.mallocStack(renderingMemoryStack);
+					final var texture = Texture.malloc(renderingMemoryStack);
 					texture.set(textureData.textureObject, VR.ETextureType_TextureType_OpenGL,
 							VR.EColorSpace_ColorSpace_Auto);
 					checkOverlayError(VROverlay.VROverlay_SetOverlayTexture(overlayHandle, texture));
