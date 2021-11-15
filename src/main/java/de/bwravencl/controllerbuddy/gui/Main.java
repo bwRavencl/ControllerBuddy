@@ -1246,7 +1246,8 @@ public final class Main {
 	public static List<ControllerInfo> getPresentControllers() {
 		final var presentControllers = new ArrayList<ControllerInfo>();
 		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++)
-			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid))
+			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
+					&& !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))
 				presentControllers.add(new ControllerInfo(jid));
 
 		return presentControllers;
@@ -2932,7 +2933,7 @@ public final class Main {
 
 			while (bufferedReader.ready()) {
 				final var line = bufferedReader.readLine();
-				if (line != null && !line.startsWith(VJOY_GUID)) {
+				if (line != null) {
 					sb.append(line);
 					sb.append("\n");
 				}
