@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.4.2" sequence="0"
-	timestamp="1634155441946" analysisTimestamp="1634155441981"
-	release="0.19.147-bfc50f0">
+<BugCollection version="4.5.0" sequence="0"
+	timestamp="1636999548571" analysisTimestamp="1636999548578"
+	release="0.19.166-b3e6d88">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -191,14 +191,14 @@
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\output\VJoyOutput.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.4\c51c00206bb913cd8612b24abd9fa98ae89719b1\commons-cli-1.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.6\8057260b08a5340bac2aeab02eab6034569d03ec\flatlaf-1.6.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.5.0\dc98be5d5390230684a092589d70ea76a147925c\commons-cli-1.5.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\1.6.3\8562fbf99d4f3b086a75a51357cc144dcbd588a2\flatlaf-1.6.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.prat-man\unique4j\7f04387584\4bb948297efdfd25a91652c4070cbb0552113f\unique4j-7f04387584.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.8\431fc3cbc0ff81abdbfde070062741089c3ba874\gson-2.8.8.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.126\89aa5b452bb0bcc6c83aac247d4f61ac73d5a9f5\classgraph-4.8.126.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.9.0\c535a5bda553d7d7690356c825010da74b2671b5\jna-platform-5.9.0.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.9.0\8f503e6d9b500ceff299052d6be75b38c7257758\jna-5.9.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.prat-man\unique4j\6701cef900\1952ed05262057672c6ece5cc5084d1e7da0c70e\unique4j-6701cef900.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.9\8a432c1d6825781e21a02db2e2c33c5fde2833b9\gson-2.8.9.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.132\e45a17445cf583d4dfa2edd056cd91e339558b53\classgraph-4.8.132.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.10.0\fbed7d9669dba47714ad0d4f4454290a997aee69\jna-platform-5.10.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna\5.10.0\7cf4c87dd802db50721db66947aa237d7ad09418\jna-5.10.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.3\5e520d5c290c8b012545a8d34fa5db5ab051ea53\lwjgl-glfw-3.2.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.3\bdd534a323d0c8f54969b95e424b6ac8984f7d6e\lwjgl-opengl-3.2.3.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.2.3\ea19076fc886f2e8a95b50a7f95401606b5282ff\lwjgl-openvr-3.2.3.jar</AuxClasspathEntry>
@@ -291,6 +291,168 @@
 			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
 			<Message>At AssignmentsComponent.java:[line 487]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="81de1d7a3c56d1b2ae68baaa1c532263"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getBounds is called from constructor
+			new
+			de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+			JPanel, Mode$Component,
+			AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+			AssignmentsComponent$CompoundButton).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="81" end="228" sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+				<Message>At AssignmentsComponent.java:[lines 81-228]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Ljavax/swing/JPanel;Lde/bwravencl/controllerbuddy/input/Mode$Component;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton$CompoundButtonLocation;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="85" end="163" startBytecode="0" endBytecode="576"
+				sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+				JPanel, Mode$Component,
+				AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+				AssignmentsComponent$CompoundButton)</Message>
+		</Method>
+		<String value="getBounds">
+			<Message>Value getBounds</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true" start="162" end="162" startBytecode="311"
+			endBytecode="311" sourcefile="AssignmentsComponent.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+			<Message>At AssignmentsComponent.java:[line 162]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="2faa8d5e49fab0a0697dbc40653a68b2"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getHeight is called from constructor
+			new
+			de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+			JPanel, Mode$Component,
+			AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+			AssignmentsComponent$CompoundButton).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="81" end="228" sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+				<Message>At AssignmentsComponent.java:[lines 81-228]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Ljavax/swing/JPanel;Lde/bwravencl/controllerbuddy/input/Mode$Component;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton$CompoundButtonLocation;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="85" end="163" startBytecode="0" endBytecode="576"
+				sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+				JPanel, Mode$Component,
+				AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+				AssignmentsComponent$CompoundButton)</Message>
+		</Method>
+		<String value="getHeight">
+			<Message>Value getHeight</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true" start="162" end="162" startBytecode="311"
+			endBytecode="311" sourcefile="AssignmentsComponent.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+			<Message>At AssignmentsComponent.java:[line 162]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="75caea32963a0595514bd5fffb30ce71"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getWidth is called from constructor
+			new
+			de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+			JPanel, Mode$Component,
+			AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+			AssignmentsComponent$CompoundButton).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="81" end="228" sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+				<Message>At AssignmentsComponent.java:[lines 81-228]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Ljavax/swing/JPanel;Lde/bwravencl/controllerbuddy/input/Mode$Component;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton$CompoundButtonLocation;Lde/bwravencl/controllerbuddy/gui/AssignmentsComponent$CompoundButton;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+				start="85" end="163" startBytecode="0" endBytecode="576"
+				sourcefile="AssignmentsComponent.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton(Main,
+				JPanel, Mode$Component,
+				AssignmentsComponent$CompoundButton$CompoundButtonLocation,
+				AssignmentsComponent$CompoundButton)</Message>
+		</Method>
+		<String value="getWidth">
+			<Message>Value getWidth</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
+			primary="true" start="162" end="162" startBytecode="311"
+			endBytecode="311" sourcefile="AssignmentsComponent.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\AssignmentsComponent.java">
+			<Message>At AssignmentsComponent.java:[line 162]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="BC_UNCONFIRMED_CAST" priority="3"
@@ -458,10 +620,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -595,6 +757,212 @@
 			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
 			<Message>At EditActionsDialog.java:[line 305]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="7f643b5cdfc2d61b896b7ebf3c978050"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getContentPane is called from
+			constructor new
+			de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+			Mode$Component, String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Mode$Component;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="322" end="352" startBytecode="0" endBytecode="391"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+				Mode$Component, String)</Message>
+		</Method>
+		<String value="getContentPane">
+			<Message>Value getContentPane</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="335" end="335" startBytecode="132"
+			endBytecode="132" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+			<Message>At EditActionsDialog.java:[line 335]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			start="348" end="348" startBytecode="150" endBytecode="150"
+			sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at EditActionsDialog.java:[line 348]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="99ceab19fc91ed9ccfb1efb172837d0b"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getRootPane is called from constructor
+			new de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+			Mode$Component, String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Mode$Component;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="322" end="352" startBytecode="0" endBytecode="391"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+				Mode$Component, String)</Message>
+		</Method>
+		<String value="getRootPane">
+			<Message>Value getRootPane</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="348" end="348" startBytecode="150"
+			endBytecode="150" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at EditActionsDialog.java:[line 348]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="2a358133686b70fc425bd7909047519a"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getValue is called from constructor
+			new de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+			Mode$Component, String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Mode$Component;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="322" end="352" startBytecode="0" endBytecode="391"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+				Mode$Component, String)</Message>
+		</Method>
+		<String value="getValue">
+			<Message>Value getValue</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="348" end="348" startBytecode="150"
+			endBytecode="150" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at EditActionsDialog.java:[line 348]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="ea29737dde95f5d620cc9d9d4954f8ee"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method isCycleEditor is called from
+			constructor new
+			de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+			Mode$Component, String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="231" end="591" sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java">
+				<Message>At EditActionsDialog.java:[lines 231-591]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.EditActionsDialog</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Mode$Component;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+				start="322" end="352" startBytecode="0" endBytecode="391"
+				sourcefile="EditActionsDialog.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.EditActionsDialog(Main,
+				Mode$Component, String)</Message>
+		</Method>
+		<String value="isCycleEditor">
+			<Message>Value isCycleEditor</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
+			primary="true" start="348" end="348" startBytecode="150"
+			endBytecode="150" sourcefile="EditActionsDialog.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\EditActionsDialog.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at EditActionsDialog.java:[line 348]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -803,10 +1171,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1056,10 +1424,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1095,18 +1463,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(ZZ)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2841"
-				end="2849" startBytecode="0" endBytecode="127"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2842"
+				end="2850" startBytecode="0" endBytecode="127"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1115,11 +1483,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2848" end="2848" startBytecode="28" endBytecode="28"
+			start="2849" end="2849" startBytecode="28" endBytecode="28"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2848]</Message>
+			<Message>At Main.java:[line 2849]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1134,10 +1502,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1184,10 +1552,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1237,10 +1605,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1274,6 +1642,211 @@
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
 			<Message>At Main.java:[line 2099]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="37e622cdd840c8b201eb7a9a0fc9674"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getSelectedHotSwappingButtonId is
+			called from constructor new
+			de.bwravencl.controllerbuddy.gui.Main(Unique4j, Main$TaskRunner,
+			String, String).</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
+				end="3367" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1051-3367]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="&lt;init&gt;"
+			signature="(Lin/pratanumandal/unique4j/Unique4j;Lde/bwravencl/controllerbuddy/gui/Main$TaskRunner;Ljava/lang/String;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1504"
+				end="1895" startBytecode="0" endBytecode="5939"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.Main(Unique4j, Main$TaskRunner,
+				String, String)</Message>
+		</Method>
+		<String value="getSelectedHotSwappingButtonId">
+			<Message>Value getSelectedHotSwappingButtonId</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="1727" end="1727" startBytecode="2059" endBytecode="2059"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 1727]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="c9658761388392a30885d2b80411799"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method updateModesPanel is called from
+			constructor new de.bwravencl.controllerbuddy.gui.Main(Unique4j,
+			Main$TaskRunner, String, String).</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
+				end="3367" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1051-3367]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="&lt;init&gt;"
+			signature="(Lin/pratanumandal/unique4j/Unique4j;Lde/bwravencl/controllerbuddy/gui/Main$TaskRunner;Ljava/lang/String;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1504"
+				end="1895" startBytecode="0" endBytecode="5939"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.Main(Unique4j, Main$TaskRunner,
+				String, String)</Message>
+		</Method>
+		<String value="updateModesPanel">
+			<Message>Value updateModesPanel</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="1853" end="1853" startBytecode="2925" endBytecode="2925"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at Main.java:[line 1853]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="70c24b13fc35ca6dfc56461d06b3d353"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method updateTitleAndTooltip is called from
+			constructor new de.bwravencl.controllerbuddy.gui.Main(Unique4j,
+			Main$TaskRunner, String, String).</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
+				end="3367" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1051-3367]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="&lt;init&gt;"
+			signature="(Lin/pratanumandal/unique4j/Unique4j;Lde/bwravencl/controllerbuddy/gui/Main$TaskRunner;Ljava/lang/String;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1504"
+				end="1895" startBytecode="0" endBytecode="5939"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.Main(Unique4j, Main$TaskRunner,
+				String, String)</Message>
+		</Method>
+		<String value="updateTitleAndTooltip">
+			<Message>Value updateTitleAndTooltip</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="1796" end="1796" startBytecode="2543" endBytecode="2543"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+			<Message>At Main.java:[line 1796]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" start="1853"
+			end="1853" startBytecode="2925" endBytecode="2925"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at Main.java:[line 1853]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="f3da604504b0891f4499e543bc90687f"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method updateVisualizationPanel is called
+			from constructor new de.bwravencl.controllerbuddy.gui.Main(Unique4j,
+			Main$TaskRunner, String, String).</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
+				end="3367" sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+				<Message>At Main.java:[lines 1051-3367]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
+			name="&lt;init&gt;"
+			signature="(Lin/pratanumandal/unique4j/Unique4j;Lde/bwravencl/controllerbuddy/gui/Main$TaskRunner;Ljava/lang/String;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1504"
+				end="1895" startBytecode="0" endBytecode="5939"
+				sourcefile="Main.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.Main(Unique4j, Main$TaskRunner,
+				String, String)</Message>
+		</Method>
+		<String value="updateVisualizationPanel">
+			<Message>Value updateVisualizationPanel</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
+			start="1853" end="1853" startBytecode="2925" endBytecode="2925"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at Main.java:[line 1853]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.Main" start="1806"
+			end="1806" startBytecode="2629" endBytecode="2629"
+			sourcefile="Main.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at Main.java:[line 1806]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1546,6 +2119,53 @@
 			<Message>At Main.java:[line 957]</Message>
 		</SourceLine>
 	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="ec1183745640e9727bbd4ede6c8ff601"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method updateLocation is called from
+			constructor new
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard(Main).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
+				start="342" end="640" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 342-640]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
+				start="451" end="488" startBytecode="0" endBytecode="2172"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard(Main)</Message>
+		</Method>
+		<String value="updateLocation">
+			<Message>Value updateLocation</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
+			primary="true" start="487" end="487" startBytecode="1782"
+			endBytecode="1782" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 487]</Message>
+		</SourceLine>
+	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
 		abbrev="Se" category="BAD_PRACTICE"
 		instanceHash="5334dc715fbe3f02ba542f39a56927a4"
@@ -1641,10 +2261,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1051"
-				end="3366" sourcefile="Main.java"
+				end="3367" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1051-3366]</Message>
+				<Message>At Main.java:[lines 1051-3367]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1655,6 +2275,151 @@
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java"
 			synthetic="true">
 			<Message>In OnScreenKeyboard.java</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="c89f863db7bc2b8168285afd5bb989f2"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getFont is called from constructor new
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton(OnScreenKeyboard,
+			String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
+				start="71" end="110" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 71-110]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
+				start="71" end="77" startBytecode="0" endBytecode="113"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton(OnScreenKeyboard,
+				String)</Message>
+		</Method>
+		<String value="getFont">
+			<Message>Value getFont</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
+			primary="true" start="76" end="76" startBytecode="31"
+			endBytecode="31" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 76]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="7002cc6025e2ac84363fb6b29e71cecd"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method toggleLock is called from constructor
+			new
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard,
+			int).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+				start="280" end="339" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 280-339]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;I)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+				start="282" end="289" startBytecode="0" endBytecode="123"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard,
+				int)</Message>
+		</Method>
+		<String value="toggleLock">
+			<Message>Value toggleLock</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			primary="true" start="286" end="286" startBytecode="43"
+			endBytecode="43" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 286]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="fdfda9ac405fd7da271160f0904b78b4"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method stop is called from constructor new
+			de.bwravencl.controllerbuddy.gui.OpenVrOverlay(Main).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
+				start="63" end="394" sourcefile="OpenVrOverlay.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java">
+				<Message>At OpenVrOverlay.java:[lines 63-394]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.gui.OpenVrOverlay</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
+				start="194" end="291" startBytecode="0" endBytecode="1346"
+				sourcefile="OpenVrOverlay.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OpenVrOverlay(Main)</Message>
+		</Method>
+		<String value="stop">
+			<Message>Value stop</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
+			primary="true" start="284" end="284" startBytecode="623"
+			endBytecode="623" sourcefile="OpenVrOverlay.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.java">
+			<Message>At OpenVrOverlay.java:[line 284]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -3659,6 +4424,53 @@
 			<Message>At ToKeyAction.java:[line 116]</Message>
 		</SourceLine>
 	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="a9a7e6720cee80284e8362d937d83ce0"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getMouseMotionListeners is called from
+			constructor new
+			de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList(Object[]).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
+				start="79" end="99" sourcefile="KeystrokeEditorBuilder.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java">
+				<Message>At KeystrokeEditorBuilder.java:[lines 79-99]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
+			name="&lt;init&gt;" signature="([Ljava/lang/Object;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
+				start="79" end="99" startBytecode="0" endBytecode="219"
+				sourcefile="KeystrokeEditorBuilder.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList(Object[])</Message>
+		</Method>
+		<String value="getMouseMotionListeners">
+			<Message>Value getMouseMotionListeners</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
+			primary="true" start="83" end="83" startBytecode="17"
+			endBytecode="17" sourcefile="KeystrokeEditorBuilder.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java">
+			<Message>At KeystrokeEditorBuilder.java:[line 83]</Message>
+		</SourceLine>
+	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
 		priority="3" rank="20" abbrev="PZLA" category="STYLE"
 		instanceHash="ce52e7daf9a641118c01159a0c8275ae"
@@ -4009,7 +4821,7 @@
 			name="sendHidReport" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="466" end="487" startBytecode="0" endBytecode="344"
+				start="466" end="487" startBytecode="0" endBytecode="352"
 				sourcefile="SonyExtension.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
@@ -4018,15 +4830,15 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="472" end="472" startBytecode="43"
-			endBytecode="43" sourcefile="SonyExtension.java"
+			primary="true" start="472" end="472" startBytecode="50"
+			endBytecode="50" sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
 			<Message>At SonyExtension.java:[line 472]</Message>
 		</SourceLine>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			start="481" end="481" startBytecode="127" endBytecode="127"
+			start="481" end="481" startBytecode="134" endBytecode="134"
 			sourcefile="SonyExtension.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"
@@ -4156,6 +4968,50 @@
 			sourcepath="de/bwravencl/controllerbuddy/json/ColorTypeAdapter.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\json\ColorTypeAdapter.java">
 			<Message>At ColorTypeAdapter.java:[line 38]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="2c4a9caa8719a65097c8aeb2e19a813a"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method setOutput is called from constructor
+			new de.bwravencl.controllerbuddy.output.Output(Main, Input).</LongMessage>
+		<Class classname="de.bwravencl.controllerbuddy.output.Output"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.output.Output" start="32"
+				end="98" sourcefile="Output.java"
+				sourcepath="de/bwravencl/controllerbuddy/output/Output.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\Output.java">
+				<Message>At Output.java:[lines 32-98]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.output.Output</Message>
+		</Class>
+		<Method classname="de.bwravencl.controllerbuddy.output.Output"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Input;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.output.Output" start="43"
+				end="47" startBytecode="0" endBytecode="106"
+				sourcefile="Output.java"
+				sourcepath="de/bwravencl/controllerbuddy/output/Output.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\output\Output.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.output.Output(Main, Input)</Message>
+		</Method>
+		<String value="setOutput">
+			<Message>Value setOutput</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.output.Output" primary="true"
+			start="46" end="46" startBytecode="21" endBytecode="21"
+			sourcefile="Output.java"
+			sourcepath="de/bwravencl/controllerbuddy/output/Output.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\output\Output.java">
+			<Message>At Output.java:[line 46]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -4445,6 +5301,19 @@ is not a directory.</p>
 
     ]]></Details>
 	</BugPattern>
+	<BugPattern type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"
+		abbrev="MC" category="MALICIOUS_CODE">
+		<ShortDescription>An overridable method is called from a constructor</ShortDescription>
+		<Details><![CDATA[
+      <p>
+      Calling an overridable method during in a constructor may result in the use of uninitialized data. It may also
+      leak the this reference of the partially constructed object. Only static, final or private methods should be
+      invoked from a constructor.</p>
+      <p>
+      See SEI CERT rule <a href="https://wiki.sei.cmu.edu/confluence/display/java/MET05-J.+Ensure+that+constructors+do+not+call+overridable+methods">MET05-J. Ensure that constructors do not call overridable methods</a>.
+      </p>
+    ]]></Details>
+	</BugPattern>
 	<BugPattern type="MS_OOI_PKGPROTECT" abbrev="MS"
 		category="MALICIOUS_CODE">
 		<ShortDescription>Field should be moved out of an interface and made
@@ -4559,6 +5428,9 @@ object is stored in this field.</p>
 	<BugCode abbrev="SF">
 		<Description>Switch case falls through</Description>
 	</BugCode>
+	<BugCode abbrev="MC">
+		<Description>Dangerous call to overridable method</Description>
+	</BugCode>
 	<BugCode abbrev="PZLA">
 		<Description>Prefer zero length arrays to null to indicate no results</Description>
 	</BugCode>
@@ -4581,7 +5453,7 @@ object is stored in this field.</p>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs2.excludeBaselineBugs(FindBugs2.java:409)</StackTrace>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs2.configureFilters(FindBugs2.java:516)</StackTrace>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs2.setUserPreferences(FindBugs2.java:505)</StackTrace>
-			<StackTrace>edu.umd.cs.findbugs.TextUICommandLine.configureEngine(TextUICommandLine.java:683)</StackTrace>
+			<StackTrace>edu.umd.cs.findbugs.TextUICommandLine.configureEngine(TextUICommandLine.java:722)</StackTrace>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs.processCommandLine(FindBugs.java:359)</StackTrace>
 			<StackTrace>com.github.spotbugs.snom.internal.SpotBugsRunnerForWorker$SpotBugsExecutor.execute(SpotBugsRunnerForWorker.java:96)</StackTrace>
 			<StackTrace>org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)</StackTrace>
@@ -4615,29 +5487,29 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Wed, 13 Oct 2021 22:04:01 +0200" total_classes="187"
-		referenced_classes="1007" total_bugs="75" total_size="8361"
-		num_packages="9" java_version="17" vm_version="17+35-2724"
-		cpu_seconds="30.50" clock_seconds="7.73" peak_mbytes="576.22"
-		alloc_mbytes="512.00" gc_seconds="0.11" priority_3="24"
+		timestamp="Mon, 15 Nov 2021 19:05:48 +0100" total_classes="187"
+		referenced_classes="1008" total_bugs="92" total_size="8362"
+		num_packages="9" java_version="17.0.1" vm_version="17.0.1+12-39"
+		cpu_seconds="29.59" clock_seconds="7.32" peak_mbytes="567.91"
+		alloc_mbytes="512.00" gc_seconds="0.11" priority_3="41"
 		priority_2="49" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
-			bugCount="4" size="410" bugHash="fa891c52246fab7722d96c1ff6748b96" />
+			bugCount="7" size="410" bugHash="953c593e86fadfb14cd5720593d011f5" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
-			bugCount="10" size="374" bugHash="22763c6eaa11bf73d640d88432920876" />
+			bugCount="14" size="374" bugHash="886f72815a8c03a06deaca74565994bf" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/GuiUtils.java" bugCount="0"
 			size="105" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="11" size="2340" bugHash="8696a06aeb5b4f2b237eb119d4c3c4a4" />
+			bugCount="15" size="2341" bugHash="2d95f38409f146f0f4cacc3416f66566" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-			bugCount="2" size="385" bugHash="bee45d302ca5c0ac7a60e01da28b06f1" />
+			bugCount="5" size="385" bugHash="eda6ca37aa314494eacf0dd065d27e4f" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
-			bugCount="0" size="254" />
+			bugCount="1" size="254" bugHash="2a901c6f31e27328870962cf52bc4e5a" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="16"
 			size="436" bugHash="fdb16de0d323e95b6b6cff295c84f724" />
@@ -4808,7 +5680,7 @@ object is stored in this field.</p>
 			bugCount="0" size="12" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java"
-			bugCount="0" size="117" />
+			bugCount="1" size="117" bugHash="4e1541860107dd628465680cd663e3f1" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/action/gui/LockKeyEditorBuilder.java"
 			bugCount="0" size="9" />
@@ -4847,7 +5719,7 @@ object is stored in this field.</p>
 			bugCount="2" size="94" bugHash="0f99091074d8ab60a5accc841e4f8ceb" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			bugCount="3" size="373" bugHash="3db100989f91f26f4c6703fa2fe14e2a" />
+			bugCount="3" size="373" bugHash="668df6a3136ebc505d9ce78fa79f07e5" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="1" size="38" bugHash="9b647dac4523e6a2248306483c979be8" />
@@ -4867,8 +5739,8 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/output/LocalOutput.java"
 			bugCount="0" size="99" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/output/Output.java" bugCount="0"
-			size="57" />
+			path="de/bwravencl/controllerbuddy/output/Output.java" bugCount="1"
+			size="57" bugHash="b00ff2304b73c0a170a003f066792b1f" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/output/ServerOutput.java"
 			bugCount="0" size="202" />
@@ -4882,7 +5754,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/version/VersionUtils.java"
 			bugCount="0" size="23" />
 		<PackageStats package="de.bwravencl.controllerbuddy.gui"
-			total_bugs="27" total_types="69" total_size="3868" priority_3="16"
+			total_bugs="42" total_types="69" total_size="3869" priority_3="31"
 			priority_2="10" priority_1="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent"
@@ -4895,7 +5767,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton"
 				sourceFile="AssignmentsComponent.java" interface="false" size="81"
-				bugs="0" />
+				bugs="3" priority_3="3" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.AssignmentsComponent$CompoundButton$1"
 				sourceFile="AssignmentsComponent.java" interface="false" size="29"
@@ -4927,7 +5799,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.EditActionsDialog"
 				sourceFile="EditActionsDialog.java" interface="false" size="253"
-				bugs="10" priority_3="8" priority_2="2" />
+				bugs="14" priority_3="12" priority_2="2" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.EditActionsDialog$1"
 				sourceFile="EditActionsDialog.java" interface="false" size="10"
@@ -4963,8 +5835,8 @@ object is stored in this field.</p>
 				class="de.bwravencl.controllerbuddy.gui.GuiUtils$FrameDragListener"
 				sourceFile="GuiUtils.java" interface="false" size="29" bugs="0" />
 			<ClassStats class="de.bwravencl.controllerbuddy.gui.Main"
-				sourceFile="Main.java" interface="false" size="1571" bugs="5"
-				priority_3="1" priority_2="3" priority_1="1" />
+				sourceFile="Main.java" interface="false" size="1572" bugs="9"
+				priority_3="5" priority_2="3" priority_1="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.Main$1"
 				sourceFile="Main.java" interface="false" size="28" bugs="0" />
@@ -5095,11 +5967,11 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
 				sourceFile="OnScreenKeyboard.java" interface="false" size="192"
-				bugs="2" priority_3="2" />
+				bugs="3" priority_3="3" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
 				sourceFile="OnScreenKeyboard.java" interface="false" size="38"
-				bugs="0" />
+				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
 				sourceFile="OnScreenKeyboard.java" interface="false" size="85"
@@ -5111,11 +5983,11 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
 				sourceFile="OnScreenKeyboard.java" interface="false" size="47"
-				bugs="0" />
+				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OpenVrOverlay"
 				sourceFile="OpenVrOverlay.java" interface="false" size="248"
-				bugs="0" />
+				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.gui.OpenVrOverlay$TextureData"
 				sourceFile="OpenVrOverlay.java" interface="false" size="6" bugs="0" />
@@ -5341,7 +6213,7 @@ object is stored in this field.</p>
 		</PackageStats>
 		<PackageStats
 			package="de.bwravencl.controllerbuddy.input.action.gui"
-			total_bugs="0" total_types="39" total_size="567">
+			total_bugs="1" total_types="39" total_size="567" priority_3="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder"
 				sourceFile="ActionsEditorBuilder.java" interface="false" size="9"
@@ -5434,7 +6306,7 @@ object is stored in this field.</p>
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList"
 				sourceFile="KeystrokeEditorBuilder.java" interface="false" size="10"
-				bugs="0" />
+				bugs="1" priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$CheckboxJList$1"
 				sourceFile="KeystrokeEditorBuilder.java" interface="false" size="10"
@@ -5548,8 +6420,8 @@ object is stored in this field.</p>
 				size="27" bugs="0" />
 		</PackageStats>
 		<PackageStats
-			package="de.bwravencl.controllerbuddy.output" total_bugs="2"
-			total_types="11" total_size="1130" priority_3="1" priority_2="1">
+			package="de.bwravencl.controllerbuddy.output" total_bugs="3"
+			total_types="11" total_size="1130" priority_3="2" priority_2="1">
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.ClientOutput"
 				sourceFile="ClientOutput.java" interface="false" size="271" bugs="0" />
@@ -5567,7 +6439,8 @@ object is stored in this field.</p>
 				sourceFile="LocalOutput.java" interface="false" size="99" bugs="0" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.Output"
-				sourceFile="Output.java" interface="false" size="50" bugs="0" />
+				sourceFile="Output.java" interface="false" size="50" bugs="1"
+				priority_3="1" />
 			<ClassStats
 				class="de.bwravencl.controllerbuddy.output.Output$1"
 				sourceFile="Output.java" interface="false" size="7" bugs="0" />
@@ -5598,159 +6471,166 @@ object is stored in this field.</p>
 		<FindBugsProfile>
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine"
-				totalMilliseconds="866" invocations="3912"
-				avgMicrosecondsPerInvocation="221"
-				maxMicrosecondsPerInvocation="15736"
-				standardDeviationMicrosecondsPerInvocation="705" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
-				totalMilliseconds="413" invocations="1007"
-				avgMicrosecondsPerInvocation="410"
-				maxMicrosecondsPerInvocation="19834"
-				standardDeviationMicrosecondsPerInvocation="1030" />
+				totalMilliseconds="715" invocations="3917"
+				avgMicrosecondsPerInvocation="182"
+				maxMicrosecondsPerInvocation="16482"
+				standardDeviationMicrosecondsPerInvocation="586" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FieldItemSummary"
-				totalMilliseconds="375" invocations="1007"
-				avgMicrosecondsPerInvocation="373"
-				maxMicrosecondsPerInvocation="23230"
-				standardDeviationMicrosecondsPerInvocation="1011" />
+				totalMilliseconds="386" invocations="1008"
+				avgMicrosecondsPerInvocation="383"
+				maxMicrosecondsPerInvocation="20660"
+				standardDeviationMicrosecondsPerInvocation="1069" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods"
+				totalMilliseconds="377" invocations="1008"
+				avgMicrosecondsPerInvocation="374"
+				maxMicrosecondsPerInvocation="16521"
+				standardDeviationMicrosecondsPerInvocation="912" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory"
-				totalMilliseconds="325" invocations="1178"
-				avgMicrosecondsPerInvocation="275"
-				maxMicrosecondsPerInvocation="19288"
-				standardDeviationMicrosecondsPerInvocation="1414" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
-				totalMilliseconds="270" invocations="3920"
-				avgMicrosecondsPerInvocation="69"
-				maxMicrosecondsPerInvocation="1867"
-				standardDeviationMicrosecondsPerInvocation="83" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
-				totalMilliseconds="260" invocations="1124"
-				avgMicrosecondsPerInvocation="232"
-				maxMicrosecondsPerInvocation="19581"
-				standardDeviationMicrosecondsPerInvocation="1083" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
-				totalMilliseconds="234" invocations="1045"
-				avgMicrosecondsPerInvocation="224"
-				maxMicrosecondsPerInvocation="19854"
-				standardDeviationMicrosecondsPerInvocation="883" />
+				totalMilliseconds="314" invocations="1178"
+				avgMicrosecondsPerInvocation="266"
+				maxMicrosecondsPerInvocation="18776"
+				standardDeviationMicrosecondsPerInvocation="1395" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory"
-				totalMilliseconds="230" invocations="2682"
-				avgMicrosecondsPerInvocation="86"
-				maxMicrosecondsPerInvocation="4000"
-				standardDeviationMicrosecondsPerInvocation="186" />
+				totalMilliseconds="245" invocations="2683"
+				avgMicrosecondsPerInvocation="91"
+				maxMicrosecondsPerInvocation="11426"
+				standardDeviationMicrosecondsPerInvocation="295" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory"
+				totalMilliseconds="242" invocations="1124"
+				avgMicrosecondsPerInvocation="215"
+				maxMicrosecondsPerInvocation="17799"
+				standardDeviationMicrosecondsPerInvocation="969" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory"
-				totalMilliseconds="227" invocations="1091"
+				totalMilliseconds="222" invocations="1091"
+				avgMicrosecondsPerInvocation="204"
+				maxMicrosecondsPerInvocation="24341"
+				standardDeviationMicrosecondsPerInvocation="1063" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine"
+				totalMilliseconds="222" invocations="3925"
+				avgMicrosecondsPerInvocation="56"
+				maxMicrosecondsPerInvocation="4123"
+				standardDeviationMicrosecondsPerInvocation="98" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder"
+				totalMilliseconds="217" invocations="1045"
 				avgMicrosecondsPerInvocation="208"
-				maxMicrosecondsPerInvocation="26222"
-				standardDeviationMicrosecondsPerInvocation="1084" />
+				maxMicrosecondsPerInvocation="17065"
+				standardDeviationMicrosecondsPerInvocation="873" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory"
-				totalMilliseconds="220" invocations="1165"
-				avgMicrosecondsPerInvocation="188"
-				maxMicrosecondsPerInvocation="13640"
-				standardDeviationMicrosecondsPerInvocation="729" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
-				totalMilliseconds="133" invocations="855"
-				avgMicrosecondsPerInvocation="155"
-				maxMicrosecondsPerInvocation="7863"
-				standardDeviationMicrosecondsPerInvocation="568" />
+				totalMilliseconds="206" invocations="1165"
+				avgMicrosecondsPerInvocation="177"
+				maxMicrosecondsPerInvocation="13445"
+				standardDeviationMicrosecondsPerInvocation="691" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers"
-				totalMilliseconds="132" invocations="1007"
-				avgMicrosecondsPerInvocation="131"
-				maxMicrosecondsPerInvocation="9443"
-				standardDeviationMicrosecondsPerInvocation="400" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
-				totalMilliseconds="116" invocations="1212"
-				avgMicrosecondsPerInvocation="96"
-				maxMicrosecondsPerInvocation="14065"
-				standardDeviationMicrosecondsPerInvocation="469" />
+				totalMilliseconds="146" invocations="1008"
+				avgMicrosecondsPerInvocation="145"
+				maxMicrosecondsPerInvocation="15367"
+				standardDeviationMicrosecondsPerInvocation="554" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory"
-				totalMilliseconds="114" invocations="1124"
-				avgMicrosecondsPerInvocation="101"
-				maxMicrosecondsPerInvocation="7788"
-				standardDeviationMicrosecondsPerInvocation="346" />
+				totalMilliseconds="124" invocations="1124"
+				avgMicrosecondsPerInvocation="110"
+				maxMicrosecondsPerInvocation="11692"
+				standardDeviationMicrosecondsPerInvocation="482" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis"
+				totalMilliseconds="116" invocations="855"
+				avgMicrosecondsPerInvocation="135"
+				maxMicrosecondsPerInvocation="9230"
+				standardDeviationMicrosecondsPerInvocation="495" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine"
+				totalMilliseconds="112" invocations="1214"
+				avgMicrosecondsPerInvocation="92"
+				maxMicrosecondsPerInvocation="14139"
+				standardDeviationMicrosecondsPerInvocation="433" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.CalledMethods"
-				totalMilliseconds="101" invocations="1007"
-				avgMicrosecondsPerInvocation="100"
-				maxMicrosecondsPerInvocation="9825"
-				standardDeviationMicrosecondsPerInvocation="466" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
-				totalMilliseconds="76" invocations="1007"
-				avgMicrosecondsPerInvocation="75"
-				maxMicrosecondsPerInvocation="1888"
-				standardDeviationMicrosecondsPerInvocation="147" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.util.TopologicalSort"
-				totalMilliseconds="71" invocations="3818"
-				avgMicrosecondsPerInvocation="18" maxMicrosecondsPerInvocation="984"
-				standardDeviationMicrosecondsPerInvocation="41" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
-				totalMilliseconds="70" invocations="1007"
-				avgMicrosecondsPerInvocation="70"
-				maxMicrosecondsPerInvocation="3198"
-				standardDeviationMicrosecondsPerInvocation="210" />
+				totalMilliseconds="109" invocations="1008"
+				avgMicrosecondsPerInvocation="108"
+				maxMicrosecondsPerInvocation="11340"
+				standardDeviationMicrosecondsPerInvocation="410" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ReflectiveClasses"
-				totalMilliseconds="69" invocations="1007"
-				avgMicrosecondsPerInvocation="68"
-				maxMicrosecondsPerInvocation="5349"
-				standardDeviationMicrosecondsPerInvocation="227" />
+				totalMilliseconds="80" invocations="1008"
+				avgMicrosecondsPerInvocation="79"
+				maxMicrosecondsPerInvocation="6768"
+				standardDeviationMicrosecondsPerInvocation="265" />
 			<ClassProfile
-				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
-				totalMilliseconds="65" invocations="1007"
-				avgMicrosecondsPerInvocation="65"
-				maxMicrosecondsPerInvocation="4300"
-				standardDeviationMicrosecondsPerInvocation="250" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
-				totalMilliseconds="65" invocations="1192"
-				avgMicrosecondsPerInvocation="54"
-				maxMicrosecondsPerInvocation="34240"
-				standardDeviationMicrosecondsPerInvocation="992" />
-			<ClassProfile
-				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
-				totalMilliseconds="63" invocations="1124"
-				avgMicrosecondsPerInvocation="56"
-				maxMicrosecondsPerInvocation="9970"
-				standardDeviationMicrosecondsPerInvocation="351" />
+				name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase"
+				totalMilliseconds="73" invocations="1008"
+				avgMicrosecondsPerInvocation="73"
+				maxMicrosecondsPerInvocation="1864"
+				standardDeviationMicrosecondsPerInvocation="134" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical"
-				totalMilliseconds="62" invocations="1007"
-				avgMicrosecondsPerInvocation="62"
-				maxMicrosecondsPerInvocation="6358"
-				standardDeviationMicrosecondsPerInvocation="286" />
+				totalMilliseconds="72" invocations="1008"
+				avgMicrosecondsPerInvocation="72"
+				maxMicrosecondsPerInvocation="15996"
+				standardDeviationMicrosecondsPerInvocation="536" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures"
+				totalMilliseconds="70" invocations="1008"
+				avgMicrosecondsPerInvocation="69"
+				maxMicrosecondsPerInvocation="3525"
+				standardDeviationMicrosecondsPerInvocation="217" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.util.TopologicalSort"
+				totalMilliseconds="67" invocations="3822"
+				avgMicrosecondsPerInvocation="17"
+				maxMicrosecondsPerInvocation="1695"
+				standardDeviationMicrosecondsPerInvocation="43" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.ConstantDataflowFactory"
+				totalMilliseconds="64" invocations="1124"
+				avgMicrosecondsPerInvocation="57"
+				maxMicrosecondsPerInvocation="16065"
+				standardDeviationMicrosecondsPerInvocation="514" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory"
+				totalMilliseconds="64" invocations="1192"
+				avgMicrosecondsPerInvocation="53"
+				maxMicrosecondsPerInvocation="29949"
+				standardDeviationMicrosecondsPerInvocation="870" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.BuildStringPassthruGraph"
+				totalMilliseconds="60" invocations="1008"
+				avgMicrosecondsPerInvocation="60"
+				maxMicrosecondsPerInvocation="3380"
+				standardDeviationMicrosecondsPerInvocation="206" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.FindUncalledPrivateMethods"
 				totalMilliseconds="51" invocations="187"
-				avgMicrosecondsPerInvocation="276"
-				maxMicrosecondsPerInvocation="1963"
-				standardDeviationMicrosecondsPerInvocation="371" />
+				avgMicrosecondsPerInvocation="273"
+				maxMicrosecondsPerInvocation="1624"
+				standardDeviationMicrosecondsPerInvocation="358" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.EqualsOperandShouldHaveClassCompatibleWithThis"
-				totalMilliseconds="48" invocations="1007"
-				avgMicrosecondsPerInvocation="48"
-				maxMicrosecondsPerInvocation="6107"
-				standardDeviationMicrosecondsPerInvocation="277" />
+				totalMilliseconds="47" invocations="1008"
+				avgMicrosecondsPerInvocation="46"
+				maxMicrosecondsPerInvocation="7458"
+				standardDeviationMicrosecondsPerInvocation="268" />
 			<ClassProfile
 				name="edu.umd.cs.findbugs.detect.ExplicitSerialization"
-				totalMilliseconds="44" invocations="1007"
-				avgMicrosecondsPerInvocation="44"
-				maxMicrosecondsPerInvocation="5715"
+				totalMilliseconds="45" invocations="1008"
+				avgMicrosecondsPerInvocation="45"
+				maxMicrosecondsPerInvocation="5431"
 				standardDeviationMicrosecondsPerInvocation="294" />
+			<ClassProfile
+				name="edu.umd.cs.findbugs.detect.UnreadFields"
+				totalMilliseconds="44" invocations="187"
+				avgMicrosecondsPerInvocation="238"
+				maxMicrosecondsPerInvocation="5011"
+				standardDeviationMicrosecondsPerInvocation="473" />
 		</FindBugsProfile>
 	</FindBugsSummary>
 	<ClassFeatures></ClassFeatures>
