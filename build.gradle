@@ -69,7 +69,7 @@ dependencies {
 		throw new GradleException("Unsupported operating system $os.displayName")
 
 	implementation 'commons-cli:commons-cli:1.5.0',
-			'com.formdev:flatlaf:1.6.3',
+			'com.formdev:flatlaf:1.6.4',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
 			'com.google.code.gson:gson:2.8.9',
 			'io.github.classgraph:classgraph:4.8.133',
