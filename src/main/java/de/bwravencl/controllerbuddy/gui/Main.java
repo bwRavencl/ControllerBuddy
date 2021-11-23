@@ -1301,15 +1301,17 @@ public final class Main {
 
 				Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
 
-				final var taskRunner = new TaskRunner();
-
 				try {
 					final var commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION)) {
 						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+						unique.releaseLock();
+
 						return;
 					}
 					if (!commandLine.hasOption(OPTION_HELP)) {
+						final var taskRunner = new TaskRunner();
+
 						EventQueue.invokeLater(() -> {
 							skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
@@ -1323,12 +1325,14 @@ public final class Main {
 						});
 
 						taskRunner.enterLoop();
+
 						return;
 					}
 				} catch (final ParseException e) {
 				}
 
 				new HelpFormatter().printHelp(strings.getString("APPLICATION_NAME"), options, true);
+				unique.releaseLock();
 			}
 		} catch (final Unique4jException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
