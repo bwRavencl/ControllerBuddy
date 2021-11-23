@@ -854,7 +854,9 @@ public final class Main {
 
 	private static final class TaskRunner {
 
-		private Thread thread = Platform.isMac() ? null : Thread.currentThread();
+		private static final boolean isMac = Platform.isMac();
+
+		private Thread thread = isMac ? null : Thread.currentThread();
 
 		private volatile boolean pollGLFWEvents = false;
 
@@ -863,7 +865,7 @@ public final class Main {
 		private volatile Object task;
 
 		private void enterLoop() {
-			if (Platform.isMac())
+			if (isMac)
 				return;
 
 			log.log(Level.INFO, "Entering main loop");
@@ -904,7 +906,7 @@ public final class Main {
 		}
 
 		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
-			if (task == null || Platform.isMac() && (thread == null || !thread.isAlive()))
+			if (task == null || isMac && (thread == null || !thread.isAlive()))
 				return false;
 
 			return clazz.isAssignableFrom(task.getClass());
@@ -912,7 +914,7 @@ public final class Main {
 
 		@SuppressWarnings("unchecked")
 		private <V> V run(final Callable<V> callable) {
-			if (Platform.isMac())
+			if (isMac)
 				try {
 					return callable.call();
 				} catch (final Exception e) {
@@ -944,7 +946,7 @@ public final class Main {
 			waitForTask();
 			task = runnable;
 
-			if (Platform.isMac())
+			if (isMac)
 				if (runnable instanceof Output) {
 					thread = new Thread(runnable);
 					thread.start();
@@ -977,7 +979,7 @@ public final class Main {
 		}
 
 		private void waitForTask() {
-			while (Platform.isMac() ? thread != null && thread.isAlive() : task != null)
+			while (isMac ? thread != null && thread.isAlive() : task != null)
 				try {
 					Thread.sleep(10L);
 				} catch (final InterruptedException e) {
@@ -1358,6 +1360,8 @@ public final class Main {
 
 	private final OpenAction openAction = new OpenAction();
 
+	private final QuitAction quitAction = new QuitAction();
+
 	private final StartLocalAction startLocalAction = new StartLocalAction();
 
 	private final StartClientAction startClientAction = new StartClientAction();
@@ -1543,7 +1547,7 @@ public final class Main {
 		frame.setJMenuBar(menuBar);
 
 		menuBar.add(fileJMenu);
-		final var quitAction = new QuitAction();
+
 		fileJMenu.add(quitAction);
 		menuBar.add(deviceJMenu);
 
@@ -1716,60 +1720,6 @@ public final class Main {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
-		if (SystemTray.isSupported()) {
-			final var popupMenu = new PopupMenu();
-
-			final var showAction = new ShowAction();
-			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
-			showMenuItem.addActionListener(showAction);
-			popupMenu.add(showMenuItem);
-
-			popupMenu.addSeparator();
-
-			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
-			openMenuItem.addActionListener(openAction);
-			popupMenu.add(openMenuItem);
-
-			runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
-
-			if (isWindows) {
-				startLocalMenuItem = new MenuItem((String) startLocalAction.getValue(Action.NAME));
-				startLocalMenuItem.addActionListener(startLocalAction);
-				runPopupMenu.add(startLocalMenuItem);
-
-				startClientMenuItem = new MenuItem((String) startClientAction.getValue(Action.NAME));
-				startClientMenuItem.addActionListener(startClientAction);
-				runPopupMenu.add(startClientMenuItem);
-			}
-
-			startServerMenuItem = new MenuItem((String) startServerAction.getValue(Action.NAME));
-			startServerMenuItem.addActionListener(startServerAction);
-			runPopupMenu.add(startServerMenuItem);
-
-			runPopupMenu.addSeparator();
-
-			stopMenuItem = new MenuItem((String) stopAction.getValue(Action.NAME));
-			stopMenuItem.addActionListener(stopAction);
-			runPopupMenu.add(stopMenuItem);
-
-			popupMenu.add(runPopupMenu);
-
-			popupMenu.addSeparator();
-
-			final var quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
-			quitMenuItem.addActionListener(quitAction);
-			popupMenu.add(quitMenuItem);
-
-			trayIcon = new TrayIcon(frame.getIconImage());
-			trayIcon.addActionListener(showAction);
-			trayIcon.setPopupMenu(popupMenu);
-			try {
-				SystemTray.getSystemTray().add(trayIcon);
-			} catch (final AWTException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-		}
-
 		updateTitleAndTooltip();
 
 		globalSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
@@ -1840,7 +1790,7 @@ public final class Main {
 				if (disconnected) {
 					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
-					if (selectedController.jid == jid) {
+					if (selectedController != null && selectedController.jid == jid) {
 						selectedController = null;
 						input.deInit(true);
 					}
@@ -2364,12 +2314,6 @@ public final class Main {
 
 	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
 		final var controllerConnected = !presentControllers.isEmpty();
-		if (!controllerConnected)
-			selectedController = null;
-		else if (selectedController == null) {
-			setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
-			updateTitleAndTooltip();
-		}
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
 		fileJMenu.remove(newJMenuItem);
@@ -2381,17 +2325,97 @@ public final class Main {
 		deviceJMenu.removeAll();
 		menuBar.remove(deviceJMenu);
 
-		runJMenu.remove(startLocalJMenuItem);
-		runJMenu.remove(startServerJMenuItem);
+		final var runMenuVisible = startClientJMenuItem != null || controllerConnected;
 
-		runPopupMenu.remove(startLocalMenuItem);
-		runPopupMenu.remove(startServerMenuItem);
+		runJMenu.setVisible(runMenuVisible);
+		if (startLocalJMenuItem != null)
+			startLocalJMenuItem.setVisible(controllerConnected);
+		if (startServerJMenuItem != null)
+			startServerJMenuItem.setVisible(controllerConnected);
+
+		if (startLocalMenuItem != null)
+			runPopupMenu.remove(startLocalMenuItem);
+		if (startServerMenuItem != null)
+			runPopupMenu.remove(startServerMenuItem);
 
 		tabbedPane.remove(modesPanel);
 		tabbedPane.remove(assignmentsComponent);
 		tabbedPane.remove(overlayPanel);
 		tabbedPane.remove(visualizationPanel);
 		tabbedPane.remove(profileSettingsScrollPane);
+
+		if (SystemTray.isSupported()) {
+			final var systemTray = SystemTray.getSystemTray();
+
+			if (trayIcon != null)
+				systemTray.remove(trayIcon);
+
+			final var popupMenu = new PopupMenu();
+
+			final var showAction = new ShowAction();
+			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
+			showMenuItem.setEnabled(!frame.isVisible());
+			showMenuItem.addActionListener(showAction);
+			popupMenu.add(showMenuItem);
+
+			popupMenu.addSeparator();
+
+			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
+			openMenuItem.addActionListener(openAction);
+			popupMenu.add(openMenuItem);
+
+			if (runMenuVisible) {
+				runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
+
+				if (isWindows) {
+					if (controllerConnected) {
+						startLocalMenuItem = new MenuItem((String) startLocalAction.getValue(Action.NAME));
+						startLocalMenuItem.addActionListener(startLocalAction);
+						runPopupMenu.add(startLocalMenuItem);
+					}
+
+					startClientMenuItem = new MenuItem((String) startClientAction.getValue(Action.NAME));
+					startClientMenuItem.addActionListener(startClientAction);
+					runPopupMenu.add(startClientMenuItem);
+				}
+
+				if (controllerConnected) {
+					startServerMenuItem = new MenuItem((String) startServerAction.getValue(Action.NAME));
+					startServerMenuItem.addActionListener(startServerAction);
+					runPopupMenu.add(startServerMenuItem);
+				}
+
+				runPopupMenu.addSeparator();
+
+				stopMenuItem = new MenuItem((String) stopAction.getValue(Action.NAME));
+				stopMenuItem.addActionListener(stopAction);
+				runPopupMenu.add(stopMenuItem);
+
+				popupMenu.add(runPopupMenu);
+			}
+
+			popupMenu.addSeparator();
+
+			final var quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
+			quitMenuItem.addActionListener(quitAction);
+			popupMenu.add(quitMenuItem);
+
+			trayIcon = new TrayIcon(frame.getIconImage());
+			trayIcon.addActionListener(showAction);
+			trayIcon.setPopupMenu(popupMenu);
+			try {
+				systemTray.add(trayIcon);
+			} catch (final AWTException e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+			}
+		}
+
+		if (!controllerConnected)
+			selectedController = null;
+		else if (selectedController == null) {
+			setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
+			updateTitleAndTooltip();
+		}
 
 		if (controllerConnected) {
 			fileJMenu.insert(newJMenuItem, 0);
@@ -2408,13 +2432,12 @@ public final class Main {
 			}
 			menuBar.add(deviceJMenu, 1);
 
-			if (isWindows)
-				runJMenu.add(startLocalJMenuItem, 0);
-
-			runJMenu.add(startServerJMenuItem, isWindows ? 2 : 0);
-
-			runPopupMenu.insert(startLocalMenuItem, 0);
-			runPopupMenu.insert(startServerMenuItem, isWindows ? 2 : 0);
+			if (runPopupMenu != null) {
+				if (startLocalMenuItem != null)
+					runPopupMenu.insert(startLocalMenuItem, 0);
+				if (startServerMenuItem != null)
+					runPopupMenu.insert(startServerMenuItem, isWindows ? 2 : 0);
+			}
 
 			modesPanel = new JPanel(new BorderLayout());
 			tabbedPane.insertTab(strings.getString("MODES_TAB"), null, modesPanel, null,
