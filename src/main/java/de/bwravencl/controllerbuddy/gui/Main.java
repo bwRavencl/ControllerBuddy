@@ -854,8 +854,6 @@ public final class Main {
 
 	private static final class TaskRunner {
 
-		private static final boolean isMac = Platform.isMac();
-
 		private Thread thread = isMac ? null : Thread.currentThread();
 
 		private volatile boolean pollGLFWEvents = false;
@@ -1028,6 +1026,8 @@ public final class Main {
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 
 	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
+
+	public static final boolean isMac = Platform.isMac();
 
 	static boolean skipMessageDialogs;
 
