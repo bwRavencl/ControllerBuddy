@@ -1071,7 +1071,7 @@ public final class Main {
 
 	private static final int DIALOG_BOUNDS_WIDTH = 930;
 
-	private static final int DIALOG_BOUNDS_HEIGHT = 650;
+	private static final int DIALOG_BOUNDS_HEIGHT = 655;
 
 	private static final int SVG_VIEWBOX_MARGIN = 20;
 
