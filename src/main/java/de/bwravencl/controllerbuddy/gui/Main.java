@@ -837,48 +837,18 @@ public final class Main {
 		}
 	}
 
-	private final class StopClientAction extends AbstractAction {
+	private final class StopAction extends AbstractAction {
 
 		private static final long serialVersionUID = -2863419586328503426L;
 
-		private StopClientAction() {
-			putValue(NAME, strings.getString("STOP_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("STOP_CLIENT_ACTION_DESCRIPTION"));
+		private StopAction() {
+			putValue(NAME, strings.getString("STOP_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("STOP_ACTION_DESCRIPTION"));
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			stopClient(true, true);
-		}
-	}
-
-	private final class StopLocalAction extends AbstractAction {
-
-		private static final long serialVersionUID = -4859431944733030332L;
-
-		private StopLocalAction() {
-			putValue(NAME, strings.getString("STOP_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("STOP_LOCAL_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			stopLocal(true, true);
-		}
-	}
-
-	private final class StopServerAction extends AbstractAction {
-
-		private static final long serialVersionUID = 6023207463370122769L;
-
-		private StopServerAction() {
-			putValue(NAME, strings.getString("STOP_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("STOP_SERVER_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			stopServer(true, true);
+			stopAll(true, true, false);
 		}
 	}
 
@@ -1233,12 +1203,14 @@ public final class Main {
 				return KeyEvent.VK_O;
 			if (action instanceof SaveAction)
 				return KeyEvent.VK_S;
-			if (action instanceof StartLocalAction || action instanceof StopLocalAction)
+			if (action instanceof StartLocalAction)
 				return KeyEvent.VK_L;
-			if (action instanceof StartClientAction || action instanceof StopClientAction)
+			if (action instanceof StartClientAction)
 				return KeyEvent.VK_C;
-			if (action instanceof StartServerAction || action instanceof StopServerAction)
+			if (action instanceof StartServerAction)
 				return KeyEvent.VK_E;
+			if (action instanceof StopAction)
+				return KeyEvent.VK_T;
 		}
 
 		return KeyEvent.VK_UNDEFINED;
@@ -1386,39 +1358,49 @@ public final class Main {
 
 	private final OpenAction openAction = new OpenAction();
 
+	private final StartLocalAction startLocalAction = new StartLocalAction();
+
+	private final StartClientAction startClientAction = new StartClientAction();
+
+	private final StartServerAction startServerAction = new StartServerAction();
+
+	private final StopAction stopAction = new StopAction();
+
 	private final JMenuBar menuBar = new JMenuBar();
 
-	private final JMenu fileMenu = new JMenu(strings.getString("FILE_MENU"));
+	private final JMenu fileJMenu = new JMenu(strings.getString("FILE_MENU"));
 
-	private final JMenu deviceMenu = new JMenu(strings.getString("DEVICE_MENU"));
+	private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
 
-	private final JMenu localMenu = new JMenu(strings.getString("LOCAL_MENU"));
+	private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
 
-	private final JMenu clientMenu = new JMenu(strings.getString("CLIENT_MENU"));
+	private final JMenuItem newJMenuItem = fileJMenu.add(new NewAction());
 
-	private final JMenu serverMenu = new JMenu(strings.getString("SERVER_MENU"));
+	private final JMenuItem openJMenuItem = fileJMenu.add(openAction);
 
-	private final JMenuItem newMenuItem = fileMenu.add(new NewAction());
+	private final JMenuItem saveJMenuItem = fileJMenu.add(new SaveAction());
 
-	private final JMenuItem openMenuItem = fileMenu.add(openAction);
+	private final JMenuItem saveAsJMenuItem = fileJMenu.add(new SaveAsAction());
 
-	private final JMenuItem saveMenuItem = fileMenu.add(new SaveAction());
+	private JMenuItem startLocalJMenuItem;
 
-	private final JMenuItem saveAsMenuItem = fileMenu.add(new SaveAsAction());
+	private JMenuItem startClientJMenuItem;
 
-	private JRadioButtonMenuItem startLocalRadioButtonMenuItem;
+	private final JMenuItem startServerJMenuItem;
 
-	private JRadioButtonMenuItem stopLocalRadioButtonMenuItem;
+	private final JMenuItem stopJMenuItem;
 
-	private JRadioButtonMenuItem startClientRadioButtonMenuItem;
-
-	private JRadioButtonMenuItem stopClientRadioButtonMenuItem;
-
-	private final JRadioButtonMenuItem startServerRadioButtonMenuItem;
-
-	private final JRadioButtonMenuItem stopServerRadioButtonMenuItem;
+	private PopupMenu runPopupMenu;
 
 	private MenuItem showMenuItem;
+
+	private MenuItem startLocalMenuItem;
+
+	private MenuItem startClientMenuItem;
+
+	private MenuItem startServerMenuItem;
+
+	private MenuItem stopMenuItem;
 
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
@@ -1560,52 +1542,21 @@ public final class Main {
 
 		frame.setJMenuBar(menuBar);
 
-		menuBar.add(fileMenu);
+		menuBar.add(fileJMenu);
 		final var quitAction = new QuitAction();
-		fileMenu.add(quitAction);
-		menuBar.add(deviceMenu);
+		fileJMenu.add(quitAction);
+		menuBar.add(deviceJMenu);
 
 		if (isWindows) {
-			menuBar.add(localMenu, 2);
-
-			final var localStateButtonGroup = new ButtonGroup();
-			startLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
-			startLocalRadioButtonMenuItem.setAction(new StartLocalAction());
-			localStateButtonGroup.add(startLocalRadioButtonMenuItem);
-			localMenu.add(startLocalRadioButtonMenuItem);
-
-			stopLocalRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
-			stopLocalRadioButtonMenuItem.setAction(new StopLocalAction());
-			localStateButtonGroup.add(stopLocalRadioButtonMenuItem);
-			localMenu.add(stopLocalRadioButtonMenuItem);
-
-			menuBar.add(clientMenu);
-
-			final var clientStateButtonGroup = new ButtonGroup();
-
-			startClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
-			startClientRadioButtonMenuItem.setAction(new StartClientAction());
-			clientStateButtonGroup.add(startClientRadioButtonMenuItem);
-			clientMenu.add(startClientRadioButtonMenuItem);
-
-			stopClientRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
-			stopClientRadioButtonMenuItem.setAction(new StopClientAction());
-			clientStateButtonGroup.add(stopClientRadioButtonMenuItem);
-			clientMenu.add(stopClientRadioButtonMenuItem);
+			startLocalJMenuItem = runJMenu.add(startLocalAction);
+			startClientJMenuItem = runJMenu.add(startClientAction);
 		}
 
-		menuBar.add(serverMenu);
+		startServerJMenuItem = runJMenu.add(startServerAction);
+		runJMenu.addSeparator();
+		stopJMenuItem = runJMenu.add(stopAction);
 
-		final var serverStateButtonGroup = new ButtonGroup();
-		startServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("START_MENU_ITEM"));
-		startServerRadioButtonMenuItem.setAction(new StartServerAction());
-		serverStateButtonGroup.add(startServerRadioButtonMenuItem);
-		serverMenu.add(startServerRadioButtonMenuItem);
-
-		stopServerRadioButtonMenuItem = new JRadioButtonMenuItem(strings.getString("STOP_MENU_ITEM"));
-		stopServerRadioButtonMenuItem.setAction(new StopServerAction());
-		serverStateButtonGroup.add(stopServerRadioButtonMenuItem);
-		serverMenu.add(stopServerRadioButtonMenuItem);
+		menuBar.add(runJMenu);
 
 		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
@@ -1778,6 +1729,30 @@ public final class Main {
 			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
 			openMenuItem.addActionListener(openAction);
 			popupMenu.add(openMenuItem);
+
+			runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
+
+			if (isWindows) {
+				startLocalMenuItem = new MenuItem((String) startLocalAction.getValue(Action.NAME));
+				startLocalMenuItem.addActionListener(startLocalAction);
+				runPopupMenu.add(startLocalMenuItem);
+
+				startClientMenuItem = new MenuItem((String) startClientAction.getValue(Action.NAME));
+				startClientMenuItem.addActionListener(startClientAction);
+				runPopupMenu.add(startClientMenuItem);
+			}
+
+			startServerMenuItem = new MenuItem((String) startServerAction.getValue(Action.NAME));
+			startServerMenuItem.addActionListener(startServerAction);
+			runPopupMenu.add(startServerMenuItem);
+
+			runPopupMenu.addSeparator();
+
+			stopMenuItem = new MenuItem((String) stopAction.getValue(Action.NAME));
+			stopMenuItem.addActionListener(stopAction);
+			runPopupMenu.add(stopMenuItem);
+
+			popupMenu.add(runPopupMenu);
 
 			popupMenu.addSeparator();
 
@@ -2128,16 +2103,13 @@ public final class Main {
 
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 		if (autostartOptionValue != null)
-			if (isWindows && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
-				if (!isLocalRunning())
-					startLocal();
-			} else if (isWindows && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
-				if (!isClientRunning())
-					startClient();
-			} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
-				if (!isServerRunning())
-					startServer();
-			} else
+			if (isWindows && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue))
+				startLocal();
+			else if (isWindows && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue))
+				startClient();
+			else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue))
+				startServer();
+			else
 				GuiUtils.showMessageDialog(frame,
 						MessageFormat.format(
 								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
@@ -2272,12 +2244,16 @@ public final class Main {
 		return taskRunner.isTaskOfTypeRunning(LocalOutput.class);
 	}
 
+	private boolean isRunning() {
+		return isLocalRunning() || isClientRunning() || isServerRunning();
+	}
+
 	public boolean isServerRunning() {
 		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs) {
-		stopAll(true, true);
+		stopAll(true, false, true);
 
 		log.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
 
@@ -2366,7 +2342,7 @@ public final class Main {
 	}
 
 	private void newProfile() {
-		stopAll(true, true);
+		stopAll(true, false, true);
 
 		currentFile = null;
 
@@ -2396,16 +2372,21 @@ public final class Main {
 		}
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
-		fileMenu.remove(newMenuItem);
-		fileMenu.remove(openMenuItem);
-		fileMenu.remove(saveMenuItem);
-		fileMenu.remove(saveAsMenuItem);
-		if (fileMenu.getItemCount() > 1)
-			fileMenu.remove(0);
-		deviceMenu.removeAll();
-		menuBar.remove(deviceMenu);
-		menuBar.remove(localMenu);
-		menuBar.remove(serverMenu);
+		fileJMenu.remove(newJMenuItem);
+		fileJMenu.remove(openJMenuItem);
+		fileJMenu.remove(saveJMenuItem);
+		fileJMenu.remove(saveAsJMenuItem);
+		if (fileJMenu.getItemCount() > 1)
+			fileJMenu.remove(0);
+		deviceJMenu.removeAll();
+		menuBar.remove(deviceJMenu);
+
+		runJMenu.remove(startLocalJMenuItem);
+		runJMenu.remove(startServerJMenuItem);
+
+		runPopupMenu.remove(startLocalMenuItem);
+		runPopupMenu.remove(startServerMenuItem);
+
 		tabbedPane.remove(modesPanel);
 		tabbedPane.remove(assignmentsComponent);
 		tabbedPane.remove(overlayPanel);
@@ -2413,24 +2394,27 @@ public final class Main {
 		tabbedPane.remove(profileSettingsScrollPane);
 
 		if (controllerConnected) {
-			fileMenu.insert(newMenuItem, 0);
-			fileMenu.insert(openMenuItem, 1);
-			fileMenu.insert(saveMenuItem, 2);
-			fileMenu.insert(saveAsMenuItem, 3);
-			fileMenu.insertSeparator(4);
+			fileJMenu.insert(newJMenuItem, 0);
+			fileJMenu.insert(openJMenuItem, 1);
+			fileJMenu.insert(saveJMenuItem, 2);
+			fileJMenu.insert(saveAsJMenuItem, 3);
+			fileJMenu.insertSeparator(4);
 
 			final var devicesButtonGroup = new ButtonGroup();
 			for (final var controller : presentControllers) {
 				final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
 				devicesButtonGroup.add(deviceRadioButtonMenuItem);
-				deviceMenu.add(deviceRadioButtonMenuItem);
+				deviceJMenu.add(deviceRadioButtonMenuItem);
 			}
-			menuBar.add(deviceMenu, 1);
+			menuBar.add(deviceJMenu, 1);
 
 			if (isWindows)
-				menuBar.add(localMenu, 2);
+				runJMenu.add(startLocalJMenuItem, 0);
 
-			menuBar.add(serverMenu, isWindows ? 4 : 2);
+			runJMenu.add(startServerJMenuItem, isWindows ? 2 : 0);
+
+			runPopupMenu.insert(startLocalMenuItem, 0);
+			runPopupMenu.insert(startServerMenuItem, isWindows ? 2 : 0);
 
 			modesPanel = new JPanel(new BorderLayout());
 			tabbedPane.insertTab(strings.getString("MODES_TAB"), null, modesPanel, null,
@@ -2529,41 +2513,31 @@ public final class Main {
 	}
 
 	private void onOutputChanged() {
-		final var localActive = isLocalRunning();
-		final var clientActive = isClientRunning();
-		final var serverActive = isServerRunning();
+		final var running = isRunning();
 
-		final var noneActive = !localActive && !clientActive && !serverActive;
+		if (startLocalJMenuItem != null)
+			startLocalJMenuItem.setEnabled(!running);
 
-		if (startLocalRadioButtonMenuItem != null) {
-			startLocalRadioButtonMenuItem.setSelected(localActive);
-			startLocalRadioButtonMenuItem.setEnabled(noneActive);
-		}
+		if (startClientJMenuItem != null)
+			startClientJMenuItem.setEnabled(!running);
 
-		if (stopLocalRadioButtonMenuItem != null) {
-			stopLocalRadioButtonMenuItem.setSelected(!localActive);
-			stopLocalRadioButtonMenuItem.setEnabled(localActive);
-		}
+		if (startServerJMenuItem != null)
+			startServerJMenuItem.setEnabled(!running);
 
-		if (startClientRadioButtonMenuItem != null) {
-			startClientRadioButtonMenuItem.setSelected(clientActive);
-			startClientRadioButtonMenuItem.setEnabled(noneActive);
-		}
+		if (stopJMenuItem != null)
+			stopJMenuItem.setEnabled(running);
 
-		if (stopClientRadioButtonMenuItem != null) {
-			stopClientRadioButtonMenuItem.setSelected(!clientActive);
-			stopClientRadioButtonMenuItem.setEnabled(clientActive);
-		}
+		if (startLocalMenuItem != null)
+			startLocalMenuItem.setEnabled(!running);
 
-		if (startServerRadioButtonMenuItem != null) {
-			startServerRadioButtonMenuItem.setSelected(serverActive);
-			startServerRadioButtonMenuItem.setEnabled(noneActive);
-		}
+		if (startClientMenuItem != null)
+			startClientMenuItem.setEnabled(!running);
 
-		if (stopServerRadioButtonMenuItem != null) {
-			stopServerRadioButtonMenuItem.setSelected(!serverActive);
-			stopServerRadioButtonMenuItem.setEnabled(serverActive);
-		}
+		if (startServerMenuItem != null)
+			startServerMenuItem.setEnabled(!running);
+
+		if (stopMenuItem != null)
+			stopMenuItem.setEnabled(running);
 
 		updateMenuShortcuts();
 		updatePanelAccess();
@@ -2584,7 +2558,7 @@ public final class Main {
 		if (input != null)
 			input.deInit(false);
 
-		stopAll(true, false);
+		stopAll(true, false, false);
 
 		taskRunner.shutdown();
 
@@ -2722,7 +2696,7 @@ public final class Main {
 
 	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
 			final EnumMap<VirtualAxis, Integer> axes) {
-		stopAll(true, true);
+		stopAll(true, false, true);
 
 		setSelectedController(controller);
 
@@ -2751,6 +2725,9 @@ public final class Main {
 	}
 
 	private void startClient() {
+		if (isRunning())
+			return;
+
 		lastOutputType = OutputType.CLIENT;
 		final var clientThread = new ClientOutput(Main.this, input);
 		clientThread
@@ -2766,7 +2743,7 @@ public final class Main {
 	}
 
 	private void startLocal() {
-		if (selectedController == null)
+		if (selectedController == null || isRunning())
 			return;
 
 		lastOutputType = OutputType.LOCAL;
@@ -2825,7 +2802,7 @@ public final class Main {
 	}
 
 	private void startServer() {
-		if (selectedController == null)
+		if (selectedController == null || isRunning())
 			return;
 
 		lastOutputType = OutputType.SERVER;
@@ -2843,12 +2820,13 @@ public final class Main {
 		startOverlayTimerTask();
 	}
 
-	public void stopAll(final boolean initiateStop, final boolean performGarbageCollection) {
+	public void stopAll(final boolean initiateStop, final boolean resetLastOutputType,
+			final boolean performGarbageCollection) {
 		if (isWindows) {
-			stopLocal(initiateStop, false);
-			stopClient(initiateStop, false);
+			stopLocal(initiateStop, resetLastOutputType);
+			stopClient(initiateStop, resetLastOutputType);
 		}
-		stopServer(initiateStop, false);
+		stopServer(initiateStop, resetLastOutputType);
 
 		if (performGarbageCollection)
 			System.gc();
@@ -2915,8 +2893,8 @@ public final class Main {
 	}
 
 	public void updateDeviceMenuSelection() {
-		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
-			final var menuItem = deviceMenu.getItem(i);
+		for (var i = 0; i < deviceJMenu.getItemCount(); i++) {
+			final var menuItem = deviceJMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
 			if (selectedController.jid == action.controller.jid) {
 				menuItem.setSelected(true);
@@ -3187,7 +3165,7 @@ public final class Main {
 	}
 
 	private void updatePanelAccess() {
-		final var panelsEnabled = !isLocalRunning() && !isClientRunning() && !isServerRunning();
+		final var panelsEnabled = !isRunning();
 
 		GuiUtils.setEnabledRecursive(modesListPanel, panelsEnabled);
 		GuiUtils.setEnabledRecursive(newModePanel, panelsEnabled);

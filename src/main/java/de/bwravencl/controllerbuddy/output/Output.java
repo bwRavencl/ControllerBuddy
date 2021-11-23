@@ -51,7 +51,7 @@ public abstract class Output implements Runnable {
 
 			@Override
 			public void run() {
-				main.stopAll(true, true);
+				main.stopAll(true, false, true);
 			}
 		}.start();
 

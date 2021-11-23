@@ -276,7 +276,7 @@ public final class ServerOutput extends Output {
 
 			EventQueue.invokeLater(() -> {
 				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
-				main.stopAll(false, true);
+				main.stopAll(false, false, true);
 			});
 		}
 
