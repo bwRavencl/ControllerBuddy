@@ -5,14 +5,14 @@
 GNU General Public License v2.0
 
 #### Download and Installation:
-1. First ensure you have correctly installed [vJoy 2.1](http://vjoystick.sourceforge.net) on your system.
+1. First ensure you have correctly installed [vJoy 2.2](https://github.com/njz3/vJoy/releases) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
 #### Description:
 ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.  
-In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the awesome [vJoy](http://vjoystick.sourceforge.net) device driver created by Shaul Eizikovich.  
+In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the awesome vJoy device driver created by Shaul Eizikovich.  
 ControllerBuddy's goal is to enable the user to control target applications solely via a gamepad and not having to reach for a keyboard or mouse at any point in time.
 
 #### Features:
