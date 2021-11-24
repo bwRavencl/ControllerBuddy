@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.gui;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -1017,7 +1016,7 @@ public final class Main {
 		protected abstract void doAction(final ActionEvent e);
 	}
 
-	private static volatile Main main;
+	static volatile Main main;
 
 	private static final Options options = new Options();
 
@@ -1228,15 +1227,15 @@ public final class Main {
 		return presentControllers;
 	}
 
-	private static void handleUncaughtException(final Throwable e, final Component parentComponent) {
+	private static void handleUncaughtException(final Throwable e) {
 		log.log(Level.SEVERE, e.getMessage(), e);
 
-		if (parentComponent != null)
+		if (main != null)
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 				final var sw = new StringWriter();
 				e.printStackTrace(new PrintWriter(sw));
 
-				GuiUtils.showMessageDialog(parentComponent,
+				GuiUtils.showMessageDialog(main.frame,
 						MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
@@ -1299,7 +1298,7 @@ public final class Main {
 			if (unique.acquireLock()) {
 				log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
-				Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, null));
+				Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e));
 
 				try {
 					final var commandLine = new DefaultParser().parse(options, args);
@@ -1340,9 +1339,14 @@ public final class Main {
 	}
 
 	private static void terminate(final int status) {
+		if (main.shutdownHookTriggered)
+			return;
+
 		log.log(Level.INFO, "Terminated (" + status + ")");
 		System.exit(status);
 	}
+
+	private volatile boolean shutdownHookTriggered;
 
 	private final Unique4j unique;
 
@@ -1492,14 +1496,21 @@ public final class Main {
 
 	private FlatLaf lookAndFeel;
 
+	private final Thread shutdownHook = new Thread(() -> {
+		shutdownHookTriggered = true;
+		quit();
+	});
+
 	private Main(final Unique4j unique, final TaskRunner taskRunner, final String cmdProfilePath,
 			final String gameControllerDbPath) {
+		Runtime.getRuntime().addShutdownHook(shutdownHook);
+
 		this.unique = unique;
 		this.taskRunner = taskRunner;
 
 		frame = new JFrame();
 
-		Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e, frame));
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e));
 
 		frame.addWindowListener(new WindowAdapter() {
 
@@ -2206,6 +2217,10 @@ public final class Main {
 		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
 	}
 
+	boolean isShutdownHookTriggered() {
+		return shutdownHookTriggered;
+	}
+
 	private void loadProfile(final File file, final boolean skipMessageDialogs) {
 		stopAll(true, false, true);
 
@@ -2596,7 +2611,11 @@ public final class Main {
 		} catch (final Unique4jException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
-		terminate(0);
+
+		if (!shutdownHookTriggered) {
+			Runtime.getRuntime().removeShutdownHook(shutdownHook);
+			terminate(0);
+		}
 	}
 
 	private void repaintOnScreenKeyboard() {
