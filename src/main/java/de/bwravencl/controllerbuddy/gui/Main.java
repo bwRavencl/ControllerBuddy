@@ -1227,24 +1227,6 @@ public final class Main {
 		return presentControllers;
 	}
 
-	private static void handleUncaughtException(final Throwable e) {
-		log.log(Level.SEVERE, e.getMessage(), e);
-
-		if (main != null)
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-				final var sw = new StringWriter();
-				e.printStackTrace(new PrintWriter(sw));
-
-				GuiUtils.showMessageDialog(main.frame,
-						MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-
-				terminate(1);
-			});
-		else
-			terminate(1);
-	}
-
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
 		if (windows != null)
@@ -1298,7 +1280,24 @@ public final class Main {
 			if (unique.acquireLock()) {
 				log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
-				Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e));
+				Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+					log.log(Level.SEVERE, e.getMessage(), e);
+
+					if (main != null)
+						GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+							final var sw = new StringWriter();
+							e.printStackTrace(new PrintWriter(sw));
+
+							GuiUtils.showMessageDialog(main.frame,
+									MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
+											sw.toString()),
+									strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+
+							terminate(1);
+						});
+					else
+						terminate(1);
+				});
 
 				try {
 					final var commandLine = new DefaultParser().parse(options, args);
@@ -1509,8 +1508,6 @@ public final class Main {
 		this.taskRunner = taskRunner;
 
 		frame = new JFrame();
-
-		Thread.setDefaultUncaughtExceptionHandler((t, e) -> handleUncaughtException(e));
 
 		frame.addWindowListener(new WindowAdapter() {
 
