@@ -1950,6 +1950,7 @@ public final class Main {
 
 			try (final var fileOutputStream = new FileOutputStream(file)) {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
+				log.log(Level.INFO, "Exported visualization of profile to " + file.getAbsolutePath());
 			}
 		} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
