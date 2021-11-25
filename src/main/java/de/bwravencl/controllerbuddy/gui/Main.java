@@ -1338,7 +1338,7 @@ public final class Main {
 	}
 
 	private static void terminate(final int status) {
-		if (main.shutdownHookTriggered)
+		if (main != null && main.shutdownHookTriggered)
 			return;
 
 		log.log(Level.INFO, "Terminated (" + status + ")");
@@ -1886,6 +1886,9 @@ public final class Main {
 	}
 
 	public void exportVisualization(final File file) {
+		if (templateSvgDocument == null)
+			return;
+
 		try {
 			final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
 					.getDOMImplementation();
@@ -2433,6 +2436,14 @@ public final class Main {
 			updateTitleAndTooltip();
 		}
 
+		try (final var bufferedReader = new BufferedReader(new InputStreamReader(
+				ClassLoader.getSystemResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		if (controllerConnected) {
 			fileJMenu.insert(newJMenuItem, 0);
 			fileJMenu.insert(openJMenuItem, 1);
@@ -2485,11 +2496,7 @@ public final class Main {
 			indicatorsScrollPane = new JScrollPane();
 			overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 
-			try (final var bufferedReader = new BufferedReader(new InputStreamReader(
-					ClassLoader.getSystemResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
-				final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
-				templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
-
+			if (templateSvgDocument != null) {
 				visualizationPanel = new JPanel(new BorderLayout());
 				tabbedPane.insertTab(strings.getString("VISUALIZATION_TAB"), null, visualizationPanel, null,
 						tabbedPane.indexOfComponent(globalSettingsScrollPane));
@@ -2520,8 +2527,6 @@ public final class Main {
 				exportButton.setPreferredSize(BUTTON_DIMENSION);
 				exportPanel.add(exportButton);
 				visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
-			} catch (final IOException e) {
-				throw new RuntimeException(e);
 			}
 
 			profileSettingsPanel = new JPanel();
