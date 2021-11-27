@@ -5,8 +5,8 @@
 GNU General Public License v2.0
 
 #### Download and Installation:
-1. First ensure you have correctly installed [vJoy 2.2](https://github.com/njz3/vJoy/releases) on your system.
-2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
+1. First ensure you have correctly installed [vJoy 2.2](https://github.com/njz3/vJoy/releases){:target="_blank"} on your system.
+2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest){:target="_blank"} and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
@@ -43,7 +43,7 @@ ControllerBuddy's goal is to enable the user to control target applications sole
   - Dual Shock 3
   - Dual Shock 4 (with special support for the touchpad, haptic feedback and lightbar)
   - Dual Sense (with special support for the touchpad, haptic feedback and lightbar)
-  - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
+  - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB){:target="_blank"} project)
 - Supported operating systems:
   - Windows x64 (local / client / server)
   - macOS (only server - no binaries provided!)
@@ -89,7 +89,7 @@ Mode switching can be configured to operate in two different ways:
 - Default: works like the SHIFT key on your keyboard
 - Toggle: works like the Caps Lock key
 
-A set of well thought out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles).
+A set of well thought out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles){:target="_blank"}.
 
 #### Architecture:
 Local mode:
@@ -149,36 +149,36 @@ Server-Client mode:
 
 #### Command Line Parameters:
 
-| Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
-| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | :---------------------: |
-| -autostart          | local / client / server | starts the specified mode of operation after launch                                                         | yes                     |
-| -export             | file destination        | exports a visualization of the current profile to the specified path                                        | yes                     |
-| -help               |                         | prints the help and exits                                                                                   | no                      |
-| -profile            | file source             | loads the specified profile after launch                                                                    | yes                     |
-| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) | yes                     |
-| -quit               |                         | quits the application                                                                                       | yes                     |
-| -save               | file destination        | save the current profile to the specified path                                                              | yes                     |
-| -skipMessageDialogs |                         | skips all message dialogs                                                                                   | no                      |
-| -tray               |                         | launches the application in the system tray                                                                 | yes                     |
-| -version            |                         | prints the version information and exits                                                                    | no                      |
+| Parameter           | Arguments               | Description                                                                                                                   | Available for scripting |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- | :---------------------: |
+| -autostart          | local / client / server | starts the specified mode of operation after launch                                                                           | yes                     |
+| -export             | file destination        | exports a visualization of the current profile to the specified path                                                          | yes                     |
+| -help               |                         | prints the help and exits                                                                                                     | no                      |
+| -profile            | file source             | loads the specified profile after launch                                                                                      | yes                     |
+| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB){:target="_blank"} | yes                     |
+| -quit               |                         | quits the application                                                                                                         | yes                     |
+| -save               | file destination        | save the current profile to the specified path                                                                                | yes                     |
+| -skipMessageDialogs |                         | skips all message dialogs                                                                                                     | no                      |
+| -tray               |                         | launches the application in the system tray                                                                                   | yes                     |
+| -version            |                         | prints the version information and exits                                                                                      | no                      |
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
 This can be used to integrate ControllerBuddy into third party applications.  
-For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration) exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
+For more information check out [this](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration){:target="_blank"} exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com){:target="_blank"}.
 
 #### Attribution:
 ControllerBuddy uses the following awesome software technologies and libraries:
-- [OpenJDK 17](https://jdk.java.net/17)
-- [Apache Batik](https://xmlgraphics.apache.org/batik)
-- [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
-- [ClassGraph](https://github.com/classgraph/classgraph)
-- [FlatLaf](https://www.formdev.com/flatlaf/)
-- [Gson](https://github.com/google/gson)
-- [Java Native Access (JNA)](https://github.com/java-native-access/jna)
-- [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
-- [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
-- [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
-- [Unique4j](https://github.com/prat-man/unique4j)
+- [OpenJDK 17](https://jdk.java.net/17){:target="_blank"}
+- [Apache Batik](https://xmlgraphics.apache.org/batik){:target="_blank"}
+- [Apache Commons CLI](https://commons.apache.org/proper/commons-cli){:target="_blank"}
+- [ClassGraph](https://github.com/classgraph/classgraph){:target="_blank"}
+- [FlatLaf](https://www.formdev.com/flatlaf/){:target="_blank"}
+- [Gson](https://github.com/google/gson){:target="_blank"}
+- [Java Native Access (JNA)](https://github.com/java-native-access/jna){:target="_blank"}
+- [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org){:target="_blank"}
+- [Pure Java HID-API](https://github.com/nyholku/purejavahidapi){:target="_blank"}
+- [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB){:target="_blank"}
+- [Unique4j](https://github.com/prat-man/unique4j){:target="_blank"}
 
 #### Building:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
