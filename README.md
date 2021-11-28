@@ -1,6 +1,8 @@
 ![ControllerBuddy Logo](./src/main/resources/icon_128.png)
 ## ControllerBuddy
 
+This is the source code repository of ControllerBuddy, regular users should refer to [ControllerBuddy's homepage](https://controllerbuddy.org) for getting started.
+
 #### License Information:
 GNU General Public License v2.0
 
