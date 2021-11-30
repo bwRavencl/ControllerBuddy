@@ -219,7 +219,7 @@ public abstract class SonyExtension {
 		final var devices = PureJavaHidApi.enumerateDevices().stream()
 				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
 						&& hidDeviceInfo.getProductId() == productId)
-				.collect(Collectors.toUnmodifiableList());
+				.toList();
 
 		log.log(Level.INFO, "Found " + devices.size() + " " + humanReadableName + " controller(s): "
 				+ devices.stream().map(SonyExtension::getPrintableDeviceId).collect(Collectors.joining(", ")));

@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -472,7 +471,7 @@ public final class EditActionsDialog extends JDialog {
 					final var action2 = entry2.getValue();
 
 					return action1.order() - action2.order();
-				}).collect(Collectors.toUnmodifiableList());
+				}).toList();
 
 				for (final var entry : sortedEntires) {
 					final var field = entry.getKey();
