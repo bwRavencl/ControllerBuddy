@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.gui;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -59,6 +60,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -791,6 +794,25 @@ public final class Main {
 		}
 	}
 
+	private static final class ShowWebsiteAction extends AbstractAction {
+
+		private static final long serialVersionUID = -9029607010261185834L;
+
+		private ShowWebsiteAction() {
+			putValue(NAME, strings.getString("SHOW_WEBSITE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try {
+				Desktop.getDesktop().browse(new URI(WEBSITE_URL));
+			} catch (IOException | URISyntaxException e1) {
+				log.log(Level.SEVERE, e1.getMessage(), e1);
+			}
+		}
+	}
+
 	private final class StartClientAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3975574941559749481L;
@@ -1130,6 +1152,8 @@ public final class Main {
 	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
 	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
+
+	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 
 	static {
 		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
@@ -1577,6 +1601,8 @@ public final class Main {
 		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowLicensesAction());
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+			helpMenu.add(new ShowWebsiteAction());
 		helpMenu.add(new ShowAboutDialogAction());
 
 		frame.getContentPane().add(tabbedPane);
