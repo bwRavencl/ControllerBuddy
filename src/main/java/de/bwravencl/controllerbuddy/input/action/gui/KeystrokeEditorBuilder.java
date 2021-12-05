@@ -17,15 +17,18 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -36,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
@@ -117,8 +121,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			try {
 				final Set<Integer> scanCodes = new HashSet<>();
 
-				for (final Object o : ((JList<?>) e.getSource()).getSelectedValuesList())
-					scanCodes.add(ScanCode.nameToKeyCodeMap.get(o));
+				for (final var object : ((JList<?>) e.getSource()).getSelectedValuesList())
+					scanCodes.add(ScanCode.nameToKeyCodeMap.get(object));
 
 				final var scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
 
@@ -128,6 +132,15 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 					keyStroke.setKeyCodes(scanCodesArray);
 
 				setterMethod.invoke(action, keyStroke);
+
+				final Set<Object> keyStrokeSet = new LinkedHashSet<>();
+				if (modifierList != null)
+					keyStrokeSet.addAll(modifierList.getSelectedValuesList());
+				if (keyList != null)
+					keyStrokeSet.addAll(keyList.getSelectedValuesList());
+
+				keyStrokeTextArea
+						.setText(keyStrokeSet.stream().map(Object::toString).collect(Collectors.joining(" + ")));
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
@@ -150,6 +163,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		return -1;
 	}
 
+	private CheckboxJList<?> modifierList;
+	private CheckboxJList<?> keyList;
+	private final JTextArea keyStrokeTextArea = new JTextArea();
+
 	public KeystrokeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
 			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -158,6 +175,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
+		parentPanel.add(keystrokePanel);
+
 		final var keyStroke = (KeyStroke) initialValue;
 
 		final var availableScanCodes = ScanCode.nameToKeyCodeMap.keySet();
@@ -168,7 +188,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
-		final var modifierList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		modifierList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
 		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
 		final var addedModifiers = new ArrayList<String>();
@@ -183,7 +203,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		final var modifiersScrollPane = new JScrollPane(modifierList);
 		modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
 		modifiersPanel.add(modifiersScrollPane);
-		parentPanel.add(modifiersPanel);
+		keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
 
 		final var keysPanel = new JPanel();
 		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
@@ -191,7 +211,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));
-		final var keyList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		keyList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
 		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
 		final var addedKeys = new ArrayList<String>();
@@ -206,6 +226,12 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		final var keysScrollPane = new JScrollPane(keyList);
 		keysScrollPane.setPreferredSize(new Dimension(130, 200));
 		keysPanel.add(keysScrollPane);
-		parentPanel.add(keysPanel);
+		keystrokePanel.add(keysPanel, BorderLayout.EAST);
+
+		keyStrokeTextArea.setLineWrap(true);
+		keyStrokeTextArea.setWrapStyleWord(true);
+		keyStrokeTextArea.setEditable(false);
+		keyStrokeTextArea.setFocusable(false);
+		keystrokePanel.add(keyStrokeTextArea, BorderLayout.SOUTH);
 	}
 }
