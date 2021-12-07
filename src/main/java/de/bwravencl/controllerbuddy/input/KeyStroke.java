@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import de.bwravencl.controllerbuddy.gui.Main;
+
 public final class KeyStroke implements Cloneable {
 
 	private Integer[] keyCodes;
@@ -72,6 +74,9 @@ public final class KeyStroke implements Cloneable {
 	public String toString() {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
 		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
+		if (collectedKeyCodes.isEmpty())
+			return Main.strings.getString("NOTHING");
+
 		return collectedKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToNameMap.get(keyCode))
 				.collect(Collectors.joining(" + "));
 	}
