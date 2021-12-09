@@ -1,6 +1,9 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
+import com.github.spotbugs.snom.SpotBugsReport
+import com.github.spotbugs.snom.SpotBugsTask
+
 plugins {
 	id 'application'
 	id 'com.github.spotbugs' version '5.0.2'
@@ -95,6 +98,13 @@ spotbugs {
 	extraArgs = ['-maxRank', spotbugsMaxRank]
 	onlyAnalyze = ['de.bwravencl.-']
 	reportLevel = spotbugsReportLevel
+}
+
+tasks.withType(SpotBugsTask) {
+	reports({
+		html { required.set(true) }
+		xml { required.set(true) }
+	} as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>)
 }
 
 spotless {
