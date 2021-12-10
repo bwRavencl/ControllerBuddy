@@ -239,8 +239,8 @@ public final class EditActionsDialog extends JDialog {
 	private static final List<Class<?>> onScreenKeyboardActionClasses = new ArrayList<>();
 
 	static {
-		final var scanResult = new ClassGraph().acceptPackages("de.bwravencl.controllerbuddy.input.action")
-				.enableClassInfo().enableAnnotationInfo().scan();
+		final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName()).enableClassInfo()
+				.enableAnnotationInfo().scan();
 		final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
 		Collections.sort(classInfoList, (c1, c2) -> {
 			final var a1 = c1.loadClass().getAnnotation(Action.class);
