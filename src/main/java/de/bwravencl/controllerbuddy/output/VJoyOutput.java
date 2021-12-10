@@ -152,19 +152,20 @@ public abstract class VJoyOutput extends Output {
 		final var stillDownSet = new HashSet<Integer>();
 
 		newUpSet.clear();
-		for (final var o : oldDownSet) {
+
+		for (final var oldCode : oldDownSet) {
 			var stillDown = false;
 
-			for (final var n : sourceSet)
-				if (n.equals(o)) {
+			for (final var newCode : sourceSet)
+				if (newCode.equals(oldCode)) {
 					stillDown = true;
 					break;
 				}
 
 			if (stillDown)
-				stillDownSet.add(o);
+				stillDownSet.add(oldCode);
 			else
-				newUpSet.add(o);
+				newUpSet.add(oldCode);
 		}
 
 		newDownSet.clear();
@@ -172,17 +173,17 @@ public abstract class VJoyOutput extends Output {
 		if (keepStillDown)
 			newDownSet.addAll(stillDownSet);
 
-		for (final var n : sourceSet) {
+		for (final var newCode : sourceSet) {
 			var alreadyDown = false;
 
-			for (final var o : oldDownSet)
-				if (o.equals(n)) {
+			for (final var oldCode : oldDownSet)
+				if (oldCode.equals(newCode)) {
 					alreadyDown = true;
 					break;
 				}
 
 			if (!alreadyDown)
-				newDownSet.add(n);
+				newDownSet.add(newCode);
 		}
 
 		oldDownSet.clear();
@@ -243,11 +244,9 @@ public abstract class VJoyOutput extends Output {
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
 
-			for (final var b : oldDownMouseButtons)
-				doMouseButtonInput(b, false);
+			oldDownMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, false));
 
-			for (final var c : oldDownModifiers)
-				doKeyboardInput(c, false);
+			oldDownModifiers.forEach(code -> doKeyboardInput(code, false));
 
 			EventQueue.invokeLater(() -> {
 				main.setStatusBarText(MessageFormat
@@ -380,6 +379,7 @@ public abstract class VJoyOutput extends Output {
 
 			final var nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
 			var maxButtonId = -1;
+
 			for (final var mode : input.getProfile().getModes())
 				for (final var action : mode.getAllActions())
 					if (action instanceof final ToButtonAction<?> toButtonAction) {
@@ -528,52 +528,40 @@ public abstract class VJoyOutput extends Output {
 				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 			}
 
-			for (final var b : newUpMouseButtons)
-				doMouseButtonInput(b, false);
+			newUpMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, false));
+			newDownMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, true));
+			downUpMouseButtons.forEach(mouseButton -> {
+				doMouseButtonInput(mouseButton, true);
+				doMouseButtonInput(mouseButton, false);
+			});
 
-			for (final var b : newDownMouseButtons)
-				doMouseButtonInput(b, true);
+			newUpNormalKeys.forEach(code -> doKeyboardInput(code, false));
+			newUpModifiers.forEach(code -> doKeyboardInput(code, false));
 
-			for (final var b : downUpMouseButtons) {
-				doMouseButtonInput(b, true);
-				doMouseButtonInput(b, false);
-			}
+			offLockKeys.forEach(code -> setLockKeyState(code, false));
+			onLockKeys.forEach(code -> setLockKeyState(code, true));
 
-			for (final var c : newUpNormalKeys)
-				doKeyboardInput(c, false);
-
-			for (final var c : newUpModifiers)
-				doKeyboardInput(c, false);
-
-			for (final var e : offLockKeys)
-				setLockKeyState(e, false);
-
-			for (final var e : onLockKeys)
-				setLockKeyState(e, true);
-
-			for (final var c : newDownModifiers)
-				doKeyboardInput(c, true);
+			newDownModifiers.forEach(code -> doKeyboardInput(code, true));
 
 			final var currentTime = System.currentTimeMillis();
 			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
-				for (final var c : newDownNormalKeys)
-					doKeyboardInput(c, true);
+				newDownNormalKeys.forEach(code -> doKeyboardInput(code, true));
 
 				prevKeyInputTime = currentTime;
 			}
 
-			for (final var keyStroke : downUpKeyStrokes) {
-				for (final var c : keyStroke.getModifierCodes())
-					doKeyboardInput(c, true);
+			downUpKeyStrokes.forEach(keyStroke -> {
+				for (final var code : keyStroke.getModifierCodes())
+					doKeyboardInput(code, true);
 
-				for (final var c : keyStroke.getKeyCodes()) {
-					doKeyboardInput(c, true);
-					doKeyboardInput(c, false);
+				for (final var code : keyStroke.getKeyCodes()) {
+					doKeyboardInput(code, true);
+					doKeyboardInput(code, false);
 				}
 
-				for (final var c : keyStroke.getModifierCodes())
-					doKeyboardInput(c, false);
-			}
+				for (final var code : keyStroke.getModifierCodes())
+					doKeyboardInput(code, false);
+			});
 
 			if (scrollClicks != 0) {
 				final var input = new INPUT();

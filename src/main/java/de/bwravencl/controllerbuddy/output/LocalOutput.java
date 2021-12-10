@@ -116,38 +116,42 @@ public final class LocalOutput extends VJoyOutput {
 		cursorDeltaY = input.getCursorDeltaY();
 		input.setCursorDeltaY(0);
 
-		final var downMouseButtons = input.getDownMouseButtons();
-		synchronized (downMouseButtons) {
-			updateOutputSets(downMouseButtons, oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons, false);
+		final var inputDownMouseButtons = input.getDownMouseButtons();
+		synchronized (inputDownMouseButtons) {
+			updateOutputSets(inputDownMouseButtons, oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons, false);
 		}
 
 		downUpMouseButtons.clear();
-		downUpMouseButtons.addAll(input.getDownUpMouseButtons());
-		input.getDownUpMouseButtons().clear();
+		final var inputDownUpMouseButtons = input.getDownUpMouseButtons();
+		downUpMouseButtons.addAll(inputDownUpMouseButtons);
+		inputDownUpMouseButtons.clear();
 
 		final var sourceModifiers = new HashSet<Integer>();
 		final var sourceNormalKeys = new HashSet<Integer>();
-		for (final var keyStroke : input.getDownKeyStrokes()) {
+		input.getDownKeyStrokes().forEach(keyStroke -> {
 			sourceModifiers.addAll(Arrays.asList(keyStroke.getModifierCodes()));
 			sourceNormalKeys.addAll(Arrays.asList(keyStroke.getKeyCodes()));
-		}
+		});
 		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
 		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
 		downUpKeyStrokes.clear();
-		downUpKeyStrokes.addAll(input.getDownUpKeyStrokes());
-		input.getDownUpKeyStrokes().clear();
+		final var inputDownUpKeyStrokes = input.getDownUpKeyStrokes();
+		downUpKeyStrokes.addAll(inputDownUpKeyStrokes);
+		inputDownUpKeyStrokes.clear();
 
 		scrollClicks = input.getScrollClicks();
 		input.setScrollClicks(0);
 
 		onLockKeys.clear();
-		onLockKeys.addAll(input.getOnLockKeys());
-		input.getOnLockKeys().clear();
+		final var inputOnLockKeys = input.getOnLockKeys();
+		onLockKeys.addAll(inputOnLockKeys);
+		inputOnLockKeys.clear();
 
 		offLockKeys.clear();
-		offLockKeys.addAll(input.getOffLockKeys());
-		input.getOffLockKeys().clear();
+		final var inputOffLockKeys = input.getOffLockKeys();
+		offLockKeys.addAll(inputOffLockKeys);
+		inputOffLockKeys.clear();
 
 		return true;
 	}

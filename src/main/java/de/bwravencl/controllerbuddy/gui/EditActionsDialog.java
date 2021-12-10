@@ -249,7 +249,7 @@ public final class EditActionsDialog extends JDialog {
 			return a1.order() - a2.order();
 		});
 
-		for (final var classInfo : classInfoList) {
+		classInfoList.forEach(classInfo -> {
 			final var actionClass = classInfo.loadClass();
 			final var annotation = actionClass.getAnnotation(Action.class);
 			final var category = annotation.category();
@@ -263,7 +263,7 @@ public final class EditActionsDialog extends JDialog {
 				cycleActionClasses.add(actionClass);
 			if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE)
 				onScreenKeyboardActionClasses.add(actionClass);
-		}
+		});
 	}
 
 	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
@@ -374,20 +374,18 @@ public final class EditActionsDialog extends JDialog {
 		final var cycleEditor = isCycleEditor();
 
 		if (cycleEditor && cycleActions != null)
-			for (final var action : cycleActions)
-				assignedActions.add(new AssignedAction(action));
+			cycleActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
 		else {
 			final var componentActions = selectedMode.getComponentToActionsMap(component.type).get(component.index);
 			if (componentActions != null)
-				for (final var action : (Collection<? extends IAction<?>>) componentActions)
-					assignedActions.add(new AssignedAction(action));
+				((Collection<? extends IAction<?>>) componentActions)
+						.forEach(action -> assignedActions.add(new AssignedAction(action)));
 		}
 
 		if (!cycleEditor && component.type == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
 			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index);
 			if (buttonToModeActions != null)
-				for (final var action : buttonToModeActions)
-					assignedActions.add(new AssignedAction(action));
+				buttonToModeActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
 		}
 
 		return assignedActions.toArray(new AssignedAction[assignedActions.size()]);

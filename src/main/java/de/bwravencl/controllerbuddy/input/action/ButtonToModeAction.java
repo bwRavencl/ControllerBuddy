@@ -36,16 +36,12 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
-public final class ButtonToModeAction implements IButtonToAction {
+public final class ButtonToModeAction implements IButtonToAction, IResetableAction {
 
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
 	public static LinkedList<ButtonToModeAction> getButtonToModeActionStack() {
 		return buttonToModeActionStack;
-	}
-
-	public static void reset() {
-		buttonToModeActionStack.clear();
 	}
 
 	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
@@ -128,11 +124,10 @@ public final class ButtonToModeAction implements IButtonToAction {
 		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
 		final var main = input.getMain();
 		if (defaultAxisToActionsMap != null)
-			for (final int axis : axes)
-				if (defaultAxisToActionsMap.containsKey(axis))
-					for (final var action : defaultAxisToActionsMap.get(axis))
-						if (action instanceof IAxisToAction)
-							input.suspendAxis(axis);
+			axes.stream().filter(axis -> defaultAxisToActionsMap.containsKey(axis))
+					.forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
+							.filter(action -> action instanceof IAxisToAction)
+							.forEach(action -> input.suspendAxis(axis)));
 
 		profile.setActiveMode(input, previousMode.getUuid());
 
@@ -188,6 +183,14 @@ public final class ButtonToModeAction implements IButtonToAction {
 
 	public boolean isToggle() {
 		return toggle;
+	}
+
+	@Override
+	public void reset(final Input input) {
+		buttonToModeActionStack.clear();
+
+		if (targetsOnScreenKeyboardMode())
+			input.getMain().setOnScreenKeyboardVisible(false);
 	}
 
 	@Override

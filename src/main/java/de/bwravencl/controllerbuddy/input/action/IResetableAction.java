@@ -17,7 +17,9 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import de.bwravencl.controllerbuddy.input.Input;
+
 public interface IResetableAction extends IAction<Byte> {
 
-	void reset();
+	void reset(final Input input);
 }
