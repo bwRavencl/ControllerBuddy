@@ -128,13 +128,13 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	public void init(final Input input) {
 		IActivatableAction.super.init(input);
 
-		for (final var action : actions) {
+		actions.forEach(action -> {
 			if (action instanceof final IInitializationAction<?> initializationAction)
 				initializationAction.init(input);
 
 			if (action instanceof final IActivatableAction<?> activatableAction)
 				activatableAction.setActivatable(Activatable.ALWAYS);
-		}
+		});
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	}
 
 	@Override
-	public void reset() {
+	public void reset(final Input input) {
 		index = 0;
 	}
 

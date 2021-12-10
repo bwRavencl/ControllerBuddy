@@ -355,13 +355,13 @@ public final class Main {
 
 		private static final long serialVersionUID = 8167193907929992395L;
 
-		private final HashSet<Float> dententValues;
+		private final HashSet<Float> detentValues;
 		private final OverlayAxis overlayAxis;
 
 		private IndicatorProgressBar(final int orient, final HashSet<Float> dententValues,
 				final OverlayAxis overlayAxis) {
 			super(orient);
-			this.dententValues = dententValues;
+			detentValues = dententValues;
 			this.overlayAxis = overlayAxis;
 		}
 
@@ -379,11 +379,11 @@ public final class Main {
 				g.drawLine(0, y, width, y);
 			}
 
-			for (final var detentValue : dententValues) {
+			detentValues.forEach(detentValue -> {
 				g.setColor(Color.RED);
 				final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
 				g.drawLine(0, y, width, y);
-			}
+			});
 		}
 
 		@Override
@@ -1501,7 +1501,7 @@ public final class Main {
 
 	private JPanel indicatorPanel;
 
-	private Rectangle prevMaxWindowBounds;
+	private Rectangle prevTotalDisplayBounds;
 
 	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
 			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
@@ -1949,7 +1949,7 @@ public final class Main {
 			selectElement.setAttribute("style", "vertical-align:text-bottom");
 			labelElement.appendChild(selectElement);
 
-			for (final var mode : input.getProfile().getModes()) {
+			input.getProfile().getModes().forEach(mode -> {
 				final var svgDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
 				final var svgDivElementId = mode.getUuid().toString();
 
@@ -1967,7 +1967,7 @@ public final class Main {
 				optionElement.setAttribute("value", svgDivElementId);
 				optionElement.setTextContent(mode.getDescription());
 				selectElement.appendChild(optionElement);
-			}
+			});
 
 			final var transformerFactory = TransformerFactory.newInstance();
 			final var transformer = transformerFactory.newTransformer();
@@ -2164,21 +2164,23 @@ public final class Main {
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
-		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class)) {
+		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
-				final var dententValues = new HashSet<Float>();
-				for (final var mode : input.getProfile().getModes())
-					for (final var actions : mode.getAxisToActionsMap().values())
-						for (final var action : actions)
+				final var detentValues = new HashSet<Float>();
+
+				input.getProfile().getModes().forEach(
+						mode -> mode.getAxisToActionsMap().values().forEach(actions -> actions.forEach(action -> {
 							if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
 									&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
 								final var detentValue = axisToRelativeAxisAction.getDetentValue();
-								if (detentValue != null)
-									dententValues.add(detentValue);
-							}
 
-				final var indicatorProgressBar = new IndicatorProgressBar(SwingConstants.VERTICAL, dententValues,
+								if (detentValue != null)
+									detentValues.add(detentValue);
+							}
+						})));
+
+				final var indicatorProgressBar = new IndicatorProgressBar(SwingConstants.VERTICAL, detentValues,
 						overlayAxis);
 				indicatorProgressBar.setPreferredSize(new Dimension(20, 150));
 				indicatorProgressBar.setForeground(overlayAxis.color);
@@ -2187,7 +2189,7 @@ public final class Main {
 				indicatorPanel.add(indicatorProgressBar);
 				virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
 			}
-		}
+		});
 
 		overlayFrame.add(indicatorPanel);
 
@@ -2196,20 +2198,23 @@ public final class Main {
 			@Override
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
-				final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-				updateOverlayAlignment(maxWindowBounds);
+				updateOverlayAlignment(GuiUtils.getTotalDisplayBounds());
 			}
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
 		overlayFrame.addMouseMotionListener(overlayFrameDragListener);
-
-		prevMaxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		overlayFrame.pack();
-		final var x = prevMaxWindowBounds.width - overlayFrame.getWidth();
-		final var y = prevMaxWindowBounds.height - overlayFrame.getHeight();
-		final var defaultLocation = new Point(x, y);
-		GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, prevMaxWindowBounds);
-		updateOverlayAlignment(prevMaxWindowBounds);
+
+		final var maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		final var defaultLocation = new Point();
+		defaultLocation.x = maximumWindowBounds.width - overlayFrame.getWidth();
+		defaultLocation.y = maximumWindowBounds.height - overlayFrame.getHeight();
+
+		prevTotalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+
+		GuiUtils.loadFrameLocation(preferences, overlayFrame, defaultLocation, prevTotalDisplayBounds);
+
+		updateOverlayAlignment(prevTotalDisplayBounds);
 
 		overlayFrame.setVisible(true);
 	}
@@ -2479,11 +2484,11 @@ public final class Main {
 			fileJMenu.insertSeparator(4);
 
 			final var devicesButtonGroup = new ButtonGroup();
-			for (final var controller : presentControllers) {
+			presentControllers.forEach(controller -> {
 				final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
 				devicesButtonGroup.add(deviceRadioButtonMenuItem);
 				deviceJMenu.add(deviceRadioButtonMenuItem);
-			}
+			});
 			menuBar.add(deviceJMenu, 1);
 
 			if (runPopupMenu != null) {
@@ -2853,10 +2858,9 @@ public final class Main {
 							GuiUtils.makeWindowTopmost(onScreenKeyboard);
 					}
 
-					final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
-							.getMaximumWindowBounds();
-					if (!maxWindowBounds.equals(prevMaxWindowBounds)) {
-						prevMaxWindowBounds = maxWindowBounds;
+					final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+					if (!totalDisplayBounds.equals(prevTotalDisplayBounds)) {
+						prevTotalDisplayBounds = totalDisplayBounds;
 
 						if (overlayFrame != null && overlayFrameDragListener != null
 								&& !overlayFrameDragListener.isDragging()) {
@@ -3124,8 +3128,8 @@ public final class Main {
 		modesScrollPane.setViewportView(modesListPanel);
 	}
 
-	private void updateOverlayAlignment(final Rectangle maxWindowBounds) {
-		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < maxWindowBounds.height / 2;
+	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
+		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
 
 		if (currentModeLabel != null) {
 			overlayFrame.remove(currentModeLabel);
@@ -3134,7 +3138,7 @@ public final class Main {
 
 		var alignment = SwingConstants.RIGHT;
 		var flowLayoutAlignment = FlowLayout.RIGHT;
-		if (overlayFrame.getX() + overlayFrame.getWidth() / 2 < maxWindowBounds.width / 2) {
+		if (overlayFrame.getX() + overlayFrame.getWidth() / 2 < totalDisplayBounds.width / 2) {
 			alignment = SwingConstants.LEFT;
 			flowLayoutAlignment = FlowLayout.LEFT;
 		}
@@ -3150,33 +3154,35 @@ public final class Main {
 	}
 
 	public void updateOverlayAxisIndicators() {
-		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class))
-			if (virtualAxisToProgressBarMap.containsKey(virtualAxis) && output != null
-					&& (isLocalRunning() || isServerRunning())) {
-				final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
-				var changed = false;
+		if (output == null || !isLocalRunning() || !isServerRunning())
+			return;
 
-				final var newMinimum = -output.getMaxAxisValue();
-				if (progressBar.getMinimum() != newMinimum) {
-					progressBar.setMinimum(newMinimum);
-					changed = true;
-				}
+		EnumSet.allOf(Input.VirtualAxis.class).stream()
+				.filter(virtualAxis -> virtualAxisToProgressBarMap.containsKey(virtualAxis)).forEach(virtualAxis -> {
+					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
+					var changed = false;
 
-				final var newMaximum = output.getMinAxisValue();
-				if (progressBar.getMaximum() != newMaximum) {
-					progressBar.setMaximum(newMaximum);
-					changed = true;
-				}
+					final var newMinimum = -output.getMaxAxisValue();
+					if (progressBar.getMinimum() != newMinimum) {
+						progressBar.setMinimum(newMinimum);
+						changed = true;
+					}
 
-				final var newValue = -input.getAxes().get(virtualAxis);
-				if (progressBar.getValue() != newValue) {
-					progressBar.setValue(newValue);
-					changed = true;
-				}
+					final var newMaximum = output.getMinAxisValue();
+					if (progressBar.getMaximum() != newMaximum) {
+						progressBar.setMaximum(newMaximum);
+						changed = true;
+					}
 
-				if (changed)
-					repaintOverlay();
-			}
+					final var newValue = -input.getAxes().get(virtualAxis);
+					if (progressBar.getValue() != newValue) {
+						progressBar.setValue(newValue);
+						changed = true;
+					}
+
+					if (changed)
+						repaintOverlay();
+				});
 	}
 
 	private void updateOverlayPanel() {
@@ -3186,7 +3192,8 @@ public final class Main {
 		indicatorsListPanel.removeAll();
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
-		for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class)) {
+
+		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
@@ -3231,7 +3238,7 @@ public final class Main {
 			displayCheckBox.setSelected(enabled);
 			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
-		}
+		});
 
 		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

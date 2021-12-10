@@ -77,8 +77,7 @@ public final class GuiUtils {
 			final var newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
 					currentMouseLocation.y - mouseDownLocation.y);
 
-			final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-			setFrameLocationRespectingBounds(frame, newFrameLocation, maxWindowBounds);
+			setFrameLocationRespectingBounds(frame, newFrameLocation, getTotalDisplayBounds());
 		}
 
 		@Override
@@ -91,10 +90,10 @@ public final class GuiUtils {
 			mouseDownLocation = null;
 
 			final var frameLocation = frame.getLocation();
-			final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			final var totalDisplayBounds = getTotalDisplayBounds();
 			main.getPreferences().put(getFrameLocationPreferencesKey(frame),
-					(float) frameLocation.x / (float) maxWindowBounds.width + ","
-							+ (float) frameLocation.y / (float) maxWindowBounds.height);
+					(float) frameLocation.x / (float) totalDisplayBounds.width + ","
+							+ (float) frameLocation.y / (float) totalDisplayBounds.height);
 		}
 	}
 
@@ -129,6 +128,30 @@ public final class GuiUtils {
 		return underscoreTitle + "_location";
 	}
 
+	static Rectangle getTotalDisplayBounds() {
+		final var totalDisplayBounds = new Rectangle();
+
+		for (final var graphicsDevice : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+			final var graphicsConfiguration = graphicsDevice.getConfigurations()[0];
+			final var bounds = graphicsConfiguration.getBounds();
+
+			final var maxX = bounds.x + bounds.width;
+			final var maxY = bounds.y + bounds.height;
+
+			totalDisplayBounds.x = Math.min(totalDisplayBounds.x, bounds.x);
+			totalDisplayBounds.x = Math.min(totalDisplayBounds.x, maxX);
+			totalDisplayBounds.y = Math.min(totalDisplayBounds.y, bounds.y);
+			totalDisplayBounds.y = Math.min(totalDisplayBounds.y, maxY);
+
+			totalDisplayBounds.width = Math.max(totalDisplayBounds.width, bounds.x);
+			totalDisplayBounds.width = Math.max(totalDisplayBounds.width, maxX);
+			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, bounds.y);
+			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
+		}
+
+		return totalDisplayBounds;
+	}
+
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
 		if (EventQueue.isDispatchThread())
 			runnable.run();
@@ -137,7 +160,7 @@ public final class GuiUtils {
 	}
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
-			final Rectangle maxWindowBounds) {
+			final Rectangle totalDisplayBounds) {
 		final var location = defaultLocation;
 
 		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
@@ -146,13 +169,13 @@ public final class GuiUtils {
 			final var parts = locationString.split(",");
 			if (parts.length == 2)
 				try {
-					location.x = Math.round(Float.parseFloat(parts[0]) * maxWindowBounds.width);
-					location.y = Math.round(Float.parseFloat(parts[1]) * maxWindowBounds.height);
+					location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
+					location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
 				} catch (final NumberFormatException e) {
 				}
 		}
 
-		setFrameLocationRespectingBounds(frame, location, maxWindowBounds);
+		setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
 	}
 
 	static void makeWindowTopmost(final Window window) {
@@ -178,11 +201,10 @@ public final class GuiUtils {
 	}
 
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
-			final Rectangle maxWindowBounds) {
-		location.x = Math.max(maxWindowBounds.x,
-				Math.min(maxWindowBounds.width + maxWindowBounds.x - frame.getWidth(), location.x));
-		location.y = Math.max(maxWindowBounds.y,
-				Math.min(maxWindowBounds.height + maxWindowBounds.y - frame.getHeight(), location.y));
+			final Rectangle totalDisplayBounds) {
+		location.x = Math.max(totalDisplayBounds.x, Math.min(totalDisplayBounds.width - frame.getWidth(), location.x));
+		location.y = Math.max(totalDisplayBounds.y,
+				Math.min(totalDisplayBounds.height - frame.getHeight(), location.y));
 		frame.setLocation(location);
 	}
 

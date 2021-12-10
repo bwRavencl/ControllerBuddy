@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -34,8 +32,6 @@ import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 
 public final class Profile implements Cloneable {
-
-	private static final Logger log = Logger.getLogger(Profile.class.getName());
 
 	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
 
@@ -78,22 +74,14 @@ public final class Profile implements Cloneable {
 		for (final var entry : buttonToModeActionsMap.entrySet()) {
 			final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
 			for (final var action : entry.getValue())
-				try {
-					buttonToModeActions.add((ButtonToModeAction) action.clone());
-				} catch (final CloneNotSupportedException e1) {
-					log.log(Level.SEVERE, e1.getMessage(), e1);
-				}
+				buttonToModeActions.add((ButtonToModeAction) action.clone());
 			clonedButtonToModeActionsMap.put(entry.getKey(), buttonToModeActions);
 		}
 		profile.setButtonToModeActionsMap(clonedButtonToModeActionsMap);
 
 		final var clonedModes = new ArrayList<Mode>();
 		for (final var mode : modes)
-			try {
-				clonedModes.add((Mode) mode.clone());
-			} catch (final CloneNotSupportedException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
+			clonedModes.add((Mode) mode.clone());
 		profile.setModes(clonedModes);
 
 		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
@@ -155,17 +143,18 @@ public final class Profile implements Cloneable {
 			final var newMode = modes.get(index);
 
 			if (input.getOutput() != null)
-				for (final var axis : newMode.getAxisToActionsMap().keySet()) {
+				newMode.getAxisToActionsMap().keySet().forEach(axis -> {
 					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
 					if (currentAxisToActionsMap.containsKey(axis))
-						for (final var action : currentAxisToActionsMap.get(axis))
+						currentAxisToActionsMap.get(axis).forEach(action -> {
 							if (action instanceof final AxisToAxisAction axisToAxisAction
 									&& !(action instanceof AxisToRelativeAxisAction)) {
 								final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
 										|| axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
 							}
-				}
+						});
+				});
 
 			activeModeIndex = index;
 			input.getMain().setOverlayText(newMode.getDescription());

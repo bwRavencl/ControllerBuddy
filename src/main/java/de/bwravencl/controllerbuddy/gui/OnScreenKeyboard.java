@@ -632,10 +632,11 @@ public final class OnScreenKeyboard extends JFrame {
 
 		pack();
 
-		final var maxWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-		final var x = (int) maxWindowBounds.getMaxX() / 2 - getWidth() / 2;
-		final var y = (int) maxWindowBounds.getMaxY() - getHeight();
-		final var defaultLocation = new Point(x, y);
-		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, maxWindowBounds);
+		final var maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		final var defaultLocation = new Point();
+		defaultLocation.x = (int) maximumWindowBounds.getMaxX() / 2 - getWidth() / 2;
+		defaultLocation.y = (int) maximumWindowBounds.getMaxY() - getHeight();
+
+		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, GuiUtils.getTotalDisplayBounds());
 	}
 }

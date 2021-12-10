@@ -127,10 +127,10 @@ public final class LocalOutput extends VJoyOutput {
 
 		final var sourceModifiers = new HashSet<Integer>();
 		final var sourceNormalKeys = new HashSet<Integer>();
-		for (final var keyStroke : input.getDownKeyStrokes()) {
+		input.getDownKeyStrokes().forEach(keyStroke -> {
 			sourceModifiers.addAll(Arrays.asList(keyStroke.getModifierCodes()));
 			sourceNormalKeys.addAll(Arrays.asList(keyStroke.getKeyCodes()));
-		}
+		});
 		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
 		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 

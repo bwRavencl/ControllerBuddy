@@ -162,8 +162,7 @@ public final class Input {
 			this.axes = axes;
 		else {
 			this.axes = new EnumMap<>(VirtualAxis.class);
-			for (final var virtualAxis : EnumSet.allOf(Input.VirtualAxis.class))
-				this.axes.put(virtualAxis, 0);
+			EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
 		}
 
 		resetLastHotSwapPollTime();
@@ -283,10 +282,10 @@ public final class Input {
 
 		planckLength = 2f / (output.getMaxAxisValue() - output.getMinAxisValue());
 
-		for (final var mode : profile.getModes())
-			for (final var action : mode.getAllActions())
-				if (action instanceof final IInitializationAction<?> initializationAction)
-					initializationAction.init(this);
+		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
+			if (action instanceof final IInitializationAction<?> initializationAction)
+				initializationAction.init(this);
+		}));
 
 		initialized = true;
 	}
@@ -514,13 +513,16 @@ public final class Input {
 
 		profile.setActiveMode(this, 0);
 
-		ButtonToModeAction.reset();
 		IButtonToAction.reset();
 
-		for (final var mode : profile.getModes())
-			for (final var action : mode.getAllActions())
-				if (action instanceof final IResetableAction resetableAction)
-					resetableAction.reset();
+		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions.stream()
+				.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
+
+		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
+			if (action instanceof final IResetableAction resetableAction)
+				resetableAction.reset(this);
+		}));
+
 	}
 
 	private void resetLastHotSwapPollTime() {
