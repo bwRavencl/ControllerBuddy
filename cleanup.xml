@@ -32,6 +32,7 @@
 		<setting
 			id="cleanup.simplify_lambda_expression_and_method_ref" value="true" />
 		<setting id="cleanup.always_use_blocks" value="false" />
+		<setting id="cleanup.stringconcat_to_textblock" value="true" />
 		<setting id="cleanup.sort_members_all" value="false" />
 		<setting id="cleanup.system_property_path_separator"
 			value="true" />
