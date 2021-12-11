@@ -474,6 +474,9 @@ public final class Main {
 
 			setUnsavedChanges(true);
 			updateModesPanel();
+
+			final var verticalScrollBar = modesScrollPane.getVerticalScrollBar();
+			verticalScrollBar.setValue(verticalScrollBar.getMaximum());
 		}
 	}
 
