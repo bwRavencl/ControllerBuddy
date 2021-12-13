@@ -33,7 +33,7 @@ jobs:
           echo ::set-output name=tag_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename {} .zip)
           echo ::set-output name=zip_path::$(ls build/distributions/ControllerBuddy-*.zip)
       - name: Tag Commit
-        uses: tvdias/github-tagger@v0.0.1
+        uses: tvdias/github-tagger@v0.0.2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.extract_release_variables.outputs.tag_name }}
