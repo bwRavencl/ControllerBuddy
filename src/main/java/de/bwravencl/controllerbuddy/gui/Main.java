@@ -1672,6 +1672,7 @@ public final class Main {
 			hostPanel.add(hostLabel);
 
 			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST), 15);
+			hostTextField.setCaretPosition(0);
 			final var setHostAction = new SetHostAction(hostTextField);
 			hostTextField.addActionListener(setHostAction);
 			hostTextField.addFocusListener(setHostAction);
@@ -3104,6 +3105,7 @@ public final class Main {
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
+			descriptionTextField.setCaretPosition(0);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 

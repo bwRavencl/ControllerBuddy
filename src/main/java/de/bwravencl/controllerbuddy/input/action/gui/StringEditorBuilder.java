@@ -79,6 +79,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 	public void buildEditor(final JPanel parentPanel) {
 		final var textField = new JTextField(23);
 		textField.setText((String) initialValue);
+		textField.setCaretPosition(0);
 		textField.getDocument().addDocumentListener(new MyDocumentListener(action, setterMethod));
 
 		parentPanel.add(textField);
