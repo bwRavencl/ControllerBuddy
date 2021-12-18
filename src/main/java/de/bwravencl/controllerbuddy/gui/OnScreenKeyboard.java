@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
@@ -459,6 +460,7 @@ public final class OnScreenKeyboard extends JFrame {
 		setFocusableWindowState(false);
 		setBackground(Main.TRANSPARENT);
 		setAlwaysOnTop(true);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		addMouseListener(frameDragListener);
 		addMouseMotionListener(frameDragListener);

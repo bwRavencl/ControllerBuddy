@@ -2152,6 +2152,7 @@ public final class Main {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.setAlwaysOnTop(true);
+		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		if (multipleModes) {
 			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
