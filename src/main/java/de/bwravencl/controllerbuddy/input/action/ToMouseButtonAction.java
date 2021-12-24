@@ -23,14 +23,19 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 
-abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
+abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V>
+		implements IActivatableAction<V>, ILongPressAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.REPEAT;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	int mouseButton = DEFAULT_MOUSE_BUTTON;
@@ -108,6 +113,11 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	}
 
 	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	@Override
 	public void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
 	}
@@ -115,6 +125,11 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	@Override
 	public void setActivation(final Activation activation) {
 		this.activation = activation;
+	}
+
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
 	}
 
 	public void setMouseButton(final int mouseButton) {

@@ -1,4 +1,4 @@
-/* Copyright (C) 2020  Matteo Hausner
+/* Copyright (C) 2021  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 
-public interface IButtonToAction extends IAction<Byte>, ILongPressAction<Byte> {
+public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<Float> {
 
-	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+	Map<IAxisToLongPressAction, Long> actionToDownSinceMap = new HashMap<>();
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
@@ -38,18 +38,22 @@ public interface IButtonToAction extends IAction<Byte>, ILongPressAction<Byte> {
 		actionToMustDenyActivationMap.clear();
 	}
 
-	default byte handleLongPress(final Input input, final int component, final byte value) {
+	float getMaxAxisValue();
+
+	float getMinAxisValue();
+
+	default Float handleLongPress(final Input input, final int component, final Float value) {
 		if (!isLongPress())
 			return value;
 
 		final var currentTime = System.currentTimeMillis();
 
-		if (value != 0) {
+		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
 			if (!actionToDownSinceMap.containsKey(this))
 				actionToDownSinceMap.put(this, currentTime);
 			else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
 				for (final var mode : input.getProfile().getModes()) {
-					final var actions = mode.getButtonToActionsMap().get(component);
+					final var actions = mode.getAxisToActionsMap().get(component);
 
 					if (actions != null && actions.contains(this)) {
 						for (final IAction<?> action : actions) {
@@ -61,15 +65,12 @@ public interface IButtonToAction extends IAction<Byte>, ILongPressAction<Byte> {
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
-									if (!buttonToKeyAction.isLongPress())
-										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
-								} else if (action instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
-									if (!buttonToMouseButtonAction.isLongPress())
-										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
-								} else if (action instanceof final ButtonToCycleAction buttonToCycleAction)
-									if (!buttonToCycleAction.isLongPress())
-										isUndelayedOnReleaseAction = true;
+								if (action instanceof final AxisToKeyAction axisToKeyAction) {
+									if (!axisToKeyAction.isLongPress())
+										isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
+								} else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction)
+									if (!axisToMouseButtonAction.isLongPress())
+										isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
 
 								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
 							}
@@ -87,6 +88,10 @@ public interface IButtonToAction extends IAction<Byte>, ILongPressAction<Byte> {
 		} else if (actionToDownSinceMap.containsKey(this))
 			actionToDownSinceMap.remove(this);
 
-		return 0;
+		return Float.MIN_VALUE;
 	}
+
+	void setMaxAxisValue(final float maxAxisValue);
+
+	void setMinAxisValue(final float minAxisValue);
 }

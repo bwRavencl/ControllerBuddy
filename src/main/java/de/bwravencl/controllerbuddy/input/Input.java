@@ -39,6 +39,7 @@ import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
+import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
@@ -513,6 +514,7 @@ public final class Input {
 
 		profile.setActiveMode(this, 0);
 
+		IAxisToLongPressAction.reset();
 		IButtonToAction.reset();
 
 		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions.stream()

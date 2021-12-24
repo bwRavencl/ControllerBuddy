@@ -22,12 +22,16 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "TO_BUTTON_ACTION", category = ActionCategory.AXIS, order = 20)
-public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToAction {
+public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToLongPressAction {
 
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
@@ -36,27 +40,43 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	@Override
-	public void doAction(final Input input, final int component, final Float value) {
+	public void doAction(final Input input, final int component, Float value) {
 		if (isAlreadyPressed(input))
 			return;
+
+		value = handleLongPress(input, component, value);
 
 		final var down = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
 
 		input.setButton(buttonId, down);
 	}
 
+	@Override
 	public float getMaxAxisValue() {
 		return maxAxisValue;
 	}
 
+	@Override
 	public float getMinAxisValue() {
 		return minAxisValue;
 	}
 
+	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
+	}
+
+	@Override
 	public void setMaxAxisValue(final float maxAxisValue) {
 		this.maxAxisValue = maxAxisValue;
 	}
 
+	@Override
 	public void setMinAxisValue(final float minAxisValue) {
 		this.minAxisValue = minAxisValue;
 	}

@@ -1,4 +1,4 @@
-/* Copyright (C) 2020  Matteo Hausner
+/* Copyright (C) 2021  Matteo Hausner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
+public interface ILongPressAction<V extends Number> extends IAction<V> {
 
-@Action(label = "TO_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
-public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButtonToAction {
+	long MIN_LONG_PRESS_TIME = 1000L;
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
-		handleAction(value != 0, input);
-	}
+	boolean DEFAULT_LONG_PRESS = false;
+
+	boolean isLongPress();
+
+	void setLongPress(final boolean longPress);
 }

@@ -25,11 +25,16 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-public abstract class ToKeyAction<V extends Number> extends DescribableAction<V> implements IActivatableAction<V> {
+public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
+		implements IActivatableAction<V>, ILongPressAction<V> {
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.REPEAT;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	KeyStroke keystroke = new KeyStroke();
@@ -103,6 +108,11 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 	}
 
 	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	@Override
 	public void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
 	}
@@ -114,5 +124,10 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 
 	public void setKeystroke(final KeyStroke keystroke) {
 		this.keystroke = keystroke;
+	}
+
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
 	}
 }
