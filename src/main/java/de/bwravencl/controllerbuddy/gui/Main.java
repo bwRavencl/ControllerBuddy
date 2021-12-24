@@ -1845,9 +1845,9 @@ public final class Main {
 			}
 		}));
 
-		final var controllerConnected = glfwInitialized && presentControllers.isEmpty();
+		final var noControllerConnected = glfwInitialized && presentControllers.isEmpty();
 
-		if (controllerConnected)
+		if (noControllerConnected)
 			if (isWindows)
 				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
@@ -1858,7 +1858,7 @@ public final class Main {
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
 				: preferences.get(PREFERENCES_LAST_PROFILE, null);
 		if (profilePath != null) {
-			loadProfile(new File(profilePath), !controllerConnected);
+			loadProfile(new File(profilePath), noControllerConnected);
 			if (loadedProfile == null && cmdProfilePath == null) {
 				log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
