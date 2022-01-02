@@ -575,7 +575,7 @@ public final class OnScreenKeyboard extends JFrame {
 		keyboardButtons[selectedRow][selectedColumn].press(false);
 	}
 
-	private void releaseAll() {
+	public void releaseAll() {
 		for (final var row : keyboardButtons)
 			for (final var keyboardButton : row)
 				keyboardButton.release();
