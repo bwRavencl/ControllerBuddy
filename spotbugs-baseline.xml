@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.5.2" sequence="0"
-	timestamp="1640305601353" analysisTimestamp="1640305601353" release="">
+<BugCollection version="4.5.3" sequence="0"
+	timestamp="1641477086382" analysisTimestamp="1641477086382" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -92,6 +92,7 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToModeAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToMouseButtonAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToPressOnScreenKeyboardKeyAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToReleaseAllOnScreenKeyboardKeysAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToScrollAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToSelectOnScreenKeyboardKeyAction$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ButtonToSelectOnScreenKeyboardKeyAction$Direction.class</Jar>
@@ -4846,10 +4847,10 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Fri, 24 Dec 2021 01:26:41 +0100" total_classes="0"
+		timestamp="Thu, 6 Jan 2022 14:51:26 +0100" total_classes="0"
 		referenced_classes="0" total_bugs="80" total_size="0" num_packages="6"
-		java_version="17.0.1" vm_version="17.0.1+12-39" cpu_seconds="33.08"
-		clock_seconds="7.94" peak_mbytes="581.06" alloc_mbytes="8180.00"
+		java_version="17.0.1" vm_version="17.0.1+12-39" cpu_seconds="31.03"
+		clock_seconds="7.52" peak_mbytes="598.48" alloc_mbytes="8180.00"
 		gc_seconds="0.10" priority_3="27" priority_2="51" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
