@@ -227,7 +227,8 @@ public final class Main {
 	public static record ControllerInfo(int jid, String name, String guid) {
 
 		private ControllerInfo(final int jid) {
-			this(jid, GLFW.glfwGetGamepadName(jid), GLFW.glfwGetJoystickGUID(jid));
+			this(jid, isMac ? MessageFormat.format(strings.getString("DEVICE_NO"), jid + 1)
+					: GLFW.glfwGetGamepadName(jid), isMac ? null : GLFW.glfwGetJoystickGUID(jid));
 		}
 	}
 
@@ -878,7 +879,7 @@ public final class Main {
 
 	private static final class TaskRunner {
 
-		private Thread thread = isMac ? null : Thread.currentThread();
+		private final Thread thread = Thread.currentThread();
 
 		private volatile boolean pollGLFWEvents = false;
 
@@ -887,9 +888,6 @@ public final class Main {
 		private volatile Object task;
 
 		private void enterLoop() {
-			if (isMac)
-				return;
-
 			log.log(Level.INFO, "Entering main loop");
 
 			for (;;)
@@ -928,7 +926,7 @@ public final class Main {
 		}
 
 		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
-			if (task == null || isMac && (thread == null || !thread.isAlive()))
+			if (task == null)
 				return false;
 
 			return clazz.isAssignableFrom(task.getClass());
@@ -936,13 +934,6 @@ public final class Main {
 
 		@SuppressWarnings("unchecked")
 		private <V> V run(final Callable<V> callable) {
-			if (isMac)
-				try {
-					return callable.call();
-				} catch (final Exception e) {
-					throw new RuntimeException(e);
-				}
-
 			waitForTask();
 
 			task = callable;
@@ -967,13 +958,6 @@ public final class Main {
 		private void run(final Runnable runnable) {
 			waitForTask();
 			task = runnable;
-
-			if (isMac)
-				if (runnable instanceof Output) {
-					thread = new Thread(runnable);
-					thread.start();
-				} else
-					runnable.run();
 		}
 
 		private void shutdown() {
@@ -1001,7 +985,7 @@ public final class Main {
 		}
 
 		private void waitForTask() {
-			while (isMac ? thread != null && thread.isAlive() : task != null)
+			while (task != null)
 				try {
 					Thread.sleep(10L);
 				} catch (final InterruptedException e) {
@@ -1051,7 +1035,7 @@ public final class Main {
 
 	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
 
-	public static final boolean isMac = Platform.isMac();
+	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
 
 	static boolean skipMessageDialogs;
 
@@ -1247,7 +1231,7 @@ public final class Main {
 	public static List<ControllerInfo> getPresentControllers() {
 		final var presentControllers = new ArrayList<ControllerInfo>();
 		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++)
-			if (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
+			if (isMac || GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
 					&& !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))
 				presentControllers.add(new ControllerInfo(jid));
 
@@ -1774,8 +1758,8 @@ public final class Main {
 
 		updateTheme();
 
-		if (Platform.getOSType() == Platform.MAC)
-			Configuration.GLFW_CHECK_THREAD0.set(false);
+		if (isMac)
+			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 
 		final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
 		if (!glfwInitialized) {

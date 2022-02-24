@@ -157,107 +157,107 @@ public final class ServerOutput extends Output {
 						sb.append(PROTOCOL_MESSAGE_UPDATE);
 					sb.append(PROTOCOL_MESSAGE_DELIMITER + counter);
 
-					if (!input.poll())
+					if (!input.poll()) {
 						controllerDisconnected();
-					else {
-						input.getAxes().values().forEach(axisId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + axisId));
-
-						for (var i = 0; i < nButtons; i++) {
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
-							input.getButtons()[i] = false;
-						}
-
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
-								+ input.getCursorDeltaY());
-						input.setCursorDeltaX(0);
-						input.setCursorDeltaY(0);
-
-						final var downMouseButtons = input.getDownMouseButtons();
-						synchronized (downMouseButtons) {
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
-							downMouseButtons
-									.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
-						}
-
-						final var downUpMouseButtons = input.getDownUpMouseButtons();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpMouseButtons.size());
-						downUpMouseButtons
-								.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
-						downUpMouseButtons.clear();
-
-						final var downKeyStrokes = input.getDownKeyStrokes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + downKeyStrokes.size());
-						downKeyStrokes.forEach(keyStroke -> {
-							final var modifierCodes = keyStroke.getModifierCodes();
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
-							for (final var code : modifierCodes)
-								sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
-
-							final var keyCodes = keyStroke.getKeyCodes();
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-							for (final var code : keyCodes)
-								sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
-						});
-
-						final var downUpKeyStrokes = input.getDownUpKeyStrokes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpKeyStrokes.size());
-						downUpKeyStrokes.forEach(keyStroke -> {
-							final var modifierCodes = keyStroke.getModifierCodes();
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
-							for (final var code : modifierCodes)
-								sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
-
-							final var keyCodes = keyStroke.getKeyCodes();
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-							for (final var code : keyCodes)
-								sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
-						});
-						downUpKeyStrokes.clear();
-
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
-						input.setScrollClicks(0);
-
-						final var onLockKeys = input.getOnLockKeys();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + onLockKeys.size());
-						onLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
-						onLockKeys.clear();
-
-						final var offLockKeys = input.getOffLockKeys();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + offLockKeys.size());
-						offLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
-						offLockKeys.clear();
-
-						final var sendBuf = sb.toString().getBytes("ASCII");
-
-						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
-						serverSocket.send(sendPacket);
-
-						if (doAliveCheck) {
-							receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-							serverSocket.setSoTimeout(timeout);
-							try {
-								serverSocket.receive(receivePacket);
-
-								if (clientIPAddress.equals(receivePacket.getAddress())) {
-									message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-											StandardCharsets.US_ASCII);
-
-									if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
-										counter++;
-								}
-							} catch (final SocketTimeoutException e) {
-								input.reset();
-								input.deInit(false);
-
-								main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
-								main.scheduleStatusBarText(
-										MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
-
-								serverState = ServerState.Listening;
-							}
-						} else
-							counter++;
+						return;
 					}
+
+					input.getAxes().values().forEach(axisId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + axisId));
+
+					for (var i = 0; i < nButtons; i++) {
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
+						input.getButtons()[i] = false;
+					}
+
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
+							+ input.getCursorDeltaY());
+					input.setCursorDeltaX(0);
+					input.setCursorDeltaY(0);
+
+					final var downMouseButtons = input.getDownMouseButtons();
+					synchronized (downMouseButtons) {
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
+						downMouseButtons
+								.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
+					}
+
+					final var downUpMouseButtons = input.getDownUpMouseButtons();
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpMouseButtons.size());
+					downUpMouseButtons.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
+					downUpMouseButtons.clear();
+
+					final var downKeyStrokes = input.getDownKeyStrokes();
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + downKeyStrokes.size());
+					downKeyStrokes.forEach(keyStroke -> {
+						final var modifierCodes = keyStroke.getModifierCodes();
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
+						for (final var code : modifierCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+
+						final var keyCodes = keyStroke.getKeyCodes();
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
+						for (final var code : keyCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+					});
+
+					final var downUpKeyStrokes = input.getDownUpKeyStrokes();
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpKeyStrokes.size());
+					downUpKeyStrokes.forEach(keyStroke -> {
+						final var modifierCodes = keyStroke.getModifierCodes();
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
+						for (final var code : modifierCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+
+						final var keyCodes = keyStroke.getKeyCodes();
+						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
+						for (final var code : keyCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+					});
+					downUpKeyStrokes.clear();
+
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
+					input.setScrollClicks(0);
+
+					final var onLockKeys = input.getOnLockKeys();
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + onLockKeys.size());
+					onLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
+					onLockKeys.clear();
+
+					final var offLockKeys = input.getOffLockKeys();
+					sb.append(PROTOCOL_MESSAGE_DELIMITER + offLockKeys.size());
+					offLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
+					offLockKeys.clear();
+
+					final var sendBuf = sb.toString().getBytes("ASCII");
+
+					final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
+					serverSocket.send(sendPacket);
+
+					if (doAliveCheck) {
+						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+						serverSocket.setSoTimeout(timeout);
+						try {
+							serverSocket.receive(receivePacket);
+
+							if (clientIPAddress.equals(receivePacket.getAddress())) {
+								message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
+										StandardCharsets.US_ASCII);
+
+								if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
+									counter++;
+							}
+						} catch (final SocketTimeoutException e) {
+							input.reset();
+							input.deInit(false);
+
+							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
+							main.scheduleStatusBarText(
+									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
+
+							serverState = ServerState.Listening;
+						}
+					} else
+						counter++;
 
 				}
 				}
