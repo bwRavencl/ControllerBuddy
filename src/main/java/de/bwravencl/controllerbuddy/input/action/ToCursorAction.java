@@ -28,7 +28,7 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 	}
 
 	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
-	MouseAxis axis = MouseAxis.X;
+	private MouseAxis axis = MouseAxis.X;
 
 	transient float remainingD;
 

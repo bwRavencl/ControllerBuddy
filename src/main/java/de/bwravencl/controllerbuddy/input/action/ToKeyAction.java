@@ -31,13 +31,13 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 		implements IActivatableAction<V>, ILongPressAction<V> {
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	Activation activation = Activation.REPEAT;
+	private Activation activation = Activation.REPEAT;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
-	KeyStroke keystroke = new KeyStroke();
+	private KeyStroke keystroke = new KeyStroke();
 
 	private transient Activatable activatable;
 

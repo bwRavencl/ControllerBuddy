@@ -46,7 +46,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	private List<IAction<Byte>> actions = new ArrayList<>();
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	Activation activation = Activation.SINGLE_IMMEDIATELY;
+	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -2230,6 +2230,10 @@ public final class Main {
 		return taskRunner.isTaskOfTypeRunning(LocalOutput.class);
 	}
 
+	public boolean isOpenVrOverlayActive() {
+		return openVrOverlay != null;
+	}
+
 	private boolean isRunning() {
 		return isLocalRunning() || isClientRunning() || isServerRunning();
 	}

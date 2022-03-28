@@ -204,6 +204,7 @@ class OpenVrOverlay {
 
 			try {
 				OpenVR.create(token);
+
 				final var overlayTextureBounds = VRTextureBounds.malloc(stack);
 				overlayTextureBounds.set(0f, 1f, 1f, 0f);
 
