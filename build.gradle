@@ -1,3 +1,4 @@
+import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
@@ -58,18 +59,41 @@ dependencies {
 	def jnaVersion = '5.10.0'
 	def lwjglVersion = '3.3.1'
 
-	def lwjglPlatform;
 	def os = DefaultNativePlatform.currentOperatingSystem
+	def clientPlatform = false
+	def lwjglOs
 	if (os.windows) {
-		lwjglPlatform = "windows"
-		runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-windows",
-				"org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+		lwjglOs = "windows"
+		clientPlatform = true
 	} else if (os.macOsX)
-		lwjglPlatform = "macos"
+		lwjglOs = 'macos'
 	else if (os.linux)
-		lwjglPlatform = "linux"
+		lwjglOs = 'linux'
 	else
 		throw new GradleException("Unsupported operating system $os.displayName")
+
+	def arch = DefaultNativePlatform.currentArchitecture
+	def lwjglArch;
+	switch (arch.name) {
+		case { Architectures.X86.isAlias(it) && os.windows }:
+			lwjglArch = 'x86'
+			break
+		case { Architectures.X86_64.isAlias(it) }:
+			lwjglArch = ''
+			break
+		case { Architectures.ARM_V7.isAlias(it) && os.linux }:
+			lwjglArch = 'arm32'
+			break;
+		case 'aarch64':
+		case 'arm-v8':
+		case 'arm64':
+			lwjglArch = 'arm64'
+			break
+		default:
+			throw new GradleException("Unsupported system architecture $arch.displayName")
+	}
+
+	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}";
 
 	implementation 'commons-cli:commons-cli:1.5.0',
 			'com.formdev:flatlaf:2.1',
@@ -90,6 +114,9 @@ dependencies {
 	implementation	('org.apache.xmlgraphics:batik-swing:1.14') {
 		exclude group: 'xml-apis', module: 'xml-apis'
 	}
+
+	if (clientPlatform)
+		runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-${lwjglPlatform}", "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-${lwjglPlatform}"
 }
 
 spotbugs {
