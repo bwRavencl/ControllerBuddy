@@ -2,7 +2,7 @@ name: Dependency Update Check
 
 on:
   schedule:
-    - cron: '* 18 * * *'
+    - cron: '0 18 * * *'
 
 jobs:
   dependencyUpdateCheck:
