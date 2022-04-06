@@ -9,6 +9,7 @@ plugins {
 	id 'application'
 	id 'com.github.spotbugs' version '5.0.6'
 	id 'com.diffplug.spotless' version '6.4.1'
+	id 'com.github.ben-manes.versions' version '0.42.0'
 	id 'eclipse'
 	id 'org.ajoberstar.grgit' version '5.0.0'
 }
@@ -117,6 +118,16 @@ dependencies {
 
 	if (clientPlatform)
 		runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-${lwjglPlatform}", "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-${lwjglPlatform}"
+}
+
+dependencyUpdates {
+	revision = 'release'
+	rejectVersionIf {
+		it.candidate.module in [
+			'purejavahidapi',
+			'unique4j'
+		]
+	}
 }
 
 spotbugs {
