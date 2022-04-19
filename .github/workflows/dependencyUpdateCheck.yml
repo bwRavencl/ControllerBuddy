@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: zulu
-          java-version: 18.0.0
+          java-version: 18.0.1
       - name: Gradle Update Check
         uses: MeilCli/gradle-update-check-action@v3
         id: gradle_update_check
