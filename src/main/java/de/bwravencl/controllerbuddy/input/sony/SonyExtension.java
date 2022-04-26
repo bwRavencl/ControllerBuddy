@@ -69,6 +69,7 @@ public abstract class SonyExtension {
 			if (connection == null) {
 				handleNewConnection(reportLength);
 				reset();
+				ready = true;
 			}
 
 			if (!isInputReportValid(reportID, reportData, reportLength))
@@ -275,38 +276,34 @@ public abstract class SonyExtension {
 
 	final Input input;
 	final int jid;
-
 	HidDevice hidDevice;
-
 	byte[] hidReport;
-
 	Connection connection;
 	volatile boolean charging = true;
 	volatile int batteryState;
-
-	byte lx = Byte.MAX_VALUE;
-	byte ly = Byte.MAX_VALUE;
-
-	byte rx = Byte.MAX_VALUE;
-	byte ry = Byte.MAX_VALUE;
-	byte l2 = Byte.MAX_VALUE;
-	byte r2 = Byte.MAX_VALUE;
-	boolean triangle;
-	boolean circle;
-	boolean cross;
-	boolean square;
-	boolean dpadUp;
-	boolean dpadDown;
-	boolean dpadLeft;
-	boolean dpadRight;
-	boolean r3;
-	boolean l3;
-	boolean options;
-	boolean share;
-	boolean r1;
-	boolean l1;
-	boolean ps;
-	boolean disconnected;
+	volatile byte lx = Byte.MAX_VALUE;
+	volatile byte ly = Byte.MAX_VALUE;
+	volatile byte rx = Byte.MAX_VALUE;
+	volatile byte ry = Byte.MAX_VALUE;
+	volatile byte l2 = Byte.MAX_VALUE;
+	volatile byte r2 = Byte.MAX_VALUE;
+	volatile boolean triangle;
+	volatile boolean circle;
+	volatile boolean cross;
+	volatile boolean square;
+	volatile boolean dpadUp;
+	volatile boolean dpadDown;
+	volatile boolean dpadLeft;
+	volatile boolean dpadRight;
+	volatile boolean r3;
+	volatile boolean l3;
+	volatile boolean options;
+	volatile boolean share;
+	volatile boolean r1;
+	volatile boolean l1;
+	volatile boolean ps;
+	volatile boolean disconnected;
+	volatile boolean ready;
 
 	SonyExtension(final Input input, final int jid) {
 		this.input = input;
@@ -315,6 +312,7 @@ public abstract class SonyExtension {
 
 	public void deInit(final boolean disconnected) {
 		this.disconnected = true;
+		ready = false;
 
 		if (hidDevice != null) {
 			if (!disconnected)
@@ -336,7 +334,7 @@ public abstract class SonyExtension {
 	abstract byte[] getDefaultHidReport();
 
 	public boolean getGamepadState(final GLFWGamepadState state) {
-		if (disconnected)
+		if (disconnected || !ready)
 			return false;
 
 		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, mapRawAxisToFloat(lx));
@@ -422,6 +420,10 @@ public abstract class SonyExtension {
 		}
 
 		return true;
+	}
+
+	public boolean isReady() {
+		return ready;
 	}
 
 	void reset() {

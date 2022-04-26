@@ -365,9 +365,12 @@ public final class Input {
 			}
 
 			final boolean gotState;
-			if (sonyExtension != null)
+			if (sonyExtension != null) {
+				if (!sonyExtension.isReady())
+					return true;
+
 				gotState = sonyExtension.getGamepadState(state);
-			else
+			} else
 				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
 			if (!gotState)
