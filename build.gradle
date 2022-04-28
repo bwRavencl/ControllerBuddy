@@ -8,7 +8,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 plugins {
 	id 'application'
 	id 'com.github.spotbugs' version '5.0.6'
-	id 'com.diffplug.spotless' version '6.5.0'
+	id 'com.diffplug.spotless' version '6.5.1'
 	id 'com.github.ben-manes.versions' version '0.42.0'
 	id 'eclipse'
 	id 'org.ajoberstar.grgit' version '5.0.0'
