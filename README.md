@@ -186,14 +186,15 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
-| Task                             | Command                 |
-| -------------------------------- | ----------------------- |
-| Generate version source file     | gradlew generateVersion |
-| Run SpotBugs and Spotless        | gradlew check           |
-| Apply Spotless formatting        | gradlew spotlessApply   |
-| Run ControllerBuddy              | gradlew run             |
-| Install a jpackage image         | gradlew installDist     |
-| Create a zipped jpackage image   | gradlew distZip         |
-| Generate Eclipse files           | gradlew eclipse         |
-| Delete Eclipse files             | gradlew cleanEclipse    |
-| Delete build and gen directories | gradlew clean           |
+| Task                             | Command                  |
+| -------------------------------- | ------------------------ |
+| Generate version source file     | gradlew generateVersion  |
+| Run SpotBugs and Spotless        | gradlew check            |
+| Apply Spotless formatting        | gradlew spotlessApply    |
+| Run ControllerBuddy              | gradlew run              |
+| Install a jpackage image         | gradlew installDist      |
+| Create a zipped jpackage image   | gradlew distZip          |
+| Generate Eclipse files           | gradlew eclipse          |
+| Delete Eclipse files             | gradlew cleanEclipse     |
+| Delete build and gen directories | gradlew clean            |
+| Check for dependency updates     | gradlew dependencyUpdate |
