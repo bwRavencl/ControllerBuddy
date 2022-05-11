@@ -181,7 +181,7 @@ spotless {
 		eclipseWtp('xml')
 	}
 	format 'newlineAndTrailingWhitespace', {
-		target '.github/workflows/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
+		target '.github/**/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
 		endWithNewline()
 		trimTrailingWhitespace()
 	}
