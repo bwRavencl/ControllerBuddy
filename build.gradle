@@ -98,7 +98,7 @@ dependencies {
 
 	implementation 'commons-cli:commons-cli:1.5.0',
 			'com.formdev:flatlaf:2.2',
-			'com.github.nyholku:purejavahidapi:ef5679619d',
+			'com.github.nyholku:purejavahidapi:v0.0.10',
 			'com.google.code.gson:gson:2.9.0',
 			'io.github.classgraph:classgraph:4.8.146',
 			"net.java.dev.jna:jna:$jnaVersion",
