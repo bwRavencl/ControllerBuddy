@@ -88,7 +88,7 @@ final class DualSenseExtension extends SonyExtension {
 					}
 					};
 					setCharging(charging);
-					setBatteryState(batteryCapacity);
+					setBatteryCapacity(batteryCapacity);
 				}
 
 				@Override

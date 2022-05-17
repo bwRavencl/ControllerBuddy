@@ -1887,7 +1887,7 @@ public final class Main {
 			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
 					MessageFormat.format(
 							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
-							input.getSonyExtension().getBatteryState() / 100f),
+							input.getSonyExtension().getBatteryCapacity() / 100f),
 					MessageType.INFO);
 	}
 
@@ -3407,7 +3407,7 @@ public final class Main {
 			if (sonyExtension != null)
 				toolTip = MessageFormat.format(strings.getString(
 						sonyExtension.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"), title,
-						sonyExtension.getBatteryState() / 100f);
+						sonyExtension.getBatteryCapacity() / 100f);
 			else
 				toolTip = title;
 

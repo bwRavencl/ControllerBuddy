@@ -280,7 +280,7 @@ public abstract class SonyExtension {
 	byte[] hidReport;
 	Connection connection;
 	volatile boolean charging = true;
-	volatile int batteryState;
+	volatile int batteryCapacity;
 	volatile byte lx = Byte.MAX_VALUE;
 	volatile byte ly = Byte.MAX_VALUE;
 	volatile byte rx = Byte.MAX_VALUE;
@@ -325,8 +325,8 @@ public abstract class SonyExtension {
 		}
 	}
 
-	public int getBatteryState() {
-		return batteryState;
+	public int getBatteryCapacity() {
+		return batteryCapacity;
 	}
 
 	abstract int getButtonsOffset();
@@ -488,9 +488,9 @@ public abstract class SonyExtension {
 		}
 	}
 
-	void setBatteryState(final int batteryState) {
-		if (this.batteryState != batteryState) {
-			this.batteryState = batteryState;
+	void setBatteryCapacity(final int batteryCapacity) {
+		if (this.batteryCapacity != batteryCapacity) {
+			this.batteryCapacity = batteryCapacity;
 
 			updateLightbarColor();
 
@@ -499,8 +499,8 @@ public abstract class SonyExtension {
 				EventQueue.invokeLater(() -> {
 					main.updateTitleAndTooltip();
 
-					if (batteryState == LOW_BATTERY_WARNING)
-						main.displayLowBatteryWarning(batteryState / 100f);
+					if (batteryCapacity == LOW_BATTERY_WARNING)
+						main.displayLowBatteryWarning(batteryCapacity / 100f);
 				});
 		}
 	}
@@ -527,15 +527,15 @@ public abstract class SonyExtension {
 			final var lightbarOffset = getLightbarOffset();
 
 			if (charging) {
-				hidReport[lightbarOffset + connection.offset] = (byte) (batteryState >= 100 ? 0x0 : 0x1C);
+				hidReport[lightbarOffset + connection.offset] = (byte) (batteryCapacity >= 100 ? 0x0 : 0x1C);
 				hidReport[lightbarOffset + 1 + connection.offset] = (byte) 0x1C;
 				hidReport[lightbarOffset + 2 + connection.offset] = 0x0;
 			} else {
 				hidReport[lightbarOffset
-						+ connection.offset] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x1C : 0x0);
+						+ connection.offset] = (byte) (batteryCapacity <= LOW_BATTERY_WARNING ? 0x1C : 0x0);
 				hidReport[lightbarOffset + 1 + connection.offset] = 0;
 				hidReport[lightbarOffset + 2
-						+ connection.offset] = (byte) (batteryState <= LOW_BATTERY_WARNING ? 0x0 : 0x1C);
+						+ connection.offset] = (byte) (batteryCapacity <= LOW_BATTERY_WARNING ? 0x0 : 0x1C);
 			}
 
 			sendHidReport();

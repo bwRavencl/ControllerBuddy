@@ -80,17 +80,36 @@ final class DualShock4Extension extends SonyExtension {
 				void handleBattery(final byte[] reportData) {
 					final var cableConnected = (reportData[30 + DualShock4Extension.this.connection.offset()] >> 4
 							& 0x1) != 0;
-					var battery = reportData[30 + DualShock4Extension.this.connection.offset()] & 0xF;
 
-					setCharging(cableConnected);
+					final var batteryData = reportData[30 + DualShock4Extension.this.connection.offset()] & 0xF;
+					final int batteryCapacity;
+					final boolean charging;
+					if (cableConnected) {
+						if (batteryData < 10) {
+							batteryCapacity = batteryData * 10 + 5;
+							charging = true;
+						} else if (batteryData == 10) {
+							batteryCapacity = 100;
+							charging = true;
+						} else {
+							if (batteryData == 11)
+								batteryCapacity = 100;
+							else
+								batteryCapacity = 0;
 
-					if (!cableConnected)
-						battery++;
+							charging = false;
+						}
+					} else {
+						if (batteryData < 10)
+							batteryCapacity = batteryData * 10 + 5;
+						else
+							batteryCapacity = 100;
 
-					battery = Math.min(battery, 10);
-					battery *= 10;
+						charging = false;
+					}
 
-					setBatteryState(battery);
+					setCharging(charging);
+					setBatteryCapacity(batteryCapacity);
 				}
 
 				@Override
