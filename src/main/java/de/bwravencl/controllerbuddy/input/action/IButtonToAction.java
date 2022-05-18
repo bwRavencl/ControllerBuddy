@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 
-public interface IButtonToAction extends IAction<Byte>, ILongPressAction<Byte> {
+public interface IButtonToAction extends ILongPressAction<Byte> {
 
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
