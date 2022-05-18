@@ -272,8 +272,6 @@ public abstract class VJoyOutput extends Output {
 		try {
 			setVJoy(Native.load(LIBRARY_NAME, IVjoyInterface.class));
 
-			final var dllVersion = new Memory(WinDef.WORD.SIZE);
-			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.vJoyEnabled().booleanValue()) {
 				log.log(Level.WARNING, "vJoy driver is not enabled");
 				EventQueue.invokeLater(() -> {
@@ -283,6 +281,9 @@ public abstract class VJoyOutput extends Output {
 				});
 				return false;
 			}
+
+			final var dllVersion = new Memory(WinDef.WORD.SIZE);
+			final var drvVersion = new Memory(WinDef.WORD.SIZE);
 			if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
 				log.log(Level.WARNING, "vJoy DLL version " + dllVersion.toString() + " does not match driver version "
 						+ drvVersion.toString());
@@ -516,63 +517,7 @@ public abstract class VJoyOutput extends Output {
 				buttonsChanged[i] = false;
 			}
 
-		if (res) {
-			if (cursorDeltaX != 0 || cursorDeltaY != 0) {
-				final var input = new INPUT();
-				input.type = new DWORD(INPUT.INPUT_MOUSE);
-				input.input.setType(MOUSEINPUT.class);
-				input.input.mi.dx = new LONG(cursorDeltaX);
-				input.input.mi.dy = new LONG(cursorDeltaY);
-				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
-
-				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
-			}
-
-			newUpMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, false));
-			newDownMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, true));
-			downUpMouseButtons.forEach(mouseButton -> {
-				doMouseButtonInput(mouseButton, true);
-				doMouseButtonInput(mouseButton, false);
-			});
-
-			newUpNormalKeys.forEach(code -> doKeyboardInput(code, false));
-			newUpModifiers.forEach(code -> doKeyboardInput(code, false));
-
-			offLockKeys.forEach(code -> setLockKeyState(code, false));
-			onLockKeys.forEach(code -> setLockKeyState(code, true));
-
-			newDownModifiers.forEach(code -> doKeyboardInput(code, true));
-
-			final var currentTime = System.currentTimeMillis();
-			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
-				newDownNormalKeys.forEach(code -> doKeyboardInput(code, true));
-
-				prevKeyInputTime = currentTime;
-			}
-
-			downUpKeyStrokes.forEach(keyStroke -> {
-				for (final var code : keyStroke.getModifierCodes())
-					doKeyboardInput(code, true);
-
-				for (final var code : keyStroke.getKeyCodes()) {
-					doKeyboardInput(code, true);
-					doKeyboardInput(code, false);
-				}
-
-				for (final var code : keyStroke.getModifierCodes())
-					doKeyboardInput(code, false);
-			});
-
-			if (scrollClicks != 0) {
-				final var input = new INPUT();
-				input.type = new DWORD(INPUT.INPUT_MOUSE);
-				input.input.setType(MOUSEINPUT.class);
-				input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
-				input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
-
-				User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
-			}
-		} else {
+		if (!res) {
 			final var confirmDialogTask = new FutureTask<>(() -> JOptionPane.showConfirmDialog(main.getFrame(),
 					Main.strings.getString("COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT"),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
@@ -588,6 +533,64 @@ public abstract class VJoyOutput extends Output {
 			}
 
 			Thread.currentThread().interrupt();
+
+			return;
+		}
+
+		if (cursorDeltaX != 0 || cursorDeltaY != 0) {
+			final var input = new INPUT();
+			input.type = new DWORD(INPUT.INPUT_MOUSE);
+			input.input.setType(MOUSEINPUT.class);
+			input.input.mi.dx = new LONG(cursorDeltaX);
+			input.input.mi.dy = new LONG(cursorDeltaY);
+			input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE);
+
+			User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
+		}
+
+		newUpMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, false));
+		newDownMouseButtons.forEach(mouseButton -> doMouseButtonInput(mouseButton, true));
+		downUpMouseButtons.forEach(mouseButton -> {
+			doMouseButtonInput(mouseButton, true);
+			doMouseButtonInput(mouseButton, false);
+		});
+
+		newUpNormalKeys.forEach(code -> doKeyboardInput(code, false));
+		newUpModifiers.forEach(code -> doKeyboardInput(code, false));
+
+		offLockKeys.forEach(code -> setLockKeyState(code, false));
+		onLockKeys.forEach(code -> setLockKeyState(code, true));
+
+		newDownModifiers.forEach(code -> doKeyboardInput(code, true));
+
+		final var currentTime = System.currentTimeMillis();
+		if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
+			newDownNormalKeys.forEach(code -> doKeyboardInput(code, true));
+
+			prevKeyInputTime = currentTime;
+		}
+
+		downUpKeyStrokes.forEach(keyStroke -> {
+			for (final var code : keyStroke.getModifierCodes())
+				doKeyboardInput(code, true);
+
+			for (final var code : keyStroke.getKeyCodes()) {
+				doKeyboardInput(code, true);
+				doKeyboardInput(code, false);
+			}
+
+			for (final var code : keyStroke.getModifierCodes())
+				doKeyboardInput(code, false);
+		});
+
+		if (scrollClicks != 0) {
+			final var input = new INPUT();
+			input.type = new DWORD(INPUT.INPUT_MOUSE);
+			input.input.setType(MOUSEINPUT.class);
+			input.input.mi.mouseData = new DWORD(scrollClicks * WHEEL_DELTA);
+			input.input.mi.dwFlags = new DWORD(MOUSEEVENTF_WHEEL);
+
+			User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 		}
 	}
 }
