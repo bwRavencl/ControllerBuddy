@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input;
@@ -25,7 +24,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public record ScanCode(String name, int scanCode) {
+import uk.co.bithatch.linuxio.EventCode;
+
+public record ScanCode(String name, int keyCode, EventCode eventCode) {
 
 	public static final String DIK_0 = "0";
 	public static final String DIK_1 = "1";
@@ -38,22 +39,14 @@ public record ScanCode(String name, int scanCode) {
 	public static final String DIK_8 = "8";
 	public static final String DIK_9 = "9";
 	public static final String DIK_A = "A";
-	private static final String DIK_ABNT_C1 = "bzAbnt_C1";
-	private static final String DIK_ABNT_C2 = "bzAbnt_C2";
 	public static final String DIK_ADD = "Num+";
 	public static final String DIK_APOSTROPHE = "'";
-	public static final String DIK_APPS = "App Menu";
-	private static final String DIK_AT = "pc-98 @";
-	private static final String DIK_AX = "jAX";
 	public static final String DIK_B = "B";
 	public static final String DIK_BACK = "Back";
 	public static final String DIK_BACKSLASH = "\\";
 	public static final String DIK_C = "C";
-	private static final String DIK_CALCULATOR = "Calc";
 	private static final String DIK_CAPITAL = "CapsLock";
-	private static final String DIK_COLON = "pc-98 :";
 	public static final String DIK_COMMA = ",";
-	private static final String DIK_CONVERT = "jConvert";
 	public static final String DIK_D = "D";
 	private static final String DIK_DECIMAL = "Num.";
 	public static final String DIK_DELETE = "Del";
@@ -68,9 +61,6 @@ public record ScanCode(String name, int scanCode) {
 	public static final String DIK_F10 = "F10";
 	public static final String DIK_F11 = "F11";
 	public static final String DIK_F12 = "F12";
-	private static final String DIK_F13 = "pc-98 F13";
-	private static final String DIK_F14 = "pc-98 F14";
-	private static final String DIK_F15 = "pc-98 F15";
 	public static final String DIK_F2 = "F2";
 	public static final String DIK_F3 = "F3";
 	public static final String DIK_F4 = "F4";
@@ -87,8 +77,6 @@ public record ScanCode(String name, int scanCode) {
 	public static final String DIK_INSERT = "Ins";
 	public static final String DIK_J = "J";
 	public static final String DIK_K = "K";
-	private static final String DIK_KANA = "jKana";
-	private static final String DIK_KANJI = "jKanji";
 	public static final String DIK_L = "L";
 	public static final String DIK_LBRACKET = "[";
 	public static final String DIK_LCONTROL = "L Ctrl";
@@ -97,17 +85,11 @@ public record ScanCode(String name, int scanCode) {
 	public static final String DIK_LSHIFT = "L Shift";
 	public static final String DIK_LWIN = "L Win";
 	public static final String DIK_M = "M";
-	private static final String DIK_MAIL = "Mail";
-	private static final String DIK_MEDIASELECT = "Media Select";
-	private static final String DIK_MEDIASTOP = "Stop";
 	public static final String DIK_MINUS = "-";
 	public static final String DIK_MULTIPLY = "Num*";
-	private static final String DIK_MUTE = "Mute";
-	private static final String DIK_MYCOMPUTER = "My Computer";
 	public static final String DIK_N = "N";
 	public static final String DIK_NEXT = "PgDn";
 	private static final String DIK_NEXTTRACK = "Next";
-	private static final String DIK_NOCONVERT = "jNoConvert";
 	private static final String DIK_NUMLOCK = "NumLock";
 	public static final String DIK_NUMPAD0 = "Num0";
 	public static final String DIK_NUMPAD1 = "Num1";
@@ -127,9 +109,6 @@ public record ScanCode(String name, int scanCode) {
 	public static final String DIK_P = "P";
 	public static final String DIK_PAUSE = "Pause";
 	public static final String DIK_PERIOD = ".";
-	private static final String DIK_PLAYPAUSE = "Play/Pause";
-	private static final String DIK_POWER = "Power";
-	private static final String DIK_PREVTRACK = "Prev";
 	public static final String DIK_PRIOR = "PgUp";
 	public static final String DIK_Q = "Q";
 	public static final String DIK_R = "R";
@@ -144,99 +123,98 @@ public record ScanCode(String name, int scanCode) {
 	private static final String DIK_SCROLL = "ScrollLock";
 	public static final String DIK_SEMICOLON = ";";
 	public static final String DIK_SLASH = "/";
-	private static final String DIK_SLEEP = "Sleep";
 	public static final String DIK_SPACE = "Space";
-	private static final String DIK_STOP = "pc-98 Stop";
 	public static final String DIK_SUBTRACT = "Num-";
 	public static final String DIK_SYSRQ = "SysRq";
 	public static final String DIK_T = "T";
 	public static final String DIK_TAB = "Tab";
 	public static final String DIK_U = "U";
-	private static final String DIK_UNDERLINE = "pc-98 _";
-	private static final String DIK_UNLABELED = "J3100";
 	public static final String DIK_UP = "Up Arrow";
 	public static final String DIK_V = "V";
-	private static final String DIK_VOLUMEDOWN = "Vol-";
-	private static final String DIK_VOLUMEUP = "Vol+";
 	public static final String DIK_W = "W";
-	private static final String DIK_WAKE = "Wake";
-	private static final String DIK_WEBBACK = "webBack";
-	private static final String DIK_WEBFAVORITES = "webFavs";
-	private static final String DIK_WEBFORWARD = "webForward";
-	private static final String DIK_WEBHOME = "webHome";
-	private static final String DIK_WEBREFRESH = "webRefresh";
-	private static final String DIK_WEBSEARCH = "webSearch";
-	private static final String DIK_WEBSTOP = "webStop";
 	public static final String DIK_X = "X";
 	public static final String DIK_Y = "Y";
-	private static final String DIK_YEN = "jYen";
 	public static final String DIK_Z = "Z";
 
-	private static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1), new ScanCode(DIK_1, 0x2),
-			new ScanCode(DIK_2, 0x3), new ScanCode(DIK_3, 0x4), new ScanCode(DIK_4, 0x5), new ScanCode(DIK_5, 0x6),
-			new ScanCode(DIK_6, 0x7), new ScanCode(DIK_7, 0x8), new ScanCode(DIK_8, 0x9), new ScanCode(DIK_9, 0xA),
-			new ScanCode(DIK_0, 0xB), new ScanCode(DIK_MINUS, 0xC), new ScanCode(DIK_EQUALS, 0xD),
-			new ScanCode(DIK_BACK, 0xE), new ScanCode(DIK_TAB, 0xF), new ScanCode(DIK_Q, 0x10),
-			new ScanCode(DIK_W, 0x11), new ScanCode(DIK_E, 0x12), new ScanCode(DIK_R, 0x13), new ScanCode(DIK_T, 0x14),
-			new ScanCode(DIK_Y, 0x15), new ScanCode(DIK_U, 0x16), new ScanCode(DIK_I, 0x17), new ScanCode(DIK_O, 0x18),
-			new ScanCode(DIK_P, 0x19), new ScanCode(DIK_LBRACKET, 0x1A), new ScanCode(DIK_RBRACKET, 0x1B),
-			new ScanCode(DIK_RETURN, 0x1C), new ScanCode(DIK_LCONTROL, 0x1D), new ScanCode(DIK_A, 0x1E),
-			new ScanCode(DIK_S, 0x1F), new ScanCode(DIK_D, 0x20), new ScanCode(DIK_F, 0x21), new ScanCode(DIK_G, 0x22),
-			new ScanCode(DIK_H, 0x23), new ScanCode(DIK_J, 0x24), new ScanCode(DIK_K, 0x25), new ScanCode(DIK_L, 0x26),
-			new ScanCode(DIK_SEMICOLON, 0x27), new ScanCode(DIK_APOSTROPHE, 0x28), new ScanCode(DIK_GRAVE, 0x29),
-			new ScanCode(DIK_LSHIFT, 0x2A), new ScanCode(DIK_BACKSLASH, 0x2B), new ScanCode(DIK_Z, 0x2C),
-			new ScanCode(DIK_X, 0x2D), new ScanCode(DIK_C, 0x2E), new ScanCode(DIK_V, 0x2F), new ScanCode(DIK_B, 0x30),
-			new ScanCode(DIK_N, 0x31), new ScanCode(DIK_M, 0x32), new ScanCode(DIK_COMMA, 0x33),
-			new ScanCode(DIK_PERIOD, 0x34), new ScanCode(DIK_SLASH, 0x35), new ScanCode(DIK_RSHIFT, 0x36),
-			new ScanCode(DIK_MULTIPLY, 0x37), new ScanCode(DIK_LMENU, 0x38), new ScanCode(DIK_SPACE, 0x39),
-			new ScanCode(DIK_CAPITAL, 0x3A), new ScanCode(DIK_F1, 0x3B), new ScanCode(DIK_F2, 0x3C),
-			new ScanCode(DIK_F3, 0x3D), new ScanCode(DIK_F4, 0x3E), new ScanCode(DIK_F5, 0x3F),
-			new ScanCode(DIK_F6, 0x40), new ScanCode(DIK_F7, 0x41), new ScanCode(DIK_F8, 0x42),
-			new ScanCode(DIK_F9, 0x43), new ScanCode(DIK_F10, 0x44), new ScanCode(DIK_NUMLOCK, 0x45),
-			new ScanCode(DIK_SCROLL, 0x46), new ScanCode(DIK_NUMPAD7, 0x47), new ScanCode(DIK_NUMPAD8, 0x48),
-			new ScanCode(DIK_NUMPAD9, 0x49), new ScanCode(DIK_SUBTRACT, 0x4A), new ScanCode(DIK_NUMPAD4, 0x4B),
-			new ScanCode(DIK_NUMPAD5, 0x4C), new ScanCode(DIK_NUMPAD6, 0x4D), new ScanCode(DIK_ADD, 0x4E),
-			new ScanCode(DIK_NUMPAD1, 0x4F), new ScanCode(DIK_NUMPAD2, 0x50), new ScanCode(DIK_NUMPAD3, 0x51),
-			new ScanCode(DIK_NUMPAD0, 0x52), new ScanCode(DIK_DECIMAL, 0x53), new ScanCode(DIK_OEM_102, 0x56),
-			new ScanCode(DIK_F11, 0x57), new ScanCode(DIK_F12, 0x58), new ScanCode(DIK_F13, 0x64),
-			new ScanCode(DIK_F14, 0x65), new ScanCode(DIK_F15, 0x66), new ScanCode(DIK_KANA, 0x70),
-			new ScanCode(DIK_ABNT_C1, 0x73), new ScanCode(DIK_CONVERT, 0x79), new ScanCode(DIK_NOCONVERT, 0x7B),
-			new ScanCode(DIK_YEN, 0x7D), new ScanCode(DIK_ABNT_C2, 0x7E), new ScanCode(DIK_NUMPADEQUALS, 0x8D),
-			new ScanCode(DIK_PREVTRACK, 0x90), new ScanCode(DIK_AT, 0x91), new ScanCode(DIK_COLON, 0x92),
-			new ScanCode(DIK_UNDERLINE, 0x93), new ScanCode(DIK_KANJI, 0x94), new ScanCode(DIK_STOP, 0x95),
-			new ScanCode(DIK_AX, 0x96), new ScanCode(DIK_UNLABELED, 0x97), new ScanCode(DIK_NEXTTRACK, 0x99),
-			new ScanCode(DIK_NUMPADENTER, 0x9C), new ScanCode(DIK_RCONTROL, 0x9D), new ScanCode(DIK_MUTE, 0xA0),
-			new ScanCode(DIK_CALCULATOR, 0xA1), new ScanCode(DIK_PLAYPAUSE, 0xA2), new ScanCode(DIK_MEDIASTOP, 0xA4),
-			new ScanCode(DIK_VOLUMEDOWN, 0xAE), new ScanCode(DIK_VOLUMEUP, 0xB0), new ScanCode(DIK_WEBHOME, 0xB2),
-			new ScanCode(DIK_NUMPADCOMMA, 0xB3), new ScanCode(DIK_DIVIDE, 0xB5), new ScanCode(DIK_SYSRQ, 0xB7),
-			new ScanCode(DIK_RMENU, 0xB8), new ScanCode(DIK_PAUSE, 0xC5), new ScanCode(DIK_HOME, 0xC7),
-			new ScanCode(DIK_UP, 0xC8), new ScanCode(DIK_PRIOR, 0xC9), new ScanCode(DIK_LEFT, 0xCB),
-			new ScanCode(DIK_RIGHT, 0xCD), new ScanCode(DIK_END, 0xCF), new ScanCode(DIK_DOWN, 0xD0),
-			new ScanCode(DIK_NEXT, 0xD1), new ScanCode(DIK_INSERT, 0xD2), new ScanCode(DIK_DELETE, 0xD3),
-			new ScanCode(DIK_LWIN, 0xDB), new ScanCode(DIK_RWIN, 0xDC), new ScanCode(DIK_APPS, 0xDD),
-			new ScanCode(DIK_POWER, 0xDE), new ScanCode(DIK_SLEEP, 0xDF), new ScanCode(DIK_WAKE, 0xE3),
-			new ScanCode(DIK_WEBSEARCH, 0xE5), new ScanCode(DIK_WEBFAVORITES, 0xE6), new ScanCode(DIK_WEBREFRESH, 0xE7),
-			new ScanCode(DIK_WEBSTOP, 0xE8), new ScanCode(DIK_WEBFORWARD, 0xE9), new ScanCode(DIK_WEBBACK, 0xEA),
-			new ScanCode(DIK_MYCOMPUTER, 0xEB), new ScanCode(DIK_MAIL, 0xEC), new ScanCode(DIK_MEDIASELECT, 0xED) };
+	private static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1, EventCode.KEY_ESC),
+			new ScanCode(DIK_1, 0x2, EventCode.KEY_1), new ScanCode(DIK_2, 0x3, EventCode.KEY_2),
+			new ScanCode(DIK_3, 0x4, EventCode.KEY_3), new ScanCode(DIK_4, 0x5, EventCode.KEY_4),
+			new ScanCode(DIK_5, 0x6, EventCode.KEY_5), new ScanCode(DIK_6, 0x7, EventCode.KEY_6),
+			new ScanCode(DIK_7, 0x8, EventCode.KEY_7), new ScanCode(DIK_8, 0x9, EventCode.KEY_8),
+			new ScanCode(DIK_9, 0xA, EventCode.KEY_9), new ScanCode(DIK_0, 0xB, EventCode.KEY_0),
+			new ScanCode(DIK_MINUS, 0xC, EventCode.KEY_MINUS), new ScanCode(DIK_EQUALS, 0xD, EventCode.KEY_EQUAL),
+			new ScanCode(DIK_BACK, 0xE, EventCode.KEY_BACKSPACE), new ScanCode(DIK_TAB, 0xF, EventCode.KEY_TAB),
+			new ScanCode(DIK_Q, 0x10, EventCode.KEY_Q), new ScanCode(DIK_W, 0x11, EventCode.KEY_W),
+			new ScanCode(DIK_E, 0x12, EventCode.KEY_E), new ScanCode(DIK_R, 0x13, EventCode.KEY_R),
+			new ScanCode(DIK_T, 0x14, EventCode.KEY_T), new ScanCode(DIK_Y, 0x15, EventCode.KEY_Y),
+			new ScanCode(DIK_U, 0x16, EventCode.KEY_U), new ScanCode(DIK_I, 0x17, EventCode.KEY_I),
+			new ScanCode(DIK_O, 0x18, EventCode.KEY_O), new ScanCode(DIK_P, 0x19, EventCode.KEY_P),
+			new ScanCode(DIK_LBRACKET, 0x1A, EventCode.KEY_LEFTBRACE),
+			new ScanCode(DIK_RBRACKET, 0x1B, EventCode.KEY_RIGHTBRACE),
+			new ScanCode(DIK_RETURN, 0x1C, EventCode.KEY_ENTER),
+			new ScanCode(DIK_LCONTROL, 0x1D, EventCode.KEY_LEFTCTRL), new ScanCode(DIK_A, 0x1E, EventCode.KEY_A),
+			new ScanCode(DIK_S, 0x1F, EventCode.KEY_S), new ScanCode(DIK_D, 0x20, EventCode.KEY_D),
+			new ScanCode(DIK_F, 0x21, EventCode.KEY_F), new ScanCode(DIK_G, 0x22, EventCode.KEY_G),
+			new ScanCode(DIK_H, 0x23, EventCode.KEY_H), new ScanCode(DIK_J, 0x24, EventCode.KEY_J),
+			new ScanCode(DIK_K, 0x25, EventCode.KEY_K), new ScanCode(DIK_L, 0x26, EventCode.KEY_L),
+			new ScanCode(DIK_SEMICOLON, 0x27, EventCode.KEY_SEMICOLON),
+			new ScanCode(DIK_APOSTROPHE, 0x28, EventCode.KEY_APOSTROPHE),
+			new ScanCode(DIK_GRAVE, 0x29, EventCode.KEY_GRAVE), new ScanCode(DIK_LSHIFT, 0x2A, EventCode.KEY_LEFTSHIFT),
+			new ScanCode(DIK_BACKSLASH, 0x2B, EventCode.KEY_BACKSLASH), new ScanCode(DIK_Z, 0x2C, EventCode.KEY_Z),
+			new ScanCode(DIK_X, 0x2D, EventCode.KEY_X), new ScanCode(DIK_C, 0x2E, EventCode.KEY_C),
+			new ScanCode(DIK_V, 0x2F, EventCode.KEY_V), new ScanCode(DIK_B, 0x30, EventCode.KEY_B),
+			new ScanCode(DIK_N, 0x31, EventCode.KEY_N), new ScanCode(DIK_M, 0x32, EventCode.KEY_M),
+			new ScanCode(DIK_COMMA, 0x33, EventCode.KEY_COMMA), new ScanCode(DIK_PERIOD, 0x34, EventCode.KEY_DOT),
+			new ScanCode(DIK_SLASH, 0x35, EventCode.KEY_SLASH),
+			new ScanCode(DIK_RSHIFT, 0x36, EventCode.KEY_RIGHTSHIFT),
+			new ScanCode(DIK_MULTIPLY, 0x37, EventCode.KEY_KPASTERISK),
+			new ScanCode(DIK_LMENU, 0x38, EventCode.KEY_LEFTALT), new ScanCode(DIK_SPACE, 0x39, EventCode.KEY_SPACE),
+			new ScanCode(DIK_CAPITAL, 0x3A, EventCode.KEY_CAPSLOCK), new ScanCode(DIK_F1, 0x3B, EventCode.KEY_F1),
+			new ScanCode(DIK_F2, 0x3C, EventCode.KEY_F2), new ScanCode(DIK_F3, 0x3D, EventCode.KEY_F3),
+			new ScanCode(DIK_F4, 0x3E, EventCode.KEY_F4), new ScanCode(DIK_F5, 0x3F, EventCode.KEY_F5),
+			new ScanCode(DIK_F6, 0x40, EventCode.KEY_F6), new ScanCode(DIK_F7, 0x41, EventCode.KEY_F7),
+			new ScanCode(DIK_F8, 0x42, EventCode.KEY_F8), new ScanCode(DIK_F9, 0x43, EventCode.KEY_F9),
+			new ScanCode(DIK_F10, 0x44, EventCode.KEY_F10), new ScanCode(DIK_NUMLOCK, 0x45, EventCode.KEY_NUMLOCK),
+			new ScanCode(DIK_SCROLL, 0x46, EventCode.KEY_SCROLLLOCK),
+			new ScanCode(DIK_NUMPAD7, 0x47, EventCode.KEY_KP7), new ScanCode(DIK_NUMPAD8, 0x48, EventCode.KEY_KP8),
+			new ScanCode(DIK_NUMPAD9, 0x49, EventCode.KEY_KP9), new ScanCode(DIK_SUBTRACT, 0x4A, EventCode.KEY_KPMINUS),
+			new ScanCode(DIK_NUMPAD4, 0x4B, EventCode.KEY_KP4), new ScanCode(DIK_NUMPAD5, 0x4C, EventCode.KEY_KP5),
+			new ScanCode(DIK_NUMPAD6, 0x4D, EventCode.KEY_KP6), new ScanCode(DIK_ADD, 0x4E, EventCode.KEY_KPPLUS),
+			new ScanCode(DIK_NUMPAD1, 0x4F, EventCode.KEY_KP1), new ScanCode(DIK_NUMPAD2, 0x50, EventCode.KEY_KP2),
+			new ScanCode(DIK_NUMPAD3, 0x51, EventCode.KEY_KP3), new ScanCode(DIK_NUMPAD0, 0x52, EventCode.KEY_KP0),
+			new ScanCode(DIK_DECIMAL, 0x53, EventCode.KEY_KPDOT), new ScanCode(DIK_OEM_102, 0x56, EventCode.KEY_102ND),
+			new ScanCode(DIK_F11, 0x57, EventCode.KEY_F11), new ScanCode(DIK_F12, 0x58, EventCode.KEY_F12),
+			new ScanCode(DIK_NUMPADEQUALS, 0x8D, null), new ScanCode(DIK_NEXTTRACK, 0x99, EventCode.KEY_NEXTSONG),
+			new ScanCode(DIK_NUMPADENTER, 0x9C, EventCode.KEY_KPENTER),
+			new ScanCode(DIK_RCONTROL, 0x9D, EventCode.KEY_RIGHTCTRL), new ScanCode(DIK_NUMPADCOMMA, 0xB3, null),
+			new ScanCode(DIK_DIVIDE, 0xB5, null), new ScanCode(DIK_SYSRQ, 0xB7, EventCode.KEY_SYSRQ),
+			new ScanCode(DIK_RMENU, 0xB8, EventCode.KEY_RIGHTALT), new ScanCode(DIK_PAUSE, 0xC5, EventCode.KEY_PAUSE),
+			new ScanCode(DIK_HOME, 0xC7, EventCode.KEY_HOME), new ScanCode(DIK_UP, 0xC8, EventCode.KEY_UP),
+			new ScanCode(DIK_PRIOR, 0xC9, null), new ScanCode(DIK_LEFT, 0xCB, EventCode.KEY_LEFT),
+			new ScanCode(DIK_RIGHT, 0xCD, EventCode.KEY_RIGHT), new ScanCode(DIK_END, 0xCF, EventCode.KEY_END),
+			new ScanCode(DIK_DOWN, 0xD0, EventCode.KEY_DOWN), new ScanCode(DIK_NEXT, 0xD1, EventCode.KEY_NEXT),
+			new ScanCode(DIK_INSERT, 0xD2, EventCode.KEY_INSERT), new ScanCode(DIK_DELETE, 0xD3, EventCode.KEY_DELETE),
+			new ScanCode(DIK_LWIN, 0xDB, EventCode.KEY_LEFTMETA),
+			new ScanCode(DIK_RWIN, 0xDC, EventCode.KEY_RIGHTMETA) };
 
-	public static final Map<String, Integer> nameToKeyCodeMap;
-	public static final Map<Integer, String> keyCodeToNameMap;
+	public static final Map<String, ScanCode> nameToScanCodeMap;
+	public static final Map<Integer, ScanCode> keyCodeToScanCodeMap;
 	public static final Set<Integer> extendedKeyScanCodesSet;
 
 	static {
-		final var modifiableNameToKeyCodeMap = new TreeMap<String, Integer>();
-		final var modifiableKeyCodeToNameMap = new HashMap<Integer, String>();
+		final var modifiableNameToScanCodeMap = new TreeMap<String, ScanCode>();
+		final var modifiableKeyCodeToScanCodeMap = new HashMap<Integer, ScanCode>();
 
 		for (final ScanCode sc : KEY_CODES) {
-			modifiableNameToKeyCodeMap.put(sc.name, sc.scanCode);
-			modifiableKeyCodeToNameMap.put(sc.scanCode, sc.name);
+			modifiableNameToScanCodeMap.put(sc.name, sc);
+			modifiableKeyCodeToScanCodeMap.put(sc.keyCode, sc);
 		}
 
-		nameToKeyCodeMap = Collections.unmodifiableMap(modifiableNameToKeyCodeMap);
-		keyCodeToNameMap = Collections.unmodifiableMap(modifiableKeyCodeToNameMap);
+		nameToScanCodeMap = Collections.unmodifiableMap(modifiableNameToScanCodeMap);
+		keyCodeToScanCodeMap = Collections.unmodifiableMap(modifiableKeyCodeToScanCodeMap);
 
-		extendedKeyScanCodesSet = keyCodeToNameMap.entrySet().stream().filter(entry -> {
-			final var name = entry.getValue();
+		extendedKeyScanCodesSet = keyCodeToScanCodeMap.entrySet().stream().filter(entry -> {
+			final var name = entry.getValue().name;
 			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
 					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)
 					|| DIK_PRIOR.equals(name) || DIK_NEXT.equals(name) || DIK_UP.equals(name) || DIK_DOWN.equals(name)

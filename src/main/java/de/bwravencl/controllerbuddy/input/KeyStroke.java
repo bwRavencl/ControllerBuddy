@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,29 +10,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 
 public final class KeyStroke implements Cloneable {
 
-	private Integer[] keyCodes;
-	private Integer[] modifierCodes;
+	private ScanCode[] keyCodes;
+	private ScanCode[] modifierCodes;
 
 	public KeyStroke() {
-		this(new Integer[0], new Integer[0]);
+		this(new ScanCode[0], new ScanCode[0]);
 	}
 
-	public KeyStroke(final Integer[] keyCodes, final Integer[] modifierCodes) {
+	public KeyStroke(final ScanCode[] keyCodes, final ScanCode[] modifierCodes) {
 		this.keyCodes = keyCodes;
 		this.modifierCodes = modifierCodes;
 	}
@@ -41,32 +41,47 @@ public final class KeyStroke implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		final var keyStroke = (KeyStroke) super.clone();
 
-		final var clonedKeyCodes = new Integer[keyCodes.length];
+		final var clonedKeyCodes = new ScanCode[keyCodes.length];
 		for (var i = 0; i < keyCodes.length; i++)
 			clonedKeyCodes[i] = keyCodes[i];
-		keyStroke.setKeyCodes(clonedKeyCodes);
+		keyStroke.keyCodes = clonedKeyCodes;
 
-		final var clonedModifierCodes = new Integer[modifierCodes.length];
+		final var clonedModifierCodes = new ScanCode[modifierCodes.length];
 		for (var i = 0; i < modifierCodes.length; i++)
 			clonedModifierCodes[i] = modifierCodes[i];
-		keyStroke.setModifierCodes(clonedModifierCodes);
+		keyStroke.modifierCodes = clonedModifierCodes;
 
 		return keyStroke;
 	}
 
-	public Integer[] getKeyCodes() {
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		final var other = (KeyStroke) obj;
+		return Arrays.equals(keyCodes, other.keyCodes) && Arrays.equals(modifierCodes, other.modifierCodes);
+	}
+
+	public ScanCode[] getKeyCodes() {
 		return keyCodes;
 	}
 
-	public Integer[] getModifierCodes() {
+	public ScanCode[] getModifierCodes() {
 		return modifierCodes;
 	}
 
-	public void setKeyCodes(final Integer[] keyCodes) {
+	@Override
+	public int hashCode() {
+		return Objects.hash(Arrays.hashCode(keyCodes), Arrays.hashCode(modifierCodes));
+	}
+
+	public void setKeyCodes(final ScanCode[] keyCodes) {
 		this.keyCodes = keyCodes;
 	}
 
-	public void setModifierCodes(final Integer[] modifierCodes) {
+	public void setModifierCodes(final ScanCode[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
 	}
 
@@ -77,7 +92,6 @@ public final class KeyStroke implements Cloneable {
 		if (collectedKeyCodes.isEmpty())
 			return Main.strings.getString("NOTHING");
 
-		return collectedKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToNameMap.get(keyCode))
-				.collect(Collectors.joining(" + "));
+		return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));
 	}
 }

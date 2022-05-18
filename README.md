@@ -4,17 +4,35 @@
 This is the source code repository of ControllerBuddy, regular users should refer to [ControllerBuddy's homepage](https://controllerbuddy.org) for getting started.
 
 #### License Information:
-GNU General Public License v2.0
+GNU General Public License v3.0
 
 #### Download and Installation:
+
+###### Windows:
 1. First ensure you have correctly installed [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
+###### Linux:
+1. First ensure you have installed libsdl2 on your system:
+   - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
+   - Red-Hat-based: `sudo yum install SDL2`
+2. Configure uinput:
+   1. Create an uinput group: `sudo groupadd -f uinput`
+   2. Add yourself to the group:  `sudo gpasswd -a USER uinput` (replace USER with your username)
+   3. As root, create a file `/etc/udev/rules.d/99-input.rules` with the following content:  
+      `SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="uinput"`
+   4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
+      `uinput`
+3. Reboot
+5. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
+6. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
+7. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
+
 #### Description:
 ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.  
-In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick, provided by the awesome vJoy device driver created by Shaul Eizikovich.  
+In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick device (vJoy / uinput).  
 ControllerBuddy's goal is to enable the user to control target applications solely via a gamepad and not having to reach for a keyboard or mouse at any point in time.
 
 #### Features:
@@ -47,9 +65,8 @@ ControllerBuddy's goal is to enable the user to control target applications sole
   - Dual Sense (with special support for the touchpad, haptic feedback and lightbar)
   - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
 - Supported operating systems:
-  - Windows x64 (local / client / server)
+  - Windows / Linux (local / client / server)
   - macOS (only server - no binaries provided!)
-  - Linux (only server - no binaries provided!)
 - Language support for:
   - English
   - German
@@ -96,21 +113,21 @@ A set of well thought out profiles for the most popular flight simulators are av
 #### Architecture:
 Local mode:
 ```
-              Local:
+            Local:
 
-       Physical Controller
-                |
-                |
-                v
-         ControllerBuddy
-         |             |
-         |             |
-         v             v
-vJoy Device Driver   Win32 API
-        |                |
-        |                |
-        v                v
-        Target Application
+     Physical Controller
+              |
+              |
+              v
+       ControllerBuddy
+       |             |
+       |             |
+       v             v
+vJoy / uinput   Win32 / X11
+      |                |
+      |                |
+      v                v
+      Target Application
 ```
 
 Server-Client mode:
@@ -125,7 +142,7 @@ Server-Client mode:
                                             |             |
                                             |             |
                                             v             v
-                                   vJoy Device Driver   Win32 API
+                                     vJoy / uinput   Win32 / X11
                                            |                |
                                            |                |
                                            v                v
@@ -177,6 +194,7 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
+- [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
@@ -186,15 +204,16 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
-| Task                             | Command                  |
-| -------------------------------- | ------------------------ |
-| Generate version source file     | gradlew generateVersion  |
-| Run SpotBugs and Spotless        | gradlew check            |
-| Apply Spotless formatting        | gradlew spotlessApply    |
-| Run ControllerBuddy              | gradlew run              |
-| Install a jpackage image         | gradlew installDist      |
-| Create a zipped jpackage image   | gradlew distZip          |
-| Generate Eclipse files           | gradlew eclipse          |
-| Delete Eclipse files             | gradlew cleanEclipse     |
-| Delete build and gen directories | gradlew clean            |
+| Task                                   | Command                  |
+| -------------------------------------- | ------------------------ |
+| Generate version source file           | gradlew generateVersion  |
+| Run SpotBugs and Spotless              | gradlew check            |
+| Apply Spotless formatting              | gradlew spotlessApply    |
+| Run ControllerBuddy                    | gradlew run              |
+| Install a jpackage image               | gradlew installDist      |
+| Create a ZIP-compressed jpackage image | gradlew distZip          |
+| Create a TGZ-compressed jpackage image | gradlew distTar          |
+| Generate Eclipse files                 | gradlew eclipse          |
+| Delete Eclipse files                   | gradlew cleanEclipse     |
+| Delete build and gen directories       | gradlew clean            |
 | Check for dependency updates     | gradlew dependencyUpdate |

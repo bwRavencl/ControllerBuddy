@@ -1,8 +1,8 @@
 /* Copyright (C) 2019  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,12 +10,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.output;
+package de.bwravencl.controllerbuddy.runmode;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,12 +23,13 @@ import java.util.logging.Logger;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 
-public final class LocalOutput extends VJoyOutput {
+public final class LocalRunMode extends OutputRunMode {
 
-	private static final Logger log = Logger.getLogger(LocalOutput.class.getName());
+	private static final Logger log = Logger.getLogger(LocalRunMode.class.getName());
 
-	public LocalOutput(final Main main, final Input input) {
+	public LocalRunMode(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -54,59 +54,32 @@ public final class LocalOutput extends VJoyOutput {
 		final var inputAxes = input.getAxes();
 
 		final var inputAxisX = inputAxes.get(Input.VirtualAxis.X);
-		if (axisX.intValue() != inputAxisX) {
-			axisX.setValue(inputAxisX);
-			axisXChanged = true;
-		}
+		axisX.setValue(inputAxisX);
 
 		final var inputAxisY = inputAxes.get(Input.VirtualAxis.Y);
-		if (axisY.intValue() != inputAxisY) {
-			axisY.setValue(inputAxisY);
-			axisYChanged = true;
-		}
+		axisY.setValue(inputAxisY);
 
 		final var inputAxisZ = inputAxes.get(Input.VirtualAxis.Z);
-		if (axisZ.intValue() != inputAxisZ) {
-			axisZ.setValue(inputAxisZ);
-			axisZChanged = true;
-		}
+		axisZ.setValue(inputAxisZ);
 
 		final var inputAxisRX = inputAxes.get(Input.VirtualAxis.RX);
-		if (axisRX.intValue() != inputAxisRX) {
-			axisRX.setValue(inputAxisRX);
-			axisRXChanged = true;
-		}
+		axisRX.setValue(inputAxisRX);
 
 		final var inputAxisRY = inputAxes.get(Input.VirtualAxis.RY);
-		if (axisRY.intValue() != inputAxisRY) {
-			axisRY.setValue(inputAxisRY);
-			axisRYChanged = true;
-		}
+		axisRY.setValue(inputAxisRY);
 
 		final var inputAxisRZ = inputAxes.get(Input.VirtualAxis.RZ);
-		if (axisRZ.intValue() != inputAxisRZ) {
-			axisRZ.setValue(inputAxisRZ);
-			axisRZChanged = true;
-		}
+		axisRZ.setValue(inputAxisRZ);
 
 		final var inputAxisS0 = inputAxes.get(Input.VirtualAxis.S0);
-		if (axisS0.intValue() != inputAxisS0) {
-			axisS0.setValue(inputAxisS0);
-			axisS0Changed = true;
-		}
+		axisS0.setValue(inputAxisS0);
 
 		final var inputAxisS1 = inputAxes.get(Input.VirtualAxis.S1);
-		if (axisS1.intValue() != inputAxisS1) {
-			axisS1.setValue(inputAxisS1);
-			axisS1Changed = true;
-		}
+		axisS1.setValue(inputAxisS1);
 
 		final var inputButtons = input.getButtons();
 		for (var i = 0; i < nButtons; i++) {
-			if (buttons[i].booleanValue() != inputButtons[i]) {
-				buttons[i].setValue(inputButtons[i] ? 1L : 0L);
-				buttonsChanged[i] = true;
-			}
+			buttons[i].setValue(inputButtons[i] ? 1 : 0);
 
 			inputButtons[i] = false;
 		}
@@ -126,14 +99,15 @@ public final class LocalOutput extends VJoyOutput {
 		downUpMouseButtons.addAll(inputDownUpMouseButtons);
 		inputDownUpMouseButtons.clear();
 
-		final var sourceModifiers = new HashSet<Integer>();
-		final var sourceNormalKeys = new HashSet<Integer>();
+		final var sourceModifiersCodes = new HashSet<ScanCode>();
+		final var sourceKeyCodes = new HashSet<ScanCode>();
 		input.getDownKeyStrokes().forEach(keyStroke -> {
-			sourceModifiers.addAll(Arrays.asList(keyStroke.getModifierCodes()));
-			sourceNormalKeys.addAll(Arrays.asList(keyStroke.getKeyCodes()));
+			sourceModifiersCodes.addAll(Arrays.asList(keyStroke.getModifierCodes()));
+			sourceKeyCodes.addAll(Arrays.asList(keyStroke.getKeyCodes()));
 		});
-		updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
-		updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
+
+		updateOutputSets(sourceModifiersCodes, oldDownModifiers, newUpModifiers, newDownModifiers, false);
+		updateOutputSets(sourceKeyCodes, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
 		downUpKeyStrokes.clear();
 		final var inputDownUpKeyStrokes = input.getDownUpKeyStrokes();

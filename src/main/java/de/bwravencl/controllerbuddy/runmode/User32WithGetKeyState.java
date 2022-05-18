@@ -14,18 +14,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.action;
+package de.bwravencl.controllerbuddy.runmode;
 
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action;
-import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.win32.W32APIOptions;
 
-@Action(label = "TO_VR_RESET_ZERO_POSE_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 610)
-public class ButtonToVrResetZeroPoseAction extends ToVrResetZeroPoseAction<Byte> implements IButtonToAction {
+interface User32WithGetKeyState extends User32 {
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
-		handleAction(value != 0, input);
-	}
+	User32WithGetKeyState INSTANCE = Native.load("user32", User32WithGetKeyState.class, W32APIOptions.DEFAULT_OPTIONS);
+
+	short GetKeyState(int KeyState);
 }

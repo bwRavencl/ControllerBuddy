@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  windows:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -30,8 +30,8 @@ jobs:
         id: extract_release_variables
         shell: bash
         run: |
-          echo ::set-output name=tag_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename {} .zip)
-          echo ::set-output name=zip_path::$(ls build/distributions/ControllerBuddy-*.zip)
+          echo ::set-output name=tag_name::$(ls build/distributions/ControllerBuddy-*.zip | xargs -i basename -s .zip {} | sed s/-windows//)
+          echo ::set-output name=archive_path::$(ls build/distributions/ControllerBuddy-*.zip)
       - name: Tag Commit
         uses: tvdias/github-tagger@v0.0.2
         with:
@@ -44,4 +44,39 @@ jobs:
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
-          files: ${{ steps.extract_release_variables.outputs.zip_path }}
+          files: ${{ steps.extract_release_variables.outputs.archive_path }}
+  linux:
+    needs: windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - name: Install JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 18.0.1+10
+      - name: Build
+        uses: eskatos/gradle-command-action@v2
+        env:
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        with:
+          arguments: distTar --info
+      - name: Extract Release Variables
+        id: extract_release_variables
+        shell: bash
+        run: |
+          echo ::set-output name=tag_name::$(ls build/distributions/ControllerBuddy-*.tgz | xargs -i basename -s .tgz {} | sed s/-linux//)
+          echo ::set-output name=archive_path::$(ls build/distributions/ControllerBuddy-*.tgz)
+      - name: Release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
+          draft: false
+          prerelease: false
+          files: ${{ steps.extract_release_variables.outputs.archive_path }}

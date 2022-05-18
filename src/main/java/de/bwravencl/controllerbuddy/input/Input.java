@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input;
@@ -44,7 +43,7 @@ import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.sony.SonyExtension;
-import de.bwravencl.controllerbuddy.output.Output;
+import de.bwravencl.controllerbuddy.runmode.RunMode;
 
 public final class Input {
 
@@ -127,17 +126,17 @@ public final class Input {
 	private final ControllerInfo controller;
 	private final EnumMap<VirtualAxis, Integer> axes;
 	private Profile profile;
-	private Output output;
+	private RunMode runMode;
 	private boolean[] buttons;
-	private volatile int cursorDeltaX = 5;
-	private volatile int cursorDeltaY = 5;
+	private volatile int cursorDeltaX;
+	private volatile int cursorDeltaY;
 	private volatile int scrollClicks;
 	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
-	private final Set<Integer> onLockKeys = new HashSet<>();
-	private final Set<Integer> offLockKeys = new HashSet<>();
+	private final Set<LockKey> onLockKeys = new HashSet<>();
+	private final Set<LockKey> offLockKeys = new HashSet<>();
 	private boolean clearOnNextPoll;
 	private boolean repeatModeActionWalk;
 	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
@@ -180,8 +179,8 @@ public final class Input {
 		value = Math.max(value, -1f);
 		value = Math.min(value, 1f);
 
-		final var minAxisValue = output.getMinAxisValue();
-		final var maxAxisValue = output.getMaxAxisValue();
+		final var minAxisValue = runMode.getMinAxisValue();
+		final var maxAxisValue = runMode.getMaxAxisValue();
 
 		return (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue);
 	}
@@ -226,16 +225,12 @@ public final class Input {
 		return main;
 	}
 
-	public Set<Integer> getOffLockKeys() {
+	public Set<LockKey> getOffLockKeys() {
 		return offLockKeys;
 	}
 
-	public Set<Integer> getOnLockKeys() {
+	public Set<LockKey> getOnLockKeys() {
 		return onLockKeys;
-	}
-
-	public Output getOutput() {
-		return output;
 	}
 
 	public float getPlanckLength() {
@@ -250,6 +245,10 @@ public final class Input {
 		return rateMultiplier;
 	}
 
+	public RunMode getRunMode() {
+		return runMode;
+	}
+
 	public int getScrollClicks() {
 		return scrollClicks;
 	}
@@ -259,7 +258,8 @@ public final class Input {
 	}
 
 	public void init() {
-		sonyExtension = SonyExtension.getIfAvailable(this, controller);
+		if (controller != null)
+			sonyExtension = SonyExtension.getIfAvailable(this, controller);
 
 		final var presentControllers = Main.getPresentControllers();
 
@@ -281,7 +281,7 @@ public final class Input {
 			}
 		}
 
-		planckLength = 2f / (output.getMaxAxisValue() - output.getMinAxisValue());
+		planckLength = 2f / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
 
 		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
 			if (action instanceof final IInitializationAction<?> initializationAction)
@@ -321,7 +321,7 @@ public final class Input {
 				axisToEndSuspensionTimestampMapIterator.remove();
 		}
 
-		var elapsedTime = output.getPollInterval();
+		var elapsedTime = runMode.getPollInterval();
 		if (lastPollTime > 0L)
 			elapsedTime = currentTime - lastPollTime;
 		lastPollTime = currentTime;
@@ -399,7 +399,7 @@ public final class Input {
 				final var currentValue = axes.get(virtualAxis);
 				final var delta = targetValue - currentValue;
 				if (delta != 0) {
-					final var axisRange = output.getMaxAxisValue() - output.getMinAxisValue();
+					final var axisRange = runMode.getMaxAxisValue() - runMode.getMinAxisValue();
 
 					final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
 							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
@@ -546,8 +546,8 @@ public final class Input {
 
 	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
 			final Integer dententValue) {
-		final var minAxisValue = output.getMinAxisValue();
-		final var maxAxisValue = output.getMaxAxisValue();
+		final var minAxisValue = runMode.getMinAxisValue();
+		final var maxAxisValue = runMode.getMaxAxisValue();
 
 		value = Math.max(value, minAxisValue);
 		value = Math.min(value, maxAxisValue);
@@ -578,11 +578,7 @@ public final class Input {
 	}
 
 	public void setnButtons(final int nButtons) {
-		buttons = new boolean[Math.min(output.getnButtons(), MAX_N_BUTTONS)];
-	}
-
-	public void setOutput(final Output output) {
-		this.output = output;
+		buttons = new boolean[Math.min(runMode.getnButtons(), MAX_N_BUTTONS)];
 	}
 
 	public boolean setProfile(final Profile profile) {
@@ -650,6 +646,10 @@ public final class Input {
 
 		this.profile = profile;
 		return true;
+	}
+
+	public void setRunMode(final RunMode runMode) {
+		this.runMode = runMode;
 	}
 
 	public void setScrollClicks(final int scrollClicks) {

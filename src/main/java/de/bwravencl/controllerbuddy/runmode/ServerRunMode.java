@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,12 +10,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.output;
+package de.bwravencl.controllerbuddy.runmode;
 
 import java.awt.EventQueue;
 import java.io.IOException;
@@ -41,13 +40,13 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public final class ServerOutput extends Output {
+public final class ServerRunMode extends RunMode {
 
 	public enum ServerState {
 		Listening, Connected
 	}
 
-	private static final Logger log = Logger.getLogger(ServerOutput.class.getName());
+	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
@@ -65,7 +64,7 @@ public final class ServerOutput extends Output {
 	private InetAddress clientIPAddress;
 	private ServerState serverState;
 
-	public ServerOutput(final Main main, final Input input) {
+	public ServerRunMode(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -191,13 +190,13 @@ public final class ServerOutput extends Output {
 					downKeyStrokes.forEach(keyStroke -> {
 						final var modifierCodes = keyStroke.getModifierCodes();
 						sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
-						for (final var code : modifierCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+						for (final var scanCode : modifierCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
 
 						final var keyCodes = keyStroke.getKeyCodes();
 						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-						for (final var code : keyCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+						for (final var scanCode : keyCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
 					});
 
 					final var downUpKeyStrokes = input.getDownUpKeyStrokes();
@@ -210,8 +209,8 @@ public final class ServerOutput extends Output {
 
 						final var keyCodes = keyStroke.getKeyCodes();
 						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-						for (final var code : keyCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
+						for (final var scanCode : keyCodes)
+							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
 					});
 					downUpKeyStrokes.clear();
 

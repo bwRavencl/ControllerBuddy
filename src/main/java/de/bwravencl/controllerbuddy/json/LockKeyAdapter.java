@@ -1,4 +1,4 @@
-/* Copyright (C) 2021  Matteo Hausner
+/* Copyright (C) 2022  Matteo Hausner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 
 package de.bwravencl.controllerbuddy.json;
 
-import java.awt.Color;
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
@@ -27,28 +26,29 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
+import de.bwravencl.controllerbuddy.input.LockKey;
+
+public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeserializer<LockKey> {
 
 	@Override
-	public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+	public LockKey deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
 			throws JsonParseException {
 		try {
-			Integer rgba = null;
-			if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber())
-				rgba = json.getAsInt();
-			else if (json.isJsonObject()) {
-				final var jsonObject = json.getAsJsonObject();
+			LockKey lockKey = null;
+			if (json.isJsonPrimitive()) {
+				final var jsonPrimitive = (JsonPrimitive) json;
 
-				final var valueMember = jsonObject.get("value");
-				if (valueMember != null && valueMember.isJsonPrimitive() && ((JsonPrimitive) valueMember).isNumber())
-					rgba = valueMember.getAsInt();
+				if (jsonPrimitive.isNumber())
+					lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(jsonPrimitive.getAsInt());
+				else if (jsonPrimitive.isString())
+					lockKey = LockKey.nameToLockKeyMap.get(jsonPrimitive.getAsString());
 			}
 
-			if (rgba == null)
+			if (lockKey == null)
 				throw new JsonParseException(
-						"Could not deserialize as " + Color.class.getSimpleName() + ": " + json.toString());
+						"Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json.toString());
 
-			return new Color(rgba, true);
+			return lockKey;
 		} catch (final JsonParseException e) {
 			throw e;
 		} catch (final Throwable t) {
@@ -57,7 +57,7 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 	}
 
 	@Override
-	public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
-		return new JsonPrimitive(src.getRGB());
+	public JsonElement serialize(final LockKey src, final Type typeOfSrc, final JsonSerializationContext context) {
+		return new JsonPrimitive(src.name());
 	}
 }

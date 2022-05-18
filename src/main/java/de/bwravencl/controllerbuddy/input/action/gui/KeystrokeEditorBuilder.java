@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action.gui;
@@ -119,12 +118,12 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			try {
-				final Set<Integer> scanCodes = new HashSet<>();
+				final Set<ScanCode> scanCodes = new HashSet<>();
 
 				((JList<?>) e.getSource()).getSelectedValuesList()
-						.forEach(object -> scanCodes.add(ScanCode.nameToKeyCodeMap.get(object)));
+						.forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
 
-				final var scanCodesArray = scanCodes.toArray(new Integer[scanCodes.size()]);
+				final var scanCodesArray = scanCodes.toArray(new ScanCode[scanCodes.size()]);
 
 				if (modifiers)
 					keyStroke.setModifierCodes(scanCodesArray);
@@ -180,7 +179,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var keyStroke = (KeyStroke) initialValue;
 
-		final var availableScanCodes = ScanCode.nameToKeyCodeMap.keySet();
+		final var availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
 
 		final var modifiersPanel = new JPanel();
 		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
@@ -192,8 +191,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
 		final var addedModifiers = new ArrayList<String>();
-		for (final int c1 : keyStroke.getModifierCodes())
-			addedModifiers.add(ScanCode.keyCodeToNameMap.get(c1));
+		for (final var modifierCode : keyStroke.getModifierCodes())
+			addedModifiers.add(modifierCode.name());
 		addedModifiers.forEach(s1 -> {
 			final var index1 = getListModelIndex(modifierList.getModel(), s1);
 			if (index1 >= 0)
@@ -215,8 +214,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
 		final var addedKeys = new ArrayList<String>();
-		for (final int c2 : keyStroke.getKeyCodes())
-			addedKeys.add(ScanCode.keyCodeToNameMap.get(c2));
+		for (final var keyCode : keyStroke.getKeyCodes())
+			addedKeys.add(keyCode.name());
 		addedKeys.forEach(s2 -> {
 			final var index2 = getListModelIndex(keyList.getModel(), s2);
 			if (index2 >= 0)

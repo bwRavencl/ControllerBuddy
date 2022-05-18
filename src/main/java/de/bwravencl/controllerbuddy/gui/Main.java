@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -165,24 +164,29 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
+import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
+import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
 import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
-import de.bwravencl.controllerbuddy.output.ClientOutput;
-import de.bwravencl.controllerbuddy.output.LocalOutput;
-import de.bwravencl.controllerbuddy.output.Output;
-import de.bwravencl.controllerbuddy.output.ServerOutput;
-import de.bwravencl.controllerbuddy.output.VJoyOutput;
+import de.bwravencl.controllerbuddy.json.ScanCodeAdapter;
+import de.bwravencl.controllerbuddy.runmode.ClientRunMode;
+import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
+import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
+import de.bwravencl.controllerbuddy.runmode.RunMode;
+import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 import in.pratanumandal.unique4j.Unique4j;
@@ -203,7 +207,7 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var vJoyDirectoryFileChooser = new JFileChooser(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutput.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
@@ -211,7 +215,7 @@ public final class Main {
 
 			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
 			final var dllFile = new File(vjoyDirectory,
-					VJoyOutput.getArchFolderName() + File.separator + VJoyOutput.LIBRARY_FILENAME);
+					OutputRunMode.getVJoyArchFolderName() + File.separator + OutputRunMode.VJOY_LIBRARY_FILENAME);
 			if (dllFile.exists()) {
 				final var vjoyPath = vjoyDirectory.getAbsolutePath();
 				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
@@ -219,7 +223,7 @@ public final class Main {
 			} else
 				GuiUtils.showMessageDialog(frame,
 						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
-								VJoyOutput.getDefaultInstallationPath()),
+								OutputRunMode.getDefaultInstallationPath()),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -437,8 +441,10 @@ public final class Main {
 		private static JsonContext create() {
 			final var actionAdapter = new ActionTypeAdapter();
 			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
+					.registerTypeAdapter(Color.class, new ColorTypeAdapter())
 					.registerTypeAdapter(IAction.class, actionAdapter)
-					.registerTypeAdapter(Color.class, new ColorTypeAdapter()).setPrettyPrinting().create();
+					.registerTypeAdapter(LockKey.class, new LockKeyAdapter())
+					.registerTypeAdapter(ScanCode.class, new ScanCodeAdapter()).setPrettyPrinting().create();
 
 			return new JsonContext(gson, actionAdapter);
 		}
@@ -495,10 +501,6 @@ public final class Main {
 			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 				loadProfile(profileFileChooser.getSelectedFile(), false);
 		}
-	}
-
-	private enum OutputType {
-		NONE, LOCAL, CLIENT, SERVER
 	}
 
 	private static final class ProfileFileChooser extends JFileChooser {
@@ -567,6 +569,10 @@ public final class Main {
 			updateModesPanel();
 			updateVisualizationPanel();
 		}
+	}
+
+	private enum RunModeType {
+		NONE, LOCAL, CLIENT, SERVER
 	}
 
 	private final class SaveAction extends AbstractAction {
@@ -679,7 +685,7 @@ public final class Main {
 			if (host != null && host.length() > 0)
 				preferences.put(PREFERENCES_HOST, host);
 			else
-				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST));
+				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST));
 		}
 	}
 
@@ -902,7 +908,10 @@ public final class Main {
 						} else if (task instanceof final Runnable runnable)
 							runnable.run();
 					} catch (final Throwable t) {
-						result = t;
+						if (task instanceof Callable)
+							result = t;
+						else if (task instanceof Runnable)
+							throw new RuntimeException(t);
 					} finally {
 						if (notify)
 							synchronized (this) {
@@ -1035,7 +1044,11 @@ public final class Main {
 
 	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
 
+	public static final boolean isLinux = Platform.getOSType() == Platform.LINUX;
+
 	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
+
+	public static final boolean isOpenVrSupported = (isWindows || isLinux) && !Platform.isARM();
 
 	static boolean skipMessageDialogs;
 
@@ -1143,9 +1156,10 @@ public final class Main {
 	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 
 	static {
-		options.addOption(OPTION_AUTOSTART, true, MessageFormat.format(
-				strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
-				isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER") : strings.getString("SERVER")));
+		options.addOption(OPTION_AUTOSTART, true,
+				MessageFormat.format(strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
+						isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+								: strings.getString("SERVER")));
 		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_GAME_CONTROLLER_DB, true, strings.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
@@ -1366,13 +1380,13 @@ public final class Main {
 
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 
-	private volatile Output output;
+	private volatile RunMode runMode;
 
 	private ControllerInfo selectedController;
 
 	private Input input;
 
-	private OutputType lastOutputType = OutputType.NONE;
+	private RunModeType lastRunModeType = RunModeType.NONE;
 
 	private final JFrame frame;
 
@@ -1574,7 +1588,7 @@ public final class Main {
 		fileJMenu.add(quitAction);
 		menuBar.add(deviceJMenu);
 
-		if (isWindows) {
+		if (isWindows || isLinux) {
 			startLocalJMenuItem = runJMenu.add(startLocalAction);
 			startClientJMenuItem = runJMenu.add(startClientAction);
 		}
@@ -1608,7 +1622,7 @@ public final class Main {
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL), 1, 100, 1));
+				preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL), 1, 100, 1));
 		final var pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1626,7 +1640,7 @@ public final class Main {
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			this.vJoyDirectoryLabel = new JLabel(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, VJoyOutput.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
 			vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
 
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
@@ -1640,14 +1654,16 @@ public final class Main {
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
-					preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE), 1, 16, 1));
+					preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE), 1, 16, 1));
 			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
 			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
 					(int) ((JSpinner) event.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
+		}
 
+		if (isWindows || isLinux) {
 			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			globalSettingsPanel.add(hostPanel, settingsPanelGridBagConstraints);
 
@@ -1655,7 +1671,7 @@ public final class Main {
 			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 			hostPanel.add(hostLabel);
 
-			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientOutput.DEFAULT_HOST), 15);
+			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST), 15);
 			hostTextField.setCaretPosition(0);
 			final var setHostAction = new SetHostAction(hostTextField);
 			hostTextField.addActionListener(setHostAction);
@@ -1671,7 +1687,7 @@ public final class Main {
 		portPanel.add(portLabel);
 
 		final var portSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT), 1024, 65535, 1));
+				preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT), 1024, 65535, 1));
 		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
 		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		portSpinner.setEditor(portSpinnerEditor);
@@ -1687,7 +1703,7 @@ public final class Main {
 		timeoutPanel.add(timeoutLabel);
 
 		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT), 10, 60000, 1));
+				preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT), 10, 60000, 1));
 		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -1765,16 +1781,25 @@ public final class Main {
 		if (!glfwInitialized) {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
 
-			if (isWindows)
-				GuiUtils.showMessageDialog(frame,
-						strings.getString("COULD_NOT_INITIALIZE_GLFW.GLFW_DIALOG_TEXT_WINDOWS"),
+			if (isWindows || isLinux)
+				GuiUtils.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			else {
-				GuiUtils.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW.GLFW_DIALOG_TEXT"),
+				GuiUtils.showMessageDialog(frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
 		}
+
+		if (isLinux)
+			X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
+				final var buffer = new byte[1024];
+				X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
+
+				log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
+
+				return 0;
+			});
 
 		var mappingsUpdated = updateGameControllerMappings(
 				ClassLoader.getSystemResourceAsStream(Main.GAME_CONTROLLER_DATABASE_FILENAME));
@@ -1832,11 +1857,11 @@ public final class Main {
 		final var noControllerConnected = glfwInitialized && presentControllers.isEmpty();
 
 		if (noControllerConnected)
-			if (isWindows)
-				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_WINDOWS"),
+			if (isWindows || isLinux)
+				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			else
-				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+				GuiUtils.showMessageDialog(frame, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
 						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
@@ -2083,9 +2108,9 @@ public final class Main {
 
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 		if (autostartOptionValue != null)
-			if (isWindows && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue))
+			if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue))
 				startLocal();
-			else if (isWindows && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue))
+			else if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue))
 				startClient();
 			else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue))
 				startServer();
@@ -2095,7 +2120,7 @@ public final class Main {
 								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
 								OPTION_AUTOSTART, autostartOptionValue,
 								MessageFormat.format(
-										isWindows ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+										isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
 												: strings.getString("SERVER"),
 										strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
 
@@ -2134,7 +2159,8 @@ public final class Main {
 		overlayFrame.setType(JFrame.Type.UTILITY);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
-		overlayFrame.setBackground(TRANSPARENT);
+		if (isWindows)
+			overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.setAlwaysOnTop(true);
 		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -2151,7 +2177,8 @@ public final class Main {
 
 		indicatorPanelFlowLayout = new FlowLayout();
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
-		indicatorPanel.setBackground(TRANSPARENT);
+		if (isWindows)
+			indicatorPanel.setBackground(TRANSPARENT);
 
 		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -2173,7 +2200,6 @@ public final class Main {
 						overlayAxis);
 				indicatorProgressBar.setPreferredSize(new Dimension(20, 150));
 				indicatorProgressBar.setForeground(overlayAxis.color);
-				indicatorProgressBar.setValue(1);
 
 				indicatorPanel.add(indicatorProgressBar);
 				virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
@@ -2211,7 +2237,7 @@ public final class Main {
 	private void initVrOverlay() {
 		final var profile = input.getProfile();
 
-		if (!isWindows || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !profile.isShowOverlay()
+		if (!isOpenVrSupported || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !profile.isShowOverlay()
 				|| !profile.isShowVrOverlay())
 			return;
 
@@ -2223,11 +2249,11 @@ public final class Main {
 	}
 
 	private boolean isClientRunning() {
-		return taskRunner.isTaskOfTypeRunning(ClientOutput.class);
+		return taskRunner.isTaskOfTypeRunning(ClientRunMode.class);
 	}
 
 	public boolean isLocalRunning() {
-		return taskRunner.isTaskOfTypeRunning(LocalOutput.class);
+		return taskRunner.isTaskOfTypeRunning(LocalRunMode.class);
 	}
 
 	public boolean isOpenVrOverlayActive() {
@@ -2239,7 +2265,7 @@ public final class Main {
 	}
 
 	public boolean isServerRunning() {
-		return taskRunner.isTaskOfTypeRunning(ServerOutput.class);
+		return taskRunner.isTaskOfTypeRunning(ServerRunMode.class);
 	}
 
 	boolean isShutdownHookTriggered() {
@@ -2411,7 +2437,7 @@ public final class Main {
 			if (runMenuVisible) {
 				runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
 
-				if (isWindows) {
+				if (isWindows || isLinux) {
 					if (controllerConnected) {
 						startLocalMenuItem = new MenuItem((String) startLocalAction.getValue(Action.NAME));
 						startLocalMenuItem.addActionListener(startLocalAction);
@@ -2488,7 +2514,7 @@ public final class Main {
 				if (startLocalMenuItem != null)
 					runPopupMenu.insert(startLocalMenuItem, 0);
 				if (startServerMenuItem != null)
-					runPopupMenu.insert(startServerMenuItem, isWindows ? 2 : 0);
+					runPopupMenu.insert(startServerMenuItem, isWindows || isLinux ? 2 : 0);
 			}
 
 			modesPanel = new JPanel(new BorderLayout());
@@ -2581,7 +2607,7 @@ public final class Main {
 		frame.getContentPane().repaint();
 	}
 
-	private void onOutputChanged() {
+	private void onRunModeChanged() {
 		final var running = isRunning();
 
 		if (startLocalJMenuItem != null)
@@ -2662,7 +2688,7 @@ public final class Main {
 	}
 
 	public void restartLast() {
-		switch (lastOutputType) {
+		switch (lastRunModeType) {
 		case LOCAL -> startLocal();
 		case CLIENT -> startClient();
 		case SERVER -> startServer();
@@ -2801,34 +2827,34 @@ public final class Main {
 		if (isRunning())
 			return;
 
-		lastOutputType = OutputType.CLIENT;
-		final var clientThread = new ClientOutput(Main.this, input);
-		clientThread
-				.setvJoyDevice(new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE)));
+		lastRunModeType = RunModeType.CLIENT;
+		final var clientThread = new ClientRunMode(Main.this, input);
+		clientThread.setvJoyDevice(
+				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
 		clientThread.setHost(hostTextField.getText());
-		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT));
-		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT));
+		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
+		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
 
-		output = clientThread;
+		runMode = clientThread;
 		taskRunner.run(clientThread);
 
-		onOutputChanged();
+		onRunModeChanged();
 	}
 
 	private void startLocal() {
 		if (selectedController == null || isRunning())
 			return;
 
-		lastOutputType = OutputType.LOCAL;
-		final var localThread = new LocalOutput(Main.this, input);
-		localThread
-				.setvJoyDevice(new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, VJoyOutput.DEFAULT_VJOY_DEVICE)));
-		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL));
+		lastRunModeType = RunModeType.LOCAL;
+		final var localThread = new LocalRunMode(Main.this, input);
+		localThread.setvJoyDevice(
+				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
+		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
 
-		output = localThread;
+		runMode = localThread;
 		taskRunner.run(localThread);
 
-		onOutputChanged();
+		onRunModeChanged();
 
 		initOverlay();
 		initVrOverlay();
@@ -2877,34 +2903,34 @@ public final class Main {
 		if (selectedController == null || isRunning())
 			return;
 
-		lastOutputType = OutputType.SERVER;
-		final var serverThread = new ServerOutput(Main.this, input);
-		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerOutput.DEFAULT_PORT));
-		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerOutput.DEFAULT_TIMEOUT));
-		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, Output.DEFAULT_POLL_INTERVAL));
+		lastRunModeType = RunModeType.SERVER;
+		final var serverThread = new ServerRunMode(Main.this, input);
+		serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
+		serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
+		serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
 
-		output = serverThread;
+		runMode = serverThread;
 		taskRunner.run(serverThread);
 
-		onOutputChanged();
+		onRunModeChanged();
 
 		initOverlay();
 		startOverlayTimerTask();
 	}
 
-	public void stopAll(final boolean initiateStop, final boolean resetLastOutputType,
+	public void stopAll(final boolean initiateStop, final boolean resetLastRunModeType,
 			final boolean performGarbageCollection) {
-		if (isWindows) {
-			stopLocal(initiateStop, resetLastOutputType);
-			stopClient(initiateStop, resetLastOutputType);
+		if (isWindows || isLinux) {
+			stopLocal(initiateStop, resetLastRunModeType);
+			stopClient(initiateStop, resetLastRunModeType);
 		}
-		stopServer(initiateStop, resetLastOutputType);
+		stopServer(initiateStop, resetLastRunModeType);
 
 		if (performGarbageCollection)
 			System.gc();
 	}
 
-	private void stopClient(final boolean initiateStop, final boolean resetLastOutputType) {
+	private void stopClient(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = isClientRunning();
 
 		if (initiateStop && running)
@@ -2913,15 +2939,15 @@ public final class Main {
 		if (running)
 			taskRunner.waitForTask();
 
-		if (resetLastOutputType)
-			lastOutputType = OutputType.NONE;
+		if (resetLastRunModeType)
+			lastRunModeType = RunModeType.NONE;
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			onOutputChanged();
+			onRunModeChanged();
 		});
 	}
 
-	private void stopLocal(final boolean initiateStop, final boolean resetLastOutputType) {
+	private void stopLocal(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = isLocalRunning();
 
 		if (initiateStop && running)
@@ -2930,13 +2956,13 @@ public final class Main {
 		if (running)
 			taskRunner.waitForTask();
 
-		if (resetLastOutputType)
-			lastOutputType = OutputType.NONE;
+		if (resetLastRunModeType)
+			lastRunModeType = RunModeType.NONE;
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
 			deInitOverlayAndHideOnScreenKeyboard();
-			onOutputChanged();
+			onRunModeChanged();
 		});
 	}
 
@@ -2945,22 +2971,22 @@ public final class Main {
 			overlayTimerTask.cancel();
 	}
 
-	private void stopServer(final boolean initiateStop, final boolean resetLastOutputType) {
-		final var running = output instanceof ServerOutput;
+	private void stopServer(final boolean initiateStop, final boolean resetLastRunModeType) {
+		final var running = runMode instanceof ServerRunMode;
 
 		if (initiateStop && running)
-			((ServerOutput) output).close();
+			((ServerRunMode) runMode).close();
 
 		if (running)
 			taskRunner.waitForTask();
 
-		if (resetLastOutputType)
-			lastOutputType = OutputType.NONE;
+		if (resetLastRunModeType)
+			lastRunModeType = RunModeType.NONE;
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 			stopOverlayTimerTask();
 			deInitOverlayAndHideOnScreenKeyboard();
-			onOutputChanged();
+			onRunModeChanged();
 		});
 	}
 
@@ -3143,32 +3169,29 @@ public final class Main {
 		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
 		indicatorPanel.invalidate();
 
-		overlayFrame.setBackground(TRANSPARENT);
+		if (isWindows)
+			overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.pack();
 	}
 
 	public void updateOverlayAxisIndicators() {
-		if (output == null || !isLocalRunning() && !isServerRunning())
+		if (runMode == null || !isLocalRunning() && !isServerRunning())
 			return;
 
 		EnumSet.allOf(Input.VirtualAxis.class).stream()
 				.filter(virtualAxis -> virtualAxisToProgressBarMap.containsKey(virtualAxis)).forEach(virtualAxis -> {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
 					var changed = false;
+					final var minimum = isLinux ? runMode.getMinAxisValue() : -runMode.getMaxAxisValue();
+					final var maximum = isLinux ? runMode.getMaxAxisValue() : runMode.getMinAxisValue();
 
-					final var newMinimum = -output.getMaxAxisValue();
-					if (progressBar.getMinimum() != newMinimum) {
-						progressBar.setMinimum(newMinimum);
-						changed = true;
-					}
-
-					final var newMaximum = output.getMinAxisValue();
+					final var newMaximum = maximum - minimum;
 					if (progressBar.getMaximum() != newMaximum) {
 						progressBar.setMaximum(newMaximum);
 						changed = true;
 					}
 
-					final var newValue = -input.getAxes().get(virtualAxis);
+					final var newValue = -input.getAxes().get(virtualAxis) - minimum - 1;
 					if (progressBar.getValue() != newValue) {
 						progressBar.setValue(newValue);
 						changed = true;
@@ -3312,7 +3335,7 @@ public final class Main {
 			});
 			overlaySettingsPanel.add(showOverlayCheckBox);
 
-			if (isWindows) {
+			if (isOpenVrSupported) {
 				final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 				profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
 
@@ -3399,6 +3422,19 @@ public final class Main {
 		}
 
 		frame.setTitle(title);
+		if (Main.isLinux) {
+			final var toolkit = Toolkit.getDefaultToolkit();
+			final var xtoolkit = toolkit.getClass();
+			if ("sun.awt.X11.XToolkit".equals(xtoolkit.getName()))
+				try {
+					final var awtAppClassName = xtoolkit.getDeclaredField("awtAppClassName");
+					awtAppClassName.setAccessible(true);
+					awtAppClassName.set(null, title);
+				} catch (final NoSuchFieldException | SecurityException | IllegalArgumentException
+						| IllegalAccessException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				}
+		}
 
 		if (trayIcon != null && input != null) {
 			final String toolTip;

@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action;
@@ -64,9 +63,9 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 			else {
 				remainingD = 0f;
 
-				final var output = input.getOutput();
-				final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), output.getMinAxisValue(),
-						output.getMaxAxisValue(), -1f, 1f);
+				final var runMode = input.getRunMode();
+				final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
+						runMode.getMaxAxisValue(), -1f, 1f);
 
 				input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
 			}

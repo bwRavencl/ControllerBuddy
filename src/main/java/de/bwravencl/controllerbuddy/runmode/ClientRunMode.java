@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,12 +10,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.output;
+package de.bwravencl.controllerbuddy.runmode;
 
 import java.awt.EventQueue;
 import java.io.IOException;
@@ -36,29 +35,31 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
-public final class ClientOutput extends VJoyOutput {
+public final class ClientRunMode extends OutputRunMode {
 
 	private enum ClientState {
 		Connecting, Connected
 	}
 
-	private static final Logger log = Logger.getLogger(ClientOutput.class.getName());
+	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	private static final int N_CONNECTION_RETRIES = 10;
 
 	private String host = DEFAULT_HOST;
-	private int port = ServerOutput.DEFAULT_PORT;
-	private int timeout = ServerOutput.DEFAULT_TIMEOUT;
+	private int port = ServerRunMode.DEFAULT_PORT;
+	private int timeout = ServerRunMode.DEFAULT_TIMEOUT;
 	private ClientState clientState = ClientState.Connecting;
 	private InetAddress hostAddress;
 	private DatagramSocket clientSocket;
 	private final byte[] receiveBuf = new byte[1024];
 	private long counter = -1;
 
-	public ClientOutput(final Main main, final Input input) {
+	public ClientRunMode(final Main main, final Input input) {
 		super(main, input);
 	}
 
@@ -82,12 +83,12 @@ public final class ClientOutput extends VJoyOutput {
 			});
 
 			final var sb = new StringBuilder();
-			sb.append(ServerOutput.PROTOCOL_MESSAGE_CLIENT_HELLO);
-			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerRunMode.PROTOCOL_MESSAGE_CLIENT_HELLO);
+			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(minAxisValue));
-			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(maxAxisValue));
-			sb.append(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
+			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
 			sb.append(String.valueOf(nButtons));
 
 			final var helloBuf = sb.toString().getBytes("ASCII");
@@ -104,8 +105,8 @@ public final class ClientOutput extends VJoyOutput {
 					final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
 							StandardCharsets.US_ASCII);
 
-					if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_SERVER_HELLO)) {
-						final var messageParts = message.split(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
+					if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_SERVER_HELLO)) {
+						final var messageParts = message.split(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
 						final var serverProtocolVersion = messageParts[1];
 						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
 						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
@@ -173,66 +174,38 @@ public final class ClientOutput extends VJoyOutput {
 				final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
 						StandardCharsets.US_ASCII);
 
-				if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_UPDATE)) {
-					final var messageParts = message.split(ServerOutput.PROTOCOL_MESSAGE_DELIMITER);
+				if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_UPDATE)) {
+					final var messageParts = message.split(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
 
 					final var newCounter = Long.parseLong(messageParts[1]);
 					if (newCounter > counter) {
 						final var inputAxisX = Integer.parseInt(messageParts[2]);
-						if (axisX.intValue() != inputAxisX) {
-							axisX.setValue(inputAxisX);
-							axisXChanged = true;
-						}
+						axisX.setValue(inputAxisX);
 
 						final var inputAxisY = Integer.parseInt(messageParts[3]);
-						if (axisY.intValue() != inputAxisY) {
-							axisY.setValue(inputAxisY);
-							axisYChanged = true;
-						}
+						axisY.setValue(inputAxisY);
 
 						final var inputAxisZ = Integer.parseInt(messageParts[4]);
-						if (axisZ.intValue() != inputAxisZ) {
-							axisZ.setValue(inputAxisZ);
-							axisZChanged = true;
-						}
+						axisZ.setValue(inputAxisZ);
 
 						final var inputAxisRX = Integer.parseInt(messageParts[5]);
-						if (axisRX.intValue() != inputAxisRX) {
-							axisRX.setValue(inputAxisRX);
-							axisRXChanged = true;
-						}
+						axisRX.setValue(inputAxisRX);
 
 						final var inputAxisRY = Integer.parseInt(messageParts[6]);
-						if (axisRY.intValue() != inputAxisRY) {
-							axisRY.setValue(inputAxisRY);
-							axisRYChanged = true;
-						}
+						axisRY.setValue(inputAxisRY);
 
 						final var inputAxisRZ = Integer.parseInt(messageParts[7]);
-						if (axisRZ.intValue() != inputAxisRZ) {
-							axisRZ.setValue(inputAxisRZ);
-							axisRZChanged = true;
-						}
+						axisRZ.setValue(inputAxisRZ);
 
 						final var inputAxisS0 = Integer.parseInt(messageParts[8]);
-						if (axisS0.intValue() != inputAxisS0) {
-							axisS0.setValue(inputAxisS0);
-							axisS0Changed = true;
-						}
+						axisS0.setValue(inputAxisS0);
 
 						final var inputAxisS1 = Integer.parseInt(messageParts[9]);
-						if (axisS1.intValue() != inputAxisS1) {
-							axisS1.setValue(inputAxisS1);
-							axisS1Changed = true;
-						}
+						axisS1.setValue(inputAxisS1);
 
 						for (var i = 0; i < nButtons; i++) {
-							final var b = Boolean.parseBoolean(messageParts[10 + i]);
-
-							if (buttons[i].booleanValue() != b) {
-								buttons[i].setValue(b ? 1L : 0L);
-								buttonsChanged[i] = true;
-							}
+							final var buttonDown = Boolean.parseBoolean(messageParts[10 + i]);
+							buttons[i].setValue(buttonDown ? 1 : 0);
 						}
 
 						cursorDeltaX = Integer.parseInt(messageParts[10 + nButtons]);
@@ -253,8 +226,8 @@ public final class ClientOutput extends VJoyOutput {
 							downUpMouseButtons.add(b);
 						}
 
-						final var sourceModifiers = new HashSet<Integer>();
-						final var sourceNormalKeys = new HashSet<Integer>();
+						final var sourceModifiers = new HashSet<ScanCode>();
+						final var sourceNormalKeys = new HashSet<ScanCode>();
 						var nDownKeyStrokes = Integer
 								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
 						for (var i = 1; i <= nDownKeyStrokes; i++) {
@@ -263,7 +236,7 @@ public final class ClientOutput extends VJoyOutput {
 							for (var j = 1; j <= nDownModifierCodes; j++) {
 								final var k = Integer.parseInt(
 										messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i + j]);
-								sourceModifiers.add(k);
+								sourceModifiers.add(ScanCode.keyCodeToScanCodeMap.get(k));
 							}
 
 							final var nDownKeyCodes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
@@ -271,7 +244,7 @@ public final class ClientOutput extends VJoyOutput {
 							for (var j = 1; j <= nDownKeyCodes; j++) {
 								final var k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
 										+ nDownUpMouseButtons + nDownModifierCodes + i + j]);
-								sourceNormalKeys.add(k);
+								sourceNormalKeys.add(ScanCode.keyCodeToScanCodeMap.get(k));
 							}
 
 							final var spacing = nDownModifierCodes + nDownKeyCodes + 1;
@@ -289,21 +262,21 @@ public final class ClientOutput extends VJoyOutput {
 
 							final var nDownUpModifierCodes = Integer.parseInt(messageParts[15 + nButtons
 									+ nDownMouseButtons + nDownUpMouseButtons + nDownKeyStrokes + i]);
-							final var modifierCodes = new Integer[nDownUpModifierCodes];
+							final var modifierCodes = new ScanCode[nDownUpModifierCodes];
 							for (var j = 1; j <= nDownUpModifierCodes; j++) {
 								final var k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
 										+ nDownUpMouseButtons + nDownKeyStrokes + i + j]);
-								modifierCodes[j - 1] = k;
+								modifierCodes[j - 1] = ScanCode.keyCodeToScanCodeMap.get(k);
 							}
 							keyStroke.setModifierCodes(modifierCodes);
 
 							final var nDownUpKeyCodes = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
 									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i]);
-							final var keyCodes = new Integer[nDownUpKeyCodes];
+							final var keyCodes = new ScanCode[nDownUpKeyCodes];
 							for (var j = 1; j <= nDownUpKeyCodes; j++) {
 								final var k = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
 										+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i + j]);
-								keyCodes[j - 1] = k;
+								keyCodes[j - 1] = ScanCode.keyCodeToScanCodeMap.get(k);
 							}
 							keyStroke.setKeyCodes(keyCodes);
 							downUpKeyStrokes.add(keyStroke);
@@ -319,24 +292,30 @@ public final class ClientOutput extends VJoyOutput {
 						onLockKeys.clear();
 						final var nOnLockKeys = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
-						for (var i = 1; i <= nOnLockKeys; i++)
-							onLockKeys.add(Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + i]));
+						for (var i = 1; i <= nOnLockKeys; i++) {
+							final var virtualKeyCode = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
+									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + i]);
+							final var lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode);
+							onLockKeys.add(lockKey);
+						}
 
 						offLockKeys.clear();
 						final var nOffLockKeys = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
 								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys]);
-						for (var i = 1; i <= nOffLockKeys; i++)
-							offLockKeys.add(Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys + i]));
+						for (var i = 1; i <= nOffLockKeys; i++) {
+							final var virtualKeyCode = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
+									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys + i]);
+							final var lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode);
+							offLockKeys.add(lockKey);
+						}
 
 						counter = newCounter;
 						retVal = true;
 					}
 				}
 
-				if (message.startsWith(ServerOutput.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
-					final var keepAliveBuf = ServerOutput.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
+				if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
+					final var keepAliveBuf = ServerRunMode.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
 					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress,
 							port);
 					clientSocket.send(keepAlivePacket);

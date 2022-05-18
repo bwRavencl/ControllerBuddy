@@ -1,8 +1,8 @@
 /* Copyright (C) 2020  Matteo Hausner
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -10,9 +10,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -132,8 +131,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 			this.directInputKeyCodeName = directInputKeyCodeName;
 
-			final Integer[] keyCodes;
-			final Integer[] modifierCodes;
+			final ScanCode[] keyScanCodes;
+			final ScanCode[] modifierScanCodes;
+
+			final var scanCode = ScanCode.nameToScanCodeMap.get(directInputKeyCodeName);
 
 			if (ScanCode.DIK_LMENU.equals(directInputKeyCodeName) || ScanCode.DIK_RMENU.equals(directInputKeyCodeName)
 					|| ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
@@ -142,14 +143,14 @@ public final class OnScreenKeyboard extends JFrame {
 					|| ScanCode.DIK_RCONTROL.equals(directInputKeyCodeName)
 					|| ScanCode.DIK_LWIN.equals(directInputKeyCodeName)
 					|| ScanCode.DIK_RWIN.equals(directInputKeyCodeName)) {
-				keyCodes = new Integer[0];
-				modifierCodes = new Integer[] { ScanCode.nameToKeyCodeMap.get(directInputKeyCodeName) };
+				keyScanCodes = new ScanCode[0];
+				modifierScanCodes = new ScanCode[] { scanCode };
 			} else {
-				keyCodes = new Integer[] { ScanCode.nameToKeyCodeMap.get(directInputKeyCodeName) };
-				modifierCodes = new Integer[0];
+				keyScanCodes = new ScanCode[] { scanCode };
+				modifierScanCodes = new ScanCode[0];
 			}
 
-			keyStroke = new KeyStroke(keyCodes, modifierCodes);
+			keyStroke = new KeyStroke(keyScanCodes, modifierScanCodes);
 
 			addMouseListener(new MouseListener() {
 
@@ -276,13 +277,13 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private volatile boolean locked;
 
-		private final int virtualKeyCode;
+		private final LockKey lockKey;
 
 		private boolean wasUp = true;
 
-		private LockKeyButton(final int virtualKeyCode) {
-			super(getShortLockKeyName(LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode).name()));
-			this.virtualKeyCode = virtualKeyCode;
+		private LockKeyButton(final LockKey lockKey) {
+			super(getShortLockKeyName(lockKey.name()));
+			this.lockKey = lockKey;
 
 			addActionListener(arg0 -> {
 				toggleLock();
@@ -293,7 +294,7 @@ public final class OnScreenKeyboard extends JFrame {
 		public Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();
 
-			if (virtualKeyCode == KeyEvent.VK_CAPS_LOCK)
+			if (lockKey.virtualKeyCode() == KeyEvent.VK_CAPS_LOCK)
 				preferredSize.width *= 2;
 
 			return preferredSize;
@@ -303,9 +304,9 @@ public final class OnScreenKeyboard extends JFrame {
 		boolean poll(final Input input) {
 			if (changed) {
 				if (locked)
-					input.getOnLockKeys().add(virtualKeyCode);
+					input.getOnLockKeys().add(lockKey);
 				else
-					input.getOffLockKeys().add(virtualKeyCode);
+					input.getOffLockKeys().add(lockKey);
 
 				changed = false;
 			}
@@ -394,7 +395,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(ScanCode.DIK_F8), new DefaultKeyboardButton(ScanCode.DIK_F9),
 					new DefaultKeyboardButton(ScanCode.DIK_F10), new DefaultKeyboardButton(ScanCode.DIK_F11),
 					new DefaultKeyboardButton(ScanCode.DIK_F12), new DefaultKeyboardButton(ScanCode.DIK_SYSRQ),
-					new LockKeyButton(KeyEvent.VK_SCROLL_LOCK), new DefaultKeyboardButton(ScanCode.DIK_PAUSE),
+					new LockKeyButton(LockKey.ScrollLockLockKey), new DefaultKeyboardButton(ScanCode.DIK_PAUSE),
 					new DefaultKeyboardButton(ScanCode.DIK_INSERT), new DefaultKeyboardButton(ScanCode.DIK_DELETE),
 					new DefaultKeyboardButton(ScanCode.DIK_HOME), new DefaultKeyboardButton(ScanCode.DIK_END) },
 			{ new DefaultKeyboardButton(ScanCode.DIK_GRAVE), new DefaultKeyboardButton(ScanCode.DIK_1),
@@ -404,7 +405,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(ScanCode.DIK_8), new DefaultKeyboardButton(ScanCode.DIK_9),
 					new DefaultKeyboardButton(ScanCode.DIK_0), new DefaultKeyboardButton(ScanCode.DIK_MINUS),
 					new DefaultKeyboardButton(ScanCode.DIK_EQUALS), new DefaultKeyboardButton(ScanCode.DIK_BACK),
-					new LockKeyButton(KeyEvent.VK_NUM_LOCK), new DefaultKeyboardButton(ScanCode.DIK_DIVIDE),
+					new LockKeyButton(LockKey.NumLockLockKey), new DefaultKeyboardButton(ScanCode.DIK_DIVIDE),
 					new DefaultKeyboardButton(ScanCode.DIK_MULTIPLY),
 					new DefaultKeyboardButton(ScanCode.DIK_SUBTRACT) },
 			{ new DefaultKeyboardButton(ScanCode.DIK_TAB), new DefaultKeyboardButton(ScanCode.DIK_Q),
@@ -416,7 +417,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(ScanCode.DIK_RBRACKET), new DefaultKeyboardButton(ScanCode.DIK_BACKSLASH),
 					new DefaultKeyboardButton(ScanCode.DIK_NUMPAD7), new DefaultKeyboardButton(ScanCode.DIK_NUMPAD8),
 					new DefaultKeyboardButton(ScanCode.DIK_NUMPAD9), new DefaultKeyboardButton(ScanCode.DIK_ADD) },
-			{ new LockKeyButton(KeyEvent.VK_CAPS_LOCK), new DefaultKeyboardButton(ScanCode.DIK_A),
+			{ new LockKeyButton(LockKey.CapsLockLockKey), new DefaultKeyboardButton(ScanCode.DIK_A),
 					new DefaultKeyboardButton(ScanCode.DIK_S), new DefaultKeyboardButton(ScanCode.DIK_D),
 					new DefaultKeyboardButton(ScanCode.DIK_F), new DefaultKeyboardButton(ScanCode.DIK_G),
 					new DefaultKeyboardButton(ScanCode.DIK_H), new DefaultKeyboardButton(ScanCode.DIK_J),
@@ -436,10 +437,9 @@ public final class OnScreenKeyboard extends JFrame {
 			{ new DefaultKeyboardButton(ScanCode.DIK_LCONTROL), new DefaultKeyboardButton(ScanCode.DIK_LWIN),
 					new DefaultKeyboardButton(ScanCode.DIK_LMENU), new DefaultKeyboardButton(ScanCode.DIK_SPACE),
 					new DefaultKeyboardButton(ScanCode.DIK_RMENU), new DefaultKeyboardButton(ScanCode.DIK_RWIN),
-					new DefaultKeyboardButton(ScanCode.DIK_APPS), new DefaultKeyboardButton(ScanCode.DIK_RCONTROL),
-					new DefaultKeyboardButton(ScanCode.DIK_UP), new DefaultKeyboardButton(ScanCode.DIK_DOWN),
-					new DefaultKeyboardButton(ScanCode.DIK_LEFT), new DefaultKeyboardButton(ScanCode.DIK_RIGHT),
-					new DefaultKeyboardButton(ScanCode.DIK_NUMPAD0),
+					new DefaultKeyboardButton(ScanCode.DIK_RCONTROL), new DefaultKeyboardButton(ScanCode.DIK_UP),
+					new DefaultKeyboardButton(ScanCode.DIK_DOWN), new DefaultKeyboardButton(ScanCode.DIK_LEFT),
+					new DefaultKeyboardButton(ScanCode.DIK_RIGHT), new DefaultKeyboardButton(ScanCode.DIK_NUMPAD0),
 					new DefaultKeyboardButton(ScanCode.DIK_NUMPADCOMMA),
 					new DefaultKeyboardButton(ScanCode.DIK_NUMPADENTER) } };
 
@@ -458,7 +458,8 @@ public final class OnScreenKeyboard extends JFrame {
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.UTILITY);
 		setFocusableWindowState(false);
-		setBackground(Main.TRANSPARENT);
+		if (Main.isWindows)
+			setBackground(Main.TRANSPARENT);
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

@@ -1,5 +1,6 @@
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.plugins.ide.eclipse.model.Container
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import com.github.spotbugs.snom.SpotBugsReport
@@ -28,6 +29,8 @@ java {
 }
 
 ext {
+	os = DefaultNativePlatform.currentOperatingSystem
+
 	versionWithoutHash = version.substring(0, version.indexOf('-'))
 
 	resourcesDir = 'src/main/resources'
@@ -37,6 +40,10 @@ ext {
 	tmpDir = "$buildDir/tmp"
 	appImageDir = "$tmpDir/$project.name"
 	runtimeDir = "$tmpDir/runtime"
+
+	linuxJvmArgs = [
+		'--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED'
+	]
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
 	jdtUiPrefsFile = '.settings/org.eclipse.jdt.ui.prefs'
@@ -49,6 +56,8 @@ ext {
 
 	spotlessFormatFile = 'spotless.eclipseformat.xml'
 	spotlessImportOrderFile = 'spotless.importorder'
+
+	distAppendix = os.toFamilyName()
 }
 
 repositories {
@@ -60,17 +69,17 @@ dependencies {
 	def jnaVersion = '5.11.0'
 	def lwjglVersion = '3.3.1'
 
-	def os = DefaultNativePlatform.currentOperatingSystem
-	def clientPlatform = false
+	def openVrSupport = false
 	def lwjglOs
 	if (os.windows) {
 		lwjglOs = "windows"
-		clientPlatform = true
+		openVrSupport = true
 	} else if (os.macOsX)
 		lwjglOs = 'macos'
-	else if (os.linux)
+	else if (os.linux) {
 		lwjglOs = 'linux'
-	else
+		openVrSupport = true
+	} else
 		throw new GradleException("Unsupported operating system $os.displayName")
 
 	def arch = DefaultNativePlatform.currentArchitecture
@@ -84,11 +93,13 @@ dependencies {
 			break
 		case { Architectures.ARM_V7.isAlias(it) && os.linux }:
 			lwjglArch = 'arm32'
+			openVrSupport = false
 			break
 		case 'aarch64':
 		case 'arm-v8':
 		case 'arm64':
 			lwjglArch = 'arm64'
+			openVrSupport = false
 			break
 		default:
 			throw new GradleException("Unsupported system architecture $arch.displayName")
@@ -108,7 +119,8 @@ dependencies {
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform",
-			'com.github.prat-man:unique4j:6701cef900'
+			'com.github.prat-man:unique4j:6701cef900',
+			'uk.co.bithatch:linuxio4j:2.1'
 
 	runtimeOnly "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
 
@@ -116,7 +128,7 @@ dependencies {
 		exclude group: 'xml-apis', module: 'xml-apis'
 	}
 
-	if (clientPlatform)
+	if (openVrSupport)
 		runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-${lwjglPlatform}", "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-${lwjglPlatform}"
 }
 
@@ -155,9 +167,9 @@ spotless {
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
 			 *
-			 * This program is free software; you can redistribute it and/or modify
+			 * This program is free software: you can redistribute it and/or modify
 			 * it under the terms of the GNU General Public License as published by
-			 * the Free Software Foundation; either version 2 of the License, or
+			 * the Free Software Foundation, either version 3 of the License, or
 			 * (at your option) any later version.
 			 *
 			 * This program is distributed in the hope that it will be useful,
@@ -165,9 +177,8 @@ spotless {
 			 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 			 * GNU General Public License for more details.
 			 *
-			 * You should have received a copy of the GNU General Public License along
-			 * with this program; if not, write to the Free Software Foundation, Inc.,
-			 * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+			 * You should have received a copy of the GNU General Public License
+			 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 			 */
 
 			'''.stripIndent()
@@ -249,6 +260,12 @@ eclipse {
 		file {
 			whenMerged { cp ->
 				cp.entries.add(3, new SourceFolder(versionDir, null))
+				if (os.linux)
+					cp.entries.findAll {it instanceof Container && it.path ==~ /org\.eclipse\.jdt\.launching\.JRE_CONTAINER\/.*$/}.each {
+						def entryAttributes = it.entryAttributes
+						entryAttributes['module'] = 'true'
+						entryAttributes['add-opens'] = 'java.desktop/sun.awt.X11=ALL-UNNAMED'
+					}
 			}
 		}
 	}
@@ -452,7 +469,12 @@ tasks.eclipse.doLast {
 compileJava {
 	dependsOn generateVersion, copyGameControllerDB
 	source generateVersion.outputs.files, sourceSets.main.java
-	options.compilerArgs += ["-Xlint:deprecation"]
+	options.compilerArgs += ['-Xlint:deprecation']
+}
+
+run {
+	if (os.linux)
+		jvmArgs = linuxJvmArgs
 }
 
 task jlink(type: Exec) {
@@ -486,16 +508,52 @@ task jpackage(type: Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
 	dependsOn copyLibs, customizeLoggingProperties
 	doFirst { delete appImageDir }
-	commandLine 'jpackage', '--input', libsDir, '--dest', tmpDir, '--type', 'app-image', '--name', project.name, '--runtime-image', runtimeDir, '--main-class', project.application.mainClassName, '--main-jar', "$project.name-${version}.jar", '--app-version', versionWithoutHash, '--icon', "$projectDir/icon.ico", '--copyright', "Copyright ${new Date().format('yyyy')} Matteo Hausner", '--vendor', 'Matteo Hausner', '--verbose'
+	def commandLineParts = [
+		'jpackage',
+		'--input',
+		libsDir,
+		'--dest',
+		tmpDir,
+		'--type',
+		'app-image',
+		'--name',
+		project.name,
+		'--runtime-image',
+		runtimeDir,
+		'--main-class',
+		project.application.mainClassName,
+		'--main-jar',
+		"$project.name-${version}.jar",
+		'--app-version',
+		versionWithoutHash,
+		'--icon',
+		"$projectDir/icon.${os.windows ? 'ico' : 'png'}",
+		'--copyright',
+		"Copyright ${new Date().format('yyyy')} Matteo Hausner",
+		'--vendor',
+		'Matteo Hausner',
+		'--verbose'
+	]
+	if (os.linux)
+		linuxJvmArgs.each { commandLineParts.addAll(['--java-options', it]) }
+	commandLine commandLineParts
 }
 
 startScripts.enabled = false
-distTar.enabled = false
+
+task distTar(type: Tar, overwrite: true) {
+	dependsOn jpackage
+	from tmpDir
+	include "$project.name/**"
+	appendix distAppendix
+	compression Compression.GZIP
+}
 
 task distZip(type: Zip, overwrite: true) {
 	dependsOn jpackage
 	from tmpDir
 	include "$project.name/**"
+	appendix distAppendix
 }
 
 task installDist(type: Sync, overwrite: true) {
