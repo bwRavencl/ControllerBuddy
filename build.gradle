@@ -108,7 +108,7 @@ dependencies {
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
 	implementation 'commons-cli:commons-cli:1.5.0',
-			'com.formdev:flatlaf:2.2',
+			'com.formdev:flatlaf:2.3',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
 			'com.google.code.gson:gson:2.9.0',
 			'io.github.classgraph:classgraph:4.8.147',
