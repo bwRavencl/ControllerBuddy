@@ -205,7 +205,7 @@ public final class OnScreenKeyboard extends JFrame {
 			else if (ScanCode.DIK_RSHIFT.equals(directInputKeyCodeName))
 				preferredSize.width *= 3;
 			else if (ScanCode.DIK_SPACE.equals(directInputKeyCodeName))
-				preferredSize.width *= 4.5;
+				preferredSize.width *= 5.5;
 
 			return preferredSize;
 		}
@@ -364,7 +364,6 @@ public final class OnScreenKeyboard extends JFrame {
 		shortName = shortName.replaceFirst("L ", "");
 		shortName = shortName.replaceFirst("R ", "");
 		shortName = shortName.replaceFirst("Num", "");
-		shortName = shortName.replaceFirst("App ", "");
 		if (shortName.endsWith("Arrow"))
 			if (shortName.startsWith("Up"))
 				shortName = "\u2191";
