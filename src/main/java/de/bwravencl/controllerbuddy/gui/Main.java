@@ -1268,7 +1268,7 @@ public final class Main {
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
 			log.log(Level.SEVERE, e.getMessage(), e);
 
-			if (main != null && main.frame != null)
+			if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null)
 				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 					final var sw = new StringWriter();
 					e.printStackTrace(new PrintWriter(sw));
