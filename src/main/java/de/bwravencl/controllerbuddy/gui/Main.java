@@ -1263,77 +1263,75 @@ public final class Main {
 	}
 
 	public static void main(final String[] args) {
-		final var unique = new Unique4jList(APP_ID) {
+		log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
-			@Override
-			protected void receiveMessageList(final List<String> messageList) {
-				final var args = messageList.toArray(new String[0]);
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+			log.log(Level.SEVERE, e.getMessage(), e);
 
-				log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+			if (main != null && main.frame != null)
+				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+					final var sw = new StringWriter();
+					e.printStackTrace(new PrintWriter(sw));
 
-				if (args.length > 0)
-					try {
-						final var commandLine = new DefaultParser().parse(options, args);
-						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+					GuiUtils.showMessageDialog(main.frame,
+							MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 
-						EventQueue.invokeLater(() -> {
-							if (cmdProfilePath != null)
-								main.loadProfile(new File(cmdProfilePath), false);
-
-							if (gameControllerDbPath != null)
-								main.updateGameControllerMappingsFromFile(gameControllerDbPath);
-
-							main.handleRemainingCommandLine(commandLine);
-						});
-					} catch (final ParseException e) {
-						log.log(Level.SEVERE, e.getMessage(), e);
-					}
-				else
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
-							strings.getString("ALREADY_RUNNING_DIALOG_TEXT"), strings.getString("ERROR_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE));
-			}
-
-			@Override
-			protected List<String> sendMessageList() {
-				return Arrays.asList(args);
-			}
-		};
+					terminate(1);
+				});
+			else
+				terminate(1);
+		});
 
 		try {
-			if (unique.acquireLock()) {
-				log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+			final var commandLine = new DefaultParser().parse(options, args);
+			if (commandLine.hasOption(OPTION_VERSION)) {
+				printCommandLineMessage(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
 
-				Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-					log.log(Level.SEVERE, e.getMessage(), e);
-
-					if (main != null && main.frame != null)
-						GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-							final var sw = new StringWriter();
-							e.printStackTrace(new PrintWriter(sw));
-
-							GuiUtils.showMessageDialog(main.frame,
-									MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
-											sw.toString()),
-									strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-
-							terminate(1);
-						});
-					else
-						terminate(1);
-				});
-
+				return;
+			}
+			if (!commandLine.hasOption(OPTION_HELP)) {
 				try {
-					final var commandLine = new DefaultParser().parse(options, args);
-					if (commandLine.hasOption(OPTION_VERSION)) {
-						printCommandLineMessage(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+					final var unique = new Unique4jList(APP_ID) {
 
-						unique.releaseLock();
+						@Override
+						protected void receiveMessageList(final List<String> messageList) {
+							final var args = messageList.toArray(new String[0]);
 
-						return;
-					}
-					if (!commandLine.hasOption(OPTION_HELP)) {
+							log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+
+							if (args.length > 0)
+								try {
+									final var commandLine = new DefaultParser().parse(options, args);
+									final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+									final var gameControllerDbPath = commandLine
+											.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+
+									EventQueue.invokeLater(() -> {
+										if (cmdProfilePath != null)
+											main.loadProfile(new File(cmdProfilePath), false);
+
+										if (gameControllerDbPath != null)
+											main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+
+										main.handleRemainingCommandLine(commandLine);
+									});
+								} catch (final ParseException e) {
+									log.log(Level.SEVERE, e.getMessage(), e);
+								}
+							else
+								EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
+										strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+										strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						}
+
+						@Override
+						protected List<String> sendMessageList() {
+							return Arrays.asList(args);
+						}
+					};
+
+					if (unique.acquireLock()) {
 						final var taskRunner = new TaskRunner();
 
 						EventQueue.invokeLater(() -> {
@@ -1349,27 +1347,25 @@ public final class Main {
 						});
 
 						taskRunner.enterLoop();
-
-						return;
 					}
-				} catch (final ParseException e) {
+				} catch (final Unique4jException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 
-				final var stringWriter = new StringWriter();
-				try (final var printWriter = new PrintWriter(stringWriter)) {
-					final var helpFormatter = new HelpFormatter();
-					helpFormatter.printHelp(printWriter, helpFormatter.getWidth(),
-							strings.getString("APPLICATION_NAME"), null, options, helpFormatter.getLeftPadding(),
-							helpFormatter.getDescPadding(), null, true);
-					printWriter.flush();
-				}
-				printCommandLineMessage(stringWriter.toString());
-
-				unique.releaseLock();
+				return;
 			}
-		} catch (final Unique4jException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (final ParseException e) {
 		}
+
+		final var stringWriter = new StringWriter();
+		try (final var printWriter = new PrintWriter(stringWriter)) {
+			final var helpFormatter = new HelpFormatter();
+			helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), strings.getString("APPLICATION_NAME"), null,
+					options, helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
+			printWriter.flush();
+		}
+		printCommandLineMessage(stringWriter.toString());
+
 	}
 
 	private static void printCommandLineMessage(final String message) {
