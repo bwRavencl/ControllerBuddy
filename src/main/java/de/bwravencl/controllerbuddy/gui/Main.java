@@ -1036,6 +1036,8 @@ public final class Main {
 
 	static volatile Main main;
 
+	private static volatile boolean terminated;
+
 	private static final Options options = new Options();
 
 	private static final String APP_ID;
@@ -1361,14 +1363,12 @@ public final class Main {
 	}
 
 	private static void terminate(final int status) {
-		if (main != null && main.shutdownHookTriggered)
-			return;
-
 		log.log(Level.INFO, "Terminated (" + status + ")");
+
+		terminated = true;
+
 		System.exit(status);
 	}
-
-	private volatile boolean shutdownHookTriggered;
 
 	private final Unique4j unique;
 
@@ -1518,14 +1518,15 @@ public final class Main {
 
 	private FlatLaf lookAndFeel;
 
-	private final Thread shutdownHook = new Thread(() -> {
-		shutdownHookTriggered = true;
-		quit();
-	});
-
 	private Main(final Unique4j unique, final TaskRunner taskRunner, final String cmdProfilePath,
 			final String gameControllerDbPath) {
-		Runtime.getRuntime().addShutdownHook(shutdownHook);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			if (!terminated) {
+				log.log(Level.INFO, "Forcing immediate halt");
+
+				Runtime.getRuntime().halt(2);
+			}
+		}));
 
 		this.unique = unique;
 		this.taskRunner = taskRunner;
@@ -2266,10 +2267,6 @@ public final class Main {
 		return taskRunner.isTaskOfTypeRunning(ServerRunMode.class);
 	}
 
-	boolean isShutdownHookTriggered() {
-		return shutdownHookTriggered;
-	}
-
 	private void loadProfile(final File file, final boolean skipMessageDialogs) {
 		stopAll(true, false, true);
 
@@ -2663,10 +2660,7 @@ public final class Main {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 
-		if (!shutdownHookTriggered) {
-			Runtime.getRuntime().removeShutdownHook(shutdownHook);
-			terminate(0);
-		}
+		terminate(0);
 	}
 
 	private void repaintOnScreenKeyboard() {

@@ -221,7 +221,7 @@ public final class GuiUtils {
 
 	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,
 			final int messageType, final Icon icon) throws HeadlessException {
-		if (Main.skipMessageDialogs || Main.main != null && Main.main.isShutdownHookTriggered())
+		if (Main.skipMessageDialogs)
 			return;
 
 		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
