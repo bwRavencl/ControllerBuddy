@@ -1327,7 +1327,8 @@ public final class Main {
 				try {
 					final var commandLine = new DefaultParser().parse(options, args);
 					if (commandLine.hasOption(OPTION_VERSION)) {
-						System.out.println(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+						printCommandLineMessage(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+
 						unique.releaseLock();
 
 						return;
@@ -1354,12 +1355,35 @@ public final class Main {
 				} catch (final ParseException e) {
 				}
 
-				new HelpFormatter().printHelp(strings.getString("APPLICATION_NAME"), options, true);
+				final var stringWriter = new StringWriter();
+				try (final var printWriter = new PrintWriter(stringWriter)) {
+					final var helpFormatter = new HelpFormatter();
+					helpFormatter.printHelp(printWriter, helpFormatter.getWidth(),
+							strings.getString("APPLICATION_NAME"), null, options, helpFormatter.getLeftPadding(),
+							helpFormatter.getDescPadding(), null, true);
+					printWriter.flush();
+				}
+				printCommandLineMessage(stringWriter.toString());
+
 				unique.releaseLock();
 			}
 		} catch (final Unique4jException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
+	}
+
+	private static void printCommandLineMessage(final String message) {
+		System.out.println(message);
+
+		if (!GraphicsEnvironment.isHeadless())
+			EventQueue.invokeLater(() -> {
+				final var textArea = new JTextArea(message);
+				textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+				textArea.setEditable(false);
+
+				GuiUtils.showMessageDialog(null, textArea, strings.getString("APPLICATION_NAME"),
+						JOptionPane.INFORMATION_MESSAGE, new ImageIcon(Main.class.getResource(ICON_RESOURCE_PATHS[1])));
+			});
 	}
 
 	private static void terminate(final int status) {
