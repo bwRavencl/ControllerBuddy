@@ -753,10 +753,10 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var icon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
+			final var imageIcon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 			GuiUtils.showMessageDialog(frame,
 					MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
-					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, icon);
+					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 		}
 	}
 
@@ -1377,8 +1377,9 @@ public final class Main {
 				textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 				textArea.setEditable(false);
 
+				final var imageIcon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
 				GuiUtils.showMessageDialog(null, textArea, strings.getString("APPLICATION_NAME"),
-						JOptionPane.INFORMATION_MESSAGE, new ImageIcon(Main.class.getResource(ICON_RESOURCE_PATHS[1])));
+						JOptionPane.INFORMATION_MESSAGE, imageIcon);
 			});
 	}
 
