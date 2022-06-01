@@ -8,11 +8,13 @@ GNU General Public License v3.0
 
 #### Download and Installation:
 
-###### Windows:
+###### Windows x64:
 1. First ensure you have correctly installed [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
+
+Alternatively you may want to use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script) which automates most of the above steps and more.
 
 ###### Linux:
 1. First ensure you have installed libsdl2 on your system:
