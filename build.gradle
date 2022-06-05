@@ -57,7 +57,8 @@ ext {
 	spotlessFormatFile = 'spotless.eclipseformat.xml'
 	spotlessImportOrderFile = 'spotless.importorder'
 
-	distAppendix = os.toFamilyName()
+	arch = DefaultNativePlatform.currentArchitecture
+	distAppendix = "${os.toFamilyName()}-$arch.name"
 }
 
 repositories {
@@ -82,7 +83,6 @@ dependencies {
 	} else
 		throw new GradleException("Unsupported operating system $os.displayName")
 
-	def arch = DefaultNativePlatform.currentArchitecture
 	def lwjglArch
 	switch (arch.name) {
 		case { Architectures.X86.isAlias(it) && os.windows }:

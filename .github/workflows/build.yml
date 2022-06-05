@@ -30,7 +30,7 @@ jobs:
         id: extract_release_variables
         shell: bash
         run: |
-          echo ::set-output name=tag_name::$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0 | xargs -0 -I filename basename -s .zip filename | sed s/-windows//)
+          echo ::set-output name=tag_name::$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0 | xargs -0 -I filename basename -s .zip filename | sed s/-windows-x86-64//)
           echo ::set-output name=archive_path::$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0)
       - name: Tag Commit
         uses: tvdias/github-tagger@v0.0.2
@@ -70,7 +70,7 @@ jobs:
         id: extract_release_variables
         shell: bash
         run: |
-          echo ::set-output name=tag_name::$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed s/-linux//)
+          echo ::set-output name=tag_name::$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed s/-linux-x86-64//)
           echo ::set-output name=archive_path::$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)
       - name: Release
         id: release
