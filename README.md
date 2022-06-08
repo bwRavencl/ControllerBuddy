@@ -7,22 +7,21 @@ This is the source code repository of ControllerBuddy, regular users should refe
 GNU General Public License v3.0
 
 #### Download and Installation:
+Hint: You may want to use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script) which automates the steps below and more.
 
-###### Windows x64:
+###### Windows x86-64:
 1. First ensure you have correctly installed [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
-Alternatively you may want to use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script) which automates most of the above steps and more.
-
-###### Linux:
+###### Linux x86-64:
 1. First ensure you have installed libsdl2 on your system:
    - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
    - Red-Hat-based: `sudo yum install SDL2`
 2. Configure uinput:
    1. Create an uinput group: `sudo groupadd -f uinput`
-   2. Add yourself to the group:  `sudo gpasswd -a USER uinput` (replace USER with your username)
+   2. Add yourself to the group:  `sudo gpasswd -a "$USER" uinput`
    3. As root, create a file `/etc/udev/rules.d/99-input.rules` with the following content:  
       `SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="uinput"`
    4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
@@ -96,7 +95,7 @@ A profile has the following general structure:
          - Action 1
          - Action 2
          - Action 3
-  - Another Mode 
+  - Another Mode
     - X Axis
       - some Action
     - A Button
