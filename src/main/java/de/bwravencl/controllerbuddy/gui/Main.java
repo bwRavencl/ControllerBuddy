@@ -2446,9 +2446,11 @@ public final class Main {
 
 			popupMenu.addSeparator();
 
-			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
-			openMenuItem.addActionListener(openAction);
-			popupMenu.add(openMenuItem);
+			if (controllerConnected) {
+				final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
+				openMenuItem.addActionListener(openAction);
+				popupMenu.add(openMenuItem);
+			}
 
 			if (runMenuVisible) {
 				runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
