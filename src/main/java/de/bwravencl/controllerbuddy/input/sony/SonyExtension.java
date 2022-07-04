@@ -68,7 +68,6 @@ public abstract class SonyExtension {
 			if (connection == null) {
 				handleNewConnection(reportLength);
 				reset();
-				ready = true;
 			}
 
 			if (!isInputReportValid(reportID, reportData, reportLength))
@@ -155,6 +154,8 @@ public abstract class SonyExtension {
 			l1 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 0) != 0;
 
 			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
+
+			ready = true;
 
 			if (jid != input.getController().jid())
 				return;
