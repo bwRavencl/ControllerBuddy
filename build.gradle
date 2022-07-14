@@ -95,9 +95,7 @@ dependencies {
 			lwjglArch = 'arm32'
 			openVrSupport = false
 			break
-		case 'aarch64':
-		case 'arm-v8':
-		case 'arm64':
+		case { Architectures.AARCH64.isAlias(it) }:
 			lwjglArch = 'arm64'
 			openVrSupport = false
 			break
