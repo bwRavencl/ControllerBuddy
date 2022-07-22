@@ -1273,9 +1273,16 @@ public final class Main {
 					final var sw = new StringWriter();
 					e.printStackTrace(new PrintWriter(sw));
 
-					GuiUtils.showMessageDialog(main.frame,
-							MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), sw.toString()),
-							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					final var panel = new JPanel();
+					panel.setLayout(new BorderLayout(5, 5));
+					panel.add(new JLabel(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT")), BorderLayout.NORTH);
+					final var textArea = new JTextArea(sw.toString());
+					textArea.setEditable(false);
+					final var scrollPane = new JScrollPane(textArea);
+					scrollPane.setPreferredSize(new Dimension(600, 400));
+					panel.add(scrollPane, BorderLayout.CENTER);
+					GuiUtils.showMessageDialog(main.frame, panel, strings.getString("ERROR_DIALOG_TITLE"),
+							JOptionPane.ERROR_MESSAGE);
 
 					terminate(1);
 				});
