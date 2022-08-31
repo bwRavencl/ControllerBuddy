@@ -315,7 +315,7 @@ class OpenVrOverlay {
 					EventQueue.invokeLater(this::stop);
 
 			final var overlayFrame = main.getOverlayFrame();
-			if (overlayFrame != null)
+			if (overlayFrame != null && overlayFrame.isDisplayable())
 				updateOverlay(statusOverlayHandle, overlayFrame);
 
 			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);

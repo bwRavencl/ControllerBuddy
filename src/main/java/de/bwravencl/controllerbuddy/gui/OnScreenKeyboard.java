@@ -24,6 +24,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -91,6 +92,8 @@ public final class OnScreenKeyboard extends JFrame {
 			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
 			if (!focus)
 				OnScreenKeyboard.this.repaint();
+
+			Toolkit.getDefaultToolkit().sync();
 		}
 
 		abstract void toggleLock();
@@ -455,7 +458,7 @@ public final class OnScreenKeyboard extends JFrame {
 		rootPane.setWindowDecorationStyle(JRootPane.NONE);
 		setUndecorated(true);
 		setTitle(OnScreenKeyboard.class.getSimpleName());
-		setType(JFrame.Type.UTILITY);
+		setType(JFrame.Type.POPUP);
 		setFocusableWindowState(false);
 		if (Main.isWindows)
 			setBackground(Main.TRANSPARENT);
@@ -470,9 +473,7 @@ public final class OnScreenKeyboard extends JFrame {
 		parentPanel.setBackground(Main.TRANSPARENT);
 
 		for (var row = 0; row < keyboardButtons.length; row++) {
-			final var flowLayout = new FlowLayout(FlowLayout.LEFT);
-			flowLayout.setHgap(0);
-			flowLayout.setVgap(0);
+			final var flowLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
 			final var rowPanel = new JPanel(flowLayout);
 			rowPanel.setBackground(ROW_BACKGROUND);
 			rowPanel.setBorder(BorderFactory.createEmptyBorder(row == 0 ? ROW_BORDER_WIDTH : 0, ROW_BORDER_WIDTH,

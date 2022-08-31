@@ -70,6 +70,7 @@ import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -124,6 +125,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -366,6 +368,7 @@ public final class Main {
 		private IndicatorProgressBar(final int orient, final HashSet<Float> dententValues,
 				final OverlayAxis overlayAxis) {
 			super(orient);
+			setBorder(createOverlayBorder());
 			detentValues = dententValues;
 			this.overlayAxis = overlayAxis;
 		}
@@ -1202,6 +1205,10 @@ public final class Main {
 			sb.append(" [" + controller.guid + "]");
 
 		return sb.toString();
+	}
+
+	private static LineBorder createOverlayBorder() {
+		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
@@ -2173,39 +2180,36 @@ public final class Main {
 		if (!multipleModes && virtualAxisToOverlayAxisMap.isEmpty())
 			return;
 
-		var longestDescription = "";
-		for (final var mode : modes) {
-			final var description = mode.getDescription();
-			if (description.length() > longestDescription.length())
-				longestDescription = description;
-		}
-
 		overlayFrame = new JFrame("Overlay");
 		overlayFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 		overlayFrame.setUndecorated(true);
-		overlayFrame.setType(JFrame.Type.UTILITY);
+		overlayFrame.setType(JFrame.Type.POPUP);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
-		if (isWindows)
-			overlayFrame.setBackground(TRANSPARENT);
+		overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.setAlwaysOnTop(true);
 		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		if (multipleModes) {
 			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
+			currentModeLabel.setOpaque(true);
+			final var border = createOverlayBorder();
+			currentModeLabel.setBorder(border);
 			final var font = currentModeLabel.getFont().deriveFont(Font.BOLD);
 			currentModeLabel.setFont(font);
 			final var fontMetrics = currentModeLabel.getFontMetrics(font);
-			currentModeLabel.setPreferredSize(
-					new Dimension(fontMetrics.stringWidth(longestDescription), fontMetrics.getHeight()));
-			currentModeLabel.setForeground(Color.RED);
+			final var longestDescription = modes.stream().map(Mode::getDescription)
+					.max(Comparator.comparingInt(String::length)).orElse("");
+			currentModeLabel.setPreferredSize(new Dimension(
+					fontMetrics.stringWidth(longestDescription + border.getThickness()), fontMetrics.getHeight()));
+
+			currentModeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
 		}
 
-		indicatorPanelFlowLayout = new FlowLayout();
+		indicatorPanelFlowLayout = new FlowLayout(FlowLayout.CENTER, 10, 5);
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
-		if (isWindows)
-			indicatorPanel.setBackground(TRANSPARENT);
+		indicatorPanel.setBackground(TRANSPARENT);
 
 		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -2233,14 +2237,26 @@ public final class Main {
 			}
 		});
 
-		overlayFrame.add(indicatorPanel);
+		overlayFrame.add(indicatorPanel, BorderLayout.CENTER);
 
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
 
 			@Override
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
-				updateOverlayAlignment(GuiUtils.getTotalDisplayBounds());
+
+				if (isWindows)
+					updateOverlayAlignment(GuiUtils.getTotalDisplayBounds());
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				super.mouseReleased(e);
+
+				if (!isWindows) {
+					deInitOverlay();
+					initOverlay();
+				}
 			}
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
@@ -2586,9 +2602,8 @@ public final class Main {
 					@Override
 					public void actionPerformed(final ActionEvent e) {
 						final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
-						final var darkTheme = lookAndFeel instanceof FlatDarkLaf;
 
-						final var workingCopySvgDocument = generateSvgDocument(selectedMode, darkTheme);
+						final var workingCopySvgDocument = generateSvgDocument(selectedMode, lookAndFeel.isDark());
 
 						svgCanvas.setSVGDocument(workingCopySvgDocument);
 					}
@@ -2693,20 +2708,18 @@ public final class Main {
 		terminate(0);
 	}
 
-	private void repaintOnScreenKeyboard() {
-		if (!onScreenKeyboard.isVisible())
-			return;
+	private void repaintOnScreenKeyboardAndOverlay() {
+		if (onScreenKeyboard.isVisible()) {
+			onScreenKeyboard.getContentPane().validate();
+			onScreenKeyboard.getContentPane().repaint();
+		}
 
-		onScreenKeyboard.getContentPane().validate();
-		onScreenKeyboard.getContentPane().repaint();
-	}
+		if (isWindows && overlayFrame != null) {
+			overlayFrame.getContentPane().validate();
+			overlayFrame.getContentPane().repaint();
+		}
 
-	private void repaintOverlay() {
-		if (overlayFrame == null)
-			return;
-
-		overlayFrame.getContentPane().validate();
-		overlayFrame.getContentPane().repaint();
+		Toolkit.getDefaultToolkit().sync();
 	}
 
 	public void restartLast() {
@@ -2793,17 +2806,22 @@ public final class Main {
 		if (isLocalRunning() || isServerRunning())
 			EventQueue.invokeLater(() -> {
 				onScreenKeyboard.setVisible(visible);
-				repaintOnScreenKeyboard();
-				repaintOverlay();
+
+				repaintOnScreenKeyboardAndOverlay();
 			});
 	}
 
 	public void setOverlayText(final String text) {
-		if (currentModeLabel != null)
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-				if (currentModeLabel != null)
-					currentModeLabel.setText(text);
-			});
+		if (currentModeLabel == null)
+			return;
+
+		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+			if (currentModeLabel == null)
+				return;
+
+			currentModeLabel.setText(text);
+			Toolkit.getDefaultToolkit().sync();
+		});
 	}
 
 	private void setSelectedController(final ControllerInfo controller) {
@@ -2834,10 +2852,8 @@ public final class Main {
 	}
 
 	public void setStatusBarText(final String text) {
-		if (statusLabel != null) {
+		if (statusLabel != null)
 			statusLabel.setText(text);
-			repaintOverlay();
-		}
 	}
 
 	void setUnsavedChanges(final boolean unsavedChanges) {
@@ -2912,8 +2928,8 @@ public final class Main {
 						onScreenKeyboard.updateLocation();
 					}
 
-					repaintOverlay();
-					repaintOnScreenKeyboard();
+					if (isWindows)
+						repaintOnScreenKeyboardAndOverlay();
 				});
 			}
 		};
@@ -3178,21 +3194,6 @@ public final class Main {
 			overlayFrame.add(currentModeLabel, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
 		}
 
-		var alignment = SwingConstants.RIGHT;
-		var flowLayoutAlignment = FlowLayout.RIGHT;
-		if (overlayFrame.getX() + overlayFrame.getWidth() / 2 < totalDisplayBounds.width / 2) {
-			alignment = SwingConstants.LEFT;
-			flowLayoutAlignment = FlowLayout.LEFT;
-		}
-
-		if (currentModeLabel != null)
-			currentModeLabel.setHorizontalAlignment(alignment);
-
-		indicatorPanelFlowLayout.setAlignment(flowLayoutAlignment);
-		indicatorPanel.invalidate();
-
-		if (isWindows)
-			overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.pack();
 	}
 
@@ -3213,14 +3214,16 @@ public final class Main {
 						changed = true;
 					}
 
-					final var newValue = -input.getAxes().get(virtualAxis) - minimum - 1;
+					final var newValue = -input.getAxes().get(virtualAxis) - minimum;
 					if (progressBar.getValue() != newValue) {
 						progressBar.setValue(newValue);
 						changed = true;
 					}
 
-					if (changed)
-						repaintOverlay();
+					if (changed) {
+						progressBar.repaint();
+						Toolkit.getDefaultToolkit().sync();
+					}
 				});
 	}
 
