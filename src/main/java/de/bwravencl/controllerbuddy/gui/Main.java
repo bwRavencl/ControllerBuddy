@@ -1095,6 +1095,7 @@ public final class Main {
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 
 	private static final String OPTION_AUTOSTART = "autostart";
+
 	private static final String OPTION_PROFILE = "profile";
 
 	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
@@ -1142,6 +1143,8 @@ public final class Main {
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
 
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
+
+	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
@@ -2193,15 +2196,18 @@ public final class Main {
 		if (multipleModes) {
 			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
 			currentModeLabel.setOpaque(true);
-			final var border = createOverlayBorder();
+			final var outerBorder = createOverlayBorder();
+			final var innerBorder = BorderFactory.createEmptyBorder(0, 1, 0, 1);
+			final var border = BorderFactory.createCompoundBorder(outerBorder, innerBorder);
 			currentModeLabel.setBorder(border);
 			final var font = currentModeLabel.getFont().deriveFont(Font.BOLD);
 			currentModeLabel.setFont(font);
 			final var fontMetrics = currentModeLabel.getFontMetrics(font);
 			final var longestDescription = modes.stream().map(Mode::getDescription)
 					.max(Comparator.comparingInt(String::length)).orElse("");
-			currentModeLabel.setPreferredSize(new Dimension(
-					fontMetrics.stringWidth(longestDescription + border.getThickness()), fontMetrics.getHeight()));
+			final var modeLabelWidth = Math.min(fontMetrics.stringWidth(longestDescription)
+					+ outerBorder.getThickness() * 2 + outerBorder.getThickness() * 2, OVERLAY_MODE_LABEL_MAX_WIDTH);
+			currentModeLabel.setPreferredSize(new Dimension(modeLabelWidth, fontMetrics.getHeight() + 1));
 
 			currentModeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
