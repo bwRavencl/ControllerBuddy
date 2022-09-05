@@ -16,6 +16,9 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import java.text.MessageFormat;
+
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
@@ -23,7 +26,19 @@ import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 public abstract class ToCursorAction<V extends Number> extends InvertableAction<V> {
 
 	public enum MouseAxis {
-		X, Y
+
+		X("MOUSE_AXIS_X"), Y("MOUSE_AXIS_Y");
+
+		private final String label;
+
+		MouseAxis(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
 	}
 
 	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
@@ -33,6 +48,14 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
 	public MouseAxis getAxis() {
 		return axis;
+	}
+
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty())
+			return super.getDescription(input);
+
+		return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
 	}
 
 	void moveCursor(final Input input, float d) {
