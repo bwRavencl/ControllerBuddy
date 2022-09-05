@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 @Action(label = "TO_SCROLL_ACTION", category = ActionCategory.AXIS, order = 35)
 public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
-	private static final float DEFAULT_DEAD_ZONE = 0.15f;
+	private static final float DEFAULT_DEAD_ZONE = 0.1f;
 	private static final float DEFAULT_EXPONENT = 1f;
 
 	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)

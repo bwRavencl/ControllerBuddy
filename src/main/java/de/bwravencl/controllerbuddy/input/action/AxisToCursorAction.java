@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxCursorSpeedEditorBuilder
 @Action(label = "TO_CURSOR_ACTION", category = ActionCategory.AXIS, order = 25)
 public final class AxisToCursorAction extends ToCursorAction<Float> implements IAxisToAction {
 
-	private static final float DEFAULT_DEAD_ZONE = 0.15f;
+	private static final float DEFAULT_DEAD_ZONE = 0.1f;
 	private static final float DEFAULT_EXPONENT = 2f;
 	private static final float DEFAULT_MAX_CURSOR_SPEED = 2000f;
 
