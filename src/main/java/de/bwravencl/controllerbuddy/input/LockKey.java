@@ -30,7 +30,7 @@ public record LockKey(String name, int virtualKeyCode, int mask, KeySym keySym) 
 
 	public static final String LOCK_SUFFIX = " Lock";
 	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
-	private static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
+	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
 	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
 
 	public static final LockKey CapsLockLockKey = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK,

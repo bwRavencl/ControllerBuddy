@@ -48,7 +48,7 @@ public record ScanCode(String name, int keyCode, EventCode eventCode) {
 	private static final String DIK_CAPITAL = "CapsLock";
 	public static final String DIK_COMMA = ",";
 	public static final String DIK_D = "D";
-	private static final String DIK_DECIMAL = "Num.";
+	public static final String DIK_DECIMAL = "Num.";
 	public static final String DIK_DELETE = "Del";
 	public static final String DIK_DIVIDE = "Num/";
 	public static final String DIK_DOWN = "Down Arrow";
@@ -101,7 +101,6 @@ public record ScanCode(String name, int keyCode, EventCode eventCode) {
 	public static final String DIK_NUMPAD7 = "Num7";
 	public static final String DIK_NUMPAD8 = "Num8";
 	public static final String DIK_NUMPAD9 = "Num9";
-	public static final String DIK_NUMPADCOMMA = "Num,";
 	public static final String DIK_NUMPADENTER = "NumEnter";
 	private static final String DIK_NUMPADEQUALS = "Num=";
 	public static final String DIK_O = "O";
@@ -188,7 +187,6 @@ public record ScanCode(String name, int keyCode, EventCode eventCode) {
 			new ScanCode(DIK_NEXTTRACK, 0x99, EventCode.KEY_NEXTSONG),
 			new ScanCode(DIK_NUMPADENTER, 0x9C, EventCode.KEY_KPENTER),
 			new ScanCode(DIK_RCONTROL, 0x9D, EventCode.KEY_RIGHTCTRL),
-			new ScanCode(DIK_NUMPADCOMMA, 0xB3, EventCode.KEY_KPCOMMA),
 			new ScanCode(DIK_DIVIDE, 0xB5, EventCode.KEY_KPSLASH), new ScanCode(DIK_SYSRQ, 0xB7, EventCode.KEY_SYSRQ),
 			new ScanCode(DIK_RMENU, 0xB8, EventCode.KEY_RIGHTALT), new ScanCode(DIK_PAUSE, 0xC5, EventCode.KEY_PAUSE),
 			new ScanCode(DIK_HOME, 0xC7, EventCode.KEY_HOME), new ScanCode(DIK_UP, 0xC8, EventCode.KEY_UP),
