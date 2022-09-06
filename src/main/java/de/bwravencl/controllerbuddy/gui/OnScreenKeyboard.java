@@ -271,7 +271,7 @@ public final class OnScreenKeyboard extends JFrame {
 			changed = true;
 			anyChanges = true;
 
-			setPressed(true);
+			setPressed(!lock);
 		}
 
 		@Override
@@ -294,7 +294,7 @@ public final class OnScreenKeyboard extends JFrame {
 		void setPressed(final boolean pressed) {
 			super.setPressed(pressed);
 
-			updateDualPurposeButtons(pressed);
+			updateDualPurposeButtons(pressed || heldButtons.contains(this));
 		}
 
 		@Override
