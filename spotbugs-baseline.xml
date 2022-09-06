@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.7.1" sequence="0"
-	timestamp="1662043519062" analysisTimestamp="1662043519062" release="">
+<BugCollection version="4.7.2" sequence="0"
+	timestamp="1662470613736" analysisTimestamp="1662470613736" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -67,7 +67,10 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DualPurposeKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$LockKeyButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$NumPadKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$ShiftableKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay$TextureData.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.class</Jar>
@@ -474,10 +477,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -823,10 +826,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1080,18 +1083,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="terminate" signature="(I)V" isStatic="true" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1401"
-				end="1406" startBytecode="0" endBytecode="77" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1404"
+				end="1409" startBytecode="0" endBytecode="77" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1099,11 +1102,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="1405" end="1405" startBytecode="20" endBytecode="20"
+			start="1408" end="1408" startBytecode="20" endBytecode="20"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 1405]</Message>
+			<Message>At Main.java:[line 1408]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DM_GC" priority="1" rank="16"
@@ -1119,18 +1122,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2961"
-				end="2969" startBytecode="0" endBytecode="144"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2967"
+				end="2975" startBytecode="0" endBytecode="144"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1140,11 +1143,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2968" end="2968" startBytecode="34" endBytecode="34"
+			start="2974" end="2974" startBytecode="34" endBytecode="34"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2968]</Message>
+			<Message>At Main.java:[line 2974]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DP_DO_INSIDE_DO_PRIVILEGED" priority="3"
@@ -1160,10 +1163,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1171,8 +1174,8 @@
 			name="updateTitleAndTooltip" signature="()V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="3439"
-				end="3475" startBytecode="0" endBytecode="679"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="3445"
+				end="3481" startBytecode="0" endBytecode="679"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1189,11 +1192,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="3454" end="3454" startBytecode="133" endBytecode="133"
+			start="3460" end="3460" startBytecode="133" endBytecode="133"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 3454]</Message>
+			<Message>At Main.java:[line 3460]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1208,10 +1211,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1219,8 +1222,8 @@
 			name="getFrame" signature="()Ljavax/swing/JFrame;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2102"
-				end="2102" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2105"
+				end="2105" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method de.bwravencl.controllerbuddy.gui.Main.getFrame()</Message>
@@ -1239,11 +1242,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2102" end="2102" startBytecode="4" endBytecode="4"
+			start="2105" end="2105" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2102]</Message>
+			<Message>At Main.java:[line 2105]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1258,10 +1261,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1270,8 +1273,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2110"
-				end="2110" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2113"
+				end="2113" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1292,11 +1295,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2110" end="2110" startBytecode="4" endBytecode="4"
+			start="2113" end="2113" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2110]</Message>
+			<Message>At Main.java:[line 2113]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1311,10 +1314,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1322,8 +1325,8 @@
 			name="getPreferences" signature="()Ljava/util/prefs/Preferences;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2118"
-				end="2118" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2121"
+				end="2121" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1343,11 +1346,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2118" end="2118" startBytecode="4" endBytecode="4"
+			start="2121" end="2121" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2118]</Message>
+			<Message>At Main.java:[line 2121]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1635,10 +1638,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
-				start="347" end="644" sourcefile="OnScreenKeyboard.java"
+				start="421" end="730" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 347-644]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 421-730]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
 		</Class>
@@ -1693,10 +1696,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
-				start="347" end="644" sourcefile="OnScreenKeyboard.java"
+				start="421" end="730" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 347-644]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 421-730]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
 		</Class>
@@ -1718,10 +1721,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3485" sourcefile="Main.java"
+				end="3491" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3485]</Message>
+				<Message>At Main.java:[lines 1044-3491]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1748,10 +1751,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
-				start="72" end="113" sourcefile="OnScreenKeyboard.java"
+				start="74" end="136" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 72-113]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 74-136]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton</Message>
@@ -1763,7 +1766,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
-				start="72" end="78" startBytecode="0" endBytecode="113"
+				start="74" end="85" startBytecode="0" endBytecode="238"
 				sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
@@ -1776,11 +1779,112 @@
 		</String>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$AbstractKeyboardButton"
-			primary="true" start="77" end="77" startBytecode="31"
-			endBytecode="31" sourcefile="OnScreenKeyboard.java"
+			primary="true" start="84" end="84" startBytecode="89"
+			endBytecode="89" sourcefile="OnScreenKeyboard.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-			<Message>At OnScreenKeyboard.java:[line 77]</Message>
+			<Message>At OnScreenKeyboard.java:[line 84]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="DLS_DEAD_LOCAL_STORE" priority="2"
+		rank="17" abbrev="DLS" category="STYLE"
+		instanceHash="91dd2a7d7c1cc09585895415e8100ac7"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="563">
+		<ShortMessage>Dead store to local variable</ShortMessage>
+		<LongMessage>Dead store to numPadKeyboardButton in
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton.getPreferredSize()</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
+				start="155" end="308" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 155-308]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
+			name="getPreferredSize" signature="()Ljava/awt/Dimension;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
+				start="216" end="239" startBytecode="0" endBytecode="128"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton.getPreferredSize()</Message>
+		</Method>
+		<LocalVariable name="numPadKeyboardButton" register="2"
+			pc="19" role="LOCAL_VARIABLE_NAMED">
+			<Message>Local variable named numPadKeyboardButton</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
+			primary="true" start="218" end="218" startBytecode="18"
+			endBytecode="18" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 218]</Message>
+		</SourceLine>
+		<Property
+			name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.LOCAL_NAME"
+			value="numPadKeyboardButton" />
+		<Property
+			name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.NO_LOADS"
+			value="true" />
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="1d7e09f1e16338e85125df088899d557"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method getText is called from constructor new
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard,
+			String, String).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
+				start="316" end="325" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 316-325]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Ljava/lang/String;Ljava/lang/String;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
+				start="316" end="321" startBytecode="0" endBytecode="102"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton(OnScreenKeyboard,
+				String, String)</Message>
+		</Method>
+		<String value="getText">
+			<Message>Value getText</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
+			primary="true" start="319" end="319" startBytecode="13"
+			endBytecode="13" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 319]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -4811,6 +4915,25 @@ before being initialized.
 
     ]]></Details>
 	</BugPattern>
+	<BugPattern type="DLS_DEAD_LOCAL_STORE" abbrev="DLS"
+		category="STYLE">
+		<ShortDescription>Dead store to local variable</ShortDescription>
+		<Details><![CDATA[
+
+<p>
+This instruction assigns a value to a local variable,
+but the value is not read or used in any subsequent instruction.
+Often, this indicates an error, because the value computed is never
+used.
+</p>
+<p>
+Note that Sun's javac compiler often generates dead stores for
+final local variables. Because SpotBugs is a bytecode-based tool,
+there is no easy way to eliminate these false positives.
+</p>
+
+    ]]></Details>
+	</BugPattern>
 	<BugPattern type="EI_EXPOSE_REP2" abbrev="EI2"
 		category="MALICIOUS_CODE" cweid="374">
 		<ShortDescription>May expose internal representation by incorporating
@@ -5084,6 +5207,9 @@ object is stored in this field.</p>
 	<BugCode abbrev="Wa">
 		<Description>Wait not in loop</Description>
 	</BugCode>
+	<BugCode abbrev="DLS" cweid="563">
+		<Description>Dead local store</Description>
+	</BugCode>
 	<BugCode abbrev="DP">
 		<Description>Use doPrivileged</Description>
 	</BugCode>
@@ -5124,11 +5250,11 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Thu, 1 Sep 2022 16:45:19 +0200" total_classes="0"
-		referenced_classes="0" total_bugs="84" total_size="0" num_packages="6"
-		java_version="18.0.2" vm_version="18.0.2+9" cpu_seconds="46.25"
-		clock_seconds="7.03" peak_mbytes="604.00" alloc_mbytes="8180.00"
-		gc_seconds="0.08" priority_3="29" priority_2="53" priority_1="2">
+		timestamp="Tue, 6 Sep 2022 15:23:33 +0200" total_classes="0"
+		referenced_classes="0" total_bugs="86" total_size="0" num_packages="6"
+		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="48.06"
+		clock_seconds="7.00" peak_mbytes="596.26" alloc_mbytes="8180.00"
+		gc_seconds="0.09" priority_3="30" priority_2="54" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5136,10 +5262,10 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
 			bugCount="10" size="0" bugHash="8b8ba933a0f5ffbcef3cc4a4b3e73648" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="12" size="0" bugHash="1696e194bcb3791053a2432a215d3705" />
+			bugCount="12" size="0" bugHash="6405c62a4a16999b6fdefcb105553eda" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-			bugCount="3" size="0" bugHash="16c07bb140433e3715e22effff2ac6f4" />
+			bugCount="5" size="0" bugHash="f3e5017d4277e8413ed767656b497347" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
 			bugCount="1" size="0" bugHash="2a901c6f31e27328870962cf52bc4e5a" />
