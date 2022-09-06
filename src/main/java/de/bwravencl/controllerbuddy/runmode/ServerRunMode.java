@@ -219,12 +219,12 @@ public final class ServerRunMode extends RunMode {
 
 					final var onLockKeys = input.getOnLockKeys();
 					sb.append(PROTOCOL_MESSAGE_DELIMITER + onLockKeys.size());
-					onLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
+					onLockKeys.forEach(lockKey -> sb.append(PROTOCOL_MESSAGE_DELIMITER + lockKey.virtualKeyCode()));
 					onLockKeys.clear();
 
 					final var offLockKeys = input.getOffLockKeys();
 					sb.append(PROTOCOL_MESSAGE_DELIMITER + offLockKeys.size());
-					offLockKeys.forEach(code -> sb.append(PROTOCOL_MESSAGE_DELIMITER + code));
+					offLockKeys.forEach(lockKey -> sb.append(PROTOCOL_MESSAGE_DELIMITER + lockKey.virtualKeyCode()));
 					offLockKeys.clear();
 
 					final var sendBuf = sb.toString().getBytes("ASCII");
