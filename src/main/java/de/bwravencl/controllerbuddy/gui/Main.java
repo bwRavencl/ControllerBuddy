@@ -2174,7 +2174,7 @@ public final class Main {
 	}
 
 	private void initOverlay() {
-		if (!Toolkit.getDefaultToolkit().isAlwaysOnTopSupported() || !input.getProfile().isShowOverlay())
+		if (!input.getProfile().isShowOverlay())
 			return;
 
 		final var modes = input.getProfile().getModes();
@@ -2286,8 +2286,7 @@ public final class Main {
 	private void initVrOverlay() {
 		final var profile = input.getProfile();
 
-		if (!isWindows && !isLinux || Platform.isARM() || !Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()
-				|| !profile.isShowOverlay() || !profile.isShowVrOverlay())
+		if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay())
 			return;
 
 		try {
@@ -3341,47 +3340,45 @@ public final class Main {
 		});
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
 
-		if (Toolkit.getDefaultToolkit().isAlwaysOnTopSupported()) {
-			final var overlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
+		final var overlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
 
-			final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
-			overlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			overlaySettingsPanel.add(overlayLabel);
+		final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
+		overlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		overlaySettingsPanel.add(overlayLabel);
 
-			final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
-			showOverlayCheckBox.setSelected(profile.isShowOverlay());
-			showOverlayCheckBox.addActionListener(event -> {
-				final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
-				profile.setShowOverlay(showOverlay);
+		final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
+		showOverlayCheckBox.setSelected(profile.isShowOverlay());
+		showOverlayCheckBox.addActionListener(event -> {
+			final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
+			profile.setShowOverlay(showOverlay);
+			if (!showOverlay)
+				profile.setShowVrOverlay(false);
+			if (showVrOverlayCheckBox != null) {
+				showVrOverlayCheckBox.setEnabled(showOverlay);
 				if (!showOverlay)
-					profile.setShowVrOverlay(false);
-				if (showVrOverlayCheckBox != null) {
-					showVrOverlayCheckBox.setEnabled(showOverlay);
-					if (!showOverlay)
-						showVrOverlayCheckBox.setSelected(false);
-				}
-				updatePanelAccess();
-				setUnsavedChanges(true);
-			});
-			overlaySettingsPanel.add(showOverlayCheckBox);
+					showVrOverlayCheckBox.setSelected(false);
+			}
+			updatePanelAccess();
+			setUnsavedChanges(true);
+		});
+		overlaySettingsPanel.add(showOverlayCheckBox);
 
-			final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
+		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
 
-			final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
-			vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			vrOverlaySettingsPanel.add(vrOverlayLabel);
+		final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
+		vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		vrOverlaySettingsPanel.add(vrOverlayLabel);
 
-			showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
-			showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
-			showVrOverlayCheckBox.addActionListener(event -> {
-				final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
-				profile.setShowVrOverlay(showVrOverlay);
-				setUnsavedChanges(true);
-			});
-			vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
-		}
+		showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
+		showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
+		showVrOverlayCheckBox.addActionListener(event -> {
+			final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
+			profile.setShowVrOverlay(showVrOverlay);
+			setUnsavedChanges(true);
+		});
+		vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
 
 		profileSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
