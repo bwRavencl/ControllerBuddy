@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.7.2" sequence="0"
-	timestamp="1662558286859" analysisTimestamp="1662558286859" release="">
+	timestamp="1662593086504" analysisTimestamp="1662593086504" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -212,6 +212,7 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\X11WithLockKeyFunctions.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
+		<Jar></Jar>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.5.0\dc98be5d5390230684a092589d70ea76a147925c\commons-cli-1.5.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\2.4\691e1f12c78f42e0dfd9fc37bc599042a1ebdd0d\flatlaf-2.4.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
@@ -482,10 +483,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -831,10 +832,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1088,10 +1089,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1127,18 +1128,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2967"
-				end="2975" startBytecode="0" endBytecode="144"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2966"
+				end="2974" startBytecode="0" endBytecode="144"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1148,11 +1149,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2974" end="2974" startBytecode="34" endBytecode="34"
+			start="2973" end="2973" startBytecode="34" endBytecode="34"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2974]</Message>
+			<Message>At Main.java:[line 2973]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DP_DO_INSIDE_DO_PRIVILEGED" priority="3"
@@ -1168,10 +1169,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1179,8 +1180,8 @@
 			name="updateTitleAndTooltip" signature="()V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="3445"
-				end="3481" startBytecode="0" endBytecode="679"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="3442"
+				end="3478" startBytecode="0" endBytecode="679"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1197,11 +1198,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="3460" end="3460" startBytecode="133" endBytecode="133"
+			start="3457" end="3457" startBytecode="133" endBytecode="133"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 3460]</Message>
+			<Message>At Main.java:[line 3457]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1216,10 +1217,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1266,10 +1267,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1319,10 +1320,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1726,10 +1727,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3491" sourcefile="Main.java"
+				end="3488" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3491]</Message>
+				<Message>At Main.java:[lines 1044-3488]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -4846,6 +4847,371 @@
 			<Message>At OutputRunMode.java:[line 693]</Message>
 		</SourceLine>
 	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="29d555067ffee0c2c65df8fcaf7dd9e"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field input in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
+			boolean)</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="doKeyboardInput"
+			signature="(Lde/bwravencl/controllerbuddy/input/ScanCode;Z)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="384" end="399" startBytecode="0" endBytecode="404"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
+				boolean)</Message>
+		</Method>
+		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
+			name="input"
+			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="387" end="387" startBytecode="33"
+			endBytecode="33" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 387]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="a2eb58fbbf953f620add4aa20a75f33"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field ki in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
+			boolean)</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="doKeyboardInput"
+			signature="(Lde/bwravencl/controllerbuddy/input/ScanCode;Z)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="384" end="399" startBytecode="0" endBytecode="404"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
+				boolean)</Message>
+		</Method>
+		<Field
+			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+			name="ki" signature="Lcom/sun/jna/platform/win32/WinUser$KEYBDINPUT;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field
+				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.ki</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="388" end="388" startBytecode="55"
+			endBytecode="55" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 388]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="74de88186113c14937972a051ec428a0"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field input in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
+			boolean)</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="doMouseButtonInput" signature="(IZ)V" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="402" end="427" startBytecode="0" endBytecode="653"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
+				boolean)</Message>
+		</Method>
+		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
+			name="input"
+			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="405" end="405" startBytecode="33"
+			endBytecode="33" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 405]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="c4340ddf2f7ae52207ee48979036495"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field mi in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
+			boolean)</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="doMouseButtonInput" signature="(IZ)V" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="402" end="427" startBytecode="0" endBytecode="653"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
+				boolean)</Message>
+		</Method>
+		<Field
+			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+			name="mi" signature="Lcom/sun/jna/platform/win32/WinUser$MOUSEINPUT;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field
+				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.mi</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="408" end="408" startBytecode="98"
+			endBytecode="98" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 408]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			start="409" end="409" startBytecode="138" endBytecode="138"
+			sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at OutputRunMode.java:[line 409]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			start="411" end="411" startBytecode="178" endBytecode="178"
+			sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at OutputRunMode.java:[line 411]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="4f1209e4fc745a4335e00940d4baba50"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field input in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="writeOutput" signature="()V" isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="697" end="922" startBytecode="0" endBytecode="3228"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</Message>
+		</Method>
+		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
+			name="input"
+			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="816" end="816" startBytecode="989"
+			endBytecode="989" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 816]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			start="882" end="882" startBytecode="1813" endBytecode="1813"
+			sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at OutputRunMode.java:[line 882]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		priority="2" rank="14" abbrev="NP" category="STYLE"
+		instanceHash="7a1bbdf8513fddd946ee24631199def0"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
+		<LongMessage>Read of unwritten public or protected field mi in
+			de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="140" end="922" sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+			</SourceLine>
+			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			name="writeOutput" signature="()V" isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+				start="697" end="922" startBytecode="0" endBytecode="3228"
+				sourcefile="OutputRunMode.java"
+				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</Message>
+		</Method>
+		<Field
+			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+			name="mi" signature="Lcom/sun/jna/platform/win32/WinUser$MOUSEINPUT;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
+				sourcefile="WinUser.java"
+				sourcepath="com/sun/jna/platform/win32/WinUser.java">
+				<Message>In WinUser.java</Message>
+			</SourceLine>
+			<Message>Field
+				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.mi</Message>
+		</Field>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			primary="true" start="817" end="817" startBytecode="1012"
+			endBytecode="1012" sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+			<Message>At OutputRunMode.java:[line 817]</Message>
+		</SourceLine>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
+			start="883" end="883" startBytecode="1840" endBytecode="1840"
+			sourcefile="OutputRunMode.java"
+			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
+			role="SOURCE_LINE_ANOTHER_INSTANCE">
+			<Message>Another occurrence at OutputRunMode.java:[line 883]</Message>
+		</SourceLine>
+	</BugInstance>
 	<BugInstance
 		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
 		rank="20" abbrev="MC" category="MALICIOUS_CODE"
@@ -4965,6 +5331,19 @@ there is no easy way to eliminate these false positives.
   <p> This code invokes a method that requires a security permission check.
   If this code will be granted security permissions, but might be invoked by code that does not
   have security permissions, then the invocation needs to occur inside a doPrivileged block.</p>
+
+    ]]></Details>
+	</BugPattern>
+	<BugPattern type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
+		abbrev="NP" category="STYLE">
+		<ShortDescription>Read of unwritten public or protected field</ShortDescription>
+		<Details><![CDATA[
+
+  <p> The program is dereferencing a public or protected
+field that does not seem to ever have a non-null value written to it.
+Unless the field is initialized via some mechanism not seen by the analysis,
+dereferencing this value will generate a null pointer exception.
+</p>
 
     ]]></Details>
 	</BugPattern>
@@ -5195,6 +5574,9 @@ object is stored in this field.</p>
 	<BugCode abbrev="UW">
 		<Description>Unconditional wait</Description>
 	</BugCode>
+	<BugCode abbrev="NP" cweid="476">
+		<Description>Null pointer dereference</Description>
+	</BugCode>
 	<BugCode abbrev="EI">
 		<Description>Method returning array may expose internal representation</Description>
 	</BugCode>
@@ -5234,7 +5616,7 @@ object is stored in this field.</p>
 	<BugCode abbrev="PZLA">
 		<Description>Prefer zero length arrays to null to indicate no results</Description>
 	</BugCode>
-	<Errors errors="1" missingClasses="0">
+	<Errors errors="1" missingClasses="28">
 		<Error>
 			<ErrorMessage>Unable to read filter:
 				C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\spotbugs-baseline.xml
@@ -5254,13 +5636,41 @@ object is stored in this field.</p>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs.processCommandLine(FindBugs.java:359)</StackTrace>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1221)</StackTrace>
 		</Error>
+		<MissingClass>org.apache.avalon.framework.logger.Logger</MissingClass>
+		<MissingClass>org.apache.log.Hierarchy</MissingClass>
+		<MissingClass>org.apache.log.Logger</MissingClass>
+		<MissingClass>org.apache.log4j.Category</MissingClass>
+		<MissingClass>org.apache.log4j.Level</MissingClass>
+		<MissingClass>org.apache.log4j.Logger</MissingClass>
+		<MissingClass>org.apache.xerces.parsers.SAXParser</MissingClass>
+		<MissingClass>org.apache.xml.serialize.XMLSerializer</MissingClass>
+		<MissingClass>org.lwjgl.vulkan.VK</MissingClass>
+		<MissingClass>org.lwjgl.vulkan.VkInstance</MissingClass>
+		<MissingClass>org.lwjgl.vulkan.VkPhysicalDevice</MissingClass>
+		<MissingClass>org.mozilla.javascript.Callable</MissingClass>
+		<MissingClass>org.mozilla.javascript.ClassCache</MissingClass>
+		<MissingClass>org.mozilla.javascript.Context</MissingClass>
+		<MissingClass>org.mozilla.javascript.ContextFactory</MissingClass>
+		<MissingClass>org.mozilla.javascript.Function</MissingClass>
+		<MissingClass>org.mozilla.javascript.ImporterTopLevel</MissingClass>
+		<MissingClass>org.mozilla.javascript.JavaScriptException</MissingClass>
+		<MissingClass>org.mozilla.javascript.NativeJavaObject</MissingClass>
+		<MissingClass>org.mozilla.javascript.NativeObject</MissingClass>
+		<MissingClass>org.mozilla.javascript.Script</MissingClass>
+		<MissingClass>org.mozilla.javascript.ScriptableObject</MissingClass>
+		<MissingClass>org.mozilla.javascript.SecurityController</MissingClass>
+		<MissingClass>org.mozilla.javascript.Undefined</MissingClass>
+		<MissingClass>org.mozilla.javascript.WrapFactory</MissingClass>
+		<MissingClass>org.mozilla.javascript.WrappedException</MissingClass>
+		<MissingClass>org.python.core.PyException</MissingClass>
+		<MissingClass>org.python.util.PythonInterpreter</MissingClass>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Wed, 7 Sep 2022 15:44:46 +0200" total_classes="0"
-		referenced_classes="0" total_bugs="86" total_size="0" num_packages="6"
-		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="47.31"
-		clock_seconds="7.06" peak_mbytes="586.55" alloc_mbytes="8180.00"
-		gc_seconds="0.09" priority_3="30" priority_2="54" priority_1="2">
+		timestamp="Thu, 8 Sep 2022 01:24:46 +0200" total_classes="0"
+		referenced_classes="0" total_bugs="92" total_size="0" num_packages="6"
+		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="69.17"
+		clock_seconds="19.21" peak_mbytes="1014.35" alloc_mbytes="8180.00"
+		gc_seconds="0.23" priority_3="30" priority_2="60" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5268,7 +5678,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
 			bugCount="10" size="0" bugHash="8b8ba933a0f5ffbcef3cc4a4b3e73648" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="12" size="0" bugHash="6405c62a4a16999b6fdefcb105553eda" />
+			bugCount="12" size="0" bugHash="a829036cf5963258a1768283a95f34c5" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="5" size="0" bugHash="9d4fe9b79f1db3fb85fd10b101787c4c" />
@@ -5328,7 +5738,7 @@ object is stored in this field.</p>
 			bugCount="1" size="0" bugHash="1dc6180829decf3345ad1626070d06ec" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			bugCount="1" size="0" bugHash="dc29c1cf385301bf1f056abc0553414e" />
+			bugCount="7" size="0" bugHash="1ef2ba49b3d3ec601f56056db8e621eb" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="1"
 			size="0" bugHash="b6818e28ebc457a424d8938b93e90e82" />
