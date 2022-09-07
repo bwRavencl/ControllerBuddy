@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.7.2" sequence="0"
-	timestamp="1662504520141" analysisTimestamp="1662504520141" release="">
+	timestamp="1662558286859" analysisTimestamp="1662558286859" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -66,12 +66,16 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\Main.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$AbstractKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$AlphabeticKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$CapsLockKeyButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DefaultKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$DualPurposeKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$LockKeyButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$NumLockKeyButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$NumPadKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$ShiftableKeyboardButton.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$ShiftKeyboardButton$ShiftKeyboardButtonType.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard$ShiftKeyboardButton.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay$TextureData.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\OpenVrOverlay.class</Jar>
@@ -1639,10 +1643,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
-				start="429" end="742" sourcefile="OnScreenKeyboard.java"
+				start="475" end="799" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 429-742]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 475-799]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
 		</Class>
@@ -1697,10 +1701,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard"
-				start="429" end="742" sourcefile="OnScreenKeyboard.java"
+				start="475" end="799" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 429-742]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 475-799]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.OnScreenKeyboard</Message>
 		</Class>
@@ -1750,10 +1754,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
-				start="163" end="316" sourcefile="OnScreenKeyboard.java"
+				start="167" end="313" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 163-316]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 167-313]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton</Message>
@@ -1764,7 +1768,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
-				start="224" end="247" startBytecode="0" endBytecode="128"
+				start="228" end="251" startBytecode="0" endBytecode="128"
 				sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
@@ -1777,11 +1781,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DefaultKeyboardButton"
-			primary="true" start="226" end="226" startBytecode="18"
+			primary="true" start="230" end="230" startBytecode="18"
 			endBytecode="18" sourcefile="OnScreenKeyboard.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-			<Message>At OnScreenKeyboard.java:[line 226]</Message>
+			<Message>At OnScreenKeyboard.java:[line 230]</Message>
 		</SourceLine>
 		<Property
 			name="edu.umd.cs.findbugs.detect.DeadLocalStoreProperty.LOCAL_NAME"
@@ -1804,10 +1808,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
-				start="324" end="333" sourcefile="OnScreenKeyboard.java"
+				start="321" end="330" sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-				<Message>At OnScreenKeyboard.java:[lines 324-333]</Message>
+				<Message>At OnScreenKeyboard.java:[lines 321-330]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton</Message>
@@ -1819,7 +1823,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
-				start="324" end="329" startBytecode="0" endBytecode="102"
+				start="321" end="326" startBytecode="0" endBytecode="102"
 				sourcefile="OnScreenKeyboard.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
@@ -1832,11 +1836,61 @@
 		</String>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$DualPurposeKeyboardButton"
-			primary="true" start="327" end="327" startBytecode="13"
+			primary="true" start="324" end="324" startBytecode="13"
 			endBytecode="13" sourcefile="OnScreenKeyboard.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
-			<Message>At OnScreenKeyboard.java:[line 327]</Message>
+			<Message>At OnScreenKeyboard.java:[line 324]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance
+		type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3"
+		rank="20" abbrev="MC" category="MALICIOUS_CODE"
+		instanceHash="32021ecef06025b503b218296c99016b"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>An overridable method is called from a constructor</ShortMessage>
+		<LongMessage>Overridable method toggleLock is called from constructor
+			new
+			de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard,
+			LockKey).</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+				start="341" end="400" sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+				<Message>At OnScreenKeyboard.java:[lines 341-400]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			name="&lt;init&gt;"
+			signature="(Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;Lde/bwravencl/controllerbuddy/input/LockKey;)V"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+				start="343" end="350" startBytecode="0" endBytecode="109"
+				sourcefile="OnScreenKeyboard.java"
+				sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java" />
+			<Message>In method new
+				de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton(OnScreenKeyboard,
+				LockKey)</Message>
+		</Method>
+		<String value="toggleLock">
+			<Message>Value toggleLock</Message>
+		</String>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.gui.OnScreenKeyboard$LockKeyButton"
+			primary="true" start="347" end="347" startBytecode="29"
+			endBytecode="29" sourcefile="OnScreenKeyboard.java"
+			sourcepath="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\gui\OnScreenKeyboard.java">
+			<Message>At OnScreenKeyboard.java:[line 347]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -5202,11 +5256,11 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Wed, 7 Sep 2022 00:48:40 +0200" total_classes="0"
-		referenced_classes="0" total_bugs="85" total_size="0" num_packages="6"
-		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="58.03"
-		clock_seconds="8.54" peak_mbytes="595.32" alloc_mbytes="8180.00"
-		gc_seconds="0.09" priority_3="29" priority_2="54" priority_1="2">
+		timestamp="Wed, 7 Sep 2022 15:44:46 +0200" total_classes="0"
+		referenced_classes="0" total_bugs="86" total_size="0" num_packages="6"
+		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="47.31"
+		clock_seconds="7.06" peak_mbytes="586.55" alloc_mbytes="8180.00"
+		gc_seconds="0.09" priority_3="30" priority_2="54" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5217,7 +5271,7 @@ object is stored in this field.</p>
 			bugCount="12" size="0" bugHash="6405c62a4a16999b6fdefcb105553eda" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
-			bugCount="4" size="0" bugHash="d3118522f9c67f471ba911094b5d82d6" />
+			bugCount="5" size="0" bugHash="9d4fe9b79f1db3fb85fd10b101787c4c" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
 			bugCount="1" size="0" bugHash="2a901c6f31e27328870962cf52bc4e5a" />
