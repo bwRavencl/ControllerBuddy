@@ -61,8 +61,6 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private static final int BASE_BUTTON_SIZE = 55;
 
-		private final boolean shiftKey;
-		private final boolean numLockKey;
 		volatile boolean changed;
 		private volatile boolean pressed;
 
@@ -75,11 +73,6 @@ public final class OnScreenKeyboard extends JFrame {
 		private AbstractKeyboardButton(final String text) {
 			super(text);
 
-			shiftKey = getDefaultKeyDisplayName(ScanCode.DIK_LSHIFT).equals(text)
-					|| getDefaultKeyDisplayName(ScanCode.DIK_RSHIFT).equals(text)
-					|| getLockKeyDisplayName(LockKey.CAPS_LOCK).equals(text);
-			numLockKey = getLockKeyDisplayName(LockKey.NUM_LOCK).equals(text);
-
 			updateTheme();
 			setMargin(new Insets(1, 1, 1, 1));
 			setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
@@ -88,6 +81,10 @@ public final class OnScreenKeyboard extends JFrame {
 		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(BASE_BUTTON_SIZE, BASE_BUTTON_SIZE);
+		}
+
+		boolean isPressed() {
+			return pressed;
 		}
 
 		abstract boolean poll(final Input input);
@@ -110,18 +107,6 @@ public final class OnScreenKeyboard extends JFrame {
 
 		abstract void toggleLock();
 
-		void updateDualPurposeButtons(final boolean keyDown) {
-			if (!shiftKey && !numLockKey)
-				return;
-
-			for (final AbstractKeyboardButton[] keyboardButton : keyboardButtons)
-				for (final AbstractKeyboardButton element : keyboardButton)
-					if (shiftKey && element instanceof final ShiftableKeyboardButton shiftableKeyboardButton)
-						shiftableKeyboardButton.setShowAlternativeKeyName(keyDown);
-					else if (numLockKey && element instanceof final NumPadKeyboardButton numPadKeyboardButton)
-						numPadKeyboardButton.setShowAlternativeKeyName(keyDown);
-		}
-
 		private void updateTheme() {
 			defaultBackground = UIManager.getColor("Button.background");
 			defaultForeground = UIManager.getColor("Button.foreground");
@@ -141,6 +126,25 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private AlphabeticKeyboardButton(final String directInputKeyCodeName) {
 			super(directInputKeyCodeName, directInputKeyCodeName);
+		}
+	}
+
+	private final class CapsLockKeyButton extends LockKeyButton {
+
+		private CapsLockKeyButton() {
+			super(LockKey.CapsLockLockKey);
+		}
+
+		@Override
+		void toggleLock() {
+			super.toggleLock();
+
+			final var showAlternativeKeyName = locked ^ isKeyboardShifted();
+
+			for (final AbstractKeyboardButton[] row : keyboardButtons)
+				for (final AbstractKeyboardButton keyboardButton : row)
+					if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton)
+						shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
 		}
 	}
 
@@ -299,13 +303,6 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void setPressed(final boolean pressed) {
-			super.setPressed(pressed);
-
-			updateDualPurposeButtons(pressed || heldButtons.contains(this));
-		}
-
-		@Override
 		void toggleLock() {
 			if (heldButtons.contains(this))
 				release();
@@ -333,11 +330,11 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
-	private final class LockKeyButton extends AbstractKeyboardButton {
+	private class LockKeyButton extends AbstractKeyboardButton {
 
 		private static final long serialVersionUID = 4014130700331413635L;
 
-		private volatile boolean locked;
+		volatile boolean locked;
 
 		private final LockKey lockKey;
 
@@ -400,8 +397,23 @@ public final class OnScreenKeyboard extends JFrame {
 			});
 			changed = true;
 			anyChanges = true;
+		}
+	}
 
-			updateDualPurposeButtons(locked);
+	private final class NumLockKeyButton extends LockKeyButton {
+
+		public NumLockKeyButton() {
+			super(LockKey.NumLockLockKey);
+		}
+
+		@Override
+		void toggleLock() {
+			super.toggleLock();
+
+			for (final AbstractKeyboardButton[] row : keyboardButtons)
+				for (final AbstractKeyboardButton keyboardButton : row)
+					if (keyboardButton instanceof final NumPadKeyboardButton numPadKeyboardButton)
+						numPadKeyboardButton.setShowAlternativeKeyName(locked);
 		}
 	}
 
@@ -423,6 +435,40 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private ShiftableKeyboardButton(final String directInputKeyCodeName, final String shiftedKeyName) {
 			super(directInputKeyCodeName, shiftedKeyName);
+		}
+	}
+
+	private final class ShiftKeyboardButton extends DefaultKeyboardButton {
+
+		private enum ShiftKeyboardButtonType {
+
+			LEFT(ScanCode.DIK_LSHIFT), RIGHT(ScanCode.DIK_RSHIFT);
+
+			private final String directInputKeyCodeName;
+
+			ShiftKeyboardButtonType(final String directInputKeyCodeName) {
+				this.directInputKeyCodeName = directInputKeyCodeName;
+			}
+		}
+
+		private ShiftKeyboardButton(final ShiftKeyboardButtonType type) {
+			super(type.directInputKeyCodeName);
+		}
+
+		private boolean isShifting() {
+			return isPressed() || heldButtons.contains(this);
+		}
+
+		@Override
+		void setPressed(final boolean pressed) {
+			super.setPressed(pressed);
+
+			final var showAlternativeKeyName = isKeyboardShifted() ^ capsLockKeyButton.locked;
+
+			for (final AbstractKeyboardButton[] row : keyboardButtons)
+				for (final AbstractKeyboardButton keyboardButton : row)
+					if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton)
+						shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
 		}
 	}
 
@@ -474,6 +520,13 @@ public final class OnScreenKeyboard extends JFrame {
 		return shortName;
 	}
 
+	private final CapsLockKeyButton capsLockKeyButton = new CapsLockKeyButton();
+
+	private final ShiftKeyboardButton leftShiftKeyboardButton = new ShiftKeyboardButton(
+			ShiftKeyboardButton.ShiftKeyboardButtonType.LEFT);
+	private final ShiftKeyboardButton rightShiftKeyboardButton = new ShiftKeyboardButton(
+			ShiftKeyboardButton.ShiftKeyboardButtonType.RIGHT);
+
 	private final AbstractKeyboardButton[][] keyboardButtons = {
 			{ new DefaultKeyboardButton(ScanCode.DIK_ESCAPE), new DefaultKeyboardButton(ScanCode.DIK_F1),
 					new DefaultKeyboardButton(ScanCode.DIK_F2), new DefaultKeyboardButton(ScanCode.DIK_F3),
@@ -493,7 +546,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new ShiftableKeyboardButton(ScanCode.DIK_0, ")"),
 					new ShiftableKeyboardButton(ScanCode.DIK_MINUS, "_"),
 					new ShiftableKeyboardButton(ScanCode.DIK_EQUALS, "+"), new DefaultKeyboardButton(ScanCode.DIK_BACK),
-					new LockKeyButton(LockKey.NumLockLockKey), new DefaultKeyboardButton(ScanCode.DIK_DIVIDE),
+					new NumLockKeyButton(), new DefaultKeyboardButton(ScanCode.DIK_DIVIDE),
 					new DefaultKeyboardButton(ScanCode.DIK_MULTIPLY),
 					new DefaultKeyboardButton(ScanCode.DIK_SUBTRACT) },
 			{ new DefaultKeyboardButton(ScanCode.DIK_TAB), new AlphabeticKeyboardButton(ScanCode.DIK_Q),
@@ -509,7 +562,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD8, ScanCode.DIK_UP),
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD9, ScanCode.DIK_PRIOR),
 					new DefaultKeyboardButton(ScanCode.DIK_ADD) },
-			{ new LockKeyButton(LockKey.CapsLockLockKey), new AlphabeticKeyboardButton(ScanCode.DIK_A),
+			{ capsLockKeyButton, new AlphabeticKeyboardButton(ScanCode.DIK_A),
 					new AlphabeticKeyboardButton(ScanCode.DIK_S), new AlphabeticKeyboardButton(ScanCode.DIK_D),
 					new AlphabeticKeyboardButton(ScanCode.DIK_F), new AlphabeticKeyboardButton(ScanCode.DIK_G),
 					new AlphabeticKeyboardButton(ScanCode.DIK_H), new AlphabeticKeyboardButton(ScanCode.DIK_J),
@@ -521,14 +574,13 @@ public final class OnScreenKeyboard extends JFrame {
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD5, ""),
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD6, ScanCode.DIK_RIGHT),
 					new DefaultKeyboardButton(ScanCode.DIK_PRIOR) },
-			{ new DefaultKeyboardButton(ScanCode.DIK_LSHIFT), new AlphabeticKeyboardButton(ScanCode.DIK_Z),
+			{ leftShiftKeyboardButton, new AlphabeticKeyboardButton(ScanCode.DIK_Z),
 					new AlphabeticKeyboardButton(ScanCode.DIK_X), new AlphabeticKeyboardButton(ScanCode.DIK_C),
 					new AlphabeticKeyboardButton(ScanCode.DIK_V), new AlphabeticKeyboardButton(ScanCode.DIK_B),
 					new AlphabeticKeyboardButton(ScanCode.DIK_N), new AlphabeticKeyboardButton(ScanCode.DIK_M),
 					new ShiftableKeyboardButton(ScanCode.DIK_COMMA, "<"),
 					new ShiftableKeyboardButton(ScanCode.DIK_PERIOD, ">"),
-					new ShiftableKeyboardButton(ScanCode.DIK_SLASH, "?"),
-					new DefaultKeyboardButton(ScanCode.DIK_RSHIFT),
+					new ShiftableKeyboardButton(ScanCode.DIK_SLASH, "?"), rightShiftKeyboardButton,
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD1, ScanCode.DIK_END),
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD2, ScanCode.DIK_DOWN),
 					new NumPadKeyboardButton(ScanCode.DIK_NUMPAD3, ScanCode.DIK_NEXT),
@@ -544,6 +596,7 @@ public final class OnScreenKeyboard extends JFrame {
 					new DefaultKeyboardButton(ScanCode.DIK_NUMPADENTER) } };
 
 	private final Main main;
+
 	private final FrameDragListener frameDragListener;
 	private volatile boolean anyChanges;
 	private int selectedRow = keyboardButtons.length / 2;
@@ -606,6 +659,10 @@ public final class OnScreenKeyboard extends JFrame {
 			x += keyboardButtons[selectedRow][i].getPreferredSize().width;
 
 		return x;
+	}
+
+	private boolean isKeyboardShifted() {
+		return leftShiftKeyboardButton.isShifting() || rightShiftKeyboardButton.isShifting();
 	}
 
 	public void moveSelectorDown() {
