@@ -38,7 +38,6 @@ ext {
 	versionDir = "$genDir/main/java"
 	libsDir = "$buildDir/$libsDirName"
 	tmpDir = "$buildDir/tmp"
-	appImageDir = "$tmpDir/$project.name"
 	runtimeDir = "$tmpDir/runtime"
 
 	linuxJvmArgs = [
@@ -201,7 +200,12 @@ spotless {
 	}
 }
 
-jar.dependsOn check
+task cleanLibsDirectory {
+	description = "Removes the \'$libsDir\' directory."
+	doLast { delete libsDir }
+}
+
+jar.dependsOn check, cleanLibsDirectory
 
 task cleanGenDirectory {
 	description = "Removes the \'$genDir\' directory."
@@ -505,7 +509,7 @@ task customizeLoggingProperties {
 task jpackage(type: Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
 	dependsOn copyLibs, customizeLoggingProperties
-	doFirst { delete appImageDir }
+	doFirst { delete "$tmpDir/$project.name" }
 	def commandLineParts = [
 		'jpackage',
 		'--input',
