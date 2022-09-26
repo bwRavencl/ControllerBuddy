@@ -20,16 +20,10 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.DistanceEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "TO_CURSOR_ACTION", category = ActionCategory.BUTTON, order = 125)
 public final class ButtonToCursorAction extends ToCursorAction<Byte> implements IButtonToAction {
-
-	private static final int DEFAULT_DISTANCE = 1000;
-
-	@ActionProperty(label = "DISTANCE", editorBuilder = DistanceEditorBuilder.class, order = 10)
-	private int distance = DEFAULT_DISTANCE;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -44,21 +38,13 @@ public final class ButtonToCursorAction extends ToCursorAction<Byte> implements 
 			return;
 		}
 
-		final var d = distance * input.getRateMultiplier();
+		final var d = cursorSensitivity * input.getRateMultiplier();
 		moveCursor(input, d);
-	}
-
-	public int getDistance() {
-		return distance;
 	}
 
 	@Override
 	public boolean isLongPress() {
 		return longPress;
-	}
-
-	public void setDistance(final int distance) {
-		this.distance = distance;
 	}
 
 	@Override

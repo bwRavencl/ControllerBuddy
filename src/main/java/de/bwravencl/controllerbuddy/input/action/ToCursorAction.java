@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.CursorSensitivityEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 
 public abstract class ToCursorAction<V extends Number> extends InvertableAction<V> {
@@ -41,13 +42,22 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 		}
 	}
 
+	private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
+
 	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
 	private MouseAxis axis = MouseAxis.X;
+
+	@ActionProperty(label = "CURSOR_SENSITIVITY", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
+	int cursorSensitivity = DEFAULT_CURSOR_SENSITIVITY;
 
 	transient float remainingD;
 
 	public MouseAxis getAxis() {
 		return axis;
+	}
+
+	public int getCursorSensitivity() {
+		return cursorSensitivity;
 	}
 
 	@Override
@@ -79,5 +89,9 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
 	public void setAxis(final MouseAxis axis) {
 		this.axis = axis;
+	}
+
+	public void setCursorSensitivity(final int cursorSensitivity) {
+		this.cursorSensitivity = cursorSensitivity;
 	}
 }

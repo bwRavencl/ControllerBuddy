@@ -1,4 +1,4 @@
-/* Copyright (C) 2020  Matteo Hausner
+/* Copyright (C) 2019  Matteo Hausner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ import java.lang.reflect.InvocationTargetException;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
-public final class DistanceEditorBuilder extends NumberEditorBuilder<Integer> {
+public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	public DistanceEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+	public CursorSensitivityEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
 			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
@@ -41,6 +41,6 @@ public final class DistanceEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	@Override
 	Number getStepSize() {
-		return 1;
+		return 1f;
 	}
 }
