@@ -228,8 +228,10 @@ public abstract class OutputRunMode extends RunMode {
 				if (state != on) {
 					final var modifierMask = X11WithLockKeyFunctions.INSTANCE.XkbKeysymToModifiers(display,
 							lockKey.keySym());
-					if (modifierMask == 0)
-						throw new RuntimeException("XkbKeysymToModifiers() unsucessful");
+					if (modifierMask == 0) {
+						log.log(Level.WARNING, lockKey + " key is not supported on this system");
+						return;
+					}
 
 					if (!X11WithLockKeyFunctions.INSTANCE.XkbLockModifiers(display,
 							X11WithLockKeyFunctions.XkbUseCoreKbd, modifierMask, on ? modifierMask : 0))
