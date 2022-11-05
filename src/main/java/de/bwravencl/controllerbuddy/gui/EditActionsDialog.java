@@ -184,7 +184,7 @@ public final class EditActionsDialog extends JDialog {
 					unsavedProfile.getModes().remove(OnScreenKeyboard.onScreenKeyboardMode);
 
 				input.setProfile(unsavedProfile);
-				main.updateModesPanel();
+				main.updateModesPanel(false);
 				main.updateVisualizationPanel();
 				main.setUnsavedChanges(true);
 			}

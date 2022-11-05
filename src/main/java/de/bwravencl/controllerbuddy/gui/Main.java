@@ -483,10 +483,7 @@ public final class Main {
 			input.getProfile().getModes().add(mode);
 
 			setUnsavedChanges(true);
-			updateModesPanel();
-
-			final var verticalScrollBar = modesScrollPane.getVerticalScrollBar();
-			verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+			updateModesPanel(true);
 		}
 	}
 
@@ -569,7 +566,7 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			input.getProfile().removeMode(input, mode);
 			setUnsavedChanges(true);
-			updateModesPanel();
+			updateModesPanel(false);
 			updateVisualizationPanel();
 		}
 	}
@@ -2374,7 +2371,7 @@ public final class Main {
 				profileLoaded = input.setProfile(profile);
 				if (profileLoaded) {
 					saveLastProfile(file);
-					updateModesPanel();
+					updateModesPanel(false);
 					updateVisualizationPanel();
 					updateOverlayPanel();
 					updateProfileSettingsPanel();
@@ -2418,7 +2415,7 @@ public final class Main {
 		loadedProfile = null;
 		unsavedChanges = false;
 		updateTitleAndTooltip();
-		updateModesPanel();
+		updateModesPanel(false);
 		updateVisualizationPanel();
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
@@ -2642,7 +2639,7 @@ public final class Main {
 			tabbedPane.setSelectedIndex(previousSelectedTabIndex);
 
 		updateMenuShortcuts();
-		updateModesPanel();
+		updateModesPanel(false);
 		updateVisualizationPanel();
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
@@ -3136,7 +3133,7 @@ public final class Main {
 		}
 	}
 
-	void updateModesPanel() {
+	void updateModesPanel(final boolean newModeAdded) {
 		if (modesListPanel == null)
 			return;
 
@@ -3146,7 +3143,8 @@ public final class Main {
 				GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0);
 
 		final var modes = input.getProfile().getModes();
-		for (var i = 0; i < modes.size(); i++) {
+		final var numModes = modes.size();
+		for (var i = 0; i < numModes; i++) {
 			final var mode = modes.get(i);
 
 			final var modePanel = new JPanel(new GridBagLayout());
@@ -3163,9 +3161,13 @@ public final class Main {
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
-			descriptionTextField.setCaretPosition(0);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+			if (newModeAdded && i == numModes - 1) {
+				descriptionTextField.grabFocus();
+				descriptionTextField.selectAll();
+			} else
+				descriptionTextField.setCaretPosition(0);
 
 			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
@@ -3189,6 +3191,11 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 		modesScrollPane.setViewportView(modesListPanel);
+
+		if (newModeAdded) {
+			final var verticalScrollBar = modesScrollPane.getVerticalScrollBar();
+			verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+		}
 	}
 
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
