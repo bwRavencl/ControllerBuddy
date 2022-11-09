@@ -3473,10 +3473,17 @@ public final class Main {
 			final String toolTip;
 
 			final var sonyExtension = input.getSonyExtension();
-			if (sonyExtension != null)
-				toolTip = MessageFormat.format(strings.getString(
-						sonyExtension.isCharging() ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"), title,
-						sonyExtension.getBatteryCapacity() / 100f);
+			Boolean charging = null;
+			Integer batteryCapacity = null;
+			if (sonyExtension != null) {
+				charging = sonyExtension.isCharging();
+				batteryCapacity = sonyExtension.getBatteryCapacity();
+			}
+
+			if (charging != null && batteryCapacity != null)
+				toolTip = MessageFormat.format(
+						strings.getString(charging ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"), title,
+						batteryCapacity / 100f);
 			else
 				toolTip = title;
 

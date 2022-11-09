@@ -279,8 +279,8 @@ public abstract class SonyExtension {
 	HidDevice hidDevice;
 	byte[] hidReport;
 	Connection connection;
-	volatile boolean charging = true;
-	volatile int batteryCapacity;
+	volatile Boolean charging;
+	volatile Integer batteryCapacity;
 	volatile byte lx = Byte.MAX_VALUE;
 	volatile byte ly = Byte.MAX_VALUE;
 	volatile byte rx = Byte.MAX_VALUE;
@@ -325,7 +325,7 @@ public abstract class SonyExtension {
 		}
 	}
 
-	public int getBatteryCapacity() {
+	public Integer getBatteryCapacity() {
 		return batteryCapacity;
 	}
 
@@ -381,7 +381,7 @@ public abstract class SonyExtension {
 
 	abstract int getTouchpadOffset();
 
-	public boolean isCharging() {
+	public Boolean isCharging() {
 		return charging;
 	}
 
@@ -489,28 +489,34 @@ public abstract class SonyExtension {
 	}
 
 	void setBatteryCapacity(final int batteryCapacity) {
-		if (this.batteryCapacity != batteryCapacity) {
-			this.batteryCapacity = batteryCapacity;
+		if (this.batteryCapacity != null && this.batteryCapacity == batteryCapacity)
+			return;
 
-			updateLightbarColor();
+		this.batteryCapacity = batteryCapacity;
 
-			final var main = input.getMain();
-			if (main != null)
-				EventQueue.invokeLater(() -> {
-					main.updateTitleAndTooltip();
+		updateLightbarColor();
 
-					if (batteryCapacity == LOW_BATTERY_WARNING)
-						main.displayLowBatteryWarning(batteryCapacity / 100f);
-				});
-		}
+		final var main = input.getMain();
+		if (main != null)
+			EventQueue.invokeLater(() -> {
+				main.updateTitleAndTooltip();
+
+				if (batteryCapacity == LOW_BATTERY_WARNING)
+					main.displayLowBatteryWarning(batteryCapacity / 100f);
+			});
 	}
 
 	void setCharging(final boolean charging) {
-		if (this.charging != charging) {
-			this.charging = charging;
+		final var firstCall = this.charging == null;
 
-			updateLightbarColor();
+		if (!firstCall && this.charging == charging)
+			return;
 
+		this.charging = charging;
+
+		updateLightbarColor();
+
+		if (!firstCall) {
 			final var main = input.getMain();
 			EventQueue.invokeLater(() -> {
 				main.updateTitleAndTooltip();
@@ -520,7 +526,7 @@ public abstract class SonyExtension {
 	}
 
 	void updateLightbarColor() {
-		if (hidDevice == null || connection == null || hidReport == null)
+		if (hidDevice == null || connection == null || hidReport == null || charging == null || batteryCapacity == null)
 			return;
 
 		synchronized (hidReport) {
