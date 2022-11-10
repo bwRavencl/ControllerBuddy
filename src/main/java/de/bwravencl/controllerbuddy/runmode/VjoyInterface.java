@@ -17,16 +17,17 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import com.sun.jna.Library;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.LONGByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 
-interface IVjoyInterface extends Library {
+interface VjoyInterface extends Library {
 
 	UINT HID_USAGE_X = new UINT(0x30L);
 	UINT HID_USAGE_Y = new UINT(0x31L);
@@ -46,13 +47,13 @@ interface IVjoyInterface extends Library {
 
 	BOOL AcquireVJD(UINT rID);
 
-	BOOL DriverMatch(Pointer DllVer, Pointer DrvVer);
+	BOOL DriverMatch(WORDByReference DllVer, WORDByReference DrvVer);
 
 	BOOL GetVJDAxisExist(UINT rID, UINT Axis);
 
-	BOOL GetVJDAxisMax(UINT rID, UINT Axis, Pointer Max);
+	BOOL GetVJDAxisMax(UINT rID, UINT Axis, LONGByReference Max);
 
-	BOOL GetVJDAxisMin(UINT rID, UINT Axis, Pointer Min);
+	BOOL GetVJDAxisMin(UINT rID, UINT Axis, LONGByReference Min);
 
 	int GetVJDButtonNumber(UINT rID);
 

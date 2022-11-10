@@ -14,13 +14,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.sony;
+package de.bwravencl.controllerbuddy.input.extension.sony;
 
 import java.awt.EventQueue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -32,12 +33,13 @@ import org.lwjgl.glfw.GLFWGamepadState;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.extension.InputExtension;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
-public abstract class SonyExtension {
+public abstract class SonyExtension extends InputExtension {
 
 	static record Connection(int offset, byte inputReportId) {
 
@@ -157,7 +159,7 @@ public abstract class SonyExtension {
 
 			ready = true;
 
-			if (jid != input.getController().jid())
+			if (controller.jid() != input.getController().jid())
 				return;
 
 			handleBattery(reportData);
@@ -215,8 +217,9 @@ public abstract class SonyExtension {
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final int hidReportPlatformOffset = Main.isWindows ? 1 : 0;
 
-	static HidDeviceInfo getHidDeviceInfo(final ControllerInfo controller, final String guid, final short productId,
-			final String humanReadableName, final Logger log) {
+	static HidDeviceInfo getHidDeviceInfo(final List<ControllerInfo> presentControllers,
+			final ControllerInfo selectedController, final short productId, final String humanReadableName,
+			final Logger log) {
 		final var devices = PureJavaHidApi.enumerateDevices().stream()
 				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
 						&& hidDeviceInfo.getProductId() == productId)
@@ -231,28 +234,20 @@ public abstract class SonyExtension {
 
 		var deviceIndex = 0;
 		if (count > 1) {
-			final var presentJidsWithSameGuid = new ArrayList<Integer>();
-			for (var i = GLFW.GLFW_JOYSTICK_1; i <= GLFW.GLFW_JOYSTICK_LAST; i++)
-				if (GLFW.glfwJoystickPresent(i) && guid.equals(GLFW.glfwGetJoystickGUID(i)))
-					presentJidsWithSameGuid.add(i);
-			deviceIndex = presentJidsWithSameGuid.indexOf(controller.jid());
+			final var presentJidsWithSameGuid = presentControllers.stream()
+					.filter(controller -> selectedController.guid() != null
+							&& selectedController.guid().equals(controller.guid()))
+					.collect(Collectors.toUnmodifiableList());
+			deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
 		}
 
 		final var hidDeviceInfo = devices.get(deviceIndex);
 
 		log.log(Level.INFO, Main.assembleControllerLoggingMessage(
 				"Using " + humanReadableName + " controller with ID " + getPrintableDeviceId(hidDeviceInfo) + " as",
-				controller));
+				selectedController));
 
 		return hidDeviceInfo;
-	}
-
-	public static SonyExtension getIfAvailable(final Input input, final ControllerInfo controller) {
-		final var dualShock4Extension = DualShock4Extension.getIfAvailable(input, controller);
-		if (dualShock4Extension != null)
-			return dualShock4Extension;
-
-		return DualSenseExtension.getIfAvailable(input, controller);
 	}
 
 	private static String getPrintableDeviceId(final HidDeviceInfo device) {
@@ -274,8 +269,6 @@ public abstract class SonyExtension {
 		return value < 0 ? Input.normalize(value, -128, -1, 0f, 1f) : Input.normalize(value, 0, 127, -1f, 0f);
 	}
 
-	final Input input;
-	final int jid;
 	HidDevice hidDevice;
 	byte[] hidReport;
 	Connection connection;
@@ -303,16 +296,16 @@ public abstract class SonyExtension {
 	volatile boolean l1;
 	volatile boolean ps;
 	volatile boolean disconnected;
-	volatile boolean ready;
 
-	SonyExtension(final Input input, final int jid) {
-		this.input = input;
-		this.jid = jid;
+	SonyExtension(final Input input, final ControllerInfo controller) {
+		super(input, controller);
 	}
 
+	@Override
 	public void deInit(final boolean disconnected) {
+		super.deInit(disconnected);
+
 		this.disconnected = true;
-		ready = false;
 
 		if (hidDevice != null) {
 			if (!disconnected)
@@ -325,14 +318,11 @@ public abstract class SonyExtension {
 		}
 	}
 
-	public Integer getBatteryCapacity() {
-		return batteryCapacity;
-	}
-
 	abstract int getButtonsOffset();
 
 	abstract byte[] getDefaultHidReport();
 
+	@Override
 	public boolean getGamepadState(final GLFWGamepadState state) {
 		if (disconnected || !ready)
 			return false;
@@ -379,6 +369,17 @@ public abstract class SonyExtension {
 
 	abstract byte getStrongRumbleStrength();
 
+	@Override
+	public String getTooltip(final String title) {
+		if (disconnected || !ready || charging == null || batteryCapacity == null)
+			return title;
+
+		return MessageFormat.format(
+				Main.strings.getString(
+						charging ? "BATTERY_TOOLTIP_PERCENT_CHARGING" : "BATTERY_TOOLTIP_PERCENT_DISCHARGING"),
+				title, batteryCapacity / 100f);
+	}
+
 	abstract int getTouchpadOffset();
 
 	public Boolean isCharging() {
@@ -422,6 +423,7 @@ public abstract class SonyExtension {
 		return true;
 	}
 
+	@Override
 	public boolean isReady() {
 		return ready;
 	}
@@ -456,10 +458,12 @@ public abstract class SonyExtension {
 		}).start();
 	}
 
+	@Override
 	public void rumbleLight() {
 		rumble(getLightRumbleDuration(), getLightRumbleStrength());
 	}
 
+	@Override
 	public void rumbleStrong() {
 		rumble(getStrongRumbleDuration(), getStrongRumbleStrength());
 	}
@@ -501,8 +505,11 @@ public abstract class SonyExtension {
 			EventQueue.invokeLater(() -> {
 				main.updateTitleAndTooltip();
 
-				if (batteryCapacity == LOW_BATTERY_WARNING)
-					main.displayLowBatteryWarning(batteryCapacity / 100f);
+				if (batteryCapacity == LOW_BATTERY_WARNING) {
+
+					final var batteryLevelString = MessageFormat.format("{0,number,percent}", batteryCapacity / 100f);
+					main.displayLowBatteryWarning(batteryLevelString);
+				}
 			});
 	}
 
@@ -520,7 +527,7 @@ public abstract class SonyExtension {
 			final var main = input.getMain();
 			EventQueue.invokeLater(() -> {
 				main.updateTitleAndTooltip();
-				main.displayChargingStateInfo(charging);
+				main.displayChargingStateInfo(charging, batteryCapacity);
 			});
 		}
 	}

@@ -14,9 +14,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.sony;
+package de.bwravencl.controllerbuddy.input.extension.sony;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.PureJavaHidApi;
 
-final class DualShock4Extension extends SonyExtension {
+public final class DualShock4Extension extends SonyExtension {
 
 	private static final byte USB_INPUT_REPORT_ID = 0x1;
 	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x11;
@@ -38,7 +39,8 @@ final class DualShock4Extension extends SonyExtension {
 
 	private static final Logger log = Logger.getLogger(DualShock4Extension.class.getName());
 
-	public static DualShock4Extension getIfAvailable(final Input input, final ControllerInfo controller) {
+	public static DualShock4Extension getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+			final ControllerInfo controller) {
 		final var guid = GLFW.glfwGetJoystickGUID(controller.jid());
 		if (guid == null)
 			return null;
@@ -55,10 +57,10 @@ final class DualShock4Extension extends SonyExtension {
 		} else
 			return null;
 
-		final var hidDeviceInfo = getHidDeviceInfo(controller, guid, productId, "DualShock 4", log);
+		final var hidDeviceInfo = getHidDeviceInfo(presentControllers, controller, productId, "DualShock 4", log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualShock4Extension(input, controller.jid(), hidDeviceInfo, connection);
+				return new DualShock4Extension(input, controller, hidDeviceInfo, connection);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -66,9 +68,9 @@ final class DualShock4Extension extends SonyExtension {
 		return null;
 	}
 
-	private DualShock4Extension(final Input input, final int jid, final HidDeviceInfo hidDeviceInfo,
+	private DualShock4Extension(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo,
 			final Connection connection) throws IOException {
-		super(input, jid);
+		super(input, controller);
 
 		try {
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

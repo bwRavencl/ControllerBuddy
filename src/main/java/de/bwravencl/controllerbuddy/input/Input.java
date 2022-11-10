@@ -42,7 +42,7 @@ import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
-import de.bwravencl.controllerbuddy.input.sony.SonyExtension;
+import de.bwravencl.controllerbuddy.input.extension.InputExtension;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 
 public final class Input {
@@ -144,8 +144,8 @@ public final class Input {
 	private long lastHotSwapPollTime;
 	private float rateMultiplier;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
-	private SonyExtension sonyExtension;
-	private final Map<Integer, SonyExtension> jidToSonyExtensionMap = new HashMap<>();
+	private InputExtension inputExtension;
+	private final Map<Integer, InputExtension> jidToInputExtensionMap = new HashMap<>();
 	private final Set<Integer> hotSwappingButtonDownJids = new HashSet<>();
 	private float planckLength;
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
@@ -171,8 +171,10 @@ public final class Input {
 	}
 
 	public void deInit(final boolean deviceDisconnected) {
-		if (sonyExtension != null)
-			sonyExtension.deInit(deviceDisconnected);
+		if (inputExtension != null) {
+			inputExtension.deInit(deviceDisconnected);
+			inputExtension = null;
+		}
 	}
 
 	public int floatToIntAxisValue(float value) {
@@ -221,6 +223,10 @@ public final class Input {
 		return downUpMouseButtons;
 	}
 
+	public InputExtension getInputExtension() {
+		return inputExtension;
+	}
+
 	public Main getMain() {
 		return main;
 	}
@@ -253,30 +259,26 @@ public final class Input {
 		return scrollClicks;
 	}
 
-	public SonyExtension getSonyExtension() {
-		return sonyExtension;
-	}
-
 	public void init() {
-		if (controller != null)
-			sonyExtension = SonyExtension.getIfAvailable(this, controller);
-
 		final var presentControllers = Main.getPresentControllers();
+
+		if (controller != null)
+			inputExtension = InputExtension.getIfAvailable(this, presentControllers, controller);
 
 		if (presentControllers.size() > 1) {
 			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
 
 			if (hotSwappingButtonId != HotSwappingButton.None.id) {
-				if (sonyExtension != null)
-					jidToSonyExtensionMap.put(controller.jid(), sonyExtension);
+				if (inputExtension != null)
+					jidToInputExtensionMap.put(controller.jid(), inputExtension);
 
 				for (final var controller : presentControllers) {
 					if (controller.jid() == this.controller.jid())
 						continue;
 
-					final var sonyExtension = SonyExtension.getIfAvailable(this, controller);
-					if (sonyExtension != null)
-						jidToSonyExtensionMap.put(controller.jid(), sonyExtension);
+					final var inputExtension = InputExtension.getIfAvailable(this, presentControllers, controller);
+					if (inputExtension != null)
+						jidToInputExtensionMap.put(controller.jid(), inputExtension);
 				}
 			}
 		}
@@ -337,9 +339,9 @@ public final class Input {
 						continue;
 
 					final boolean gotState;
-					final var sonyExtension = jidToSonyExtensionMap.get(controller.jid());
-					if (sonyExtension != null)
-						gotState = sonyExtension.getGamepadState(state);
+					final var inputExtension = jidToInputExtensionMap.get(controller.jid());
+					if (inputExtension != null)
+						gotState = inputExtension.getGamepadState(state);
 					else
 						gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
@@ -365,11 +367,11 @@ public final class Input {
 			}
 
 			final boolean gotState;
-			if (sonyExtension != null) {
-				if (!sonyExtension.isReady())
+			if (inputExtension != null) {
+				if (!inputExtension.isReady())
 					return true;
 
-				gotState = sonyExtension.getGamepadState(state);
+				gotState = inputExtension.getGamepadState(state);
 			} else
 				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
@@ -509,7 +511,7 @@ public final class Input {
 		rateMultiplier = 0f;
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
-		jidToSonyExtensionMap.clear();
+		jidToInputExtensionMap.clear();
 		hotSwappingButtonDownJids.clear();
 		hotSwappingButtonId = HotSwappingButton.None.id;
 
@@ -527,7 +529,6 @@ public final class Input {
 			if (action instanceof final IResetableAction resetableAction)
 				resetableAction.reset(this);
 		}));
-
 	}
 
 	private void resetLastHotSwapPollTime() {
@@ -554,12 +555,12 @@ public final class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && sonyExtension != null && prevValue != value)
+		if (hapticFeedback && inputExtension != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
-				sonyExtension.rumbleStrong();
+				inputExtension.rumbleStrong();
 			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
 					|| prevValue < dententValue && value >= dententValue))
-				sonyExtension.rumbleLight();
+				inputExtension.rumbleLight();
 	}
 
 	public void setButton(final int id, final boolean value) {

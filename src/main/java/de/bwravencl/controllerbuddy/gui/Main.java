@@ -1941,20 +1941,20 @@ public final class Main {
 		onScreenKeyboard.setVisible(false);
 	}
 
-	public void displayChargingStateInfo(final boolean charging) {
-		if (trayIcon != null && input != null)
+	public void displayChargingStateInfo(final boolean charging, final Integer batteryCapacity) {
+		if (trayIcon != null && input != null && batteryCapacity != null)
 			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
 					MessageFormat.format(
 							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
-							input.getSonyExtension().getBatteryCapacity() / 100f),
+							batteryCapacity / 100f),
 					MessageType.INFO);
 	}
 
-	public void displayLowBatteryWarning(final float batteryCharge) {
+	public void displayLowBatteryWarning(final String batteryLevelString) {
 		EventQueue.invokeLater(() -> {
 			if (trayIcon != null)
-				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"),
-						MessageFormat.format("{0,number,percent}", batteryCharge), MessageType.WARNING);
+				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"), batteryLevelString,
+						MessageType.WARNING);
 		});
 	}
 
@@ -3469,23 +3469,14 @@ public final class Main {
 				}
 		}
 
-		if (trayIcon != null && input != null) {
-			final String toolTip;
+		if (trayIcon != null) {
+			var toolTip = title;
 
-			final var sonyExtension = input.getSonyExtension();
-			Boolean charging = null;
-			Integer batteryCapacity = null;
-			if (sonyExtension != null) {
-				charging = sonyExtension.isCharging();
-				batteryCapacity = sonyExtension.getBatteryCapacity();
+			if (input != null) {
+				final var inputExtension = input.getInputExtension();
+				if (inputExtension != null)
+					toolTip = inputExtension.getTooltip(title);
 			}
-
-			if (charging != null && batteryCapacity != null)
-				toolTip = MessageFormat.format(
-						strings.getString(charging ? "BATTERY_TOOLTIP_CHARGING" : "BATTERY_TOOLTIP_DISCHARGING"), title,
-						batteryCapacity / 100f);
-			else
-				toolTip = title;
 
 			trayIcon.setToolTip(toolTip);
 		}

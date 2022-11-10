@@ -14,21 +14,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.sony;
+package de.bwravencl.controllerbuddy.input.extension.sony;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.lwjgl.glfw.GLFW;
 
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.PureJavaHidApi;
 
-final class DualSenseExtension extends SonyExtension {
+public final class DualSenseExtension extends SonyExtension {
 
 	private static final Logger log = Logger.getLogger(DualSenseExtension.class.getName());
 
@@ -38,15 +37,16 @@ final class DualSenseExtension extends SonyExtension {
 	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
 	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
-	public static DualSenseExtension getIfAvailable(final Input input, final ControllerInfo controller) {
-		final var guid = GLFW.glfwGetJoystickGUID(controller.jid());
-		if (guid == null || !guid.startsWith("030000004c050000e60c"))
+	public static DualSenseExtension getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+			final ControllerInfo selectedController) {
+		if (!"PS5 Controller".equals(selectedController.name()))
 			return null;
 
-		final var hidDeviceInfo = getHidDeviceInfo(controller, guid, (short) 0xCE6, "DualSense", log);
+		final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, (short) 0xCE6, "DualSense",
+				log);
 		if (hidDeviceInfo != null)
 			try {
-				return new DualSenseExtension(input, controller.jid(), hidDeviceInfo);
+				return new DualSenseExtension(input, selectedController, hidDeviceInfo);
 			} catch (final IOException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
@@ -54,8 +54,9 @@ final class DualSenseExtension extends SonyExtension {
 		return null;
 	}
 
-	private DualSenseExtension(final Input input, final int jid, final HidDeviceInfo hidDeviceInfo) throws IOException {
-		super(input, jid);
+	private DualSenseExtension(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo)
+			throws IOException {
+		super(input, controller);
 
 		try {
 			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);

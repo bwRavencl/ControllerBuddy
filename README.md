@@ -61,9 +61,10 @@ ControllerBuddy's goal is to enable the user to control target applications sole
 - Supported gamepads:
   - Xbox 360 Controller
   - Xbox One Controller
+  - Xbox Series X|S Controller
   - Dual Shock 3
-  - Dual Shock 4 (with special support for the touchpad, haptic feedback and lightbar)
-  - Dual Sense (with special support for the touchpad, haptic feedback and lightbar)
+  - Dual Shock 4
+  - Dual Sense
   - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
 - Supported operating systems:
   - Windows / Linux (local / client / server)
@@ -195,6 +196,7 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
+- [JXInput](https://github.com/StrikerX3/JXInput)
 - [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
