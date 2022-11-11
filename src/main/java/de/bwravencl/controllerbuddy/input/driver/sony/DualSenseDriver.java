@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.extension.sony;
+package de.bwravencl.controllerbuddy.input.driver.sony;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,37 +24,43 @@ import java.util.logging.Logger;
 
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.driver.Driver;
+import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.PureJavaHidApi;
 
-public final class DualSenseExtension extends SonyExtension {
+public final class DualSenseDriver extends SonyDriver {
 
-	private static final Logger log = Logger.getLogger(DualSenseExtension.class.getName());
+	public static class DualSenseDriverBuilder implements IDriverBuilder {
 
-	private static final byte USB_INPUT_REPORT_ID = 0x1;
-	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x31;
+		@Override
+		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+				final ControllerInfo selectedController) {
+			if (!"PS5 Controller".equals(selectedController.name()))
+				return null;
 
-	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
-	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
+			final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, (short) 0xCE6,
+					"DualSense", log);
+			if (hidDeviceInfo != null)
+				try {
+					return new DualSenseDriver(input, selectedController, hidDeviceInfo);
+				} catch (final IOException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				}
 
-	public static DualSenseExtension getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-			final ControllerInfo selectedController) {
-		if (!"PS5 Controller".equals(selectedController.name()))
 			return null;
-
-		final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, (short) 0xCE6, "DualSense",
-				log);
-		if (hidDeviceInfo != null)
-			try {
-				return new DualSenseExtension(input, selectedController, hidDeviceInfo);
-			} catch (final IOException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-
-		return null;
+		}
 	}
 
-	private DualSenseExtension(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo)
+	private static final Logger log = Logger.getLogger(DualSenseDriver.class.getName());
+	private static final byte USB_INPUT_REPORT_ID = 0x1;
+
+	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x31;
+	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
+
+	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
+
+	private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo)
 			throws IOException {
 		super(input, controller);
 

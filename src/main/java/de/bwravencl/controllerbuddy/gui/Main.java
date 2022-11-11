@@ -3473,9 +3473,9 @@ public final class Main {
 			var toolTip = title;
 
 			if (input != null) {
-				final var inputExtension = input.getInputExtension();
-				if (inputExtension != null)
-					toolTip = inputExtension.getTooltip(title);
+				final var driver = input.getDriver();
+				if (driver != null)
+					toolTip = driver.getTooltip(title);
 			}
 
 			trayIcon.setToolTip(toolTip);

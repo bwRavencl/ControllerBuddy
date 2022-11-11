@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.extension.sony;
+package de.bwravencl.controllerbuddy.input.driver.sony;
 
 import java.awt.EventQueue;
 import java.nio.ByteBuffer;
@@ -33,13 +33,13 @@ import org.lwjgl.glfw.GLFWGamepadState;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.extension.InputExtension;
+import de.bwravencl.controllerbuddy.input.driver.Driver;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
-public abstract class SonyExtension extends InputExtension {
+public abstract class SonyDriver extends Driver {
 
 	static record Connection(int offset, byte inputReportId) {
 
@@ -226,7 +226,7 @@ public abstract class SonyExtension extends InputExtension {
 				.toList();
 
 		log.log(Level.INFO, "Found " + devices.size() + " " + humanReadableName + " controller(s): "
-				+ devices.stream().map(SonyExtension::getPrintableDeviceId).collect(Collectors.joining(", ")));
+				+ devices.stream().map(SonyDriver::getPrintableDeviceId).collect(Collectors.joining(", ")));
 
 		final var count = devices.size();
 		if (count < 1)
@@ -297,7 +297,7 @@ public abstract class SonyExtension extends InputExtension {
 	volatile boolean ps;
 	volatile boolean disconnected;
 
-	SonyExtension(final Input input, final ControllerInfo controller) {
+	SonyDriver(final Input input, final ControllerInfo controller) {
 		super(input, controller);
 	}
 

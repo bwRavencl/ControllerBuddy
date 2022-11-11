@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.extension;
+package de.bwravencl.controllerbuddy.input.driver;
 
 import java.awt.EventQueue;
 import java.text.MessageFormat;
@@ -40,33 +40,37 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class XInputExtension extends InputExtension {
+public class XInputDriver extends Driver {
 
-	private static final Logger log = Logger.getLogger(XInputExtension.class.getName());
+	public static class XInputDriverBuilder implements IDriverBuilder {
 
-	private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
-	private static final int MAX_MOTOR_SPEED = 65535;
+		@Override
+		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+				final ControllerInfo controller) {
+			if (Platform.isIntel() && Main.isWindows && isXInputController(controller) && XInputDevice.isAvailable()) {
+				final var presentXInputControllers = presentControllers.stream()
+						.filter(XInputDriver::isXInputController).collect(Collectors.toUnmodifiableList());
+				if (presentXInputControllers.size() > 1) {
+					log.log(Level.WARNING,
+							"Found more than one XInput controller - extended XInput support will be unavailable");
+					return null;
+				}
 
-	public static XInputExtension getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-			final ControllerInfo controller) {
-		if (Platform.isIntel() && Main.isWindows && isXInputController(controller) && XInputDevice.isAvailable()) {
-			final var presentXInputControllers = presentControllers.stream().filter(XInputExtension::isXInputController)
-					.collect(Collectors.toUnmodifiableList());
-			if (presentXInputControllers.size() > 1) {
-				log.log(Level.WARNING,
-						"Found more than one XInput controller - extended XInput support will be unavailable");
-				return null;
+				try {
+					return new XInputDriver(input, controller);
+				} catch (final Throwable t) {
+					log.log(Level.SEVERE, t.getMessage(), t);
+				}
 			}
 
-			try {
-				return new XInputExtension(input, controller);
-			} catch (final Throwable t) {
-				log.log(Level.SEVERE, t.getMessage(), t);
-			}
+			return null;
 		}
-
-		return null;
 	}
+
+	private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
+	private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
+
+	private static final int MAX_MOTOR_SPEED = 65535;
 
 	private static final boolean isXInputController(final ControllerInfo controller) {
 		return "78696e70757401000000000000000000".equals(controller.guid()) || controller.name().startsWith("Xbox")
@@ -81,7 +85,7 @@ public class XInputExtension extends InputExtension {
 	private ScheduledExecutorService executorService;
 	private volatile String batteryLevelString;
 
-	private XInputExtension(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
+	private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
 		super(input, controller);
 
 		if (XInputDevice14.isAvailable()) {

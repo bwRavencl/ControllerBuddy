@@ -14,38 +14,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.input.extension;
+package de.bwravencl.controllerbuddy.input.driver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lwjgl.glfw.GLFWGamepadState;
 
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension;
-import de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension;
+import io.github.classgraph.ClassGraph;
 
-public abstract class InputExtension {
+public abstract class Driver {
 
-	public static InputExtension getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+	private static List<Class<IDriverBuilder>> driverClasses;
+
+	static {
+		final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo().scan();
+		final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
+		driverClasses = classInfoList.stream().map(classInfo -> classInfo.loadClass(IDriverBuilder.class))
+				.collect(Collectors.toUnmodifiableList());
+	}
+
+	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController) {
-		InputExtension inputExtension = DualShock4Extension.getIfAvailable(input, presentControllers,
-				selectedController);
-		if (inputExtension != null)
-			return inputExtension;
 
-		inputExtension = DualSenseExtension.getIfAvailable(input, presentControllers, selectedController);
-		if (inputExtension != null)
-			return inputExtension;
+		for (final var driverClass : driverClasses)
+			try {
+				final var driverBuilder = driverClass.getDeclaredConstructor().newInstance();
+				final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
+				if (driver != null)
+					return driver;
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException(e);
+			}
 
-		return XInputExtension.getIfAvailable(input, presentControllers, selectedController);
+		return null;
 	}
 
 	protected final Input input;
 	protected final ControllerInfo controller;
 	protected volatile boolean ready;
 
-	protected InputExtension(final Input input, final ControllerInfo controller) {
+	protected Driver(final Input input, final ControllerInfo controller) {
 		this.input = input;
 		this.controller = controller;
 	}

@@ -42,7 +42,7 @@ import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
-import de.bwravencl.controllerbuddy.input.extension.InputExtension;
+import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 
 public final class Input {
@@ -144,8 +144,8 @@ public final class Input {
 	private long lastHotSwapPollTime;
 	private float rateMultiplier;
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
-	private InputExtension inputExtension;
-	private final Map<Integer, InputExtension> jidToInputExtensionMap = new HashMap<>();
+	private Driver driver;
+	private final Map<Integer, Driver> jidToDriverMap = new HashMap<>();
 	private final Set<Integer> hotSwappingButtonDownJids = new HashSet<>();
 	private float planckLength;
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
@@ -171,9 +171,9 @@ public final class Input {
 	}
 
 	public void deInit(final boolean deviceDisconnected) {
-		if (inputExtension != null) {
-			inputExtension.deInit(deviceDisconnected);
-			inputExtension = null;
+		if (driver != null) {
+			driver.deInit(deviceDisconnected);
+			driver = null;
 		}
 	}
 
@@ -223,8 +223,8 @@ public final class Input {
 		return downUpMouseButtons;
 	}
 
-	public InputExtension getInputExtension() {
-		return inputExtension;
+	public Driver getDriver() {
+		return driver;
 	}
 
 	public Main getMain() {
@@ -263,22 +263,22 @@ public final class Input {
 		final var presentControllers = Main.getPresentControllers();
 
 		if (controller != null)
-			inputExtension = InputExtension.getIfAvailable(this, presentControllers, controller);
+			driver = Driver.getIfAvailable(this, presentControllers, controller);
 
 		if (presentControllers.size() > 1) {
 			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
 
 			if (hotSwappingButtonId != HotSwappingButton.None.id) {
-				if (inputExtension != null)
-					jidToInputExtensionMap.put(controller.jid(), inputExtension);
+				if (driver != null)
+					jidToDriverMap.put(controller.jid(), driver);
 
 				for (final var controller : presentControllers) {
 					if (controller.jid() == this.controller.jid())
 						continue;
 
-					final var inputExtension = InputExtension.getIfAvailable(this, presentControllers, controller);
-					if (inputExtension != null)
-						jidToInputExtensionMap.put(controller.jid(), inputExtension);
+					final var driver = Driver.getIfAvailable(this, presentControllers, controller);
+					if (driver != null)
+						jidToDriverMap.put(controller.jid(), driver);
 				}
 			}
 		}
@@ -339,9 +339,9 @@ public final class Input {
 						continue;
 
 					final boolean gotState;
-					final var inputExtension = jidToInputExtensionMap.get(controller.jid());
-					if (inputExtension != null)
-						gotState = inputExtension.getGamepadState(state);
+					final var driver = jidToDriverMap.get(controller.jid());
+					if (driver != null)
+						gotState = driver.getGamepadState(state);
 					else
 						gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
@@ -367,11 +367,11 @@ public final class Input {
 			}
 
 			final boolean gotState;
-			if (inputExtension != null) {
-				if (!inputExtension.isReady())
+			if (driver != null) {
+				if (!driver.isReady())
 					return true;
 
-				gotState = inputExtension.getGamepadState(state);
+				gotState = driver.getGamepadState(state);
 			} else
 				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
@@ -511,7 +511,7 @@ public final class Input {
 		rateMultiplier = 0f;
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
-		jidToInputExtensionMap.clear();
+		jidToDriverMap.clear();
 		hotSwappingButtonDownJids.clear();
 		hotSwappingButtonId = HotSwappingButton.None.id;
 
@@ -555,12 +555,12 @@ public final class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && inputExtension != null && prevValue != value)
+		if (hapticFeedback && driver != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
-				inputExtension.rumbleStrong();
+				driver.rumbleStrong();
 			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
 					|| prevValue < dententValue && value >= dententValue))
-				inputExtension.rumbleLight();
+				driver.rumbleLight();
 	}
 
 	public void setButton(final int id, final boolean value) {
