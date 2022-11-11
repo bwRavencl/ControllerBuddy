@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.7.2" sequence="0"
-	timestamp="1662593086504" analysisTimestamp="1662593086504" release="">
+<BugCollection version="4.7.3" sequence="0"
+	timestamp="1668183655564" analysisTimestamp="1668183655564" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -120,11 +120,11 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ButtonEditorBuilder$ZeroBasedFormatterFactory.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ButtonEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ClicksEditorBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\CursorSensitivityEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DeadZoneEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DetentValueEditorBuilder$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DetentValueEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DirectionEditorBuilder.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\DistanceEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder$PropertySetter.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder$PropertySetterAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder.class</Jar>
@@ -137,7 +137,6 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\LockKeyEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\LongPressEditorBuilder.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MaxCursorSpeedEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MaxRelativeSpeedEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ModeEditorBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\MouseAxisEditorBuilder.class</Jar>
@@ -172,6 +171,16 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction$VrCoordinateSystem.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\InputExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension$Connection.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension$SonyInputReportListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\XInputExtension$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\XInputExtension.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input$VirtualAxis.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\KeyStroke.class</Jar>
@@ -182,13 +191,6 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\OverlayAxis.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Profile.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\ScanCode.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension$1.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension$1.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$Connection.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension$SonyInputReportListener.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\sony\SonyExtension.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ActionTypeAdapter.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ColorTypeAdapter.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\LockKeyAdapter.class</Jar>
@@ -198,7 +200,6 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ClientRunMode$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ClientRunMode$ClientState.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ClientRunMode.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\IVjoyInterface.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\LocalRunMode.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\OutputRunMode$AxisValue.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\OutputRunMode$ButtonValue.class</Jar>
@@ -209,15 +210,16 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ServerRunMode$ServerState.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ServerRunMode.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\User32WithGetKeyState.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\VjoyInterface.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\X11WithLockKeyFunctions.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
-		<Jar></Jar>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.5.0\dc98be5d5390230684a092589d70ea76a147925c\commons-cli-1.5.0.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\2.4\691e1f12c78f42e0dfd9fc37bc599042a1ebdd0d\flatlaf-2.4.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\2.6\4dd2ba228e3c57eb3d80e3927b5a6a33265eb69b\flatlaf-2.6.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.prat-man\unique4j\6701cef900\1952ed05262057672c6ece5cc5084d1e7da0c70e\unique4j-6701cef900.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.9.1\2cc2131b98ebfb04e2b2c7dfb84431f4045096b\gson-2.9.1.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.strikerx3\jxinput\1.0.0\ded95655f3550171c54bb81c389892e9ad96cccc\jxinput-1.0.0.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10\dd9b193aef96e973d5a11ab13cd17430c2e4306b\gson-2.10.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.149\4bc2f188bc9001473d4a26ac488c2ae1a3e906de\classgraph-4.8.149.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\uk.co.bithatch\linuxio4j\2.1\f7d312bfd93646a3e9a9ad66319d94a5ae9ef10e\linuxio4j-2.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform\5.12.1\97406a297c852f4a41e688a176ec675f72e8329\jna-platform-5.12.1.jar</AuxClasspathEntry>
@@ -227,29 +229,27 @@
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.3.1\228e175484b0ee41bef656f6b5665dd0da3adbb9\lwjgl-openvr-3.3.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\ae58664f88e18a9bb2c77b063833ca7aaec484cb\lwjgl-3.3.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\36c37f16ab611b3aa11f3bcf80b1d509b4ce6b\lwjgl-3.3.1-natives-windows.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-swing\1.14\e73ec76aa7d5b0f01aa47a9970d9fc246c0821e7\batik-swing-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.14\5833c8b8dc292081e0db6bbaee935e7e1391daaf\batik-bridge-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.14\f39a410e0cb936d0538c4a7411e1ae45c0d0a10a\batik-script-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.14\135d69b4deb4569237e9ee9c508a13ba407a77bb\batik-anim-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gvt\1.14\93aacfbe75655c2900c9fb069ffa059370366c78\batik-gvt-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-svg-dom\1.14\916c216454503413ed4fc76dbfac55b30bbcae2b\batik-svg-dom-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-parser\1.14\4ac928fd781673c0b6a181fabaa89f0ee3b32f28\batik-parser-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-awt-util\1.14\8f30e4cfc76626e7786ce0991df351cd91cddec6\batik-awt-util-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-dom\1.14\66943d7b34766d0d270cce9c61fba4d769362af\batik-dom-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-css\1.14\3118d46f4879ec08c6c6471c7c0825652ed659ee\batik-css-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-ext\1.14\79fe8cc37676e7af4c85f2f7fd51e17f46bc75ed\batik-ext-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gui-util\1.14\4657a260ef8b6819d135b2d7c15fc0b97fc802c0\batik-gui-util-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-xml\1.14\b78b3e2f87579f02dcc342a147017cce8fc0ffc6\batik-xml-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-util\1.14\7ca55c864e5ddd690ba07f44e3ba8e68e9048a02\batik-util-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-constants\1.14\371acf696982f1c8e2689f5899b4e8453ccd74ff\batik-constants-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-i18n\1.14\a4e7b0cda9132904f21b25ab29a0b73e1867e7fd\batik-i18n-1.14.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-shared-resources\1.14\42e9d6345952575e8b2f4ee26108b2811c334305\batik-shared-resources-1.14.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-swing\1.16\cc1e77d9ba42d0a95c7d4d72a0e0cdcad0258215\batik-swing-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.16\d5384b5f1eba4050a2ebe129a9ab686b97d667ac\batik-bridge-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.16\ba120da776d0ecb18c2280c6d9f503484dc1c12c\batik-script-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.16\aa73e4fff38898d9a4f85e662bd2d40fd71dbc0d\batik-anim-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gvt\1.16\aeee5beb6f1eaa4304bf7e9d4c185b126b743d8c\batik-gvt-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-svg-dom\1.16\d16a96149c33cde0eb5ed688308abf067e73e5a4\batik-svg-dom-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-parser\1.16\8217bd068a48dc79c207c95821fe5c0d3d4c8b62\batik-parser-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-awt-util\1.16\2f884535c65e892cfe14c7cdc660274528ec15f0\batik-awt-util-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-dom\1.16\2d0d63c9177d5c25b52061464457478e9f74363a\batik-dom-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-css\1.16\9151bffd3799b8f55fb27b81f06156183ffeb307\batik-css-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-ext\1.16\3114e178d00db9053498f23cc46668b93c44dbc5\batik-ext-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-gui-util\1.16\df6fa25760dfd0feac4dce26a43cc18d5affa0fb\batik-gui-util-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-xml\1.16\3055a9f0b0ee5b327c35c62749189b1c4683bc56\batik-xml-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-util\1.16\cc144a6a69fac333e5ed10ac3169768ceff2b840\batik-util-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-constants\1.16\924370bb08a8ef1d3983d5ea587a17c7845d9af6\batik-constants-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-i18n\1.16\6e45a40b5e67f89d528bb511d7d938c161dcbc1f\batik-i18n-1.16.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-shared-resources\1.16\75809160dd805a8ce29b655671cd29e47da43efd\batik-shared-resources-1.16.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xml-apis\xml-apis-ext\1.3.04\41a8b86b358e87f3f13cf46069721719105aff66\xml-apis-ext-1.3.04.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.6\8779b8d8f426f24fdb4a512f8bc4248cb3775bd2\xmlgraphics-commons-2.6.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xalan\xalan\2.7.2\d55d3f02a56ec4c25695fe67e1334ff8c2ecea23\xalan-2.7.2.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.7\336ddd6d0a244cdebf26a298fb7c3a5fd45449db\xmlgraphics-commons-2.7.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\1.3.1\b90b6ac57cf27a2858eaa490d02ba7945d18ca7b\commons-io-1.3.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.0.4\f029a2aefe2b3e1517573c580f948caac31b1056\commons-logging-1.0.4.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\xalan\serializer\2.7.2\24247f3bb052ee068971393bdb83e04512bb1c3c\serializer-2.7.2.jar</AuxClasspathEntry>
 		<SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\src\main\resources</SrcDir>
 		<SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\src\main\java</SrcDir>
 	</Project>
@@ -288,10 +288,10 @@
 				de.bwravencl.controllerbuddy.gui.AssignmentsComponent$1.paintComponent(Graphics)</Message>
 		</Method>
 		<Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
-			<SourceLine classname="java.awt.Graphics" start="118"
-				end="1264" sourcefile="Graphics.java"
+			<SourceLine classname="java.awt.Graphics" start="115"
+				end="1261" sourcefile="Graphics.java"
 				sourcepath="java/awt/Graphics.java">
-				<Message>At Graphics.java:[lines 118-1264]</Message>
+				<Message>At Graphics.java:[lines 115-1261]</Message>
 			</SourceLine>
 			<Message>Actual type java.awt.Graphics</Message>
 		</Type>
@@ -354,10 +354,10 @@
 				Graphics, int, int)</Message>
 		</Method>
 		<Type descriptor="Ljava/awt/Graphics;" role="TYPE_FOUND">
-			<SourceLine classname="java.awt.Graphics" start="118"
-				end="1264" sourcefile="Graphics.java"
+			<SourceLine classname="java.awt.Graphics" start="115"
+				end="1261" sourcefile="Graphics.java"
 				sourcepath="java/awt/Graphics.java">
-				<Message>At Graphics.java:[lines 118-1264]</Message>
+				<Message>At Graphics.java:[lines 115-1261]</Message>
 			</SourceLine>
 			<Message>Actual type java.awt.Graphics</Message>
 		</Type>
@@ -482,11 +482,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -777,10 +777,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Input</Message>
 		</Type>
@@ -831,11 +831,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1088,19 +1088,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="terminate" signature="(I)V" isStatic="true" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1404"
-				end="1409" startBytecode="0" endBytecode="77" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1401"
+				end="1406" startBytecode="0" endBytecode="77" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1108,11 +1108,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="1408" end="1408" startBytecode="20" endBytecode="20"
+			start="1405" end="1405" startBytecode="20" endBytecode="20"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 1408]</Message>
+			<Message>At Main.java:[line 1405]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DM_GC" priority="1" rank="16"
@@ -1127,19 +1127,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2966"
-				end="2974" startBytecode="0" endBytecode="144"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2963"
+				end="2971" startBytecode="0" endBytecode="144"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1149,11 +1149,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2973" end="2973" startBytecode="34" endBytecode="34"
+			start="2970" end="2970" startBytecode="34" endBytecode="34"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2973]</Message>
+			<Message>At Main.java:[line 2970]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DP_DO_INSIDE_DO_PRIVILEGED" priority="3"
@@ -1168,11 +1168,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1180,8 +1180,8 @@
 			name="updateTitleAndTooltip" signature="()V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="3442"
-				end="3478" startBytecode="0" endBytecode="679"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="3449"
+				end="3483" startBytecode="0" endBytecode="554"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1198,11 +1198,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="3457" end="3457" startBytecode="133" endBytecode="133"
+			start="3464" end="3464" startBytecode="133" endBytecode="133"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 3457]</Message>
+			<Message>At Main.java:[line 3464]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1216,11 +1216,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1228,8 +1228,8 @@
 			name="getFrame" signature="()Ljavax/swing/JFrame;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2105"
-				end="2105" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2102"
+				end="2102" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method de.bwravencl.controllerbuddy.gui.Main.getFrame()</Message>
@@ -1248,11 +1248,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2105" end="2105" startBytecode="4" endBytecode="4"
+			start="2102" end="2102" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2105]</Message>
+			<Message>At Main.java:[line 2102]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1266,11 +1266,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1279,8 +1279,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2113"
-				end="2113" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2110"
+				end="2110" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1301,11 +1301,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2113" end="2113" startBytecode="4" endBytecode="4"
+			start="2110" end="2110" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2113]</Message>
+			<Message>At Main.java:[line 2110]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1319,11 +1319,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.gui.Main"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1331,8 +1331,8 @@
 			name="getPreferences" signature="()Ljava/util/prefs/Preferences;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2121"
-				end="2121" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2118"
+				end="2118" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1352,11 +1352,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2121" end="2121" startBytecode="4" endBytecode="4"
+			start="2118" end="2118" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2121]</Message>
+			<Message>At Main.java:[line 2118]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1476,10 +1476,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-				start="513" end="536" sourcefile="Main.java"
+				start="510" end="533" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 513-536]</Message>
+				<Message>At Main.java:[lines 510-533]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser</Message>
@@ -1490,7 +1490,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-				start="521" end="536" startBytecode="0" endBytecode="218"
+				start="518" end="533" startBytecode="0" endBytecode="218"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1499,11 +1499,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$ProfileFileChooser"
-			primary="true" start="528" end="530" startBytecode="89"
+			primary="true" start="525" end="527" startBytecode="89"
 			endBytecode="92" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[lines 528-530]</Message>
+			<Message>At Main.java:[lines 525-527]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="NN_NAKED_NOTIFY" priority="2" rank="14"
@@ -1518,10 +1518,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="889" end="1006" sourcefile="Main.java"
+				start="886" end="1003" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 889-1006]</Message>
+				<Message>At Main.java:[lines 886-1003]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1530,7 +1530,7 @@
 			name="enterLoop" signature="()V" isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="900" end="935" startBytecode="0" endBytecode="728"
+				start="897" end="932" startBytecode="0" endBytecode="728"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1539,11 +1539,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="921" end="921" startBytecode="95"
+			primary="true" start="918" end="918" startBytecode="95"
 			endBytecode="95" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 921]</Message>
+			<Message>At Main.java:[line 918]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="UW_UNCOND_WAIT" priority="2" rank="14"
@@ -1558,10 +1558,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="889" end="1006" sourcefile="Main.java"
+				start="886" end="1003" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 889-1006]</Message>
+				<Message>At Main.java:[lines 886-1003]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1572,7 +1572,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="949" end="966" startBytecode="0" endBytecode="255"
+				start="946" end="963" startBytecode="0" endBytecode="255"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1581,11 +1581,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="955" end="955" startBytecode="14"
+			primary="true" start="952" end="952" startBytecode="14"
 			endBytecode="14" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 955]</Message>
+			<Message>At Main.java:[line 952]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="WA_NOT_IN_LOOP" priority="2" rank="14"
@@ -1600,10 +1600,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="889" end="1006" sourcefile="Main.java"
+				start="886" end="1003" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 889-1006]</Message>
+				<Message>At Main.java:[lines 886-1003]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
 		</Class>
@@ -1614,7 +1614,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-				start="949" end="966" startBytecode="0" endBytecode="255"
+				start="946" end="963" startBytecode="0" endBytecode="255"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1623,11 +1623,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner"
-			primary="true" start="955" end="955" startBytecode="14"
+			primary="true" start="952" end="952" startBytecode="14"
 			endBytecode="14" sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 955]</Message>
+			<Message>At Main.java:[line 952]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SE_BAD_FIELD" priority="3" rank="19"
@@ -1726,11 +1726,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/gui/Main;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="1044"
-				end="3488" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="1041"
+				end="3493" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1044-3488]</Message>
+				<Message>At Main.java:[lines 1041-3493]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1952,10 +1952,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -1963,8 +1963,8 @@
 			name="getAxes" signature="()Ljava/util/EnumMap;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="189"
-				end="189" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="191"
+				end="191" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.getAxes()</Message>
@@ -1983,11 +1983,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="189" end="189" startBytecode="4" endBytecode="4"
+			start="191" end="191" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 189]</Message>
+			<Message>At Input.java:[line 191]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2002,18 +2002,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="getButtons" signature="()[Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="193"
-				end="193" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="195"
+				end="195" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2032,11 +2032,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="193" end="193" startBytecode="4" endBytecode="4"
+			start="195" end="195" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 193]</Message>
+			<Message>At Input.java:[line 195]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2051,10 +2051,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2062,8 +2062,8 @@
 			name="getDownKeyStrokes" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="209"
-				end="209" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="211"
+				end="211" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2084,11 +2084,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="209" end="209" startBytecode="4" endBytecode="4"
+			start="211" end="211" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 209]</Message>
+			<Message>At Input.java:[line 211]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2104,10 +2104,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2115,8 +2115,8 @@
 			name="getDownMouseButtons" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="213"
-				end="213" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="215"
+				end="215" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2137,11 +2137,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="213" end="213" startBytecode="4" endBytecode="4"
+			start="215" end="215" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 213]</Message>
+			<Message>At Input.java:[line 215]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2157,10 +2157,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2168,8 +2168,8 @@
 			name="getDownUpKeyStrokes" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="217"
-				end="217" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="219"
+				end="219" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2190,11 +2190,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="217" end="217" startBytecode="4" endBytecode="4"
+			start="219" end="219" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 217]</Message>
+			<Message>At Input.java:[line 219]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2210,10 +2210,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2221,8 +2221,8 @@
 			name="getDownUpMouseButtons" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="221"
-				end="221" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="223"
+				end="223" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2243,11 +2243,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="221" end="221" startBytecode="4" endBytecode="4"
+			start="223" end="223" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 221]</Message>
+			<Message>At Input.java:[line 223]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2262,10 +2262,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2273,8 +2273,8 @@
 			name="getMain" signature="()Lde/bwravencl/controllerbuddy/gui/Main;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="225"
-				end="225" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="231"
+				end="231" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.getMain()</Message>
@@ -2293,11 +2293,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="225" end="225" startBytecode="4" endBytecode="4"
+			start="231" end="231" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 225]</Message>
+			<Message>At Input.java:[line 231]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2312,10 +2312,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2323,8 +2323,8 @@
 			name="getOffLockKeys" signature="()Ljava/util/Set;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="229"
-				end="229" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="235"
+				end="235" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2344,11 +2344,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="229" end="229" startBytecode="4" endBytecode="4"
+			start="235" end="235" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 229]</Message>
+			<Message>At Input.java:[line 235]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2363,10 +2363,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2374,8 +2374,8 @@
 			name="getOnLockKeys" signature="()Ljava/util/Set;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="233"
-				end="233" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="239"
+				end="239" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2395,11 +2395,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="233" end="233" startBytecode="4" endBytecode="4"
+			start="239" end="239" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 233]</Message>
+			<Message>At Input.java:[line 239]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2414,10 +2414,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2426,8 +2426,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/input/Profile;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="241"
-				end="241" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="247"
+				end="247" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2448,11 +2448,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="241" end="241" startBytecode="4" endBytecode="4"
+			start="247" end="247" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 241]</Message>
+			<Message>At Input.java:[line 247]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2467,10 +2467,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2479,8 +2479,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/runmode/RunMode;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="249"
-				end="249" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="255"
+				end="255" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2501,64 +2501,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="249" end="249" startBytecode="4" endBytecode="4"
+			start="255" end="255" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 249]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
-		abbrev="EI" category="MALICIOUS_CODE"
-		instanceHash="35e2b03a7b3268a2edb39af24bd440c4"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
-		<ShortMessage>May expose internal representation by returning
-			reference to mutable object</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.Input.getSonyExtension()
-			may expose internal representation by returning Input.sonyExtension</LongMessage>
-		<Class classname="de.bwravencl.controllerbuddy.input.Input"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
-		</Class>
-		<Method classname="de.bwravencl.controllerbuddy.input.Input"
-			name="getSonyExtension"
-			signature="()Lde/bwravencl/controllerbuddy/input/sony/SonyExtension;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="257"
-				end="257" startBytecode="0" endBytecode="46" sourcefile="Input.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.input.Input.getSonyExtension()</Message>
-		</Method>
-		<Field classname="de.bwravencl.controllerbuddy.input.Input"
-			name="sonyExtension"
-			signature="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input"
-				sourcefile="Input.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>In Input.java</Message>
-			</SourceLine>
-			<Message>Field de.bwravencl.controllerbuddy.input.Input.sonyExtension</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="257" end="257" startBytecode="4" endBytecode="4"
-			sourcefile="Input.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 257]</Message>
+			<Message>At Input.java:[line 255]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2574,10 +2521,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2632,10 +2579,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2690,10 +2637,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2702,8 +2649,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/input/Profile;)Z"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="585"
-				end="648" startBytecode="0" endBytecode="574"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="586"
+				end="649" startBytecode="0" endBytecode="574"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
@@ -2729,11 +2676,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="647" end="647" startBytecode="275" endBytecode="275"
+			start="648" end="648" startBytecode="275" endBytecode="275"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 647]</Message>
+			<Message>At Input.java:[line 648]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2749,10 +2696,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 54-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2761,8 +2708,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/runmode/RunMode;)V"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="652"
-				end="653" startBytecode="0" endBytecode="61" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="653"
+				end="654" startBytecode="0" endBytecode="61" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2787,11 +2734,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="652" end="652" startBytecode="2" endBytecode="2"
+			start="653" end="653" startBytecode="2" endBytecode="2"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 652]</Message>
+			<Message>At Input.java:[line 653]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -4153,377 +4100,377 @@
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
 		priority="3" rank="20" abbrev="PZLA" category="STYLE"
-		instanceHash="ce52e7daf9a641118c01159a0c8275ae"
+		instanceHash="76dc69f68c6d613609d2fb757238771d"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Consider returning a zero length array rather than null</ShortMessage>
 		<LongMessage>Should
-			de.bwravencl.controllerbuddy.input.sony.DualSenseExtension.getDefaultHidReport()
+			de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension.getDefaultHidReport()
 			return a zero length array rather than null?</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-				start="33" end="195" sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-				<Message>At DualSenseExtension.java:[lines 33-195]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
+				start="32" end="196" sourcefile="DualSenseExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
+				<Message>At DualSenseExtension.java:[lines 32-196]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
 			name="getDefaultHidReport" signature="()[B" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-				start="111" end="133" startBytecode="0" endBytecode="240"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
+				start="112" end="134" startBytecode="0" endBytecode="240"
 				sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension.getDefaultHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension.getDefaultHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension"
-			primary="true" start="112" end="112" startBytecode="8"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
+			primary="true" start="113" end="113" startBytecode="8"
 			endBytecode="8" sourcefile="DualSenseExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 112]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
+			<Message>At DualSenseExtension.java:[line 113]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
 		priority="3" rank="20" abbrev="PZLA" category="STYLE"
-		instanceHash="58c4b1b961985672c9ec90ecab5029fe"
+		instanceHash="f7c8928b43ce41004bf86741f652b121"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Consider returning a zero length array rather than null</ShortMessage>
 		<LongMessage>Should
-			de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getDefaultHidReport()
+			de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension.getDefaultHidReport()
 			return a zero length array rather than null?</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-				start="35" end="199" sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-				<Message>At DualShock4Extension.java:[lines 35-199]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
+				start="36" end="201" sourcefile="DualShock4Extension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
+				<Message>At DualShock4Extension.java:[lines 36-201]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
 			name="getDefaultHidReport" signature="()[B" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-				start="133" end="154" startBytecode="0" endBytecode="230"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
+				start="135" end="156" startBytecode="0" endBytecode="230"
 				sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension.getDefaultHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension.getDefaultHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension"
-			primary="true" start="134" end="134" startBytecode="8"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
+			primary="true" start="136" end="136" startBytecode="8"
 			endBytecode="8" sourcefile="DualShock4Extension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 134]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
+			<Message>At DualShock4Extension.java:[line 136]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2"
 		rank="14" abbrev="SWL" category="MT_CORRECTNESS"
-		instanceHash="79fc8deaa24e599a8de9d098e43a730b"
+		instanceHash="de52d33fc285a793af0261df7e36c1a0"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Method calls Thread.sleep() with a lock held</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
+		<LongMessage>de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
 			byte, long) calls Thread.sleep() with a lock held</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="216" end="543" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 216-543]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="42" end="556" sourcefile="SonyExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			name="lambda$rumble$1" signature="(IBJ)V" isStatic="false"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="445" end="456" startBytecode="0" endBytecode="240"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="447" end="458" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="449" end="449" startBytecode="20"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			primary="true" start="451" end="451" startBytecode="20"
 			endBytecode="20" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 449]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 451]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="2bd1880ed039ee42553ab49c17f94315"
+		instanceHash="704087668df363e786da5f15ebd3783c"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
 		<LongMessage>SonyExtension.connection not initialized in constructor
 			and dereferenced in
-			de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1.handleBattery(byte[])</LongMessage>
+			de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1.handleBattery(byte[])</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="216" end="543" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 216-543]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="42" end="556" sourcefile="SonyExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			name="connection"
-			signature="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension$Connection;"
+			signature="Lde/bwravencl/controllerbuddy/input/extension/sony/SonyExtension$Connection;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.connection</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.connection</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
 			name="handleBattery" signature="([B)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1"
-				start="67" end="91" startBytecode="0" endBytecode="359"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
+				start="68" end="92" startBytecode="0" endBytecode="359"
 				sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1.handleBattery(byte[])</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1.handleBattery(byte[])</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.DualSenseExtension$1"
-			primary="true" start="67" end="67" startBytecode="10"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
+			primary="true" start="68" end="68" startBytecode="10"
 			endBytecode="10" sourcefile="DualSenseExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 67]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
+			<Message>At DualSenseExtension.java:[line 68]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="44ac69fc9078d50a7aee4edcbb1ab6e9"
+		instanceHash="de2c325550111aecc6f7872fac99d141"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
 		<LongMessage>SonyExtension.connection not initialized in constructor
 			and dereferenced in
-			de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleBattery(byte[])</LongMessage>
+			de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1.handleBattery(byte[])</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="216" end="543" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 216-543]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="42" end="556" sourcefile="SonyExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			name="connection"
-			signature="Lde/bwravencl/controllerbuddy/input/sony/SonyExtension$Connection;"
+			signature="Lde/bwravencl/controllerbuddy/input/extension/sony/SonyExtension$Connection;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.connection</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.connection</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
 			name="handleBattery" signature="([B)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1"
-				start="80" end="112" startBytecode="0" endBytecode="433"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
+				start="82" end="114" startBytecode="0" endBytecode="433"
 				sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1.handleBattery(byte[])</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1.handleBattery(byte[])</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.DualShock4Extension$1"
-			primary="true" start="80" end="80" startBytecode="10"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
+			primary="true" start="82" end="82" startBytecode="10"
 			endBytecode="10" sourcefile="DualShock4Extension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 80]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
+			<Message>At DualShock4Extension.java:[line 82]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="47a43ad62eb7024a88766a3b7fc1f147"
+		instanceHash="af1ba5c2f2da5e64bdaef23bd3e36c02"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
 		<LongMessage>SonyExtension.hidReport not initialized in constructor
 			and dereferenced in
-			de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
+			de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
 			byte, long)</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="216" end="543" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 216-543]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="42" end="556" sourcefile="SonyExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			name="hidReport" signature="[B" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.hidReport</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.hidReport</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			name="lambda$rumble$1" signature="(IBJ)V" isStatic="false"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="445" end="456" startBytecode="0" endBytecode="240"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="447" end="458" startBytecode="0" endBytecode="240"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.lambda$rumble$1(int,
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="453" end="453" startBytecode="40"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			primary="true" start="455" end="455" startBytecode="40"
 			endBytecode="40" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 453]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 455]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="89e39bdf9e758bf4a3e813950fc09433"
+		instanceHash="646a8c272ff2a69aa21149f2bb1f2bf8"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
 		<LongMessage>SonyExtension.hidReport not initialized in constructor
 			and dereferenced in
-			de.bwravencl.controllerbuddy.input.sony.SonyExtension.sendHidReport()</LongMessage>
+			de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.sendHidReport()</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="216" end="543" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 216-543]</Message>
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="42" end="556" sourcefile="SonyExtension.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+				<Message>At SonyExtension.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			name="hidReport" signature="[B" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
 				<Message>In SonyExtension.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.hidReport</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.hidReport</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
 			name="sendHidReport" signature="()V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-				start="468" end="489" startBytecode="0" endBytecode="352"
+				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				start="472" end="493" startBytecode="0" endBytecode="352"
 				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java" />
+				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.sony.SonyExtension.sendHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.sendHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			primary="true" start="474" end="474" startBytecode="50"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			primary="true" start="478" end="478" startBytecode="50"
 			endBytecode="50" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 474]</Message>
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
+			<Message>At SonyExtension.java:[line 478]</Message>
 		</SourceLine>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.sony.SonyExtension"
-			start="483" end="483" startBytecode="134" endBytecode="134"
+			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			start="487" end="487" startBytecode="134" endBytecode="134"
 			sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\sony\SonyExtension.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java"
 			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at SonyExtension.java:[line 483]</Message>
+			<Message>Another occurrence at SonyExtension.java:[line 487]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -4798,10 +4745,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
+				start="141" end="928" sourcefile="OutputRunMode.java"
 				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
+				<Message>At OutputRunMode.java:[lines 141-928]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
 		</Class>
@@ -4812,7 +4759,7 @@
 			isStatic="false" primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="693" end="694" startBytecode="0" endBytecode="61"
+				start="699" end="700" startBytecode="0" endBytecode="61"
 				sourcefile="OutputRunMode.java"
 				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
@@ -4840,376 +4787,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="693" end="693" startBytecode="2"
+			primary="true" start="699" end="699" startBytecode="2"
 			endBytecode="2" sourcefile="OutputRunMode.java"
 			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 693]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="29d555067ffee0c2c65df8fcaf7dd9e"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field input in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
-			boolean)</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="doKeyboardInput"
-			signature="(Lde/bwravencl/controllerbuddy/input/ScanCode;Z)V"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="384" end="399" startBytecode="0" endBytecode="404"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
-				boolean)</Message>
-		</Method>
-		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
-			name="input"
-			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="387" end="387" startBytecode="33"
-			endBytecode="33" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 387]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="a2eb58fbbf953f620add4aa20a75f33"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field ki in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
-			boolean)</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="doKeyboardInput"
-			signature="(Lde/bwravencl/controllerbuddy/input/ScanCode;Z)V"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="384" end="399" startBytecode="0" endBytecode="404"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doKeyboardInput(ScanCode,
-				boolean)</Message>
-		</Method>
-		<Field
-			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-			name="ki" signature="Lcom/sun/jna/platform/win32/WinUser$KEYBDINPUT;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field
-				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.ki</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="388" end="388" startBytecode="55"
-			endBytecode="55" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 388]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="74de88186113c14937972a051ec428a0"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field input in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
-			boolean)</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="doMouseButtonInput" signature="(IZ)V" isStatic="false"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="402" end="427" startBytecode="0" endBytecode="653"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
-				boolean)</Message>
-		</Method>
-		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
-			name="input"
-			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="405" end="405" startBytecode="33"
-			endBytecode="33" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 405]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="c4340ddf2f7ae52207ee48979036495"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field mi in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
-			boolean)</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="doMouseButtonInput" signature="(IZ)V" isStatic="false"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="402" end="427" startBytecode="0" endBytecode="653"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.doMouseButtonInput(int,
-				boolean)</Message>
-		</Method>
-		<Field
-			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-			name="mi" signature="Lcom/sun/jna/platform/win32/WinUser$MOUSEINPUT;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field
-				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.mi</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="408" end="408" startBytecode="98"
-			endBytecode="98" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 408]</Message>
-		</SourceLine>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			start="409" end="409" startBytecode="138" endBytecode="138"
-			sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
-			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at OutputRunMode.java:[line 409]</Message>
-		</SourceLine>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			start="411" end="411" startBytecode="178" endBytecode="178"
-			sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
-			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at OutputRunMode.java:[line 411]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="4f1209e4fc745a4335e00940d4baba50"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field input in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="writeOutput" signature="()V" isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="697" end="922" startBytecode="0" endBytecode="3228"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</Message>
-		</Method>
-		<Field classname="com.sun.jna.platform.win32.WinUser$INPUT"
-			name="input"
-			signature="Lcom/sun/jna/platform/win32/WinUser$INPUT$INPUT_UNION;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field com.sun.jna.platform.win32.WinUser$INPUT.input</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="816" end="816" startBytecode="989"
-			endBytecode="989" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 816]</Message>
-		</SourceLine>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			start="882" end="882" startBytecode="1813" endBytecode="1813"
-			sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
-			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at OutputRunMode.java:[line 882]</Message>
-		</SourceLine>
-	</BugInstance>
-	<BugInstance type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		priority="2" rank="14" abbrev="NP" category="STYLE"
-		instanceHash="7a1bbdf8513fddd946ee24631199def0"
-		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
-		<ShortMessage>Read of unwritten public or protected field</ShortMessage>
-		<LongMessage>Read of unwritten public or protected field mi in
-			de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</LongMessage>
-		<Class
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="140" end="922" sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-				<Message>At OutputRunMode.java:[lines 140-922]</Message>
-			</SourceLine>
-			<Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
-		</Class>
-		<Method
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			name="writeOutput" signature="()V" isStatic="false" primary="true">
-			<SourceLine
-				classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-				start="697" end="922" startBytecode="0" endBytecode="3228"
-				sourcefile="OutputRunMode.java"
-				sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java" />
-			<Message>In method
-				de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</Message>
-		</Method>
-		<Field
-			classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-			name="mi" signature="Lcom/sun/jna/platform/win32/WinUser$MOUSEINPUT;"
-			isStatic="false" primary="true">
-			<SourceLine
-				classname="com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION"
-				sourcefile="WinUser.java"
-				sourcepath="com/sun/jna/platform/win32/WinUser.java">
-				<Message>In WinUser.java</Message>
-			</SourceLine>
-			<Message>Field
-				com.sun.jna.platform.win32.WinUser$INPUT$INPUT_UNION.mi</Message>
-		</Field>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			primary="true" start="817" end="817" startBytecode="1012"
-			endBytecode="1012" sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-			<Message>At OutputRunMode.java:[line 817]</Message>
-		</SourceLine>
-		<SourceLine
-			classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode"
-			start="883" end="883" startBytecode="1840" endBytecode="1840"
-			sourcefile="OutputRunMode.java"
-			sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"
-			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at OutputRunMode.java:[line 883]</Message>
+			<Message>At OutputRunMode.java:[line 699]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -5331,19 +4913,6 @@ there is no easy way to eliminate these false positives.
   <p> This code invokes a method that requires a security permission check.
   If this code will be granted security permissions, but might be invoked by code that does not
   have security permissions, then the invocation needs to occur inside a doPrivileged block.</p>
-
-    ]]></Details>
-	</BugPattern>
-	<BugPattern type="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD"
-		abbrev="NP" category="STYLE">
-		<ShortDescription>Read of unwritten public or protected field</ShortDescription>
-		<Details><![CDATA[
-
-  <p> The program is dereferencing a public or protected
-field that does not seem to ever have a non-null value written to it.
-Unless the field is initialized via some mechanism not seen by the analysis,
-dereferencing this value will generate a null pointer exception.
-</p>
 
     ]]></Details>
 	</BugPattern>
@@ -5574,9 +5143,6 @@ object is stored in this field.</p>
 	<BugCode abbrev="UW">
 		<Description>Unconditional wait</Description>
 	</BugCode>
-	<BugCode abbrev="NP" cweid="476">
-		<Description>Null pointer dereference</Description>
-	</BugCode>
 	<BugCode abbrev="EI">
 		<Description>Method returning array may expose internal representation</Description>
 	</BugCode>
@@ -5616,7 +5182,7 @@ object is stored in this field.</p>
 	<BugCode abbrev="PZLA">
 		<Description>Prefer zero length arrays to null to indicate no results</Description>
 	</BugCode>
-	<Errors errors="1" missingClasses="28">
+	<Errors errors="1" missingClasses="0">
 		<Error>
 			<ErrorMessage>Unable to read filter:
 				C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\spotbugs-baseline.xml
@@ -5636,41 +5202,13 @@ object is stored in this field.</p>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs.processCommandLine(FindBugs.java:359)</StackTrace>
 			<StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1221)</StackTrace>
 		</Error>
-		<MissingClass>org.apache.avalon.framework.logger.Logger</MissingClass>
-		<MissingClass>org.apache.log.Hierarchy</MissingClass>
-		<MissingClass>org.apache.log.Logger</MissingClass>
-		<MissingClass>org.apache.log4j.Category</MissingClass>
-		<MissingClass>org.apache.log4j.Level</MissingClass>
-		<MissingClass>org.apache.log4j.Logger</MissingClass>
-		<MissingClass>org.apache.xerces.parsers.SAXParser</MissingClass>
-		<MissingClass>org.apache.xml.serialize.XMLSerializer</MissingClass>
-		<MissingClass>org.lwjgl.vulkan.VK</MissingClass>
-		<MissingClass>org.lwjgl.vulkan.VkInstance</MissingClass>
-		<MissingClass>org.lwjgl.vulkan.VkPhysicalDevice</MissingClass>
-		<MissingClass>org.mozilla.javascript.Callable</MissingClass>
-		<MissingClass>org.mozilla.javascript.ClassCache</MissingClass>
-		<MissingClass>org.mozilla.javascript.Context</MissingClass>
-		<MissingClass>org.mozilla.javascript.ContextFactory</MissingClass>
-		<MissingClass>org.mozilla.javascript.Function</MissingClass>
-		<MissingClass>org.mozilla.javascript.ImporterTopLevel</MissingClass>
-		<MissingClass>org.mozilla.javascript.JavaScriptException</MissingClass>
-		<MissingClass>org.mozilla.javascript.NativeJavaObject</MissingClass>
-		<MissingClass>org.mozilla.javascript.NativeObject</MissingClass>
-		<MissingClass>org.mozilla.javascript.Script</MissingClass>
-		<MissingClass>org.mozilla.javascript.ScriptableObject</MissingClass>
-		<MissingClass>org.mozilla.javascript.SecurityController</MissingClass>
-		<MissingClass>org.mozilla.javascript.Undefined</MissingClass>
-		<MissingClass>org.mozilla.javascript.WrapFactory</MissingClass>
-		<MissingClass>org.mozilla.javascript.WrappedException</MissingClass>
-		<MissingClass>org.python.core.PyException</MissingClass>
-		<MissingClass>org.python.util.PythonInterpreter</MissingClass>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Thu, 8 Sep 2022 01:24:46 +0200" total_classes="0"
-		referenced_classes="0" total_bugs="92" total_size="0" num_packages="6"
-		java_version="18.0.2.1" vm_version="18.0.2.1+1" cpu_seconds="69.17"
-		clock_seconds="19.21" peak_mbytes="1014.35" alloc_mbytes="8180.00"
-		gc_seconds="0.23" priority_3="30" priority_2="60" priority_1="2">
+		timestamp="Fri, 11 Nov 2022 17:20:55 +0100" total_classes="0"
+		referenced_classes="0" total_bugs="85" total_size="0" num_packages="6"
+		java_version="19.0.1" vm_version="19.0.1+10" cpu_seconds="8.08"
+		clock_seconds="7.77" peak_mbytes="589.83" alloc_mbytes="8180.00"
+		gc_seconds="0.09" priority_3="30" priority_2="53" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5678,7 +5216,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
 			bugCount="10" size="0" bugHash="8b8ba933a0f5ffbcef3cc4a4b3e73648" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="12" size="0" bugHash="a829036cf5963258a1768283a95f34c5" />
+			bugCount="12" size="0" bugHash="5dde2d81be93018ca8654c4df60624dc" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="5" size="0" bugHash="9d4fe9b79f1db3fb85fd10b101787c4c" />
@@ -5686,8 +5224,8 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java"
 			bugCount="1" size="0" bugHash="2a901c6f31e27328870962cf52bc4e5a" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="16"
-			size="0" bugHash="28aa69ffde5df29d634fa0341720fd59" />
+			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="15"
+			size="0" bugHash="8b94728198a87f21b70c1346d94c73f8" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6"
 			size="0" bugHash="341727b8e8e9b9c0d106866463a37224" />
@@ -5716,14 +5254,14 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
 			bugCount="2" size="0" bugHash="11532cf120bd9579fd69c6cd070826b0" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/sony/DualSenseExtension.java"
-			bugCount="2" size="0" bugHash="11f2df32a269dc4a6b9a88fade5ed07d" />
+			path="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
+			bugCount="2" size="0" bugHash="b8d74111a9558f5dba835efce24b726b" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/sony/DualShock4Extension.java"
-			bugCount="2" size="0" bugHash="48801a37fed1e956d6db69e146d61113" />
+			path="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
+			bugCount="2" size="0" bugHash="eefbe2c1423b5b48bcf2a848b4d3753b" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/sony/SonyExtension.java"
-			bugCount="3" size="0" bugHash="bb860e8a8ac32baa3fdb076f266783b4" />
+			path="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
+			bugCount="3" size="0" bugHash="eefe21918403e469462e68e0660962e6" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="1" size="0" bugHash="dae4fdbd0e992e8a9a9161b68ab12e79" />
@@ -5738,7 +5276,7 @@ object is stored in this field.</p>
 			bugCount="1" size="0" bugHash="1dc6180829decf3345ad1626070d06ec" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java"
-			bugCount="7" size="0" bugHash="1ef2ba49b3d3ec601f56056db8e621eb" />
+			bugCount="1" size="0" bugHash="c4dc9464b9b620e0abdb7d2c3ea2d3aa" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="1"
 			size="0" bugHash="b6818e28ebc457a424d8938b93e90e82" />
