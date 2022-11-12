@@ -506,7 +506,7 @@ public final class EditActionsDialog extends JDialog {
 						editorBuilder.buildEditor(propertyPanel);
 					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 							| IllegalArgumentException | InvocationTargetException e1) {
-						log.log(Level.SEVERE, e1.getMessage(), e1);
+						throw new RuntimeException(e1);
 					}
 				}
 			}
