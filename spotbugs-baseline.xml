@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.7.3" sequence="0"
-	timestamp="1668183655564" analysisTimestamp="1668183655564" release="">
+	timestamp="1668237903135" analysisTimestamp="1668237903135" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -171,16 +171,20 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction$VrCoordinateSystem.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\InputExtension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension$1.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension$1.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension$Connection.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension$SonyInputReportListener.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\XInputExtension$1.class</Jar>
-		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\extension\XInputExtension.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\Driver.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\IDriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver$DualSenseDriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver$DualShock4DriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver$Connection.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver$SonyInputReportListener.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver$XInputDriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input$VirtualAxis.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\Input.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\KeyStroke.class</Jar>
@@ -214,6 +218,7 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\X11WithLockKeyFunctions.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
+		<Jar>uddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.5.0\dc98be5d5390230684a092589d70ea76a147925c\commons-cli-1.5.0.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\2.6\4dd2ba228e3c57eb3d80e3927b5a6a33265eb69b\flatlaf-2.6.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.nyholku\purejavahidapi\ef5679619d\9170f7e18f897be429e1f2c5edd44807a7d7044a\purejavahidapi-ef5679619d.jar</AuxClasspathEntry>
@@ -4100,377 +4105,377 @@
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
 		priority="3" rank="20" abbrev="PZLA" category="STYLE"
-		instanceHash="76dc69f68c6d613609d2fb757238771d"
+		instanceHash="c39aab48e80be1238b930452e5e18bc9"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Consider returning a zero length array rather than null</ShortMessage>
 		<LongMessage>Should
-			de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension.getDefaultHidReport()
+			de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver.getDefaultHidReport()
 			return a zero length array rather than null?</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
-				start="32" end="196" sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
-				<Message>At DualSenseExtension.java:[lines 32-196]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver"
+				start="55" end="202" sourcefile="DualSenseDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.java">
+				<Message>At DualSenseDriver.java:[lines 55-202]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver"
 			name="getDefaultHidReport" signature="()[B" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
-				start="112" end="134" startBytecode="0" endBytecode="240"
-				sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java" />
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver"
+				start="118" end="140" startBytecode="0" endBytecode="240"
+				sourcefile="DualSenseDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension.getDefaultHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver.getDefaultHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension"
-			primary="true" start="113" end="113" startBytecode="8"
-			endBytecode="8" sourcefile="DualSenseExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 113]</Message>
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver"
+			primary="true" start="119" end="119" startBytecode="8"
+			endBytecode="8" sourcefile="DualSenseDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.java">
+			<Message>At DualSenseDriver.java:[line 119]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
 		priority="3" rank="20" abbrev="PZLA" category="STYLE"
-		instanceHash="f7c8928b43ce41004bf86741f652b121"
+		instanceHash="272bfa6adc6bf5165bb9d1930c819b2a"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Consider returning a zero length array rather than null</ShortMessage>
 		<LongMessage>Should
-			de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension.getDefaultHidReport()
+			de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver.getDefaultHidReport()
 			return a zero length array rather than null?</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
-				start="36" end="201" sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
-				<Message>At DualShock4Extension.java:[lines 36-201]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver"
+				start="72" end="209" sourcefile="DualShock4Driver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.java">
+				<Message>At DualShock4Driver.java:[lines 72-209]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver"
 			name="getDefaultHidReport" signature="()[B" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
-				start="135" end="156" startBytecode="0" endBytecode="230"
-				sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java" />
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver"
+				start="143" end="164" startBytecode="0" endBytecode="230"
+				sourcefile="DualShock4Driver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension.getDefaultHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver.getDefaultHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension"
-			primary="true" start="136" end="136" startBytecode="8"
-			endBytecode="8" sourcefile="DualShock4Extension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 136]</Message>
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver"
+			primary="true" start="144" end="144" startBytecode="8"
+			endBytecode="8" sourcefile="DualShock4Driver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.java">
+			<Message>At DualShock4Driver.java:[line 144]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2"
 		rank="14" abbrev="SWL" category="MT_CORRECTNESS"
-		instanceHash="de52d33fc285a793af0261df7e36c1a0"
+		instanceHash="a86db87642c5f07cf646857460962c47"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Method calls Thread.sleep() with a lock held</ShortMessage>
-		<LongMessage>de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
+		<LongMessage>de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.lambda$rumble$2(int,
 			byte, long) calls Thread.sleep() with a lock held</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				start="42" end="556" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 42-556]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				start="42" end="556" sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>At SonyDriver.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
 		</Class>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 				start="447" end="458" startBytecode="0" endBytecode="240"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true" start="451" end="451" startBytecode="20"
-			endBytecode="20" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 451]</Message>
+			endBytecode="20" sourcefile="SonyDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+			<Message>At SonyDriver.java:[line 451]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="704087668df363e786da5f15ebd3783c"
+		instanceHash="86a9976b4b9b891b9bb9a32ed287182d"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
-		<LongMessage>SonyExtension.connection not initialized in constructor
-			and dereferenced in
-			de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1.handleBattery(byte[])</LongMessage>
+		<LongMessage>SonyDriver.connection not initialized in constructor and
+			dereferenced in
+			de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver$1.handleBattery(byte[])</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				start="42" end="556" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 42-556]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				start="42" end="556" sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>At SonyDriver.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="connection"
-			signature="Lde/bwravencl/controllerbuddy/input/extension/sony/SonyExtension$Connection;"
+			signature="Lde/bwravencl/controllerbuddy/input/driver/sony/SonyDriver$Connection;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>In SonyExtension.java</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>In SonyDriver.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.connection</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.connection</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver$1"
 			name="handleBattery" signature="([B)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
-				start="68" end="92" startBytecode="0" endBytecode="359"
-				sourcefile="DualSenseExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java" />
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver$1"
+				start="74" end="98" startBytecode="0" endBytecode="359"
+				sourcefile="DualSenseDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1.handleBattery(byte[])</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver$1.handleBattery(byte[])</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualSenseExtension$1"
-			primary="true" start="68" end="68" startBytecode="10"
-			endBytecode="10" sourcefile="DualSenseExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualSenseExtension.java">
-			<Message>At DualSenseExtension.java:[line 68]</Message>
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualSenseDriver$1"
+			primary="true" start="74" end="74" startBytecode="10"
+			endBytecode="10" sourcefile="DualSenseDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.java">
+			<Message>At DualSenseDriver.java:[line 74]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="de2c325550111aecc6f7872fac99d141"
+		instanceHash="ca8202dfa04ed16906d3bb18a0f876de"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
-		<LongMessage>SonyExtension.connection not initialized in constructor
-			and dereferenced in
-			de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1.handleBattery(byte[])</LongMessage>
+		<LongMessage>SonyDriver.connection not initialized in constructor and
+			dereferenced in
+			de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver$1.handleBattery(byte[])</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				start="42" end="556" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 42-556]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				start="42" end="556" sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>At SonyDriver.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="connection"
-			signature="Lde/bwravencl/controllerbuddy/input/extension/sony/SonyExtension$Connection;"
+			signature="Lde/bwravencl/controllerbuddy/input/driver/sony/SonyDriver$Connection;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>In SonyExtension.java</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>In SonyDriver.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.connection</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.connection</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver$1"
 			name="handleBattery" signature="([B)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
-				start="82" end="114" startBytecode="0" endBytecode="433"
-				sourcefile="DualShock4Extension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java" />
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver$1"
+				start="90" end="122" startBytecode="0" endBytecode="433"
+				sourcefile="DualShock4Driver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1.handleBattery(byte[])</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver$1.handleBattery(byte[])</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.DualShock4Extension$1"
-			primary="true" start="82" end="82" startBytecode="10"
-			endBytecode="10" sourcefile="DualShock4Extension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\DualShock4Extension.java">
-			<Message>At DualShock4Extension.java:[line 82]</Message>
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.DualShock4Driver$1"
+			primary="true" start="90" end="90" startBytecode="10"
+			endBytecode="10" sourcefile="DualShock4Driver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\DualShock4Driver.java">
+			<Message>At DualShock4Driver.java:[line 90]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="af1ba5c2f2da5e64bdaef23bd3e36c02"
+		instanceHash="8c2d31ab9c80b4ac9b86e613490f718b"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
-		<LongMessage>SonyExtension.hidReport not initialized in constructor
-			and dereferenced in
-			de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
+		<LongMessage>SonyDriver.hidReport not initialized in constructor and
+			dereferenced in
+			de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.lambda$rumble$2(int,
 			byte, long)</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				start="42" end="556" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 42-556]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				start="42" end="556" sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>At SonyDriver.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="hidReport" signature="[B" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>In SonyExtension.java</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>In SonyDriver.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.hidReport</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.hidReport</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="lambda$rumble$2" signature="(IBJ)V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 				start="447" end="458" startBytecode="0" endBytecode="240"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.lambda$rumble$2(int,
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.lambda$rumble$2(int,
 				byte, long)</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true" start="455" end="455" startBytecode="40"
-			endBytecode="40" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 455]</Message>
+			endBytecode="40" sourcefile="SonyDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+			<Message>At SonyDriver.java:[line 455]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
 		type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20"
 		abbrev="UwF" category="STYLE"
-		instanceHash="646a8c272ff2a69aa21149f2bb1f2bf8"
+		instanceHash="52406ed2c74389a655f657734c50c8cf"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Field not initialized in constructor but dereferenced
 			without null check</ShortMessage>
-		<LongMessage>SonyExtension.hidReport not initialized in constructor
-			and dereferenced in
-			de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.sendHidReport()</LongMessage>
+		<LongMessage>SonyDriver.hidReport not initialized in constructor and
+			dereferenced in
+			de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.sendHidReport()</LongMessage>
 		<Class
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				start="42" end="556" sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>At SonyExtension.java:[lines 42-556]</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				start="42" end="556" sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>At SonyDriver.java:[lines 42-556]</Message>
 			</SourceLine>
 			<Message>In class
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
 		</Class>
 		<Field
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="hidReport" signature="[B" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-				<Message>In SonyExtension.java</Message>
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+				<Message>In SonyDriver.java</Message>
 			</SourceLine>
 			<Message>Field
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.hidReport</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.hidReport</Message>
 		</Field>
 		<Method
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			name="sendHidReport" signature="()V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 				start="472" end="493" startBytecode="0" endBytecode="352"
-				sourcefile="SonyExtension.java"
-				sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-				relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java" />
+				sourcefile="SonyDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java" />
 			<Message>In method
-				de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension.sendHidReport()</Message>
+				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver.sendHidReport()</Message>
 		</Method>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			primary="true" start="478" end="478" startBytecode="50"
-			endBytecode="50" sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java">
-			<Message>At SonyExtension.java:[line 478]</Message>
+			endBytecode="50" sourcefile="SonyDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
+			<Message>At SonyDriver.java:[line 478]</Message>
 		</SourceLine>
 		<SourceLine
-			classname="de.bwravencl.controllerbuddy.input.extension.sony.SonyExtension"
+			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
 			start="487" end="487" startBytecode="134" endBytecode="134"
-			sourcefile="SonyExtension.java"
-			sourcepath="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-			relSourcepath="java\de\bwravencl\controllerbuddy\input\extension\sony\SonyExtension.java"
+			sourcefile="SonyDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java"
 			role="SOURCE_LINE_ANOTHER_INSTANCE">
-			<Message>Another occurrence at SonyExtension.java:[line 487]</Message>
+			<Message>Another occurrence at SonyDriver.java:[line 487]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -5204,11 +5209,11 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Fri, 11 Nov 2022 17:20:55 +0100" total_classes="0"
+		timestamp="Sat, 12 Nov 2022 08:25:03 +0100" total_classes="0"
 		referenced_classes="0" total_bugs="85" total_size="0" num_packages="6"
-		java_version="19.0.1" vm_version="19.0.1+10" cpu_seconds="8.08"
-		clock_seconds="7.77" peak_mbytes="589.83" alloc_mbytes="8180.00"
-		gc_seconds="0.09" priority_3="30" priority_2="53" priority_1="2">
+		java_version="19.0.1" vm_version="19.0.1+10" cpu_seconds="7.50"
+		clock_seconds="7.61" peak_mbytes="596.88" alloc_mbytes="8180.00"
+		gc_seconds="0.08" priority_3="30" priority_2="53" priority_1="2">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5254,14 +5259,14 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
 			bugCount="2" size="0" bugHash="11532cf120bd9579fd69c6cd070826b0" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/extension/sony/DualSenseExtension.java"
-			bugCount="2" size="0" bugHash="b8d74111a9558f5dba835efce24b726b" />
+			path="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
+			bugCount="2" size="0" bugHash="724940d2515a57b2e694abebcfdb7d1e" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/extension/sony/DualShock4Extension.java"
-			bugCount="2" size="0" bugHash="eefbe2c1423b5b48bcf2a848b4d3753b" />
+			path="de/bwravencl/controllerbuddy/input/driver/sony/DualShock4Driver.java"
+			bugCount="2" size="0" bugHash="b547e751ba1fdec09d87fe7f0a92318a" />
 		<FileStats
-			path="de/bwravencl/controllerbuddy/input/extension/sony/SonyExtension.java"
-			bugCount="3" size="0" bugHash="eefe21918403e469462e68e0660962e6" />
+			path="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
+			bugCount="3" size="0" bugHash="b4b3aaa526569c48a8795c191a2072b2" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="1" size="0" bugHash="dae4fdbd0e992e8a9a9161b68ab12e79" />
