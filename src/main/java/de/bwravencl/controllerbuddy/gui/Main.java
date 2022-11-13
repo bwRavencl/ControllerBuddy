@@ -3217,8 +3217,13 @@ public final class Main {
 				.filter(virtualAxis -> virtualAxisToProgressBarMap.containsKey(virtualAxis)).forEach(virtualAxis -> {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
 					var changed = false;
-					final var minimum = isLinux ? runMode.getMinAxisValue() : -runMode.getMaxAxisValue();
-					final var maximum = isLinux ? runMode.getMaxAxisValue() : runMode.getMinAxisValue();
+
+					final var minAxisValue = runMode.getMinAxisValue();
+					final var maxAxisValue = runMode.getMaxAxisValue();
+					final var negativeMinAxisValue = minAxisValue < 0;
+
+					final var minimum = negativeMinAxisValue ? minAxisValue : -maxAxisValue;
+					final var maximum = negativeMinAxisValue ? maxAxisValue : minAxisValue;
 
 					final var newMaximum = maximum - minimum;
 					if (progressBar.getMaximum() != newMaximum) {

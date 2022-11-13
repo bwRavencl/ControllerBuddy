@@ -17,17 +17,23 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import java.awt.EventQueue;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -38,9 +44,13 @@ import com.sun.jna.Platform;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.version.VersionUtils;
+import de.bwravencl.controllerbuddy.input.LockKey;
 
 public final class ServerRunMode extends RunMode {
+
+	public enum MessageType {
+		ClientHello, ServerHello, Update, UpdateRequestAlive, ClientAlive
+	}
 
 	public enum ServerState {
 		Listening, Connected
@@ -48,14 +58,11 @@ public final class ServerRunMode extends RunMode {
 
 	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
 
+	static final byte PROTOCOL_VERSION = 1;
+
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 2000;
-	static final String PROTOCOL_MESSAGE_DELIMITER = ":";
-	static final String PROTOCOL_MESSAGE_CLIENT_HELLO = "CLIENT_HELLO";
-	static final String PROTOCOL_MESSAGE_SERVER_HELLO = "SERVER_HELLO";
-	static final String PROTOCOL_MESSAGE_UPDATE = "UPDATE";
-	static final String PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE = PROTOCOL_MESSAGE_UPDATE + "_ALIVE";
-	static final String PROTOCOL_MESSAGE_CLIENT_ALIVE = "CLIENT_ALIVE";
+
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	private int port = DEFAULT_PORT;
@@ -89,7 +96,6 @@ public final class ServerRunMode extends RunMode {
 		final var clientPort = port + 1;
 		serverState = ServerState.Listening;
 		DatagramPacket receivePacket;
-		String message;
 		var counter = 0L;
 
 		try {
@@ -111,126 +117,89 @@ public final class ServerRunMode extends RunMode {
 					serverSocket.setSoTimeout(0);
 					serverSocket.receive(receivePacket);
 					clientIPAddress = receivePacket.getAddress();
-					message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-							StandardCharsets.US_ASCII);
 
-					if (message.startsWith(PROTOCOL_MESSAGE_CLIENT_HELLO)) {
-						final var messageParts = message.split(PROTOCOL_MESSAGE_DELIMITER);
+					try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
+						try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+							final var messageType = dataInputStream.readInt();
 
-						if (messageParts.length == 4) {
-							minAxisValue = Integer.parseInt(messageParts[1]);
-							maxAxisValue = Integer.parseInt(messageParts[2]);
-							setnButtons(Integer.parseInt(messageParts[3]));
+							if (messageType == MessageType.ClientHello.ordinal()) {
+								minAxisValue = dataInputStream.readInt();
+								maxAxisValue = dataInputStream.readInt();
+								setnButtons(dataInputStream.readInt());
 
-							final var sb = new StringBuilder();
-							sb.append(PROTOCOL_MESSAGE_SERVER_HELLO);
-							sb.append(PROTOCOL_MESSAGE_DELIMITER);
-							sb.append(VersionUtils.getMajorAndMinorVersion());
-							sb.append(PROTOCOL_MESSAGE_DELIMITER);
-							sb.append(String.valueOf(pollInterval));
+								try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
+									try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+										dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
+										dataOutputStream.writeByte(PROTOCOL_VERSION);
+										dataOutputStream.writeLong(pollInterval);
+									}
 
-							final var sendBuf = sb.toString().getBytes("ASCII");
-							final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
-									clientPort);
-							serverSocket.send(sendPacket);
+									final var sendBuf = byteArrayOutputStream.toByteArray();
+									final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+											clientPort);
+									serverSocket.send(sendPacket);
+								}
 
-							serverState = ServerState.Connected;
-							input.init();
-							EventQueue.invokeLater(() -> {
-								main.setStatusBarText(
-										MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-												clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
-							});
+								serverState = ServerState.Connected;
+								input.init();
+								EventQueue.invokeLater(() -> {
+									main.setStatusBarText(
+											MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
+													clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
+								});
+							}
 						}
 					}
 				}
 				case Connected -> {
 					Thread.sleep(pollInterval);
 
-					final var sb = new StringBuilder();
-					var doAliveCheck = false;
-					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
-						sb.append(PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE);
-						doAliveCheck = true;
-					} else
-						sb.append(PROTOCOL_MESSAGE_UPDATE);
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + counter);
+					final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
+					try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
+						try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+							dataOutputStream.writeInt(
+									(doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
+							dataOutputStream.writeLong(counter);
+						}
 
-					if (!input.poll()) {
-						controllerDisconnected();
-						return;
+						if (!input.poll()) {
+							controllerDisconnected();
+							return;
+						}
+
+						try (var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+							objectOutputStream.writeObject(input.getAxes());
+							objectOutputStream.writeObject(input.getButtons());
+							objectOutputStream.writeInt(input.getCursorDeltaX());
+							objectOutputStream.writeInt(input.getCursorDeltaY());
+							objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
+							objectOutputStream.writeObject(input.getDownUpMouseButtons());
+							objectOutputStream.writeObject(input.getDownKeyStrokes());
+							objectOutputStream.writeObject(input.getDownUpKeyStrokes());
+
+							objectOutputStream.writeInt(input.getScrollClicks());
+
+							objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
+									.collect(Collectors.toSet()));
+							objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
+									.collect(Collectors.toSet()));
+						}
+
+						input.setCursorDeltaX(0);
+						input.setCursorDeltaY(0);
+
+						input.getDownUpMouseButtons().clear();
+						input.getDownUpKeyStrokes().clear();
+
+						input.setScrollClicks(0);
+
+						input.getOnLockKeys().clear();
+						input.getOffLockKeys().clear();
+
+						final var sendBuf = byteArrayOutputStream.toByteArray();
+						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
+						serverSocket.send(sendPacket);
 					}
-
-					input.getAxes().values().forEach(axisId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + axisId));
-
-					for (var i = 0; i < nButtons; i++) {
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getButtons()[i]);
-						input.getButtons()[i] = false;
-					}
-
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getCursorDeltaX() + PROTOCOL_MESSAGE_DELIMITER
-							+ input.getCursorDeltaY());
-					input.setCursorDeltaX(0);
-					input.setCursorDeltaY(0);
-
-					final var downMouseButtons = input.getDownMouseButtons();
-					synchronized (downMouseButtons) {
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + downMouseButtons.size());
-						downMouseButtons
-								.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
-					}
-
-					final var downUpMouseButtons = input.getDownUpMouseButtons();
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpMouseButtons.size());
-					downUpMouseButtons.forEach(mouseButtonId -> sb.append(PROTOCOL_MESSAGE_DELIMITER + mouseButtonId));
-					downUpMouseButtons.clear();
-
-					final var downKeyStrokes = input.getDownKeyStrokes();
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + downKeyStrokes.size());
-					downKeyStrokes.forEach(keyStroke -> {
-						final var modifierCodes = keyStroke.getModifierCodes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
-						for (final var scanCode : modifierCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
-
-						final var keyCodes = keyStroke.getKeyCodes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-						for (final var scanCode : keyCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
-					});
-
-					final var downUpKeyStrokes = input.getDownUpKeyStrokes();
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + downUpKeyStrokes.size());
-					downUpKeyStrokes.forEach(keyStroke -> {
-						final var modifierCodes = keyStroke.getModifierCodes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + modifierCodes.length);
-						for (final var code : modifierCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + code);
-
-						final var keyCodes = keyStroke.getKeyCodes();
-						sb.append(PROTOCOL_MESSAGE_DELIMITER + keyCodes.length);
-						for (final var scanCode : keyCodes)
-							sb.append(PROTOCOL_MESSAGE_DELIMITER + scanCode);
-					});
-					downUpKeyStrokes.clear();
-
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + input.getScrollClicks());
-					input.setScrollClicks(0);
-
-					final var onLockKeys = input.getOnLockKeys();
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + onLockKeys.size());
-					onLockKeys.forEach(lockKey -> sb.append(PROTOCOL_MESSAGE_DELIMITER + lockKey.virtualKeyCode()));
-					onLockKeys.clear();
-
-					final var offLockKeys = input.getOffLockKeys();
-					sb.append(PROTOCOL_MESSAGE_DELIMITER + offLockKeys.size());
-					offLockKeys.forEach(lockKey -> sb.append(PROTOCOL_MESSAGE_DELIMITER + lockKey.virtualKeyCode()));
-					offLockKeys.clear();
-
-					final var sendBuf = sb.toString().getBytes("ASCII");
-
-					final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
-					serverSocket.send(sendPacket);
 
 					if (doAliveCheck) {
 						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
@@ -238,13 +207,15 @@ public final class ServerRunMode extends RunMode {
 						try {
 							serverSocket.receive(receivePacket);
 
-							if (clientIPAddress.equals(receivePacket.getAddress())) {
-								message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-										StandardCharsets.US_ASCII);
-
-								if (PROTOCOL_MESSAGE_CLIENT_ALIVE.equals(message))
-									counter++;
-							}
+							if (clientIPAddress.equals(receivePacket.getAddress()))
+								try (final var byteArrayInputStream = new ByteArrayInputStream(
+										receivePacket.getData())) {
+									try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+										final var messageType = dataInputStream.readInt();
+										if (messageType == MessageType.ClientAlive.ordinal())
+											counter++;
+									}
+								}
 						} catch (final SocketTimeoutException e) {
 							input.reset();
 							input.deInit(false);

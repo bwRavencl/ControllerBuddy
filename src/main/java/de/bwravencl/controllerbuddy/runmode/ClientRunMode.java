@@ -17,27 +17,34 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import java.awt.EventQueue;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.HashSet;
+import java.util.EnumMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
-import de.bwravencl.controllerbuddy.input.ScanCode;
-import de.bwravencl.controllerbuddy.version.VersionUtils;
+import de.bwravencl.controllerbuddy.runmode.ServerRunMode.MessageType;
 
 public final class ClientRunMode extends OutputRunMode {
 
@@ -68,6 +75,7 @@ public final class ClientRunMode extends OutputRunMode {
 		return log;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	boolean readInput() throws IOException {
 		super.readInput();
@@ -82,243 +90,183 @@ public final class ClientRunMode extends OutputRunMode {
 						MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
-			final var sb = new StringBuilder();
-			sb.append(ServerRunMode.PROTOCOL_MESSAGE_CLIENT_HELLO);
-			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
-			sb.append(String.valueOf(minAxisValue));
-			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
-			sb.append(String.valueOf(maxAxisValue));
-			sb.append(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
-			sb.append(String.valueOf(nButtons));
+			try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
+				try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+					dataOutputStream.writeInt(MessageType.ClientHello.ordinal());
+					dataOutputStream.writeInt(minAxisValue);
+					dataOutputStream.writeInt(maxAxisValue);
+					dataOutputStream.writeInt(nButtons);
+				}
 
-			final var helloBuf = sb.toString().getBytes("ASCII");
-			final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
+				final var helloBuf = byteArrayOutputStream.toByteArray();
+				final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
 
-			var success = false;
-			var retry = N_CONNECTION_RETRIES;
-			do {
-				clientSocket.send(helloPacket);
+				var success = false;
+				var retry = N_CONNECTION_RETRIES;
+				do {
+					clientSocket.send(helloPacket);
 
-				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-				try {
-					clientSocket.receive(receivePacket);
-					final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-							StandardCharsets.US_ASCII);
+					final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+					try {
+						clientSocket.receive(receivePacket);
 
-					if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_SERVER_HELLO)) {
-						final var messageParts = message.split(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
-						final var serverProtocolVersion = messageParts[1];
-						final var versionsComparisonResult = VersionUtils.compareVersions(serverProtocolVersion);
-						if (versionsComparisonResult.isEmpty() || versionsComparisonResult.get() != 0) {
-							final var clientVersion = VersionUtils.getMajorAndMinorVersion();
-							log.log(Level.WARNING, "Protocol version mismatch: client " + clientVersion + " vs server "
-									+ serverProtocolVersion);
-							EventQueue.invokeLater(() -> {
-								GuiUtils.showMessageDialog(main.getFrame(),
-										MessageFormat.format(
-												Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
-												clientVersion, serverProtocolVersion),
-										Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-							});
-							retry = -1;
-						} else {
-							pollInterval = Long.parseLong(messageParts[2]);
-							success = true;
+						try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
+							try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+								final var messageType = dataInputStream.readInt();
+								if (messageType == MessageType.ServerHello.ordinal()) {
+									final var serverProtocolVersion = dataInputStream.readByte();
+									if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
+										log.log(Level.WARNING,
+												"Protocol version mismatch: client " + ServerRunMode.PROTOCOL_VERSION
+														+ " vs server " + serverProtocolVersion);
+										EventQueue.invokeLater(() -> {
+											GuiUtils.showMessageDialog(main.getFrame(),
+													MessageFormat.format(
+															Main.strings
+																	.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+															ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
+													Main.strings.getString("ERROR_DIALOG_TITLE"),
+													JOptionPane.ERROR_MESSAGE);
+										});
+										retry = -1;
+									} else {
+										pollInterval = dataInputStream.readLong();
+										success = true;
+									}
+								} else {
+									retry--;
+									final var finalRetry = retry;
+									EventQueue.invokeLater(() -> {
+										main.setStatusBarText(MessageFormat.format(
+												Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+												N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
+									});
+								}
+							}
 						}
-					} else {
+					} catch (final SocketTimeoutException e) {
+						log.log(Level.INFO, e.getMessage(), e);
 						retry--;
 						final var finalRetry = retry;
 						EventQueue.invokeLater(() -> {
 							main.setStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+									MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
 											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
 						});
 					}
-				} catch (final SocketTimeoutException e) {
-					log.log(Level.INFO, e.getMessage(), e);
-					retry--;
-					final var finalRetry = retry;
-					EventQueue.invokeLater(() -> {
-						main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
-								N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
-					});
-				}
-			} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
+				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
-			if (success) {
-				clientState = ClientState.Connected;
-				log.log(Level.INFO, "Successfully connected");
-				EventQueue.invokeLater(() -> {
-					main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host,
-							port, pollInterval));
-				});
-			} else {
-				if (retry != -1 && !Thread.currentThread().isInterrupted()) {
-					log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
+				if (success) {
+					clientState = ClientState.Connected;
+					log.log(Level.INFO, "Successfully connected");
 					EventQueue.invokeLater(() -> {
-						GuiUtils.showMessageDialog(main.getFrame(),
-								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
-										N_CONNECTION_RETRIES),
-								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host,
+								port, pollInterval));
 					});
-				}
+				} else {
+					if (retry != -1 && !Thread.currentThread().isInterrupted()) {
+						log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
+						EventQueue.invokeLater(() -> {
+							GuiUtils.showMessageDialog(main.getFrame(),
+									MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
+											N_CONNECTION_RETRIES),
+									Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						});
+					}
 
-				forceStop = true;
-				Thread.currentThread().interrupt();
+					forceStop = true;
+					Thread.currentThread().interrupt();
+				}
 			}
 		}
 		case Connected -> {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				clientSocket.receive(receivePacket);
-				final var message = new String(receivePacket.getData(), 0, receivePacket.getLength(),
-						StandardCharsets.US_ASCII);
 
-				if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_UPDATE)) {
-					final var messageParts = message.split(ServerRunMode.PROTOCOL_MESSAGE_DELIMITER);
+				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
+					try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 
-					final var newCounter = Long.parseLong(messageParts[1]);
-					if (newCounter > counter) {
-						final var inputAxisX = Integer.parseInt(messageParts[2]);
-						axisX.setValue(inputAxisX);
+						final var messageType = MessageType.values()[dataInputStream.readInt()];
 
-						final var inputAxisY = Integer.parseInt(messageParts[3]);
-						axisY.setValue(inputAxisY);
+						if (messageType == MessageType.Update || messageType == MessageType.UpdateRequestAlive) {
 
-						final var inputAxisZ = Integer.parseInt(messageParts[4]);
-						axisZ.setValue(inputAxisZ);
+							final var newCounter = dataInputStream.readLong();
+							if (newCounter > counter) {
 
-						final var inputAxisRX = Integer.parseInt(messageParts[5]);
-						axisRX.setValue(inputAxisRX);
+								try (var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+									final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream
+											.readObject();
+									axisX.setValue(inputAxes.get(VirtualAxis.X));
+									axisY.setValue(inputAxes.get(VirtualAxis.Y));
+									axisZ.setValue(inputAxes.get(VirtualAxis.Z));
+									axisRX.setValue(inputAxes.get(VirtualAxis.RX));
+									axisRY.setValue(inputAxes.get(VirtualAxis.RY));
+									axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
+									axisS0.setValue(inputAxes.get(VirtualAxis.S0));
+									axisS1.setValue(inputAxes.get(VirtualAxis.S1));
 
-						final var inputAxisRY = Integer.parseInt(messageParts[6]);
-						axisRY.setValue(inputAxisRY);
+									final var inputButtons = (boolean[]) objectInputStream.readObject();
+									for (var i = 0; i < nButtons; i++)
+										buttons[i].setValue(inputButtons[i] ? 1 : 0);
 
-						final var inputAxisRZ = Integer.parseInt(messageParts[7]);
-						axisRZ.setValue(inputAxisRZ);
+									cursorDeltaX = objectInputStream.readInt();
+									cursorDeltaY = objectInputStream.readInt();
 
-						final var inputAxisS0 = Integer.parseInt(messageParts[8]);
-						axisS0.setValue(inputAxisS0);
+									updateOutputSets((Set<Integer>) objectInputStream.readObject(), oldDownMouseButtons,
+											newUpMouseButtons, newDownMouseButtons, false);
 
-						final var inputAxisS1 = Integer.parseInt(messageParts[9]);
-						axisS1.setValue(inputAxisS1);
+									downUpMouseButtons.clear();
+									downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
 
-						for (var i = 0; i < nButtons; i++) {
-							final var buttonDown = Boolean.parseBoolean(messageParts[10 + i]);
-							buttons[i].setValue(buttonDown ? 1 : 0);
-						}
+									final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
+									final var inputDownModifiers = downKeyStrokes.stream()
+											.map(KeyStroke::getModifierCodes).flatMap(Stream::of)
+											.collect(Collectors.toSet());
+									updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers,
+											newDownModifiers, false);
 
-						cursorDeltaX = Integer.parseInt(messageParts[10 + nButtons]);
-						cursorDeltaY = Integer.parseInt(messageParts[11 + nButtons]);
+									final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
+											.flatMap(Stream::of).collect(Collectors.toSet());
+									updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys,
+											newDownNormalKeys, true);
 
-						final var nDownMouseButtons = Integer.parseInt(messageParts[12 + nButtons]);
-						final var sourceDownMouseButtons = new HashSet<Integer>(nDownMouseButtons);
-						for (var i = 1; i <= nDownMouseButtons; i++)
-							sourceDownMouseButtons.add(Integer.parseInt(messageParts[12 + nButtons + i]));
-						updateOutputSets(sourceDownMouseButtons, oldDownMouseButtons, newUpMouseButtons,
-								newDownMouseButtons, false);
+									downUpKeyStrokes.clear();
+									downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
 
-						downUpMouseButtons.clear();
-						final var nDownUpMouseButtons = Integer
-								.parseInt(messageParts[13 + nButtons + nDownMouseButtons]);
-						for (var i = 1; i <= nDownUpMouseButtons; i++) {
-							final var b = Integer.parseInt(messageParts[13 + nButtons + nDownMouseButtons + i]);
-							downUpMouseButtons.add(b);
-						}
+									scrollClicks = objectInputStream.readInt();
 
-						final var sourceModifiers = new HashSet<ScanCode>();
-						final var sourceNormalKeys = new HashSet<ScanCode>();
-						var nDownKeyStrokes = Integer
-								.parseInt(messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons]);
-						for (var i = 1; i <= nDownKeyStrokes; i++) {
-							final var nDownModifierCodes = Integer.parseInt(
-									messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i]);
-							for (var j = 1; j <= nDownModifierCodes; j++) {
-								final var k = Integer.parseInt(
-										messageParts[14 + nButtons + nDownMouseButtons + nDownUpMouseButtons + i + j]);
-								sourceModifiers.add(ScanCode.keyCodeToScanCodeMap.get(k));
+									onLockKeys.clear();
+									((Set<Integer>) objectInputStream.readObject()).stream().map(
+											virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
+											.forEachOrdered(onLockKeys::add);
+
+									offLockKeys.clear();
+									((Set<Integer>) objectInputStream.readObject()).stream().map(
+											virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
+											.forEachOrdered(offLockKeys::add);
+								} catch (final ClassNotFoundException e) {
+									throw new RuntimeException(e);
+								}
+
+								counter = newCounter;
+								retVal = true;
 							}
 
-							final var nDownKeyCodes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownModifierCodes + i]);
-							for (var j = 1; j <= nDownKeyCodes; j++) {
-								final var k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
-										+ nDownUpMouseButtons + nDownModifierCodes + i + j]);
-								sourceNormalKeys.add(ScanCode.keyCodeToScanCodeMap.get(k));
+						}
+
+						if (messageType == MessageType.UpdateRequestAlive)
+							try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
+								try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+									dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
+								}
+
+								final var keepAliveBuf = byteArrayOutputStream.toByteArray();
+								final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length,
+										hostAddress, port);
+								clientSocket.send(keepAlivePacket);
 							}
-
-							final var spacing = nDownModifierCodes + nDownKeyCodes + 1;
-							nDownKeyStrokes += spacing;
-							i += spacing;
-						}
-						updateOutputSets(sourceModifiers, oldDownModifiers, newUpModifiers, newDownModifiers, false);
-						updateOutputSets(sourceNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
-
-						downUpKeyStrokes.clear();
-						var nDownUpKeyStrokes = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
-								+ nDownUpMouseButtons + nDownKeyStrokes]);
-						for (var i = 1; i <= nDownUpKeyStrokes; i++) {
-							final var keyStroke = new KeyStroke();
-
-							final var nDownUpModifierCodes = Integer.parseInt(messageParts[15 + nButtons
-									+ nDownMouseButtons + nDownUpMouseButtons + nDownKeyStrokes + i]);
-							final var modifierCodes = new ScanCode[nDownUpModifierCodes];
-							for (var j = 1; j <= nDownUpModifierCodes; j++) {
-								final var k = Integer.parseInt(messageParts[15 + nButtons + nDownMouseButtons
-										+ nDownUpMouseButtons + nDownKeyStrokes + i + j]);
-								modifierCodes[j - 1] = ScanCode.keyCodeToScanCodeMap.get(k);
-							}
-							keyStroke.setModifierCodes(modifierCodes);
-
-							final var nDownUpKeyCodes = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i]);
-							final var keyCodes = new ScanCode[nDownUpKeyCodes];
-							for (var j = 1; j <= nDownUpKeyCodes; j++) {
-								final var k = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-										+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpModifierCodes + i + j]);
-								keyCodes[j - 1] = ScanCode.keyCodeToScanCodeMap.get(k);
-							}
-							keyStroke.setKeyCodes(keyCodes);
-							downUpKeyStrokes.add(keyStroke);
-
-							final var spacing = nDownUpModifierCodes + nDownUpKeyCodes + 1;
-							nDownUpKeyStrokes += spacing;
-							i += spacing;
-						}
-
-						scrollClicks = Integer.parseInt(messageParts[16 + nButtons + nDownMouseButtons
-								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
-
-						onLockKeys.clear();
-						final var nOnLockKeys = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
-								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes]);
-						for (var i = 1; i <= nOnLockKeys; i++) {
-							final var virtualKeyCode = Integer.parseInt(messageParts[17 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + i]);
-							final var lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode);
-							onLockKeys.add(lockKey);
-						}
-
-						offLockKeys.clear();
-						final var nOffLockKeys = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
-								+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys]);
-						for (var i = 1; i <= nOffLockKeys; i++) {
-							final var virtualKeyCode = Integer.parseInt(messageParts[18 + nButtons + nDownMouseButtons
-									+ nDownUpMouseButtons + nDownKeyStrokes + nDownUpKeyStrokes + nOnLockKeys + i]);
-							final var lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode);
-							offLockKeys.add(lockKey);
-						}
-
-						counter = newCounter;
-						retVal = true;
 					}
-				}
-
-				if (message.startsWith(ServerRunMode.PROTOCOL_MESSAGE_UPDATE_REQUEST_ALIVE)) {
-					final var keepAliveBuf = ServerRunMode.PROTOCOL_MESSAGE_CLIENT_ALIVE.getBytes("ASCII");
-					final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress,
-							port);
-					clientSocket.send(keepAlivePacket);
 				}
 			} catch (final SocketTimeoutException e) {
 				log.log(Level.FINE, e.getMessage(), e);
@@ -352,6 +300,8 @@ public final class ClientRunMode extends OutputRunMode {
 			} else
 				forceStop = true;
 		} catch (final UnknownHostException e) {
+			forceStop = true;
+
 			log.log(Level.INFO, "Could not resolve host: " + host);
 			EventQueue.invokeLater(() -> {
 				GuiUtils.showMessageDialog(main.getFrame(),
@@ -359,6 +309,8 @@ public final class ClientRunMode extends OutputRunMode {
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
 		} catch (final IOException e) {
+			forceStop = true;
+
 			log.log(Level.SEVERE, e.getMessage(), e);
 			EventQueue.invokeLater(() -> {
 				GuiUtils.showMessageDialog(main.getFrame(),

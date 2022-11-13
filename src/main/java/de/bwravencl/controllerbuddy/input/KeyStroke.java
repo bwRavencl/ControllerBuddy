@@ -16,17 +16,24 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 
-public final class KeyStroke implements Cloneable {
+public final class KeyStroke implements Cloneable, Serializable {
 
-	private ScanCode[] keyCodes;
-	private ScanCode[] modifierCodes;
+	private static final long serialVersionUID = 3572153768203547877L;
+
+	private transient ScanCode[] keyCodes;
+	private transient ScanCode[] modifierCodes;
 
 	public KeyStroke() {
 		this(new ScanCode[0], new ScanCode[0]);
@@ -77,6 +84,22 @@ public final class KeyStroke implements Cloneable {
 		return Objects.hash(Arrays.hashCode(keyCodes), Arrays.hashCode(modifierCodes));
 	}
 
+	private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
+		stream.defaultReadObject();
+
+		@SuppressWarnings("unchecked")
+		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
+		modifierCodes = modifierCodesKeyCodes.stream()
+				.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
+				.toArray(size -> new ScanCode[size]);
+
+		@SuppressWarnings("unchecked")
+		final var keyCodesKeyCodes = (Set<Integer>) stream.readObject();
+		keyCodes = keyCodesKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToScanCodeMap.get(keyCode))
+				.toArray(size -> new ScanCode[size]);
+
+	}
+
 	public void setKeyCodes(final ScanCode[] keyCodes) {
 		this.keyCodes = keyCodes;
 	}
@@ -93,5 +116,12 @@ public final class KeyStroke implements Cloneable {
 			return Main.strings.getString("NOTHING");
 
 		return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));
+	}
+
+	private void writeObject(final ObjectOutputStream stream) throws IOException {
+		stream.defaultWriteObject();
+
+		stream.writeObject(Arrays.stream(modifierCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
+		stream.writeObject(Arrays.stream(keyCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
 	}
 }
