@@ -32,8 +32,8 @@ public final class KeyStroke implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 3572153768203547877L;
 
-	private transient ScanCode[] keyCodes;
-	private transient ScanCode[] modifierCodes;
+	private ScanCode[] keyCodes;
+	private ScanCode[] modifierCodes;
 
 	public KeyStroke() {
 		this(new ScanCode[0], new ScanCode[0]);
@@ -85,8 +85,6 @@ public final class KeyStroke implements Cloneable, Serializable {
 	}
 
 	private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
-		stream.defaultReadObject();
-
 		@SuppressWarnings("unchecked")
 		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
 		modifierCodes = modifierCodesKeyCodes.stream()
@@ -119,8 +117,6 @@ public final class KeyStroke implements Cloneable, Serializable {
 	}
 
 	private void writeObject(final ObjectOutputStream stream) throws IOException {
-		stream.defaultWriteObject();
-
 		stream.writeObject(Arrays.stream(modifierCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
 		stream.writeObject(Arrays.stream(keyCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
 	}
