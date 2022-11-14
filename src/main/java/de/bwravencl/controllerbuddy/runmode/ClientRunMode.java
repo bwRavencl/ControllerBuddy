@@ -26,6 +26,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
@@ -68,6 +69,11 @@ public final class ClientRunMode extends OutputRunMode {
 
 	public ClientRunMode(final Main main, final Input input) {
 		super(main, input);
+	}
+
+	public void close() {
+		if (clientSocket != null)
+			clientSocket.close();
 	}
 
 	@Override
@@ -308,6 +314,8 @@ public final class ClientRunMode extends OutputRunMode {
 						MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			});
+		} catch (final SocketException e) {
+			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			forceStop = true;
 

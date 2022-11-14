@@ -2868,15 +2868,15 @@ public final class Main {
 			return;
 
 		lastRunModeType = RunModeType.CLIENT;
-		final var clientThread = new ClientRunMode(Main.this, input);
-		clientThread.setvJoyDevice(
+		final var clientRunMode = new ClientRunMode(Main.this, input);
+		clientRunMode.setvJoyDevice(
 				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
-		clientThread.setHost(hostTextField.getText());
-		clientThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
-		clientThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
+		clientRunMode.setHost(hostTextField.getText());
+		clientRunMode.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
+		clientRunMode.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
 
-		runMode = clientThread;
-		taskRunner.run(clientThread);
+		runMode = clientRunMode;
+		taskRunner.run(clientRunMode);
 
 		onRunModeChanged();
 	}
@@ -2886,13 +2886,13 @@ public final class Main {
 			return;
 
 		lastRunModeType = RunModeType.LOCAL;
-		final var localThread = new LocalRunMode(Main.this, input);
-		localThread.setvJoyDevice(
+		final var localRunMode = new LocalRunMode(Main.this, input);
+		localRunMode.setvJoyDevice(
 				new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
-		localThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
+		localRunMode.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
 
-		runMode = localThread;
-		taskRunner.run(localThread);
+		runMode = localRunMode;
+		taskRunner.run(localRunMode);
 
 		onRunModeChanged();
 
@@ -2974,7 +2974,7 @@ public final class Main {
 		final var running = isClientRunning();
 
 		if (initiateStop && running)
-			taskRunner.stopTask();
+			((ClientRunMode) runMode).close();
 
 		if (running)
 			taskRunner.waitForTask();
