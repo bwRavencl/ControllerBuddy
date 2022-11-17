@@ -112,7 +112,7 @@ dependencies {
 			'com.github.prat-man:unique4j:6701cef900',
 			'com.github.strikerx3:jxinput:1.0.0',
 			'com.google.code.gson:gson:2.10',
-			'io.github.classgraph:classgraph:4.8.150',
+			'io.github.classgraph:classgraph:4.8.151',
 			"net.java.dev.jna:jna:$jnaVersion",
 			"net.java.dev.jna:jna-platform:$jnaVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion",
