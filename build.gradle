@@ -109,7 +109,6 @@ dependencies {
 	implementation 'commons-cli:commons-cli:1.5.0',
 			'com.formdev:flatlaf:2.6',
 			'com.github.nyholku:purejavahidapi:ef5679619d',
-			'com.github.prat-man:unique4j:6701cef900',
 			'com.github.strikerx3:jxinput:1.0.0',
 			'com.google.code.gson:gson:2.10',
 			'io.github.classgraph:classgraph:4.8.151',
@@ -135,10 +134,7 @@ dependencies {
 dependencyUpdates {
 	revision = 'release'
 	rejectVersionIf {
-		it.candidate.module in [
-			'purejavahidapi',
-			'unique4j'
-		]
+		it.candidate.module in ['purejavahidapi']
 	}
 }
 

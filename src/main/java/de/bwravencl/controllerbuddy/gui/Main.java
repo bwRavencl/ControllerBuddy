@@ -53,12 +53,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -67,6 +71,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,9 +196,6 @@ import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
-import in.pratanumandal.unique4j.Unique4j;
-import in.pratanumandal.unique4j.Unique4jList;
-import in.pratanumandal.unique4j.exception.Unique4jException;
 
 public final class Main {
 
@@ -1040,8 +1042,6 @@ public final class Main {
 
 	private static final Options options = new Options();
 
-	private static final String APP_ID;
-
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 
 	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
@@ -1158,6 +1158,14 @@ public final class Main {
 
 	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 
+	private static final File SINGLE_INSTANCE_LOCK_FILE;
+
+	private static final String SINGLE_INSTANCE_INIT = "INIT";
+
+	private static final String SINGLE_INSTANCE_ACK = "ACK";
+
+	private static final String SINGLE_INSTANCE_EOF = "EOF";
+
 	static {
 		options.addOption(OPTION_AUTOSTART, true,
 				MessageFormat.format(strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
@@ -1174,8 +1182,8 @@ public final class Main {
 		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_HELP, false, strings.getString("HELP_OPTION_DESCRIPTION"));
 
-		final var mainClassPackageName = Main.class.getPackageName();
-		APP_ID = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+		SINGLE_INSTANCE_LOCK_FILE = new File(System.getProperty("java.io.tmpdir") + File.separator
+				+ strings.getString("APPLICATION_NAME") + ".lock");
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
@@ -1209,6 +1217,12 @@ public final class Main {
 
 	private static LineBorder createOverlayBorder() {
 		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
+	}
+
+	private static void deleteSingleInstanceLockFile() {
+		if (!SINGLE_INSTANCE_LOCK_FILE.delete())
+			log.log(Level.WARNING,
+					"Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
@@ -1305,67 +1319,73 @@ public final class Main {
 				return;
 			}
 			if (!commandLine.hasOption(OPTION_HELP)) {
-				try {
-					final var unique = new Unique4jList(APP_ID) {
+				var continueLaunch = true;
 
-						@Override
-						protected void receiveMessageList(final List<String> messageList) {
-							final var args = messageList.toArray(new String[0]);
+				if (SINGLE_INSTANCE_LOCK_FILE.exists())
+					try (var fileBufferedReader = new BufferedReader(
+							new FileReader(SINGLE_INSTANCE_LOCK_FILE, StandardCharsets.UTF_8))) {
+						final var portString = fileBufferedReader.readLine();
+						if (portString == null)
+							throw new IOException("Could not read port");
+						final var port = Integer.parseInt(portString);
 
-							log.log(Level.INFO, "New activation with arguments: " + Arrays.toString(args));
+						final var randomNumberString = fileBufferedReader.readLine();
+						if (randomNumberString == null)
+							throw new IOException("Could not read random number");
 
-							if (args.length > 0)
-								try {
-									final var commandLine = new DefaultParser().parse(options, args);
-									final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-									final var gameControllerDbPath = commandLine
-											.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+						try (var socket = new Socket(InetAddress.getLoopbackAddress(), port);
+								var printStream = new PrintStream(socket.getOutputStream(), false,
+										StandardCharsets.UTF_8);
+								var socketBufferedReader = new BufferedReader(
+										new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
+							socket.setSoTimeout(5000);
+							printStream.println(randomNumberString);
+							printStream.println(SINGLE_INSTANCE_INIT);
 
-									EventQueue.invokeLater(() -> {
-										if (cmdProfilePath != null)
-											main.loadProfile(new File(cmdProfilePath), false);
+							for (final String arg : args)
+								printStream.println(arg);
 
-										if (gameControllerDbPath != null)
-											main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+							printStream.println(SINGLE_INSTANCE_EOF);
+							printStream.flush();
 
-										main.handleRemainingCommandLine(commandLine);
-									});
-								} catch (final ParseException e) {
-									log.log(Level.SEVERE, e.getMessage(), e);
+							for (var i = 0; i < 5; i++) {
+								final var str = socketBufferedReader.readLine();
+								if (SINGLE_INSTANCE_ACK.equals(str)) {
+									continueLaunch = false;
+									break;
 								}
-							else
-								EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.frame,
-										strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
-										strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+							}
+
+							if (continueLaunch)
+								log.log(Level.WARNING, "Other " + strings.getString("APPLICATION_NAME")
+										+ " instance did not acknowledge invocation");
 						}
-
-						@Override
-						protected List<String> sendMessageList() {
-							return Arrays.asList(args);
-						}
-					};
-
-					if (unique.acquireLock()) {
-						final var taskRunner = new TaskRunner();
-
-						EventQueue.invokeLater(() -> {
-							skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
-
-							final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-							final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
-							main = new Main(unique, taskRunner, cmdProfilePath, gameControllerDbPath);
-
-							main.handleRemainingCommandLine(commandLine);
-
-							taskRunner.pollGLFWEvents = true;
-						});
-
-						taskRunner.enterLoop();
+					} catch (IOException | NumberFormatException e) {
+						log.log(Level.WARNING, e.getMessage(), e);
+						deleteSingleInstanceLockFile();
 					}
-				} catch (final Unique4jException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
 
+				if (continueLaunch) {
+					final var taskRunner = new TaskRunner();
+
+					EventQueue.invokeLater(() -> {
+						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
+
+						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+						main = new Main(taskRunner, cmdProfilePath, gameControllerDbPath);
+
+						main.handleRemainingCommandLine(commandLine);
+
+						taskRunner.pollGLFWEvents = true;
+					});
+
+					taskRunner.enterLoop();
+				} else {
+					log.log(Level.INFO,
+							"Another " + strings.getString("APPLICATION_NAME") + " instance is already running");
+					terminate(0);
+				}
 				return;
 			}
 		} catch (final ParseException e) {
@@ -1405,11 +1425,9 @@ public final class Main {
 		System.exit(status);
 	}
 
-	private final Unique4j unique;
-
 	private final TaskRunner taskRunner;
 
-	private final Preferences preferences = Preferences.userRoot().node("/" + APP_ID.replace('.', '/'));
+	private final Preferences preferences;
 
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 
@@ -1543,7 +1561,7 @@ public final class Main {
 
 	private volatile JFrame overlayFrame;
 
-	private final OnScreenKeyboard onScreenKeyboard = new OnScreenKeyboard(this);
+	private final OnScreenKeyboard onScreenKeyboard;
 
 	private JComboBox<Mode> modeComboBox;
 
@@ -1553,8 +1571,7 @@ public final class Main {
 
 	private FlatLaf lookAndFeel;
 
-	private Main(final Unique4j unique, final TaskRunner taskRunner, final String cmdProfilePath,
-			final String gameControllerDbPath) {
+	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
 				log.log(Level.INFO, "Forcing immediate halt");
@@ -1563,8 +1580,77 @@ public final class Main {
 			}
 		}));
 
-		this.unique = unique;
 		this.taskRunner = taskRunner;
+
+		final var singleInstanceThread = new Thread(() -> {
+			try (final var singleInstanceServerSocket = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
+				SINGLE_INSTANCE_LOCK_FILE.deleteOnExit();
+
+				final var randomNumber = new SecureRandom().nextInt();
+
+				try {
+					Files.writeString(SINGLE_INSTANCE_LOCK_FILE.toPath(),
+							singleInstanceServerSocket.getLocalPort() + "\n" + String.valueOf(randomNumber),
+							StandardCharsets.UTF_8);
+				} catch (final IOException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
+				}
+
+				for (;;) {
+					String line;
+					String[] arguments = null;
+					try (var socket = singleInstanceServerSocket.accept();
+							var bufferedReader = new BufferedReader(
+									new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
+						line = bufferedReader.readLine();
+						if (!String.valueOf(randomNumber).equals(line)) {
+							log.log(Level.WARNING,
+									"Received unexpected value for random number on single instance socket: " + line);
+							continue;
+						}
+
+						line = bufferedReader.readLine();
+						if (SINGLE_INSTANCE_INIT.equals(line)) {
+							final var receivedArgs = new ArrayList<String>();
+
+							while (true)
+								try {
+									line = bufferedReader.readLine();
+									if (SINGLE_INSTANCE_EOF.equals(line))
+										break;
+									receivedArgs.add(line);
+								} catch (final IOException e) {
+									log.log(Level.SEVERE, e.getMessage(), e);
+								}
+							arguments = receivedArgs.toArray(new String[receivedArgs.size()]);
+						} else
+							log.log(Level.WARNING, "Received unexpected line on single instance socket: " + line);
+
+						if (arguments != null) {
+							main.newActivation(arguments);
+
+							try (var printStream = new PrintStream(socket.getOutputStream(), false,
+									StandardCharsets.UTF_8)) {
+								printStream.println(SINGLE_INSTANCE_ACK);
+								printStream.flush();
+							}
+						}
+					} catch (final IOException e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+					}
+				}
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		singleInstanceThread.setDaemon(true);
+		singleInstanceThread.start();
+
+		final var mainClassPackageName = Main.class.getPackageName();
+		preferences = Preferences.userRoot()
+				.node("/" + mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.')).replace('.', '/'));
+
+		onScreenKeyboard = new OnScreenKeyboard(this);
 
 		frame = new JFrame();
 
@@ -2402,6 +2488,34 @@ public final class Main {
 		}
 	}
 
+	public void newActivation(final String[] args) {
+		log.log(Level.INFO,
+				"New activation with arguments: " + Arrays.asList(args).stream().collect(Collectors.joining(" ")));
+
+		if (args.length > 0)
+			try {
+				final var commandLine = new DefaultParser().parse(options, args);
+				final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+
+				EventQueue.invokeLater(() -> {
+					if (cmdProfilePath != null)
+						main.loadProfile(new File(cmdProfilePath), false);
+
+					if (gameControllerDbPath != null)
+						main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+
+					main.handleRemainingCommandLine(commandLine);
+				});
+			} catch (final ParseException e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+			}
+		else
+			EventQueue.invokeLater(
+					() -> GuiUtils.showMessageDialog(main.frame, strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+	}
+
 	private void newProfile() {
 		stopAll(true, false, true);
 
@@ -2700,12 +2814,6 @@ public final class Main {
 		taskRunner.shutdown();
 
 		taskRunner.run(GLFW::glfwTerminate);
-
-		try {
-			unique.releaseLock();
-		} catch (final Unique4jException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
 
 		terminate(0);
 	}
