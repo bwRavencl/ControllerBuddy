@@ -118,36 +118,33 @@ public final class ServerRunMode extends RunMode {
 					serverSocket.receive(receivePacket);
 					clientIPAddress = receivePacket.getAddress();
 
-					try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
-						try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
-							final var messageType = dataInputStream.readInt();
+					try (var dataInputStream = new DataInputStream(new ByteArrayInputStream(receivePacket.getData()))) {
+						final var messageType = dataInputStream.readInt();
 
-							if (messageType == MessageType.ClientHello.ordinal()) {
-								minAxisValue = dataInputStream.readInt();
-								maxAxisValue = dataInputStream.readInt();
-								setnButtons(dataInputStream.readInt());
+						if (messageType == MessageType.ClientHello.ordinal()) {
+							minAxisValue = dataInputStream.readInt();
+							maxAxisValue = dataInputStream.readInt();
+							setnButtons(dataInputStream.readInt());
 
-								try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
-									try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-										dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
-										dataOutputStream.writeByte(PROTOCOL_VERSION);
-										dataOutputStream.writeLong(pollInterval);
-									}
+							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+									var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+								dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
+								dataOutputStream.writeByte(PROTOCOL_VERSION);
+								dataOutputStream.writeLong(pollInterval);
 
-									final var sendBuf = byteArrayOutputStream.toByteArray();
-									final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
-											clientPort);
-									serverSocket.send(sendPacket);
-								}
-
-								serverState = ServerState.Connected;
-								input.init();
-								EventQueue.invokeLater(() -> {
-									main.setStatusBarText(
-											MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-													clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
-								});
+								final var sendBuf = byteArrayOutputStream.toByteArray();
+								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+										clientPort);
+								serverSocket.send(sendPacket);
 							}
+
+							serverState = ServerState.Connected;
+							input.init();
+							EventQueue.invokeLater(() -> {
+								main.setStatusBarText(
+										MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
+												clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
+							});
 						}
 					}
 				}
@@ -155,35 +152,33 @@ public final class ServerRunMode extends RunMode {
 					Thread.sleep(pollInterval);
 
 					final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
-					try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
-						try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-							dataOutputStream.writeInt(
-									(doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
-							dataOutputStream.writeLong(counter);
-						}
+					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+							var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+							var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+						dataOutputStream.writeInt(
+								(doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
+						dataOutputStream.writeLong(counter);
 
 						if (!input.poll()) {
 							controllerDisconnected();
 							return;
 						}
 
-						try (var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-							objectOutputStream.writeObject(input.getAxes());
-							objectOutputStream.writeObject(input.getButtons());
-							objectOutputStream.writeInt(input.getCursorDeltaX());
-							objectOutputStream.writeInt(input.getCursorDeltaY());
-							objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
-							objectOutputStream.writeObject(input.getDownUpMouseButtons());
-							objectOutputStream.writeObject(input.getDownKeyStrokes());
-							objectOutputStream.writeObject(input.getDownUpKeyStrokes());
+						objectOutputStream.writeObject(input.getAxes());
+						objectOutputStream.writeObject(input.getButtons());
+						objectOutputStream.writeInt(input.getCursorDeltaX());
+						objectOutputStream.writeInt(input.getCursorDeltaY());
+						objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
+						objectOutputStream.writeObject(input.getDownUpMouseButtons());
+						objectOutputStream.writeObject(input.getDownKeyStrokes());
+						objectOutputStream.writeObject(input.getDownUpKeyStrokes());
 
-							objectOutputStream.writeInt(input.getScrollClicks());
+						objectOutputStream.writeInt(input.getScrollClicks());
 
-							objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
-									.collect(Collectors.toSet()));
-							objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
-									.collect(Collectors.toSet()));
-						}
+						objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
+								.collect(Collectors.toSet()));
+						objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
+								.collect(Collectors.toSet()));
 
 						input.setCursorDeltaX(0);
 						input.setCursorDeltaY(0);

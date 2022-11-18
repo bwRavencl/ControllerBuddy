@@ -96,13 +96,12 @@ public final class ClientRunMode extends OutputRunMode {
 						MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
 			});
 
-			try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
-				try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-					dataOutputStream.writeInt(MessageType.ClientHello.ordinal());
-					dataOutputStream.writeInt(minAxisValue);
-					dataOutputStream.writeInt(maxAxisValue);
-					dataOutputStream.writeInt(nButtons);
-				}
+			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+					var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+				dataOutputStream.writeInt(MessageType.ClientHello.ordinal());
+				dataOutputStream.writeInt(minAxisValue);
+				dataOutputStream.writeInt(maxAxisValue);
+				dataOutputStream.writeInt(nButtons);
 
 				final var helloBuf = byteArrayOutputStream.toByteArray();
 				final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
@@ -116,38 +115,35 @@ public final class ClientRunMode extends OutputRunMode {
 					try {
 						clientSocket.receive(receivePacket);
 
-						try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
-							try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
-								final var messageType = dataInputStream.readInt();
-								if (messageType == MessageType.ServerHello.ordinal()) {
-									final var serverProtocolVersion = dataInputStream.readByte();
-									if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
-										log.log(Level.WARNING,
-												"Protocol version mismatch: client " + ServerRunMode.PROTOCOL_VERSION
-														+ " vs server " + serverProtocolVersion);
-										EventQueue.invokeLater(() -> {
-											GuiUtils.showMessageDialog(main.getFrame(),
-													MessageFormat.format(
-															Main.strings
-																	.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
-															ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
-													Main.strings.getString("ERROR_DIALOG_TITLE"),
-													JOptionPane.ERROR_MESSAGE);
-										});
-										retry = -1;
-									} else {
-										pollInterval = dataInputStream.readLong();
-										success = true;
-									}
-								} else {
-									retry--;
-									final var finalRetry = retry;
+						try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+								var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+							final var messageType = dataInputStream.readInt();
+							if (messageType == MessageType.ServerHello.ordinal()) {
+								final var serverProtocolVersion = dataInputStream.readByte();
+								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
+									log.log(Level.WARNING, "Protocol version mismatch: client "
+											+ ServerRunMode.PROTOCOL_VERSION + " vs server " + serverProtocolVersion);
 									EventQueue.invokeLater(() -> {
-										main.setStatusBarText(MessageFormat.format(
-												Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
-												N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
+										GuiUtils.showMessageDialog(main.getFrame(),
+												MessageFormat.format(
+														Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+														ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
+												Main.strings.getString("ERROR_DIALOG_TITLE"),
+												JOptionPane.ERROR_MESSAGE);
 									});
+									retry = -1;
+								} else {
+									pollInterval = dataInputStream.readLong();
+									success = true;
 								}
+							} else {
+								retry--;
+								final var finalRetry = retry;
+								EventQueue.invokeLater(() -> {
+									main.setStatusBarText(MessageFormat.format(
+											Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
+								});
 							}
 						}
 					} catch (final SocketTimeoutException e) {
@@ -190,89 +186,84 @@ public final class ClientRunMode extends OutputRunMode {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				clientSocket.receive(receivePacket);
 
-				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData())) {
-					try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+						var dataInputStream = new DataInputStream(byteArrayInputStream);
+						var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
 
-						final var messageType = MessageType.values()[dataInputStream.readInt()];
+					final var messageType = MessageType.values()[dataInputStream.readInt()];
 
-						if (messageType == MessageType.Update || messageType == MessageType.UpdateRequestAlive) {
+					if (messageType == MessageType.Update || messageType == MessageType.UpdateRequestAlive) {
 
-							final var newCounter = dataInputStream.readLong();
-							if (newCounter > counter) {
+						final var newCounter = dataInputStream.readLong();
+						if (newCounter > counter) {
 
-								try (var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-									final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream
-											.readObject();
-									axisX.setValue(inputAxes.get(VirtualAxis.X));
-									axisY.setValue(inputAxes.get(VirtualAxis.Y));
-									axisZ.setValue(inputAxes.get(VirtualAxis.Z));
-									axisRX.setValue(inputAxes.get(VirtualAxis.RX));
-									axisRY.setValue(inputAxes.get(VirtualAxis.RY));
-									axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
-									axisS0.setValue(inputAxes.get(VirtualAxis.S0));
-									axisS1.setValue(inputAxes.get(VirtualAxis.S1));
+							final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream.readObject();
+							axisX.setValue(inputAxes.get(VirtualAxis.X));
+							axisY.setValue(inputAxes.get(VirtualAxis.Y));
+							axisZ.setValue(inputAxes.get(VirtualAxis.Z));
+							axisRX.setValue(inputAxes.get(VirtualAxis.RX));
+							axisRY.setValue(inputAxes.get(VirtualAxis.RY));
+							axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
+							axisS0.setValue(inputAxes.get(VirtualAxis.S0));
+							axisS1.setValue(inputAxes.get(VirtualAxis.S1));
 
-									final var inputButtons = (boolean[]) objectInputStream.readObject();
-									for (var i = 0; i < nButtons; i++)
-										buttons[i].setValue(inputButtons[i] ? 1 : 0);
+							final var inputButtons = (boolean[]) objectInputStream.readObject();
+							for (var i = 0; i < nButtons; i++)
+								buttons[i].setValue(inputButtons[i] ? 1 : 0);
 
-									cursorDeltaX = objectInputStream.readInt();
-									cursorDeltaY = objectInputStream.readInt();
+							cursorDeltaX = objectInputStream.readInt();
+							cursorDeltaY = objectInputStream.readInt();
 
-									updateOutputSets((Set<Integer>) objectInputStream.readObject(), oldDownMouseButtons,
-											newUpMouseButtons, newDownMouseButtons, false);
+							updateOutputSets((Set<Integer>) objectInputStream.readObject(), oldDownMouseButtons,
+									newUpMouseButtons, newDownMouseButtons, false);
 
-									downUpMouseButtons.clear();
-									downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
+							downUpMouseButtons.clear();
+							downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
 
-									final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
-									final var inputDownModifiers = downKeyStrokes.stream()
-											.map(KeyStroke::getModifierCodes).flatMap(Stream::of)
-											.collect(Collectors.toSet());
-									updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers,
-											newDownModifiers, false);
+							final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
+							final var inputDownModifiers = downKeyStrokes.stream().map(KeyStroke::getModifierCodes)
+									.flatMap(Stream::of).collect(Collectors.toSet());
+							updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers, newDownModifiers,
+									false);
 
-									final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
-											.flatMap(Stream::of).collect(Collectors.toSet());
-									updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys,
-											newDownNormalKeys, true);
+							final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
+									.flatMap(Stream::of).collect(Collectors.toSet());
+							updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys,
+									true);
 
-									downUpKeyStrokes.clear();
-									downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
+							downUpKeyStrokes.clear();
+							downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
 
-									scrollClicks = objectInputStream.readInt();
+							scrollClicks = objectInputStream.readInt();
 
-									onLockKeys.clear();
-									((Set<Integer>) objectInputStream.readObject()).stream().map(
-											virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
-											.forEachOrdered(onLockKeys::add);
+							onLockKeys.clear();
+							((Set<Integer>) objectInputStream.readObject()).stream()
+									.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
+									.forEachOrdered(onLockKeys::add);
 
-									offLockKeys.clear();
-									((Set<Integer>) objectInputStream.readObject()).stream().map(
-											virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
-											.forEachOrdered(offLockKeys::add);
-								} catch (final ClassNotFoundException e) {
-									throw new RuntimeException(e);
-								}
+							offLockKeys.clear();
+							((Set<Integer>) objectInputStream.readObject()).stream()
+									.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
+									.forEachOrdered(offLockKeys::add);
 
-								counter = newCounter;
-								retVal = true;
-							}
-
+							counter = newCounter;
+							retVal = true;
 						}
 
-						if (messageType == MessageType.UpdateRequestAlive)
-							try (final var byteArrayOutputStream = new ByteArrayOutputStream()) {
-								try (var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-									dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
-								}
-
-								final var keepAliveBuf = byteArrayOutputStream.toByteArray();
-								final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length,
-										hostAddress, port);
-								clientSocket.send(keepAlivePacket);
-							}
 					}
+
+					if (messageType == MessageType.UpdateRequestAlive)
+						try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+								var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+							dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
+
+							final var keepAliveBuf = byteArrayOutputStream.toByteArray();
+							final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length,
+									hostAddress, port);
+							clientSocket.send(keepAlivePacket);
+						}
+				} catch (final ClassNotFoundException e) {
+					throw new RuntimeException(e);
 				}
 			} catch (final SocketTimeoutException e) {
 				log.log(Level.FINE, e.getMessage(), e);
