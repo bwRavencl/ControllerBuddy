@@ -11,6 +11,7 @@ plugins {
 	id 'com.github.spotbugs' version '5.0.13'
 	id 'com.diffplug.spotless' version '6.11.0'
 	id 'com.github.ben-manes.versions' version '0.44.0'
+	id 'org.gradlex.extra-java-module-info' version '1.1'
 	id 'eclipse'
 	id 'org.ajoberstar.grgit' version '5.0.0'
 }
@@ -21,11 +22,8 @@ sourceCompatibility = 19
 targetCompatibility = 19
 
 application {
-	mainClass = "de.bwravencl.controllerbuddy.gui.Main"
-}
-
-java {
-	modularity.inferModulePath = false
+	mainModule = 'de.bwravencl.controllerbuddy'
+	mainClass = 'de.bwravencl.controllerbuddy.gui.Main'
 }
 
 ext {
@@ -40,8 +38,9 @@ ext {
 	tmpDir = "$buildDir/tmp"
 	runtimeDir = "$tmpDir/runtime"
 
+	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
-		'--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED'
+		"--add-opens=$linuxAddOpensValue"
 	]
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
@@ -58,6 +57,11 @@ ext {
 
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
+
+	batikVersion = '1.16'
+	commonsCliVersion = '1.5.0'
+	jxinputVersion = '1.0.0'
+	purejavahidapiVersion = 'ef5679619d'
 }
 
 repositories {
@@ -106,24 +110,31 @@ dependencies {
 
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
-	implementation 'commons-cli:commons-cli:1.5.0',
+	implementation "commons-cli:commons-cli:$commonsCliVersion",
 			'com.formdev:flatlaf:2.6',
-			'com.github.nyholku:purejavahidapi:ef5679619d',
-			'com.github.strikerx3:jxinput:1.0.0',
+			"com.github.strikerx3:jxinput:$jxinputVersion",
 			'com.google.code.gson:gson:2.10',
 			'io.github.classgraph:classgraph:4.8.151',
-			"net.java.dev.jna:jna:$jnaVersion",
-			"net.java.dev.jna:jna-platform:$jnaVersion",
+			"net.java.dev.jna:jna-jpms:$jnaVersion",
+			"net.java.dev.jna:jna-platform-jpms:$jnaVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion",
 			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
+			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform",
 			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
-			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform",
-			'uk.co.bithatch:linuxio4j:2.1'
+			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
 
-	runtimeOnly "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
+	implementation("com.github.nyholku:purejavahidapi:$purejavahidapiVersion") {
+		exclude module: 'jna'
+		exclude module: 'jna-platform'
+	}
 
-	implementation('org.apache.xmlgraphics:batik-swing:1.16') {
+	implementation('uk.co.bithatch:linuxio4j:2.1') {
+		exclude module: 'jna'
+		exclude module: 'jna-platform'
+	}
+
+	implementation("org.apache.xmlgraphics:batik-swing:$batikVersion") {
 		exclude group: 'xml-apis', module: 'xml-apis'
 	}
 
@@ -135,6 +146,62 @@ dependencyUpdates {
 	revision = 'release'
 	rejectVersionIf {
 		it.candidate.module in ['purejavahidapi']
+	}
+}
+
+extraJavaModuleInfo {
+	failOnMissingModuleInfo = false
+
+	automaticModule("batik-anim-${batikVersion}.jar", 'batik.anim')
+	automaticModule("batik-awt-util-${batikVersion}.jar", 'batik.awt.util')
+	automaticModule("batik-bridge-${batikVersion}.jar", 'batik.bridge')
+	automaticModule("batik-constants-${batikVersion}.jar", 'batik.constants')
+	automaticModule("batik-css-${batikVersion}.jar", 'batik.css')
+	automaticModule("batik-dom-${batikVersion}.jar", 'batik.dom')
+	automaticModule("batik-ext-${batikVersion}.jar", 'batik.ext')
+	automaticModule("batik-gui-util-${batikVersion}.jar", 'batik.gui.util')
+	automaticModule("batik-gvt-${batikVersion}.jar", 'batik.gvt')
+	automaticModule("batik-i18n-${batikVersion}.jar", 'batik.i18n')
+	automaticModule("batik-script-${batikVersion}.jar", 'batik.script')
+	automaticModule("batik-shared-resources-${batikVersion}.jar", 'batik.shared.resources')
+	automaticModule("batik-svg-dom-${batikVersion}.jar", 'batik.svg.dom')
+	automaticModule("batik-util-${batikVersion}.jar", 'batik.util')
+	automaticModule("batik-parser-${batikVersion}.jar", 'batik.parser')
+	automaticModule("batik-xml-${batikVersion}.jar", 'batik.xml')
+	automaticModule('commons-io-1.3.1.jar', 'commons.io')
+	automaticModule('commons-logging-1.0.4.jar', 'commons.logging')
+	automaticModule("jxinput-${jxinputVersion}.jar", 'jxinput')
+	automaticModule("purejavahidapi-${purejavahidapiVersion}.jar", 'purejavahidapi')
+	automaticModule('xmlgraphics-commons-2.7.jar', 'xml.graphics.commons')
+	automaticModule('xml-apis-ext-1.3.04.jar', 'xml.apis.ext')
+
+	module("batik-swing-${batikVersion}.jar", 'batik.swing', batikVersion) {
+		exports('org.apache.batik.swing')
+		requires('java.desktop')
+		requires('commons.io')
+		requires('commons.logging')
+		requires('batik.anim')
+		requires('batik.bridge')
+		requires('batik.constants')
+		requires('batik.css')
+		requires('batik.dom')
+		requires('batik.ext')
+		requires('batik.gvt')
+		requires('batik.script')
+		requires('batik.svg.dom')
+		requires('batik.util')
+		requires('batik.xml')
+		requires('batik.parser')
+		requires('batik.awt.util')
+		requires('batik.gui.util')
+		requires('batik.i18n')
+		requires('batik.shared.resources')
+		requires('xml.graphics.commons')
+		requires('xml.apis.ext')
+	}
+
+	module("commons-cli-${commonsCliVersion}.jar", 'commons.cli', commonsCliVersion) {
+		exports('org.apache.commons.cli')
 	}
 }
 
@@ -156,7 +223,7 @@ tasks.withType(SpotBugsTask) {
 spotless {
 	encoding 'UTF-8'
 	java {
-		target 'src/main/java/de/bwravencl/**/*.java'
+		target 'src/main/java/de/bwravencl/**/*.java', 'src/main/java/module-info.java'
 		encoding 'Cp1252'
 		eclipse().configFile spotlessFormatFile
 		importOrderFile spotlessImportOrderFile
@@ -265,7 +332,7 @@ eclipse {
 					cp.entries.findAll {it instanceof Container && it.path ==~ /org\.eclipse\.jdt\.launching\.JRE_CONTAINER\/.*$/}.each {
 						def entryAttributes = it.entryAttributes
 						entryAttributes['module'] = 'true'
-						entryAttributes['add-opens'] = 'java.desktop/sun.awt.X11=ALL-UNNAMED'
+						entryAttributes['add-opens'] = linuxAddOpensValue
 					}
 			}
 		}
@@ -482,7 +549,7 @@ task jlink(type: Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,jdk.unsupported,java.logging,jdk.xml.dom'
+	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.xml.dom'
 }
 
 task copyLibs(type: Copy) {
@@ -511,8 +578,6 @@ task jpackage(type: Exec) {
 	doFirst { delete "$tmpDir/$project.name" }
 	def commandLineParts = [
 		'jpackage',
-		'--input',
-		libsDir,
 		'--dest',
 		tmpDir,
 		'--type',
@@ -521,10 +586,10 @@ task jpackage(type: Exec) {
 		project.name,
 		'--runtime-image',
 		runtimeDir,
-		'--main-class',
-		project.application.mainClassName,
-		'--main-jar',
-		"$project.name-${version}.jar",
+		'--module-path',
+		libsDir,
+		'--module',
+		"${project.application.mainModule.get()}/$project.application.mainClassName",
 		'--app-version',
 		versionWithoutHash,
 		'--icon',
