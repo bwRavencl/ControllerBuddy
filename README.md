@@ -201,7 +201,6 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
-- [Unique4j](https://github.com/prat-man/unique4j)
 
 #### Building:
 If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
