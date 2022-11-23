@@ -1,10 +1,11 @@
+src/main/java/module-info.java
+src/main/java/de/bwravencl/controllerbuddy/version/Version.java
 src/main/resources/gamecontrollerdb.txt
 
-# Created by https://www.gitignore.io/api/gradle,java,eclipse,windows,linux,macos
-# Edit at https://www.gitignore.io/?templates=gradle,java,eclipse,windows,linux,macos
+# Created by https://www.toptal.com/developers/gitignore/api/gradle,java,eclipse,windows,linux,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=gradle,java,eclipse,windows,linux,macos
 
 ### Eclipse ###
-
 .metadata
 bin/
 tmp/
@@ -55,22 +56,19 @@ local.properties
 
 # Annotation Processing
 .apt_generated/
+.apt_generated_test/
 
 # Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
 .scala_dependencies
 .worksheet
 
+# Uncomment this line if you wish to ignore the project description file.
+# Typically, this file would be tracked if it contains build/dependency configurations:
+#.project
+
 ### Eclipse Patch ###
-# Eclipse Core
-.project
-
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-# Annotation Processing
-.apt_generated
-
+# Spring Boot Tooling
 .sts4-cache/
 
 ### Java ###
@@ -97,6 +95,7 @@ local.properties
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+replay_pid*
 
 ### Linux ###
 *~
@@ -120,7 +119,7 @@ hs_err_pid*
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
 
 # Thumbnails
 ._*
@@ -141,9 +140,14 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### macOS Patch ###
+# iCloud generated files
+*.icloud
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
+Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 
@@ -168,8 +172,8 @@ $RECYCLE.BIN/
 
 ### Gradle ###
 .gradle
-/build/
-/gen/
+**/build/
+!src/**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -177,13 +181,20 @@ gradle-app.setting
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
+# Avoid ignore Gradle wrappper properties
+!gradle-wrapper.properties
+
 # Cache of project
 .gradletasknamecache
 
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
+# Eclipse Gradle plugin generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
 
 ### Gradle Patch ###
-**/build/
+# Java heap dump
+*.hprof
 
-# End of https://www.gitignore.io/api/gradle,java,eclipse,windows,linux,macos
+# End of https://www.toptal.com/developers/gitignore/api/gradle,java,eclipse,windows,linux,macos

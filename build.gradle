@@ -31,9 +31,10 @@ ext {
 
 	versionWithoutHash = version.substring(0, version.indexOf('-'))
 
+	moduleInfoFile = 'src/main/java/module-info.java'
+	versionFile = 'src/main/java/de/bwravencl/controllerbuddy/version/Version.java'
+
 	resourcesDir = 'src/main/resources'
-	genDir = 'gen'
-	versionDir = "$genDir/main/java"
 	libsDir = "$buildDir/$libsDirName"
 	tmpDir = "$buildDir/tmp"
 	runtimeDir = "$tmpDir/runtime"
@@ -62,6 +63,8 @@ ext {
 	commonsCliVersion = '1.5.0'
 	jxinputVersion = '1.0.0'
 	purejavahidapiVersion = 'ef5679619d'
+
+	openVrSupport = false
 }
 
 repositories {
@@ -69,11 +72,27 @@ repositories {
 	maven { url 'https://jitpack.io' }
 }
 
+task cleanModuleInfo {
+	description = "Removes the \'$moduleInfoFile\' source file"
+	doLast { delete moduleInfoFile }
+}
+
+task cleanVersion {
+	description = "Removes the \'$versionFile\' source file"
+	doLast { delete versionFile }
+}
+
+task cleanGameControllerDB {
+	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
+	doLast { delete gamecontrollerdbFile }
+}
+
+clean.dependsOn cleanModuleInfo, cleanVersion, cleanGameControllerDB
+
 dependencies {
 	def jnaVersion = '5.12.1'
 	def lwjglVersion = '3.3.1'
 
-	def openVrSupport = false
 	def xinputSupport = false;
 	def lwjglOs
 	if (os.windows) {
@@ -139,7 +158,8 @@ dependencies {
 	}
 
 	if (openVrSupport)
-		runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-${lwjglPlatform}", "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-${lwjglPlatform}"
+		implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-$lwjglPlatform",
+				"org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-$lwjglPlatform"
 }
 
 dependencyUpdates {
@@ -205,6 +225,43 @@ extraJavaModuleInfo {
 	}
 }
 
+task generateModuleInfo {
+	description = "Generates the \'$moduleInfoFile\' source file"
+	doLast {
+		new File(moduleInfoFile).write("""\
+			module de.bwravencl.controllerbuddy {
+
+			\texports de.bwravencl.controllerbuddy.gui;
+
+			\topens de.bwravencl.controllerbuddy.input to com.google.gson;
+			\topens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+
+			\trequires batik.swing;
+			\trequires com.google.gson;
+			\trequires com.formdev.flatlaf;
+			\trequires com.sun.jna;
+			\trequires com.sun.jna.platform;
+			\trequires commons.cli;
+			\trequires io.github.classgraph;
+			\trequires transitive java.desktop;
+			\trequires java.logging;
+			\trequires transitive java.prefs;
+			\trequires jdk.xml.dom;
+			\trequires org.lwjgl;
+			\trequires org.lwjgl.natives;
+			\trequires org.lwjgl.glfw;
+			\trequires org.lwjgl.glfw.natives;
+			\trequires org.lwjgl.opengl;
+			${openVrSupport ? '\trequires org.lwjgl.opengl.natives;' : ''}
+			\trequires org.lwjgl.openvr;
+			${openVrSupport ? '\trequires org.lwjgl.openvr.natives;' : ''}
+			\trequires purejavahidapi;
+			\trequires uk.co.bithatch.linuxio;
+			}
+			""".stripIndent())
+	}
+}
+
 spotbugs {
 	baselineFile = file(spotbugsBaselineFile)
 	effort = spotbugsEffort
@@ -223,7 +280,8 @@ tasks.withType(SpotBugsTask) {
 spotless {
 	encoding 'UTF-8'
 	java {
-		target 'src/main/java/de/bwravencl/**/*.java', 'src/main/java/module-info.java'
+		target 'src/main/java/de/bwravencl/**/*.java'
+		targetExclude moduleInfoFile, versionFile
 		encoding 'Cp1252'
 		eclipse().configFile spotlessFormatFile
 		importOrderFile spotlessImportOrderFile
@@ -273,27 +331,10 @@ task cleanLibsDirectory {
 
 jar.dependsOn check, cleanLibsDirectory
 
-task cleanGenDirectory {
-	description = "Removes the \'$genDir\' directory."
-	doLast { delete genDir }
-}
-
-task cleanGameControllerDB {
-	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
-	doLast { delete gamecontrollerdbFile }
-}
-
-clean.dependsOn cleanGenDirectory, cleanGameControllerDB
-
 task generateVersion {
-	description = "Creates a source directory named \'$genDir\' and inside it generates a source file that defines a version string. Also removes any preexisting gen directory."
-	dependsOn cleanGenDirectory
-	def outputDir = file(versionDir)
-	outputs.dir outputDir
+	description = "Generates the \'$versionFile\' source file"
 	doLast {
-		def srcFile = new File(outputDir, "de/bwravencl/controllerbuddy/version/Version.java")
-		srcFile.parentFile.mkdirs()
-		srcFile.write("""\
+		new File(versionFile).write("""\
 			package de.bwravencl.controllerbuddy.version;\n
 			public class Version {
 
@@ -317,7 +358,7 @@ task cleanJdtUiPrefs {
 
 tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
 
-tasks.eclipse.dependsOn generateVersion, copyGameControllerDB
+tasks.eclipseClasspath.dependsOn generateModuleInfo, generateVersion, copyGameControllerDB
 
 def formatterProfile() {
 	return new XmlParser().parse(file(spotlessFormatFile)).profile[0]
@@ -327,7 +368,6 @@ eclipse {
 	classpath {
 		file {
 			whenMerged { cp ->
-				cp.entries.add(3, new SourceFolder(versionDir, null))
 				if (os.linux)
 					cp.entries.findAll {it instanceof Container && it.path ==~ /org\.eclipse\.jdt\.launching\.JRE_CONTAINER\/.*$/}.each {
 						def entryAttributes = it.entryAttributes
@@ -535,7 +575,7 @@ tasks.eclipse.doLast {
 }
 
 compileJava {
-	dependsOn generateVersion, copyGameControllerDB
+	dependsOn generateModuleInfo, generateVersion, copyGameControllerDB
 	source generateVersion.outputs.files, sourceSets.main.java
 	options.compilerArgs += ['-Xlint:deprecation']
 }
