@@ -207,20 +207,21 @@ public final class GuiUtils {
 		frame.setLocation(location);
 	}
 
-	public static void showMessageDialog(final Component parentComponent, final Object message)
-			throws HeadlessException {
+	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
+			final Object message) throws HeadlessException {
 		showMessageDialog(parentComponent, message,
 				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,
-			final int messageType) throws HeadlessException {
+	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
+			final Object message, final String title, final int messageType) throws HeadlessException {
 		showMessageDialog(parentComponent, message, title, messageType, null);
 	}
 
-	public static void showMessageDialog(final Component parentComponent, final Object message, final String title,
-			final int messageType, final Icon icon) throws HeadlessException {
+	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
+			final Object message, final String title, final int messageType,
+			@SuppressWarnings("exports") final Icon icon) throws HeadlessException {
 		if (Main.skipMessageDialogs)
 			return;
 

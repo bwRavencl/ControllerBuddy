@@ -478,6 +478,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
 
+	@SuppressWarnings("exports")
 	public static final Mode onScreenKeyboardMode;
 
 	private static final int ROW_BORDER_WIDTH = 15;
@@ -715,7 +716,7 @@ public final class OnScreenKeyboard extends JFrame {
 		});
 	}
 
-	public void poll(final Input input) {
+	public void poll(@SuppressWarnings("exports") final Input input) {
 		synchronized (keyboardButtons) {
 			if (anyChanges) {
 				anyChanges = false;

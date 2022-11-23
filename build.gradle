@@ -197,27 +197,27 @@ extraJavaModuleInfo {
 
 	module("batik-swing-${batikVersion}.jar", 'batik.swing', batikVersion) {
 		exports('org.apache.batik.swing')
-		requires('java.desktop')
-		requires('commons.io')
-		requires('commons.logging')
-		requires('batik.anim')
-		requires('batik.bridge')
-		requires('batik.constants')
-		requires('batik.css')
-		requires('batik.dom')
-		requires('batik.ext')
-		requires('batik.gvt')
-		requires('batik.script')
-		requires('batik.svg.dom')
-		requires('batik.util')
-		requires('batik.xml')
-		requires('batik.parser')
-		requires('batik.awt.util')
-		requires('batik.gui.util')
-		requires('batik.i18n')
-		requires('batik.shared.resources')
-		requires('xml.graphics.commons')
-		requires('xml.apis.ext')
+		requiresTransitive('java.desktop')
+		requiresTransitive('commons.io')
+		requiresTransitive('commons.logging')
+		requiresTransitive('batik.anim')
+		requiresTransitive('batik.bridge')
+		requiresTransitive('batik.constants')
+		requiresTransitive('batik.css')
+		requiresTransitive('batik.dom')
+		requiresTransitive('batik.ext')
+		requiresTransitive('batik.gvt')
+		requiresTransitive('batik.script')
+		requiresTransitive('batik.svg.dom')
+		requiresTransitive('batik.util')
+		requiresTransitive('batik.xml')
+		requiresTransitive('batik.parser')
+		requiresTransitive('batik.awt.util')
+		requiresTransitive('batik.gui.util')
+		requiresTransitive('batik.i18n')
+		requiresTransitive('batik.shared.resources')
+		requiresTransitive('xml.graphics.commons')
+		requiresTransitive('xml.apis.ext')
 	}
 
 	module("commons-cli-${commonsCliVersion}.jar", 'commons.cli', commonsCliVersion) {
@@ -243,10 +243,10 @@ task generateModuleInfo {
 			\trequires com.sun.jna.platform;
 			\trequires commons.cli;
 			\trequires io.github.classgraph;
-			\trequires transitive java.desktop;
 			\trequires java.logging;
-			\trequires transitive java.prefs;
+			\trequires java.prefs;
 			\trequires jdk.xml.dom;
+			\trequires jxinput;
 			\trequires org.lwjgl;
 			\trequires org.lwjgl.natives;
 			\trequires org.lwjgl.glfw;

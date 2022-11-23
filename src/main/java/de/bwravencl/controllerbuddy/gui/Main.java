@@ -1076,6 +1076,7 @@ public final class Main {
 
 	static final int DEFAULT_VGAP = 10;
 
+	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
@@ -2184,6 +2185,7 @@ public final class Main {
 		return workingCopySvgDocument;
 	}
 
+	@SuppressWarnings("exports")
 	public JFrame getFrame() {
 		return frame;
 	}
@@ -2200,6 +2202,7 @@ public final class Main {
 		return overlayFrame;
 	}
 
+	@SuppressWarnings("exports")
 	public Preferences getPreferences() {
 		return preferences;
 	}
@@ -2944,7 +2947,7 @@ public final class Main {
 	}
 
 	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
-			final EnumMap<VirtualAxis, Integer> axes) {
+			@SuppressWarnings("exports") final EnumMap<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
 
 		setSelectedController(controller);
