@@ -827,9 +827,9 @@ public abstract class OutputRunMode extends RunMode {
 					User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
 				} else if (Main.isLinux) {
 					if (moveCursorOnXAxis)
-						mouseInputDevice.emit(new Event(EventCode.REL_X, cursorDeltaX));
+						mouseInputDevice.emit(new Event(EventCode.REL_X, cursorDeltaX), false);
 					if (moveCursorOnYAxis)
-						mouseInputDevice.emit(new Event(EventCode.REL_Y, cursorDeltaY));
+						mouseInputDevice.emit(new Event(EventCode.REL_Y, cursorDeltaY), false);
 					mouseInputDevice.syn();
 				} else
 					throw new UnsupportedOperationException();
