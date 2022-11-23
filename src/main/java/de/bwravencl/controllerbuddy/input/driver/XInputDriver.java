@@ -18,6 +18,7 @@ package de.bwravencl.controllerbuddy.input.driver;
 
 import java.awt.EventQueue;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -88,54 +89,62 @@ public class XInputDriver extends Driver {
 	private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
 		super(input, controller);
 
-		if (XInputDevice14.isAvailable()) {
-			xinputDevice = XInputDevice14.getDeviceFor(0);
+		XInputDevice[] xinputDevices;
+		if (XInputDevice14.isAvailable())
+			xinputDevices = XInputDevice14.getAllDevices();
+		else
+			xinputDevices = XInputDevice.getAllDevices();
 
-			var batteryLevelAvailable = false;
-			if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
-				final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+		final var optionalXinputDevice = Arrays.asList(xinputDevices).stream().filter(XInputDevice::poll).findFirst();
 
+		if (optionalXinputDevice.isEmpty())
+			throw new IllegalStateException("No XInput Device connected");
+
+		xinputDevice = optionalXinputDevice.get();
+		ready = true;
+
+		var batteryLevelAvailable = false;
+		if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
+			final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+			if (batteryInformation != null)
 				batteryLevelAvailable = switch (batteryInformation.getType()) {
 				case ALKALINE, NIMH -> true;
 				default -> false;
 				};
-			}
+		}
 
-			if (batteryLevelAvailable) {
-				executorService = Executors.newSingleThreadScheduledExecutor();
-				executorService.scheduleAtFixedRate(() -> {
-					EventQueue.invokeLater(() -> {
-						if (controller.jid() != input.getController().jid())
-							return;
+		if (batteryLevelAvailable) {
+			executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService.scheduleAtFixedRate(() -> {
+				EventQueue.invokeLater(() -> {
+					if (controller.jid() != input.getController().jid())
+						return;
 
-						if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
-							final var batteryInformation = xinputDevice14
-									.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
-							final var batteryLevel = batteryInformation.getLevel();
+					if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
+						final var batteryInformation = xinputDevice14
+								.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+						final var batteryLevel = batteryInformation.getLevel();
 
-							batteryLevelString = Main.strings.getString(switch (batteryInformation.getLevel()) {
-							case EMPTY -> "BATTERY_LEVEL_EMPTY";
-							case LOW -> "BATTERY_LEVEL_LOW";
-							case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
-							case FULL -> "BATTERY_LEVEL_FULL";
-							});
+						batteryLevelString = Main.strings.getString(switch (batteryInformation.getLevel()) {
+						case EMPTY -> "BATTERY_LEVEL_EMPTY";
+						case LOW -> "BATTERY_LEVEL_LOW";
+						case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
+						case FULL -> "BATTERY_LEVEL_FULL";
+						});
 
-							input.getMain().updateTitleAndTooltip();
-							if (batteryLevel == XInputBatteryLevel.LOW)
-								input.getMain().displayLowBatteryWarning(batteryLevelString);
-						}
-					});
-				}, 0L, BATTERY_LEVEL_POLL_INTERVAL, TimeUnit.SECONDS);
-			}
-		} else
-			xinputDevice = XInputDevice.getDeviceFor(0);
-
-		ready = xinputDevice.poll();
+						input.getMain().updateTitleAndTooltip();
+						if (batteryLevel == XInputBatteryLevel.LOW)
+							input.getMain().displayLowBatteryWarning(batteryLevelString);
+					}
+				});
+			}, 0L, BATTERY_LEVEL_POLL_INTERVAL, TimeUnit.SECONDS);
+		}
 
 		log.log(Level.INFO,
-				Main.assembleControllerLoggingMessage("Using XInput "
-						+ XInputDevice.getLibraryVersion().name().substring("XINPUT_".length()).replace('_', '.')
-						+ " for", controller));
+				Main.assembleControllerLoggingMessage(
+						"Using XInput " + XInputDevice.getLibraryVersion().name().substring("XINPUT_".length())
+								.replace('_', '.') + " device with ID " + xinputDevice.getPlayerNum() + " for",
+						controller));
 	}
 
 	@Override
@@ -216,11 +225,11 @@ public class XInputDriver extends Driver {
 
 	@Override
 	public void rumbleLight() {
-		rumble(30L, MAX_MOTOR_SPEED, 0);
+		rumble(60L, MAX_MOTOR_SPEED, 0);
 	}
 
 	@Override
 	public void rumbleStrong() {
-		rumble(45L, 0, MAX_MOTOR_SPEED);
+		rumble(90L, 0, MAX_MOTOR_SPEED);
 	}
 }
