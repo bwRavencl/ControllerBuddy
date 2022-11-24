@@ -75,21 +75,23 @@ public abstract class SonyDriver extends Driver {
 			if (!isInputReportValid(reportID, reportData, reportLength))
 				return;
 
-			lx = reportData[1 + connection.offset];
-			ly = reportData[2 + connection.offset];
-			rx = reportData[3 + connection.offset];
-			ry = reportData[4 + connection.offset];
+			final var offset = connection.offset + hidReadReportPlatformOffset;
 
-			l2 = reportData[getL2Offset() + connection.offset];
-			r2 = reportData[getL2Offset() + 1 + connection.offset];
+			lx = reportData[1 + offset];
+			ly = reportData[2 + offset];
+			rx = reportData[3 + offset];
+			ry = reportData[4 + offset];
+
+			l2 = reportData[getL2Offset() + offset];
+			r2 = reportData[getL2Offset() + 1 + offset];
 
 			final var buttonsOffset = getButtonsOffset();
-			triangle = (reportData[buttonsOffset + connection.offset] & 1 << 7) != 0;
-			circle = (reportData[buttonsOffset + connection.offset] & 1 << 6) != 0;
-			cross = (reportData[buttonsOffset + connection.offset] & 1 << 5) != 0;
-			square = (reportData[buttonsOffset + connection.offset] & 1 << 4) != 0;
+			triangle = (reportData[buttonsOffset + offset] & 1 << 7) != 0;
+			circle = (reportData[buttonsOffset + offset] & 1 << 6) != 0;
+			cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
+			square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
 
-			final var dpadRightData = (byte) (reportData[buttonsOffset + connection.offset] & 0xF);
+			final var dpadRightData = (byte) (reportData[buttonsOffset + offset] & 0xF);
 			dpadRight = switch (dpadRightData) {
 			case 0 -> {
 				dpadUp = true;
@@ -148,14 +150,14 @@ public abstract class SonyDriver extends Driver {
 			default -> throw new IllegalArgumentException("Unexpected value: " + dpadRightData);
 			};
 
-			r3 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 7) != 0;
-			l3 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 6) != 0;
-			options = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 5) != 0;
-			share = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 4) != 0;
-			r1 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 1) != 0;
-			l1 = (reportData[buttonsOffset + 1 + connection.offset] & 1 << 0) != 0;
+			r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
+			l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
+			options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
+			share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
+			r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
+			l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
 
-			ps = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 0) != 0;
+			ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
 
 			ready = true;
 
@@ -168,15 +170,15 @@ public abstract class SonyDriver extends Driver {
 			if (!main.isLocalRunning() && !main.isServerRunning())
 				return;
 
-			final var touchpadButtonDown = (reportData[buttonsOffset + 2 + connection.offset] & 1 << 2 - 1) != 0;
+			final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
 
 			final var touchpadOffset = getTouchpadOffset();
-			final var down1 = reportData[touchpadOffset + connection.offset] >> 7 == 0;
-			final var down2 = reportData[touchpadOffset + 4 + connection.offset] >> 7 == 0;
-			final var x1 = reportData[touchpadOffset + 1 + connection.offset]
-					+ (reportData[touchpadOffset + 2 + connection.offset] & 0xF) * 255;
-			final var y1 = ((reportData[touchpadOffset + 2 + connection.offset] & 0xF0) >> 4)
-					+ reportData[touchpadOffset + 3 + connection.offset] * 16;
+			final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
+			final var down2 = reportData[touchpadOffset + 4 + offset] >> 7 == 0;
+			final var x1 = reportData[touchpadOffset + 1 + offset]
+					+ (reportData[touchpadOffset + 2 + offset] & 0xF) * 255;
+			final var y1 = ((reportData[touchpadOffset + 2 + offset] & 0xF0) >> 4)
+					+ reportData[touchpadOffset + 3 + offset] * 16;
 
 			final var downMouseButtons = input.getDownMouseButtons();
 			if (touchpadButtonDown)
@@ -211,11 +213,11 @@ public abstract class SonyDriver extends Driver {
 	}
 
 	static final int USB_REPORT_LENGTH = 64;
-
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
-
 	private static final int LOW_BATTERY_WARNING = 20;
-	private static final int hidReportPlatformOffset = Main.isWindows ? 1 : 0;
+
+	private static final int hidReadReportPlatformOffset = Main.isLinux ? -1 : 0;
+	private static final int hidWriteReportPlatformOffset = Main.isMac ? 0 : 1;
 
 	static HidDeviceInfo getHidDeviceInfo(final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController, final short productId, final String humanReadableName,
@@ -262,7 +264,7 @@ public abstract class SonyDriver extends Driver {
 	}
 
 	static boolean isBluetoothConnection(final int reportLength) {
-		return reportLength != USB_REPORT_LENGTH;
+		return reportLength != USB_REPORT_LENGTH + hidReadReportPlatformOffset;
 	}
 
 	private static float mapRawAxisToFloat(final byte value) {
@@ -395,7 +397,8 @@ public abstract class SonyDriver extends Driver {
 		final var bluetooth = connection.isBluetooth();
 
 		if (reportId != connection.inputReportId
-				|| (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH : reportLength != USB_REPORT_LENGTH)) {
+				|| (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset
+						: reportLength != USB_REPORT_LENGTH + hidReadReportPlatformOffset)) {
 			getLogger().log(Level.WARNING,
 					"Received unexpected HID input report with ID " + reportId + " and length " + reportLength);
 
@@ -403,17 +406,20 @@ public abstract class SonyDriver extends Driver {
 		}
 
 		if (bluetooth) {
-			final var byteBuffer = ByteBuffer.wrap(reportData, 0, BLUETOOTH_REPORT_LENGTH);
+			final var byteBuffer = ByteBuffer.wrap(reportData, 0,
+					BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset);
 			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
 			final var crc32 = new CRC32();
 			crc32.update(0xA1);
 
-			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH - 4);
+			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset - 4);
+			if (Main.isLinux)
+				crc32.update(reportId);
 			crc32.update(byteBuffer);
 			final var calculatedCrc32Value = crc32.getValue();
 
-			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH);
+			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset);
 			final var receivedCrc32Value = byteBuffer.getInt() & 0xFFFFFFFFL;
 
 			if (receivedCrc32Value != calculatedCrc32Value) {
@@ -486,10 +492,10 @@ public abstract class SonyDriver extends Driver {
 			hidReport[hidReport.length - 1] = (byte) (crc32Value >> 24);
 		}
 
-		final var dataLength = hidReport.length - hidReportPlatformOffset;
+		final var dataLength = hidReport.length - hidWriteReportPlatformOffset;
 		try {
 			hidDevice.setOutputReport(hidReport[0],
-					Arrays.copyOfRange(hidReport, 0 + hidReportPlatformOffset, hidReport.length), dataLength);
+					Arrays.copyOfRange(hidReport, 0 + hidWriteReportPlatformOffset, hidReport.length), dataLength);
 		} catch (final IllegalStateException e) {
 		}
 	}
