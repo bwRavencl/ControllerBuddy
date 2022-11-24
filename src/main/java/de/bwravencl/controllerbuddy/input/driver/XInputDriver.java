@@ -143,7 +143,7 @@ public class XInputDriver extends Driver {
 		log.log(Level.INFO,
 				Main.assembleControllerLoggingMessage(
 						"Using XInput " + XInputDevice.getLibraryVersion().name().substring("XINPUT_".length())
-								.replace('_', '.') + " device with ID " + xinputDevice.getPlayerNum() + " for",
+								.replace('_', '.') + " controller with ID " + xinputDevice.getPlayerNum() + " as",
 						controller));
 	}
 
