@@ -1,5 +1,5 @@
-![ControllerBuddy Logo](./src/main/resources/icon_128.png)
 ## ControllerBuddy
+![ControllerBuddy Logo](./src/main/resources/icon_128.png)
 
 This is the source code repository of ControllerBuddy, regular users should refer to [ControllerBuddy's homepage](https://controllerbuddy.org) for getting started.
 
