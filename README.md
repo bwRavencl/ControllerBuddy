@@ -19,11 +19,17 @@ Hint: You may want to use the [ControllerBuddy-Install-Script](https://github.co
 1. First ensure you have installed libsdl2 on your system:
    - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
    - Red-Hat-based: `sudo yum install SDL2`
-2. Configure uinput:
+2. Configure uinput and hidraw:
    1. Create an uinput group: `sudo groupadd -f uinput`
-   2. Add yourself to the group:  `sudo gpasswd -a "$USER" uinput`
+   2. Add yourself to the group: `sudo gpasswd -a "$USER" uinput`
    3. As root, create a file `/etc/udev/rules.d/99-input.rules` with the following content:  
-      `SUBSYSTEM=="misc", KERNEL=="uinput", MODE="0660", GROUP="uinput"`
+      ```
+      KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="uinput"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="05c4", MODE="0666"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="09cc", MODE="0666"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ba0", MODE="0666"
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0666"
+      ```
    4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
       `uinput`
 3. Reboot
