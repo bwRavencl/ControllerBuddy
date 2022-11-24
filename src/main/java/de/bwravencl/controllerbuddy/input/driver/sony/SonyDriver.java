@@ -311,7 +311,9 @@ public abstract class SonyDriver extends Driver {
 			if (!disconnected)
 				reset();
 			try {
-				hidDevice.close();
+				synchronized (hidDevice) {
+					hidDevice.close();
+				}
 			} catch (final IllegalStateException e) {
 			}
 			hidDevice = null;
@@ -444,7 +446,7 @@ public abstract class SonyDriver extends Driver {
 		final var actualRumbleOffset = getRumbleOffset() + connection.offset;
 
 		new Thread(() -> {
-			synchronized (hidReport) {
+			synchronized (hidDevice) {
 				hidReport[actualRumbleOffset] = strength;
 				sendHidReport();
 				try {
@@ -536,7 +538,7 @@ public abstract class SonyDriver extends Driver {
 		if (hidDevice == null || connection == null || hidReport == null || charging == null || batteryCapacity == null)
 			return;
 
-		synchronized (hidReport) {
+		synchronized (hidDevice) {
 			final var lightbarOffset = getLightbarOffset();
 
 			if (charging) {

@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.glfw.GLFW;
+
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
@@ -36,7 +39,13 @@ public final class DualSenseDriver extends SonyDriver {
 		@Override
 		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
-			if (!"PS5 Controller".equals(selectedController.name()))
+			String name;
+			if (Main.isMac)
+				name = GLFW.glfwGetGamepadName(selectedController.jid());
+			else
+				name = selectedController.name();
+
+			if (!"PS5 Controller".equals(name))
 				return null;
 
 			final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, (short) 0xCE6,

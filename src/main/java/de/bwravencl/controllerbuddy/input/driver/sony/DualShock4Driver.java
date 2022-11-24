@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import org.lwjgl.glfw.GLFW;
 
+import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
@@ -37,7 +38,12 @@ public final class DualShock4Driver extends SonyDriver {
 		@Override
 		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
-			final var guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
+			final String guid;
+			if (Main.isMac) {
+				guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
+			} else
+				guid = selectedController.guid();
+
 			if (guid == null)
 				return null;
 
