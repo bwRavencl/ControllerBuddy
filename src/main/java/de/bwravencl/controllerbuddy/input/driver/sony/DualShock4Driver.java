@@ -39,9 +39,9 @@ public final class DualShock4Driver extends SonyDriver {
 		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
 			final String guid;
-			if (Main.isMac) {
+			if (Main.isMac)
 				guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
-			} else
+			else
 				guid = selectedController.guid();
 
 			if (guid == null)
@@ -49,11 +49,11 @@ public final class DualShock4Driver extends SonyDriver {
 
 			final short productId;
 			Connection connection = null;
-			if (guid.startsWith("030000004c050000c405"))
+			if (guid.matches("^0[35]0000004c050000c405.*"))
 				productId = 0x5C4;
-			else if (guid.startsWith("030000004c050000cc09"))
+			else if (guid.matches("^0[35]0000004c050000cc09.*"))
 				productId = 0x9CC;
-			else if (guid.startsWith("030000004c050000a00b")) {
+			else if (guid.matches("^0[35]0000004c050000a00b.*")) {
 				productId = 0xBA0;
 				connection = DongleConnection;
 			} else
