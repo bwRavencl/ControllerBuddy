@@ -3142,6 +3142,9 @@ public final class Main {
 	}
 
 	public void updateDeviceMenuSelection() {
+		if (selectedController == null)
+			return;
+
 		for (var i = 0; i < deviceJMenu.getItemCount(); i++) {
 			final var menuItem = deviceJMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
