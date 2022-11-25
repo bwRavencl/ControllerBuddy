@@ -95,7 +95,7 @@ public class XInputDriver extends Driver {
 		else
 			xinputDevices = XInputDevice.getAllDevices();
 
-		final var optionalXinputDevice = Arrays.asList(xinputDevices).stream().filter(XInputDevice::poll).findFirst();
+		final var optionalXinputDevice = Arrays.stream(xinputDevices).filter(XInputDevice::poll).findFirst();
 
 		if (optionalXinputDevice.isEmpty())
 			throw new IllegalStateException("No XInput Device connected");

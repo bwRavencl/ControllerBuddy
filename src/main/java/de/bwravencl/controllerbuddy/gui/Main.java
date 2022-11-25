@@ -2492,8 +2492,7 @@ public final class Main {
 	}
 
 	public void newActivation(final String[] args) {
-		log.log(Level.INFO,
-				"New activation with arguments: " + Arrays.asList(args).stream().collect(Collectors.joining(" ")));
+		log.log(Level.INFO, "New activation with arguments: " + Arrays.stream(args).collect(Collectors.joining(" ")));
 
 		if (args.length > 0)
 			try {
