@@ -21,6 +21,8 @@ version = org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: t
 sourceCompatibility = 19
 targetCompatibility = 19
 
+archivesBaseName = applicationName.toLowerCase()
+
 application {
 	mainModule = 'de.bwravencl.controllerbuddy'
 	mainClass = 'de.bwravencl.controllerbuddy.gui.Main'
