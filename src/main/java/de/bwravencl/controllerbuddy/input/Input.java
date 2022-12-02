@@ -391,8 +391,7 @@ public final class Input {
 				clearOnNextPoll = false;
 			}
 
-			if (onScreenKeyboard.isVisible())
-				onScreenKeyboard.poll(this);
+			onScreenKeyboard.poll(this);
 
 			virtualAxisToTargetValueMap.entrySet().removeIf(entry -> {
 				final var virtualAxis = entry.getKey();
