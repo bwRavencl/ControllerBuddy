@@ -254,7 +254,6 @@ public final class OnScreenKeyboard extends JFrame {
 		@Override
 		boolean poll(final Input input) {
 			if (mouseDown || changed) {
-
 				if (doDownUp) {
 					input.getDownUpKeyStrokes().add(keyStroke);
 					doDownUp = false;
