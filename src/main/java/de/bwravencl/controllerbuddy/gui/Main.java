@@ -1140,6 +1140,8 @@ public final class Main {
 
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
 
+	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1000L;
+
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
@@ -3042,11 +3044,17 @@ public final class Main {
 
 					if (isWindows)
 						repaintOnScreenKeyboardAndOverlay();
+					else if (isLinux && currentModeLabel != null) {
+						currentModeLabel.validate();
+						currentModeLabel.repaint();
+						updateOverlayAxisIndicators(true);
+					}
+
 				});
 			}
 		};
 
-		timer.schedule(overlayTimerTask, OVERLAY_POSITION_UPDATE_INTERVAL, OVERLAY_POSITION_UPDATE_INTERVAL);
+		timer.schedule(overlayTimerTask, OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL);
 	}
 
 	private void startServer() {
@@ -3322,14 +3330,14 @@ public final class Main {
 		overlayFrame.pack();
 	}
 
-	public void updateOverlayAxisIndicators() {
+	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
 		if (runMode == null || !isLocalRunning() && !isServerRunning())
 			return;
 
 		EnumSet.allOf(Input.VirtualAxis.class).stream()
 				.filter(virtualAxis -> virtualAxisToProgressBarMap.containsKey(virtualAxis)).forEach(virtualAxis -> {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
-					var changed = false;
+					var repaint = forceRepaint;
 
 					final var minAxisValue = runMode.getMinAxisValue();
 					final var maxAxisValue = runMode.getMaxAxisValue();
@@ -3341,16 +3349,16 @@ public final class Main {
 					final var newMaximum = maximum - minimum;
 					if (progressBar.getMaximum() != newMaximum) {
 						progressBar.setMaximum(newMaximum);
-						changed = true;
+						repaint = true;
 					}
 
 					final var newValue = -input.getAxes().get(virtualAxis) - minimum;
 					if (progressBar.getValue() != newValue) {
 						progressBar.setValue(newValue);
-						changed = true;
+						repaint = true;
 					}
 
-					if (changed) {
+					if (repaint) {
 						progressBar.repaint();
 						Toolkit.getDefaultToolkit().sync();
 					}

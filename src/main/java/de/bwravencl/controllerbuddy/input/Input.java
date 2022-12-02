@@ -490,7 +490,7 @@ public final class Input {
 		}
 
 		EventQueue.invokeLater(() -> {
-			main.updateOverlayAxisIndicators();
+			main.updateOverlayAxisIndicators(false);
 		});
 		main.handleOnScreenKeyboardModeChange();
 
