@@ -366,13 +366,16 @@ public final class Main {
 
 		private final HashSet<Float> detentValues;
 		private final OverlayAxis overlayAxis;
+		private final int subdivisionHeight;
 
 		private IndicatorProgressBar(final int orient, final HashSet<Float> dententValues,
 				final OverlayAxis overlayAxis) {
 			super(orient);
+
 			setBorder(createOverlayBorder());
 			detentValues = dententValues;
 			this.overlayAxis = overlayAxis;
+			subdivisionHeight = Math.round(main.getOverlayScaling());
 		}
 
 		@Override
@@ -386,13 +389,13 @@ public final class Main {
 			for (var i = 1; i <= subdivisions; i++) {
 				g.setColor(Color.WHITE);
 				final var y = i * (height / (subdivisions + 1));
-				g.drawLine(0, y, width, y);
+				g.fillRect(0, y - subdivisionHeight / 2, width, subdivisionHeight);
 			}
 
 			detentValues.forEach(detentValue -> {
 				g.setColor(Color.RED);
 				final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
-				g.drawLine(0, y, width, y);
+				g.fillRect(0, y - subdivisionHeight / 2, width, subdivisionHeight);
 			});
 		}
 
@@ -1076,6 +1079,8 @@ public final class Main {
 
 	static final int DEFAULT_VGAP = 10;
 
+	static final int DEFAULT_OVERLAY_SCALING = 1;
+
 	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 
@@ -1134,6 +1139,8 @@ public final class Main {
 
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 
+	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
+
 	private static final String PREFERENCES_DARK_THEME = "dark_theme";
 
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
@@ -1145,6 +1152,10 @@ public final class Main {
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
 
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
+
+	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH = 20;
+
+	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
 
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
@@ -1653,8 +1664,6 @@ public final class Main {
 		preferences = Preferences.userRoot()
 				.node("/" + mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.')).replace('.', '/'));
 
-		onScreenKeyboard = new OnScreenKeyboard(this);
-
 		frame = new JFrame();
 
 		frame.addWindowListener(new WindowAdapter() {
@@ -1858,6 +1867,21 @@ public final class Main {
 		darkThemeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		darkThemePanel.add(darkThemeLabel);
 
+		final var overlayScalingPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		globalSettingsPanel.add(overlayScalingPanel, settingsPanelGridBagConstraints);
+
+		final var overlayScalingLabel = new JLabel(strings.getString("OVERLAY_SCALING_LABEL"));
+		overlayScalingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		overlayScalingPanel.add(overlayScalingLabel);
+
+		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), 1d, 6d, .25));
+		final var overlayScalingSpinnerEditor = new JSpinner.NumberEditor(overlayScalingSpinner, "#.## x");
+		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
+		overlayScalingSpinner.addChangeListener(event -> preferences.putFloat(PREFERENCES_OVERLAY_SCALING,
+				((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
+		overlayScalingPanel.add(overlayScalingSpinner);
+
 		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
 		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
 		darkThemeCheckBox.addActionListener(event -> {
@@ -1896,6 +1920,8 @@ public final class Main {
 		frame.add(statusLabel, BorderLayout.SOUTH);
 
 		updateTheme();
+
+		onScreenKeyboard = new OnScreenKeyboard(this);
 
 		if (isMac)
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
@@ -2204,6 +2230,10 @@ public final class Main {
 		return overlayFrame;
 	}
 
+	float getOverlayScaling() {
+		return preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
+	}
+
 	@SuppressWarnings("exports")
 	public Preferences getPreferences() {
 		return preferences;
@@ -2281,6 +2311,8 @@ public final class Main {
 		overlayFrame.setAlwaysOnTop(true);
 		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+		final var overlayScaling = getOverlayScaling();
+
 		if (multipleModes) {
 			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
 			currentModeLabel.setOpaque(true);
@@ -2288,14 +2320,19 @@ public final class Main {
 			final var innerBorder = BorderFactory.createEmptyBorder(0, 1, 0, 1);
 			final var border = BorderFactory.createCompoundBorder(outerBorder, innerBorder);
 			currentModeLabel.setBorder(border);
-			final var font = currentModeLabel.getFont().deriveFont(Font.BOLD);
-			currentModeLabel.setFont(font);
-			final var fontMetrics = currentModeLabel.getFontMetrics(font);
+			final var defaultFont = currentModeLabel.getFont();
+			final var newFont = currentModeLabel.getFont().deriveFont(Font.BOLD,
+					defaultFont.getSize2D() * overlayScaling);
+			currentModeLabel.setFont(newFont);
+			final var fontMetrics = currentModeLabel.getFontMetrics(newFont);
 			final var longestDescription = modes.stream().map(Mode::getDescription)
 					.max(Comparator.comparingInt(String::length)).orElse("");
-			final var modeLabelWidth = Math.min(fontMetrics.stringWidth(longestDescription)
-					+ outerBorder.getThickness() * 2 + outerBorder.getThickness() * 2, OVERLAY_MODE_LABEL_MAX_WIDTH);
-			currentModeLabel.setPreferredSize(new Dimension(modeLabelWidth, fontMetrics.getHeight() + 1));
+			final var modeLabelWidth = Math.min(
+					fontMetrics.stringWidth(longestDescription) + outerBorder.getThickness() * 2
+							+ outerBorder.getThickness() * Math.round(2 * overlayScaling),
+					Math.round(OVERLAY_MODE_LABEL_MAX_WIDTH * overlayScaling));
+			currentModeLabel.setPreferredSize(
+					new Dimension(modeLabelWidth, fontMetrics.getHeight() + Math.round(1 * overlayScaling)));
 
 			currentModeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
@@ -2323,7 +2360,9 @@ public final class Main {
 
 				final var indicatorProgressBar = new IndicatorProgressBar(SwingConstants.VERTICAL, detentValues,
 						overlayAxis);
-				indicatorProgressBar.setPreferredSize(new Dimension(20, 150));
+				indicatorProgressBar.setPreferredSize(
+						new Dimension(Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH * overlayScaling),
+								Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT * overlayScaling)));
 				indicatorProgressBar.setForeground(overlayAxis.color);
 
 				indicatorPanel.add(indicatorProgressBar);
