@@ -1636,7 +1636,7 @@ public final class Main {
 								} catch (final IOException e) {
 									log.log(Level.SEVERE, e.getMessage(), e);
 								}
-							arguments = receivedArgs.toArray(new String[receivedArgs.size()]);
+							arguments = receivedArgs.toArray(String[]::new);
 						} else
 							log.log(Level.WARNING, "Received unexpected line on single instance socket: " + line);
 
@@ -3652,7 +3652,7 @@ public final class Main {
 			return;
 
 		final var modes = input.getProfile().getModes();
-		final var model = new DefaultComboBoxModel<>(modes.toArray(new Mode[modes.size()]));
+		final var model = new DefaultComboBoxModel<>(modes.toArray(Mode[]::new));
 		modeComboBox.setModel(model);
 		modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 	}

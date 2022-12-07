@@ -88,13 +88,12 @@ public final class KeyStroke implements Cloneable, Serializable {
 		@SuppressWarnings("unchecked")
 		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
 		modifierCodes = modifierCodesKeyCodes.stream()
-				.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
-				.toArray(size -> new ScanCode[size]);
+				.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode)).toArray(ScanCode[]::new);
 
 		@SuppressWarnings("unchecked")
 		final var keyCodesKeyCodes = (Set<Integer>) stream.readObject();
 		keyCodes = keyCodesKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToScanCodeMap.get(keyCode))
-				.toArray(size -> new ScanCode[size]);
+				.toArray(ScanCode[]::new);
 
 	}
 

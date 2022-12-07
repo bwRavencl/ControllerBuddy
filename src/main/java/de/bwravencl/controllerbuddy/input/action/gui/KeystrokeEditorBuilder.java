@@ -123,7 +123,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				((JList<?>) e.getSource()).getSelectedValuesList()
 						.forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
 
-				final var scanCodesArray = scanCodes.toArray(new ScanCode[scanCodes.size()]);
+				final var scanCodesArray = scanCodes.toArray(ScanCode[]::new);
 
 				if (modifiers)
 					keyStroke.setModifierCodes(scanCodesArray);
@@ -187,7 +187,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
-		modifierList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		modifierList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
 		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
 		final var addedModifiers = new ArrayList<String>();
@@ -210,7 +210,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));
-		keyList = new CheckboxJList<>(availableScanCodes.toArray(new String[availableScanCodes.size()]));
+		keyList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
 		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
 		final var addedKeys = new ArrayList<String>();

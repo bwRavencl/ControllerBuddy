@@ -105,7 +105,7 @@ public final class GuiUtils {
 
 		modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
 
-		final var modeComboBox = new JComboBox<>(modes.toArray(new Mode[modes.size()]));
+		final var modeComboBox = new JComboBox<>(modes.toArray(Mode[]::new));
 		modeComboBox.addActionListener(actionListener);
 		modePanel.add(modeComboBox);
 

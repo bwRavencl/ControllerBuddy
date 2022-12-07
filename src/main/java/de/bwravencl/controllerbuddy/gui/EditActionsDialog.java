@@ -388,7 +388,7 @@ public final class EditActionsDialog extends JDialog {
 				buttonToModeActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
 		}
 
-		return assignedActions.toArray(new AssignedAction[assignedActions.size()]);
+		return assignedActions.toArray(AssignedAction[]::new);
 	}
 
 	@SuppressWarnings("exports")
@@ -585,6 +585,6 @@ public final class EditActionsDialog extends JDialog {
 			availableActions.add(availableAction);
 		}
 
-		availableActionsList.setListData(availableActions.toArray(new AvailableAction[availableActions.size()]));
+		availableActionsList.setListData(availableActions.toArray(AvailableAction[]::new));
 	}
 }

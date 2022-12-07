@@ -43,6 +43,6 @@ public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 		if (!profile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
 			modes.add(OnScreenKeyboard.onScreenKeyboardMode);
 
-		return modes.toArray(new Mode[modes.size()]);
+		return modes.toArray(Mode[]::new);
 	}
 }
