@@ -1874,7 +1874,7 @@ public final class Main {
 		overlayScalingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		overlayScalingPanel.add(overlayScalingLabel);
 
-		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), 1d, 6d, .25));
+		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), .5, 6d, .25));
 		final var overlayScalingSpinnerEditor = new JSpinner.NumberEditor(overlayScalingSpinner, "#.## x");
 		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
