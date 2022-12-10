@@ -135,7 +135,7 @@ dependencies {
 			'com.formdev:flatlaf:2.6',
 			"com.github.strikerx3:jxinput:$jxinputVersion",
 			'com.google.code.gson:gson:2.10',
-			'io.github.classgraph:classgraph:4.8.151',
+			'io.github.classgraph:classgraph:4.8.152',
 			"net.java.dev.jna:jna-jpms:$jnaVersion",
 			"net.java.dev.jna:jna-platform-jpms:$jnaVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion",
