@@ -20,36 +20,35 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.lwjgl.glfw.GLFWGamepadState;
-
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import io.github.classgraph.ClassGraph;
 
 public abstract class Driver {
 
-	private static List<Class<IDriverBuilder>> driverBuilderClasses;
+	private static List<? extends IDriverBuilder> driverBuilders;
 
 	static {
 		final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo().scan();
 		final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
-		driverBuilderClasses = classInfoList.stream().map(classInfo -> classInfo.loadClass(IDriverBuilder.class))
-				.collect(Collectors.toUnmodifiableList());
+		driverBuilders = classInfoList.stream().map(classInfo -> {
+			try {
+				return classInfo.loadClass(IDriverBuilder.class).getDeclaredConstructor().newInstance();
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException(e);
+			}
+		}).sorted().collect(Collectors.toUnmodifiableList());
 	}
 
 	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController) {
 
-		for (final var driverBuilderClass : driverBuilderClasses)
-			try {
-				final var driverBuilder = driverBuilderClass.getDeclaredConstructor().newInstance();
-				final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
-				if (driver != null)
-					return driver;
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				throw new RuntimeException(e);
-			}
+		for (final var driverBuilder : driverBuilders) {
+			final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
+			if (driver != null)
+				return driver;
+		}
 
 		return null;
 	}
@@ -66,8 +65,6 @@ public abstract class Driver {
 	public void deInit(final boolean disconnected) {
 		ready = false;
 	}
-
-	public abstract boolean getGamepadState(final GLFWGamepadState state);
 
 	public String getTooltip(final String title) {
 		return title;

@@ -1987,7 +1987,8 @@ public final class Main {
 		taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
 			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
 			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
-				if (disconnected) {
+				if (disconnected && presentControllers.stream().filter(controller -> controller.jid == jid).findFirst()
+						.isPresent()) {
 					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
 					if (selectedController != null && selectedController.jid == jid) {

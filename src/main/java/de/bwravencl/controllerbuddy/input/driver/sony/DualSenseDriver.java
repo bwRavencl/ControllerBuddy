@@ -62,11 +62,11 @@ public final class DualSenseDriver extends SonyDriver {
 	}
 
 	private static final Logger log = Logger.getLogger(DualSenseDriver.class.getName());
+
 	private static final byte USB_INPUT_REPORT_ID = 0x1;
-
 	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x31;
-	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
 
+	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
 	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
 	private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo)

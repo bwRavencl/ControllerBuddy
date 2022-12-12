@@ -34,12 +34,13 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
+import de.bwravencl.controllerbuddy.input.driver.IGamepadStateProvider;
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
-public abstract class SonyDriver extends Driver {
+public abstract class SonyDriver extends Driver implements IGamepadStateProvider {
 
 	static record Connection(int offset, byte inputReportId) {
 

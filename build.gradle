@@ -237,6 +237,7 @@ task generateModuleInfo {
 
 			\topens de.bwravencl.controllerbuddy.input to com.google.gson;
 			\topens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+			\topens de.bwravencl.controllerbuddy.input.driver to com.sun.jna;
 
 			\trequires batik.swing;
 			\trequires com.google.gson;

@@ -16,22 +16,9 @@
 
 package de.bwravencl.controllerbuddy.input.driver;
 
-import java.util.List;
+import org.lwjgl.glfw.GLFWGamepadState;
 
-import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
-import de.bwravencl.controllerbuddy.input.Input;
+public interface IGamepadStateProvider {
 
-public interface IDriverBuilder extends Comparable<IDriverBuilder> {
-
-	@Override
-	default int compareTo(final IDriverBuilder o) {
-		return Integer.compare(getOrder(), o.getOrder());
-	}
-
-	Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-			final ControllerInfo selectedController);
-
-	default int getOrder() {
-		return 0;
-	}
+	boolean getGamepadState(final GLFWGamepadState state);
 }

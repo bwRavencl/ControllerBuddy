@@ -41,7 +41,7 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class XInputDriver extends Driver {
+public class XInputDriver extends Driver implements IGamepadStateProvider {
 
 	public static class XInputDriverBuilder implements IDriverBuilder {
 
@@ -53,8 +53,7 @@ public class XInputDriver extends Driver {
 				final var presentXInputControllers = presentControllers.stream()
 						.filter(XInputDriver::isXInputController).collect(Collectors.toUnmodifiableList());
 				if (presentXInputControllers.size() > 1) {
-					log.log(Level.WARNING,
-							"Found more than one XInput controller - extended XInput support will be unavailable");
+					log.log(Level.WARNING, "Found more than one XInput controller - XInput driver disabled");
 					return null;
 				}
 
@@ -70,6 +69,7 @@ public class XInputDriver extends Driver {
 	}
 
 	private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
+
 	private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
 
 	private static final int MAX_MOTOR_SPEED = 65535;
