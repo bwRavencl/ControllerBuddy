@@ -43,6 +43,7 @@ import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
+import de.bwravencl.controllerbuddy.input.driver.IGamepadStateProvider;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 
 public final class Input {
@@ -340,8 +341,8 @@ public final class Input {
 
 					final boolean gotState;
 					final var driver = jidToDriverMap.get(controller.jid());
-					if (driver != null)
-						gotState = driver.getGamepadState(state);
+					if (driver instanceof final IGamepadStateProvider gamepadStateProvider)
+						gotState = gamepadStateProvider.getGamepadState(state);
 					else
 						gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 
@@ -367,11 +368,11 @@ public final class Input {
 			}
 
 			final boolean gotState;
-			if (driver != null) {
+			if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
 				if (!driver.isReady())
 					return true;
 
-				gotState = driver.getGamepadState(state);
+				gotState = gamepadStateProvider.getGamepadState(state);
 			} else
 				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
 

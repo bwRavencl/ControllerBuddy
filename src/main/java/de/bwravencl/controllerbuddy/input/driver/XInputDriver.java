@@ -41,7 +41,7 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class XInputDriver extends Driver {
+public class XInputDriver extends Driver implements IGamepadStateProvider {
 
 	public static class XInputDriverBuilder implements IDriverBuilder {
 

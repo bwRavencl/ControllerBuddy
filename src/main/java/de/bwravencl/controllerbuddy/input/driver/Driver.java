@@ -20,8 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.lwjgl.glfw.GLFWGamepadState;
-
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import io.github.classgraph.ClassGraph;
@@ -66,8 +64,6 @@ public abstract class Driver {
 	public void deInit(final boolean disconnected) {
 		ready = false;
 	}
-
-	public abstract boolean getGamepadState(final GLFWGamepadState state);
 
 	public String getTooltip(final String title) {
 		return title;

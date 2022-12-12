@@ -65,6 +65,7 @@ ext {
 	commonsCliVersion = '1.5.0'
 	jxinputVersion = '1.0.0'
 	purejavahidapiVersion = 'ef5679619d'
+	steamworks4jVersion = '1.9.0'
 
 	openVrSupport = false
 }
@@ -132,6 +133,7 @@ dependencies {
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
 	implementation "commons-cli:commons-cli:$commonsCliVersion",
+			"com.code-disaster.steamworks4j:steamworks4j:$steamworks4jVersion",
 			'com.formdev:flatlaf:2.6',
 			"com.github.strikerx3:jxinput:$jxinputVersion",
 			'com.google.code.gson:gson:2.10',
@@ -194,6 +196,7 @@ extraJavaModuleInfo {
 	automaticModule('commons-logging-1.0.4.jar', 'commons.logging')
 	automaticModule("jxinput-${jxinputVersion}.jar", 'jxinput')
 	automaticModule("purejavahidapi-${purejavahidapiVersion}.jar", 'purejavahidapi')
+	automaticModule("steamworks4j-${steamworks4jVersion}.jar", 'steamworks4j')
 	automaticModule('xmlgraphics-commons-2.7.jar', 'xml.graphics.commons')
 	automaticModule('xml-apis-ext-1.3.04.jar', 'xml.apis.ext')
 
@@ -258,6 +261,7 @@ task generateModuleInfo {
 			\trequires org.lwjgl.openvr;
 			${openVrSupport ? '\trequires org.lwjgl.openvr.natives;' : ''}
 			\trequires purejavahidapi;
+			\trequires steamworks4j;
 			\trequires uk.co.bithatch.linuxio;
 			}
 			""".stripIndent())

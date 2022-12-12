@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <BugCollection version="4.7.3" sequence="0"
-	timestamp="1670432957718" analysisTimestamp="1670432957718" release="">
+	timestamp="1670957606086" analysisTimestamp="1670957606086" release="">
 	<Project projectName="ControllerBuddy (spotbugsMain)">
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -172,6 +172,7 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\ToVrResetZeroPoseAction.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\Driver.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\IDriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\IGamepadStateProvider.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver$DualSenseDriverBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\DualSenseDriver.class</Jar>
@@ -181,6 +182,9 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver$Connection.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver$SonyInputReportListener.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver$1.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver$SteamControllerDriverBuilder.class</Jar>
+		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver$1.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver$XInputDriverBuilder.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\driver\XInputDriver.class</Jar>
@@ -219,11 +223,12 @@
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
 		<Jar>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\build\classes\java\main\module-info.class</Jar>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\272f667a02f4b4ec474de1e34cfe4a88\transformed\commons-cli-1.5.0-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\3c003bd762efed87bd5c59cb8770f7f7\transformed\commons-cli-1.5.0-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\0d24521a4f4a6a9d60fec3b3db809f03\transformed\steamworks4j-1.9.0-module.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\2.6\4dd2ba228e3c57eb3d80e3927b5a6a33265eb69b\flatlaf-2.6.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\836c41498d8ce52078347ae00805ffc5\transformed\jxinput-1.0.0-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\963cf5504cd8e5b8af29ac7fa412c34e\transformed\jxinput-1.0.0-module.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10\dd9b193aef96e973d5a11ab13cd17430c2e4306b\gson-2.10.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.151\3943720402fb4c139df4193f5e6c5da9e46cb2a9\classgraph-4.8.151.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.152\b121c4461fb767e88909164dcd97f13688115e12\classgraph-4.8.152.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform-jpms\5.12.1\dd5c97cb2b74e2f85b708745a8c6127317b023f1\jna-platform-jpms-5.12.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-jpms\5.12.1\3e4c58e97eb819867d9b8d7a3a6005b9cd9987f7\jna-jpms-5.12.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.1\cbac1b8d30cb4795149c1ef540f912671a8616d0\lwjgl-glfw-3.3.1.jar</AuxClasspathEntry>
@@ -234,29 +239,29 @@
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.3.1\37b28ecc602db690794c3f37cebf229c0c21868f\lwjgl-openvr-3.3.1-natives-windows.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\ae58664f88e18a9bb2c77b063833ca7aaec484cb\lwjgl-3.3.1.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.1\36c37f16ab611b3aa11f3bcf80b1d509b4ce6b\lwjgl-3.3.1-natives-windows.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\75c2154b6d06064728ed216955d7a521\transformed\purejavahidapi-ef5679619d-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\ad84a82e2444141563f0d0a447ce9fa3\transformed\purejavahidapi-ef5679619d-module.jar</AuxClasspathEntry>
 		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\uk.co.bithatch\linuxio4j\2.1\f7d312bfd93646a3e9a9ad66319d94a5ae9ef10e\linuxio4j-2.1.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\09f752ed10d1c06a464f96c17f32195b\transformed\batik-swing-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\46866ddc0742f500eb0b7bfa8c55e856\transformed\batik-bridge-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\7b5ca2415fbb4377ecb9378e48ccea45\transformed\batik-script-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d320876af0cba9bb8167bff0386a031a\transformed\batik-anim-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\457b466a086ff6918ac0df38557de1ef\transformed\batik-gvt-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\880ad86eeecee3eeb01797fa6671f071\transformed\batik-svg-dom-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\ff5759c2e9d0f7426f447a033ddd5aa8\transformed\batik-parser-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\76ce061b4bc7e3f6255556c6ad2b16fc\transformed\batik-awt-util-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\79d1a7a7931b4a289889fbcde002f86a\transformed\batik-dom-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\6189a589747ea7bee8195756441f75ce\transformed\batik-css-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\890055d755ee88cf144fe3f01aacca55\transformed\batik-ext-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\999990ff2606573eab8049c8852ff955\transformed\batik-gui-util-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\2c73ddc9c0f5c713490ec081b060b243\transformed\batik-xml-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\84e220f5ad6b510f8dce91909d9870eb\transformed\batik-util-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\fa905a9ac90fe2330d2e335adc88faa7\transformed\batik-constants-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\c612405abfa1901af9d977221d9fecb9\transformed\batik-i18n-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\c049cab6047565661d8e831f67e9317e\transformed\batik-shared-resources-1.16-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\0edc1d62bac5abfeac140235b3526ddb\transformed\xml-apis-ext-1.3.04-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\ac0be1aad9dc2889eb9241db840d092f\transformed\xmlgraphics-commons-2.7-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\6be32cb168672ff0ff82135a1517d8c2\transformed\commons-io-1.3.1-module.jar</AuxClasspathEntry>
-		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\49aacb8f6add12a4ebdc3a9763bf196f\transformed\commons-logging-1.0.4-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\1ec3799abf19640bae9a3eeca79b2d92\transformed\batik-swing-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\e0bfe4fe1037fb83d0585dda08c34593\transformed\batik-bridge-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\98bf23a4b303130f1f4c334020084e23\transformed\batik-script-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\5b520aa0856259f5eec92f893952c54f\transformed\batik-anim-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\dbed005b45017a3718816a6b26f935a2\transformed\batik-gvt-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\89150df658e128319ef68f71820d7558\transformed\batik-svg-dom-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\19140e169424c0f937faa38debacd97f\transformed\batik-parser-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\54a4a8902bb2cc4c6f85985be2a981d4\transformed\batik-awt-util-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d219ce9c95422cf37af5c42fbc651a7f\transformed\batik-dom-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\22ed1f07af21d7b833ba0861c5cdaeea\transformed\batik-css-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\300d4e7f5324bd4b6ea15819cd252526\transformed\batik-ext-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\cfd0c56d6730452d985ffbe40c541340\transformed\batik-gui-util-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d686a86b707a8b0c951012664c1a5a71\transformed\batik-xml-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\916cea12c2efeec6035702818d9b1025\transformed\batik-util-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\c54eac5b8b30f0e604d4cbb363383d95\transformed\batik-constants-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\031e7a7b1143df119bc002c6226c89bd\transformed\batik-i18n-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\757ca915e9a536a49ff809523db97d30\transformed\batik-shared-resources-1.16-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d38d65d761f2fe01d9e92be5e90952b4\transformed\xml-apis-ext-1.3.04-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\f1c2359073ecdb20dad63e360281f3f3\transformed\xmlgraphics-commons-2.7-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\46981373fa392dbb25c488f4d0057f2b\transformed\commons-io-1.3.1-module.jar</AuxClasspathEntry>
+		<AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\f6d63f6a8494b004bddf334c4b7f8b1f\transformed\commons-logging-1.0.4-module.jar</AuxClasspathEntry>
 		<SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\src\main\resources</SrcDir>
 		<SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\workspace-ControllerBuddy\ControllerBuddy\src\main\java</SrcDir>
 	</Project>
@@ -490,10 +495,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -783,11 +788,11 @@
 		<Type descriptor="Lde/bwravencl/controllerbuddy/input/Input;"
 			role="TYPE_FOUND">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.input.Input</Message>
 		</Type>
@@ -839,10 +844,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -1096,10 +1101,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1141,10 +1146,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1180,18 +1185,18 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.gui.Main"
 			name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="3120"
-				end="3128" startBytecode="0" endBytecode="144"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="3121"
+				end="3129" startBytecode="0" endBytecode="144"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1201,11 +1206,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="3127" end="3127" startBytecode="34" endBytecode="34"
+			start="3128" end="3128" startBytecode="34" endBytecode="34"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 3127]</Message>
+			<Message>At Main.java:[line 3128]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="DP_DO_INSIDE_DO_PRIVILEGED" priority="3"
@@ -1221,10 +1226,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1232,8 +1237,8 @@
 			name="updateTitleAndTooltip" signature="()V" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="3614"
-				end="3648" startBytecode="0" endBytecode="554"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="3615"
+				end="3649" startBytecode="0" endBytecode="554"
 				sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
@@ -1250,11 +1255,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="3629" end="3629" startBytecode="133" endBytecode="133"
+			start="3630" end="3630" startBytecode="133" endBytecode="133"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 3629]</Message>
+			<Message>At Main.java:[line 3630]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1269,10 +1274,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1280,8 +1285,8 @@
 			name="getFrame" signature="()Ljavax/swing/JFrame;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2218"
-				end="2218" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2219"
+				end="2219" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method de.bwravencl.controllerbuddy.gui.Main.getFrame()</Message>
@@ -1300,11 +1305,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2218" end="2218" startBytecode="4" endBytecode="4"
+			start="2219" end="2219" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2218]</Message>
+			<Message>At Main.java:[line 2219]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1319,10 +1324,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1331,8 +1336,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2226"
-				end="2226" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2227"
+				end="2227" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1353,11 +1358,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2226" end="2226" startBytecode="4" endBytecode="4"
+			start="2227" end="2227" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2226]</Message>
+			<Message>At Main.java:[line 2227]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -1372,10 +1377,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Class>
@@ -1383,8 +1388,8 @@
 			name="getPreferences" signature="()Ljava/util/prefs/Preferences;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.gui.Main" start="2239"
-				end="2239" startBytecode="0" endBytecode="46" sourcefile="Main.java"
+				classname="de.bwravencl.controllerbuddy.gui.Main" start="2240"
+				end="2240" startBytecode="0" endBytecode="46" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" />
 			<Message>In method
@@ -1404,11 +1409,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.gui.Main" primary="true"
-			start="2239" end="2239" startBytecode="4" endBytecode="4"
+			start="2240" end="2240" startBytecode="4" endBytecode="4"
 			sourcefile="Main.java"
 			sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-			<Message>At Main.java:[line 2239]</Message>
+			<Message>At Main.java:[line 2240]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2"
@@ -1779,10 +1784,10 @@
 			role="TYPE_FOUND">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.gui.Main" start="1046"
-				end="3658" sourcefile="Main.java"
+				end="3659" sourcefile="Main.java"
 				sourcepath="de/bwravencl/controllerbuddy/gui/Main.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-				<Message>At Main.java:[lines 1046-3658]</Message>
+				<Message>At Main.java:[lines 1046-3659]</Message>
 			</SourceLine>
 			<Message>Actual type de.bwravencl.controllerbuddy.gui.Main</Message>
 		</Type>
@@ -2003,11 +2008,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2015,8 +2020,8 @@
 			name="getAxes" signature="()Ljava/util/EnumMap;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="191"
-				end="191" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="192"
+				end="192" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.getAxes()</Message>
@@ -2035,11 +2040,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="191" end="191" startBytecode="4" endBytecode="4"
+			start="192" end="192" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 191]</Message>
+			<Message>At Input.java:[line 192]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2053,19 +2058,19 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
 		<Method classname="de.bwravencl.controllerbuddy.input.Input"
 			name="getButtons" signature="()[Z" isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="195"
-				end="195" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="196"
+				end="196" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2084,11 +2089,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="195" end="195" startBytecode="4" endBytecode="4"
+			start="196" end="196" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 195]</Message>
+			<Message>At Input.java:[line 196]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2102,11 +2107,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2114,8 +2119,8 @@
 			name="getDownKeyStrokes" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="211"
-				end="211" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="212"
+				end="212" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2136,11 +2141,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="211" end="211" startBytecode="4" endBytecode="4"
+			start="212" end="212" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 211]</Message>
+			<Message>At Input.java:[line 212]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2155,11 +2160,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2167,8 +2172,8 @@
 			name="getDownMouseButtons" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="215"
-				end="215" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="216"
+				end="216" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2189,11 +2194,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="215" end="215" startBytecode="4" endBytecode="4"
+			start="216" end="216" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 215]</Message>
+			<Message>At Input.java:[line 216]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2208,11 +2213,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2220,8 +2225,8 @@
 			name="getDownUpKeyStrokes" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="219"
-				end="219" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="220"
+				end="220" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2242,11 +2247,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="219" end="219" startBytecode="4" endBytecode="4"
+			start="220" end="220" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 219]</Message>
+			<Message>At Input.java:[line 220]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2261,11 +2266,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2273,8 +2278,8 @@
 			name="getDownUpMouseButtons" signature="()Ljava/util/Set;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="223"
-				end="223" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="224"
+				end="224" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2295,11 +2300,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="223" end="223" startBytecode="4" endBytecode="4"
+			start="224" end="224" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 223]</Message>
+			<Message>At Input.java:[line 224]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2313,11 +2318,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2325,8 +2330,8 @@
 			name="getMain" signature="()Lde/bwravencl/controllerbuddy/gui/Main;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="231"
-				end="231" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="232"
+				end="232" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method de.bwravencl.controllerbuddy.input.Input.getMain()</Message>
@@ -2345,11 +2350,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="231" end="231" startBytecode="4" endBytecode="4"
+			start="232" end="232" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 231]</Message>
+			<Message>At Input.java:[line 232]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2363,11 +2368,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2375,8 +2380,8 @@
 			name="getOffLockKeys" signature="()Ljava/util/Set;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="235"
-				end="235" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="236"
+				end="236" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2396,11 +2401,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="235" end="235" startBytecode="4" endBytecode="4"
+			start="236" end="236" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 235]</Message>
+			<Message>At Input.java:[line 236]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2414,11 +2419,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2426,8 +2431,8 @@
 			name="getOnLockKeys" signature="()Ljava/util/Set;" isStatic="false"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="239"
-				end="239" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="240"
+				end="240" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2447,11 +2452,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="239" end="239" startBytecode="4" endBytecode="4"
+			start="240" end="240" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 239]</Message>
+			<Message>At Input.java:[line 240]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2465,11 +2470,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2478,8 +2483,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/input/Profile;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="247"
-				end="247" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="248"
+				end="248" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2500,11 +2505,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="247" end="247" startBytecode="4" endBytecode="4"
+			start="248" end="248" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 247]</Message>
+			<Message>At Input.java:[line 248]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -2518,11 +2523,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2531,8 +2536,8 @@
 			signature="()Lde/bwravencl/controllerbuddy/runmode/RunMode;"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="255"
-				end="255" startBytecode="0" endBytecode="46" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="256"
+				end="256" startBytecode="0" endBytecode="46" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2553,11 +2558,11 @@
 		</Field>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="255" end="255" startBytecode="4" endBytecode="4"
+			start="256" end="256" startBytecode="4" endBytecode="4"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 255]</Message>
+			<Message>At Input.java:[line 256]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2572,11 +2577,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2585,8 +2590,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/gui/Main$ControllerInfo;Ljava/util/EnumMap;)V"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="155"
-				end="171" startBytecode="0" endBytecode="429"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="156"
+				end="172" startBytecode="0" endBytecode="429"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
@@ -2611,11 +2616,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="162" end="162" startBytecode="152" endBytecode="152"
+			start="163" end="163" startBytecode="152" endBytecode="152"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 162]</Message>
+			<Message>At Input.java:[line 163]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2630,11 +2635,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2643,8 +2648,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/gui/Main$ControllerInfo;Ljava/util/EnumMap;)V"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="155"
-				end="171" startBytecode="0" endBytecode="429"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="156"
+				end="172" startBytecode="0" endBytecode="429"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
@@ -2669,11 +2674,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="156" end="156" startBytecode="122" endBytecode="122"
+			start="157" end="157" startBytecode="122" endBytecode="122"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 156]</Message>
+			<Message>At Input.java:[line 157]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2688,11 +2693,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2701,8 +2706,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/input/Profile;)Z"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="585"
-				end="648" startBytecode="0" endBytecode="574"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="586"
+				end="649" startBytecode="0" endBytecode="574"
 				sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
@@ -2728,11 +2733,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="647" end="647" startBytecode="275" endBytecode="275"
+			start="648" end="648" startBytecode="275" endBytecode="275"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 647]</Message>
+			<Message>At Input.java:[line 648]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18"
@@ -2747,11 +2752,11 @@
 		<Class classname="de.bwravencl.controllerbuddy.input.Input"
 			primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="54"
-				end="661" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="55"
+				end="662" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-				<Message>At Input.java:[lines 54-661]</Message>
+				<Message>At Input.java:[lines 55-662]</Message>
 			</SourceLine>
 			<Message>In class de.bwravencl.controllerbuddy.input.Input</Message>
 		</Class>
@@ -2760,8 +2765,8 @@
 			signature="(Lde/bwravencl/controllerbuddy/runmode/RunMode;)V"
 			isStatic="false" primary="true">
 			<SourceLine
-				classname="de.bwravencl.controllerbuddy.input.Input" start="652"
-				end="653" startBytecode="0" endBytecode="61" sourcefile="Input.java"
+				classname="de.bwravencl.controllerbuddy.input.Input" start="653"
+				end="654" startBytecode="0" endBytecode="61" sourcefile="Input.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java" />
 			<Message>In method
@@ -2786,11 +2791,11 @@
 		</LocalVariable>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.Input" primary="true"
-			start="652" end="652" startBytecode="2" endBytecode="2"
+			start="653" end="653" startBytecode="2" endBytecode="2"
 			sourcefile="Input.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/Input.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\Input.java">
-			<Message>At Input.java:[line 652]</Message>
+			<Message>At Input.java:[line 653]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="EI_EXPOSE_REP" priority="2" rank="18"
@@ -4152,6 +4157,98 @@
 	</BugInstance>
 	<BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2"
 		rank="14" abbrev="SWL" category="MT_CORRECTNESS"
+		instanceHash="88ae92086668d52cccfe6d067be09a29"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+		<ShortMessage>Method calls Thread.sleep() with a lock held</ShortMessage>
+		<LongMessage>de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver.lambda$rumble$0(short,
+			long) calls Thread.sleep() with a lock held</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver"
+				start="96" end="157" sourcefile="SteamControllerDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java">
+				<Message>At SteamControllerDriver.java:[lines 96-157]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver"
+			name="lambda$rumble$0" signature="(SJ)V" isStatic="false"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver"
+				start="136" end="146" startBytecode="0" endBytecode="236"
+				sourcefile="SteamControllerDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver.lambda$rumble$0(short,
+				long)</Message>
+		</Method>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver"
+			primary="true" start="140" end="140" startBytecode="29"
+			endBytecode="29" sourcefile="SteamControllerDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java">
+			<Message>At SteamControllerDriver.java:[line 140]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="NP_LOAD_OF_KNOWN_NULL_VALUE"
+		priority="3" rank="19" abbrev="NP" category="STYLE"
+		instanceHash="6dfcf5b457df1cf49c26004c7e028d21"
+		instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="476">
+		<ShortMessage>Load of known null value</ShortMessage>
+		<LongMessage>Load of known null value in
+			de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder.getIfAvailable(Input,
+			List, Main$ControllerInfo)</LongMessage>
+		<Class
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder"
+			primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder"
+				start="38" end="90" sourcefile="SteamControllerDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java">
+				<Message>At SteamControllerDriver.java:[lines 38-90]</Message>
+			</SourceLine>
+			<Message>In class
+				de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder</Message>
+		</Class>
+		<Method
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder"
+			name="getIfAvailable"
+			signature="(Lde/bwravencl/controllerbuddy/input/Input;Ljava/util/List;Lde/bwravencl/controllerbuddy/gui/Main$ControllerInfo;)Lde/bwravencl/controllerbuddy/input/driver/Driver;"
+			isStatic="false" primary="true">
+			<SourceLine
+				classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder"
+				start="43" end="90" startBytecode="0" endBytecode="101"
+				sourcefile="SteamControllerDriver.java"
+				sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java" />
+			<Message>In method
+				de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder.getIfAvailable(Input,
+				List, Main$ControllerInfo)</Message>
+		</Method>
+		<LocalVariable name="steamController" register="5"
+			pc="231" role="LOCAL_VARIABLE_VALUE_OF">
+			<Message>Value loaded from steamController</Message>
+		</LocalVariable>
+		<SourceLine
+			classname="de.bwravencl.controllerbuddy.input.driver.SteamControllerDriver$SteamControllerDriverBuilder"
+			primary="true" start="87" end="87" startBytecode="234"
+			endBytecode="234" sourcefile="SteamControllerDriver.java"
+			sourcepath="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\SteamControllerDriver.java">
+			<Message>At SteamControllerDriver.java:[line 87]</Message>
+		</SourceLine>
+	</BugInstance>
+	<BugInstance type="SWL_SLEEP_WITH_LOCK_HELD" priority="2"
+		rank="14" abbrev="SWL" category="MT_CORRECTNESS"
 		instanceHash="e83ff5edd232b45588fe8ab3b5edaab6"
 		instanceOccurrenceNum="0" instanceOccurrenceMax="0">
 		<ShortMessage>Method calls Thread.sleep() with a lock held</ShortMessage>
@@ -4162,10 +4259,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver"
-				start="71" end="234" sourcefile="XInputDriver.java"
+				start="72" end="236" sourcefile="XInputDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\XInputDriver.java">
-				<Message>At XInputDriver.java:[lines 71-234]</Message>
+				<Message>At XInputDriver.java:[lines 72-236]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.driver.XInputDriver</Message>
@@ -4176,7 +4273,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver"
-				start="214" end="223" startBytecode="0" endBytecode="230"
+				start="215" end="225" startBytecode="0" endBytecode="241"
 				sourcefile="XInputDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\XInputDriver.java" />
@@ -4186,11 +4283,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver"
-			primary="true" start="217" end="217" startBytecode="19"
-			endBytecode="19" sourcefile="XInputDriver.java"
+			primary="true" start="219" end="219" startBytecode="26"
+			endBytecode="26" sourcefile="XInputDriver.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\XInputDriver.java">
-			<Message>At XInputDriver.java:[line 217]</Message>
+			<Message>At XInputDriver.java:[line 219]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance type="PZLA_PREFER_ZERO_LENGTH_ARRAYS"
@@ -4291,10 +4388,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
-				start="42" end="564" sourcefile="SonyDriver.java"
+				start="43" end="571" sourcefile="SonyDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
-				<Message>At SonyDriver.java:[lines 42-564]</Message>
+				<Message>At SonyDriver.java:[lines 43-571]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
@@ -4305,7 +4402,7 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
-				start="455" end="466" startBytecode="0" endBytecode="240"
+				start="461" end="473" startBytecode="0" endBytecode="251"
 				sourcefile="SonyDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java" />
@@ -4315,11 +4412,11 @@
 		</Method>
 		<SourceLine
 			classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
-			primary="true" start="459" end="459" startBytecode="20"
-			endBytecode="20" sourcefile="SonyDriver.java"
+			primary="true" start="466" end="466" startBytecode="27"
+			endBytecode="27" sourcefile="SonyDriver.java"
 			sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
 			relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
-			<Message>At SonyDriver.java:[line 459]</Message>
+			<Message>At SonyDriver.java:[line 466]</Message>
 		</SourceLine>
 	</BugInstance>
 	<BugInstance
@@ -4337,10 +4434,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
-				start="42" end="564" sourcefile="SonyDriver.java"
+				start="43" end="571" sourcefile="SonyDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
-				<Message>At SonyDriver.java:[lines 42-564]</Message>
+				<Message>At SonyDriver.java:[lines 43-571]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
@@ -4397,10 +4494,10 @@
 			primary="true">
 			<SourceLine
 				classname="de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver"
-				start="42" end="564" sourcefile="SonyDriver.java"
+				start="43" end="571" sourcefile="SonyDriver.java"
 				sourcepath="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
 				relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\sony\SonyDriver.java">
-				<Message>At SonyDriver.java:[lines 42-564]</Message>
+				<Message>At SonyDriver.java:[lines 43-571]</Message>
 			</SourceLine>
 			<Message>In class
 				de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver</Message>
@@ -4873,6 +4970,19 @@ there is no easy way to eliminate these false positives.
 
     ]]></Details>
 	</BugPattern>
+	<BugPattern type="NP_LOAD_OF_KNOWN_NULL_VALUE" abbrev="NP"
+		category="STYLE">
+		<ShortDescription>Load of known null value</ShortDescription>
+		<Details><![CDATA[
+
+  <p> The variable referenced at this point is known to be null due to an earlier
+   check against null. Although this is valid, it might be a mistake (perhaps you
+intended to refer to a different variable, or perhaps the earlier check to see if the
+variable is null should have been a check to see if it was non-null).
+</p>
+
+    ]]></Details>
+	</BugPattern>
 	<BugPattern type="DP_DO_INSIDE_DO_PRIVILEGED" abbrev="DP"
 		category="MALICIOUS_CODE">
 		<ShortDescription>Method invoked that should be only be invoked inside
@@ -5133,6 +5243,9 @@ object is stored in this field.</p>
 	<BugCode abbrev="UW">
 		<Description>Unconditional wait</Description>
 	</BugCode>
+	<BugCode abbrev="NP" cweid="476">
+		<Description>Null pointer dereference</Description>
+	</BugCode>
 	<BugCode abbrev="EI">
 		<Description>Method returning array may expose internal representation</Description>
 	</BugCode>
@@ -5194,11 +5307,11 @@ object is stored in this field.</p>
 		</Error>
 	</Errors>
 	<FindBugsSummary
-		timestamp="Wed, 7 Dec 2022 18:09:17 +0100" total_classes="0"
-		referenced_classes="0" total_bugs="85" total_size="0" num_packages="7"
-		java_version="19.0.1" vm_version="19.0.1+10" cpu_seconds="13.59"
-		clock_seconds="7.91" peak_mbytes="601.22" alloc_mbytes="8180.00"
-		gc_seconds="0.09" priority_3="28" priority_2="54" priority_1="3">
+		timestamp="Tue, 13 Dec 2022 19:53:26 +0100" total_classes="0"
+		referenced_classes="0" total_bugs="87" total_size="0" num_packages="7"
+		java_version="19.0.1" vm_version="19.0.1+10" cpu_seconds="9.34"
+		clock_seconds="7.99" peak_mbytes="601.95" alloc_mbytes="8180.00"
+		gc_seconds="0.14" priority_3="29" priority_2="55" priority_1="3">
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java"
 			bugCount="4" size="0" bugHash="5b52e0a78bc354fa36750aa483331e0d" />
@@ -5206,7 +5319,7 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java"
 			bugCount="10" size="0" bugHash="adf387302699ea838e39eb0cdd1e2093" />
 		<FileStats path="de/bwravencl/controllerbuddy/gui/Main.java"
-			bugCount="13" size="0" bugHash="7a4dfc408a2de07e05603514e8d04769" />
+			bugCount="13" size="0" bugHash="e48ed79815b4baf8bec862c3a068cc36" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java"
 			bugCount="5" size="0" bugHash="d202d738821d1af00cf71a2c7edbdd04" />
@@ -5215,7 +5328,7 @@ object is stored in this field.</p>
 			bugCount="1" size="0" bugHash="2a901c6f31e27328870962cf52bc4e5a" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="15"
-			size="0" bugHash="8918d22942e199a954a817a04592e0ec" />
+			size="0" bugHash="7610b2e6ea7de17dc2751c0e56c3a6bf" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/KeyStroke.java" bugCount="6"
 			size="0" bugHash="2a3d2a9085bc370dbf71d4c59d749f88" />
@@ -5244,8 +5357,11 @@ object is stored in this field.</p>
 			path="de/bwravencl/controllerbuddy/input/action/ToKeyAction.java"
 			bugCount="2" size="0" bugHash="11532cf120bd9579fd69c6cd070826b0" />
 		<FileStats
+			path="de/bwravencl/controllerbuddy/input/driver/SteamControllerDriver.java"
+			bugCount="2" size="0" bugHash="089142d3a221e6a7ffdd4448fce1ef5b" />
+		<FileStats
 			path="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java"
-			bugCount="1" size="0" bugHash="2d73da69356c1a00cbd904fd0a0ea60a" />
+			bugCount="1" size="0" bugHash="88eee9a95daf94fd0be23e261528f14b" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/driver/sony/DualSenseDriver.java"
 			bugCount="2" size="0" bugHash="96d763a66222b206c3e70f6abf849aa4" />
@@ -5254,7 +5370,7 @@ object is stored in this field.</p>
 			bugCount="2" size="0" bugHash="2cdad5643325d6d64937c054aa34b43a" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/input/driver/sony/SonyDriver.java"
-			bugCount="1" size="0" bugHash="075149594af7fcada20b634817442e9c" />
+			bugCount="1" size="0" bugHash="7bddf144e2e79e39ddfd31cfff443588" />
 		<FileStats
 			path="de/bwravencl/controllerbuddy/json/ActionTypeAdapter.java"
 			bugCount="1" size="0" bugHash="dae4fdbd0e992e8a9a9161b68ab12e79" />
