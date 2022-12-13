@@ -1447,7 +1447,7 @@ public final class Main {
 
 	private volatile RunMode runMode;
 
-	private ControllerInfo selectedController;
+	private volatile ControllerInfo selectedController;
 
 	private Input input;
 

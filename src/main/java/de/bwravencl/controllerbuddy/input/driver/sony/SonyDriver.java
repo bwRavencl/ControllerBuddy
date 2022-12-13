@@ -271,7 +271,7 @@ public abstract class SonyDriver extends Driver {
 		return value < 0 ? Input.normalize(value, -128, -1, 0f, 1f) : Input.normalize(value, 0, 127, -1f, 0f);
 	}
 
-	HidDevice hidDevice;
+	volatile HidDevice hidDevice;
 	byte[] hidReport;
 	Connection connection;
 	volatile Boolean charging;
@@ -304,20 +304,25 @@ public abstract class SonyDriver extends Driver {
 	}
 
 	@Override
-	public void deInit(final boolean disconnected) {
+	public synchronized void deInit(final boolean disconnected) {
 		super.deInit(disconnected);
 
 		this.disconnected = true;
 
+		if (hidDevice == null)
+			return;
+
+		if (!disconnected)
+			reset();
+
 		if (hidDevice != null) {
-			if (!disconnected)
-				reset();
-			try {
-				synchronized (hidDevice) {
+			synchronized (hidDevice) {
+				try {
 					hidDevice.close();
+				} catch (final IllegalStateException e) {
 				}
-			} catch (final IllegalStateException e) {
 			}
+
 			hidDevice = null;
 		}
 	}
@@ -452,17 +457,18 @@ public abstract class SonyDriver extends Driver {
 		final var actualRumbleOffset = getRumbleOffset() + connection.offset;
 
 		new Thread(() -> {
-			synchronized (hidDevice) {
-				hidReport[actualRumbleOffset] = strength;
-				sendHidReport();
-				try {
-					Thread.sleep(duration);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
+			if (hidDevice != null)
+				synchronized (hidDevice) {
+					hidReport[actualRumbleOffset] = strength;
+					sendHidReport();
+					try {
+						Thread.sleep(duration);
+					} catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					hidReport[actualRumbleOffset] = 0;
+					sendHidReport();
 				}
-				hidReport[actualRumbleOffset] = 0;
-				sendHidReport();
-			}
 		}).start();
 	}
 

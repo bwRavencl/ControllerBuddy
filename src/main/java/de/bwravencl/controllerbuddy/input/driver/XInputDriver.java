@@ -211,15 +211,16 @@ public class XInputDriver extends Driver {
 			return;
 
 		new Thread(() -> {
-			synchronized (xinputDevice) {
-				xinputDevice.setVibration(leftMotor, rightMotor);
-				try {
-					Thread.sleep(duration);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
+			if (xinputDevice != null)
+				synchronized (xinputDevice) {
+					xinputDevice.setVibration(leftMotor, rightMotor);
+					try {
+						Thread.sleep(duration);
+					} catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					xinputDevice.setVibration(0, 0);
 				}
-				xinputDevice.setVibration(0, 0);
-			}
 		}).start();
 	}
 
