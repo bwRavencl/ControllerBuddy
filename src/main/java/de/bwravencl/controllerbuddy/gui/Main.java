@@ -1991,7 +1991,8 @@ public final class Main {
 					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
 					if (selectedController != null && selectedController.jid == jid) {
-						selectedController = null;
+						if (!isMac)
+							selectedController = null;
 						input.deInit(true);
 					}
 				} else if (event == GLFW.GLFW_CONNECTED)
