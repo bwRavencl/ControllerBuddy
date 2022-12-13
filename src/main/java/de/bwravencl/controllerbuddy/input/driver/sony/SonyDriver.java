@@ -381,7 +381,7 @@ public abstract class SonyDriver extends Driver {
 	@Override
 	public String getTooltip(final String title) {
 		if (disconnected || !ready || charging == null || batteryCapacity == null)
-			return title;
+			return super.getTooltip(title);
 
 		return MessageFormat.format(
 				Main.strings.getString(

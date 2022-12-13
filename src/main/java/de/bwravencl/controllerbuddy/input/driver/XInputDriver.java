@@ -47,8 +47,9 @@ public class XInputDriver extends Driver {
 
 		@Override
 		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-				final ControllerInfo controller) {
-			if (Platform.isIntel() && Main.isWindows && isXInputController(controller) && XInputDevice.isAvailable()) {
+				final ControllerInfo selectedController) {
+			if (Platform.isIntel() && Main.isWindows && isXInputController(selectedController)
+					&& XInputDevice.isAvailable()) {
 				final var presentXInputControllers = presentControllers.stream()
 						.filter(XInputDriver::isXInputController).collect(Collectors.toUnmodifiableList());
 				if (presentXInputControllers.size() > 1) {
@@ -58,9 +59,9 @@ public class XInputDriver extends Driver {
 				}
 
 				try {
-					return new XInputDriver(input, controller);
-				} catch (final Throwable t) {
-					log.log(Level.SEVERE, t.getMessage(), t);
+					return new XInputDriver(input, selectedController);
+				} catch (final XInputNotLoadedException e) {
+					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 
@@ -201,7 +202,7 @@ public class XInputDriver extends Driver {
 	@Override
 	public String getTooltip(final String title) {
 		if (batteryLevelString == null)
-			return title;
+			return super.getTooltip(title);
 
 		return MessageFormat.format(Main.strings.getString("BATTERY_TOOLTIP_STRING"), title, batteryLevelString);
 	}

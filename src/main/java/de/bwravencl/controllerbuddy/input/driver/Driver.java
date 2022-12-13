@@ -28,21 +28,21 @@ import io.github.classgraph.ClassGraph;
 
 public abstract class Driver {
 
-	private static List<Class<IDriverBuilder>> driverClasses;
+	private static List<Class<IDriverBuilder>> driverBuilderClasses;
 
 	static {
 		final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo().scan();
 		final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
-		driverClasses = classInfoList.stream().map(classInfo -> classInfo.loadClass(IDriverBuilder.class))
+		driverBuilderClasses = classInfoList.stream().map(classInfo -> classInfo.loadClass(IDriverBuilder.class))
 				.collect(Collectors.toUnmodifiableList());
 	}
 
 	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController) {
 
-		for (final var driverClass : driverClasses)
+		for (final var driverBuilderClass : driverBuilderClasses)
 			try {
-				final var driverBuilder = driverClass.getDeclaredConstructor().newInstance();
+				final var driverBuilder = driverBuilderClass.getDeclaredConstructor().newInstance();
 				final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
 				if (driver != null)
 					return driver;
@@ -69,7 +69,9 @@ public abstract class Driver {
 
 	public abstract boolean getGamepadState(final GLFWGamepadState state);
 
-	public abstract String getTooltip(String title);
+	public String getTooltip(final String title) {
+		return title;
+	}
 
 	public boolean isReady() {
 		return ready;
