@@ -289,6 +289,7 @@ public final class ClientRunMode extends OutputRunMode {
 			if (init()) {
 				hostAddress = InetAddress.getByName(host);
 				clientSocket = new DatagramSocket(port + 1);
+				clientSocket.connect(hostAddress, port);
 				clientSocket.setSoTimeout(timeout);
 
 				while (!Thread.interrupted())
