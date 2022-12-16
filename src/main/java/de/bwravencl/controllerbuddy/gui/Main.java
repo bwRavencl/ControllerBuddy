@@ -1145,6 +1145,8 @@ public final class Main {
 
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 
+	public static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
+
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
 
 	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1000L;
@@ -1844,6 +1846,22 @@ public final class Main {
 				event -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) event.getSource()).getValue()));
 		timeoutPanel.add(timeoutSpinner);
 
+		final var hapticFeedbackPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		globalSettingsPanel.add(hapticFeedbackPanel, settingsPanelGridBagConstraints);
+
+		final var hapticFeedbackLabel = new JLabel(strings.getString("HAPTIC_FEEDBACK_LABEL"));
+		hapticFeedbackLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		hapticFeedbackPanel.add(hapticFeedbackLabel);
+
+		final var hapticFeedbackCheckBox = new JCheckBox(strings.getString("HAPTIC_FEEDBACK_CHECK_BOX"));
+		hapticFeedbackCheckBox.setSelected(preferences.getBoolean(PREFERENCES_HAPTIC_FEEDBACK, true));
+		hapticFeedbackCheckBox.addActionListener(event -> {
+			final var hapticFeedback = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_HAPTIC_FEEDBACK, hapticFeedback);
+			updateTheme();
+		});
+		hapticFeedbackPanel.add(hapticFeedbackCheckBox);
+
 		final var hotSwapPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(hotSwapPanel, settingsPanelGridBagConstraints);
 
@@ -1867,6 +1885,15 @@ public final class Main {
 		darkThemeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
 		darkThemePanel.add(darkThemeLabel);
 
+		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
+		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
+		darkThemeCheckBox.addActionListener(event -> {
+			final var darkTheme = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
+			updateTheme();
+		});
+		darkThemePanel.add(darkThemeCheckBox);
+
 		final var overlayScalingPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		globalSettingsPanel.add(overlayScalingPanel, settingsPanelGridBagConstraints);
 
@@ -1881,15 +1908,6 @@ public final class Main {
 		overlayScalingSpinner.addChangeListener(event -> preferences.putFloat(PREFERENCES_OVERLAY_SCALING,
 				((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
 		overlayScalingPanel.add(overlayScalingSpinner);
-
-		final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
-		darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
-		darkThemeCheckBox.addActionListener(event -> {
-			final var darkTheme = ((JCheckBox) event.getSource()).isSelected();
-			preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
-			updateTheme();
-		});
-		darkThemePanel.add(darkThemeCheckBox);
 
 		if (isWindows) {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);

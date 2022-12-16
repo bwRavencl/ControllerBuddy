@@ -152,6 +152,7 @@ public final class Input {
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
 	private boolean skipAxisInitialization;
 	private boolean initialized;
+	private boolean hapticFeedbackEnabled;
 
 	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;
@@ -261,6 +262,8 @@ public final class Input {
 	}
 
 	public void init() {
+		hapticFeedbackEnabled = main.getPreferences().getBoolean(Main.PREFERENCES_HAPTIC_FEEDBACK, true);
+
 		final var presentControllers = Main.getPresentControllers();
 
 		if (controller != null)
@@ -555,7 +558,7 @@ public final class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && driver != null && prevValue != value)
+		if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
 				driver.rumbleStrong();
 			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
