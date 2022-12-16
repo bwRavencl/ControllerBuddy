@@ -301,6 +301,10 @@ public final class Input {
 		return axisToEndSuspensionTimestampMap.containsKey(axis);
 	}
 
+	public boolean isHapticFeedbackEnabled() {
+		return hapticFeedbackEnabled;
+	}
+
 	public boolean isInitialized() {
 		return initialized;
 	}
