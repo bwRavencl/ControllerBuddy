@@ -195,7 +195,7 @@ For more information check out [this](https://github.com/bwRavencl/ControllerBud
 
 #### Attribution:
 ControllerBuddy uses the following awesome software technologies and libraries:
-- [OpenJDK 18](https://jdk.java.net/18)
+- [OpenJDK](https://openjdk.org)
 - [Apache Batik](https://xmlgraphics.apache.org/batik)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
