@@ -3340,7 +3340,7 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
-			final var descriptionTextField = new JTextField(mode.getDescription(), 20);
+			final var descriptionTextField = new JTextField(mode.getDescription(), 35);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 			if (newModeAdded && i == numModes - 1) {
