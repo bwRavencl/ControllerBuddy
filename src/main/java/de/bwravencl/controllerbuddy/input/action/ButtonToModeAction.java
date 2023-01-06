@@ -161,6 +161,9 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	@Override
 	public String getDescription(final Input input) {
 		final var mode = getMode(input);
+		if (mode == null)
+			return null;
+
 		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
 	}
 
@@ -172,7 +175,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid))
 			return OnScreenKeyboard.onScreenKeyboardMode;
 
-		return null;
+		return Profile.defaultMode;
 	}
 
 	@Override
