@@ -9,7 +9,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 plugins {
 	id 'application'
 	id 'com.github.spotbugs' version '5.0.13'
-	id 'com.diffplug.spotless' version '6.12.1'
+	id 'com.diffplug.spotless' version '6.13.0'
 	id 'com.github.ben-manes.versions' version '0.44.0'
 	id 'org.gradlex.extra-java-module-info' version '1.2'
 	id 'eclipse'
@@ -92,7 +92,7 @@ task cleanGameControllerDB {
 clean.dependsOn cleanModuleInfo, cleanVersion, cleanGameControllerDB
 
 dependencies {
-	def jnaVersion = '5.12.1'
+	def jnaVersion = '5.13.0'
 	def lwjglVersion = '3.3.1'
 
 	def xinputSupport = false;
