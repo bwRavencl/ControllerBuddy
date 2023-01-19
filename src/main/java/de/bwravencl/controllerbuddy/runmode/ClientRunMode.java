@@ -22,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
+import java.io.ObjectInputFilter.Status;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -31,6 +33,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -189,6 +192,11 @@ public final class ClientRunMode extends OutputRunMode {
 				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
 						var dataInputStream = new DataInputStream(byteArrayInputStream);
 						var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+					objectInputStream.setObjectInputFilter(ObjectInputFilter.allowFilter(
+							clazz -> clazz == null || clazz.isArray() || clazz == Number.class || clazz == Integer.class
+									|| clazz == Enum.class || clazz == HashSet.class || clazz == EnumMap.class
+									|| clazz == VirtualAxis.class || clazz == KeyStroke.class,
+							Status.REJECTED));
 
 					final var messageType = MessageType.values()[dataInputStream.readInt()];
 
