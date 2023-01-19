@@ -162,6 +162,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
 
 			ready = true;
+			timestampLastInputReport = System.currentTimeMillis();
 
 			if (controller.jid() != input.getController().jid())
 				return;
@@ -217,6 +218,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	static final int USB_REPORT_LENGTH = 64;
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
 	private static final int LOW_BATTERY_WARNING = 20;
+	private static final long INPUT_REPORT_TIMEOUT = 5000L;
 
 	private static final int hidReadReportPlatformOffset = Main.isMac ? 0 : -1;
 	private static final int hidWriteReportPlatformOffset = Main.isMac ? 0 : 1;
@@ -300,6 +302,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	volatile boolean l1;
 	volatile boolean ps;
 	volatile boolean disconnected;
+	volatile long timestampLastInputReport = Long.MAX_VALUE;
 
 	SonyDriver(final Input input, final ControllerInfo controller) {
 		super(input, controller);
@@ -337,6 +340,13 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	public boolean getGamepadState(final GLFWGamepadState state) {
 		if (disconnected || !ready)
 			return false;
+
+		if (System.currentTimeMillis() - timestampLastInputReport > INPUT_REPORT_TIMEOUT) {
+			getLogger().log(Level.WARNING, Main.assembleControllerLoggingMessage(
+					"No new input report for more than " + INPUT_REPORT_TIMEOUT + " ms from", controller));
+
+			return false;
+		}
 
 		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, mapRawAxisToFloat(lx));
 		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, mapRawAxisToFloat(ly));
@@ -407,7 +417,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				|| (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset
 						: reportLength != USB_REPORT_LENGTH + hidReadReportPlatformOffset)) {
 			getLogger().log(Level.WARNING,
-					"Received unexpected HID input report with ID " + reportId + " and length " + reportLength);
+					Main.assembleControllerLoggingMessage("Received unexpected HID input report with ID " + reportId
+							+ " and length " + reportLength + " from", controller));
 
 			return false;
 		}
@@ -430,7 +441,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			final var receivedCrc32Value = byteBuffer.getInt() & 0xFFFFFFFFL;
 
 			if (receivedCrc32Value != calculatedCrc32Value) {
-				getLogger().log(Level.WARNING, "Received faulty HID input report");
+				getLogger().log(Level.WARNING,
+						Main.assembleControllerLoggingMessage("Received faulty HID input report from", controller));
 				return false;
 			}
 		}
