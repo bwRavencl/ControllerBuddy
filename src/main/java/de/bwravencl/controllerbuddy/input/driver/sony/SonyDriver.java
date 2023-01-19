@@ -92,64 +92,65 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
 			square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
 
-			final var dpadRightData = (byte) (reportData[buttonsOffset + offset] & 0xF);
-			dpadRight = switch (dpadRightData) {
+			final var dpadData = (byte) (reportData[buttonsOffset + offset] & 0xF);
+			switch (dpadData) {
 			case 0 -> {
 				dpadUp = true;
 				dpadDown = false;
 				dpadLeft = false;
-				yield false;
+				dpadRight = false;
 			}
 			case 1 -> {
 				dpadUp = true;
 				dpadDown = false;
 				dpadLeft = false;
-				yield true;
+				dpadRight = true;
 			}
 			case 2 -> {
 				dpadUp = false;
 				dpadDown = false;
 				dpadLeft = false;
-				yield true;
+				dpadRight = true;
+
 			}
 			case 3 -> {
 				dpadUp = false;
 				dpadDown = true;
 				dpadLeft = false;
-				yield true;
+				dpadRight = true;
 			}
 			case 4 -> {
 				dpadUp = false;
 				dpadDown = true;
 				dpadLeft = false;
-				yield false;
+				dpadRight = false;
 			}
 			case 5 -> {
 				dpadUp = false;
 				dpadDown = true;
 				dpadLeft = true;
-				yield false;
+				dpadRight = false;
 			}
 			case 6 -> {
 				dpadUp = false;
 				dpadDown = false;
 				dpadLeft = true;
-				yield false;
+				dpadRight = false;
 			}
 			case 7 -> {
 				dpadUp = true;
 				dpadDown = false;
 				dpadLeft = true;
-				yield false;
+				dpadRight = false;
 			}
 			case 8 -> {
 				dpadUp = false;
 				dpadDown = false;
 				dpadLeft = false;
-				yield false;
+				dpadRight = false;
 			}
-			default -> throw new IllegalArgumentException("Unexpected value: " + dpadRightData);
-			};
+			default -> throw new IllegalArgumentException("Unexpected value: " + dpadData);
+			}
 
 			r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
 			l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
