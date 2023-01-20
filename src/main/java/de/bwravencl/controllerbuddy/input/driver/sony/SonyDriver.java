@@ -68,150 +68,162 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		@Override
 		public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
 				final int reportLength) {
-			if (connection == null) {
-				handleNewConnection(reportLength);
-				reset();
-			}
-
-			if (!isInputReportValid(reportID, reportData, reportLength))
-				return;
-
-			final var offset = connection.offset + hidReadReportPlatformOffset;
-
-			lx = reportData[1 + offset];
-			ly = reportData[2 + offset];
-			rx = reportData[3 + offset];
-			ry = reportData[4 + offset];
-
-			l2 = reportData[getL2Offset() + offset];
-			r2 = reportData[getL2Offset() + 1 + offset];
-
-			final var buttonsOffset = getButtonsOffset();
-			triangle = (reportData[buttonsOffset + offset] & 1 << 7) != 0;
-			circle = (reportData[buttonsOffset + offset] & 1 << 6) != 0;
-			cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
-			square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
-
-			final var dpadData = (byte) (reportData[buttonsOffset + offset] & 0xF);
-			switch (dpadData) {
-			case 0 -> {
-				dpadUp = true;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = false;
-			}
-			case 1 -> {
-				dpadUp = true;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = true;
-			}
-			case 2 -> {
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = true;
-
-			}
-			case 3 -> {
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = false;
-				dpadRight = true;
-			}
-			case 4 -> {
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = false;
-				dpadRight = false;
-			}
-			case 5 -> {
-				dpadUp = false;
-				dpadDown = true;
-				dpadLeft = true;
-				dpadRight = false;
-			}
-			case 6 -> {
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = true;
-				dpadRight = false;
-			}
-			case 7 -> {
-				dpadUp = true;
-				dpadDown = false;
-				dpadLeft = true;
-				dpadRight = false;
-			}
-			case 8 -> {
-				dpadUp = false;
-				dpadDown = false;
-				dpadLeft = false;
-				dpadRight = false;
-			}
-			default -> throw new IllegalArgumentException("Unexpected value: " + dpadData);
-			}
-
-			r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
-			l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
-			options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
-			share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
-			r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
-			l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
-
-			ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
-
-			ready = true;
-			timestampLastInputReport = System.currentTimeMillis();
-
-			if (controller.jid() != input.getController().jid())
-				return;
-
-			handleBattery(reportData, offset);
-
-			final var main = input.getMain();
-			if (!main.isLocalRunning() && !main.isServerRunning())
-				return;
-
-			final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
-
-			final var touchpadOffset = getTouchpadOffset();
-			final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
-			final var down2 = reportData[touchpadOffset + 4 + offset] >> 7 == 0;
-			final var x1 = reportData[touchpadOffset + 1 + offset]
-					+ (reportData[touchpadOffset + 2 + offset] & 0xF) * 255;
-			final var y1 = ((reportData[touchpadOffset + 2 + offset] & 0xF0) >> 4)
-					+ reportData[touchpadOffset + 3 + offset] * 16;
-
-			final var downMouseButtons = input.getDownMouseButtons();
-			if (touchpadButtonDown)
-				synchronized (downMouseButtons) {
-					downMouseButtons.add(down2 ? 2 : 1);
-				}
-			else if (prevTouchpadButtonDown)
-				synchronized (downMouseButtons) {
-					downMouseButtons.clear();
+			try {
+				if (connection == null) {
+					handleNewConnection(reportLength);
+					reset();
 				}
 
-			if (down1 && prevDown1) {
-				final var dX1 = x1 - prevX1;
-				final var dY1 = y1 - prevY1;
+				if (disconnected) {
+					hidDevice.setInputReportListener(null);
+					return;
+				}
 
-				if (!prevDown2 || touchpadButtonDown) {
-					if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-						input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
+				if (!isInputReportValid(reportID, reportData, reportLength))
+					return;
 
-					if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-						input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
-				} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-					input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
+				final var offset = connection.offset + hidReadReportPlatformOffset;
+
+				lx = reportData[1 + offset];
+				ly = reportData[2 + offset];
+				rx = reportData[3 + offset];
+				ry = reportData[4 + offset];
+
+				l2 = reportData[getL2Offset() + offset];
+				r2 = reportData[getL2Offset() + 1 + offset];
+
+				final var buttonsOffset = getButtonsOffset();
+				triangle = (reportData[buttonsOffset + offset] & 1 << 7) != 0;
+				circle = (reportData[buttonsOffset + offset] & 1 << 6) != 0;
+				cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
+				square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
+
+				final var dpadData = (byte) (reportData[buttonsOffset + offset] & 0xF);
+				switch (dpadData) {
+				case 0 -> {
+					dpadUp = true;
+					dpadDown = false;
+					dpadLeft = false;
+					dpadRight = false;
+				}
+				case 1 -> {
+					dpadUp = true;
+					dpadDown = false;
+					dpadLeft = false;
+					dpadRight = true;
+				}
+				case 2 -> {
+					dpadUp = false;
+					dpadDown = false;
+					dpadLeft = false;
+					dpadRight = true;
+
+				}
+				case 3 -> {
+					dpadUp = false;
+					dpadDown = true;
+					dpadLeft = false;
+					dpadRight = true;
+				}
+				case 4 -> {
+					dpadUp = false;
+					dpadDown = true;
+					dpadLeft = false;
+					dpadRight = false;
+				}
+				case 5 -> {
+					dpadUp = false;
+					dpadDown = true;
+					dpadLeft = true;
+					dpadRight = false;
+				}
+				case 6 -> {
+					dpadUp = false;
+					dpadDown = false;
+					dpadLeft = true;
+					dpadRight = false;
+				}
+				case 7 -> {
+					dpadUp = true;
+					dpadDown = false;
+					dpadLeft = true;
+					dpadRight = false;
+				}
+				case 8 -> {
+					dpadUp = false;
+					dpadDown = false;
+					dpadLeft = false;
+					dpadRight = false;
+				}
+				default -> throw new IllegalArgumentException("Unexpected value: " + dpadData);
+				}
+
+				r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
+				l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
+				options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
+				share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
+				r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
+				l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
+
+				ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
+
+				ready = true;
+				timestampLastInputReport = System.currentTimeMillis();
+
+				if (controller.jid() != input.getController().jid())
+					return;
+
+				handleBattery(reportData, offset);
+
+				final var main = input.getMain();
+				if (!main.isLocalRunning() && !main.isServerRunning())
+					return;
+
+				final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
+
+				final var touchpadOffset = getTouchpadOffset();
+				final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
+				final var down2 = reportData[touchpadOffset + 4 + offset] >> 7 == 0;
+				final var x1 = reportData[touchpadOffset + 1 + offset]
+						+ (reportData[touchpadOffset + 2 + offset] & 0xF) * 255;
+				final var y1 = ((reportData[touchpadOffset + 2 + offset] & 0xF0) >> 4)
+						+ reportData[touchpadOffset + 3 + offset] * 16;
+
+				final var downMouseButtons = input.getDownMouseButtons();
+				if (touchpadButtonDown)
+					synchronized (downMouseButtons) {
+						downMouseButtons.add(down2 ? 2 : 1);
+					}
+				else if (prevTouchpadButtonDown)
+					synchronized (downMouseButtons) {
+						downMouseButtons.clear();
+					}
+
+				if (down1 && prevDown1) {
+					final var dX1 = x1 - prevX1;
+					final var dY1 = y1 - prevY1;
+
+					if (!prevDown2 || touchpadButtonDown) {
+						if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+							input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
+
+						if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+							input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
+					} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+						input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
+				}
+
+				prevTouchpadButtonDown = touchpadButtonDown;
+				prevDown1 = down1;
+				prevDown2 = down2;
+				prevX1 = x1;
+				prevY1 = y1;
+			} catch (final Throwable t) {
+				getLogger().log(Level.SEVERE, t.getMessage(), t);
+
+				hidDevice.setInputReportListener(null);
+				disconnected = true;
 			}
-
-			prevTouchpadButtonDown = touchpadButtonDown;
-			prevDown1 = down1;
-			prevDown2 = down2;
-			prevX1 = x1;
-			prevY1 = y1;
 		}
 	}
 
@@ -320,16 +332,14 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		if (!disconnected)
 			reset();
 
-		if (hidDevice != null) {
-			synchronized (hidDevice) {
-				try {
-					hidDevice.close();
-				} catch (final IllegalStateException e) {
-				}
+		synchronized (hidDevice) {
+			try {
+				hidDevice.close();
+			} catch (final IllegalStateException e) {
 			}
-
-			hidDevice = null;
 		}
+
+		hidDevice = null;
 	}
 
 	abstract int getButtonsOffset();
@@ -521,7 +531,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	void setBatteryCapacity(final int batteryCapacity) {
-		if (this.batteryCapacity != null && this.batteryCapacity == batteryCapacity)
+		if (disconnected || !ready || this.batteryCapacity != null && this.batteryCapacity == batteryCapacity)
 			return;
 
 		this.batteryCapacity = batteryCapacity;
@@ -542,6 +552,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	void setCharging(final boolean charging) {
+		if (disconnected || !ready)
+			return;
+
 		final var firstCall = this.charging == null;
 
 		if (!firstCall && this.charging == charging)
@@ -561,7 +574,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	void updateLightbarColor() {
-		if (hidDevice == null || connection == null || hidReport == null || charging == null || batteryCapacity == null)
+		if (disconnected || hidDevice == null || connection == null || hidReport == null || charging == null
+				|| batteryCapacity == null)
 			return;
 
 		synchronized (hidDevice) {
