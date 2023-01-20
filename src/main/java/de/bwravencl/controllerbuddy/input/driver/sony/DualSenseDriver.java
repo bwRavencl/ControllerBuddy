@@ -79,9 +79,9 @@ public final class DualSenseDriver extends SonyDriver {
 			hidDevice.setInputReportListener(new SonyInputReportListener() {
 
 				@Override
-				void handleBattery(final byte[] reportData) {
-					final var chargingStatus = (reportData[53 + connection.offset()] & 0xF0) >> 4;
-					final var batteryData = reportData[53 + connection.offset()] & 0xF;
+				void handleBattery(final byte[] reportData, final int offset) {
+					final var chargingStatus = (reportData[53 + offset] & 0xF0) >> 4;
+					final var batteryData = reportData[53 + offset] & 0xF;
 
 					final int batteryCapacity;
 					final var charging = switch (chargingStatus) {

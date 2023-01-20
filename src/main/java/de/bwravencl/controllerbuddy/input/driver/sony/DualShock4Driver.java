@@ -91,11 +91,9 @@ public final class DualShock4Driver extends SonyDriver {
 			hidDevice.setInputReportListener(new SonyInputReportListener() {
 
 				@Override
-				void handleBattery(final byte[] reportData) {
-					final var cableConnected = (reportData[30 + DualShock4Driver.this.connection.offset()] >> 4
-							& 0x1) != 0;
-
-					final var batteryData = reportData[30 + DualShock4Driver.this.connection.offset()] & 0xF;
+				void handleBattery(final byte[] reportData, final int offset) {
+					final var cableConnected = (reportData[30 + offset] >> 4 & 0x1) != 0;
+					final var batteryData = reportData[30 + offset] & 0xF;
 					final int batteryCapacity;
 					final boolean charging;
 					if (cableConnected) {

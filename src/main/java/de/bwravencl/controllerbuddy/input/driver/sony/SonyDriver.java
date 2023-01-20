@@ -61,7 +61,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		private int prevX1;
 		private int prevY1;
 
-		abstract void handleBattery(byte[] reportData);
+		abstract void handleBattery(byte[] reportData, int offset);
 
 		abstract void handleNewConnection(int reportLength);
 
@@ -167,7 +167,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			if (controller.jid() != input.getController().jid())
 				return;
 
-			handleBattery(reportData);
+			handleBattery(reportData, offset);
 
 			final var main = input.getMain();
 			if (!main.isLocalRunning() && !main.isServerRunning())
@@ -220,7 +220,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final long INPUT_REPORT_TIMEOUT = 5000L;
 
-	private static final int hidReadReportPlatformOffset = Main.isMac ? 0 : -1;
+	static final int hidReadReportPlatformOffset = Main.isMac ? 0 : -1;
 	private static final int hidWriteReportPlatformOffset = Main.isMac ? 0 : 1;
 
 	static HidDeviceInfo getHidDeviceInfo(final List<ControllerInfo> presentControllers,
