@@ -29,16 +29,18 @@ public abstract class Driver {
 	private static List<? extends IDriverBuilder> driverBuilders;
 
 	static {
-		final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo().scan();
-		final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
-		driverBuilders = classInfoList.stream().map(classInfo -> {
-			try {
-				return classInfo.loadClass(IDriverBuilder.class).getDeclaredConstructor().newInstance();
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				throw new RuntimeException(e);
-			}
-		}).sorted().collect(Collectors.toUnmodifiableList());
+		try (final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo()
+				.scan()) {
+			final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
+			driverBuilders = classInfoList.stream().map(classInfo -> {
+				try {
+					return classInfo.loadClass(IDriverBuilder.class).getDeclaredConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					throw new RuntimeException(e);
+				}
+			}).sorted().collect(Collectors.toUnmodifiableList());
+		}
 	}
 
 	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
