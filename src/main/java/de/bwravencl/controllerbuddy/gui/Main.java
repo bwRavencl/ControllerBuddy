@@ -98,6 +98,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -131,6 +132,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -184,6 +186,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
@@ -1065,7 +1068,7 @@ public final class Main {
 
 	private static final int DIALOG_BOUNDS_Y = 100;
 
-	private static final int DIALOG_BOUNDS_WIDTH = 930;
+	private static final int DIALOG_BOUNDS_WIDTH = 935;
 
 	private static final int DIALOG_BOUNDS_HEIGHT = 655;
 
@@ -1091,9 +1094,9 @@ public final class Main {
 
 	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
 
-	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
+	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 
-	private static final Insets LIST_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
+	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 
@@ -1148,6 +1151,12 @@ public final class Main {
 	public static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
+
+	public static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
+
+	public static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
+
+	public static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
 
 	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1000L;
 
@@ -1209,6 +1218,16 @@ public final class Main {
 		} catch (final UnsupportedLookAndFeelException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
+		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+
+		settingsPanel.add(Box.createGlue(), constraints);
+
+		constraints.gridx = 1;
+		settingsPanel.add(Box.createGlue(), constraints);
 	}
 
 	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
@@ -1531,6 +1550,10 @@ public final class Main {
 
 	private final JPanel globalSettingsPanel;
 
+	private final JPanel sonyCursorSensitivityPanel;
+
+	private final JPanel sonyScrollSensitivityPanel;
+
 	private JScrollPane indicatorsScrollPane;
 
 	private JPanel indicatorsListPanel;
@@ -1570,10 +1593,6 @@ public final class Main {
 	private JPanel indicatorPanel;
 
 	private Rectangle prevTotalDisplayBounds;
-
-	private final GridBagConstraints settingsPanelGridBagConstraints = new GridBagConstraints(0,
-			GridBagConstraints.RELATIVE, 1, 1, 0d, 0d, GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-			new Insets(0, 0, 0, 0), 0, 5);
 
 	private volatile JFrame overlayFrame;
 
@@ -1748,8 +1767,16 @@ public final class Main {
 		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
 		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
 
+		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
+
+		final var inputSettingsPanel = new JPanel();
+		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
+		inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_SETTINGS_BORDER_TITLE")));
+		globalSettingsPanel.add(inputSettingsPanel, constraints);
+
 		final var pollIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(pollIntervalPanel, settingsPanelGridBagConstraints);
+		inputSettingsPanel.add(pollIntervalPanel);
 
 		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
 		pollIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1765,89 +1792,8 @@ public final class Main {
 				(int) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
-		if (isWindows) {
-			final var vJoyDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			globalSettingsPanel.add(vJoyDirectoryPanel, settingsPanelGridBagConstraints);
-
-			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
-			vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
-
-			this.vJoyDirectoryLabel = new JLabel(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
-			vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
-
-			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
-			vJoyDirectoryPanel.add(vJoyDirectoryButton);
-
-			final var vJoyDevicePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			globalSettingsPanel.add(vJoyDevicePanel, settingsPanelGridBagConstraints);
-
-			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
-			vJoyDeviceLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			vJoyDevicePanel.add(vJoyDeviceLabel);
-
-			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
-					preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE), 1, 16, 1));
-			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
-			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
-			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
-					(int) ((JSpinner) event.getSource()).getValue()));
-			vJoyDevicePanel.add(vJoyDeviceSpinner);
-		}
-
-		if (isWindows || isLinux) {
-			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			globalSettingsPanel.add(hostPanel, settingsPanelGridBagConstraints);
-
-			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
-			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			hostPanel.add(hostLabel);
-
-			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST), 15);
-			hostTextField.setCaretPosition(0);
-			final var setHostAction = new SetHostAction(hostTextField);
-			hostTextField.addActionListener(setHostAction);
-			hostTextField.addFocusListener(setHostAction);
-			hostPanel.add(hostTextField);
-		}
-
-		final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(portPanel, settingsPanelGridBagConstraints);
-
-		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
-		portLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		portPanel.add(portLabel);
-
-		final var portSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT), 1024, 65535, 1));
-		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
-		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		portSpinner.setEditor(portSpinnerEditor);
-		portSpinner.addChangeListener(
-				event -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) event.getSource()).getValue()));
-		portPanel.add(portSpinner);
-
-		final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(timeoutPanel, settingsPanelGridBagConstraints);
-
-		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
-		timeoutLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		timeoutPanel.add(timeoutLabel);
-
-		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
-				preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT), 10, 60000, 1));
-		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
-				"# " + strings.getString("MILLISECOND_SYMBOL"));
-		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		timeoutSpinner.setEditor(timeoutSpinnerEditor);
-		timeoutSpinner.addChangeListener(
-				event -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) event.getSource()).getValue()));
-		timeoutPanel.add(timeoutSpinner);
-
 		final var hapticFeedbackPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(hapticFeedbackPanel, settingsPanelGridBagConstraints);
+		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
 
 		final var hapticFeedbackLabel = new JLabel(strings.getString("HAPTIC_FEEDBACK_LABEL"));
 		hapticFeedbackLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1863,7 +1809,7 @@ public final class Main {
 		hapticFeedbackPanel.add(hapticFeedbackCheckBox);
 
 		final var hotSwapPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(hotSwapPanel, settingsPanelGridBagConstraints);
+		inputSettingsPanel.add(hotSwapPanel, constraints);
 
 		final var hotSwappingLabel = new JLabel(strings.getString("HOT_SWAPPING_LABEL"));
 		hotSwappingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1878,8 +1824,105 @@ public final class Main {
 		hotSwapPanel.add(hotSwapButtonComboBox);
 		hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
 
+		if (isWindows) {
+			final var vJoySettingsPanel = new JPanel();
+			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.PAGE_AXIS));
+			vJoySettingsPanel.setBorder(new TitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
+			globalSettingsPanel.add(vJoySettingsPanel, constraints);
+
+			final var vJoyDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			vJoySettingsPanel.add(vJoyDirectoryPanel);
+
+			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
+			vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
+
+			this.vJoyDirectoryLabel = new JLabel(
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
+			vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
+
+			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
+			vJoyDirectoryPanel.add(vJoyDirectoryButton);
+
+			final var vJoyDevicePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			vJoySettingsPanel.add(vJoyDevicePanel);
+
+			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
+			vJoyDeviceLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			vJoyDevicePanel.add(vJoyDeviceLabel);
+
+			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
+					preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE), 1, 16, 1));
+			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
+			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
+			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
+					(int) ((JSpinner) event.getSource()).getValue()));
+			vJoyDevicePanel.add(vJoyDeviceSpinner);
+		}
+
+		final var networkSettingsPanel = new JPanel();
+		networkSettingsPanel.setLayout(new BoxLayout(networkSettingsPanel, BoxLayout.PAGE_AXIS));
+		networkSettingsPanel.setBorder(new TitledBorder(strings.getString("NETWORK_SETTINGS_BORDER_TITLE")));
+		globalSettingsPanel.add(networkSettingsPanel, constraints);
+
+		if (isWindows || isLinux) {
+			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			networkSettingsPanel.add(hostPanel);
+
+			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
+			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			hostPanel.add(hostLabel);
+
+			hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST), 15);
+			hostTextField.setCaretPosition(0);
+			final var setHostAction = new SetHostAction(hostTextField);
+			hostTextField.addActionListener(setHostAction);
+			hostTextField.addFocusListener(setHostAction);
+			hostPanel.add(hostTextField);
+		}
+
+		final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		networkSettingsPanel.add(portPanel, constraints);
+
+		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
+		portLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		portPanel.add(portLabel);
+
+		final var portSpinner = new JSpinner(new SpinnerNumberModel(
+				preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT), 1024, 65535, 1));
+		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
+		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		portSpinner.setEditor(portSpinnerEditor);
+		portSpinner.addChangeListener(
+				event -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) event.getSource()).getValue()));
+		portPanel.add(portSpinner);
+
+		final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		networkSettingsPanel.add(timeoutPanel, constraints);
+
+		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
+		timeoutLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		timeoutPanel.add(timeoutLabel);
+
+		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
+				preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT), 10, 60000, 1));
+		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
+				"# " + strings.getString("MILLISECOND_SYMBOL"));
+		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		timeoutSpinner.setEditor(timeoutSpinnerEditor);
+		timeoutSpinner.addChangeListener(
+				event -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) event.getSource()).getValue()));
+		timeoutPanel.add(timeoutSpinner);
+
+		final var appearanceSettingsPanel = new JPanel();
+		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
+		appearanceSettingsPanel.setBorder(new TitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+		constraints.gridx = 1;
+		globalSettingsPanel.add(appearanceSettingsPanel, constraints);
+
 		final var darkThemePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(darkThemePanel, settingsPanelGridBagConstraints);
+		appearanceSettingsPanel.add(darkThemePanel);
 
 		final var darkThemeLabel = new JLabel(strings.getString("DARK_THEME_LABEL"));
 		darkThemeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1895,7 +1938,7 @@ public final class Main {
 		darkThemePanel.add(darkThemeCheckBox);
 
 		final var overlayScalingPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		globalSettingsPanel.add(overlayScalingPanel, settingsPanelGridBagConstraints);
+		appearanceSettingsPanel.add(overlayScalingPanel);
 
 		final var overlayScalingLabel = new JLabel(strings.getString("OVERLAY_SCALING_LABEL"));
 		overlayScalingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1911,7 +1954,7 @@ public final class Main {
 
 		if (isWindows) {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			globalSettingsPanel.add(preventPowerSaveModeSettingsPanel, settingsPanelGridBagConstraints);
+			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel, constraints);
 
 			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
 			preventPowerSaveModeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -1927,10 +1970,67 @@ public final class Main {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
-		updateTitleAndTooltip();
+		final var sonyControllersSettingsPanel = new JPanel();
+		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.PAGE_AXIS));
+		sonyControllersSettingsPanel
+				.setBorder(new TitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
+		globalSettingsPanel.add(sonyControllersSettingsPanel, constraints);
 
-		globalSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		final var sonyTouchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		sonyControllersSettingsPanel.add(sonyTouchpadPanel);
+
+		final var sonyEnableTouchpadLabel = new JLabel(strings.getString("SONY_TOUCHPAD_LABEL"));
+		sonyEnableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		sonyTouchpadPanel.add(sonyEnableTouchpadLabel);
+
+		sonyCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		sonyControllersSettingsPanel.add(sonyCursorSensitivityPanel);
+
+		final var sonyCursorSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_CURSOR_SENSITIVITY"));
+		sonyCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		sonyCursorSensitivityPanel.add(sonyCursorSensitivityLabel);
+
+		final var cursorSensitivitySpinner = new JSpinner(
+				new SpinnerNumberModel(getSonyCursorSensitivity(), .1, 5d, .05));
+		final var cursorSensitivitySpinnerEditor = new JSpinner.NumberEditor(cursorSensitivitySpinner);
+		((DefaultFormatter) cursorSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		cursorSensitivitySpinner.setEditor(cursorSensitivitySpinnerEditor);
+		cursorSensitivitySpinner
+				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
+						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
+		sonyCursorSensitivityPanel.add(cursorSensitivitySpinner);
+
+		sonyScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		sonyControllersSettingsPanel.add(sonyScrollSensitivityPanel);
+
+		final var sonyScrollSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_SCROLL_SENSITIVITY"));
+		sonyScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		sonyScrollSensitivityPanel.add(sonyScrollSensitivityLabel);
+
+		final var sonyScrollSensitivitySpinner = new JSpinner(
+				new SpinnerNumberModel(getSonyScrollSensitivity(), .1, 1d, .05));
+		final var scrollSensitivitySpinnerEditor = new JSpinner.NumberEditor(sonyScrollSensitivitySpinner);
+		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		sonyScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
+		sonyScrollSensitivitySpinner
+				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
+						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
+		sonyScrollSensitivityPanel.add(sonyScrollSensitivitySpinner);
+
+		final var sonyTouchpadEnabledCheckBox = new JCheckBox(strings.getString("SONY_TOUCHPAD_ENABLED_CHECK_BOX"));
+		sonyTouchpadEnabledCheckBox.setSelected(isSonyTouchpadEnabled());
+		sonyTouchpadEnabledCheckBox.addActionListener(event -> {
+			final var enableTouchpad = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, enableTouchpad);
+
+			updateSonyTouchpadSettings();
+		});
+		sonyTouchpadPanel.add(sonyTouchpadEnabledCheckBox);
+
+		addGlueToSettingsPanel(globalSettingsPanel);
+
+		updateSonyTouchpadSettings();
+		updateTitleAndTooltip();
 
 		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
@@ -2264,6 +2364,16 @@ public final class Main {
 				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
 	}
 
+	public float getSonyCursorSensitivity() {
+		return preferences.getFloat(Main.PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
+				SonyDriver.DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY);
+	}
+
+	public float getSonyScrollSensitivity() {
+		return preferences.getFloat(Main.PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
+				SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+	}
+
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values())
@@ -2461,6 +2571,10 @@ public final class Main {
 
 	public boolean isServerRunning() {
 		return taskRunner.isTaskOfTypeRunning(ServerRunMode.class);
+	}
+
+	public boolean isSonyTouchpadEnabled() {
+		return preferences.getBoolean(Main.PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs) {
@@ -3330,7 +3444,7 @@ public final class Main {
 			final var modePanel = new JPanel(new GridBagLayout());
 			modePanel.setBorder(LIST_ITEM_BORDER);
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
 
 			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
 			modeNoLabel.setPreferredSize(new Dimension(100, 15));
@@ -3436,7 +3550,7 @@ public final class Main {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, LIST_ITEM_INSETS, 0, 0));
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
 
 			final var virtualAxisLabel = new JLabel(
 					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
@@ -3510,8 +3624,16 @@ public final class Main {
 		profileSettingsPanel.removeAll();
 		showVrOverlayCheckBox = null;
 
+		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
+
+		final var inputSettingsPanel = new JPanel();
+		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
+		inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_SETTINGS_BORDER_TITLE")));
+		profileSettingsPanel.add(inputSettingsPanel, constraints);
+
 		final var keyRepeatIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		profileSettingsPanel.add(keyRepeatIntervalPanel, settingsPanelGridBagConstraints);
+		inputSettingsPanel.add(keyRepeatIntervalPanel, constraints);
 
 		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
 		keyRepeatIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -3532,8 +3654,14 @@ public final class Main {
 		});
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
 
+		final var appearanceSettingsPanel = new JPanel();
+		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
+		appearanceSettingsPanel.setBorder(new TitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+		constraints.gridx = 1;
+		profileSettingsPanel.add(appearanceSettingsPanel, constraints);
+
 		final var overlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		profileSettingsPanel.add(overlaySettingsPanel, settingsPanelGridBagConstraints);
+		appearanceSettingsPanel.add(overlaySettingsPanel, constraints);
 
 		final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
 		overlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -3557,7 +3685,7 @@ public final class Main {
 		overlaySettingsPanel.add(showOverlayCheckBox);
 
 		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		profileSettingsPanel.add(vrOverlaySettingsPanel, settingsPanelGridBagConstraints);
+		appearanceSettingsPanel.add(vrOverlaySettingsPanel, constraints);
 
 		final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
 		vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
@@ -3572,8 +3700,14 @@ public final class Main {
 		});
 		vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
 
-		profileSettingsPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		addGlueToSettingsPanel(profileSettingsPanel);
+	}
+
+	private void updateSonyTouchpadSettings() {
+		final var enableTouchpad = isSonyTouchpadEnabled();
+
+		GuiUtils.setEnabledRecursive(sonyCursorSensitivityPanel, enableTouchpad);
+		GuiUtils.setEnabledRecursive(sonyScrollSensitivityPanel, enableTouchpad);
 	}
 
 	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,

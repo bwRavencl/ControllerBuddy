@@ -52,14 +52,30 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	abstract class SonyInputReportListener implements InputReportListener {
 
 		private static final int TOUCHPAD_MAX_DELTA = 150;
-		private static final float TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
-		private static final float TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
+
+		private final boolean touchpadEnabled;
+		private final float touchpadCursorSensitivity;
+		private final float touchpadScrollSensitivity;
 
 		private boolean prevTouchpadButtonDown;
 		private boolean prevDown1;
 		private boolean prevDown2;
 		private int prevX1;
 		private int prevY1;
+
+		public SonyInputReportListener() {
+			final var main = input.getMain();
+
+			touchpadEnabled = main.isSonyTouchpadEnabled();
+
+			if (touchpadEnabled) {
+				touchpadCursorSensitivity = main.getSonyCursorSensitivity();
+				touchpadScrollSensitivity = main.getSonyScrollSensitivity();
+			} else {
+				touchpadCursorSensitivity = 0f;
+				touchpadScrollSensitivity = 0f;
+			}
+		}
 
 		abstract void handleBattery(byte[] reportData, int offset);
 
@@ -176,7 +192,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				handleBattery(reportData, offset);
 
 				final var main = input.getMain();
-				if (!main.isLocalRunning() && !main.isServerRunning())
+				if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning())
 					return;
 
 				final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
@@ -205,12 +221,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 					if (!prevDown2 || touchpadButtonDown) {
 						if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaX((int) (dX1 * TOUCHPAD_CURSOR_SENSITIVITY));
+							input.setCursorDeltaX((int) (dX1 * touchpadCursorSensitivity));
 
 						if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaY((int) (dY1 * TOUCHPAD_CURSOR_SENSITIVITY));
+							input.setCursorDeltaY((int) (dY1 * touchpadCursorSensitivity));
 					} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-						input.setScrollClicks((int) (-dY1 * TOUCHPAD_SCROLL_SENSITIVITY));
+						input.setScrollClicks((int) (-dY1 * touchpadScrollSensitivity));
 				}
 
 				prevTouchpadButtonDown = touchpadButtonDown;
@@ -226,6 +242,10 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			}
 		}
 	}
+
+	public static final float DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
+
+	public static final float DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
 
 	static final int USB_REPORT_LENGTH = 64;
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
