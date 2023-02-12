@@ -31,7 +31,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 	@Override
 	Comparable<Float> getMaximum() {
-		return 5f;
+		return 10f;
 	}
 
 	@Override

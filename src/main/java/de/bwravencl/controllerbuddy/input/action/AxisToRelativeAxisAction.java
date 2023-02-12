@@ -22,18 +22,13 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
 @Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	private static final float DEFAULT_EXPONENT = 2f;
 	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
-
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 200)
-	private float exponent = DEFAULT_EXPONENT;
 
 	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
@@ -76,10 +71,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 		return detentValue;
 	}
 
-	public float getExponent() {
-		return exponent;
-	}
-
 	public float getMaxRelativeSpeed() {
 		return maxRelativeSpeed;
 	}
@@ -90,10 +81,6 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	public void setDetentValue(final Float detentValue) {
 		this.detentValue = detentValue;
-	}
-
-	public void setExponent(final float exponent) {
-		this.exponent = exponent;
 	}
 
 	public void setHapticFeedback(final boolean hapticFeedback) {
