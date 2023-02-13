@@ -348,11 +348,19 @@ task generateVersion {
 	}
 }
 
+tasks.eclipseClasspath.dependsOn generateModuleInfo, generateVersion
+
 task copyGameControllerDB(type: Copy) {
 	description = "Places a copy of the \'gamecontrollerdb.txt\' file from the SDL_GameControllerDB Git Submodule folder into the \'$resourcesDir' directory."
 	from 'SDL_GameControllerDB/gamecontrollerdb.txt'
 	into resourcesDir
 }
+
+tasks.processResources.dependsOn copyGameControllerDB
+tasks.spotlessGroovyGradleCheck.dependsOn copyGameControllerDB
+tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
+tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
+tasks.spotlessXml.dependsOn copyGameControllerDB
 
 task cleanJdtUiPrefs {
 	description = "Removes the \'$jdtUiPrefsFile\' settings file."
@@ -360,8 +368,6 @@ task cleanJdtUiPrefs {
 }
 
 tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
-
-tasks.eclipseClasspath.dependsOn generateModuleInfo, generateVersion, copyGameControllerDB
 
 def formatterProfile() {
 	return new XmlParser().parse(file(spotlessFormatFile)).profile[0]
@@ -578,7 +584,7 @@ tasks.eclipse.doLast {
 }
 
 compileJava {
-	dependsOn generateModuleInfo, generateVersion, copyGameControllerDB
+	dependsOn generateModuleInfo, generateVersion
 	source generateVersion.outputs.files, sourceSets.main.java
 	options.compilerArgs += ['-Xlint:deprecation']
 }
@@ -632,7 +638,7 @@ task jpackage(type: Exec) {
 		'--module-path',
 		libsDir,
 		'--module',
-		"${project.application.mainModule.get()}/$project.application.mainClassName",
+		"${project.application.mainModule.get()}/${project.application.mainClass.get()}",
 		'--app-version',
 		versionWithoutHash,
 		'--icon',
@@ -654,7 +660,7 @@ task distTar(type: Tar, overwrite: true) {
 	dependsOn jpackage
 	from tmpDir
 	include "$project.name/**"
-	appendix distAppendix
+	archiveAppendix = distAppendix
 	compression Compression.GZIP
 }
 
@@ -662,7 +668,7 @@ task distZip(type: Zip, overwrite: true) {
 	dependsOn jpackage
 	from tmpDir
 	include "$project.name/**"
-	appendix distAppendix
+	archiveAppendix = distAppendix
 }
 
 task installDist(type: Sync, overwrite: true) {
