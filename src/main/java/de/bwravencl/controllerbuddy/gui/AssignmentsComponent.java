@@ -101,14 +101,14 @@ final class AssignmentsComponent extends JScrollPane {
 					throw new IllegalArgumentException();
 			} else if (peer != null)
 				switch (component.index) {
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> setAction(
-						new EditComponentAction(main, Main.strings.getString("LEFT_STICK_X_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> setAction(
-						new EditComponentAction(main, Main.strings.getString("LEFT_STICK_Y_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> setAction(
-						new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_X_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> setAction(
-						new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_Y_AXIS"), component));
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X ->
+					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_STICK_X_AXIS"), component));
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y ->
+					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_STICK_Y_AXIS"), component));
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X ->
+					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_X_AXIS"), component));
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y ->
+					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_Y_AXIS"), component));
 				default -> throw new IllegalArgumentException();
 				}
 

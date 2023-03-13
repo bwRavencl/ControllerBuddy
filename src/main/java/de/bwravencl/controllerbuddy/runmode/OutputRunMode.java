@@ -413,8 +413,8 @@ public abstract class OutputRunMode extends RunMode {
 			switch (button) {
 			case 1 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP);
 			case 2 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
-			case 3 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN)
-					: new DWORD(MOUSEEVENTF_MIDDLEUP);
+			case 3 ->
+				input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
 			default -> throw new IllegalArgumentException();
 			}
 
