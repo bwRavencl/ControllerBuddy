@@ -285,7 +285,6 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, versionFile
-		encoding 'Cp1252'
 		eclipse().configFile spotlessFormatFile
 		importOrderFile spotlessImportOrderFile
 		licenseHeader '''\
