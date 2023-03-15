@@ -356,6 +356,7 @@ task copyGameControllerDB(type: Copy) {
 	into resourcesDir
 }
 
+tasks.eclipse.dependsOn copyGameControllerDB
 tasks.processResources.dependsOn copyGameControllerDB
 tasks.spotlessGroovyGradleCheck.dependsOn copyGameControllerDB
 tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
