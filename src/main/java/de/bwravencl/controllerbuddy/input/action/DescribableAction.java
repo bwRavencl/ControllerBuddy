@@ -46,7 +46,7 @@ public abstract class DescribableAction<V extends Number> implements IAction<V> 
 		return description == null || description.length() < 1;
 	}
 
-	public void setDescription(final String decription) {
-		this.description = decription;
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 }
