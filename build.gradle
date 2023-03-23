@@ -18,8 +18,8 @@ plugins {
 
 version = org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')
 
-sourceCompatibility = 19
-targetCompatibility = 19
+sourceCompatibility = 20
+targetCompatibility = 20
 
 archivesBaseName = applicationName.toLowerCase()
 
