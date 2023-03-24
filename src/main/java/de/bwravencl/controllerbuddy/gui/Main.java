@@ -88,6 +88,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -1158,9 +1161,9 @@ public final class Main {
 
 	public static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
 
-	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1000L;
+	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1L;
 
-	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10000L;
+	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10L;
 
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
@@ -1558,7 +1561,7 @@ public final class Main {
 
 	private JPanel indicatorsListPanel;
 
-	private TimerTask overlayTimerTask;
+	private ScheduledExecutorService overlayExecutorService;
 
 	private JLabel vJoyDirectoryLabel;
 
@@ -3189,45 +3192,41 @@ public final class Main {
 	private void startOverlayTimerTask() {
 		stopOverlayTimerTask();
 
-		overlayTimerTask = new TimerTask() {
+		overlayExecutorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
 
-			@Override
-			public void run() {
-				EventQueue.invokeLater(() -> {
-					if (!isModalDialogShowing()) {
-						if (overlayFrame != null)
-							GuiUtils.makeWindowTopmost(overlayFrame);
+		overlayExecutorService.scheduleAtFixedRate(() -> {
+			EventQueue.invokeLater(() -> {
+				if (!isModalDialogShowing()) {
+					if (overlayFrame != null)
+						GuiUtils.makeWindowTopmost(overlayFrame);
 
-						if (onScreenKeyboard.isVisible())
-							GuiUtils.makeWindowTopmost(onScreenKeyboard);
+					if (onScreenKeyboard.isVisible())
+						GuiUtils.makeWindowTopmost(onScreenKeyboard);
+				}
+
+				final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+				if (!totalDisplayBounds.equals(prevTotalDisplayBounds)) {
+					prevTotalDisplayBounds = totalDisplayBounds;
+
+					if (overlayFrame != null && overlayFrameDragListener != null
+							&& !overlayFrameDragListener.isDragging()) {
+						deInitOverlay();
+						initOverlay();
 					}
 
-					final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-					if (!totalDisplayBounds.equals(prevTotalDisplayBounds)) {
-						prevTotalDisplayBounds = totalDisplayBounds;
+					onScreenKeyboard.updateLocation();
+				}
 
-						if (overlayFrame != null && overlayFrameDragListener != null
-								&& !overlayFrameDragListener.isDragging()) {
-							deInitOverlay();
-							initOverlay();
-						}
+				if (isWindows)
+					repaintOnScreenKeyboardAndOverlay();
+				else if (isLinux && currentModeLabel != null) {
+					currentModeLabel.validate();
+					currentModeLabel.repaint();
+					updateOverlayAxisIndicators(true);
+				}
 
-						onScreenKeyboard.updateLocation();
-					}
-
-					if (isWindows)
-						repaintOnScreenKeyboardAndOverlay();
-					else if (isLinux && currentModeLabel != null) {
-						currentModeLabel.validate();
-						currentModeLabel.repaint();
-						updateOverlayAxisIndicators(true);
-					}
-
-				});
-			}
-		};
-
-		timer.schedule(overlayTimerTask, OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL);
+			});
+		}, OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS);
 	}
 
 	private void startServer() {
@@ -3298,8 +3297,17 @@ public final class Main {
 	}
 
 	private void stopOverlayTimerTask() {
-		if (overlayTimerTask != null)
-			overlayTimerTask.cancel();
+		if (overlayExecutorService != null) {
+			overlayExecutorService.shutdown();
+
+			try {
+				overlayExecutorService.awaitTermination(2L, TimeUnit.SECONDS);
+			} catch (final InterruptedException e) {
+				Thread.currentThread().interrupt();
+			} finally {
+				overlayExecutorService = null;
+			}
+		}
 	}
 
 	private void stopServer(final boolean initiateStop, final boolean resetLastRunModeType) {

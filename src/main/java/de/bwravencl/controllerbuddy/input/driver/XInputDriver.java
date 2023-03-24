@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -84,6 +86,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 	}
 
 	private volatile XInputDevice xinputDevice;
+	private final Lock xinputDeviceLock = new ReentrantLock();
 	private ScheduledExecutorService executorService;
 	private volatile String batteryLevelString;
 
@@ -115,7 +118,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 		}
 
 		if (batteryLevelAvailable) {
-			executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
 			executorService.scheduleAtFixedRate(() -> {
 				EventQueue.invokeLater(() -> {
 					if (controller.jid() != input.getController().jid())
@@ -152,14 +155,19 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 	public void deInit(final boolean disconnected) {
 		super.deInit(disconnected);
 
-		if (executorService != null)
-			try {
-				executorService.awaitTermination(2L, TimeUnit.SECONDS);
-			} catch (final InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
+		xinputDeviceLock.lock();
+		try {
+			if (executorService != null)
+				try {
+					executorService.awaitTermination(2L, TimeUnit.SECONDS);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
 
-		xinputDevice = null;
+			xinputDevice = null;
+		} finally {
+			xinputDeviceLock.unlock();
+		}
 	}
 
 	@Override
@@ -211,18 +219,23 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 		if (xinputDevice == null)
 			return;
 
-		new Thread(() -> {
-			if (xinputDevice != null)
-				synchronized (xinputDevice) {
-					xinputDevice.setVibration(leftMotor, rightMotor);
-					try {
-						Thread.sleep(duration);
-					} catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-					xinputDevice.setVibration(0, 0);
+		Thread.startVirtualThread(() -> {
+			xinputDeviceLock.lock();
+			try {
+				if (xinputDevice == null)
+					return;
+
+				xinputDevice.setVibration(leftMotor, rightMotor);
+				try {
+					Thread.sleep(duration);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
 				}
-		}).start();
+				xinputDevice.setVibration(0, 0);
+			} finally {
+				xinputDeviceLock.unlock();
+			}
+		});
 	}
 
 	@Override

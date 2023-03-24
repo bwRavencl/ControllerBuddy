@@ -41,6 +41,8 @@ ext {
 	tmpDir = "$buildDir/tmp"
 	runtimeDir = "$tmpDir/runtime"
 
+	enablePreviewJvmArg = '--enable-preview'
+
 	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
 		"--add-opens=$linuxAddOpensValue"
@@ -586,12 +588,17 @@ tasks.eclipse.doLast {
 compileJava {
 	dependsOn generateModuleInfo, generateVersion
 	source generateVersion.outputs.files, sourceSets.main.java
-	options.compilerArgs += ['-Xlint:deprecation']
+	options.compilerArgs += [
+		'-Xlint:deprecation',
+		enablePreviewJvmArg
+	]
 }
 
 run {
+	jvmArgs += enablePreviewJvmArg
+
 	if (os.linux)
-		jvmArgs = linuxJvmArgs
+		jvmArgs += linuxJvmArgs
 }
 
 task jlink(type: Exec) {
@@ -647,7 +654,9 @@ task jpackage(type: Exec) {
 		"Copyright ${new Date().format('yyyy')} Matteo Hausner",
 		'--vendor',
 		'Matteo Hausner',
-		'--verbose'
+		'--verbose',
+		'--java-options',
+		enablePreviewJvmArg
 	]
 	if (os.linux)
 		linuxJvmArgs.each { commandLineParts.addAll(['--java-options', it]) }

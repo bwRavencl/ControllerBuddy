@@ -22,6 +22,8 @@ import java.nio.ByteOrder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -308,6 +310,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	volatile HidDevice hidDevice;
+	private final Lock hidDeviceLock = new ReentrantLock();
 	byte[] hidReport;
 	Connection connection;
 	volatile Boolean charging;
@@ -352,14 +355,14 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		if (!disconnected)
 			reset();
 
-		synchronized (hidDevice) {
-			try {
-				hidDevice.close();
-			} catch (final IllegalStateException e) {
-			}
+		hidDeviceLock.lock();
+		try {
+			hidDevice.close();
+		} catch (final IllegalStateException e) {
+		} finally {
+			hidDevice = null;
+			hidDeviceLock.unlock();
 		}
-
-		hidDevice = null;
 	}
 
 	abstract int getButtonsOffset();
@@ -500,20 +503,25 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		final var actualRumbleOffset = getRumbleOffset() + connection.offset;
 
-		new Thread(() -> {
-			if (hidDevice != null)
-				synchronized (hidDevice) {
-					hidReport[actualRumbleOffset] = strength;
-					sendHidReport();
-					try {
-						Thread.sleep(duration);
-					} catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-					hidReport[actualRumbleOffset] = 0;
-					sendHidReport();
+		Thread.startVirtualThread(() -> {
+			hidDeviceLock.lock();
+			try {
+				if (hidDevice == null)
+					return;
+
+				hidReport[actualRumbleOffset] = strength;
+				sendHidReport();
+				try {
+					Thread.sleep(duration);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
 				}
-		}).start();
+				hidReport[actualRumbleOffset] = 0;
+				sendHidReport();
+			} finally {
+				hidDeviceLock.unlock();
+			}
+		});
 	}
 
 	@Override
@@ -598,7 +606,11 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				|| batteryCapacity == null)
 			return;
 
-		synchronized (hidDevice) {
+		hidDeviceLock.lock();
+		try {
+			if (hidDevice == null)
+				return;
+
 			final var lightbarOffset = getLightbarOffset();
 
 			if (charging) {
@@ -614,6 +626,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			}
 
 			sendHidReport();
+		} finally {
+			hidDeviceLock.unlock();
 		}
 	}
 }

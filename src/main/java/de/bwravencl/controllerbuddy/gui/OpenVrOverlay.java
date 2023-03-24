@@ -280,7 +280,7 @@ class OpenVrOverlay {
 
 				renderingMemoryStack = MemoryStack.create(2048000);
 
-				executorService = Executors.newSingleThreadScheduledExecutor();
+				executorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
 				executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 			} catch (final Throwable t) {
 				log.log(Level.SEVERE, t.getMessage(), t);
@@ -331,6 +331,7 @@ class OpenVrOverlay {
 
 	void stop() {
 		executorService.shutdown();
+
 		try {
 			if (executorService.awaitTermination(2L, TimeUnit.SECONDS))
 				deInit();
