@@ -5,6 +5,11 @@ on:
     branches:
       - master
 
+env:
+   JAVA_DISTRIBUTION: zulu
+   JAVA_VERSION: 20
+   GRADLE_OPTS: -Dorg.gradle.daemon=false
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -18,12 +23,10 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          distribution: zulu
-          java-version: 20
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Build
-        uses: eskatos/gradle-command-action@v2
-        env:
-          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: distZip --info
       - name: Extract Release Variables
@@ -58,12 +61,10 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          distribution: zulu
-          java-version: 20
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Build
-        uses: eskatos/gradle-command-action@v2
-        env:
-          GRADLE_OPTS: -Dorg.gradle.daemon=false
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: distTar --info
       - name: Extract Release Variables
