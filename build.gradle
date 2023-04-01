@@ -95,7 +95,7 @@ clean.dependsOn cleanModuleInfo, cleanVersion, cleanGameControllerDB
 
 dependencies {
 	def jnaVersion = '5.13.0'
-	def lwjglVersion = '3.3.1'
+	def lwjglVersion = '3.3.2'
 
 	def xinputSupport = false;
 	def lwjglOs
