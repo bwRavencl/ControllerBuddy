@@ -93,7 +93,14 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				}
 
 				if (disconnected) {
-					hidDevice.setInputReportListener(null);
+					hidDeviceLock.lock();
+					try {
+						hidDevice.setInputReportListener(null);
+					} catch (final IllegalStateException e) {
+					} finally {
+						hidDeviceLock.unlock();
+					}
+
 					return;
 				}
 
@@ -357,6 +364,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		hidDeviceLock.lock();
 		try {
+			hidDevice.setInputReportListener(null);
 			hidDevice.close();
 		} catch (final IllegalStateException e) {
 		} finally {
