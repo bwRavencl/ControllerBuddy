@@ -134,7 +134,7 @@ dependencies {
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
 	implementation "commons-cli:commons-cli:$commonsCliVersion",
-			'com.formdev:flatlaf:3.0',
+			'com.formdev:flatlaf:3.1',
 			"com.github.strikerx3:jxinput:$jxinputVersion",
 			'com.google.code.gson:gson:2.10.1',
 			'io.github.classgraph:classgraph:4.8.157',
