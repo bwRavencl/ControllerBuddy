@@ -248,7 +248,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final long INPUT_REPORT_TIMEOUT = 5000L;
 
-	static final int hidReadReportPlatformOffset = Main.isMac ? 0 : -1;
+	private static final int hidReadReportPlatformOffset = Main.isLinux ? -1 : 0;
 	private static final int hidWriteReportPlatformOffset = Main.isMac ? 0 : 1;
 
 	static HidDeviceInfo getHidDeviceInfo(final List<ControllerInfo> presentControllers,
@@ -464,7 +464,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			crc32.update(0xA1);
 
 			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset - 4);
-			if (!Main.isMac)
+			if (Main.isLinux)
 				crc32.update(reportId);
 			crc32.update(byteBuffer);
 			final var calculatedCrc32Value = crc32.getValue();
