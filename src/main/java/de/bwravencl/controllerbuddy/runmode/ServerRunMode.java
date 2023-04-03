@@ -223,7 +223,6 @@ public final class ServerRunMode extends RunMode {
 						}
 					} else
 						counter++;
-
 				}
 				}
 			}
