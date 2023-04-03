@@ -16,11 +16,10 @@
 
 package de.bwravencl.controllerbuddy.input.driver.sony;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.hid4java.HidDevice;
 import org.lwjgl.glfw.GLFW;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -28,8 +27,6 @@ import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.PureJavaHidApi;
 
 public final class DualShock4Driver extends SonyDriver {
 
@@ -59,14 +56,9 @@ public final class DualShock4Driver extends SonyDriver {
 			} else
 				return null;
 
-			final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, productId, "DualShock 4",
-					log);
-			if (hidDeviceInfo != null)
-				try {
-					return new DualShock4Driver(input, selectedController, hidDeviceInfo, connection);
-				} catch (final IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
+			final var hidDevice = getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log);
+			if (hidDevice != null)
+				return new DualShock4Driver(input, selectedController, hidDevice, connection);
 
 			return null;
 		}
@@ -81,59 +73,9 @@ public final class DualShock4Driver extends SonyDriver {
 	private static final Connection DongleConnection = new Connection(0, USB_INPUT_REPORT_ID);
 	private static final Connection BluetoothConnection = new Connection(2, BLUETOOTH_INPUT_REPORT_ID);
 
-	private DualShock4Driver(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo,
-			final Connection connection) throws IOException {
-		super(input, controller);
-
-		try {
-			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-
-			hidDevice.setInputReportListener(new SonyInputReportListener() {
-
-				@Override
-				void handleBattery(final byte[] reportData, final int offset) {
-					final var cableConnected = (reportData[30 + offset] >> 4 & 0x1) != 0;
-					final var batteryData = reportData[30 + offset] & 0xF;
-					final int batteryCapacity;
-					final boolean charging;
-					if (cableConnected) {
-						if (batteryData < 10) {
-							batteryCapacity = batteryData * 10 + 5;
-							charging = true;
-						} else if (batteryData == 10) {
-							batteryCapacity = 100;
-							charging = true;
-						} else {
-							if (batteryData == 11)
-								batteryCapacity = 100;
-							else
-								batteryCapacity = 0;
-
-							charging = false;
-						}
-					} else {
-						if (batteryData < 10)
-							batteryCapacity = batteryData * 10 + 5;
-						else
-							batteryCapacity = 100;
-
-						charging = false;
-					}
-
-					setCharging(charging);
-					setBatteryCapacity(batteryCapacity);
-				}
-
-				@Override
-				void handleNewConnection(final int reportLength) {
-					DualShock4Driver.this.connection = connection != null ? connection
-							: isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
-				}
-			});
-		} catch (final Throwable t) {
-			deInit(false);
-			throw t;
-		}
+	private DualShock4Driver(final Input input, final ControllerInfo controller, final HidDevice hidDevice,
+			final Connection connection) {
+		super(input, controller, hidDevice);
 	}
 
 	@Override
@@ -148,23 +90,26 @@ public final class DualShock4Driver extends SonyDriver {
 
 		final byte[] defaultHidReport;
 		if (connection.isBluetooth()) {
-			defaultHidReport = new byte[334];
+			defaultHidReport = new byte[333];
 
-			defaultHidReport[0] = 0x15;
-			defaultHidReport[1] = (byte) 0xC0;
-			defaultHidReport[3] = (byte) 0xF7;
+			defaultHidReport[0] = (byte) 0xC0;
+			defaultHidReport[2] = (byte) 0xF7;
 		} else {
-			defaultHidReport = new byte[32];
+			defaultHidReport = new byte[31];
 
-			defaultHidReport[0] = (byte) 0x5;
-			defaultHidReport[1] = (byte) 0xF;
+			defaultHidReport[0] = (byte) 0xF;
 		}
 
-		defaultHidReport[6 + connection.offset()] = (byte) 0xC;
-		defaultHidReport[7 + connection.offset()] = (byte) 0x18;
-		defaultHidReport[8 + connection.offset()] = (byte) 0x1C;
+		defaultHidReport[5 + connection.offset()] = (byte) 0xC;
+		defaultHidReport[6 + connection.offset()] = (byte) 0x18;
+		defaultHidReport[7 + connection.offset()] = (byte) 0x1C;
 
 		return defaultHidReport;
+	}
+
+	@Override
+	byte getDefaultHidReportId() {
+		return (byte) (connection.isBluetooth() ? 0x15 : 0x5);
 	}
 
 	@Override
@@ -174,7 +119,7 @@ public final class DualShock4Driver extends SonyDriver {
 
 	@Override
 	int getLightbarOffset() {
-		return 6;
+		return 5;
 	}
 
 	@Override
@@ -194,7 +139,7 @@ public final class DualShock4Driver extends SonyDriver {
 
 	@Override
 	int getRumbleOffset() {
-		return 5;
+		return 4;
 	}
 
 	@Override
@@ -210,5 +155,45 @@ public final class DualShock4Driver extends SonyDriver {
 	@Override
 	int getTouchpadOffset() {
 		return 35;
+	}
+
+	@Override
+	void handleBattery(final byte[] reportData, final int offset) {
+		final var cableConnected = (reportData[30 + offset] >> 4 & 0x1) != 0;
+		final var batteryData = reportData[30 + offset] & 0xF;
+		final int batteryCapacity;
+		final boolean charging;
+		if (cableConnected) {
+			if (batteryData < 10) {
+				batteryCapacity = batteryData * 10 + 5;
+				charging = true;
+			} else if (batteryData == 10) {
+				batteryCapacity = 100;
+				charging = true;
+			} else {
+				if (batteryData == 11)
+					batteryCapacity = 100;
+				else
+					batteryCapacity = 0;
+
+				charging = false;
+			}
+		} else {
+			if (batteryData < 10)
+				batteryCapacity = batteryData * 10 + 5;
+			else
+				batteryCapacity = 100;
+
+			charging = false;
+		}
+
+		setCharging(charging);
+		setBatteryCapacity(batteryCapacity);
+	}
+
+	@Override
+	void handleNewConnection(final int reportLength) {
+		DualShock4Driver.this.connection = connection != null ? connection
+				: isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
 	}
 }

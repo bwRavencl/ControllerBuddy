@@ -29,6 +29,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
+import org.hid4java.HidDevice;
+import org.hid4java.HidException;
+import org.hid4java.HidManager;
+import org.hid4java.HidServices;
+import org.hid4java.HidServicesSpecification;
+import org.hid4java.jna.HidApi;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 
@@ -37,10 +43,6 @@ import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IGamepadStateProvider;
-import purejavahidapi.HidDevice;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.InputReportListener;
-import purejavahidapi.PureJavaHidApi;
 
 public abstract class SonyDriver extends Driver implements IGamepadStateProvider {
 
@@ -51,257 +53,82 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		}
 	}
 
-	abstract class SonyInputReportListener implements InputReportListener {
-
-		private static final int TOUCHPAD_MAX_DELTA = 150;
-
-		private final boolean touchpadEnabled;
-		private final float touchpadCursorSensitivity;
-		private final float touchpadScrollSensitivity;
-
-		private boolean prevTouchpadButtonDown;
-		private boolean prevDown1;
-		private boolean prevDown2;
-		private int prevX1;
-		private int prevY1;
-
-		public SonyInputReportListener() {
-			final var main = input.getMain();
-
-			touchpadEnabled = main.isSonyTouchpadEnabled();
-
-			if (touchpadEnabled) {
-				touchpadCursorSensitivity = main.getSonyCursorSensitivity();
-				touchpadScrollSensitivity = main.getSonyScrollSensitivity();
-			} else {
-				touchpadCursorSensitivity = 0f;
-				touchpadScrollSensitivity = 0f;
-			}
-		}
-
-		abstract void handleBattery(byte[] reportData, int offset);
-
-		abstract void handleNewConnection(int reportLength);
-
-		@Override
-		public void onInputReport(final HidDevice source, final byte reportID, final byte[] reportData,
-				final int reportLength) {
-			try {
-				if (connection == null) {
-					handleNewConnection(reportLength);
-					reset();
-				}
-
-				if (disconnected || !isInputReportValid(reportID, reportData, reportLength))
-					return;
-
-				final var offset = connection.offset + hidReadReportPlatformOffset;
-
-				lx = reportData[1 + offset];
-				ly = reportData[2 + offset];
-				rx = reportData[3 + offset];
-				ry = reportData[4 + offset];
-
-				l2 = reportData[getL2Offset() + offset];
-				r2 = reportData[getL2Offset() + 1 + offset];
-
-				final var buttonsOffset = getButtonsOffset();
-				triangle = (reportData[buttonsOffset + offset] & 1 << 7) != 0;
-				circle = (reportData[buttonsOffset + offset] & 1 << 6) != 0;
-				cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
-				square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
-
-				final var dpadData = (byte) (reportData[buttonsOffset + offset] & 0xF);
-				switch (dpadData) {
-				case 0 -> {
-					dpadUp = true;
-					dpadDown = false;
-					dpadLeft = false;
-					dpadRight = false;
-				}
-				case 1 -> {
-					dpadUp = true;
-					dpadDown = false;
-					dpadLeft = false;
-					dpadRight = true;
-				}
-				case 2 -> {
-					dpadUp = false;
-					dpadDown = false;
-					dpadLeft = false;
-					dpadRight = true;
-
-				}
-				case 3 -> {
-					dpadUp = false;
-					dpadDown = true;
-					dpadLeft = false;
-					dpadRight = true;
-				}
-				case 4 -> {
-					dpadUp = false;
-					dpadDown = true;
-					dpadLeft = false;
-					dpadRight = false;
-				}
-				case 5 -> {
-					dpadUp = false;
-					dpadDown = true;
-					dpadLeft = true;
-					dpadRight = false;
-				}
-				case 6 -> {
-					dpadUp = false;
-					dpadDown = false;
-					dpadLeft = true;
-					dpadRight = false;
-				}
-				case 7 -> {
-					dpadUp = true;
-					dpadDown = false;
-					dpadLeft = true;
-					dpadRight = false;
-				}
-				case 8 -> {
-					dpadUp = false;
-					dpadDown = false;
-					dpadLeft = false;
-					dpadRight = false;
-				}
-				default -> throw new IllegalArgumentException("Unexpected value: " + dpadData);
-				}
-
-				r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
-				l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
-				options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
-				share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
-				r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
-				l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
-
-				ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
-
-				ready = true;
-				timestampLastInputReport = System.currentTimeMillis();
-
-				if (controller.jid() != input.getController().jid())
-					return;
-
-				handleBattery(reportData, offset);
-
-				final var main = input.getMain();
-				if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning())
-					return;
-
-				final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
-
-				final var touchpadOffset = getTouchpadOffset();
-				final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
-				final var down2 = reportData[touchpadOffset + 4 + offset] >> 7 == 0;
-				final var x1 = reportData[touchpadOffset + 1 + offset]
-						+ (reportData[touchpadOffset + 2 + offset] & 0xF) * 255;
-				final var y1 = ((reportData[touchpadOffset + 2 + offset] & 0xF0) >> 4)
-						+ reportData[touchpadOffset + 3 + offset] * 16;
-
-				final var downMouseButtons = input.getDownMouseButtons();
-				if (touchpadButtonDown)
-					synchronized (downMouseButtons) {
-						downMouseButtons.add(down2 ? 2 : 1);
-					}
-				else if (prevTouchpadButtonDown)
-					synchronized (downMouseButtons) {
-						downMouseButtons.clear();
-					}
-
-				if (down1 && prevDown1) {
-					final var dX1 = x1 - prevX1;
-					final var dY1 = y1 - prevY1;
-
-					if (!prevDown2 || touchpadButtonDown) {
-						if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaX((int) (dX1 * touchpadCursorSensitivity));
-
-						if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-							input.setCursorDeltaY((int) (dY1 * touchpadCursorSensitivity));
-					} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
-						input.setScrollClicks((int) (-dY1 * touchpadScrollSensitivity));
-				}
-
-				prevTouchpadButtonDown = touchpadButtonDown;
-				prevDown1 = down1;
-				prevDown2 = down2;
-				prevX1 = x1;
-				prevY1 = y1;
-			} catch (final Throwable t) {
-				getLogger().log(Level.SEVERE, t.getMessage(), t);
-
-				disconnected = true;
-			}
-		}
-	}
-
 	public static final float DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
-
 	public static final float DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
 
 	static final int USB_REPORT_LENGTH = 64;
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
+
 	private static final int LOW_BATTERY_WARNING = 20;
 	private static final long INPUT_REPORT_TIMEOUT = 5000L;
+	private static final int TOUCHPAD_MAX_DELTA = 150;
 
-	private static final int hidReadReportPlatformOffset = Main.isLinux ? -1 : 0;
-	private static final int hidWriteReportPlatformOffset = Main.isMac ? 0 : 1;
-
-	static HidDeviceInfo getHidDeviceInfo(final List<ControllerInfo> presentControllers,
-			final ControllerInfo selectedController, final short productId, final String humanReadableName,
-			final Logger log) {
-		final var devices = PureJavaHidApi.enumerateDevices().stream()
-				.filter(hidDeviceInfo -> hidDeviceInfo.getVendorId() == (short) 0x54C
-						&& hidDeviceInfo.getProductId() == productId)
-				.toList();
-
-		log.log(Level.INFO, "Found " + devices.size() + " " + humanReadableName + " controller(s): "
-				+ devices.stream().map(SonyDriver::getPrintableDeviceId).collect(Collectors.joining(", ")));
-
-		final var count = devices.size();
-		if (count < 1)
-			return null;
-
-		var deviceIndex = 0;
-		if (count > 1) {
-			if (selectedController.guid() != null) {
-				final var presentJidsWithSameGuid = presentControllers.stream()
-						.filter(controller -> selectedController.guid().equals(controller.guid()))
-						.collect(Collectors.toUnmodifiableList());
-				deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
-			} else
-				deviceIndex = presentControllers.indexOf(selectedController);
-
-			if (deviceIndex < 0)
-				return null;
-		}
-
-		final var hidDeviceInfo = devices.get(deviceIndex);
-
-		log.log(Level.INFO, Main.assembleControllerLoggingMessage(
-				"Using " + humanReadableName + " controller with ID " + getPrintableDeviceId(hidDeviceInfo) + " as",
-				selectedController));
-
-		return hidDeviceInfo;
+	static {
+		HidApi.darwinOpenDevicesNonExclusive = true;
 	}
 
-	private static String getPrintableDeviceId(final HidDeviceInfo device) {
-		var deviceId = device.getDeviceId();
-		if (deviceId == null)
-			return "?";
+	static HidDevice getHidDevice(final List<ControllerInfo> presentControllers,
+			final ControllerInfo selectedController, final short productId, final String humanReadableName,
+			final Logger log) {
+		final var hidServicesSpecification = new HidServicesSpecification();
+		hidServicesSpecification.setAutoStart(false);
 
-		if (deviceId.endsWith("\0"))
-			deviceId = deviceId.substring(0, deviceId.indexOf('\0'));
+		HidServices hidServices = null;
+		try {
+			hidServices = HidManager.getHidServices(hidServicesSpecification);
 
-		return deviceId;
+			final var devices = hidServices.getAttachedHidDevices().stream().filter(
+					hidDevice -> hidDevice.getVendorId() == (short) 0x54C && hidDevice.getProductId() == productId)
+					.toList();
+
+			log.log(Level.INFO, "Found " + devices.size() + " " + humanReadableName + " controller(s): "
+					+ devices.stream().map(HidDevice::getPath).collect(Collectors.joining(", ")));
+
+			final var count = devices.size();
+			if (count < 1)
+				return null;
+
+			var deviceIndex = 0;
+			if (count > 1) {
+				if (selectedController.guid() != null) {
+					final var presentJidsWithSameGuid = presentControllers.stream()
+							.filter(controller -> selectedController.guid().equals(controller.guid()))
+							.collect(Collectors.toUnmodifiableList());
+					deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
+				} else
+					deviceIndex = presentControllers.indexOf(selectedController);
+
+				if (deviceIndex < 0)
+					return null;
+			}
+
+			final var hidDevice = devices.get(deviceIndex);
+
+			if (!hidDevice.open()) {
+				log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not open HID device "
+						+ humanReadableName + " with path " + hidDevice.getPath() + " to use as", selectedController));
+				return null;
+			}
+
+			log.log(Level.INFO,
+					Main.assembleControllerLoggingMessage(
+							"Using " + humanReadableName + " controller with path " + hidDevice.getPath() + " as",
+							selectedController));
+
+			hidServices = null;
+			return hidDevice;
+		} catch (final HidException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+
+			return null;
+		} finally {
+			if (hidServices != null)
+				hidServices.shutdown();
+		}
 	}
 
 	static boolean isBluetoothConnection(final int reportLength) {
-		return reportLength != USB_REPORT_LENGTH + hidReadReportPlatformOffset;
+		return reportLength != USB_REPORT_LENGTH;
 	}
 
 	private static float mapRawAxisToFloat(final byte value) {
@@ -337,29 +164,255 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	volatile boolean ps;
 	volatile boolean disconnected;
 	volatile long timestampLastInputReport = Long.MAX_VALUE;
+	private final boolean touchpadEnabled;
+	private final float touchpadCursorSensitivity;
+	private final float touchpadScrollSensitivity;
+	private boolean prevTouchpadButtonDown;
+	private boolean prevDown1;
+	private boolean prevDown2;
+	private int prevX1;
+	private int prevY1;
 
-	SonyDriver(final Input input, final ControllerInfo controller) {
+	SonyDriver(final Input input, final ControllerInfo controller, final HidDevice hidDevice) {
 		super(input, controller);
+
+		this.hidDevice = hidDevice;
+
+		final var main = input.getMain();
+
+		touchpadEnabled = main.isSonyTouchpadEnabled();
+
+		if (touchpadEnabled) {
+			touchpadCursorSensitivity = main.getSonyCursorSensitivity();
+			touchpadScrollSensitivity = main.getSonyScrollSensitivity();
+		} else {
+			touchpadCursorSensitivity = 0f;
+			touchpadScrollSensitivity = 0f;
+		}
+
+		Thread.startVirtualThread(() -> {
+			final var reportData = new byte[BLUETOOTH_REPORT_LENGTH]; // TODO: size
+
+			for (;;)
+				try {
+					if (hidDevice.isClosed())
+						return;
+
+					final var reportLength = hidDevice.read(reportData); // TODO: check return value
+					if (reportLength < 0)
+						return;
+
+					if (connection == null) {
+						handleNewConnection(reportLength);
+						if (!reset())
+							return;
+					}
+
+					if (disconnected || connection == null)
+						return;
+
+					final var bluetooth = connection.isBluetooth();
+
+					final var reportId = reportData[0];
+					if (reportId != connection.inputReportId || (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH
+							: reportLength != USB_REPORT_LENGTH)) {
+						getLogger().log(Level.WARNING,
+								Main.assembleControllerLoggingMessage("Received unexpected HID input report with ID "
+										+ reportId + " and length " + reportLength + " from", controller));
+
+						continue;
+					}
+
+					if (bluetooth) {
+						final var byteBuffer = ByteBuffer.wrap(reportData, 0, BLUETOOTH_REPORT_LENGTH);
+						byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+						final var crc32 = new CRC32();
+						crc32.update(0xA1);
+
+						byteBuffer.limit(BLUETOOTH_REPORT_LENGTH - 4);
+						if (Main.isLinux)
+							crc32.update(reportId);
+						crc32.update(byteBuffer);
+						final var calculatedCrc32Value = crc32.getValue();
+
+						byteBuffer.limit(BLUETOOTH_REPORT_LENGTH);
+						final var receivedCrc32Value = byteBuffer.getInt() & 0xFFFFFFFFL;
+
+						if (receivedCrc32Value != calculatedCrc32Value) {
+							getLogger().log(Level.WARNING, Main.assembleControllerLoggingMessage(
+									"Received faulty HID input report from", controller));
+							continue;
+						}
+					}
+
+					final var offset = connection.offset;
+
+					lx = reportData[1 + offset];
+					ly = reportData[2 + offset];
+					rx = reportData[3 + offset];
+					ry = reportData[4 + offset];
+
+					l2 = reportData[getL2Offset() + offset];
+					r2 = reportData[getL2Offset() + 1 + offset];
+
+					final var buttonsOffset = getButtonsOffset();
+					triangle = (reportData[buttonsOffset + offset] & 1 << 7) != 0;
+					circle = (reportData[buttonsOffset + offset] & 1 << 6) != 0;
+					cross = (reportData[buttonsOffset + offset] & 1 << 5) != 0;
+					square = (reportData[buttonsOffset + offset] & 1 << 4) != 0;
+
+					final var dpadData = (byte) (reportData[buttonsOffset + offset] & 0xF);
+					switch (dpadData) {
+					case 0 -> {
+						dpadUp = true;
+						dpadDown = false;
+						dpadLeft = false;
+						dpadRight = false;
+					}
+					case 1 -> {
+						dpadUp = true;
+						dpadDown = false;
+						dpadLeft = false;
+						dpadRight = true;
+					}
+					case 2 -> {
+						dpadUp = false;
+						dpadDown = false;
+						dpadLeft = false;
+						dpadRight = true;
+
+					}
+					case 3 -> {
+						dpadUp = false;
+						dpadDown = true;
+						dpadLeft = false;
+						dpadRight = true;
+					}
+					case 4 -> {
+						dpadUp = false;
+						dpadDown = true;
+						dpadLeft = false;
+						dpadRight = false;
+					}
+					case 5 -> {
+						dpadUp = false;
+						dpadDown = true;
+						dpadLeft = true;
+						dpadRight = false;
+					}
+					case 6 -> {
+						dpadUp = false;
+						dpadDown = false;
+						dpadLeft = true;
+						dpadRight = false;
+					}
+					case 7 -> {
+						dpadUp = true;
+						dpadDown = false;
+						dpadLeft = true;
+						dpadRight = false;
+					}
+					case 8 -> {
+						dpadUp = false;
+						dpadDown = false;
+						dpadLeft = false;
+						dpadRight = false;
+					}
+					default -> throw new IllegalArgumentException("Unexpected value: " + dpadData);
+					}
+
+					r3 = (reportData[buttonsOffset + 1 + offset] & 1 << 7) != 0;
+					l3 = (reportData[buttonsOffset + 1 + offset] & 1 << 6) != 0;
+					options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
+					share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
+					r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
+					l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
+
+					ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
+
+					ready = true;
+					timestampLastInputReport = System.currentTimeMillis();
+
+					if (controller.jid() != input.getController().jid())
+						continue;
+
+					handleBattery(reportData, offset);
+
+					if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning())
+						return;
+
+					final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
+
+					final var touchpadOffset = getTouchpadOffset();
+					final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
+					final var down2 = reportData[touchpadOffset + 4 + offset] >> 7 == 0;
+					final var x1 = reportData[touchpadOffset + 1 + offset]
+							+ (reportData[touchpadOffset + 2 + offset] & 0xF) * 255;
+					final var y1 = ((reportData[touchpadOffset + 2 + offset] & 0xF0) >> 4)
+							+ reportData[touchpadOffset + 3 + offset] * 16;
+
+					final var downMouseButtons = input.getDownMouseButtons();
+					if (touchpadButtonDown)
+						synchronized (downMouseButtons) {
+							downMouseButtons.add(down2 ? 2 : 1);
+						}
+					else if (prevTouchpadButtonDown)
+						synchronized (downMouseButtons) {
+							downMouseButtons.clear();
+						}
+
+					if (down1 && prevDown1) {
+						final var dX1 = x1 - prevX1;
+						final var dY1 = y1 - prevY1;
+
+						if (!prevDown2 || touchpadButtonDown) {
+							if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+								input.setCursorDeltaX((int) (dX1 * touchpadCursorSensitivity));
+
+							if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+								input.setCursorDeltaY((int) (dY1 * touchpadCursorSensitivity));
+						} else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+							input.setScrollClicks((int) (-dY1 * touchpadScrollSensitivity));
+					}
+
+					prevTouchpadButtonDown = touchpadButtonDown;
+					prevDown1 = down1;
+					prevDown2 = down2;
+					prevX1 = x1;
+					prevY1 = y1;
+				} catch (final Throwable t) {
+					getLogger().log(Level.SEVERE, t.getMessage(), t);
+
+					disconnected = true;
+				}
+		});
+	}
+
+	private boolean canSendHidReport() {
+		return !disconnected && hidDevice != null && !hidDevice.isClosed() && connection != null && hidReport != null;
 	}
 
 	@Override
 	public synchronized void deInit(final boolean disconnected) {
 		super.deInit(disconnected);
 
-		this.disconnected = true;
-
-		if (hidDevice == null)
-			return;
-
 		if (!disconnected)
 			reset();
 
+		this.disconnected = true;
+
 		hidDeviceLock.lock();
 		try {
-			hidDevice.close();
-		} catch (final IllegalStateException e) {
+			if (hidDevice != null) {
+				hidDevice.close();
+				hidDevice = null;
+			}
+
+			HidManager.getHidServices().shutdown();
+		} catch (final HidException e) {
+			getLogger().log(Level.WARNING, e.getMessage(), e);
 		} finally {
-			hidDevice = null;
 			hidDeviceLock.unlock();
 		}
 	}
@@ -367,6 +420,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	abstract int getButtonsOffset();
 
 	abstract byte[] getDefaultHidReport();
+
+	abstract byte getDefaultHidReportId();
 
 	@Override
 	public boolean getGamepadState(final GLFWGamepadState state) {
@@ -435,51 +490,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 	abstract int getTouchpadOffset();
 
+	abstract void handleBattery(byte[] reportData, int offset);
+
+	abstract void handleNewConnection(int reportLength);
+
 	public Boolean isCharging() {
 		return charging;
-	}
-
-	boolean isInputReportValid(final byte reportId, final byte[] reportData, final int reportLength) {
-		if (connection == null)
-			return false;
-
-		final var bluetooth = connection.isBluetooth();
-
-		if (reportId != connection.inputReportId
-				|| (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset
-						: reportLength != USB_REPORT_LENGTH + hidReadReportPlatformOffset)) {
-			getLogger().log(Level.WARNING,
-					Main.assembleControllerLoggingMessage("Received unexpected HID input report with ID " + reportId
-							+ " and length " + reportLength + " from", controller));
-
-			return false;
-		}
-
-		if (bluetooth) {
-			final var byteBuffer = ByteBuffer.wrap(reportData, 0,
-					BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset);
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-
-			final var crc32 = new CRC32();
-			crc32.update(0xA1);
-
-			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset - 4);
-			if (Main.isLinux)
-				crc32.update(reportId);
-			crc32.update(byteBuffer);
-			final var calculatedCrc32Value = crc32.getValue();
-
-			byteBuffer.limit(BLUETOOTH_REPORT_LENGTH + hidReadReportPlatformOffset);
-			final var receivedCrc32Value = byteBuffer.getInt() & 0xFFFFFFFFL;
-
-			if (receivedCrc32Value != calculatedCrc32Value) {
-				getLogger().log(Level.WARNING,
-						Main.assembleControllerLoggingMessage("Received faulty HID input report from", controller));
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	@Override
@@ -487,17 +503,18 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		return ready;
 	}
 
-	void reset() {
+	boolean reset() {
 		final var defaultHidReport = getDefaultHidReport();
 		if (defaultHidReport == null)
-			return;
+			return false;
 
 		hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
-		sendHidReport();
+
+		return sendHidReport();
 	}
 
 	private void rumble(final long duration, final byte strength) {
-		if (hidDevice == null || hidReport == null || connection == null)
+		if (!canSendHidReport())
 			return;
 
 		final var actualRumbleOffset = getRumbleOffset() + connection.offset;
@@ -509,14 +526,15 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 					return;
 
 				hidReport[actualRumbleOffset] = strength;
-				sendHidReport();
-				try {
-					Thread.sleep(duration);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
+				if (sendHidReport()) {
+					try {
+						Thread.sleep(duration);
+					} catch (final InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					hidReport[actualRumbleOffset] = 0;
+					sendHidReport();
 				}
-				hidReport[actualRumbleOffset] = 0;
-				sendHidReport();
 			} finally {
 				hidDeviceLock.unlock();
 			}
@@ -533,13 +551,16 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		rumble(getStrongRumbleDuration(), getStrongRumbleStrength());
 	}
 
-	void sendHidReport() {
-		if (hidDevice == null || connection == null)
-			return;
+	boolean sendHidReport() {
+		if (!canSendHidReport())
+			return false;
+
+		final var reportId = getDefaultHidReportId();
 
 		if (connection.isBluetooth()) {
 			final var crc32 = new CRC32();
 			crc32.update(0xA2);
+			crc32.update(reportId);
 			crc32.update(hidReport, 0, hidReport.length - 4);
 			final var crc32Value = crc32.getValue();
 
@@ -549,12 +570,13 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			hidReport[hidReport.length - 1] = (byte) (crc32Value >> 24);
 		}
 
-		final var dataLength = hidReport.length - hidWriteReportPlatformOffset;
-		try {
-			hidDevice.setOutputReport(hidReport[0],
-					Arrays.copyOfRange(hidReport, 0 + hidWriteReportPlatformOffset, hidReport.length), dataLength);
-		} catch (final IllegalStateException e) {
-		}
+		final var success = hidDevice.write(hidReport, hidReport.length, reportId) > 0;
+
+		if (!success)
+			getLogger().log(Level.WARNING,
+					Main.assembleControllerLoggingMessage("Error while sending HID packet to", controller));
+
+		return success;
 	}
 
 	void setBatteryCapacity(final int batteryCapacity) {
@@ -601,8 +623,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	void updateLightbarColor() {
-		if (disconnected || hidDevice == null || connection == null || hidReport == null || charging == null
-				|| batteryCapacity == null)
+		if (!canSendHidReport() || charging == null || batteryCapacity == null)
 			return;
 
 		hidDeviceLock.lock();

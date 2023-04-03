@@ -201,11 +201,11 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
+- [hid4java](https://github.com/gary-rowe/hid4java)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
 - [JXInput](https://github.com/StrikerX3/JXInput)
 - [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
-- [Pure Java HID-API](https://github.com/nyholku/purejavahidapi)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
 
 #### Building:
