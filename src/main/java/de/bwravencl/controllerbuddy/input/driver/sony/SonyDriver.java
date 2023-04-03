@@ -268,11 +268,16 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		var deviceIndex = 0;
 		if (count > 1) {
-			final var presentJidsWithSameGuid = presentControllers.stream()
-					.filter(controller -> selectedController.guid() != null
-							&& selectedController.guid().equals(controller.guid()))
-					.collect(Collectors.toUnmodifiableList());
-			deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
+			if (selectedController.guid() != null) {
+				final var presentJidsWithSameGuid = presentControllers.stream()
+						.filter(controller -> selectedController.guid().equals(controller.guid()))
+						.collect(Collectors.toUnmodifiableList());
+				deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
+			} else
+				deviceIndex = presentControllers.indexOf(selectedController);
+
+			if (deviceIndex < 0)
+				return null;
 		}
 
 		final var hidDeviceInfo = devices.get(deviceIndex);
