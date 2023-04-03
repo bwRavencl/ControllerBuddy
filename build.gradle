@@ -66,7 +66,7 @@ ext {
 	batikVersion = '1.16'
 	commonsCliVersion = '1.5.0'
 	jxinputVersion = '1.0.0'
-	purejavahidapiVersion = 'b5ddf0a39c'
+	purejavahidapiVersion = 'ef5679619d'
 
 	openVrSupport = false
 }
@@ -147,7 +147,7 @@ dependencies {
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
 
-	implementation("com.github.git-moss:purejavahidapi:$purejavahidapiVersion") {
+	implementation("com.github.nyholku:purejavahidapi:$purejavahidapiVersion") {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
 	}
