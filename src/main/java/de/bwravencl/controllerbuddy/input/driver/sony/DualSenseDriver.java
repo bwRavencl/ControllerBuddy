@@ -16,12 +16,11 @@
 
 package de.bwravencl.controllerbuddy.input.driver.sony;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.hid4java.HidDevice;
 import org.lwjgl.glfw.GLFW;
 
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -29,8 +28,6 @@ import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
-import purejavahidapi.HidDeviceInfo;
-import purejavahidapi.PureJavaHidApi;
 
 public final class DualSenseDriver extends SonyDriver {
 
@@ -48,14 +45,10 @@ public final class DualSenseDriver extends SonyDriver {
 			if (!"PS5 Controller".equals(name))
 				return null;
 
-			final var hidDeviceInfo = getHidDeviceInfo(presentControllers, selectedController, (short) 0xCE6,
-					"DualSense", log);
-			if (hidDeviceInfo != null)
-				try {
-					return new DualSenseDriver(input, selectedController, hidDeviceInfo);
-				} catch (final IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
+			final var hidDevice = getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log);
+
+			if (hidDevice != null)
+				return new DualSenseDriver(input, selectedController, hidDevice);
 
 			return null;
 		}
@@ -69,52 +62,8 @@ public final class DualSenseDriver extends SonyDriver {
 	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
 	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
-	private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDeviceInfo hidDeviceInfo)
-			throws IOException {
-		super(input, controller);
-
-		try {
-			hidDevice = PureJavaHidApi.openDevice(hidDeviceInfo);
-
-			hidDevice.setInputReportListener(new SonyInputReportListener() {
-
-				@Override
-				void handleBattery(final byte[] reportData, final int offset) {
-					final var chargingStatus = (reportData[53 + offset] & 0xF0) >> 4;
-					final var batteryData = reportData[53 + offset] & 0xF;
-
-					final int batteryCapacity;
-					final var charging = switch (chargingStatus) {
-					case 0x0 -> {
-						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-						yield false;
-					}
-					case 0x1 -> {
-						batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-						yield true;
-					}
-					case 0x2 -> {
-						batteryCapacity = 100;
-						yield false;
-					}
-					default -> {
-						batteryCapacity = 0;
-						yield false;
-					}
-					};
-					setCharging(charging);
-					setBatteryCapacity(batteryCapacity);
-				}
-
-				@Override
-				void handleNewConnection(final int reportLength) {
-					connection = isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
-				}
-			});
-		} catch (final Throwable t) {
-			deInit(false);
-			throw t;
-		}
+	private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDevice hidDevice) {
+		super(input, controller, hidDevice);
 	}
 
 	@Override
@@ -129,24 +78,25 @@ public final class DualSenseDriver extends SonyDriver {
 
 		final byte[] defaultHidReport;
 		if (connection.isBluetooth()) {
-			defaultHidReport = new byte[BLUETOOTH_REPORT_LENGTH];
-
-			defaultHidReport[0] = 0x31;
-			defaultHidReport[1] = 0x2;
-		} else {
-			defaultHidReport = new byte[48];
+			defaultHidReport = new byte[BLUETOOTH_REPORT_LENGTH - 1];
 
 			defaultHidReport[0] = 0x2;
-		}
+		} else
+			defaultHidReport = new byte[47];
 
-		defaultHidReport[1 + connection.offset()] = 0x3;
-		defaultHidReport[2 + connection.offset()] = 0x15;
+		defaultHidReport[connection.offset()] = 0x3;
+		defaultHidReport[1 + connection.offset()] = 0x15;
 
+		defaultHidReport[44 + connection.offset()] = (byte) 0x0;
 		defaultHidReport[45 + connection.offset()] = (byte) 0x0;
-		defaultHidReport[46 + connection.offset()] = (byte) 0x0;
-		defaultHidReport[47 + connection.offset()] = (byte) 0xFF;
+		defaultHidReport[46 + connection.offset()] = (byte) 0xFF;
 
 		return defaultHidReport;
+	}
+
+	@Override
+	byte getDefaultHidReportId() {
+		return connection.isBluetooth() ? (byte) 0x31 : (byte) 0x2;
 	}
 
 	@Override
@@ -156,7 +106,7 @@ public final class DualSenseDriver extends SonyDriver {
 
 	@Override
 	int getLightbarOffset() {
-		return 45;
+		return 44;
 	}
 
 	@Override
@@ -176,7 +126,7 @@ public final class DualSenseDriver extends SonyDriver {
 
 	@Override
 	int getRumbleOffset() {
-		return 4;
+		return 3;
 	}
 
 	@Override
@@ -195,18 +145,52 @@ public final class DualSenseDriver extends SonyDriver {
 	}
 
 	@Override
-	void reset() {
+	void handleBattery(final byte[] reportData, final int offset) {
+		final var chargingStatus = (reportData[53 + offset] & 0xF0) >> 4;
+		final var batteryData = reportData[53 + offset] & 0xF;
+
+		final int batteryCapacity;
+		final var charging = switch (chargingStatus) {
+		case 0x0 -> {
+			batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+			yield false;
+		}
+		case 0x1 -> {
+			batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+			yield true;
+		}
+		case 0x2 -> {
+			batteryCapacity = 100;
+			yield false;
+		}
+		default -> {
+			batteryCapacity = 0;
+			yield false;
+		}
+		};
+		setCharging(charging);
+		setBatteryCapacity(batteryCapacity);
+	}
+
+	@Override
+	void handleNewConnection(final int reportLength) {
+		connection = isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
+	}
+
+	@Override
+	boolean reset() {
 		if (connection == null)
-			return;
+			return false;
 
 		if (connection.isBluetooth()) {
 			final var defaultHidReport = getDefaultHidReport();
 			hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
 			hidReport[3] = 0x8;
 
-			sendHidReport();
+			if (!sendHidReport())
+				return false;
 		}
 
-		super.reset();
+		return super.reset();
 	}
 }

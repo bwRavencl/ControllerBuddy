@@ -66,7 +66,7 @@ ext {
 	batikVersion = '1.16'
 	commonsCliVersion = '1.5.0'
 	jxinputVersion = '1.0.0'
-	purejavahidapiVersion = 'ef5679619d'
+	hid4javaVersion = '85d76ecd85'
 
 	openVrSupport = false
 }
@@ -147,9 +147,8 @@ dependencies {
 			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
 			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
 
-	implementation("com.github.nyholku:purejavahidapi:$purejavahidapiVersion") {
+	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") {
 		exclude module: 'jna'
-		exclude module: 'jna-platform'
 	}
 
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
@@ -169,7 +168,7 @@ dependencies {
 dependencyUpdates {
 	revision = 'release'
 	rejectVersionIf {
-		it.candidate.module in ['purejavahidapi']
+		it.candidate.module in ['hid4java']
 	}
 }
 
@@ -195,7 +194,7 @@ extraJavaModuleInfo {
 	automaticModule('commons-io-1.3.1.jar', 'commons.io')
 	automaticModule('commons-logging-1.0.4.jar', 'commons.logging')
 	automaticModule("jxinput-${jxinputVersion}.jar", 'jxinput')
-	automaticModule("purejavahidapi-${purejavahidapiVersion}.jar", 'purejavahidapi')
+	automaticModule("hid4java-${hid4javaVersion}.jar", 'hid4java')
 	automaticModule('xmlgraphics-commons-2.7.jar', 'xml.graphics.commons')
 	automaticModule('xml-apis-ext-1.3.04.jar', 'xml.apis.ext')
 
@@ -247,6 +246,7 @@ task generateModuleInfo {
 			\trequires com.sun.jna;
 			\trequires com.sun.jna.platform;
 			\trequires commons.cli;
+			\trequires hid4java;
 			\trequires io.github.classgraph;
 			\trequires java.logging;
 			\trequires java.prefs;
@@ -260,7 +260,6 @@ task generateModuleInfo {
 			${openVrSupport ? '\trequires org.lwjgl.opengl.natives;' : ''}
 			\trequires org.lwjgl.openvr;
 			${openVrSupport ? '\trequires org.lwjgl.openvr.natives;' : ''}
-			\trequires purejavahidapi;
 			\trequires uk.co.bithatch.linuxio;
 			}
 			""".stripIndent())
