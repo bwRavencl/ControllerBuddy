@@ -1620,7 +1620,7 @@ public final class Main {
 
 		this.taskRunner = taskRunner;
 
-		final var singleInstanceThread = new Thread(() -> {
+		Thread.startVirtualThread(() -> {
 			try (final var singleInstanceServerSocket = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
 				SINGLE_INSTANCE_LOCK_FILE.deleteOnExit();
 
@@ -1681,8 +1681,6 @@ public final class Main {
 				throw new RuntimeException(e);
 			}
 		});
-		singleInstanceThread.setDaemon(true);
-		singleInstanceThread.start();
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		preferences = Preferences.userRoot()

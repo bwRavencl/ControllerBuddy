@@ -46,9 +46,7 @@ public abstract class RunMode implements Runnable {
 	}
 
 	final void controllerDisconnected() {
-		new Thread(() -> {
-			main.stopAll(true, true, true);
-		}).start();
+		Thread.startVirtualThread(() -> main.stopAll(true, true, true));
 
 		log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
 		EventQueue.invokeLater(() -> {
