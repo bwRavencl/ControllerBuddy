@@ -1413,7 +1413,7 @@ public final class Main {
 						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 						main = new Main(taskRunner, cmdProfilePath, gameControllerDbPath);
 
-						main.handleRemainingCommandLine(commandLine);
+						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
 
 						taskRunner.pollGLFWEvents = true;
 					});
