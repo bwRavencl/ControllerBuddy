@@ -117,8 +117,8 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 			hidServices = null;
 			return hidDevice;
-		} catch (final HidException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (final Throwable t) {
+			log.log(Level.SEVERE, t.getMessage(), t);
 
 			return null;
 		} finally {
@@ -137,6 +137,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 	volatile HidDevice hidDevice;
 	private final Lock hidDeviceLock = new ReentrantLock();
+	private final Thread readerThread;
 	byte[] hidReport;
 	Connection connection;
 	volatile Boolean charging;
@@ -190,15 +191,15 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			touchpadScrollSensitivity = 0f;
 		}
 
-		Thread.startVirtualThread(() -> {
-			final var reportData = new byte[BLUETOOTH_REPORT_LENGTH]; // TODO: size
+		readerThread = Thread.startVirtualThread(() -> {
+			final var reportData = new byte[BLUETOOTH_REPORT_LENGTH];
 
 			for (;;)
 				try {
 					if (hidDevice.isClosed())
 						return;
 
-					final var reportLength = hidDevice.read(reportData); // TODO: check return value
+					final var reportLength = hidDevice.read(reportData);
 					if (reportLength < 0)
 						return;
 
@@ -401,6 +402,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			reset();
 
 		this.disconnected = true;
+
+		try {
+			readerThread.join();
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 
 		hidDeviceLock.lock();
 		try {
