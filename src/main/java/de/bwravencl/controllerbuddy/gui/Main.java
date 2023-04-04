@@ -2641,6 +2641,7 @@ public final class Main {
 						updateVisualizationPanel();
 						updateOverlayPanel();
 						updateProfileSettingsPanel();
+						updatePanelAccess();
 						loadedProfile = file.getName();
 						setUnsavedChanges(false);
 						setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_LOADED"),
