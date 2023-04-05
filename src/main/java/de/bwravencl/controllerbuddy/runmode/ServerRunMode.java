@@ -102,9 +102,8 @@ public final class ServerRunMode extends RunMode {
 			serverSocket = new DatagramSocket(port);
 			final var receiveBuf = new byte[1024];
 
-			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
-			});
+			EventQueue.invokeLater(() -> main
+					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
 			for (;;) {
 				if (!Platform.isMac())
@@ -140,11 +139,9 @@ public final class ServerRunMode extends RunMode {
 
 							serverState = ServerState.Connected;
 							input.init();
-							EventQueue.invokeLater(() -> {
-								main.setStatusBarText(
-										MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-												clientIPAddress.getCanonicalHostName(), clientPort, pollInterval));
-							});
+							EventQueue.invokeLater(() -> main.setStatusBarText(
+									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
+											clientIPAddress.getCanonicalHostName(), clientPort, pollInterval)));
 						}
 					}
 				}
@@ -228,20 +225,16 @@ public final class ServerRunMode extends RunMode {
 			}
 		} catch (final BindException e) {
 			log.log(Level.WARNING, "Could not bind socket on port " + port);
-			EventQueue.invokeLater(() -> {
-				GuiUtils.showMessageDialog(main.getFrame(),
-						MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+					MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
 			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
-			EventQueue.invokeLater(() -> {
-				GuiUtils.showMessageDialog(main.getFrame(),
-						Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final InterruptedException e) {
 		} finally {
 			input.reset();

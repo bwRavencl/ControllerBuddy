@@ -94,10 +94,8 @@ public final class ClientRunMode extends OutputRunMode {
 		switch (clientState) {
 		case Connecting -> {
 			log.log(Level.INFO, "Connecting to " + host + ":" + port);
-			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(
-						MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port));
-			});
+			EventQueue.invokeLater(() -> main.setStatusBarText(
+					MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 					var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
@@ -142,41 +140,33 @@ public final class ClientRunMode extends OutputRunMode {
 							} else {
 								retry--;
 								final var finalRetry = retry;
-								EventQueue.invokeLater(() -> {
-									main.setStatusBarText(MessageFormat.format(
-											Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
-											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
-								});
+								EventQueue.invokeLater(() -> main.setStatusBarText(
+										MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+												N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES)));
 							}
 						}
 					} catch (final SocketTimeoutException e) {
 						log.log(Level.INFO, e.getMessage(), e);
 						retry--;
 						final var finalRetry = retry;
-						EventQueue.invokeLater(() -> {
-							main.setStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
-											N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES));
-						});
+						EventQueue.invokeLater(() -> main.setStatusBarText(
+								MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
+										N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES)));
 					}
 				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
 				if (success) {
 					clientState = ClientState.Connected;
 					log.log(Level.INFO, "Successfully connected");
-					EventQueue.invokeLater(() -> {
-						main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host,
-								port, pollInterval));
-					});
+					EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat
+							.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval)));
 				} else {
 					if (retry != -1 && !Thread.currentThread().isInterrupted()) {
 						log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
-						EventQueue.invokeLater(() -> {
-							GuiUtils.showMessageDialog(main.getFrame(),
-									MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
-											N_CONNECTION_RETRIES),
-									Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-						});
+						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
+										N_CONNECTION_RETRIES),
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 					}
 
 					forceStop = true;
@@ -275,10 +265,9 @@ public final class ClientRunMode extends OutputRunMode {
 				}
 			} catch (final SocketTimeoutException e) {
 				log.log(Level.FINE, e.getMessage(), e);
-				EventQueue.invokeLater(() -> {
-					GuiUtils.showMessageDialog(main.getFrame(), Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
-							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-				});
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+						Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				forceStop = true;
 				Thread.currentThread().interrupt();
@@ -309,22 +298,18 @@ public final class ClientRunMode extends OutputRunMode {
 			forceStop = true;
 
 			log.log(Level.INFO, "Could not resolve host: " + host);
-			EventQueue.invokeLater(() -> {
-				GuiUtils.showMessageDialog(main.getFrame(),
-						MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+					MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
 			log.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			forceStop = true;
 
 			log.log(Level.SEVERE, e.getMessage(), e);
-			EventQueue.invokeLater(() -> {
-				GuiUtils.showMessageDialog(main.getFrame(),
-						Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-			});
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} finally {
 			if (clientSocket != null)
 				clientSocket.close();
