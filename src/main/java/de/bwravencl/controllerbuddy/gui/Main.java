@@ -138,6 +138,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -204,6 +205,34 @@ import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
 public final class Main {
+
+	private static abstract class AbstractProfileFileChooser extends JFileChooser {
+
+		private static final long serialVersionUID = -4669170626378955605L;
+
+		private AbstractProfileFileChooser(final FileFilter fileFilter) {
+			setFileFilter(fileFilter);
+		}
+
+		@Override
+		public void approveSelection() {
+			final var file = getSelectedFile();
+			if (file.exists() && getDialogType() == SAVE_DIALOG) {
+				final var result = JOptionPane.showConfirmDialog(this,
+						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+				switch (result) {
+				case JOptionPane.CANCEL_OPTION:
+					cancelSelection();
+				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
+					return;
+				default:
+					break;
+				}
+			}
+			super.approveSelection();
+		}
+	}
 
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
@@ -329,12 +358,12 @@ public final class Main {
 		}
 	}
 
-	private static final class HtmlFileChooser extends JFileChooser {
+	private static final class HtmlFileChooser extends AbstractProfileFileChooser {
 
 		private static final long serialVersionUID = -1707951153902772391L;
 
 		private HtmlFileChooser(final File profileFile) {
-			setFileFilter(new FileNameExtensionFilter(strings.getString("HTML_FILE_DESCRIPTION"), "htm", "html"));
+			super(new FileNameExtensionFilter(strings.getString("HTML_FILE_DESCRIPTION"), "htm", "html"));
 
 			String filename;
 			if (profileFile != null) {
@@ -344,25 +373,6 @@ public final class Main {
 				filename = "*";
 
 			setSelectedFile(new File(filename + ".html"));
-		}
-
-		@Override
-		public void approveSelection() {
-			final var file = getSelectedFile();
-			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var result = JOptionPane.showConfirmDialog(this,
-						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
-						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-				switch (result) {
-				case JOptionPane.CANCEL_OPTION:
-					cancelSelection();
-				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
-					return;
-				default:
-					break;
-				}
-			}
-			super.approveSelection();
 		}
 	}
 
@@ -510,37 +520,18 @@ public final class Main {
 		@Override
 		protected void doAction(final ActionEvent e) {
 			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-				loadProfile(profileFileChooser.getSelectedFile(), false);
+				loadProfile(profileFileChooser.getSelectedFile(), false, true);
 		}
 	}
 
-	private static final class ProfileFileChooser extends JFileChooser {
+	private static final class ProfileFileChooser extends AbstractProfileFileChooser {
 
 		private static final long serialVersionUID = -4669170626378955605L;
 
 		private ProfileFileChooser() {
-			setFileFilter(
-					new FileNameExtensionFilter(strings.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
-			setSelectedFile(new File(PROFILE_FILE_SUFFIX));
-		}
+			super(new FileNameExtensionFilter(strings.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
 
-		@Override
-		public void approveSelection() {
-			final var file = getSelectedFile();
-			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var result = JOptionPane.showConfirmDialog(this,
-						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
-						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-				switch (result) {
-				case JOptionPane.CANCEL_OPTION:
-					cancelSelection();
-				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
-					return;
-				default:
-					break;
-				}
-			}
-			super.approveSelection();
+			setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 		}
 	}
 
