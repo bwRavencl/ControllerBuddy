@@ -60,6 +60,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
 
 	private static final int LOW_BATTERY_WARNING = 20;
+	private static final int HID_READ_TIMEOUT = 100;
 	private static final long INPUT_REPORT_TIMEOUT = 5000L;
 	private static final int TOUCHPAD_MAX_DELTA = 150;
 
@@ -194,26 +195,25 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		readerThread = Thread.startVirtualThread(() -> {
 			final var reportData = new byte[BLUETOOTH_REPORT_LENGTH];
 
-			for (;;)
-				try {
-					if (hidDevice.isClosed())
+			try {
+				for (;;) {
+					if (disconnected || hidDevice.isClosed())
 						return;
 
-					final var reportLength = hidDevice.read(reportData);
+					final var reportLength = hidDevice.read(reportData, HID_READ_TIMEOUT);
 					if (reportLength < 0)
 						return;
+					if (reportLength == 0)
+						continue;
 
 					if (connection == null) {
 						handleNewConnection(reportLength);
-						if (!reset())
+
+						if (connection == null || !reset())
 							return;
 					}
 
-					if (disconnected || connection == null)
-						return;
-
 					final var bluetooth = connection.isBluetooth();
-
 					final var reportId = reportData[0];
 					if (reportId != connection.inputReportId || (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH
 							: reportLength != USB_REPORT_LENGTH)) {
@@ -382,11 +382,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 					prevDown2 = down2;
 					prevX1 = x1;
 					prevY1 = y1;
-				} catch (final Throwable t) {
-					getLogger().log(Level.SEVERE, t.getMessage(), t);
-
-					disconnected = true;
 				}
+			} catch (final Throwable t) {
+				getLogger().log(Level.SEVERE, t.getMessage(), t);
+
+				disconnected = true;
+			}
 		});
 	}
 
