@@ -2678,7 +2678,7 @@ public final class Main {
 					if (gameControllerDbPath != null)
 						main.updateGameControllerMappingsFromFile(gameControllerDbPath);
 
-					main.handleRemainingCommandLine(commandLine);
+					EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
 				});
 			} catch (final ParseException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
