@@ -485,7 +485,7 @@ public final class Main {
 
 		@Override
 		protected void doAction(final ActionEvent e) {
-			newProfile();
+			newProfile(true);
 		}
 	}
 
@@ -2090,7 +2090,7 @@ public final class Main {
 						});
 		}
 
-		newProfile();
+		newProfile(false);
 
 		onControllersChanged(presentControllers, true);
 
@@ -2128,7 +2128,7 @@ public final class Main {
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
 				: preferences.get(PREFERENCES_LAST_PROFILE, null);
 		if (profilePath != null) {
-			loadProfile(new File(profilePath), noControllerConnected);
+			loadProfile(new File(profilePath), noControllerConnected, false);
 			if (loadedProfile == null && cmdProfilePath == null) {
 				log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
@@ -2569,8 +2569,9 @@ public final class Main {
 		return preferences.getBoolean(Main.PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
 	}
 
-	private void loadProfile(final File file, final boolean skipMessageDialogs) {
-		stopAll(true, false, true);
+	private void loadProfile(final File file, final boolean skipMessageDialogs,
+			final boolean performGarbageCollection) {
+		stopAll(true, false, performGarbageCollection);
 
 		EventQueue.invokeLater(() -> {
 			log.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
@@ -2672,7 +2673,7 @@ public final class Main {
 
 				EventQueue.invokeLater(() -> {
 					if (cmdProfilePath != null)
-						main.loadProfile(new File(cmdProfilePath), false);
+						main.loadProfile(new File(cmdProfilePath), false, true);
 
 					if (gameControllerDbPath != null)
 						main.updateGameControllerMappingsFromFile(gameControllerDbPath);
@@ -2688,8 +2689,8 @@ public final class Main {
 							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 	}
 
-	private void newProfile() {
-		stopAll(true, false, true);
+	private void newProfile(final boolean performGarbageCollection) {
+		stopAll(true, false, performGarbageCollection);
 
 		currentFile = null;
 
