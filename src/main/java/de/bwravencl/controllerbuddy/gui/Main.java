@@ -1072,7 +1072,7 @@ public final class Main {
 
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
 
-	static final int DEFAULT_HGAP = 10;
+	public static final int DEFAULT_HGAP = 10;
 
 	static final int DEFAULT_VGAP = 10;
 

@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,10 +37,16 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
-	private static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
+	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
+
+		private Consumer<Object> valueConsumer;
 
 		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
 			super(action, setterMethod);
+		}
+
+		void setValueConsumer(final Consumer<Object> valueConsumer) {
+			this.valueConsumer = valueConsumer;
 		}
 
 		@Override
@@ -51,6 +58,9 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 					value = roundFloat(floatValue);
 
 				setterMethod.invoke(action, value);
+
+				if (valueConsumer != null)
+					valueConsumer.accept(value);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
