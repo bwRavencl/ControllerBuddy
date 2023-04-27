@@ -46,9 +46,9 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 		}
 	}
 
-	private static final long INITIAL_MIN_ELAPSE_TIME = 150L;
+	private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
 
-	private static final long PEAK_MIN_ELAPSE_TIME = 70L;
+	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
 
 	private static final long ACCELERATION_TIME = 300L;
 
