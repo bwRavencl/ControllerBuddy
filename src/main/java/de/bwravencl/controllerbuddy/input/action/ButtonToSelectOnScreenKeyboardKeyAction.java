@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
-public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction {
+public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction {
 
 	public enum Direction {
 
@@ -46,13 +46,22 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 		}
 	}
 
-	private static final long MIN_ELAPSE_TIME = 150L;
+	private static final long INITIAL_MIN_ELAPSE_TIME = 150L;
+
+	private static final long PEAK_MIN_ELAPSE_TIME = 70L;
+
+	private static final long ACCELERATION_TIME = 300L;
+
+	private static final float peakElapseTimeReduction = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
+			/ (float) ACCELERATION_TIME;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
 	private Direction direction = Direction.UP;
+
+	private transient long initialPressTime;
 
 	private transient long lastPressTime;
 
@@ -67,7 +76,13 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 		if (value != 0) {
 			final var currentTime = System.currentTimeMillis();
-			if (currentTime - lastPressTime >= MIN_ELAPSE_TIME) {
+			if (initialPressTime == 0)
+				initialPressTime = currentTime;
+
+			final var accelerationFactor = Math.min(currentTime - initialPressTime, ACCELERATION_TIME);
+			final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
+
+			if (currentTime - lastPressTime >= minElapseTime) {
 				final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 
 				switch (direction) {
@@ -79,7 +94,8 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 				lastPressTime = currentTime;
 			}
-		}
+		} else
+			initialPressTime = 0;
 	}
 
 	@Override
@@ -95,6 +111,12 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 	@Override
 	public boolean isLongPress() {
 		return longPress;
+	}
+
+	@Override
+	public void reset(final Input input) {
+		initialPressTime = 0L;
+		lastPressTime = 0L;
 	}
 
 	public void setDirection(final Direction direction) {
