@@ -190,6 +190,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
 import de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
@@ -3722,8 +3723,30 @@ public final class Main {
 		if (hide)
 			return;
 
-		final var textContent = actions.stream().map(action -> action.getDescription(input)).distinct()
-				.collect(Collectors.joining(", "));
+		final var instantActions = new ArrayList<IAction<?>>();
+		final var delayedActions = new ArrayList<ILongPressAction<?>>();
+
+		for (final var action : actions)
+			if (action instanceof final ILongPressAction longPressAction && longPressAction.isLongPress())
+				delayedActions.add(longPressAction);
+			else
+				instantActions.add(action);
+
+		final var delayedActionsPresent = !delayedActions.isEmpty();
+		final var instantAndDelayedActionsPresent = !instantActions.isEmpty() && delayedActionsPresent;
+
+		final var textContent = MessageFormat.format(
+				strings.getString(
+						instantAndDelayedActionsPresent ? "VISUALIZATION_SHORT_PREFIX" : "VISUALIZATION_EMPTY_PREFIX"),
+				instantActions.stream().map(action -> action.getDescription(input)).distinct()
+						.collect(Collectors.joining(", ")))
+				+ (instantAndDelayedActionsPresent ? " / " : "")
+				+ MessageFormat.format(
+						strings.getString(
+								delayedActionsPresent ? "VISUALIZATION_LONG_PREFIX" : "VISUALIZATION_EMPTY_PREFIX"),
+						delayedActions.stream().map(action -> action.getDescription(input)).distinct()
+								.collect(Collectors.joining(", ")));
+
 		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
 		final var tSpanElement = textElement.getFirstChild();
 		tSpanElement.setTextContent(textContent);
