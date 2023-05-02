@@ -2207,6 +2207,7 @@ public final class Main {
 			headElement.appendChild(titleElement);
 
 			final var bodyElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "body");
+			bodyElement.setAttribute("style", "text-align:center");
 			htmlDocument.getDocumentElement().appendChild(bodyElement);
 
 			final var profileHeaderElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "h1");
@@ -2230,8 +2231,8 @@ public final class Main {
 
 				svgDivElement.setAttribute("id", svgDivElementId);
 				svgDivElement.setAttribute("class", "svg-div");
-				svgDivElement.setAttribute("style", "margin-top:50px;margin-bottom:75px;height:450px;display:"
-						+ (Profile.defaultMode.equals(mode) ? "block" : "none"));
+				svgDivElement.setAttribute("style",
+						"margin-top:50px;display:" + (Profile.defaultMode.equals(mode) ? "block" : "none"));
 				bodyElement.appendChild(svgDivElement);
 
 				final var svgDocument = generateSvgDocument(mode, false);
