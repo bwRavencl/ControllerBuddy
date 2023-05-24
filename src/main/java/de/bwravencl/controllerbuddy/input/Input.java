@@ -335,7 +335,7 @@ public final class Input {
 		if (lastPollTime > 0L)
 			elapsedTime = currentTime - lastPollTime;
 		lastPollTime = currentTime;
-		rateMultiplier = (float) elapsedTime / (float) 1000L;
+		rateMultiplier = (float) elapsedTime / 1000L;
 
 		try (var stack = MemoryStack.stackPush()) {
 			final var state = GLFWGamepadState.calloc(stack);
