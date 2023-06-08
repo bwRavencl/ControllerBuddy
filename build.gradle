@@ -101,7 +101,7 @@ dependencies {
 	if (os.windows) {
 		lwjglOs = "windows"
 		openVrSupport = true
-		xinputSupport = true;
+		xinputSupport = true
 	} else if (os.macOsX)
 		lwjglOs = 'macos'
 	else if (os.linux) {
