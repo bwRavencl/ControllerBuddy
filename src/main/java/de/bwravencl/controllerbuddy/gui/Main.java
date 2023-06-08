@@ -2382,8 +2382,10 @@ public final class Main {
 	}
 
 	private void handleRemainingCommandLine(final CommandLine commandLine) {
-		if (frame != null)
+		if (frame != null) {
 			frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
+			updateShowMenuItem();
+		}
 
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
 		if (autostartOptionValue != null)
@@ -2754,7 +2756,7 @@ public final class Main {
 
 			final var showAction = new ShowAction();
 			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
-			showMenuItem.setEnabled(!frame.isVisible());
+			updateShowMenuItem();
 			showMenuItem.addActionListener(showAction);
 			popupMenu.add(showMenuItem);
 
@@ -3704,6 +3706,13 @@ public final class Main {
 		vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
 
 		addGlueToSettingsPanel(profileSettingsPanel);
+	}
+
+	private void updateShowMenuItem() {
+		if (showMenuItem == null)
+			return;
+
+		showMenuItem.setEnabled(!frame.isVisible());
 	}
 
 	private void updateSonyTouchpadSettings() {
