@@ -218,8 +218,20 @@ class OpenVrOverlay {
 							VROverlay.VROverlay_SetOverlayWidthInMeters(statusOverlayHandle, STATUS_OVERLAY_WIDTH));
 
 					final var statusOverlayTransform = createIdentityHmdMatrix34(stack);
-					translate(statusOverlayTransform, STATUS_OVERLAY_POSITION_X, STATUS_OVERLAY_POSITION_Y,
+
+					final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+
+					var statusOverlayPositionX = STATUS_OVERLAY_POSITION_X;
+					if (main.isOverlayInLeftHalf(totalDisplayBounds))
+						statusOverlayPositionX *= -1f;
+
+					var statusOverlayPositionY = STATUS_OVERLAY_POSITION_Y;
+					if (!main.isOverlayInLowerHalf(totalDisplayBounds))
+						statusOverlayPositionY *= -1f;
+
+					translate(statusOverlayTransform, statusOverlayPositionX, statusOverlayPositionY,
 							STATUS_OVERLAY_POSITION_Z);
+
 					makeTransformFacing(statusOverlayTransform);
 					checkOverlayError(VROverlay.VROverlay_SetOverlayTransformAbsolute(statusOverlayHandle,
 							VR.ETrackingUniverseOrigin_TrackingUniverseSeated, statusOverlayTransform));

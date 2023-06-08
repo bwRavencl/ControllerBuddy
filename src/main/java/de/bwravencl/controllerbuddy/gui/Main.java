@@ -2561,6 +2561,14 @@ public final class Main {
 		return openVrOverlay != null;
 	}
 
+	boolean isOverlayInLeftHalf(final Rectangle totalDisplayBounds) {
+		return overlayFrame.getX() + overlayFrame.getWidth() / 2 < totalDisplayBounds.width / 2;
+	}
+
+	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
+		return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
+	}
+
 	private boolean isRunning() {
 		return isLocalRunning() || isClientRunning() || isServerRunning();
 	}
@@ -3498,11 +3506,10 @@ public final class Main {
 	}
 
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
-		final var inLowerHalf = overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
-
 		if (currentModeLabel != null) {
 			overlayFrame.remove(currentModeLabel);
-			overlayFrame.add(currentModeLabel, inLowerHalf ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
+			overlayFrame.add(currentModeLabel,
+					isOverlayInLowerHalf(totalDisplayBounds) ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
 		}
 
 		overlayFrame.pack();
