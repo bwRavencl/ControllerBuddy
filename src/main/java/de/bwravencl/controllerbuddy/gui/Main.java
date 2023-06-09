@@ -202,6 +202,7 @@ import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
+import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.version.Version;
 import de.bwravencl.controllerbuddy.version.VersionUtils;
 
@@ -246,8 +247,10 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			final var defaultVJoyPath = OutputRunMode.getDefaultVJoyPath();
+
 			final var vJoyDirectoryFileChooser = new JFileChooser(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, defaultVJoyPath));
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
@@ -262,8 +265,7 @@ public final class Main {
 				vJoyDirectoryLabel.setText(vjoyPath);
 			} else
 				GuiUtils.showMessageDialog(frame,
-						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
-								OutputRunMode.getDefaultInstallationPath()),
+						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"), defaultVJoyPath),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1172,7 +1174,8 @@ public final class Main {
 
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
 
-	static final Color TRANSPARENT = new Color(255, 255, 255, 0);
+	@SuppressWarnings("exports")
+	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
 	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
 
@@ -1456,150 +1459,80 @@ public final class Main {
 	}
 
 	private final TaskRunner taskRunner;
-
 	private final Preferences preferences;
-
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-
 	private volatile RunMode runMode;
-
 	private volatile ControllerInfo selectedController;
-
 	private Input input;
-
 	private RunModeType lastRunModeType = RunModeType.NONE;
-
 	private final JFrame frame;
-
 	private final OpenAction openAction = new OpenAction();
-
 	private final QuitAction quitAction = new QuitAction();
-
 	private final StartLocalAction startLocalAction = new StartLocalAction();
-
 	private final StartClientAction startClientAction = new StartClientAction();
-
 	private final StartServerAction startServerAction = new StartServerAction();
-
 	private final StopAction stopAction = new StopAction();
-
 	private final JMenuBar menuBar = new JMenuBar();
-
 	private final JMenu fileJMenu = new JMenu(strings.getString("FILE_MENU"));
-
 	private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
-
 	private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
-
 	private final JMenuItem newJMenuItem = fileJMenu.add(new NewAction());
-
 	private final JMenuItem openJMenuItem = fileJMenu.add(openAction);
-
 	private final JMenuItem saveJMenuItem = fileJMenu.add(new SaveAction());
-
 	private final JMenuItem saveAsJMenuItem = fileJMenu.add(new SaveAsAction());
-
 	private JMenuItem startLocalJMenuItem;
-
 	private JMenuItem startClientJMenuItem;
-
 	private final JMenuItem startServerJMenuItem;
-
 	private final JMenuItem stopJMenuItem;
-
 	private PopupMenu runPopupMenu;
-
 	private MenuItem showMenuItem;
-
 	private MenuItem startLocalMenuItem;
-
 	private MenuItem startClientMenuItem;
-
 	private MenuItem startServerMenuItem;
-
 	private MenuItem stopMenuItem;
-
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-
 	private JPanel modesPanel;
-
 	private JScrollPane modesScrollPane;
-
 	private JPanel modesListPanel;
-
 	private JPanel newModePanel;
-
 	private JPanel overlayPanel;
-
 	private JPanel visualizationPanel;
-
 	private AssignmentsComponent assignmentsComponent;
-
 	private JScrollPane profileSettingsScrollPane;
-
 	private JPanel profileSettingsPanel;
-
 	private JCheckBox showVrOverlayCheckBox;
-
 	private final JScrollPane globalSettingsScrollPane = new JScrollPane();
-
 	private final JPanel globalSettingsPanel;
-
 	private final JPanel sonyCursorSensitivityPanel;
-
 	private final JPanel sonyScrollSensitivityPanel;
-
 	private JScrollPane indicatorsScrollPane;
-
 	private JPanel indicatorsListPanel;
-
 	private ScheduledExecutorService overlayExecutorService;
-
 	private JLabel vJoyDirectoryLabel;
-
 	private JTextField hostTextField;
-
 	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
-
 	private TrayIcon trayIcon;
-
 	private boolean unsavedChanges = false;
-
 	private String loadedProfile = null;
-
 	private File currentFile;
-
 	private ServerSocket serverSocket;
-
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-
 	private JLabel currentModeLabel;
-
 	private final JFileChooser profileFileChooser = new ProfileFileChooser();
-
 	private final Timer timer = new Timer();
-
 	private volatile OpenVrOverlay openVrOverlay;
-
 	private FrameDragListener overlayFrameDragListener;
-
 	private FlowLayout indicatorPanelFlowLayout;
-
 	private JPanel indicatorPanel;
-
 	private Rectangle prevTotalDisplayBounds;
-
 	private volatile JFrame overlayFrame;
-
 	private final OnScreenKeyboard onScreenKeyboard;
-
 	private JComboBox<Mode> modeComboBox;
-
 	private JSVGCanvas svgCanvas;
-
 	private SVGDocument templateSvgDocument;
-
 	private FlatLaf lookAndFeel;
+
+	private volatile Rectangle totalDisplayBounds;
 
 	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -1831,7 +1764,7 @@ public final class Main {
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			this.vJoyDirectoryLabel = new JLabel(
-					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultInstallationPath()));
+					preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultVJoyPath()));
 			vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
 
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
@@ -2417,6 +2350,23 @@ public final class Main {
 			quit();
 	}
 
+	private void initOpenVrOverlay() {
+		final var profile = input.getProfile();
+
+		if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay())
+			return;
+
+		try {
+			openVrOverlay = OpenVrOverlay.start(this);
+		} catch (final Throwable t) {
+			log.log(Level.WARNING, t.getMessage(), t);
+
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+					Main.strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
+					Main.strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE));
+		}
+	}
+
 	private void initOverlay() {
 		if (!input.getProfile().isShowOverlay())
 			return;
@@ -2504,8 +2454,10 @@ public final class Main {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				if (isWindows)
-					updateOverlayAlignment(GuiUtils.getTotalDisplayBounds());
+				if (isWindows) {
+					totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+					updateOverlayAlignment(totalDisplayBounds);
+				}
 			}
 
 			@Override
@@ -2534,19 +2486,6 @@ public final class Main {
 		updateOverlayAlignment(prevTotalDisplayBounds);
 
 		overlayFrame.setVisible(true);
-	}
-
-	private void initVrOverlay() {
-		final var profile = input.getProfile();
-
-		if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay())
-			return;
-
-		try {
-			openVrOverlay = new OpenVrOverlay(this);
-		} catch (final Exception e) {
-			openVrOverlay = null;
-		}
 	}
 
 	private boolean isClientRunning() {
@@ -3151,6 +3090,10 @@ public final class Main {
 			statusLabel.setText(text);
 	}
 
+	void setTotalDisplayBounds(final Rectangle totalDisplayBounds) {
+		this.totalDisplayBounds = totalDisplayBounds;
+	}
+
 	void setUnsavedChanges(final boolean unsavedChanges) {
 		this.unsavedChanges = unsavedChanges;
 		updateTitleAndTooltip();
@@ -3190,7 +3133,7 @@ public final class Main {
 		onRunModeChanged();
 
 		initOverlay();
-		initVrOverlay();
+		initOpenVrOverlay();
 		startOverlayTimerTask();
 	}
 
@@ -3198,40 +3141,8 @@ public final class Main {
 		stopOverlayTimerTask();
 
 		overlayExecutorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
-
-		overlayExecutorService.scheduleAtFixedRate(() -> {
-			EventQueue.invokeLater(() -> {
-				if (!isModalDialogShowing()) {
-					if (overlayFrame != null)
-						GuiUtils.makeWindowTopmost(overlayFrame);
-
-					if (onScreenKeyboard.isVisible())
-						GuiUtils.makeWindowTopmost(onScreenKeyboard);
-				}
-
-				final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-				if (!totalDisplayBounds.equals(prevTotalDisplayBounds)) {
-					prevTotalDisplayBounds = totalDisplayBounds;
-
-					if (overlayFrame != null && overlayFrameDragListener != null
-							&& !overlayFrameDragListener.isDragging()) {
-						deInitOverlay();
-						initOverlay();
-					}
-
-					onScreenKeyboard.updateLocation();
-				}
-
-				if (isWindows)
-					repaintOnScreenKeyboardAndOverlay();
-				else if (isLinux && currentModeLabel != null) {
-					currentModeLabel.validate();
-					currentModeLabel.repaint();
-					updateOverlayAxisIndicators(true);
-				}
-
-			});
-		}, OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS);
+		overlayExecutorService.scheduleAtFixedRate(new RunnableWithDefaultExceptionHandler(this::updateOverlayPosition),
+				OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS);
 	}
 
 	private void startServer() {
@@ -3611,6 +3522,40 @@ public final class Main {
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
 	}
 
+	private void updateOverlayPosition() {
+		EventQueue.invokeLater(() -> {
+			if (!isModalDialogShowing()) {
+				if (overlayFrame != null)
+					GuiUtils.makeWindowTopmost(overlayFrame);
+
+				if (onScreenKeyboard.isVisible())
+					GuiUtils.makeWindowTopmost(onScreenKeyboard);
+			}
+
+			totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+			if (!totalDisplayBounds.equals(prevTotalDisplayBounds)) {
+				prevTotalDisplayBounds = totalDisplayBounds;
+
+				if (overlayFrame != null && overlayFrameDragListener != null
+						&& !overlayFrameDragListener.isDragging()) {
+					deInitOverlay();
+					initOverlay();
+				}
+
+				onScreenKeyboard.updateLocation();
+			}
+
+			if (isWindows)
+				repaintOnScreenKeyboardAndOverlay();
+			else if (isLinux && currentModeLabel != null) {
+				currentModeLabel.validate();
+				currentModeLabel.repaint();
+				updateOverlayAxisIndicators(true);
+			}
+
+		});
+	}
+
 	private void updatePanelAccess() {
 		final var panelsEnabled = !isRunning();
 
@@ -3626,6 +3571,8 @@ public final class Main {
 			updateOverlayPanel();
 
 		GuiUtils.setEnabledRecursive(profileSettingsPanel, panelsEnabled);
+		if (panelsEnabled)
+			updateProfileSettingsPanel();
 		GuiUtils.setEnabledRecursive(globalSettingsPanel, panelsEnabled);
 	}
 
@@ -3686,15 +3633,19 @@ public final class Main {
 			profile.setShowOverlay(showOverlay);
 			if (!showOverlay)
 				profile.setShowVrOverlay(false);
+
 			if (showVrOverlayCheckBox != null) {
 				showVrOverlayCheckBox.setEnabled(showOverlay);
 				if (!showOverlay)
 					showVrOverlayCheckBox.setSelected(false);
 			}
+
 			updatePanelAccess();
 			setUnsavedChanges(true);
 		});
 		overlaySettingsPanel.add(showOverlayCheckBox);
+
+		final var showOverlay = profile.isShowOverlay();
 
 		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		appearanceSettingsPanel.add(vrOverlaySettingsPanel, constraints);
@@ -3705,6 +3656,7 @@ public final class Main {
 
 		showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
 		showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
+		showVrOverlayCheckBox.setEnabled(showOverlay);
 		showVrOverlayCheckBox.addActionListener(event -> {
 			final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
 			profile.setShowVrOverlay(showVrOverlay);

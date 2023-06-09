@@ -42,6 +42,7 @@ import com.sun.jna.Platform;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 
 public class XInputDriver extends Driver implements IGamepadStateProvider {
 
@@ -119,29 +120,8 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
 		if (batteryLevelAvailable) {
 			executorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
-			executorService.scheduleAtFixedRate(() -> {
-				EventQueue.invokeLater(() -> {
-					if (controller.jid() != input.getController().jid())
-						return;
-
-					if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
-						final var batteryInformation = xinputDevice14
-								.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
-						final var batteryLevel = batteryInformation.getLevel();
-
-						batteryLevelString = Main.strings.getString(switch (batteryInformation.getLevel()) {
-						case EMPTY -> "BATTERY_LEVEL_EMPTY";
-						case LOW -> "BATTERY_LEVEL_LOW";
-						case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
-						case FULL -> "BATTERY_LEVEL_FULL";
-						});
-
-						input.getMain().updateTitleAndTooltip();
-						if (batteryLevel == XInputBatteryLevel.LOW)
-							input.getMain().displayLowBatteryWarning(batteryLevelString);
-					}
-				});
-			}, 0L, BATTERY_LEVEL_POLL_INTERVAL, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new RunnableWithDefaultExceptionHandler(this::pollBatteryLevel), 0L,
+					BATTERY_LEVEL_POLL_INTERVAL, TimeUnit.SECONDS);
 		}
 
 		log.log(Level.INFO,
@@ -213,6 +193,29 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 			return super.getTooltip(title);
 
 		return MessageFormat.format(Main.strings.getString("BATTERY_TOOLTIP_STRING"), title, batteryLevelString);
+	}
+
+	private void pollBatteryLevel() {
+		EventQueue.invokeLater(() -> {
+			if (controller.jid() != input.getController().jid())
+				return;
+
+			if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
+				final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+				final var batteryLevel = batteryInformation.getLevel();
+
+				batteryLevelString = Main.strings.getString(switch (batteryInformation.getLevel()) {
+				case EMPTY -> "BATTERY_LEVEL_EMPTY";
+				case LOW -> "BATTERY_LEVEL_LOW";
+				case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
+				case FULL -> "BATTERY_LEVEL_FULL";
+				});
+
+				input.getMain().updateTitleAndTooltip();
+				if (batteryLevel == XInputBatteryLevel.LOW)
+					input.getMain().displayLowBatteryWarning(batteryLevelString);
+			}
+		});
 	}
 
 	private void rumble(final long duration, final int leftMotor, final int rightMotor) {

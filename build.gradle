@@ -64,8 +64,8 @@ ext {
 
 	batikVersion = '1.16'
 	commonsCliVersion = '1.5.0'
-	jxinputVersion = '1.0.0'
 	hid4javaVersion = '85d76ecd85'
+	jxinputVersion = '1.0.0'
 
 	openVrSupport = false
 }
@@ -96,7 +96,7 @@ dependencies {
 	def jnaVersion = '5.13.0'
 	def lwjglVersion = '3.3.2'
 
-	def xinputSupport = false;
+	def xinputSupport = false
 	def lwjglOs
 	if (os.windows) {
 		lwjglOs = "windows"

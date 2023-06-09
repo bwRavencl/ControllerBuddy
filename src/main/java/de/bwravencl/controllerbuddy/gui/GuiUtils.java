@@ -76,7 +76,8 @@ public final class GuiUtils {
 			final var newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
 					currentMouseLocation.y - mouseDownLocation.y);
 
-			setFrameLocationRespectingBounds(frame, newFrameLocation, getTotalDisplayBounds());
+			final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
+			setFrameLocationRespectingBounds(frame, newFrameLocation, totalDisplayBounds);
 		}
 
 		@Override
@@ -89,10 +90,10 @@ public final class GuiUtils {
 			mouseDownLocation = null;
 
 			final var frameLocation = frame.getLocation();
-			final var totalDisplayBounds = getTotalDisplayBounds();
+			final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
 			main.getPreferences().put(getFrameLocationPreferencesKey(frame),
-					(float) frameLocation.x / (float) totalDisplayBounds.width + ","
-							+ (float) frameLocation.y / (float) totalDisplayBounds.height);
+					frameLocation.x / (float) totalDisplayBounds.width + ","
+							+ frameLocation.y / (float) totalDisplayBounds.height);
 		}
 	}
 
@@ -112,22 +113,7 @@ public final class GuiUtils {
 		return modeComboBox;
 	}
 
-	private static String getFrameLocationPreferencesKey(final JFrame frame) {
-		final var title = frame.getTitle();
-		if (title == null || title.isBlank())
-			return null;
-
-		var underscoreTitle = title.codePoints().mapToObj(c -> {
-			if (c == ' ')
-				return "_";
-			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
-		}).collect(Collectors.joining());
-		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
-
-		return underscoreTitle + "_location";
-	}
-
-	static Rectangle getTotalDisplayBounds() {
+	static Rectangle getAndStoreTotalDisplayBounds(final Main main) {
 		final var totalDisplayBounds = new Rectangle();
 
 		for (final var graphicsDevice : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
@@ -148,7 +134,29 @@ public final class GuiUtils {
 			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
 		}
 
+		if (main != null)
+			main.setTotalDisplayBounds(totalDisplayBounds);
+
 		return totalDisplayBounds;
+	}
+
+	private static String getFrameLocationPreferencesKey(final JFrame frame) {
+		final var title = frame.getTitle();
+		if (title == null || title.isBlank())
+			return null;
+
+		var underscoreTitle = title.codePoints().mapToObj(c -> {
+			if (c == ' ')
+				return "_";
+			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
+		}).collect(Collectors.joining());
+		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
+
+		return underscoreTitle + "_location";
+	}
+
+	static Rectangle getTotalDisplayBounds() {
+		return getAndStoreTotalDisplayBounds(null);
 	}
 
 	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
