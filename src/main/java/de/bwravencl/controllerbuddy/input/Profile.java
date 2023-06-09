@@ -36,6 +36,8 @@ public final class Profile implements Cloneable {
 
 	private static final boolean DEFAULT_SHOW_OVERLAY = true;
 
+	private static final boolean DEFAULT_USE_MUMBLE_OVERLAY = false;
+
 	private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
 
 	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
@@ -49,6 +51,7 @@ public final class Profile implements Cloneable {
 
 	private String version;
 	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
+	private boolean useMumbleOverlay = DEFAULT_USE_MUMBLE_OVERLAY;
 	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
 	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
@@ -123,6 +126,10 @@ public final class Profile implements Cloneable {
 		return showVrOverlay;
 	}
 
+	public boolean isUseMumbleOverlay() {
+		return useMumbleOverlay;
+	}
+
 	public void removeMode(final Input input, final Mode mode) {
 		buttonToModeActionsMap.entrySet().removeIf(entry -> {
 			for (final var action : entry.getValue())
@@ -183,6 +190,10 @@ public final class Profile implements Cloneable {
 
 	public void setShowVrOverlay(final boolean showVrOverlay) {
 		this.showVrOverlay = showVrOverlay;
+	}
+
+	public void setUseMumbleOverlay(final boolean useMumbleOverlay) {
+		this.useMumbleOverlay = useMumbleOverlay;
 	}
 
 	public void setVersion(final String version) {

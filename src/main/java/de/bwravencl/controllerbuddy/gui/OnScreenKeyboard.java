@@ -95,6 +95,7 @@ public final class OnScreenKeyboard extends JFrame {
 				OnScreenKeyboard.this.repaint();
 
 			Toolkit.getDefaultToolkit().sync();
+			main.updateMumbleOverlay();
 		}
 
 		void setPressed(final boolean pressed) {
@@ -779,6 +780,8 @@ public final class OnScreenKeyboard extends JFrame {
 			} else
 				releaseAll();
 		}
+
+		main.updateMumbleOverlay();
 	}
 
 	public void toggleLock() {

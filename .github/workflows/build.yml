@@ -25,6 +25,15 @@ jobs:
         with:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           java-version: ${{ env.JAVA_VERSION }}
+      - name: Extract Qt version
+        id: extract_qt_version
+        shell: bash
+        run: echo "qt_version=$(grep 'qtJambiVersion =' build.gradle | cut -d = -f2 | tr -d "'")" >> $GITHUB_OUTPUT
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ steps.extract_qt_version.outputs.qt_version }}
+          arch: win64_msvc2019_64
       - name: Build
         uses: gradle/gradle-build-action@v2
         with:

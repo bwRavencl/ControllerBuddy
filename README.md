@@ -206,6 +206,7 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 - [JXInput](https://github.com/StrikerX3/JXInput)
 - [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
+- [QtJambi](https://qtjambi.io)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
 
 #### Building:
@@ -225,3 +226,5 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Delete Eclipse files                   | gradlew cleanEclipse     |
 | Delete build and gen directories       | gradlew clean            |
 | Check for dependency updates           | gradlew dependencyUpdate |
+
+On Windows x86-64 make sure to install the appropriate version of the Qt framework for the version of QtJambi used by ControllerBuddy. Then create an environment variable called `QT_ROOT_DIR`, that points to the root directory of said Qt version, e.g.: `C:\Qt\6.5.1\msvc2019_64`.

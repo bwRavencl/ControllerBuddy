@@ -181,6 +181,7 @@ import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.win32.WinDef.UINT;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
+import de.bwravencl.controllerbuddy.gui.mumbleoverlay.MumbleOverlay;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -233,6 +234,45 @@ public final class Main {
 				}
 			}
 			super.approveSelection();
+		}
+	}
+
+	private final class ChangeMumbleDirectoryAction extends AbstractAction {
+
+		private static final long serialVersionUID = -7672382299595684105L;
+
+		private ChangeMumbleDirectoryAction() {
+			putValue(NAME, "...");
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_MUMBLE_DIRECTORY_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var defaultMumbleDirectory = MumbleOverlay.getDefaultMumblePath();
+
+			final var mumbleDirectoryFileChooser = new JFileChooser(
+					preferences.get(PREFERENCES_MUMBLE_DIRECTORY, defaultMumbleDirectory));
+			mumbleDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+			if (mumbleDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION)
+				return;
+
+			final var mumblePath = mumbleDirectoryFileChooser.getSelectedFile().getAbsolutePath();
+
+			for (final var platform : MumbleOverlay.HelperBinary.values()) {
+				final var helperPath = MumbleOverlay.getMumbleHelperPath(mumblePath, platform);
+				if (helperPath == null) {
+					GuiUtils.showMessageDialog(frame,
+							MessageFormat.format(strings.getString("INVALID_MUMBLE_DIRECTORY_DIALOG_TEXT"),
+									defaultMumbleDirectory),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+
+					return;
+				}
+			}
+
+			preferences.put(PREFERENCES_MUMBLE_DIRECTORY, mumblePath);
+			mumbleDirectoryLabel.setText(mumblePath);
 		}
 	}
 
@@ -1053,6 +1093,8 @@ public final class Main {
 
 	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
 
+	private static final boolean isMumbleOverlaySupported = isWindows && Platform.isIntel() && Platform.is64Bit();
+
 	static boolean skipMessageDialogs;
 
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
@@ -1128,6 +1170,10 @@ public final class Main {
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
+
+	public static final String PREFERENCES_USE_MUMBLE_OVERLAY = "mumble_overlay_enabled";
+
+	public static final String PREFERENCES_MUMBLE_DIRECTORY = "mumble_directory";
 
 	public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
 
@@ -1501,6 +1547,7 @@ public final class Main {
 	private JScrollPane profileSettingsScrollPane;
 	private JPanel profileSettingsPanel;
 	private JCheckBox showVrOverlayCheckBox;
+	private JCheckBox useMumbleOverlayCheckBox;
 	private final JScrollPane globalSettingsScrollPane = new JScrollPane();
 	private final JPanel globalSettingsPanel;
 	private final JPanel sonyCursorSensitivityPanel;
@@ -1531,6 +1578,8 @@ public final class Main {
 	private JSVGCanvas svgCanvas;
 	private SVGDocument templateSvgDocument;
 	private FlatLaf lookAndFeel;
+	private MumbleOverlay mumbleOverlay;
+	private JLabel mumbleDirectoryLabel;
 
 	private volatile Rectangle totalDisplayBounds;
 
@@ -1896,6 +1945,44 @@ public final class Main {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
+		if (isMumbleOverlaySupported) {
+			final var mumbleOverlaySettingsPanel = new JPanel();
+			mumbleOverlaySettingsPanel.setLayout(new BoxLayout(mumbleOverlaySettingsPanel, BoxLayout.PAGE_AXIS));
+			mumbleOverlaySettingsPanel
+					.setBorder(new TitledBorder(strings.getString("MUMBLE_OVERLAY_SETTINGS_BORDER_TITLE")));
+			globalSettingsPanel.add(mumbleOverlaySettingsPanel, constraints);
+
+			final var useMumbleOverlayPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			mumbleOverlaySettingsPanel.add(useMumbleOverlayPanel, constraints);
+
+			final var mumbleOverlayLabel = new JLabel(strings.getString("MUMBLE_OVERLAY_LABEL"));
+			mumbleOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			useMumbleOverlayPanel.add(mumbleOverlayLabel);
+
+			final var useMumbleOverlayCheckBox = new JCheckBox(strings.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
+			useMumbleOverlayCheckBox.setSelected(
+					preferences.getBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, MumbleOverlay.DEFAULT_USE_MUMBLE_OVERLAY));
+			useMumbleOverlayCheckBox.addActionListener(event -> {
+				final var useMumbleOverlay = ((JCheckBox) event.getSource()).isSelected();
+				preferences.putBoolean(PREFERENCES_USE_MUMBLE_OVERLAY, useMumbleOverlay);
+			});
+			useMumbleOverlayPanel.add(useMumbleOverlayCheckBox);
+
+			final var mumbleDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			mumbleOverlaySettingsPanel.add(mumbleDirectoryPanel);
+
+			final var mumbleDirectoryLabel = new JLabel(strings.getString("MUMBLE_DIRECTORY_LABEL"));
+			mumbleDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			mumbleDirectoryPanel.add(mumbleDirectoryLabel);
+
+			this.mumbleDirectoryLabel = new JLabel(
+					preferences.get(PREFERENCES_MUMBLE_DIRECTORY, MumbleOverlay.getDefaultMumblePath()));
+			mumbleDirectoryPanel.add(this.mumbleDirectoryLabel);
+
+			final var mumbleDirectoryButton = new JButton(new ChangeMumbleDirectoryAction());
+			mumbleDirectoryPanel.add(mumbleDirectoryButton);
+		}
+
 		final var sonyControllersSettingsPanel = new JPanel();
 		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.PAGE_AXIS));
 		sonyControllersSettingsPanel
@@ -2074,6 +2161,11 @@ public final class Main {
 		if (openVrOverlay != null) {
 			openVrOverlay.stop();
 			openVrOverlay = null;
+		}
+
+		if (mumbleOverlay != null) {
+			MumbleOverlay.stop(this);
+			mumbleOverlay = null;
 		}
 
 		if (overlayFrame != null) {
@@ -2265,7 +2357,8 @@ public final class Main {
 		return frame;
 	}
 
-	Input getInput() {
+	@SuppressWarnings("exports")
+	public Input getInput() {
 		return input;
 	}
 
@@ -2273,7 +2366,8 @@ public final class Main {
 		return onScreenKeyboard;
 	}
 
-	JFrame getOverlayFrame() {
+	@SuppressWarnings("exports")
+	public JFrame getOverlayFrame() {
 		return overlayFrame;
 	}
 
@@ -2299,6 +2393,14 @@ public final class Main {
 	public float getSonyScrollSensitivity() {
 		return preferences.getFloat(Main.PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
 				SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+	}
+
+	@SuppressWarnings("exports")
+	public Rectangle getTotalDisplayBounds() {
+		if (totalDisplayBounds == null)
+			totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+
+		return totalDisplayBounds;
 	}
 
 	public void handleOnScreenKeyboardModeChange() {
@@ -2464,7 +2566,9 @@ public final class Main {
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
 
-				if (!isWindows) {
+				if (isWindows)
+					updateMumbleOverlay();
+				else {
 					deInitOverlay();
 					initOverlay();
 				}
@@ -2486,6 +2590,9 @@ public final class Main {
 		updateOverlayAlignment(prevTotalDisplayBounds);
 
 		overlayFrame.setVisible(true);
+
+		if (isMumbleOverlaySupported)
+			mumbleOverlay = MumbleOverlay.start(this);
 	}
 
 	private boolean isClientRunning() {
@@ -2954,6 +3061,7 @@ public final class Main {
 		}
 
 		Toolkit.getDefaultToolkit().sync();
+		updateMumbleOverlay();
 	}
 
 	public void restartLast() {
@@ -3055,6 +3163,7 @@ public final class Main {
 
 			currentModeLabel.setText(text);
 			Toolkit.getDefaultToolkit().sync();
+			updateMumbleOverlay();
 		});
 	}
 
@@ -3416,6 +3525,13 @@ public final class Main {
 		}
 	}
 
+	void updateMumbleOverlay() {
+		if (mumbleOverlay == null)
+			return;
+
+		mumbleOverlay.paintContainers(true);
+	}
+
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
 		if (currentModeLabel != null) {
 			overlayFrame.remove(currentModeLabel);
@@ -3424,6 +3540,7 @@ public final class Main {
 		}
 
 		overlayFrame.pack();
+		updateMumbleOverlay();
 	}
 
 	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
@@ -3457,6 +3574,7 @@ public final class Main {
 					if (repaint) {
 						progressBar.repaint();
 						Toolkit.getDefaultToolkit().sync();
+						updateMumbleOverlay();
 					}
 				});
 	}
@@ -3524,7 +3642,7 @@ public final class Main {
 
 	private void updateOverlayPosition() {
 		EventQueue.invokeLater(() -> {
-			if (!isModalDialogShowing()) {
+			if (!isModalDialogShowing() && mumbleOverlay == null) {
 				if (overlayFrame != null)
 					GuiUtils.makeWindowTopmost(overlayFrame);
 
@@ -3631,8 +3749,16 @@ public final class Main {
 		showOverlayCheckBox.addActionListener(event -> {
 			final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
 			profile.setShowOverlay(showOverlay);
-			if (!showOverlay)
+			if (!showOverlay) {
+				profile.setUseMumbleOverlay(false);
 				profile.setShowVrOverlay(false);
+			}
+
+			if (useMumbleOverlayCheckBox != null) {
+				useMumbleOverlayCheckBox.setEnabled(showOverlay);
+				if (!showOverlay)
+					useMumbleOverlayCheckBox.setSelected(false);
+			}
 
 			if (showVrOverlayCheckBox != null) {
 				showVrOverlayCheckBox.setEnabled(showOverlay);
@@ -3646,6 +3772,23 @@ public final class Main {
 		overlaySettingsPanel.add(showOverlayCheckBox);
 
 		final var showOverlay = profile.isShowOverlay();
+
+		final var mumbleOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		appearanceSettingsPanel.add(mumbleOverlaySettingsPanel, constraints);
+
+		final var mumbleOverlayLabel = new JLabel(strings.getString("MUMBLE_OVERLAY_LABEL"));
+		mumbleOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		mumbleOverlaySettingsPanel.add(mumbleOverlayLabel);
+
+		useMumbleOverlayCheckBox = new JCheckBox(strings.getString("USE_MUMBLE_OVERLAY_CHECK_BOX"));
+		useMumbleOverlayCheckBox.setSelected(profile.isUseMumbleOverlay());
+		useMumbleOverlayCheckBox.setEnabled(showOverlay);
+		useMumbleOverlayCheckBox.addActionListener(event -> {
+			final var useMumbleOverlay = ((JCheckBox) event.getSource()).isSelected();
+			profile.setUseMumbleOverlay(useMumbleOverlay);
+			setUnsavedChanges(true);
+		});
+		mumbleOverlaySettingsPanel.add(useMumbleOverlayCheckBox);
 
 		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		appearanceSettingsPanel.add(vrOverlaySettingsPanel, constraints);
