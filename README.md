@@ -224,4 +224,4 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Generate Eclipse files                 | gradlew eclipse          |
 | Delete Eclipse files                   | gradlew cleanEclipse     |
 | Delete build and gen directories       | gradlew clean            |
-| Check for dependency updates     | gradlew dependencyUpdate |
+| Check for dependency updates           | gradlew dependencyUpdate |

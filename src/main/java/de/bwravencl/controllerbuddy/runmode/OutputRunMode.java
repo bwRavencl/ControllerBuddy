@@ -187,7 +187,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 	}
 
-	public static String getDefaultInstallationPath() {
+	public static String getDefaultVJoyPath() {
 		try {
 			return Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, VJOY_UNINSTALL_REGISTRY_KEY,
 					VJOY_INSTALL_LOCATION_REGISTRY_VALUE);
@@ -466,8 +466,7 @@ public abstract class OutputRunMode extends RunMode {
 		int nButtons;
 		if (Main.isWindows)
 			try {
-				final var vJoyPath = main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY,
-						getDefaultInstallationPath());
+				final var vJoyPath = main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
 				final var libraryPath = new File(vJoyPath, getVJoyArchFolderName()).getAbsolutePath();
 
 				log.log(Level.INFO, "Using vJoy library path: " + libraryPath);

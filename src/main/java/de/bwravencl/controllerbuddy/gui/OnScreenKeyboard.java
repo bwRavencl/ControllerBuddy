@@ -805,7 +805,8 @@ public final class OnScreenKeyboard extends JFrame {
 		defaultLocation.x = (int) maximumWindowBounds.getMaxX() / 2 - getWidth() / 2;
 		defaultLocation.y = (int) maximumWindowBounds.getMaxY() - getHeight();
 
-		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, GuiUtils.getTotalDisplayBounds());
+		final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
+		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, totalDisplayBounds);
 	}
 
 	private void updateScaling() {

@@ -18,7 +18,7 @@ package de.bwravencl.controllerbuddy.gui;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -50,23 +48,25 @@ import org.lwjgl.system.windows.WNDCLASSEX;
 import org.lwjgl.system.windows.WindowsLibrary;
 import org.lwjgl.system.windows.WindowsUtil;
 
+import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
+
 class OpenVrOverlay {
 
 	private static final class TextureData {
 
 		private BufferedImage image;
 		private int textureObject;
-		private Graphics2D g2d;
+		private Graphics graphics;
 	}
-
-	private static final Logger log = Logger.getLogger(OpenVrOverlay.class.getName());
 
 	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
 	private static final long OVERLAY_FPS = 25L;
+
 	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
 	private static final float STATUS_OVERLAY_POSITION_X = 0.2f;
 	private static final float STATUS_OVERLAY_POSITION_Y = -0.1f;
 	private static final float STATUS_OVERLAY_POSITION_Z = -0.4f;
+
 	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
@@ -172,6 +172,13 @@ class OpenVrOverlay {
 		mat.m(10, res22);
 	}
 
+	synchronized static OpenVrOverlay start(final Main main) {
+		if (!VR.VR_IsRuntimeInstalled() || !VR.VR_IsHmdPresent())
+			return null;
+
+		return new OpenVrOverlay(main);
+	}
+
 	private static void translate(final HmdMatrix34 mat, final float x, final float y, final float z) {
 		mat.m(3, x);
 		mat.m(7, y);
@@ -188,9 +195,10 @@ class OpenVrOverlay {
 	private short classAtom = 0;
 	private long hwnd = MemoryUtil.NULL;
 	private MemoryStack renderingMemoryStack;
+
 	private final ScheduledExecutorService executorService;
 
-	OpenVrOverlay(final Main main) throws Exception {
+	private OpenVrOverlay(final Main main) {
 		this.main = main;
 		onScreenKeyboard = main.getOnScreenKeyboard();
 
@@ -199,7 +207,7 @@ class OpenVrOverlay {
 			final var token = VR.VR_InitInternal(peError, VR.EVRApplicationType_VRApplication_Background);
 			final var initError = peError.get();
 			if (initError != VR.EVRInitError_VRInitError_None)
-				throw new Exception(getClass().getName() + ": " + VR.VR_GetVRInitErrorAsEnglishDescription(initError));
+				throw new RuntimeException(VR.VR_GetVRInitErrorAsEnglishDescription(initError));
 
 			try {
 				OpenVR.create(token);
@@ -219,7 +227,7 @@ class OpenVrOverlay {
 
 					final var statusOverlayTransform = createIdentityHmdMatrix34(stack);
 
-					final var totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+					final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
 
 					var statusOverlayPositionX = STATUS_OVERLAY_POSITION_X;
 					if (main.isOverlayInLeftHalf(totalDisplayBounds))
@@ -266,7 +274,7 @@ class OpenVrOverlay {
 
 				classAtom = User32.RegisterClassEx(wc);
 				if (classAtom == 0)
-					throw new IllegalStateException(getClass().getName() + ": failed to register WGL window class");
+					throw new IllegalStateException("Failed to register WGL window class");
 
 				hwnd = Checks.check(User32.nCreateWindowEx(0, classAtom & 0xFFFF, MemoryUtil.NULL,
 						User32.WS_OVERLAPPEDWINDOW | User32.WS_CLIPCHILDREN | User32.WS_CLIPSIBLINGS, 0, 0, 1, 1,
@@ -286,26 +294,25 @@ class OpenVrOverlay {
 							getClass().getName() + ": failed to obtain pixel format information");
 
 				if (!GDI32.SetPixelFormat(hdc, pixelFormat, pfd))
-					WindowsUtil.windowsThrowException(getClass().getName() + ": failed to set the pixel format");
+					WindowsUtil.windowsThrowException("Failed to set the pixel format");
 
 				hglrc = Checks.check(WGL.wglCreateContext(hdc));
 
 				renderingMemoryStack = MemoryStack.create(2048000);
 
 				executorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
-				executorService.scheduleAtFixedRate(this::render, 0L, 1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
+				executorService.scheduleAtFixedRate(new RunnableWithDefaultExceptionHandler(this::render), 0L,
+						1000L / OVERLAY_FPS, TimeUnit.MILLISECONDS);
 			} catch (final Throwable t) {
-				log.log(Level.SEVERE, t.getMessage(), t);
 				deInit();
 				throw t;
 			}
 		}
 	}
 
-	private void checkOverlayError(final int overlayError) throws Exception {
+	private void checkOverlayError(final int overlayError) {
 		if (overlayError != VR.EVROverlayError_VROverlayError_None)
-			throw new Exception(
-					getClass().getName() + ": " + VROverlay.VROverlay_GetOverlayErrorNameFromEnum(overlayError));
+			throw new RuntimeException(VROverlay.VROverlay_GetOverlayErrorNameFromEnum(overlayError));
 	}
 
 	private void deInit() {
@@ -331,8 +338,6 @@ class OpenVrOverlay {
 				updateOverlay(statusOverlayHandle, overlayFrame);
 
 			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
-		} catch (final Throwable t) {
-			log.log(Level.SEVERE, t.getMessage(), t);
 		} finally {
 			if (WGL.wglGetCurrentContext() == hglrc)
 				WGL.wglMakeCurrent(MemoryUtil.NULL, MemoryUtil.NULL);
@@ -352,7 +357,7 @@ class OpenVrOverlay {
 		}
 	}
 
-	private void updateOverlay(final long overlayHandle, final Frame frame) throws Exception {
+	private void updateOverlay(final long overlayHandle, final Frame frame) {
 		renderingMemoryStack.push();
 		try {
 			if (frame.isVisible()) {
@@ -372,15 +377,15 @@ class OpenVrOverlay {
 					if (imageResized) {
 						textureData.image = new BufferedImage(frame.getWidth(), frame.getHeight(),
 								BufferedImage.TYPE_INT_ARGB_PRE);
-						textureData.g2d = textureData.image.createGraphics();
+						textureData.graphics = textureData.image.createGraphics();
 					}
 
-					frame.paint(textureData.g2d);
+					frame.paint(textureData.graphics);
 					final var byteBuffer = bufferedImageToByteBuffer(textureData.image, renderingMemoryStack);
 
 					if (WGL.wglGetCurrentContext() != hglrc) {
 						if (!WGL.wglMakeCurrent(hdc, hglrc))
-							throw new Exception(getClass().getName() + ": could not acquire OpenGL context");
+							throw new RuntimeException("Could not acquire OpenGL context");
 						createGLCapabilitiesIfRequired();
 					}
 
