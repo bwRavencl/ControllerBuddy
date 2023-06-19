@@ -12,9 +12,6 @@
 		<setting id="cleanup.remove_trailing_whitespaces_ignore_empty"
 			value="false" />
 		<setting id="cleanup.primitive_comparison" value="true" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode"
-			value="enabled" />
 		<setting id="cleanup.system_property_file_encoding"
 			value="true" />
 		<setting id="cleanup.format_source_code_changes_only"
@@ -51,13 +48,10 @@
 		<setting id="cleanup.always_use_parentheses_in_expressions"
 			value="false" />
 		<setting id="cleanup.sort_members" value="true" />
-		<setting id="org.eclipse.jdt.core.compiler.source" value="18" />
 		<setting id="cleanup.remove_unused_method_parameters"
 			value="false" />
 		<setting id="cleanup.remove_unused_local_variables"
 			value="false" />
-		<setting id="org.eclipse.jdt.core.compiler.release"
-			value="enabled" />
 		<setting id="cleanup.add_missing_deprecated_annotations"
 			value="true" />
 		<setting id="cleanup.no_string_creation" value="true" />
@@ -66,17 +60,12 @@
 			value="false" />
 		<setting id="cleanup.standard_comparison" value="true" />
 		<setting id="cleanup.if_condition" value="true" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.codegen.targetPlatform" value="18" />
 		<setting id="cleanup.system_property_line_separator"
 			value="true" />
 		<setting id="cleanup.remove_trailing_whitespaces" value="true" />
 		<setting id="cleanup.map_cloning" value="true" />
 		<setting id="cleanup.add_serial_version_id" value="false" />
 		<setting id="cleanup.try_with_resource" value="true" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.problem.reportPreviewFeatures"
-			value="warning" />
 		<setting id="cleanup.use_this_for_non_static_method_access"
 			value="true" />
 		<setting
@@ -90,12 +79,6 @@
 		<setting
 			id="cleanup.qualify_static_member_accesses_with_declaring_class"
 			value="true" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.problem.enumIdentifier"
-			value="error" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures"
-			value="disabled" />
 		<setting id="cleanup.add_missing_override_annotations"
 			value="true" />
 		<setting id="cleanup.use_blocks" value="true" />
@@ -166,17 +149,12 @@
 			value="true" />
 		<setting id="cleanup.remove_unused_private_fields"
 			value="true" />
-		<setting id="org.eclipse.jdt.core.compiler.compliance"
-			value="18" />
 		<setting id="cleanup.never_use_blocks" value="true" />
 		<setting id="cleanup.remove_redundant_modifiers" value="true" />
 		<setting id="cleanup.unreachable_block" value="true" />
 		<setting id="cleanup.redundant_falling_through_block_end"
 			value="true" />
 		<setting id="cleanup.switch" value="true" />
-		<setting
-			id="org.eclipse.jdt.core.compiler.problem.assertIdentifier"
-			value="error" />
 		<setting id="cleanup.number_suffix" value="true" />
 		<setting id="cleanup.remove_unnecessary_nls_tags" value="true" />
 		<setting id="cleanup.convert_to_switch_expressions"
@@ -221,6 +199,8 @@
 		<setting id="cleanup.use_parentheses_in_expressions"
 			value="true" />
 		<setting id="cleanup.hash" value="true" />
+		<setting id="cleanup.stringconcat_stringbuffer_stringbuilder"
+			value="true" />
 		<setting id="cleanup.double_negation" value="true" />
 		<setting id="cleanup.overridden_assignment" value="true" />
 		<setting id="cleanup.primitive_rather_than_wrapper"
