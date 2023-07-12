@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
 
+		@Serial
 		private static final long serialVersionUID = -33052386834598414L;
 
 		private JCheckBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
@@ -54,8 +56,8 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	JCheckBox checkBox;
 
 	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

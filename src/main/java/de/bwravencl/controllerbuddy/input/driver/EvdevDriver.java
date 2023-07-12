@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.sun.jna.NativeLong;
@@ -44,7 +43,7 @@ public class EvdevDriver extends Driver {
 
 	public static class EvdevDriverBuilder implements IDriverBuilder {
 
-		private static int BITS_PER_LONG = NativeLong.SIZE * Byte.SIZE;
+		private static final int BITS_PER_LONG = NativeLong.SIZE * Byte.SIZE;
 
 		private static int EVIOCGID;
 
@@ -64,6 +63,9 @@ public class EvdevDriver extends Driver {
 				final var inputDir = new File("/dev/input/");
 				final var allEventFiles = inputDir
 						.listFiles((final var dir, final var name) -> name.matches("event(\\d+)"));
+
+				if (allEventFiles == null)
+					return null;
 
 				final var evdevInfos = Arrays.stream(allEventFiles).flatMap(eventFile -> {
 					final var fd = CLib.INSTANCE.open(eventFile.getAbsolutePath(), CLib.O_RDWR | CLib.O_NONBLOCK);
@@ -109,7 +111,7 @@ public class EvdevDriver extends Driver {
 
 					closeFileDescriptor(fd);
 					return Stream.empty();
-				}).collect(Collectors.toUnmodifiableList());
+				}).toList();
 
 				if (evdevInfos.isEmpty())
 					return null;
@@ -134,7 +136,7 @@ public class EvdevDriver extends Driver {
 		}
 	}
 
-	private static record EvdevInfo(int fd, boolean hasGain) {
+	private record EvdevInfo(int fd, boolean hasGain) {
 	}
 
 	@FieldOrder({ "right_saturation", "left_saturation", "right_coeff", "left_coeff", "deadband", "center" })
@@ -163,7 +165,7 @@ public class EvdevDriver extends Driver {
 			public ff_constant_effect constant;
 			public ff_ramp_effect ramp;
 			public ff_periodic_effect periodic;
-			public ff_condition_effect[] condition = new ff_condition_effect[2];
+			public final ff_condition_effect[] condition = new ff_condition_effect[2];
 			public ff_rumble_effect rumble;
 
 			public U() {
@@ -182,23 +184,12 @@ public class EvdevDriver extends Driver {
 			super.read();
 
 			switch (type) {
-			case FF_RUMBLE:
-				u.setType(u.rumble.getClass());
-				break;
-			case FF_PERIODIC:
-				u.setType(u.periodic.getClass());
-				break;
-			case FF_CONSTANT:
-				u.setType(u.constant.getClass());
-				break;
-			case FF_SPRING, FF_FRICTION, FF_DAMPER, FF_INERTIA:
-				u.setType(u.condition.getClass());
-				break;
-			case FF_RAMP:
-				u.setType(u.ramp.getClass());
-				break;
-			default:
-				throw new IllegalStateException("Unknown type " + type);
+			case FF_RUMBLE -> u.setType(u.rumble.getClass());
+			case FF_PERIODIC -> u.setType(u.periodic.getClass());
+			case FF_CONSTANT -> u.setType(u.constant.getClass());
+			case FF_SPRING, FF_FRICTION, FF_DAMPER, FF_INERTIA -> u.setType(u.condition.getClass());
+			case FF_RAMP -> u.setType(u.ramp.getClass());
+			default -> throw new IllegalStateException("Unknown type " + type);
 			}
 
 			u.read();

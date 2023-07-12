@@ -46,7 +46,7 @@ public final class ScanCodeAdapter implements JsonSerializer<ScanCode>, JsonDese
 
 			if (scanCode == null)
 				throw new JsonParseException(
-						"Could not deserialize as " + ScanCode.class.getSimpleName() + ": " + json.toString());
+						"Could not deserialize as " + ScanCode.class.getSimpleName() + ": " + json);
 
 			return scanCode;
 		} catch (final JsonParseException e) {

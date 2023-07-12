@@ -28,11 +28,6 @@ public abstract class ToButtonAction<V extends Number> extends DescribableAction
 	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId = 0;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
 	public int getButtonId() {
 		return buttonId;
 	}

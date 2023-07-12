@@ -24,8 +24,8 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 public final class MouseButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	public MouseButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

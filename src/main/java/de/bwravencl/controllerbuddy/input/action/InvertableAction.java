@@ -24,11 +24,6 @@ abstract class InvertableAction<V extends Number> extends DescribableAction<V> {
 	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class, order = 500)
 	boolean invert = false;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
 	public boolean isInvert() {
 		return invert;
 	}

@@ -56,28 +56,23 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 	private transient Activatable activatable;
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	@Override
 	public void doAction(final Input input, final int component, final Byte value) {
 		final var hot = handleLongPress(input, component, value) != 0;
 
 		switch (activation) {
-		case REPEAT:
+		case REPEAT -> {
 			if (hot)
 				resetAxis(input);
-			break;
-		case SINGLE_IMMEDIATELY:
+		}
+		case SINGLE_IMMEDIATELY -> {
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
 				resetAxis(input);
 			}
-			break;
-		case SINGLE_ON_RELEASE:
+		}
+		case SINGLE_ON_RELEASE -> {
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
@@ -87,7 +82,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 				activatable = Activatable.NO;
 				resetAxis(input);
 			}
-			break;
+		}
 		}
 	}
 

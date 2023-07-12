@@ -71,7 +71,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
 
-	static final float roundFloat(final Float value) {
+	static float roundFloat(final Float value) {
 		return new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP).floatValue();
 	}
 
@@ -80,8 +80,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	JFormattedTextField textField;
 
 	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws NoSuchFieldException, SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

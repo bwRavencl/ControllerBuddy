@@ -16,8 +16,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -33,10 +33,11 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	private static final class ZeroBasedFormatter extends DefaultFormatter {
 
+		@Serial
 		private static final long serialVersionUID = -7229427356426148291L;
 
 		@Override
-		public Object stringToValue(final String text) throws ParseException {
+		public Object stringToValue(final String text) {
 			if (text == null || text.isBlank())
 				return null;
 
@@ -44,13 +45,14 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 		}
 
 		@Override
-		public String valueToString(final Object value) throws ParseException {
+		public String valueToString(final Object value) {
 			return Integer.toString((int) value + 1);
 		}
 	}
 
 	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
 
+		@Serial
 		private static final long serialVersionUID = -7273246342105584827L;
 
 		@Override
@@ -60,8 +62,8 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 	}
 
 	public ButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

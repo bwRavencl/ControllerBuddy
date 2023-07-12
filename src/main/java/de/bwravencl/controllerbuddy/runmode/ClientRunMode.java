@@ -124,14 +124,11 @@ public final class ClientRunMode extends OutputRunMode {
 								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
 									log.log(Level.WARNING, "Protocol version mismatch: client "
 											+ ServerRunMode.PROTOCOL_VERSION + " vs server " + serverProtocolVersion);
-									EventQueue.invokeLater(() -> {
-										GuiUtils.showMessageDialog(main.getFrame(),
-												MessageFormat.format(
-														Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
-														ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
-												Main.strings.getString("ERROR_DIALOG_TITLE"),
-												JOptionPane.ERROR_MESSAGE);
-									});
+									EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+											MessageFormat.format(
+													Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+													ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
+											Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 									retry = -1;
 								} else {
 									pollInterval = dataInputStream.readLong();
@@ -236,13 +233,11 @@ public final class ClientRunMode extends OutputRunMode {
 
 							onLockKeys.clear();
 							((Set<Integer>) objectInputStream.readObject()).stream()
-									.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
-									.forEachOrdered(onLockKeys::add);
+									.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(onLockKeys::add);
 
 							offLockKeys.clear();
 							((Set<Integer>) objectInputStream.readObject()).stream()
-									.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode))
-									.forEachOrdered(offLockKeys::add);
+									.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(offLockKeys::add);
 
 							counter = newCounter;
 							retVal = true;

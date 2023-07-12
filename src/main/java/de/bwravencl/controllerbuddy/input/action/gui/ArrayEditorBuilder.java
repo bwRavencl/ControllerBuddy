@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -30,8 +31,9 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
-	private final class JComboBoxSetPropertyAction extends PropertySetterAction {
+	private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
 
+		@Serial
 		private static final long serialVersionUID = 1938012378184518954L;
 
 		JComboBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
@@ -53,8 +55,8 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	JComboBox<T> comboBox;
 
 	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws NoSuchFieldException, SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

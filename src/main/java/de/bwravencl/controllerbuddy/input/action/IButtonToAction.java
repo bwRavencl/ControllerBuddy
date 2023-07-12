@@ -83,7 +83,7 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
 
 				return value;
 			}
-		} else if (actionToDownSinceMap.containsKey(this))
+		} else
 			actionToDownSinceMap.remove(this);
 
 		return 0;

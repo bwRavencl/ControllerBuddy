@@ -46,7 +46,7 @@ import de.bwravencl.controllerbuddy.input.driver.IGamepadStateProvider;
 
 public abstract class SonyDriver extends Driver implements IGamepadStateProvider {
 
-	static record Connection(int offset, byte inputReportId) {
+	record Connection(int offset, byte inputReportId) {
 
 		boolean isBluetooth() {
 			return offset != 0;
@@ -93,8 +93,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			if (count > 1) {
 				if (selectedController.guid() != null) {
 					final var presentJidsWithSameGuid = presentControllers.stream()
-							.filter(controller -> selectedController.guid().equals(controller.guid()))
-							.collect(Collectors.toUnmodifiableList());
+							.filter(controller -> selectedController.guid().equals(controller.guid())).toList();
 					deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
 				} else
 					deviceIndex = presentControllers.indexOf(selectedController);
@@ -328,9 +327,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 					options = (reportData[buttonsOffset + 1 + offset] & 1 << 5) != 0;
 					share = (reportData[buttonsOffset + 1 + offset] & 1 << 4) != 0;
 					r1 = (reportData[buttonsOffset + 1 + offset] & 1 << 1) != 0;
-					l1 = (reportData[buttonsOffset + 1 + offset] & 1 << 0) != 0;
+					l1 = (reportData[buttonsOffset + 1 + offset] & 1) != 0;
 
-					ps = (reportData[buttonsOffset + 2 + offset] & 1 << 0) != 0;
+					ps = (reportData[buttonsOffset + 2 + offset] & 1) != 0;
 
 					ready = true;
 					timestampLastInputReport = System.currentTimeMillis();
@@ -499,15 +498,6 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	abstract void handleBattery(byte[] reportData, int offset);
 
 	abstract void handleNewConnection(int reportLength);
-
-	public Boolean isCharging() {
-		return charging;
-	}
-
-	@Override
-	public boolean isReady() {
-		return ready;
-	}
 
 	boolean reset() {
 		final var defaultHidReport = getDefaultHidReport();

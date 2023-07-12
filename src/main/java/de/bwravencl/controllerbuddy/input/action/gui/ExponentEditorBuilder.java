@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -38,6 +39,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 	private static final class PowerFunctionPlotter extends JComponent implements Consumer<Object> {
 
+		@Serial
 		private static final long serialVersionUID = 5075932419255249325L;
 
 		private float power;
@@ -93,8 +95,8 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 	}
 
 	public ExponentEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

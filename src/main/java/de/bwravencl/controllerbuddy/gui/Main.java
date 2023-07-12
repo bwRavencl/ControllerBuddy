@@ -57,14 +57,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -74,7 +79,6 @@ import java.nio.file.NoSuchFileException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -210,6 +214,7 @@ public final class Main {
 
 	private static abstract class AbstractProfileFileChooser extends JFileChooser {
 
+		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
 		private AbstractProfileFileChooser(final FileFilter fileFilter) {
@@ -238,6 +243,7 @@ public final class Main {
 
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -7672382299595684105L;
 
 		private ChangeVJoyDirectoryAction() {
@@ -270,7 +276,7 @@ public final class Main {
 		}
 	}
 
-	public static record ControllerInfo(int jid, String name, String guid) {
+	public record ControllerInfo(int jid, String name, String guid) {
 
 		private ControllerInfo(final int jid) {
 			this(jid, isMac ? MessageFormat.format(strings.getString("DEVICE_NO"), jid + 1)
@@ -280,6 +286,7 @@ public final class Main {
 
 	private final class DisplayIndicatorAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
 		private final VirtualAxis virtualAxis;
@@ -305,6 +312,7 @@ public final class Main {
 
 	private final class ExportAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -6582801831348704984L;
 
 		private ExportAction() {
@@ -363,6 +371,7 @@ public final class Main {
 
 	private static final class HtmlFileChooser extends AbstractProfileFileChooser {
 
+		@Serial
 		private static final long serialVersionUID = -1707951153902772391L;
 
 		private HtmlFileChooser(final File profileFile) {
@@ -381,18 +390,18 @@ public final class Main {
 
 	private static final class IndicatorProgressBar extends JProgressBar {
 
+		@Serial
 		private static final long serialVersionUID = 8167193907929992395L;
 
 		private final HashSet<Float> detentValues;
 		private final OverlayAxis overlayAxis;
 		private final int subdivisionHeight;
 
-		private IndicatorProgressBar(final int orient, final HashSet<Float> dententValues,
-				final OverlayAxis overlayAxis) {
-			super(orient);
+		private IndicatorProgressBar(final HashSet<Float> detentValues, final OverlayAxis overlayAxis) {
+			super(SwingConstants.VERTICAL);
 
 			setBorder(createOverlayBorder());
-			detentValues = dententValues;
+			this.detentValues = detentValues;
 			this.overlayAxis = overlayAxis;
 			subdivisionHeight = Math.round(main.getOverlayScaling());
 		}
@@ -418,6 +427,11 @@ public final class Main {
 			});
 		}
 
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		}
+
 		@Override
 		public void setMaximum(final int n) {
 			if (overlayAxis.inverted)
@@ -438,10 +452,16 @@ public final class Main {
 		public void setValue(final int n) {
 			super.setValue(overlayAxis.inverted ? -n : n);
 		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(IndicatorProgressBar.class.getName());
+		}
 	}
 
 	private final class InvertIndicatorAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
 		private final VirtualAxis virtualAxis;
@@ -463,7 +483,7 @@ public final class Main {
 		}
 	}
 
-	private static record JsonContext(Gson gson, ActionTypeAdapter actionTypeAdapter) {
+	private record JsonContext(Gson gson, ActionTypeAdapter actionTypeAdapter) {
 
 		private static JsonContext create() {
 			final var actionAdapter = new ActionTypeAdapter();
@@ -479,6 +499,7 @@ public final class Main {
 
 	private final class NewAction extends UnsavedChangesAwareAction {
 
+		@Serial
 		private static final long serialVersionUID = 5703987691203427504L;
 
 		private NewAction() {
@@ -487,13 +508,14 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction(final ActionEvent e) {
+		protected void doAction() {
 			newProfile(true);
 		}
 	}
 
 	private final class NewModeAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -4881923833724315489L;
 
 		private NewModeAction() {
@@ -513,6 +535,7 @@ public final class Main {
 
 	private final class OpenAction extends UnsavedChangesAwareAction {
 
+		@Serial
 		private static final long serialVersionUID = -8932510785275935297L;
 
 		private OpenAction() {
@@ -521,7 +544,7 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction(final ActionEvent e) {
+		protected void doAction() {
 			if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 				loadProfile(profileFileChooser.getSelectedFile(), false, true);
 		}
@@ -529,6 +552,7 @@ public final class Main {
 
 	private static final class ProfileFileChooser extends AbstractProfileFileChooser {
 
+		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
 		private ProfileFileChooser() {
@@ -540,6 +564,7 @@ public final class Main {
 
 	private final class QuitAction extends UnsavedChangesAwareAction {
 
+		@Serial
 		private static final long serialVersionUID = 8952460723177800923L;
 
 		private QuitAction() {
@@ -548,13 +573,14 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction(final ActionEvent e) {
+		protected void doAction() {
 			quit();
 		}
 	}
 
 	private final class RemoveModeAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -1056071724769862582L;
 
 		private final Mode mode;
@@ -574,6 +600,16 @@ public final class Main {
 			updateModesPanel(false);
 			updateVisualizationPanel();
 		}
+
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(RemoveModeAction.class.getName());
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(RemoveModeAction.class.getName());
+		}
 	}
 
 	private enum RunModeType {
@@ -582,6 +618,7 @@ public final class Main {
 
 	private final class SaveAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		private SaveAction() {
@@ -597,6 +634,7 @@ public final class Main {
 
 	private final class SaveAsAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
 		private SaveAsAction() {
@@ -612,6 +650,7 @@ public final class Main {
 
 	private final class SelectControllerAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -2043467156713598592L;
 
 		private final ControllerInfo controller;
@@ -632,10 +671,21 @@ public final class Main {
 			setSelectedControllerAndUpdateInput(controller, input.isInitialized() ? input.getAxes() : null);
 			restartLast();
 		}
+
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(SelectControllerAction.class.getName());
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(SelectControllerAction.class.getName());
+		}
 	}
 
 	private final class SelectIndicatorColorAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
 		private final VirtualAxis virtualAxis;
@@ -662,6 +712,7 @@ public final class Main {
 
 	private final class SetHostAction extends AbstractAction implements FocusListener {
 
+		@Serial
 		private static final long serialVersionUID = -7674562782751876814L;
 
 		private final JTextField hostTextField;
@@ -696,17 +747,20 @@ public final class Main {
 
 	private final class SetHotSwapButtonAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 6854936097922617928L;
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var hotSwappingButton = (HotSwappingButton) ((JComboBox<?>) e.getSource()).getSelectedItem();
-			preferences.putInt(PREFERENCES_HOT_SWAPPING_BUTTON, hotSwappingButton.id);
+			if (hotSwappingButton != null)
+				preferences.putInt(PREFERENCES_HOT_SWAPPING_BUTTON, hotSwappingButton.id);
 		}
 	}
 
 	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
 
+		@Serial
 		private static final long serialVersionUID = -6706537047137827688L;
 
 		private final Mode mode;
@@ -749,6 +803,7 @@ public final class Main {
 
 	private final class ShowAboutDialogAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -2578971543384483382L;
 
 		private ShowAboutDialogAction() {
@@ -758,7 +813,8 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var imageIcon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
+			final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
+
 			GuiUtils.showMessageDialog(frame,
 					MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
@@ -767,6 +823,7 @@ public final class Main {
 
 	private final class ShowAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 8578159622754054457L;
 
 		private ShowAction() {
@@ -785,6 +842,7 @@ public final class Main {
 
 	private final class ShowLicensesAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 2471952794110895043L;
 
 		private ShowLicensesAction() {
@@ -794,8 +852,8 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			try (final var bufferedReader = new BufferedReader(new InputStreamReader(
-					ClassLoader.getSystemResourceAsStream(Main.LICENSES_FILENAME), StandardCharsets.UTF_8))) {
+			try (final var bufferedReader = new BufferedReader(
+					new InputStreamReader(getResourceAsStream(Main.LICENSES_FILENAME), StandardCharsets.UTF_8))) {
 				final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
 				final var textArea = new JTextArea(text);
 				textArea.setLineWrap(true);
@@ -804,13 +862,14 @@ public final class Main {
 				scrollPane.setPreferredSize(new Dimension(600, 400));
 				GuiUtils.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
 			} catch (final IOException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				throw new RuntimeException(e1);
 			}
 		}
 	}
 
 	private static final class ShowWebsiteAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -9029607010261185834L;
 
 		private ShowWebsiteAction() {
@@ -830,6 +889,7 @@ public final class Main {
 
 	private final class StartClientAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 3975574941559749481L;
 
 		private StartClientAction() {
@@ -845,6 +905,7 @@ public final class Main {
 
 	private final class StartLocalAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -2003502124995392039L;
 
 		private StartLocalAction() {
@@ -860,6 +921,7 @@ public final class Main {
 
 	private final class StartServerAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 1758447420975631146L;
 
 		private StartServerAction() {
@@ -875,6 +937,7 @@ public final class Main {
 
 	private final class StopAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -2863419586328503426L;
 
 		private StopAction() {
@@ -977,22 +1040,17 @@ public final class Main {
 		private void shutdown() {
 			pollGLFWEvents = false;
 
-			if (thread != null) {
-				thread.interrupt();
+			thread.interrupt();
 
-				while (thread.isAlive())
-					try {
-						Thread.sleep(10L);
-					} catch (final InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-			}
+			while (thread.isAlive())
+				try {
+					Thread.sleep(10L);
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
 		}
 
 		private void stopTask() {
-			if (thread == null)
-				return;
-
 			thread.interrupt();
 
 			waitForTask();
@@ -1010,6 +1068,7 @@ public final class Main {
 
 	private abstract class UnsavedChangesAwareAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 1387266903295357716L;
 
 		@Override
@@ -1033,10 +1092,10 @@ public final class Main {
 				}
 			}
 
-			doAction(e);
+			doAction();
 		}
 
-		protected abstract void doAction(final ActionEvent e);
+		protected abstract void doAction();
 	}
 
 	static volatile Main main;
@@ -1230,20 +1289,20 @@ public final class Main {
 
 	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
 		final var sb = new StringBuilder();
-		sb.append(prefix + " controller ");
+		sb.append(prefix).append(" controller ");
 
 		final var appendGamepadName = controller.name != null;
 
 		if (appendGamepadName)
-			sb.append(controller.name + " (");
+			sb.append(controller.name).append(" (");
 
-		sb.append(String.valueOf(controller.jid));
+		sb.append(controller.jid);
 
 		if (appendGamepadName)
 			sb.append(")");
 
 		if (controller.guid != null)
-			sb.append(" [" + controller.guid + "]");
+			sb.append(" [").append(controller.guid).append("]");
 
 		return sb.toString();
 	}
@@ -1304,6 +1363,22 @@ public final class Main {
 				presentControllers.add(new ControllerInfo(jid));
 
 		return presentControllers;
+	}
+
+	private static InputStream getResourceAsStream(final String resourcePath) {
+		final var resourceInputStream = ClassLoader.getSystemResourceAsStream(resourcePath);
+		if (resourceInputStream == null)
+			throw new RuntimeException("Resource not found " + resourcePath);
+
+		return resourceInputStream;
+	}
+
+	private static URL getResourceLocation(final String resourcePath) {
+		final var resourceLocation = Main.class.getResource(resourcePath);
+		if (resourceLocation == null)
+			throw new RuntimeException("Resource not found " + resourcePath);
+
+		return resourceLocation;
 	}
 
 	private static boolean isModalDialogShowing() {
@@ -1421,7 +1496,7 @@ public final class Main {
 				}
 				return;
 			}
-		} catch (final ParseException e) {
+		} catch (final ParseException ignored) {
 		}
 
 		final var stringWriter = new StringWriter();
@@ -1444,7 +1519,7 @@ public final class Main {
 				textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 				textArea.setEditable(false);
 
-				final var imageIcon = new ImageIcon(Main.class.getResource(Main.ICON_RESOURCE_PATHS[2]));
+				final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
 				GuiUtils.showMessageDialog(null, textArea, strings.getString("APPLICATION_NAME"),
 						JOptionPane.INFORMATION_MESSAGE, imageIcon);
 			});
@@ -1515,14 +1590,12 @@ public final class Main {
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
 	private File currentFile;
-	private ServerSocket serverSocket;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 	private JLabel currentModeLabel;
 	private final JFileChooser profileFileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
 	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
-	private FlowLayout indicatorPanelFlowLayout;
 	private JPanel indicatorPanel;
 	private Rectangle prevTotalDisplayBounds;
 	private volatile JFrame overlayFrame;
@@ -1553,8 +1626,7 @@ public final class Main {
 
 				try {
 					Files.writeString(SINGLE_INSTANCE_LOCK_FILE.toPath(),
-							singleInstanceServerSocket.getLocalPort() + "\n" + String.valueOf(randomNumber),
-							StandardCharsets.UTF_8);
+							singleInstanceServerSocket.getLocalPort() + "\n" + randomNumber, StandardCharsets.UTF_8);
 				} catch (final IOException e) {
 					log.log(Level.SEVERE, e.getMessage(), e);
 				}
@@ -1655,7 +1727,7 @@ public final class Main {
 
 		final var icons = new ArrayList<Image>();
 		for (final var path : ICON_RESOURCE_PATHS) {
-			final var icon = new ImageIcon(Main.class.getResource(path));
+			final var icon = new ImageIcon(getResourceLocation(path));
 			icons.add(icon.getImage());
 		}
 		frame.setIconImages(icons);
@@ -1971,7 +2043,7 @@ public final class Main {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 
 		final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
-		if (!glfwInitialized) {
+		if (Boolean.FALSE.equals(glfwInitialized)) {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
 
 			if (isWindows || isLinux)
@@ -2011,7 +2083,7 @@ public final class Main {
 		}
 
 		final var presentControllers = taskRunner.run(Main::getPresentControllers);
-		if (!presentControllers.isEmpty()) {
+		if (presentControllers != null && !presentControllers.isEmpty()) {
 			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 			if (lastControllerGuid != null)
 				presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
@@ -2026,13 +2098,14 @@ public final class Main {
 
 		newProfile(false);
 
-		onControllersChanged(presentControllers, true);
+		if (presentControllers != null)
+			onControllersChanged(presentControllers, true);
 
 		taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
 			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
 			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
-				if (disconnected && presentControllers.stream().filter(controller -> controller.jid == jid).findFirst()
-						.isPresent()) {
+				if (disconnected && presentControllers != null
+						&& presentControllers.stream().anyMatch(controller -> controller.jid == jid)) {
 					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
 					if (selectedController != null && selectedController.jid == jid) {
@@ -2049,7 +2122,8 @@ public final class Main {
 			}
 		}));
 
-		final var noControllerConnected = glfwInitialized && presentControllers.isEmpty();
+		final var noControllerConnected = Boolean.TRUE.equals(glfwInitialized)
+				&& (presentControllers == null || presentControllers.isEmpty());
 
 		if (noControllerConnected)
 			if (isWindows || isLinux)
@@ -2196,7 +2270,7 @@ public final class Main {
 
 	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
 		if (templateSvgDocument == null)
-			return null;
+			throw new IllegalStateException();
 
 		final var workingCopySvgDocument = (SVGDocument) DOMUtilities.deepCloneDocument(templateSvgDocument,
 				templateSvgDocument.getImplementation());
@@ -2414,7 +2488,7 @@ public final class Main {
 			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
 		}
 
-		indicatorPanelFlowLayout = new FlowLayout(FlowLayout.CENTER, 10, 5);
+		final var indicatorPanelFlowLayout = new FlowLayout(FlowLayout.CENTER, 10, 5);
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
@@ -2434,8 +2508,7 @@ public final class Main {
 							}
 						})));
 
-				final var indicatorProgressBar = new IndicatorProgressBar(SwingConstants.VERTICAL, detentValues,
-						overlayAxis);
+				final var indicatorProgressBar = new IndicatorProgressBar(detentValues, overlayAxis);
 				indicatorProgressBar.setPreferredSize(
 						new Dimension(Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH * overlayScaling),
 								Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT * overlayScaling)));
@@ -2545,7 +2618,7 @@ public final class Main {
 											strings.getString("AN_UNKNOWN")),
 									strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					} else {
-						final var v = versionsComparisonResult.get();
+						final int v = versionsComparisonResult.get();
 						if (v < 0) {
 							log.log(Level.WARNING, "Trying to load a profile for an older release");
 
@@ -2614,7 +2687,7 @@ public final class Main {
 	}
 
 	public void newActivation(final String[] args) {
-		log.log(Level.INFO, "New activation with arguments: " + Arrays.stream(args).collect(Collectors.joining(" ")));
+		log.log(Level.INFO, "New activation with arguments: " + String.join(" ", args));
 
 		if (args.length > 0)
 			try {
@@ -2768,8 +2841,8 @@ public final class Main {
 			updateTitleAndTooltip();
 		}
 
-		try (final var bufferedReader = new BufferedReader(new InputStreamReader(
-				ClassLoader.getSystemResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+		try (final var bufferedReader = new BufferedReader(
+				new InputStreamReader(getResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
 			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
 		} catch (final IOException e) {
@@ -2836,6 +2909,7 @@ public final class Main {
 				final var modes = input.getProfile().getModes();
 				modeComboBox = GuiUtils.addModePanel(visualizationPanel, modes, new AbstractAction() {
 
+					@Serial
 					private static final long serialVersionUID = -9107064465015662054L;
 
 					@SuppressWarnings("unchecked")
@@ -2923,13 +2997,6 @@ public final class Main {
 	}
 
 	private void quit() {
-		if (serverSocket != null)
-			try {
-				serverSocket.close();
-			} catch (final IOException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-
 		if (input != null)
 			input.deInit(false);
 
@@ -3086,8 +3153,7 @@ public final class Main {
 	}
 
 	public void setStatusBarText(final String text) {
-		if (statusLabel != null)
-			statusLabel.setText(text);
+		statusLabel.setText(text);
 	}
 
 	void setTotalDisplayBounds(final Rectangle totalDisplayBounds) {
@@ -3188,9 +3254,7 @@ public final class Main {
 		if (resetLastRunModeType)
 			lastRunModeType = RunModeType.NONE;
 
-		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			onRunModeChanged();
-		});
+		GuiUtils.invokeOnEventDispatchThreadIfRequired(this::onRunModeChanged);
 	}
 
 	private void stopLocal(final boolean initiateStop, final boolean resetLastRunModeType) {
@@ -3282,7 +3346,7 @@ public final class Main {
 
 			final var content = sb.toString().getBytes(defaultCharset);
 			final var byteBuffer = ByteBuffer.allocateDirect(content.length).put(content).flip();
-			mappingsUpdated = taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer));
+			mappingsUpdated = Boolean.TRUE.equals(taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer)));
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -3430,8 +3494,8 @@ public final class Main {
 		if (runMode == null || !isLocalRunning() && !isServerRunning())
 			return;
 
-		EnumSet.allOf(Input.VirtualAxis.class).stream()
-				.filter(virtualAxis -> virtualAxisToProgressBarMap.containsKey(virtualAxis)).forEach(virtualAxis -> {
+		EnumSet.allOf(Input.VirtualAxis.class).stream().filter(virtualAxisToProgressBarMap::containsKey)
+				.forEach(virtualAxis -> {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
 					var repaint = forceRepaint;
 
@@ -3696,7 +3760,7 @@ public final class Main {
 		final var delayedActions = new ArrayList<ILongPressAction<?>>();
 
 		for (final var action : actions)
-			if (action instanceof final ILongPressAction longPressAction && longPressAction.isLongPress())
+			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress())
 				delayedActions.add(longPressAction);
 			else
 				instantActions.add(action);

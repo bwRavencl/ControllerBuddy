@@ -184,6 +184,9 @@ public final class DualSenseDriver extends SonyDriver {
 
 		if (connection.isBluetooth()) {
 			final var defaultHidReport = getDefaultHidReport();
+			if (defaultHidReport == null)
+				return false;
+
 			hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
 			hidReport[2] = 0x8;
 

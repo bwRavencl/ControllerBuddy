@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +34,8 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 	private static final Logger log = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
 	public DetentValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -52,6 +53,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 		final var checkBox = new JCheckBox(new AbstractAction() {
 
+			@Serial
 			private static final long serialVersionUID = 3326369393786088402L;
 
 			@Override

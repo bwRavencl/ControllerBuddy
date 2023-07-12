@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
 
+			@Serial
 			private static final long serialVersionUID = -7958791166718006570L;
 
 			@Override
@@ -76,6 +78,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			}
 		}
 
+		@Serial
 		private static final long serialVersionUID = 5413881551745215922L;
 
 		private CheckboxJList(final E[] listData) {
@@ -89,6 +92,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 			setSelectionModel(new DefaultListSelectionModel() {
 
+				@Serial
 				private static final long serialVersionUID = 8997996268575032389L;
 
 				@Override
@@ -167,8 +171,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	private final JTextArea keyStrokeTextArea = new JTextArea();
 
 	public KeystrokeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

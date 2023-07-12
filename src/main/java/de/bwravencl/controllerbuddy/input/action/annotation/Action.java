@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Action {
 
-	public enum ActionCategory {
+	enum ActionCategory {
 		ALL, AXIS, BUTTON, BUTTON_AND_CYCLES, ON_SCREEN_KEYBOARD_MODE
 	}
 

@@ -44,11 +44,6 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 	private transient Activatable activatable;
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	@Override
 	public Activatable getActivatable() {
 		return activatable;
 	}
@@ -77,7 +72,7 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 		}
 
 		switch (activation) {
-		case REPEAT:
+		case REPEAT -> {
 			final var downMouseButtons = input.getDownMouseButtons();
 			if (!hot) {
 				if (initiator) {
@@ -88,16 +83,16 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 				initiator = true;
 				downMouseButtons.add(mouseButton);
 			}
-			break;
-		case SINGLE_IMMEDIATELY:
+		}
+		case SINGLE_IMMEDIATELY -> {
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
 				input.getDownUpMouseButtons().add(mouseButton);
 			}
-			break;
-		case SINGLE_ON_RELEASE:
+		}
+		case SINGLE_ON_RELEASE -> {
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
@@ -107,7 +102,7 @@ abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V
 				activatable = Activatable.NO;
 				input.getDownUpMouseButtons().add(mouseButton);
 			}
-			break;
+		}
 		}
 	}
 

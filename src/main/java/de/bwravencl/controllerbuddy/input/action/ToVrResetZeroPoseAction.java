@@ -95,19 +95,19 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
 		}
 
 		switch (activation) {
-		case REPEAT:
+		case REPEAT -> {
 			if (hot)
 				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
-			break;
-		case SINGLE_IMMEDIATELY:
+		}
+		case SINGLE_IMMEDIATELY -> {
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
 				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
 			}
-			break;
-		case SINGLE_ON_RELEASE:
+		}
+		case SINGLE_ON_RELEASE -> {
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
@@ -117,7 +117,7 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
 				activatable = Activatable.NO;
 				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
 			}
-			break;
+		}
 		}
 	}
 

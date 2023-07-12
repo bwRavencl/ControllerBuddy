@@ -32,7 +32,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 
 public final class StringEditorBuilder extends EditorBuilder {
 
-	private class MyDocumentListener extends PropertySetter implements DocumentListener {
+	private static class MyDocumentListener extends PropertySetter implements DocumentListener {
 
 		private MyDocumentListener(final IAction<?> action, final Method setterMethod) {
 			super(action, setterMethod);
@@ -69,8 +69,8 @@ public final class StringEditorBuilder extends EditorBuilder {
 	private static final Logger log = Logger.getLogger(StringEditorBuilder.class.getName());
 
 	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

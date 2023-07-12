@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import de.bwravencl.controllerbuddy.gui.Main;
 
 public final class KeyStroke implements Cloneable, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 3572153768203547877L;
 
 	private ScanCode[] keyCodes;
@@ -49,13 +51,11 @@ public final class KeyStroke implements Cloneable, Serializable {
 		final var keyStroke = (KeyStroke) super.clone();
 
 		final var clonedKeyCodes = new ScanCode[keyCodes.length];
-		for (var i = 0; i < keyCodes.length; i++)
-			clonedKeyCodes[i] = keyCodes[i];
+		System.arraycopy(keyCodes, 0, clonedKeyCodes, 0, keyCodes.length);
 		keyStroke.keyCodes = clonedKeyCodes;
 
 		final var clonedModifierCodes = new ScanCode[modifierCodes.length];
-		for (var i = 0; i < modifierCodes.length; i++)
-			clonedModifierCodes[i] = modifierCodes[i];
+		System.arraycopy(modifierCodes, 0, clonedModifierCodes, 0, modifierCodes.length);
 		keyStroke.modifierCodes = clonedModifierCodes;
 
 		return keyStroke;
@@ -84,16 +84,15 @@ public final class KeyStroke implements Cloneable, Serializable {
 		return Objects.hash(Arrays.hashCode(keyCodes), Arrays.hashCode(modifierCodes));
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
-		modifierCodes = modifierCodesKeyCodes.stream()
-				.map(virtualKeyCode -> LockKey.virtualKeyCodeToLockKeyMap.get(virtualKeyCode)).toArray(ScanCode[]::new);
+		modifierCodes = modifierCodesKeyCodes.stream().map(ScanCode.keyCodeToScanCodeMap::get).toArray(ScanCode[]::new);
 
 		@SuppressWarnings("unchecked")
 		final var keyCodesKeyCodes = (Set<Integer>) stream.readObject();
-		keyCodes = keyCodesKeyCodes.stream().map(keyCode -> ScanCode.keyCodeToScanCodeMap.get(keyCode))
-				.toArray(ScanCode[]::new);
+		keyCodes = keyCodesKeyCodes.stream().map(ScanCode.keyCodeToScanCodeMap::get).toArray(ScanCode[]::new);
 
 	}
 
@@ -115,6 +114,7 @@ public final class KeyStroke implements Cloneable, Serializable {
 		return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));
 	}
 
+	@Serial
 	private void writeObject(final ObjectOutputStream stream) throws IOException {
 		stream.writeObject(Arrays.stream(modifierCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
 		stream.writeObject(Arrays.stream(keyCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));

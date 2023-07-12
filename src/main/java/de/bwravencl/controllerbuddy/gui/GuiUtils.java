@@ -97,8 +97,6 @@ public final class GuiUtils {
 		}
 	}
 
-	static final int DEFAULT_SCROLL_PANE_BORDER_WIDTH = 10;
-
 	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
 			final AbstractAction actionListener) {
 		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
@@ -168,7 +166,7 @@ public final class GuiUtils {
 
 	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
 			final Rectangle totalDisplayBounds) {
-		final var location = defaultLocation;
+		final var location = new Point(defaultLocation);
 
 		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
 		if (locationString != null) {
@@ -178,7 +176,7 @@ public final class GuiUtils {
 				try {
 					location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
 					location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
-				} catch (final NumberFormatException e) {
+				} catch (final NumberFormatException ignored) {
 				}
 		}
 

@@ -27,7 +27,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
@@ -54,7 +53,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 			if (Platform.isIntel() && Main.isWindows && isXInputController(selectedController)
 					&& XInputDevice.isAvailable()) {
 				final var presentXInputControllers = presentControllers.stream()
-						.filter(XInputDriver::isXInputController).collect(Collectors.toUnmodifiableList());
+						.filter(XInputDriver::isXInputController).toList();
 				if (presentXInputControllers.size() > 1) {
 					log.log(Level.WARNING, "Found more than one XInput controller - XInput driver disabled");
 					return null;
@@ -77,7 +76,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
 	private static final int MAX_MOTOR_SPEED = 65535;
 
-	private static final boolean isXInputController(final ControllerInfo controller) {
+	private static boolean isXInputController(final ControllerInfo controller) {
 		return "78696e70757401000000000000000000".equals(controller.guid()) || controller.name().startsWith("Xbox")
 				|| controller.name().startsWith("XInput");
 	}

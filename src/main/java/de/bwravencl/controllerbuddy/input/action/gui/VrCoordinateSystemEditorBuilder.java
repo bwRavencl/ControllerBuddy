@@ -25,8 +25,8 @@ import de.bwravencl.controllerbuddy.input.action.ToVrResetZeroPoseAction.VrCoord
 public final class VrCoordinateSystemEditorBuilder extends ArrayEditorBuilder<VrCoordinateSystem> {
 
 	public VrCoordinateSystemEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

@@ -69,7 +69,6 @@ public final class ServerRunMode extends RunMode {
 	private int timeout = DEFAULT_TIMEOUT;
 	private DatagramSocket serverSocket;
 	private InetAddress clientIPAddress;
-	private ServerState serverState;
 
 	public ServerRunMode(final Main main, final Input input) {
 		super(main, input);
@@ -85,16 +84,12 @@ public final class ServerRunMode extends RunMode {
 		return log;
 	}
 
-	public ServerState getServerState() {
-		return serverState;
-	}
-
 	@Override
 	public void run() {
 		logStart();
 
 		final var clientPort = port + 1;
-		serverState = ServerState.Listening;
+		var serverState = ServerState.Listening;
 		DatagramPacket receivePacket;
 		var counter = 0L;
 
@@ -235,7 +230,7 @@ public final class ServerRunMode extends RunMode {
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
 					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-		} catch (final InterruptedException e) {
+		} catch (final InterruptedException ignored) {
 		} finally {
 			input.reset();
 

@@ -82,7 +82,7 @@ public abstract class RunMode implements Runnable {
 
 	void setnButtons(final int nButtons) {
 		this.nButtons = nButtons;
-		input.setnButtons(nButtons);
+		input.initButtons();
 	}
 
 	public final void setPollInterval(final long pollInterval) {

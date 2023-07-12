@@ -45,8 +45,7 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
 			}
 
 			if (lockKey == null)
-				throw new JsonParseException(
-						"Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json.toString());
+				throw new JsonParseException("Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json);
 
 			return lockKey;
 		} catch (final JsonParseException e) {

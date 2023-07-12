@@ -32,18 +32,13 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "LOCK_KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
+	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
 	private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
 
 	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
 
 	private transient boolean wasUp = true;
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
 
 	@Override
 	public void doAction(final Input input, final int component, Byte value) {

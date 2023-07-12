@@ -33,9 +33,9 @@ Hint: You may want to use the [ControllerBuddy-Install-Script](https://github.co
    4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
       `uinput`
 3. Reboot
-5. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
-6. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
-7. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
+4. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
+5. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
+6. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
 
 #### Description:
 ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.  
@@ -116,7 +116,7 @@ Mode switching can be configured to operate in two different ways:
 - Default: works like the SHIFT key on your keyboard
 - Toggle: works like the Caps Lock key
 
-A set of well thought out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles).
+A set of well-thought-out profiles for the most popular flight simulators are available [here](https://github.com/bwRavencl/ControllerBuddy-Profiles).
 
 #### Architecture:
 Local mode:
@@ -177,17 +177,17 @@ Server-Client mode:
 #### Command Line Parameters:
 
 | Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
-| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | :---------------------: |
-| -autostart          | local / client / server | starts the specified mode of operation after launch                                                         | yes                     |
-| -export             | file destination        | exports a visualization of the current profile to the specified path                                        | yes                     |
-| -help               |                         | prints the help and exits                                                                                   | no                      |
-| -profile            | file source             | loads the specified profile after launch                                                                    | yes                     |
-| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) | yes                     |
-| -quit               |                         | quits the application                                                                                       | yes                     |
-| -save               | file destination        | save the current profile to the specified path                                                              | yes                     |
-| -skipMessageDialogs |                         | skips all message dialogs                                                                                   | no                      |
-| -tray               |                         | launches the application in the system tray                                                                 | yes                     |
-| -version            |                         | prints the version information and exits                                                                    | no                      |
+|---------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|:-----------------------:|
+| -autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
+| -export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
+| -help               |                         | prints the help and exits                                                                                   |           no            |
+| -profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
+| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
+| -quit               |                         | quits the application                                                                                       |           yes           |
+| -save               | file destination        | save the current profile to the specified path                                                              |           yes           |
+| -skipMessageDialogs |                         | skips all message dialogs                                                                                   |           no            |
+| -tray               |                         | launches the application in the system tray                                                                 |           yes           |
+| -version            |                         | prints the version information and exits                                                                    |           no            |
 
 If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.  
 This can be used to integrate ControllerBuddy into third party applications.  
@@ -213,7 +213,7 @@ If you want to build ControllerBuddy from its source code this section might be 
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
 | Task                                   | Command                  |
-| -------------------------------------- | ------------------------ |
+|----------------------------------------|--------------------------|
 | Generate version source file           | gradlew generateVersion  |
 | Run SpotBugs and Spotless              | gradlew check            |
 | Apply Spotless formatting              | gradlew spotlessApply    |

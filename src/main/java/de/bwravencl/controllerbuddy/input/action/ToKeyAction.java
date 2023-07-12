@@ -77,22 +77,22 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 		}
 
 		switch (activation) {
-		case REPEAT:
+		case REPEAT -> {
 			final var downKeyStrokes = input.getDownKeyStrokes();
 			if (!hot)
 				downKeyStrokes.remove(keystroke);
 			else
 				downKeyStrokes.add(keystroke);
-			break;
-		case SINGLE_IMMEDIATELY:
+		}
+		case SINGLE_IMMEDIATELY -> {
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
 				input.getDownUpKeyStrokes().add(keystroke);
 			}
-			break;
-		case SINGLE_ON_RELEASE:
+		}
+		case SINGLE_ON_RELEASE -> {
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
@@ -102,7 +102,7 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 				activatable = Activatable.NO;
 				input.getDownUpKeyStrokes().add(keystroke);
 			}
-			break;
+		}
 		}
 	}
 

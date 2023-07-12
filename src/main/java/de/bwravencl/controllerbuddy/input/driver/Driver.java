@@ -18,7 +18,6 @@ package de.bwravencl.controllerbuddy.input.driver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -26,7 +25,7 @@ import io.github.classgraph.ClassGraph;
 
 public abstract class Driver {
 
-	private static List<? extends IDriverBuilder> driverBuilders;
+	private static final List<? extends IDriverBuilder> driverBuilders;
 
 	static {
 		try (final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo()
@@ -39,7 +38,7 @@ public abstract class Driver {
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					throw new RuntimeException(e);
 				}
-			}).sorted().collect(Collectors.toUnmodifiableList());
+			}).sorted().toList();
 		}
 	}
 

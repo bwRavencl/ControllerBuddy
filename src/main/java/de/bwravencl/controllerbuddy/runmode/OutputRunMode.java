@@ -114,10 +114,6 @@ public abstract class OutputRunMode extends RunMode {
 			return changed;
 		}
 
-		void setUinputValue(final int uinputValue) {
-			this.uinputValue = uinputValue;
-		}
-
 		void setUnchanged() {
 			changed = false;
 		}
@@ -131,10 +127,6 @@ public abstract class OutputRunMode extends RunMode {
 				uinputValue = value;
 			} else
 				throw new UnsupportedOperationException();
-		}
-
-		void setvJoyValue(final T vJoyValue) {
-			this.vJoyValue = vJoyValue;
 		}
 	}
 
@@ -160,7 +152,7 @@ public abstract class OutputRunMode extends RunMode {
 	private static final int UINPUT_VENDOR_CODE = 0x1234;
 	private static final int UINPUT_PRODUCT_CODE = 0x5678;
 
-	private static EventCode[] UINPUT_JOYSTICK_BUTTON_EVENT_CODES = { EventCode.BTN_TRIGGER, EventCode.BTN_THUMB,
+	private static final EventCode[] UINPUT_JOYSTICK_BUTTON_EVENT_CODES = { EventCode.BTN_TRIGGER, EventCode.BTN_THUMB,
 			EventCode.BTN_THUMB2, EventCode.BTN_TOP, EventCode.BTN_TOP2, EventCode.BTN_PINKIE, EventCode.BTN_BASE,
 			EventCode.BTN_BASE2, EventCode.BTN_BASE3, EventCode.BTN_BASE4, EventCode.BTN_BASE5, EventCode.BTN_BASE6,
 			EventCode.BTN_DEAD, EventCode.BTN_TRIGGER_HAPPY1, EventCode.BTN_TRIGGER_HAPPY2,
@@ -303,7 +295,6 @@ public abstract class OutputRunMode extends RunMode {
 	AxisValue axisRZ;
 	AxisValue axisS0;
 	AxisValue axisS1;
-	AxisValue axisS1Changed;
 	ButtonValue[] buttons;
 	int cursorDeltaX;
 	int cursorDeltaY;
@@ -485,8 +476,8 @@ public abstract class OutputRunMode extends RunMode {
 				final var dllVersion = new WORDByReference();
 				final var drvVersion = new WORDByReference();
 				if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
-					log.log(Level.WARNING, "vJoy DLL version " + dllVersion.toString()
-							+ " does not match driver version " + drvVersion.toString());
+					log.log(Level.WARNING,
+							"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
 							MessageFormat.format(Main.strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.getValue().shortValue(), drvVersion.getValue().shortValue(),
@@ -580,10 +571,9 @@ public abstract class OutputRunMode extends RunMode {
 							WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_DISPLAY_REQUIRED);
 			} catch (final UnsatisfiedLinkError e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
-				if (Main.isWindows)
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
-							Main.strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
-							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
+						Main.strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				return false;
 			}
@@ -873,7 +863,7 @@ public abstract class OutputRunMode extends RunMode {
 
 		if (!writeSucessful) {
 			final var confirmDialogTask = new FutureTask<>(() -> {
-				String message = null;
+				final String message;
 				if (Main.isWindows)
 					message = "COULD_NOT_WRITE_TO_VJOY_DEVICE_DIALOG_TEXT";
 				else if (Main.isLinux)
@@ -890,7 +880,7 @@ public abstract class OutputRunMode extends RunMode {
 					restart = true;
 				else
 					forceStop = true;
-			} catch (final InterruptedException e) {
+			} catch (final InterruptedException ignored) {
 			} catch (final ExecutionException e) {
 				throw new RuntimeException(e);
 			}

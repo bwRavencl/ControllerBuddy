@@ -98,7 +98,7 @@ class OpenVrOverlay {
 
 		try {
 			capabilities = GL.getCapabilities();
-		} catch (final IllegalStateException e) {
+		} catch (final IllegalStateException ignored) {
 		}
 
 		if (capabilities == null)
@@ -194,7 +194,7 @@ class OpenVrOverlay {
 	private long hglrc = MemoryUtil.NULL;
 	private short classAtom = 0;
 	private long hwnd = MemoryUtil.NULL;
-	private MemoryStack renderingMemoryStack;
+	private final MemoryStack renderingMemoryStack;
 
 	private final ScheduledExecutorService executorService;
 

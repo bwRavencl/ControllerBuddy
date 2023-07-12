@@ -42,7 +42,7 @@ public final class LocalRunMode extends OutputRunMode {
 	boolean readInput() {
 		try {
 			super.readInput();
-		} catch (final IOException e) {
+		} catch (final IOException ignored) {
 		}
 
 		if (!input.poll()) {
@@ -143,7 +143,7 @@ public final class LocalRunMode extends OutputRunMode {
 				}
 			else
 				forceStop = true;
-		} catch (final InterruptedException e) {
+		} catch (final InterruptedException ignored) {
 		} finally {
 			deInit();
 		}

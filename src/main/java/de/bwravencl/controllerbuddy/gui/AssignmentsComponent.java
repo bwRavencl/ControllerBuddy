@@ -32,6 +32,10 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
@@ -67,10 +71,11 @@ final class AssignmentsComponent extends JScrollPane {
 			}
 		}
 
+		@Serial
 		private static final long serialVersionUID = 5560396295119690740L;
 
-		private transient Shape shape;
-		private transient Shape base;
+		private Shape shape;
+		private Shape base;
 		private final CompoundButtonLocation buttonLocation;
 		private final Dimension preferredSize;
 		private String text;
@@ -90,17 +95,17 @@ final class AssignmentsComponent extends JScrollPane {
 				setModel(peer.getModel());
 			}
 
-			if (component.type == ComponentType.BUTTON) {
-				if (component.index == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
+			if (component.type() == ComponentType.BUTTON) {
+				if (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
 					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_THUMB"), component));
 					text = Main.strings.getString("LEFT_STICK");
-				} else if (component.index == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
+				} else if (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
 					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_THUMB"), component));
 					text = Main.strings.getString("RIGHT_STICK");
 				} else
 					throw new IllegalArgumentException();
 			} else if (peer != null)
-				switch (component.index) {
+				switch (component.index()) {
 				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X ->
 					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_STICK_X_AXIS"), component));
 				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y ->
@@ -217,6 +222,11 @@ final class AssignmentsComponent extends JScrollPane {
 			super.paintComponent(g);
 		}
 
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(CompoundButton.class.getName());
+		}
+
 		private void setPeer(final CompoundButton peer) {
 			this.peer = peer;
 		}
@@ -225,10 +235,16 @@ final class AssignmentsComponent extends JScrollPane {
 		public void setText(final String text) {
 			this.text = text;
 		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(CompoundButton.class.getName());
+		}
 	}
 
 	private static abstract class CustomButton extends JButton {
 
+		@Serial
 		private static final long serialVersionUID = 5458020346838696827L;
 
 		private Color defaultForeground;
@@ -248,7 +264,6 @@ final class AssignmentsComponent extends JScrollPane {
 		private Color defaultFocusedBorderColor;
 		protected boolean defaultBoldText;
 		Color disabledText;
-
 		boolean contentAreaFilled = true;
 
 		private CustomButton() {
@@ -341,8 +356,10 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
-	@SuppressWarnings("serial")
 	private static final class EditComponentAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -2879419156880580931L;
 
 		private final Main main;
 		private final String name;
@@ -363,10 +380,21 @@ final class AssignmentsComponent extends JScrollPane {
 			final var editComponentDialog = new EditActionsDialog(main, component, name);
 			editComponentDialog.setVisible(true);
 		}
+
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(EditComponentAction.class.getName());
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(EditComponentAction.class.getName());
+		}
 	}
 
 	private static final class FourWay extends JPanel {
 
+		@Serial
 		private static final long serialVersionUID = -5178710302755638535L;
 
 		private FourWay(final Main main, final String upTitle, final Component upComponent, final String leftTitle,
@@ -400,6 +428,7 @@ final class AssignmentsComponent extends JScrollPane {
 			Left, Right
 		}
 
+		@Serial
 		private static final long serialVersionUID = -8389190445101809929L;
 
 		private Stick(final Main main, final StickType type) {
@@ -430,6 +459,7 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
+	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
 
 	private static final int BUTTON_HEIGHT = 50;
@@ -442,14 +472,15 @@ final class AssignmentsComponent extends JScrollPane {
 	private static JButton createComponentButton(final Main main, final String name, final Component component) {
 		final boolean round;
 		final JButton button;
-		if (component.type == ComponentType.BUTTON && (component.index == GLFW.GLFW_GAMEPAD_BUTTON_A
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_B || component.index == GLFW.GLFW_GAMEPAD_BUTTON_X
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_Y || component.index == GLFW.GLFW_GAMEPAD_BUTTON_BACK
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_START
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)) {
+		if (component.type() == ComponentType.BUTTON && (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_A
+				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_B || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_X
+				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_Y || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_BACK
+				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_START
+				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)) {
 			round = true;
 			button = new CustomButton(new EditComponentAction(main, name, component)) {
 
+				@Serial
 				private static final long serialVersionUID = 8467379031897370934L;
 
 				@Override
@@ -533,10 +564,11 @@ final class AssignmentsComponent extends JScrollPane {
 			button = new JButton(new EditComponentAction(main, name, component));
 		}
 
-		if (component.type == ComponentType.BUTTON && (round || component.index == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
-				|| component.index == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP))
+		if (component.type() == ComponentType.BUTTON
+				&& (round || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN
+						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
+						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
+						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP))
 			button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
 		else
 			button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));

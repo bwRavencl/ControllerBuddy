@@ -32,19 +32,10 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 
 public final class Mode implements Cloneable {
 
-	public static final class Component {
+	public record Component(Mode.Component.ComponentType type, int index) {
 
 		public enum ComponentType {
 			AXIS, BUTTON
-		}
-
-		public final ComponentType type;
-
-		public final int index;
-
-		public Component(final ComponentType type, final int index) {
-			this.type = type;
-			this.index = index;
 		}
 
 		@Override
@@ -54,14 +45,8 @@ public final class Mode implements Cloneable {
 			if (obj == null || getClass() != obj.getClass())
 				return false;
 			final var other = (Component) obj;
-			if (index != other.index || type != other.type)
-				return false;
-			return true;
-		}
 
-		@Override
-		public int hashCode() {
-			return Objects.hash(index, type);
+			return index == other.index && type == other.type;
 		}
 	}
 
@@ -73,12 +58,7 @@ public final class Mode implements Cloneable {
 			for (final var action : entry.getValue()) {
 				final var key = entry.getKey();
 
-				var clonedActions = clonedActionMap.get(key);
-				if (clonedActions == null) {
-					clonedActions = new ArrayList<>();
-					clonedActionMap.put(key, clonedActions);
-				}
-
+				final var clonedActions = clonedActionMap.computeIfAbsent(key, k -> new ArrayList<>());
 				clonedActions.add((IAction<V>) action.clone());
 			}
 
@@ -119,9 +99,8 @@ public final class Mode implements Cloneable {
 		if (obj == null || getClass() != obj.getClass())
 			return false;
 		final var other = (Mode) obj;
-		if (!Objects.equals(uuid, other.uuid))
-			return false;
-		return true;
+
+		return Objects.equals(uuid, other.uuid);
 	}
 
 	public Set<IAction<?>> getAllActions() {

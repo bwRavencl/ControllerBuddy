@@ -45,8 +45,7 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 			}
 
 			if (rgba == null)
-				throw new JsonParseException(
-						"Could not deserialize as " + Color.class.getSimpleName() + ": " + json.toString());
+				throw new JsonParseException("Could not deserialize as " + Color.class.getSimpleName() + ": " + json);
 
 			return new Color(rgba, true);
 		} catch (final JsonParseException e) {

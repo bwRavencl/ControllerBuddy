@@ -84,7 +84,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 
 				return value;
 			}
-		} else if (actionToDownSinceMap.containsKey(this))
+		} else
 			actionToDownSinceMap.remove(this);
 
 		return Float.MIN_VALUE;

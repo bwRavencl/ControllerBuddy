@@ -1,10 +1,14 @@
+import org.ajoberstar.grgit.Grgit
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.plugins.ide.eclipse.model.Container
-import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import com.github.spotbugs.snom.SpotBugsReport
 import com.github.spotbugs.snom.SpotBugsTask
+
+import groovy.xml.XmlParser
+
+import java.util.regex.Pattern
 
 plugins {
 	id 'application'
@@ -16,7 +20,7 @@ plugins {
 	id 'org.ajoberstar.grgit' version '5.2.0'
 }
 
-version = org.ajoberstar.grgit.Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(java.util.regex.Pattern.quote('-'), '.').replaceFirst(java.util.regex.Pattern.quote('-g'), '-')
+version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst(Pattern.quote('-g'), '-')
 
 sourceCompatibility = 20
 targetCompatibility = 20
@@ -75,17 +79,17 @@ repositories {
 	maven { url 'https://jitpack.io' }
 }
 
-task cleanModuleInfo {
+tasks.register('cleanModuleInfo') {
 	description = "Removes the \'$moduleInfoFile\' source file"
 	doLast { delete moduleInfoFile }
 }
 
-task cleanVersion {
+tasks.register('cleanVersion') {
 	description = "Removes the \'$versionFile\' source file"
 	doLast { delete versionFile }
 }
 
-task cleanGameControllerDB {
+tasks.register('cleanGameControllerDB') {
 	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
 	doLast { delete gamecontrollerdbFile }
 }
@@ -96,12 +100,10 @@ dependencies {
 	def jnaVersion = '5.13.0'
 	def lwjglVersion = '3.3.2'
 
-	def xinputSupport = false
 	def lwjglOs
 	if (os.windows) {
 		lwjglOs = "windows"
 		openVrSupport = true
-		xinputSupport = true
 	} else if (os.macOsX)
 		lwjglOs = 'macos'
 	else if (os.linux) {
@@ -227,7 +229,7 @@ extraJavaModuleInfo {
 	}
 }
 
-task generateModuleInfo {
+tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
 		new File(moduleInfoFile).write("""\
@@ -273,7 +275,7 @@ spotbugs {
 	reportLevel = spotbugsReportLevel
 }
 
-tasks.withType(SpotBugsTask) {
+tasks.withType(SpotBugsTask).configureEach {
 	reports({
 		html { required.set(true) }
 		xml { required.set(true) }
@@ -325,14 +327,14 @@ spotless {
 	}
 }
 
-task cleanLibsDirectory {
+tasks.register('cleanLibsDirectory') {
 	description = "Removes the \'$libsDir\' directory."
 	doLast { delete libsDir }
 }
 
 jar.dependsOn check, cleanLibsDirectory
 
-task generateVersion {
+tasks.register('generateVersion') {
 	description = "Generates the \'$versionFile\' source file"
 	doLast {
 		new File(versionFile).write("""\
@@ -348,7 +350,7 @@ task generateVersion {
 
 tasks.eclipseClasspath.dependsOn generateModuleInfo, generateVersion
 
-task copyGameControllerDB(type: Copy) {
+tasks.register('copyGameControllerDB', Copy) {
 	description = "Places a copy of the \'gamecontrollerdb.txt\' file from the SDL_GameControllerDB Git Submodule folder into the \'$resourcesDir' directory."
 	from 'SDL_GameControllerDB/gamecontrollerdb.txt'
 	into resourcesDir
@@ -361,7 +363,7 @@ tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
 tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
 
-task cleanJdtUiPrefs {
+tasks.register('cleanJdtUiPrefs') {
 	description = "Removes the \'$jdtUiPrefsFile\' settings file."
 	doLast { delete jdtUiPrefsFile, spotbugsPrefsFile }
 }
@@ -578,6 +580,7 @@ compileJava {
 		'-Xlint:deprecation',
 		enablePreviewJvmArg
 	]
+	options.encoding = 'UTF-8'
 }
 
 run {
@@ -587,21 +590,21 @@ run {
 		jvmArgs += linuxJvmArgs
 }
 
-task jlink(type: Exec) {
+tasks.register('jlink', Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
 	group
 	doFirst { delete runtimeDir }
 	commandLine 'jlink', '--output', runtimeDir, '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.xml.dom'
 }
 
-task copyLibs(type: Copy) {
+tasks.register('copyLibs', Copy) {
 	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
 	dependsOn jar
 	from configurations.runtimeClasspath
 	into libsDir
 }
 
-task customizeLoggingProperties {
+tasks.register('customizeLoggingProperties') {
 	description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
 	dependsOn jlink
 	doLast {
@@ -614,7 +617,7 @@ task customizeLoggingProperties {
 	}
 }
 
-task jpackage(type: Exec) {
+tasks.register('jpackage', Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
 	dependsOn copyLibs, customizeLoggingProperties
 	doFirst { delete "$tmpDir/$project.name" }
@@ -651,7 +654,7 @@ task jpackage(type: Exec) {
 
 startScripts.enabled = false
 
-task distTar(type: Tar, overwrite: true) {
+tasks.replace('distTar', Tar).configure {
 	dependsOn jpackage
 	from tmpDir
 	include "$project.name/**"
@@ -659,14 +662,14 @@ task distTar(type: Tar, overwrite: true) {
 	compression Compression.GZIP
 }
 
-task distZip(type: Zip, overwrite: true) {
+tasks.replace('distZip', Zip).configure {
 	dependsOn jpackage
 	from tmpDir
 	include "$project.name/**"
 	archiveAppendix = distAppendix
 }
 
-task installDist(type: Sync, overwrite: true) {
+tasks.replace('installDist', Sync).configure {
 	dependsOn jpackage
 	from tmpDir
 	into "$buildDir/install"

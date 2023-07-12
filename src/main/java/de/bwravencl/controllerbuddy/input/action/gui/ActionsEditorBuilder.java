@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
@@ -33,6 +34,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 
 	private final class EditActionsAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = -6538021954760621595L;
 
 		private EditActionsAction() {
@@ -49,8 +51,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 	}
 
 	public ActionsEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws NoSuchFieldException, SecurityException,
-			NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

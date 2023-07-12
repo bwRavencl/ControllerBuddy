@@ -101,7 +101,9 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	private void deactivateMode(final Input input, final Profile profile) {
 		for (var topmostModeAction = buttonToModeActionStack
 				.peek(); topmostModeAction != this; topmostModeAction = buttonToModeActionStack.peek()) {
-			topmostModeAction.deactivateMode(input, profile);
+			if (topmostModeAction != null)
+				topmostModeAction.deactivateMode(input, profile);
+
 			input.repeatModeActionWalk();
 		}
 
@@ -123,7 +125,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
 		final var main = input.getMain();
 		if (defaultAxisToActionsMap != null)
-			axes.stream().filter(axis -> defaultAxisToActionsMap.containsKey(axis))
+			axes.stream().filter(defaultAxisToActionsMap::containsKey)
 					.forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
 							.filter(action -> action instanceof IAxisToAction)
 							.forEach(action -> input.suspendAxis(axis)));

@@ -67,17 +67,16 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		final var hot = value != 0;
 
 		switch (activation) {
-		case REPEAT:
-			throw new IllegalStateException();
-		case SINGLE_IMMEDIATELY:
+		case REPEAT -> throw new IllegalStateException();
+		case SINGLE_IMMEDIATELY -> {
 			if (!hot)
 				activatable = Activatable.YES;
 			else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
 				doActionAndAdvanceIndex(input, component);
 			}
-			break;
-		case SINGLE_ON_RELEASE:
+		}
+		case SINGLE_ON_RELEASE -> {
 			if (hot) {
 				if (activatable == Activatable.NO)
 					activatable = Activatable.YES;
@@ -87,7 +86,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 				activatable = Activatable.NO;
 				doActionAndAdvanceIndex(input, component);
 			}
-			break;
+		}
 		}
 	}
 
@@ -120,7 +119,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 			return super.getDescription(input);
 
 		return MessageFormat.format(Main.strings.getString("CYCLE"),
-				actions.stream().map(action -> action.getDescription(input)).collect(Collectors.joining(" \u2192 ")));
+				actions.stream().map(action -> action.getDescription(input)).collect(Collectors.joining(" → ")));
 	}
 
 	@Override

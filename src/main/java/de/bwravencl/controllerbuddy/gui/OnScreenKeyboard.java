@@ -29,6 +29,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -52,11 +56,11 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 
-@SuppressWarnings("serial")
 public final class OnScreenKeyboard extends JFrame {
 
 	private abstract class AbstractKeyboardButton extends JButton {
 
+		@Serial
 		private static final long serialVersionUID = 4567858619453576258L;
 
 		private static final int BASE_BUTTON_SIZE = 55;
@@ -86,6 +90,11 @@ public final class OnScreenKeyboard extends JFrame {
 		abstract boolean poll(final Input input);
 
 		abstract void press(final boolean lock);
+
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(AbstractKeyboardButton.class.getName());
+		}
 
 		abstract void release();
 
@@ -117,9 +126,17 @@ public final class OnScreenKeyboard extends JFrame {
 			super.updateUI();
 			updateTheme();
 		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(AbstractKeyboardButton.class.getName());
+		}
 	}
 
 	private final class AlphabeticKeyboardButton extends ShiftableKeyboardButton {
+
+		@Serial
+		private static final long serialVersionUID = -43249779147068577L;
 
 		private AlphabeticKeyboardButton(final String directInputKeyCodeName) {
 			super(directInputKeyCodeName, directInputKeyCodeName);
@@ -127,6 +144,9 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	private final class CapsLockKeyButton extends LockKeyButton {
+
+		@Serial
+		private static final long serialVersionUID = 6891401614243607392L;
 
 		private CapsLockKeyButton() {
 			super(LockKey.CapsLockLockKey);
@@ -147,6 +167,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private class DefaultKeyboardButton extends AbstractKeyboardButton {
 
+		@Serial
 		private static final long serialVersionUID = -1739002089027358633L;
 
 		private static final long MIN_REPEAT_PRESS_TIME = 150L;
@@ -224,7 +245,7 @@ public final class OnScreenKeyboard extends JFrame {
 		public Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();
 
-			if (this instanceof final NumPadKeyboardButton numPadKeyboardButton) {
+			if (this instanceof NumPadKeyboardButton) {
 				if (ScanCode.DIK_NUMPAD0.equals(directInputKeyCodeName))
 					preferredSize.width *= 2;
 			} else if (ScanCode.DIK_INSERT.equals(directInputKeyCodeName)
@@ -311,6 +332,9 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private abstract class DualPurposeKeyboardButton extends DefaultKeyboardButton {
 
+		@Serial
+		private static final long serialVersionUID = -722664487208124876L;
+
 		String defaultKeyName;
 		String alternativeKeyName;
 
@@ -328,6 +352,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private class LockKeyButton extends AbstractKeyboardButton {
 
+		@Serial
 		private static final long serialVersionUID = 4014130700331413635L;
 
 		volatile boolean locked;
@@ -340,9 +365,7 @@ public final class OnScreenKeyboard extends JFrame {
 			super(getLockKeyDisplayName(lockKey.name()));
 			this.lockKey = lockKey;
 
-			addActionListener(arg0 -> {
-				toggleLock();
-			});
+			addActionListener(arg0 -> toggleLock());
 		}
 
 		@Override
@@ -388,15 +411,17 @@ public final class OnScreenKeyboard extends JFrame {
 		@Override
 		void toggleLock() {
 			locked = !locked;
-			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-				setForeground(locked ? Color.GREEN : defaultForeground);
-			});
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(
+					() -> setForeground(locked ? Color.GREEN : defaultForeground));
 			changed = true;
 			anyChanges = true;
 		}
 	}
 
 	private final class NumLockKeyButton extends LockKeyButton {
+
+		@Serial
+		private static final long serialVersionUID = 296846375213986255L;
 
 		public NumLockKeyButton() {
 			super(LockKey.NumLockLockKey);
@@ -415,6 +440,9 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private final class NumPadKeyboardButton extends DualPurposeKeyboardButton {
 
+		@Serial
+		private static final long serialVersionUID = -460568797568937461L;
+
 		private NumPadKeyboardButton(final String directInputKeyCodeName,
 				final String numLockOffDirectInputKeyCodeName) {
 			super(directInputKeyCodeName, getDefaultKeyDisplayName(numLockOffDirectInputKeyCodeName));
@@ -428,6 +456,9 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	private class ShiftableKeyboardButton extends DualPurposeKeyboardButton {
+
+		@Serial
+		private static final long serialVersionUID = -106361505843077547L;
 
 		private ShiftableKeyboardButton(final String directInputKeyCodeName, final String shiftedKeyName) {
 			super(directInputKeyCodeName, shiftedKeyName);
@@ -446,6 +477,9 @@ public final class OnScreenKeyboard extends JFrame {
 				this.directInputKeyCodeName = directInputKeyCodeName;
 			}
 		}
+
+		@Serial
+		private static final long serialVersionUID = -1789796245988164919L;
 
 		private ShiftKeyboardButton(final ShiftKeyboardButtonType type) {
 			super(type.directInputKeyCodeName);
@@ -467,6 +501,9 @@ public final class OnScreenKeyboard extends JFrame {
 						shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
 		}
 	}
+
+	@Serial
+	private static final long serialVersionUID = -5061347351151925461L;
 
 	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 
@@ -497,13 +534,13 @@ public final class OnScreenKeyboard extends JFrame {
 			shortName = shortName.toLowerCase(Locale.ROOT);
 		else if (shortName.endsWith("Arrow"))
 			if (shortName.startsWith("Up"))
-				shortName = "\u2191";
+				shortName = "↑";
 			else if (shortName.startsWith("Down"))
-				shortName = "\u2193";
+				shortName = "↓";
 			else if (shortName.startsWith("Left"))
-				shortName = "\u2190";
+				shortName = "←";
 			else if (shortName.startsWith("Right"))
-				shortName = "\u2192";
+				shortName = "→";
 
 		return shortName;
 	}
@@ -740,6 +777,11 @@ public final class OnScreenKeyboard extends JFrame {
 		keyboardButtons[selectedRow][selectedColumn].press(false);
 	}
 
+	@Serial
+	private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+		throw new NotSerializableException(OnScreenKeyboard.class.getName());
+	}
+
 	public void releaseAll() {
 		for (final var row : keyboardButtons)
 			for (final var keyboardButton : row)
@@ -825,5 +867,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 		pack();
 		updateLocation();
+	}
+
+	@Serial
+	private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+		throw new NotSerializableException(OnScreenKeyboard.class.getName());
 	}
 }

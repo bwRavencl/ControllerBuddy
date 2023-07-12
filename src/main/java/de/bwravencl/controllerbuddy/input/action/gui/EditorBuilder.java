@@ -16,6 +16,10 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -42,6 +46,7 @@ public abstract class EditorBuilder {
 
 	static abstract class PropertySetterAction extends AbstractAction {
 
+		@Serial
 		private static final long serialVersionUID = 4141747329971720525L;
 
 		final IAction<?> action;
@@ -51,6 +56,16 @@ public abstract class EditorBuilder {
 			this.action = action;
 			this.setterMethod = setterMethod;
 		}
+
+		@Serial
+		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(PropertySetterAction.class.getName());
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+			throw new NotSerializableException(PropertySetterAction.class.getName());
+		}
 	}
 
 	protected final EditActionsDialog editActionsDialog;
@@ -59,8 +74,8 @@ public abstract class EditorBuilder {
 	protected Object initialValue;
 
 	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws NoSuchFieldException, SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		this.editActionsDialog = editActionsDialog;
 		this.action = action;
 

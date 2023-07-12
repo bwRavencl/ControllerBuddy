@@ -18,7 +18,6 @@ package de.bwravencl.controllerbuddy.input;
 
 import java.awt.EventQueue;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -272,7 +271,7 @@ public final class Input {
 		if (presentControllers.size() > 1) {
 			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
 
-			if (hotSwappingButtonId != HotSwappingButton.None.id) {
+			if (hotSwappingButtonId != HotSwappingButton.None.id && controller != null) {
 				if (driver != null)
 					jidToDriverMap.put(controller.jid(), driver);
 
@@ -295,6 +294,10 @@ public final class Input {
 		}));
 
 		initialized = true;
+	}
+
+	public void initButtons() {
+		buttons = new boolean[Math.min(runMode.getnButtons(), MAX_N_BUTTONS)];
 	}
 
 	public boolean isAxisSuspended(final int axis) {
@@ -323,13 +326,7 @@ public final class Input {
 	public boolean poll() {
 		final var currentTime = System.currentTimeMillis();
 
-		final var axisToEndSuspensionTimestampMapIterator = axisToEndSuspensionTimestampMap.values().iterator();
-		while (axisToEndSuspensionTimestampMapIterator.hasNext()) {
-			final var timestamp = axisToEndSuspensionTimestampMapIterator.next();
-
-			if (timestamp < currentTime)
-				axisToEndSuspensionTimestampMapIterator.remove();
-		}
+		axisToEndSuspensionTimestampMap.values().removeIf(timestamp -> timestamp < currentTime);
 
 		var elapsedTime = runMode.getPollInterval();
 		if (lastPollTime > 0L)
@@ -423,8 +420,7 @@ public final class Input {
 
 					setAxis(virtualAxis, newValue, false, (Integer) null);
 
-					if (newValue != targetValue)
-						return false;
+					return newValue == targetValue;
 				}
 
 				return true;
@@ -527,7 +523,7 @@ public final class Input {
 		IAxisToLongPressAction.reset();
 		IButtonToAction.reset();
 
-		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions.stream()
+		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions
 				.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
 
 		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
@@ -560,7 +556,7 @@ public final class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != value)
+		if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != null && prevValue != value)
 			if (value == minAxisValue || value == maxAxisValue)
 				driver.rumbleStrong();
 			else if (dententValue != null && (prevValue > dententValue && value <= dententValue
@@ -583,10 +579,6 @@ public final class Input {
 		this.cursorDeltaY = cursorDeltaY;
 	}
 
-	public void setnButtons(final int nButtons) {
-		buttons = new boolean[Math.min(runMode.getnButtons(), MAX_N_BUTTONS)];
-	}
-
 	public boolean setProfile(final Profile profile) {
 		if (profile == null)
 			throw new IllegalArgumentException();
@@ -596,7 +588,7 @@ public final class Input {
 				return false;
 
 		final var modes = profile.getModes();
-		Collections.sort(modes, (o1, o2) -> {
+		modes.sort((o1, o2) -> {
 			final var o1IsDefaultMode = Profile.defaultMode.equals(o1);
 			final var o2IsDefaultMode = Profile.defaultMode.equals(o2);
 
@@ -634,7 +626,7 @@ public final class Input {
 					return false;
 
 			for (final var actions : mode.getButtonToActionsMap().values())
-				Collections.sort(actions, (o1, o2) -> {
+				actions.sort((o1, o2) -> {
 					if (o1 instanceof final IButtonToAction buttonToAction1
 							&& o2 instanceof final IButtonToAction buttonToAction2) {
 						final var o1IsLongPress = buttonToAction1.isLongPress();
