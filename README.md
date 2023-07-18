@@ -140,21 +140,21 @@ vJoy / uinput   Win32 / X11
 
 Server-Client mode:
 ```
-             Server:                             Client:
+             Server:                                 Client:
 
        Physical Controller
                 |
                 |
-                v
-         ControllerBuddy  --------------->  ControllerBuddy
-                                            |             |
-                                            |             |
-                                            v             v
-                                     vJoy / uinput   Win32 / X11
-                                           |                |
-                                           |                |
-                                           v                v
-                                           Target Application
+                v                  UDP
+         ControllerBuddy  -------------------->  ControllerBuddy
+                                                 |             |
+                                                 |             |
+                                                 v             v
+                                          vJoy / uinput   Win32 / X11
+                                                |                |
+                                                |                |
+                                                v                v
+                                                Target Application
 ```
 
 #### Example Screenshots:
