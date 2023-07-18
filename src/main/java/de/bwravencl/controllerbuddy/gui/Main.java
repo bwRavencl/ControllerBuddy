@@ -693,7 +693,7 @@ public final class Main {
 		private SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, strings.getString("CHANGE_INDICATOR_COLOR_ACTION_NAME"));
+			putValue(NAME, "🎨");
 			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
 		}
 
@@ -701,7 +701,8 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
 
-			final var newColor = JColorChooser.showDialog(frame, "Choose Background Color", overlayAxis.color);
+			final var newColor = JColorChooser.showDialog(frame, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
+					overlayAxis.color);
 			if (newColor != null)
 				overlayAxis.color = newColor;
 
@@ -2549,7 +2550,7 @@ public final class Main {
 
 		final var maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		final var defaultLocation = new Point();
-		defaultLocation.x = maximumWindowBounds.width - overlayFrame.getWidth();
+		defaultLocation.x = 0;
 		defaultLocation.y = maximumWindowBounds.height - overlayFrame.getHeight();
 
 		prevTotalDisplayBounds = GuiUtils.getTotalDisplayBounds();
@@ -3559,13 +3560,12 @@ public final class Main {
 
 			colorLabel.setPreferredSize(new Dimension(100, 15));
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
-			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 0.2d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
-			colorButton.setPreferredSize(BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
-			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var invertedCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
