@@ -526,7 +526,7 @@ final class AssignmentsComponent extends JScrollPane {
 					}
 
 					final var text = getText();
-					if (text != null && text.length() > 0) {
+					if (text != null && !text.isEmpty()) {
 						beginForeground(g2d);
 						final var metrics = g2d.getFontMetrics(getFont());
 						final var stringWidth = metrics.stringWidth(text);

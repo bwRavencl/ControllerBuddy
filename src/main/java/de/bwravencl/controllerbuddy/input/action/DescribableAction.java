@@ -43,7 +43,7 @@ public abstract class DescribableAction<V extends Number> implements IAction<V> 
 	}
 
 	boolean isDescriptionEmpty() {
-		return description == null || description.length() < 1;
+		return description == null || description.isEmpty();
 	}
 
 	public void setDescription(final String description) {

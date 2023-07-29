@@ -739,7 +739,7 @@ public final class Main {
 		private void setHost() {
 			final var host = hostTextField.getText();
 
-			if (host != null && host.length() > 0)
+			if (host != null && !host.isEmpty())
 				preferences.put(PREFERENCES_HOST, host);
 			else
 				hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST));
@@ -795,7 +795,7 @@ public final class Main {
 		private void setModeDescription() {
 			final var description = modeDescriptionTextField.getText();
 
-			if (description != null && description.length() > 0) {
+			if (description != null && !description.isEmpty()) {
 				mode.setDescription(description);
 				setUnsavedChanges(true);
 			}
@@ -1323,7 +1323,7 @@ public final class Main {
 		var keyCode = KeyEvent.VK_UNDEFINED;
 
 		final var text = button.getText();
-		if (text != null && text.length() > 0) {
+		if (text != null && !text.isEmpty()) {
 			var index = 0;
 			do {
 				keyCode = KeyEvent.getExtendedKeyCodeForChar(text.charAt(index));
