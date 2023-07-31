@@ -99,6 +99,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -194,6 +195,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
 import de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
@@ -3756,28 +3758,54 @@ public final class Main {
 		if (hide)
 			return;
 
-		final var instantActions = new ArrayList<IAction<?>>();
 		final var delayedActions = new ArrayList<ILongPressAction<?>>();
+		final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
+		final var otherActions = new ArrayList<IAction<?>>();
 
-		for (final var action : actions)
-			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress())
+		for (final var action : actions) {
+			var addToOtherActions = true;
+
+			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
 				delayedActions.add(longPressAction);
-			else
-				instantActions.add(action);
+				addToOtherActions = false;
+			}
+			if (action instanceof final IActivatableAction activatableAction
+					&& activatableAction.getActivation() == IActivatableAction.Activation.SINGLE_ON_RELEASE) {
+				onReleaseActions.add(activatableAction);
+				addToOtherActions = false;
+			}
 
-		final var delayedActionsPresent = !delayedActions.isEmpty();
-		final var instantAndDelayedActionsPresent = !instantActions.isEmpty() && delayedActionsPresent;
+			if (addToOtherActions)
+				otherActions.add(action);
+		}
+
+		final List<? extends IAction<?>> actionGroupA;
+		final List<? extends IAction<?>> actionGroupB;
+		final String groupAPrefix;
+		final String groupBPrefix;
+
+		if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
+			actionGroupA = Stream.concat(otherActions.stream(), delayedActions.stream()).toList();
+			actionGroupB = onReleaseActions;
+			groupAPrefix = "VISUALIZATION_ON_PRESS_PREFIX";
+			groupBPrefix = "VISUALIZATION_ON_RELEASE_PREFIX";
+		} else {
+			actionGroupA = Stream.concat(otherActions.stream(), onReleaseActions.stream()).toList();
+			actionGroupB = delayedActions;
+			groupAPrefix = "VISUALIZATION_SHORT_PREFIX";
+			groupBPrefix = "VISUALIZATION_LONG_PREFIX";
+		}
+
+		final var groupBPresent = !actionGroupB.isEmpty();
+		final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
 
 		final var textContent = MessageFormat.format(
-				strings.getString(
-						instantAndDelayedActionsPresent ? "VISUALIZATION_SHORT_PREFIX" : "VISUALIZATION_EMPTY_PREFIX"),
-				instantActions.stream().map(action -> action.getDescription(input)).distinct()
+				strings.getString(bothGroupsPresent ? groupAPrefix : "VISUALIZATION_EMPTY_PREFIX"),
+				actionGroupA.stream().map(action -> action.getDescription(input)).distinct()
 						.collect(Collectors.joining(", ")))
-				+ (instantAndDelayedActionsPresent ? " / " : "")
-				+ MessageFormat.format(
-						strings.getString(
-								delayedActionsPresent ? "VISUALIZATION_LONG_PREFIX" : "VISUALIZATION_EMPTY_PREFIX"),
-						delayedActions.stream().map(action -> action.getDescription(input)).distinct()
+				+ (bothGroupsPresent ? " / " : "")
+				+ MessageFormat.format(strings.getString(groupBPresent ? groupBPrefix : "VISUALIZATION_EMPTY_PREFIX"),
+						actionGroupB.stream().map(action -> action.getDescription(input)).distinct()
 								.collect(Collectors.joining(", ")));
 
 		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
