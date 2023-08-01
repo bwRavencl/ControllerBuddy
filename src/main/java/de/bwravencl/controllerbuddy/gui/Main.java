@@ -164,6 +164,7 @@ import org.apache.batik.constants.XMLConstants;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.util.CSSConstants;
+import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -173,6 +174,7 @@ import org.apache.commons.cli.ParseException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Configuration;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -2147,6 +2149,23 @@ public final class Main {
 		}
 	}
 
+	private void addTSpanElement(final List<? extends IAction<?>> actions, final boolean bold, final Node parentNode) {
+		addTSpanElement(actions.stream().map(action -> action.getDescription(input)).distinct()
+				.collect(Collectors.joining(", ")), bold, parentNode);
+	}
+
+	private void addTSpanElement(final String textContent, final boolean bold, final Node parentNode) {
+		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS(SVGConstants.SVG_NAMESPACE_URI,
+				SVGConstants.SVG_TSPAN_TAG);
+
+		if (bold)
+			prefixTSpanElement.setAttribute("style", "font-weight: bold;");
+
+		prefixTSpanElement.setTextContent(textContent);
+
+		parentNode.appendChild(prefixTSpanElement);
+	}
+
 	private void deInitOverlay() {
 		if (openVrOverlay != null) {
 			openVrOverlay.stop();
@@ -3799,18 +3818,19 @@ public final class Main {
 		final var groupBPresent = !actionGroupB.isEmpty();
 		final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
 
-		final var textContent = MessageFormat.format(
-				strings.getString(bothGroupsPresent ? groupAPrefix : "VISUALIZATION_EMPTY_PREFIX"),
-				actionGroupA.stream().map(action -> action.getDescription(input)).distinct()
-						.collect(Collectors.joining(", ")))
-				+ (bothGroupsPresent ? " / " : "")
-				+ MessageFormat.format(strings.getString(groupBPresent ? groupBPrefix : "VISUALIZATION_EMPTY_PREFIX"),
-						actionGroupB.stream().map(action -> action.getDescription(input)).distinct()
-								.collect(Collectors.joining(", ")));
-
 		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
-		final var tSpanElement = textElement.getFirstChild();
-		tSpanElement.setTextContent(textContent);
+		final var tSpanNode = textElement.getFirstChild();
+		tSpanNode.setTextContent(null);
+
+		if (bothGroupsPresent)
+			addTSpanElement("• " + strings.getString(groupAPrefix) + ": ", true, tSpanNode);
+
+		addTSpanElement(actionGroupA, false, tSpanNode);
+
+		if (bothGroupsPresent)
+			addTSpanElement(" • " + strings.getString(groupBPrefix) + ": ", true, tSpanNode);
+
+		addTSpanElement(actionGroupB, false, tSpanNode);
 
 		if (darkTheme) {
 			textElement.getStyle().setProperty(CSSConstants.CSS_FILL_PROPERTY, SVG_DARK_THEME_TEXT_COLOR, "");
