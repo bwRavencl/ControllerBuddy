@@ -62,6 +62,7 @@ ext {
 	spotbugsReportLevel = 'Low'
 
 	spotlessFormatFile = 'spotless.eclipseformat.xml'
+	spotlessImportOrderFile = 'spotless.importorder'
 
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
@@ -288,6 +289,7 @@ spotless {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, versionFile
 		eclipse().configFile spotlessFormatFile
+		importOrderFile spotlessImportOrderFile
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
 			 *
@@ -321,7 +323,7 @@ spotless {
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target 'LICENSE', '*.gitignore', '*.md', '*.txt', '*.xml', 'src/main/resources/**/*.txt'
+		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', '*.xml', 'src/main/resources/**/*.txt'
 		targetExclude gamecontrollerdbFile
 		endWithNewline()
 	}
@@ -401,9 +403,20 @@ tasks.eclipse.doLast {
 	if (uiPrefs.exists())
 		logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
 	else {
+		def importOrder = file(spotlessImportOrderFile).readLines().findAll { it ==~ /^\d+=.*$/ }.collectEntries {
+			def elements = it.split('=').toList()
+			if (elements.size() < 2)
+				elements << ''
+			return elements
+		}.sort().values().join(';')
+
 		uiPrefs.append("""\
 			eclipse.preferences.version=1
 			editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
+			org.eclipse.jdt.ui.ignorelowercasenames=true
+			org.eclipse.jdt.ui.importorder=$importOrder
+			org.eclipse.jdt.ui.ondemandthreshold=99
+			org.eclipse.jdt.ui.staticondemandthreshold=99
 			sp_cleanup.on_save_use_additional_actions=true
 			""".stripIndent())
 
