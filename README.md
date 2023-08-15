@@ -19,6 +19,7 @@ Hint: You may want to use the [ControllerBuddy-Install-Script](https://github.co
 1. First ensure you have installed libsdl2 on your system:
    - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
    - Red-Hat-based: `sudo yum install SDL2`
+   - Arch Linux: `sudo pacman -S sdl2`
 2. Configure uinput and hidraw:
    1. Create an uinput group: `sudo groupadd -f uinput`
    2. Add yourself to the group: `sudo gpasswd -a "$USER" uinput`
