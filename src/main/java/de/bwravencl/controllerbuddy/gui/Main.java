@@ -196,6 +196,7 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
@@ -2150,8 +2151,14 @@ public final class Main {
 	}
 
 	private void addTSpanElement(final List<? extends IAction<?>> actions, final boolean bold, final Node parentNode) {
-		addTSpanElement(actions.stream().map(action -> action.getDescription(input)).distinct()
-				.collect(Collectors.joining(", ")), bold, parentNode);
+		addTSpanElement(actions.stream().map(action -> {
+			var description = action.getDescription(input);
+
+			if (action instanceof final ButtonToModeAction buttonToModeAction)
+				description = (buttonToModeAction.isToggle() ? "⇪" : "⇧") + " " + description;
+
+			return description;
+		}).distinct().collect(Collectors.joining(", ")), bold, parentNode);
 	}
 
 	private void addTSpanElement(final String textContent, final boolean bold, final Node parentNode) {
