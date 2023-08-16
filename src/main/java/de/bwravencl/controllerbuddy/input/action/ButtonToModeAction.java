@@ -54,11 +54,6 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
 	private transient boolean up = true;
 
-	public ButtonToModeAction(final Input input) {
-		final var modes = input.getProfile().getModes();
-		setMode(modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode);
-	}
-
 	private void activateMode(final Input input, final Profile profile) {
 		if (!buttonToModeActionStack.contains(this)) {
 			buttonToModeActionStack.push(this);

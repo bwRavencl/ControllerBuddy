@@ -364,9 +364,15 @@ public final class EditActionsDialog extends JDialog {
 			throw new IllegalArgumentException(
 					"Class '" + actionClass.getName() + "' does not implement '" + IAction.class.getSimpleName() + "'");
 
-		if (actionClass == ButtonToModeAction.class)
-			return new ButtonToModeAction(input);
-		return (IAction<?>) actionClass.getConstructor().newInstance();
+		final var action = (IAction<?>) actionClass.getConstructor().newInstance();
+
+		if (action instanceof final ButtonToModeAction buttonToModeAction) {
+			final var modes = input.getProfile().getModes();
+			final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode;
+			buttonToModeAction.setMode(defaultMode);
+		}
+
+		return action;
 	}
 
 	@SuppressWarnings("unchecked")
