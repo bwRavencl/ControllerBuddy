@@ -337,7 +337,7 @@ tasks.register('cleanLibsDirectory') {
 	doLast { delete base.libsDirectory }
 }
 
-jar.dependsOn check, cleanLibsDirectory
+jar.dependsOn cleanLibsDirectory
 
 tasks.register('generateVersion') {
 	description = "Generates the \'$versionFile\' source file"
@@ -601,13 +601,13 @@ compileJava {
 
 run {
 	jvmArgs += enablePreviewJvmArg
-
 	if (os.linux)
 		jvmArgs += linuxJvmArgs
 }
 
 tasks.register('jlink', Exec) {
 	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
+	dependsOn check
 	group
 	doFirst { delete runtimeDir }
 	commandLine 'jlink', '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.xml.dom'
