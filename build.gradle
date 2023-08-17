@@ -314,16 +314,16 @@ spotless {
 		importOrderFile spotlessImportOrderFile
 	}
 	format 'xml', {
-		target '*.xml', 'src/main/resources/**/*.svg'
+		target '*.xml', "$resourcesDir/**/*.svg".toString()
 		eclipseWtp('xml')
 	}
 	format 'newlineAndTrailingWhitespace', {
-		target '.github/**/*.yml', 'src/main/resources/**/*.properties', 'src/main/resources/**/*.svg'
+		target '.github/**/*.yml', "$resourcesDir/**/*.properties", "$resourcesDir/**/*.svg".toString()
 		endWithNewline()
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', '*.xml', 'src/main/resources/**/*.txt'
+		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', '*.xml', "$resourcesDir/**/*.txt".toString()
 		targetExclude gamecontrollerdbFile
 		endWithNewline()
 	}
