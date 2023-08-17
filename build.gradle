@@ -22,10 +22,14 @@ plugins {
 
 version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst(Pattern.quote('-g'), '-')
 
-sourceCompatibility = 20
-targetCompatibility = 20
+java {
+	sourceCompatibility = JavaVersion.VERSION_20
+	targetCompatibility = JavaVersion.VERSION_20
+}
 
-archivesBaseName = applicationName.toLowerCase()
+base {
+	archivesName = application.applicationName.toLowerCase()
+}
 
 application {
 	mainModule = 'de.bwravencl.controllerbuddy'
@@ -330,8 +334,8 @@ spotless {
 }
 
 tasks.register('cleanLibsDirectory') {
-	description = "Removes the \'${libsDirectory.get()}\' directory."
-	doLast { delete libsDirectory }
+	description = "Removes the \'${base.libsDirectory.get()}\' directory."
+	doLast { delete base.libsDirectory }
 }
 
 jar.dependsOn check, cleanLibsDirectory
@@ -614,7 +618,7 @@ tasks.register('copyLibs', Copy) {
 	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
 	dependsOn jar
 	from configurations.runtimeClasspath
-	into libsDirectory
+	into base.libsDirectory
 }
 
 tasks.register('customizeLoggingProperties') {
@@ -645,7 +649,7 @@ tasks.register('jpackage', Exec) {
 		'--runtime-image',
 		runtimeDir.get(),
 		'--module-path',
-		libsDirectory.get(),
+		base.libsDirectory.get(),
 		'--module',
 		"${project.application.mainModule.get()}/${project.application.mainClass.get()}",
 		'--app-version',
