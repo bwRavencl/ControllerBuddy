@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 import org.ajoberstar.grgit.Grgit
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -7,8 +9,6 @@ import com.github.spotbugs.snom.SpotBugsReport
 import com.github.spotbugs.snom.SpotBugsTask
 
 import groovy.xml.XmlParser
-
-import java.util.regex.Pattern
 
 plugins {
 	id 'application'
@@ -312,6 +312,7 @@ spotless {
 	groovyGradle {
 		target '*.gradle'
 		greclipse().configFile(spotlessFormatFile)
+		importOrderFile spotlessImportOrderFile
 	}
 	format 'xml', {
 		target '*.xml', 'src/main/resources/**/*.svg'
