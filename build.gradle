@@ -5,7 +5,6 @@ import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.plugins.ide.eclipse.model.Container
 
-import com.github.spotbugs.snom.SpotBugsReport
 import com.github.spotbugs.snom.SpotBugsTask
 
 import groovy.xml.XmlParser
@@ -279,11 +278,11 @@ spotbugs {
 	reportLevel = spotbugsReportLevel
 }
 
-tasks.withType(SpotBugsTask).configureEach {
-	reports({
+tasks.withType(SpotBugsTask) {
+	reports {
 		html { required.set(true) }
 		xml { required.set(true) }
-	} as Closure<NamedDomainObjectContainer<? extends SpotBugsReport>>)
+	}
 }
 
 spotless {
