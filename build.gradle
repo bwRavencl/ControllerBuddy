@@ -292,6 +292,7 @@ spotless {
 		targetExclude moduleInfoFile, versionFile
 		eclipse().configFile spotlessFormatFile
 		importOrderFile spotlessImportOrderFile
+		removeUnusedImports()
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
 			 *
