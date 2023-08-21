@@ -69,7 +69,7 @@ ext {
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
-	batikVersion = '1.16'
+	batikVersion = '1.17'
 	commonsCliVersion = '1.5.0'
 	hid4javaVersion = '85d76ecd85'
 	jxinputVersion = '1.0.0'
