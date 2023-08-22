@@ -137,36 +137,29 @@ dependencies {
 
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
-	implementation "commons-cli:commons-cli:$commonsCliVersion",
-			'com.formdev:flatlaf:3.2',
-			"com.github.strikerx3:jxinput:$jxinputVersion",
-			'com.google.code.gson:gson:2.10.1',
-			'io.github.classgraph:classgraph:4.8.162',
-			"net.java.dev.jna:jna-jpms:$jnaVersion",
-			"net.java.dev.jna:jna-platform-jpms:$jnaVersion",
-			"org.lwjgl:lwjgl:$lwjglVersion",
-			"org.lwjgl:lwjgl-glfw:$lwjglVersion",
-			"org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform",
-			"org.lwjgl:lwjgl-opengl:$lwjglVersion",
-			"org.lwjgl:lwjgl-openvr:$lwjglVersion",
-			"org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
-
-	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") {
-		exclude module: 'jna'
-	}
-
+	implementation "commons-cli:commons-cli:$commonsCliVersion"
+	implementation 'com.formdev:flatlaf:3.2'
+	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
+	implementation "com.github.strikerx3:jxinput:$jxinputVersion"
+	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'io.github.classgraph:classgraph:4.8.162'
+	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
+	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
+	implementation "org.lwjgl:lwjgl:$lwjglVersion"
+	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
+	implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+	implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion"
+	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
+	implementation("org.apache.xmlgraphics:batik-swing:$batikVersion") { exclude group: 'xml-apis', module: 'xml-apis' }
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
 	}
-
-	implementation("org.apache.xmlgraphics:batik-swing:$batikVersion") {
-		exclude group: 'xml-apis', module: 'xml-apis'
+	if (openVrSupport) {
+		implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-$lwjglPlatform"
+		implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-$lwjglPlatform"
 	}
-
-	if (openVrSupport)
-		implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-$lwjglPlatform",
-				"org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-$lwjglPlatform"
 }
 
 dependencyUpdates {
