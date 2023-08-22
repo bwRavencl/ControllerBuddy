@@ -6,9 +6,9 @@ on:
       - master
 
 env:
-   JAVA_DISTRIBUTION: zulu
-   JAVA_VERSION: 20.0.2+9
-   GRADLE_OPTS: -Dorg.gradle.daemon=false
+  JAVA_DISTRIBUTION: zulu
+  JAVA_VERSION: 20.0.2+9
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
   windows:
