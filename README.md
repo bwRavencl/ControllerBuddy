@@ -222,7 +222,5 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Install a jpackage image               | gradlew installDist      |
 | Create a ZIP-compressed jpackage image | gradlew distZip          |
 | Create a TGZ-compressed jpackage image | gradlew distTar          |
-| Generate Eclipse files                 | gradlew eclipse          |
-| Delete Eclipse files                   | gradlew cleanEclipse     |
 | Delete build and gen directories       | gradlew clean            |
 | Check for dependency updates           | gradlew dependencyUpdate |

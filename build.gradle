@@ -3,15 +3,11 @@ import java.util.regex.Pattern
 import org.ajoberstar.grgit.Grgit
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-import org.gradle.plugins.ide.eclipse.model.Container
 
 import com.github.spotbugs.snom.SpotBugsTask
 
-import groovy.xml.XmlParser
-
 plugins {
 	id 'application'
-	id 'eclipse'
 	id 'com.diffplug.spotless' version '6.20.0'
 	id 'com.github.ben-manes.versions' version '0.47.0'
 	id 'com.github.spotbugs' version '5.1.3'
@@ -55,9 +51,7 @@ ext {
 	]
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
-	jdtUiPrefsFile = '.settings/org.eclipse.jdt.ui.prefs'
 
-	spotbugsPrefsFile = '.settings/edu.umd.cs.findbugs.core.prefs'
 	spotbugsBaselineFile = 'spotbugs-baseline.xml'
 	spotbugsEffort = 'max'
 	spotbugsMaxRank = '20'
@@ -313,7 +307,7 @@ spotless {
 		importOrderFile spotlessImportOrderFile
 	}
 	format 'xml', {
-		target '*.xml', "$resourcesDir/**/*.svg".toString()
+		target "$resourcesDir/**/*.svg".toString()
 		eclipseWtp('xml')
 	}
 	format 'newlineAndTrailingWhitespace', {
@@ -322,7 +316,7 @@ spotless {
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', '*.xml', "$resourcesDir/**/*.txt".toString()
+		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', "$resourcesDir/**/*.txt".toString()
 		targetExclude gamecontrollerdbFile
 		endWithNewline()
 	}
@@ -348,226 +342,17 @@ tasks.register('generateVersion') {
 	}
 }
 
-tasks.eclipseClasspath.dependsOn generateModuleInfo, generateVersion
-
 tasks.register('copyGameControllerDB', Copy) {
 	description = "Places a copy of the \'gamecontrollerdb.txt\' file from the SDL_GameControllerDB Git Submodule folder into the \'$resourcesDir' directory."
 	from 'SDL_GameControllerDB/gamecontrollerdb.txt'
 	into resourcesDir
 }
 
-tasks.eclipse.dependsOn copyGameControllerDB
 tasks.processResources.dependsOn copyGameControllerDB
 tasks.spotlessGroovyGradleCheck.dependsOn copyGameControllerDB
 tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
 tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
-
-tasks.register('cleanJdtUiPrefs') {
-	description = "Removes the \'$jdtUiPrefsFile\' settings file."
-	doLast { delete jdtUiPrefsFile, spotbugsPrefsFile }
-}
-
-tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
-
-eclipse {
-	classpath {
-		file {
-			whenMerged { cp ->
-				if (os.linux)
-					cp.entries.findAll {it instanceof Container && it.path ==~ /org\.eclipse\.jdt\.launching\.JRE_CONTAINER\/.*$/}.each {
-						def entryAttributes = it.entryAttributes
-						entryAttributes['module'] = 'true'
-						entryAttributes['add-opens'] = linuxAddOpensValue
-					}
-			}
-		}
-	}
-}
-
-tasks.eclipse.doLast {
-	def uiPrefs = file(jdtUiPrefsFile)
-	if (uiPrefs.exists())
-		logger.warn("UI preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
-	else {
-		def importOrder = file(spotlessImportOrderFile).readLines().findAll { it ==~ /^\d+=.*$/ }.collectEntries {
-			def elements = it.split('=').toList()
-			if (elements.size() < 2)
-				elements << ''
-			return elements
-		}.sort().values().join(';')
-
-		uiPrefs.append("""\
-			eclipse.preferences.version=1
-			editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
-			org.eclipse.jdt.ui.ignorelowercasenames=true
-			org.eclipse.jdt.ui.importorder=$importOrder
-			org.eclipse.jdt.ui.ondemandthreshold=99
-			org.eclipse.jdt.ui.staticondemandthreshold=99
-			sp_cleanup.on_save_use_additional_actions=true
-			""".stripIndent())
-
-		def cleanupProfile = new XmlParser().parse(file('cleanup.xml')).profile[0]
-		uiPrefs.append("cleanup_profile=_${cleanupProfile.@name}\n")
-		uiPrefs.append("cleanup_settings_version=${cleanupProfile.@version}\n")
-		cleanupProfile.setting.findAll { it.@id ==~ /^cleanup\..*$/ }.each {
-			def configLine = "${it.@id}=${it.@value}\n"
-			uiPrefs.append(configLine)
-			uiPrefs.append("sp_$configLine")
-		}
-	}
-
-	def spotbugsPrefs = file(spotbugsPrefsFile)
-	if (spotbugsPrefs.exists())
-		logger.warn("SpotBugs preferences already exist and will not be overridden. Use task 'cleanEclipse' first.")
-	else {
-		spotbugsPrefs.append("""\
-			detectorExplicitSerialization=ExplicitSerialization|true
-			detectorMultithreadedInstanceAccess=MultithreadedInstanceAccess|true
-			detectorConfusionBetweenInheritedAndOuterMethod=ConfusionBetweenInheritedAndOuterMethod|true
-			detectorWrongMapIterator=WrongMapIterator|true
-			detectorUnnecessaryMath=UnnecessaryMath|true
-			detectorUselessSubclassMethod=UselessSubclassMethod|false
-			filter_settings=$spotbugsReportLevel|BAD_PRACTICE,CORRECTNESS,EXPERIMENTAL,I18N,MALICIOUS_CODE,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false|$spotbugsMaxRank
-			detectorURLProblems=URLProblems|true
-			detectorIteratorIdioms=IteratorIdioms|true
-			detectorMutableEnum=MutableEnum|true
-			detectorFindNonShortCircuit=FindNonShortCircuit|true
-			detectorSynchronizeAndNullCheckField=SynchronizeAndNullCheckField|true
-			detectorVolatileUsage=VolatileUsage|true
-			detectorFindNakedNotify=FindNakedNotify|true
-			detectorFindUninitializedGet=FindUninitializedGet|true
-			detectorFindUseOfNonSerializableValue=FindUseOfNonSerializableValue|true
-			detectorFindJSR166LockMonitorenter=FindJSR166LockMonitorenter|true
-			detectorQuestionableBooleanAssignment=QuestionableBooleanAssignment|true
-			detectorSwitchFallthrough=SwitchFallthrough|true
-			detectorFindLocalSelfAssignment2=FindLocalSelfAssignment2|true
-			detectorConfusedInheritance=ConfusedInheritance|true
-			detectorSynchronizationOnSharedBuiltinConstant=SynchronizationOnSharedBuiltinConstant|true
-			detectorMutableStaticFields=MutableStaticFields|true
-			detectorInvalidJUnitTest=InvalidJUnitTest|true
-			detectorInfiniteLoop=InfiniteLoop|true
-			detectorFindRunInvocations=FindRunInvocations|true
-			detectorBadSyntaxForRegularExpression=BadSyntaxForRegularExpression|true
-			detectorXMLFactoryBypass=XMLFactoryBypass|true
-			detectorFindOpenStream=FindOpenStream|true
-			detectorCheckExpectedWarnings=CheckExpectedWarnings|false
-			detectorHugeSharedStringConstants=HugeSharedStringConstants|true
-			detectorLostLoggerDueToWeakReference=LostLoggerDueToWeakReference|true
-			detectorStringConcatenation=StringConcatenation|true
-			detectorLoadOfKnownNullValue=LoadOfKnownNullValue|true
-			detectorFinalizerNullsFields=FinalizerNullsFields|true
-			detectorFindFieldSelfAssignment=FindFieldSelfAssignment|true
-			detectorInefficientToArray=InefficientToArray|false
-			detectorDontCatchIllegalMonitorStateException=DontCatchIllegalMonitorStateException|true
-			detectorInconsistentAnnotations=InconsistentAnnotations|true
-			detectorBadlyOverriddenAdapter=BadlyOverriddenAdapter|true
-			detectorInstantiateStaticClass=InstantiateStaticClass|true
-			detectorCheckRelaxingNullnessAnnotation=CheckRelaxingNullnessAnnotation|true
-			detectorMethodReturnCheck=MethodReturnCheck|true
-			detectorEqualsOperandShouldHaveClassCompatibleWithThis=EqualsOperandShouldHaveClassCompatibleWithThis|true
-			detectorFindDoubleCheck=FindDoubleCheck|true
-			detectorFindBadForLoop=FindBadForLoop|true
-			detectorDefaultEncodingDetector=DefaultEncodingDetector|true
-			detectorFindInconsistentSync2=FindInconsistentSync2|true
-			detectorFindSpinLoop=FindSpinLoop|true
-			detectorFindMaskedFields=FindMaskedFields|true
-			detectorBooleanReturnNull=BooleanReturnNull|true
-			detectorFindUnsyncGet=FindUnsyncGet|true
-			detectorCrossSiteScripting=CrossSiteScripting|true
-			detectorDroppedException=DroppedException|true
-			detectorFindDeadLocalStores=FindDeadLocalStores|true
-			detectorCheckImmutableAnnotation=CheckImmutableAnnotation|true
-			detectorInfiniteRecursiveLoop=InfiniteRecursiveLoop|true
-			detectorFindRefComparison=FindRefComparison|true
-			detectorFindRoughConstants=FindRoughConstants|true
-			detectorMutableLock=MutableLock|true
-			detectorFindNullDeref=FindNullDeref|true
-			detectorFindReturnRef=FindReturnRef|true
-			detectorSynchronizeOnClassLiteralNotGetClass=SynchronizeOnClassLiteralNotGetClass|true
-			detectorFindUselessControlFlow=FindUselessControlFlow|true
-			detectorOverridingEqualsNotSymmetrical=OverridingEqualsNotSymmetrical|true
-			detectorIDivResultCastToDouble=IDivResultCastToDouble|true
-			detectorReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass=ReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass|true
-			detectorFindSelfComparison=FindSelfComparison|true
-			detectorFindFloatEquality=FindFloatEquality|true
-			detectorFindComparatorProblems=FindComparatorProblems|true
-			detectorRepeatedConditionals=RepeatedConditionals|true
-			filter_settings_neg=NOISE|
-			detectorInefficientMemberAccess=InefficientMemberAccess|false
-			detectorFindUncalledPrivateMethods=FindUncalledPrivateMethods|true
-			detectorNumberConstructor=NumberConstructor|true
-			detectorDontAssertInstanceofInTests=DontAssertInstanceofInTests|true
-			detectorFindFinalizeInvocations=FindFinalizeInvocations|true
-			detectorFindNullDerefsInvolvingNonShortCircuitEvaluation=FindNullDerefsInvolvingNonShortCircuitEvaluation|true
-			detectorDontIgnoreResultOfPutIfAbsent=DontIgnoreResultOfPutIfAbsent|true
-			detectorFindUnconditionalWait=FindUnconditionalWait|true
-			detectorFindTwoLockWait=FindTwoLockWait|true
-			detectorFindSleepWithLockHeld=FindSleepWithLockHeld|true
-			detectorFindUnreleasedLock=FindUnreleasedLock|true
-			detectorInefficientIndexOf=InefficientIndexOf|false
-			detectorDoInsideDoPrivileged=DoInsideDoPrivileged|true
-			detectorFindEmptySynchronizedBlock=FindEmptySynchronizedBlock|true
-			detectorOverridingMethodsMustInvokeSuperDetector=OverridingMethodsMustInvokeSuperDetector|true
-			detectorWaitInLoop=WaitInLoop|true
-			detectorIntCast2LongAsInstant=IntCast2LongAsInstant|true
-			detectorBadUseOfReturnValue=BadUseOfReturnValue|true
-			detectorFindSqlInjection=FindSqlInjection|true
-			detectorUnreadFields=UnreadFields|true
-			detectorSynchronizingOnContentsOfFieldToProtectField=SynchronizingOnContentsOfFieldToProtectField|true
-			detectorFindUselessObjects=FindUselessObjects|true
-			detectorBadAppletConstructor=BadAppletConstructor|false
-			excludebugs0=$spotbugsBaselineFile|true
-			detectorInheritanceUnsafeGetResource=InheritanceUnsafeGetResource|true
-			detectorSerializableIdiom=SerializableIdiom|true
-			detectorNaming=Naming|true
-			detectorNoteUnconditionalParamDerefs=NoteUnconditionalParamDerefs|true
-			detectorFormatStringChecker=FormatStringChecker|true
-			detectorSuspiciousThreadInterrupted=SuspiciousThreadInterrupted|true
-			detectorEmptyZipFileEntry=EmptyZipFileEntry|false
-			detectorFindCircularDependencies=FindCircularDependencies|false
-			detectorPreferZeroLengthArrays=PreferZeroLengthArrays|true
-			detectorAtomicityProblem=AtomicityProblem|true
-			detectorRuntimeExceptionCapture=RuntimeExceptionCapture|true
-			detectorInitializationChain=InitializationChain|true
-			detectorInitializeNonnullFieldsInConstructor=InitializeNonnullFieldsInConstructor|true
-			detectorOptionalReturnNull=OptionalReturnNull|true
-			detectorStartInConstructor=StartInConstructor|true
-			detectorFindUnsatisfiedObligation=FindUnsatisfiedObligation|true
-			detectorRedundantConditions=RedundantConditions|true
-			effort=$spotbugsEffort
-			detectorRedundantInterfaces=RedundantInterfaces|true
-			detectorDuplicateBranches=DuplicateBranches|true
-			detectorCheckTypeQualifiers=CheckTypeQualifiers|true
-			detectorComparatorIdiom=ComparatorIdiom|true
-			detectorFindBadCast2=FindBadCast2|true
-			detectorFindMismatchedWaitOrNotify=FindMismatchedWaitOrNotify|true
-			detectorBadResultSetAccess=BadResultSetAccess|true
-			detectorIncompatMask=IncompatMask|true
-			detectorCovariantArrayAssignment=CovariantArrayAssignment|false
-			detectorDumbMethodInvocations=DumbMethodInvocations|true
-			run_at_full_build=false
-			detectorStaticCalendarDetector=StaticCalendarDetector|true
-			detectorUncallableMethodOfAnonymousClass=UncallableMethodOfAnonymousClass|true
-			detectorVarArgsProblems=VarArgsProblems|true
-			detectorInefficientInitializationInsideLoop=InefficientInitializationInsideLoop|false
-			detectorCloneIdiom=CloneIdiom|true
-			detectorFindHEmismatch=FindHEmismatch|true
-			detectorAppendingToAnObjectOutputStream=AppendingToAnObjectOutputStream|true
-			detectorFindSelfComparison2=FindSelfComparison2|true
-			detectorLazyInit=LazyInit|true
-			detectorFindUnrelatedTypesInGenericContainer=FindUnrelatedTypesInGenericContainer|true
-			detectorDontUseEnum=DontUseEnum|true
-			detectorFindPuzzlers=FindPuzzlers|true
-			detectorCallToUnsupportedMethod=CallToUnsupportedMethod|false
-			detectorSuperfluousInstanceOf=SuperfluousInstanceOf|true
-			detectorReadReturnShouldBeChecked=ReadReturnShouldBeChecked|true
-			detector_threshold=3
-			detectorPublicSemaphores=PublicSemaphores|false
-			detectorDumbMethods=DumbMethods|true
-			""".stripIndent())
-	}
-}
 
 compileJava {
 	dependsOn generateModuleInfo, generateVersion
