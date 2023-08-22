@@ -281,6 +281,10 @@ spotless {
 		targetExclude moduleInfoFile, versionFile
 		eclipse().configFile spotlessFormatFile
 		formatAnnotations()
+		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
+			'SafeButNotConsensual',
+			'SafeButControversial'
+		])
 		importOrderFile spotlessImportOrderFile
 		removeUnusedImports()
 		licenseHeader '''\
