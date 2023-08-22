@@ -63,7 +63,6 @@ ext {
 	spotbugsMaxRank = '20'
 	spotbugsReportLevel = 'Low'
 
-	spotlessFormatFile = 'spotless.eclipseformat.xml'
 	spotlessImportOrderFile = 'spotless.importorder'
 
 	arch = DefaultNativePlatform.currentArchitecture
@@ -226,34 +225,36 @@ tasks.register('generateModuleInfo') {
 	doLast {
 		new File(moduleInfoFile).write("""\
 			module de.bwravencl.controllerbuddy {
+			    exports de.bwravencl.controllerbuddy.gui;
 
-			\texports de.bwravencl.controllerbuddy.gui;
+			    opens de.bwravencl.controllerbuddy.input to
+				        com.google.gson;
+			    opens de.bwravencl.controllerbuddy.input.action to
+				        com.google.gson;
+			    opens de.bwravencl.controllerbuddy.input.driver to
+				        com.sun.jna;
 
-			\topens de.bwravencl.controllerbuddy.input to com.google.gson;
-			\topens de.bwravencl.controllerbuddy.input.action to com.google.gson;
-			\topens de.bwravencl.controllerbuddy.input.driver to com.sun.jna;
-
-			\trequires batik.swing;
-			\trequires com.google.gson;
-			\trequires com.formdev.flatlaf;
-			\trequires com.sun.jna;
-			\trequires com.sun.jna.platform;
-			\trequires commons.cli;
-			\trequires hid4java;
-			\trequires io.github.classgraph;
-			\trequires java.logging;
-			\trequires java.prefs;
-			\trequires jdk.xml.dom;
-			\trequires jxinput;
-			\trequires org.lwjgl;
-			\trequires org.lwjgl.natives;
-			\trequires org.lwjgl.glfw;
-			\trequires org.lwjgl.glfw.natives;
-			\trequires org.lwjgl.opengl;
-			${openVrSupport ? '\trequires org.lwjgl.opengl.natives;' : ''}
-			\trequires org.lwjgl.openvr;
-			${openVrSupport ? '\trequires org.lwjgl.openvr.natives;' : ''}
-			\trequires uk.co.bithatch.linuxio;
+			    requires batik.swing;
+			    requires com.google.gson;
+			    requires com.formdev.flatlaf;
+			    requires com.sun.jna;
+			    requires com.sun.jna.platform;
+			    requires commons.cli;
+			    requires hid4java;
+			    requires io.github.classgraph;
+			    requires java.logging;
+			    requires java.prefs;
+			    requires jdk.xml.dom;
+			    requires jxinput;
+			    requires org.lwjgl;
+			    requires org.lwjgl.natives;
+			    requires org.lwjgl.glfw;
+			    requires org.lwjgl.glfw.natives;
+			    requires org.lwjgl.opengl;
+			${openVrSupport ? '    requires org.lwjgl.opengl.natives;' : ''}
+			    requires org.lwjgl.openvr;
+			${openVrSupport ? '    requires org.lwjgl.openvr.natives;' : ''}
+			    requires uk.co.bithatch.linuxio;
 			}
 			""".stripIndent())
 	}
@@ -279,7 +280,7 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, versionFile
-		eclipse().configFile spotlessFormatFile
+		palantirJavaFormat()
 		formatAnnotations()
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
@@ -308,7 +309,7 @@ spotless {
 	}
 	groovyGradle {
 		target '*.gradle'
-		greclipse().configFile(spotlessFormatFile)
+		greclipse()
 		importOrderFile spotlessImportOrderFile
 	}
 	format 'xml', {
@@ -341,8 +342,7 @@ tasks.register('generateVersion') {
 			package de.bwravencl.controllerbuddy.version;\n
 			public class Version {
 
-			\tpublic static final String VERSION = "$project.version";
-
+			    public static final String VERSION = "$project.version";
 			}
 			""".stripIndent())
 	}
@@ -370,10 +370,6 @@ tasks.register('cleanJdtUiPrefs') {
 
 tasks.cleanEclipse.dependsOn cleanJdtUiPrefs
 
-def formatterProfile() {
-	return new XmlParser().parse(file(spotlessFormatFile)).profile[0]
-}
-
 eclipse {
 	classpath {
 		file {
@@ -384,13 +380,6 @@ eclipse {
 						entryAttributes['module'] = 'true'
 						entryAttributes['add-opens'] = linuxAddOpensValue
 					}
-			}
-		}
-	}
-	jdt {
-		file {
-			withProperties { properties ->
-				formatterProfile().setting.findAll { it.@id ==~ /^org\.eclipse\.jdt\.core\.formatter\..*$/ }.each { properties[it.@id] = it.@value }
 			}
 		}
 	}
@@ -417,10 +406,6 @@ tasks.eclipse.doLast {
 			org.eclipse.jdt.ui.staticondemandthreshold=99
 			sp_cleanup.on_save_use_additional_actions=true
 			""".stripIndent())
-
-		def formatterProfile = formatterProfile()
-		uiPrefs.append("formatter_profile=_${formatterProfile.@name}\n")
-		uiPrefs.append("formatter_settings_version=${formatterProfile.@version}\n")
 
 		def cleanupProfile = new XmlParser().parse(file('cleanup.xml')).profile[0]
 		uiPrefs.append("cleanup_profile=_${cleanupProfile.@name}\n")
