@@ -62,7 +62,7 @@ public class EvdevDriver extends Driver {
 			if (Main.isLinux && input.isHapticFeedbackEnabled()) {
 				final var inputDir = new File("/dev/input/");
 				final var allEventFiles = inputDir
-						.listFiles((final var dir, final var name) -> name.matches("event(\\d+)"));
+						.listFiles((dir, name) -> name.matches("event(\\d+)"));
 
 				if (allEventFiles == null)
 					return null;
