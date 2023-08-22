@@ -280,6 +280,7 @@ spotless {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, versionFile
 		eclipse().configFile spotlessFormatFile
+		formatAnnotations()
 		importOrderFile spotlessImportOrderFile
 		removeUnusedImports()
 		licenseHeader '''\
