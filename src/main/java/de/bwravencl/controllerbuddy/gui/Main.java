@@ -1233,7 +1233,7 @@ public final class Main {
         System.exit(status);
     }
 
-    private void addTSpanElement(final List<? extends IAction<?>> actions, final boolean bold, final Node parentNode) {
+    private void addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode) {
         addTSpanElement(
                 actions.stream()
                         .map(action -> {
@@ -1246,7 +1246,7 @@ public final class Main {
                         })
                         .distinct()
                         .collect(Collectors.joining(", ")),
-                bold,
+                false,
                 parentNode);
     }
 
@@ -3068,7 +3068,7 @@ public final class Main {
                 delayedActions.add(longPressAction);
                 addToOtherActions = false;
             }
-            if (action instanceof final IActivatableAction activatableAction
+            if (action instanceof final IActivatableAction<?> activatableAction
                     && activatableAction.getActivation() == IActivatableAction.Activation.SINGLE_ON_RELEASE) {
                 onReleaseActions.add(activatableAction);
                 addToOtherActions = false;
@@ -3105,11 +3105,11 @@ public final class Main {
 
         if (bothGroupsPresent) addTSpanElement("• " + strings.getString(groupAPrefix) + ": ", true, tSpanNode);
 
-        addTSpanElement(actionGroupA, false, tSpanNode);
+        addTSpanElement(actionGroupA, tSpanNode);
 
         if (bothGroupsPresent) addTSpanElement(" • " + strings.getString(groupBPrefix) + ": ", true, tSpanNode);
 
-        addTSpanElement(actionGroupB, false, tSpanNode);
+        addTSpanElement(actionGroupB, tSpanNode);
 
         if (darkTheme) {
             textElement.getStyle().setProperty(CSSConstants.CSS_FILL_PROPERTY, SVG_DARK_THEME_TEXT_COLOR, "");
