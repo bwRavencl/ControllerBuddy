@@ -16,66 +16,76 @@
 
 package de.bwravencl.controllerbuddy.input.driver;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import io.github.classgraph.ClassGraph;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public abstract class Driver {
 
-	private static final List<? extends IDriverBuilder> driverBuilders;
+    private static final List<? extends IDriverBuilder> driverBuilders;
 
-	static {
-		try (final var scanResult = new ClassGraph().acceptPackages(Driver.class.getPackageName()).enableClassInfo()
-				.scan()) {
-			final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
-			driverBuilders = classInfoList.stream().map(classInfo -> {
-				try {
-					return classInfo.loadClass(IDriverBuilder.class).getDeclaredConstructor().newInstance();
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					throw new RuntimeException(e);
-				}
-			}).sorted().toList();
-		}
-	}
+    static {
+        try (final var scanResult = new ClassGraph()
+                .acceptPackages(Driver.class.getPackageName())
+                .enableClassInfo()
+                .scan()) {
+            final var classInfoList = scanResult.getClassesImplementing(IDriverBuilder.class);
+            driverBuilders = classInfoList.stream()
+                    .map(classInfo -> {
+                        try {
+                            return classInfo
+                                    .loadClass(IDriverBuilder.class)
+                                    .getDeclaredConstructor()
+                                    .newInstance();
+                        } catch (InstantiationException
+                                | IllegalAccessException
+                                | IllegalArgumentException
+                                | InvocationTargetException
+                                | NoSuchMethodException
+                                | SecurityException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .sorted()
+                    .toList();
+        }
+    }
 
-	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-			final ControllerInfo selectedController) {
+    protected final Input input;
+    protected final ControllerInfo controller;
+    protected volatile boolean ready;
 
-		for (final var driverBuilder : driverBuilders) {
-			final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
-			if (driver != null)
-				return driver;
-		}
+    protected Driver(final Input input, final ControllerInfo controller) {
+        this.input = input;
+        this.controller = controller;
+    }
 
-		return null;
-	}
+    public static Driver getIfAvailable(
+            final Input input, final List<ControllerInfo> presentControllers, final ControllerInfo selectedController) {
 
-	protected final Input input;
-	protected final ControllerInfo controller;
-	protected volatile boolean ready;
+        for (final var driverBuilder : driverBuilders) {
+            final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
+            if (driver != null) return driver;
+        }
 
-	protected Driver(final Input input, final ControllerInfo controller) {
-		this.input = input;
-		this.controller = controller;
-	}
+        return null;
+    }
 
-	public void deInit(final boolean disconnected) {
-		ready = false;
-	}
+    public void deInit(final boolean disconnected) {
+        ready = false;
+    }
 
-	public String getTooltip(final String title) {
-		return title;
-	}
+    public String getTooltip(final String title) {
+        return title;
+    }
 
-	public boolean isReady() {
-		return ready;
-	}
+    public boolean isReady() {
+        return ready;
+    }
 
-	public abstract void rumbleLight();
+    public abstract void rumbleLight();
 
-	public abstract void rumbleStrong();
+    public abstract void rumbleStrong();
 }

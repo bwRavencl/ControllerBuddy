@@ -27,70 +27,66 @@ import de.bwravencl.controllerbuddy.input.action.gui.InitialValueEditorBuilder;
 @Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
-	private static final float DEFAULT_INITIAL_VALUE = 0f;
-	private static final float DEFAULT_DEAD_ZONE = 0f;
-	private static final float DEFAULT_EXPONENT = 1f;
+    private static final float DEFAULT_INITIAL_VALUE = 0f;
+    private static final float DEFAULT_DEAD_ZONE = 0f;
+    private static final float DEFAULT_EXPONENT = 1f;
 
-	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
-	float deadZone = DEFAULT_DEAD_ZONE;
+    @ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+    float deadZone = DEFAULT_DEAD_ZONE;
 
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
-	float exponent = DEFAULT_EXPONENT;
+    @ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
+    float exponent = DEFAULT_EXPONENT;
 
-	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class, order = 202)
-	float initialValue = DEFAULT_INITIAL_VALUE;
+    @ActionProperty(label = "INITIAL_VALUE", editorBuilder = InitialValueEditorBuilder.class, order = 202)
+    float initialValue = DEFAULT_INITIAL_VALUE;
 
-	@Override
-	public void doAction(final Input input, final int component, Float value) {
-		if (!input.isAxisSuspended(component)) {
-			if (Math.abs(value) <= deadZone)
-				value = 0f;
-			else {
-				final float inMax;
-				if (exponent > 1f) {
-					inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+    @Override
+    public void doAction(final Input input, final int component, Float value) {
+        if (!input.isAxisSuspended(component)) {
+            if (Math.abs(value) <= deadZone) value = 0f;
+            else {
+                final float inMax;
+                if (exponent > 1f) {
+                    inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-					value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
-				} else
-					inMax = 1f;
+                    value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
+                } else inMax = 1f;
 
-				if (value >= 0f)
-					value = Input.normalize(value, deadZone, inMax, 0f, 1f);
-				else
-					value = Input.normalize(value, -inMax, -deadZone, -1f, 0f);
-			}
+                if (value >= 0f) value = Input.normalize(value, deadZone, inMax, 0f, 1f);
+                else value = Input.normalize(value, -inMax, -deadZone, -1f, 0f);
+            }
 
-			input.setAxis(virtualAxis, invert ? -value : value, false, null);
-		}
-	}
+            input.setAxis(virtualAxis, invert ? -value : value, false, null);
+        }
+    }
 
-	public float getDeadZone() {
-		return deadZone;
-	}
+    public float getDeadZone() {
+        return deadZone;
+    }
 
-	public float getExponent() {
-		return exponent;
-	}
+    public float getExponent() {
+        return exponent;
+    }
 
-	public float getInitialValue() {
-		return initialValue;
-	}
+    public float getInitialValue() {
+        return initialValue;
+    }
 
-	@Override
-	public void init(final Input input) {
-		if (!input.isSkipAxisInitialization())
-			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
-	}
+    @Override
+    public void init(final Input input) {
+        if (!input.isSkipAxisInitialization())
+            input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
+    }
 
-	public void setDeadZone(final float deadZone) {
-		this.deadZone = deadZone;
-	}
+    public void setDeadZone(final float deadZone) {
+        this.deadZone = deadZone;
+    }
 
-	public void setExponent(final float exponent) {
-		this.exponent = exponent;
-	}
+    public void setExponent(final float exponent) {
+        this.exponent = exponent;
+    }
 
-	public void setInitialValue(final float initialValue) {
-		this.initialValue = initialValue;
-	}
+    public void setInitialValue(final float initialValue) {
+        this.initialValue = initialValue;
+    }
 }

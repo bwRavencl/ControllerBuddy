@@ -16,80 +16,81 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
-
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JPanel;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.DefaultFormatterFactory;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	private static final class ZeroBasedFormatter extends DefaultFormatter {
+    public ButtonEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		@Serial
-		private static final long serialVersionUID = -7229427356426148291L;
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        super.buildEditor(parentPanel);
 
-		@Override
-		public Object stringToValue(final String text) {
-			if (text == null || text.isBlank())
-				return null;
+        final var formatterFactory = new ZeroBasedFormatterFactory();
+        textField.setFormatterFactory(formatterFactory);
 
-			return Integer.parseInt(text) - 1;
-		}
+        final var formatter = (DefaultFormatter) textField.getFormatter();
+        formatter.setCommitsOnValidEdit(true);
+    }
 
-		@Override
-		public String valueToString(final Object value) {
-			return Integer.toString((int) value + 1);
-		}
-	}
+    @Override
+    Comparable<Integer> getMaximum() {
+        return Input.MAX_N_BUTTONS - 1;
+    }
 
-	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
+    @Override
+    Comparable<Integer> getMinimum() {
+        return 0;
+    }
 
-		@Serial
-		private static final long serialVersionUID = -7273246342105584827L;
+    @Override
+    Number getStepSize() {
+        return 1;
+    }
 
-		@Override
-		public AbstractFormatter getFormatter(final JFormattedTextField tf) {
-			return new ZeroBasedFormatter();
-		}
-	}
+    private static final class ZeroBasedFormatter extends DefaultFormatter {
 
-	public ButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        @Serial
+        private static final long serialVersionUID = -7229427356426148291L;
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		super.buildEditor(parentPanel);
+        @Override
+        public Object stringToValue(final String text) {
+            if (text == null || text.isBlank()) return null;
 
-		final var formatterFactory = new ZeroBasedFormatterFactory();
-		textField.setFormatterFactory(formatterFactory);
+            return Integer.parseInt(text) - 1;
+        }
 
-		final var formatter = (DefaultFormatter) textField.getFormatter();
-		formatter.setCommitsOnValidEdit(true);
-	}
+        @Override
+        public String valueToString(final Object value) {
+            return Integer.toString((int) value + 1);
+        }
+    }
 
-	@Override
-	Comparable<Integer> getMaximum() {
-		return Input.MAX_N_BUTTONS - 1;
-	}
+    private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
 
-	@Override
-	Comparable<Integer> getMinimum() {
-		return 0;
-	}
+        @Serial
+        private static final long serialVersionUID = -7273246342105584827L;
 
-	@Override
-	Number getStepSize() {
-		return 1;
-	}
+        @Override
+        public AbstractFormatter getFormatter(final JFormattedTextField tf) {
+            return new ZeroBasedFormatter();
+        }
+    }
 }

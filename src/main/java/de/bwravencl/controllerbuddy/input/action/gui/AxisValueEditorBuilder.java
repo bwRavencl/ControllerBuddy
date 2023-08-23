@@ -16,31 +16,34 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.lang.reflect.InvocationTargetException;
 
 public final class AxisValueEditorBuilder extends NumberEditorBuilder<Float> {
 
-	public AxisValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public AxisValueEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	Comparable<Float> getMaximum() {
-		return 1f;
-	}
+    @Override
+    Comparable<Float> getMaximum() {
+        return 1f;
+    }
 
-	@Override
-	Comparable<Float> getMinimum() {
-		return -1f;
-	}
+    @Override
+    Comparable<Float> getMinimum() {
+        return -1f;
+    }
 
-	@Override
-	Number getStepSize() {
-		return 0.01f;
-	}
+    @Override
+    Number getStepSize() {
+        return 0.01f;
+    }
 }

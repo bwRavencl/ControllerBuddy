@@ -20,21 +20,21 @@ import java.awt.Color;
 
 public final class OverlayAxis implements Cloneable {
 
-	public Color color;
+    public Color color;
 
-	public boolean inverted;
+    public boolean inverted;
 
-	public OverlayAxis() {
-		this(Color.BLACK, false);
-	}
+    public OverlayAxis() {
+        this(Color.BLACK, false);
+    }
 
-	private OverlayAxis(final Color color, final boolean inverted) {
-		this.color = color;
-		this.inverted = inverted;
-	}
+    private OverlayAxis(final Color color, final boolean inverted) {
+        this.color = color;
+        this.inverted = inverted;
+    }
 
-	@Override
-	public Object clone() {
-		return new OverlayAxis(new Color(color.getRGB(), true), inverted);
-	}
+    @Override
+    public Object clone() {
+        return new OverlayAxis(new Color(color.getRGB(), true), inverted);
+    }
 }

@@ -16,6 +16,11 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import com.sun.jna.Platform;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
+import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,223 +39,220 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.swing.JOptionPane;
-
 import org.lwjgl.glfw.GLFW;
-
-import com.sun.jna.Platform;
-
-import de.bwravencl.controllerbuddy.gui.GuiUtils;
-import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.LockKey;
 
 public final class ServerRunMode extends RunMode {
 
-	public enum MessageType {
-		ClientHello, ServerHello, Update, UpdateRequestAlive, ClientAlive
-	}
+    public static final int DEFAULT_PORT = 28_789;
+    public static final int DEFAULT_TIMEOUT = 2000;
+    static final byte PROTOCOL_VERSION = 1;
+    private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
+    private static final int REQUEST_ALIVE_INTERVAL = 100;
+    private int port = DEFAULT_PORT;
+    private int timeout = DEFAULT_TIMEOUT;
+    private DatagramSocket serverSocket;
+    private InetAddress clientIPAddress;
 
-	public enum ServerState {
-		Listening, Connected
-	}
+    public ServerRunMode(final Main main, final Input input) {
+        super(main, input);
+    }
 
-	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
+    public void close() {
+        if (serverSocket != null) serverSocket.close();
+    }
 
-	static final byte PROTOCOL_VERSION = 1;
+    @Override
+    Logger getLogger() {
+        return log;
+    }
 
-	public static final int DEFAULT_PORT = 28789;
-	public static final int DEFAULT_TIMEOUT = 2000;
+    @Override
+    public void run() {
+        logStart();
 
-	private static final int REQUEST_ALIVE_INTERVAL = 100;
+        final var clientPort = port + 1;
+        var serverState = ServerState.Listening;
+        DatagramPacket receivePacket;
+        var counter = 0L;
 
-	private int port = DEFAULT_PORT;
-	private int timeout = DEFAULT_TIMEOUT;
-	private DatagramSocket serverSocket;
-	private InetAddress clientIPAddress;
+        try {
+            serverSocket = new DatagramSocket(port);
+            final var receiveBuf = new byte[1024];
 
-	public ServerRunMode(final Main main, final Input input) {
-		super(main, input);
-	}
+            EventQueue.invokeLater(() ->
+                    main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
-	public void close() {
-		if (serverSocket != null)
-			serverSocket.close();
-	}
+            for (; ; ) {
+                if (!Platform.isMac()) GLFW.glfwPollEvents();
 
-	@Override
-	Logger getLogger() {
-		return log;
-	}
+                switch (serverState) {
+                    case Listening -> {
+                        counter = 0;
+                        receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+                        serverSocket.setSoTimeout(0);
+                        serverSocket.receive(receivePacket);
+                        clientIPAddress = receivePacket.getAddress();
 
-	@Override
-	public void run() {
-		logStart();
+                        try (var dataInputStream =
+                                new DataInputStream(new ByteArrayInputStream(receivePacket.getData()))) {
+                            final var messageType = dataInputStream.readInt();
 
-		final var clientPort = port + 1;
-		var serverState = ServerState.Listening;
-		DatagramPacket receivePacket;
-		var counter = 0L;
+                            if (messageType == MessageType.ClientHello.ordinal()) {
+                                minAxisValue = dataInputStream.readInt();
+                                maxAxisValue = dataInputStream.readInt();
+                                setnButtons(dataInputStream.readInt());
 
-		try {
-			serverSocket = new DatagramSocket(port);
-			final var receiveBuf = new byte[1024];
+                                try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+                                        var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                                    dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
+                                    dataOutputStream.writeByte(PROTOCOL_VERSION);
+                                    dataOutputStream.writeLong(pollInterval);
 
-			EventQueue.invokeLater(() -> main
-					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
+                                    final var sendBuf = byteArrayOutputStream.toByteArray();
+                                    final var sendPacket =
+                                            new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
+                                    serverSocket.send(sendPacket);
+                                }
 
-			for (;;) {
-				if (!Platform.isMac())
-					GLFW.glfwPollEvents();
+                                serverState = ServerState.Connected;
+                                input.init();
+                                EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat.format(
+                                        Main.strings.getString("STATUS_CONNECTED_TO"),
+                                        clientIPAddress.getCanonicalHostName(),
+                                        clientPort,
+                                        pollInterval)));
+                            }
+                        }
+                    }
+                    case Connected -> {
+                        Thread.sleep(pollInterval);
 
-				switch (serverState) {
-				case Listening -> {
-					counter = 0;
-					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-					serverSocket.setSoTimeout(0);
-					serverSocket.receive(receivePacket);
-					clientIPAddress = receivePacket.getAddress();
+                        final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
+                        try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+                                var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+                                var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+                            dataOutputStream.writeInt(
+                                    (doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
+                            dataOutputStream.writeLong(counter);
 
-					try (var dataInputStream = new DataInputStream(new ByteArrayInputStream(receivePacket.getData()))) {
-						final var messageType = dataInputStream.readInt();
+                            if (!input.poll()) {
+                                controllerDisconnected();
+                                return;
+                            }
 
-						if (messageType == MessageType.ClientHello.ordinal()) {
-							minAxisValue = dataInputStream.readInt();
-							maxAxisValue = dataInputStream.readInt();
-							setnButtons(dataInputStream.readInt());
+                            objectOutputStream.writeObject(input.getAxes());
+                            objectOutputStream.writeObject(input.getButtons());
+                            objectOutputStream.writeInt(input.getCursorDeltaX());
+                            objectOutputStream.writeInt(input.getCursorDeltaY());
+                            objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
+                            objectOutputStream.writeObject(input.getDownUpMouseButtons());
+                            objectOutputStream.writeObject(input.getDownKeyStrokes());
+                            objectOutputStream.writeObject(input.getDownUpKeyStrokes());
 
-							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-									var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-								dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
-								dataOutputStream.writeByte(PROTOCOL_VERSION);
-								dataOutputStream.writeLong(pollInterval);
+                            objectOutputStream.writeInt(input.getScrollClicks());
 
-								final var sendBuf = byteArrayOutputStream.toByteArray();
-								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
-										clientPort);
-								serverSocket.send(sendPacket);
-							}
+                            objectOutputStream.writeObject(input.getOnLockKeys().stream()
+                                    .map(LockKey::virtualKeyCode)
+                                    .collect(Collectors.toSet()));
+                            objectOutputStream.writeObject(input.getOffLockKeys().stream()
+                                    .map(LockKey::virtualKeyCode)
+                                    .collect(Collectors.toSet()));
 
-							serverState = ServerState.Connected;
-							input.init();
-							EventQueue.invokeLater(() -> main.setStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-											clientIPAddress.getCanonicalHostName(), clientPort, pollInterval)));
-						}
-					}
-				}
-				case Connected -> {
-					Thread.sleep(pollInterval);
+                            input.setCursorDeltaX(0);
+                            input.setCursorDeltaY(0);
 
-					final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
-					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-							var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-							var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-						dataOutputStream.writeInt(
-								(doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
-						dataOutputStream.writeLong(counter);
+                            input.getDownUpMouseButtons().clear();
+                            input.getDownUpKeyStrokes().clear();
 
-						if (!input.poll()) {
-							controllerDisconnected();
-							return;
-						}
+                            input.setScrollClicks(0);
 
-						objectOutputStream.writeObject(input.getAxes());
-						objectOutputStream.writeObject(input.getButtons());
-						objectOutputStream.writeInt(input.getCursorDeltaX());
-						objectOutputStream.writeInt(input.getCursorDeltaY());
-						objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
-						objectOutputStream.writeObject(input.getDownUpMouseButtons());
-						objectOutputStream.writeObject(input.getDownKeyStrokes());
-						objectOutputStream.writeObject(input.getDownUpKeyStrokes());
+                            input.getOnLockKeys().clear();
+                            input.getOffLockKeys().clear();
 
-						objectOutputStream.writeInt(input.getScrollClicks());
+                            final var sendBuf = byteArrayOutputStream.toByteArray();
+                            final var sendPacket =
+                                    new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
+                            serverSocket.send(sendPacket);
+                        }
 
-						objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
-								.collect(Collectors.toSet()));
-						objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
-								.collect(Collectors.toSet()));
+                        if (doAliveCheck) {
+                            receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+                            serverSocket.setSoTimeout(timeout);
+                            try {
+                                serverSocket.receive(receivePacket);
 
-						input.setCursorDeltaX(0);
-						input.setCursorDeltaY(0);
+                                if (clientIPAddress.equals(receivePacket.getAddress()))
+                                    try (final var byteArrayInputStream =
+                                            new ByteArrayInputStream(receivePacket.getData())) {
+                                        try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+                                            final var messageType = dataInputStream.readInt();
+                                            if (messageType == MessageType.ClientAlive.ordinal()) counter++;
+                                        }
+                                    }
+                            } catch (final SocketTimeoutException e) {
+                                input.reset();
+                                input.deInit(false);
 
-						input.getDownUpMouseButtons().clear();
-						input.getDownUpKeyStrokes().clear();
+                                main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
+                                main.scheduleStatusBarText(
+                                        MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
 
-						input.setScrollClicks(0);
+                                serverState = ServerState.Listening;
+                            }
+                        } else counter++;
+                    }
+                }
+            }
+        } catch (final BindException e) {
+            log.log(Level.WARNING, "Could not bind socket on port " + port);
+            EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main.getFrame(),
+                    MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+                    Main.strings.getString("ERROR_DIALOG_TITLE"),
+                    JOptionPane.ERROR_MESSAGE));
+        } catch (final SocketException e) {
+            log.log(Level.FINE, e.getMessage(), e);
+        } catch (final IOException e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
+            EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main.getFrame(),
+                    Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+                    Main.strings.getString("ERROR_DIALOG_TITLE"),
+                    JOptionPane.ERROR_MESSAGE));
+        } catch (final InterruptedException ignored) {
+        } finally {
+            input.reset();
 
-						input.getOnLockKeys().clear();
-						input.getOffLockKeys().clear();
+            if (serverSocket != null) serverSocket.close();
 
-						final var sendBuf = byteArrayOutputStream.toByteArray();
-						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
-						serverSocket.send(sendPacket);
-					}
+            EventQueue.invokeLater(() -> {
+                main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
+                main.stopAll(false, false, true);
+            });
+        }
 
-					if (doAliveCheck) {
-						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-						serverSocket.setSoTimeout(timeout);
-						try {
-							serverSocket.receive(receivePacket);
+        logStop();
+    }
 
-							if (clientIPAddress.equals(receivePacket.getAddress()))
-								try (final var byteArrayInputStream = new ByteArrayInputStream(
-										receivePacket.getData())) {
-									try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
-										final var messageType = dataInputStream.readInt();
-										if (messageType == MessageType.ClientAlive.ordinal())
-											counter++;
-									}
-								}
-						} catch (final SocketTimeoutException e) {
-							input.reset();
-							input.deInit(false);
+    public void setPort(final int port) {
+        this.port = port;
+    }
 
-							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
-							main.scheduleStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
+    public void setTimeout(final int timeout) {
+        this.timeout = timeout;
+    }
 
-							serverState = ServerState.Listening;
-						}
-					} else
-						counter++;
-				}
-				}
-			}
-		} catch (final BindException e) {
-			log.log(Level.WARNING, "Could not bind socket on port " + port);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
-					MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-		} catch (final SocketException e) {
-			log.log(Level.FINE, e.getMessage(), e);
-		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
-					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-		} catch (final InterruptedException ignored) {
-		} finally {
-			input.reset();
+    public enum MessageType {
+        ClientHello,
+        ServerHello,
+        Update,
+        UpdateRequestAlive,
+        ClientAlive
+    }
 
-			if (serverSocket != null)
-				serverSocket.close();
-
-			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
-				main.stopAll(false, false, true);
-			});
-		}
-
-		logStop();
-	}
-
-	public void setPort(final int port) {
-		this.port = port;
-	}
-
-	public void setTimeout(final int timeout) {
-		this.timeout = timeout;
-	}
+    public enum ServerState {
+        Listening,
+        Connected
+    }
 }

@@ -16,22 +16,25 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
+import java.lang.reflect.InvocationTargetException;
 
 public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> {
 
-	public MouseAxisEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public MouseAxisEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	MouseAxis[] getValues() {
-		return MouseAxis.values();
-	}
+    @Override
+    MouseAxis[] getValues() {
+        return MouseAxis.values();
+    }
 }

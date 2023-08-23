@@ -16,22 +16,25 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction.Direction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.lang.reflect.InvocationTargetException;
 
 public final class DirectionEditorBuilder extends ArrayEditorBuilder<Direction> {
 
-	public DirectionEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public DirectionEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	Direction[] getValues() {
-		return Direction.values();
-	}
+    @Override
+    Direction[] getValues() {
+        return Direction.values();
+    }
 }

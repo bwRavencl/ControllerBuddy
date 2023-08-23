@@ -16,24 +16,23 @@
 
 package de.bwravencl.controllerbuddy.input.action.annotation;
 
+import de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ActionProperty {
 
-	Class<? extends EditorBuilder> editorBuilder();
+    Class<? extends EditorBuilder> editorBuilder();
 
-	String label();
+    String label();
 
-	int order();
+    int order();
 
-	String overrideFieldName() default "";
+    String overrideFieldName() default "";
 
-	Class<?> overrideFieldType() default Void.class;
+    Class<?> overrideFieldType() default Void.class;
 }

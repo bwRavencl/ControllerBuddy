@@ -16,86 +16,88 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public abstract class EditorBuilder {
 
-	static abstract class PropertySetter {
+    protected final EditActionsDialog editActionsDialog;
+    protected final IAction<?> action;
+    protected final Method setterMethod;
+    protected Object initialValue;
 
-		final IAction<?> action;
-		final Method setterMethod;
+    EditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        this.editActionsDialog = editActionsDialog;
+        this.action = action;
 
-		PropertySetter(final IAction<?> action, final Method setterMethod) {
-			this.action = action;
-			this.setterMethod = setterMethod;
-		}
-	}
+        final var clazz = action.getClass();
 
-	static abstract class PropertySetterAction extends AbstractAction {
+        final var fieldNameChars = fieldName.toCharArray();
+        fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
+        final var capizalizedFieldName = String.valueOf(fieldNameChars);
 
-		@Serial
-		private static final long serialVersionUID = 4141747329971720525L;
+        setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
 
-		final IAction<?> action;
-		final Method setterMethod;
+        final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
+        final var modeProperty = fieldType == Mode.class;
 
-		PropertySetterAction(final IAction<?> action, final Method setterMethod) {
-			this.action = action;
-			this.setterMethod = setterMethod;
-		}
+        final var getterParams = modeProperty ? new Class[] {Input.class} : null;
+        final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
 
-		@Serial
-		private void readObject(final ObjectInputStream stream) throws NotSerializableException {
-			throw new NotSerializableException(PropertySetterAction.class.getName());
-		}
+        final var getterArgs = modeProperty ? new Object[] {editActionsDialog.getInput()} : null;
+        initialValue = getterMethod.invoke(action, getterArgs);
+    }
 
-		@Serial
-		private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
-			throw new NotSerializableException(PropertySetterAction.class.getName());
-		}
-	}
+    public abstract void buildEditor(final JPanel parentPanel);
 
-	protected final EditActionsDialog editActionsDialog;
-	protected final IAction<?> action;
-	protected final Method setterMethod;
-	protected Object initialValue;
+    abstract static class PropertySetter {
 
-	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		this.editActionsDialog = editActionsDialog;
-		this.action = action;
+        final IAction<?> action;
+        final Method setterMethod;
 
-		final var clazz = action.getClass();
+        PropertySetter(final IAction<?> action, final Method setterMethod) {
+            this.action = action;
+            this.setterMethod = setterMethod;
+        }
+    }
 
-		final var fieldNameChars = fieldName.toCharArray();
-		fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
-		final var capizalizedFieldName = String.valueOf(fieldNameChars);
+    abstract static class PropertySetterAction extends AbstractAction {
 
-		setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
+        @Serial
+        private static final long serialVersionUID = 4141747329971720525L;
 
-		final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
-		final var modeProperty = fieldType == Mode.class;
+        final IAction<?> action;
+        final Method setterMethod;
 
-		final var getterParams = modeProperty ? new Class[] { Input.class } : null;
-		final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
+        PropertySetterAction(final IAction<?> action, final Method setterMethod) {
+            this.action = action;
+            this.setterMethod = setterMethod;
+        }
 
-		final var getterArgs = modeProperty ? new Object[] { editActionsDialog.getInput() } : null;
-		initialValue = getterMethod.invoke(action, getterArgs);
-	}
+        @Serial
+        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+            throw new NotSerializableException(PropertySetterAction.class.getName());
+        }
 
-	public abstract void buildEditor(final JPanel parentPanel);
+        @Serial
+        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+            throw new NotSerializableException(PropertySetterAction.class.getName());
+        }
+    }
 }

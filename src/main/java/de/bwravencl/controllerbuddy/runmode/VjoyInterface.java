@@ -29,67 +29,67 @@ import com.sun.jna.platform.win32.WinDef.WORDByReference;
 
 interface VjoyInterface extends Library {
 
-	UINT HID_USAGE_X = new UINT(0x30L);
-	UINT HID_USAGE_Y = new UINT(0x31L);
-	UINT HID_USAGE_Z = new UINT(0x32L);
-	UINT HID_USAGE_RX = new UINT(0x33L);
-	UINT HID_USAGE_RY = new UINT(0x34L);
-	UINT HID_USAGE_RZ = new UINT(0x35L);
-	UINT HID_USAGE_SL0 = new UINT(0x36L);
-	UINT HID_USAGE_SL1 = new UINT(0x37L);
-	UINT HID_USAGE_WHL = new UINT(0x38L);
-	UINT HID_USAGE_POV = new UINT(0x39L);
-	int VJD_STAT_OWN = 0;
-	int VJD_STAT_FREE = 1;
-	int VJD_STAT_BUSY = 2;
-	int VJD_STAT_MISS = 3;
-	int VJD_STAT_UNKN = 4;
+    UINT HID_USAGE_X = new UINT(0x30L);
+    UINT HID_USAGE_Y = new UINT(0x31L);
+    UINT HID_USAGE_Z = new UINT(0x32L);
+    UINT HID_USAGE_RX = new UINT(0x33L);
+    UINT HID_USAGE_RY = new UINT(0x34L);
+    UINT HID_USAGE_RZ = new UINT(0x35L);
+    UINT HID_USAGE_SL0 = new UINT(0x36L);
+    UINT HID_USAGE_SL1 = new UINT(0x37L);
+    UINT HID_USAGE_WHL = new UINT(0x38L);
+    UINT HID_USAGE_POV = new UINT(0x39L);
+    int VJD_STAT_OWN = 0;
+    int VJD_STAT_FREE = 1;
+    int VJD_STAT_BUSY = 2;
+    int VJD_STAT_MISS = 3;
+    int VJD_STAT_UNKN = 4;
 
-	BOOL AcquireVJD(UINT rID);
+    BOOL AcquireVJD(UINT rID);
 
-	BOOL DriverMatch(WORDByReference DllVer, WORDByReference DrvVer);
+    BOOL DriverMatch(WORDByReference DllVer, WORDByReference DrvVer);
 
-	BOOL GetVJDAxisExist(UINT rID, UINT Axis);
+    BOOL GetVJDAxisExist(UINT rID, UINT Axis);
 
-	BOOL GetVJDAxisMax(UINT rID, UINT Axis, LONGByReference Max);
+    BOOL GetVJDAxisMax(UINT rID, UINT Axis, LONGByReference Max);
 
-	BOOL GetVJDAxisMin(UINT rID, UINT Axis, LONGByReference Min);
+    BOOL GetVJDAxisMin(UINT rID, UINT Axis, LONGByReference Min);
 
-	int GetVJDButtonNumber(UINT rID);
+    int GetVJDButtonNumber(UINT rID);
 
-	int GetVJDContPovNumber(UINT rID);
+    int GetVJDContPovNumber(UINT rID);
 
-	int GetVJDDiscPovNumber(UINT rID);
+    int GetVJDDiscPovNumber(UINT rID);
 
-	int GetVJDStatus(UINT rID);
+    int GetVJDStatus(UINT rID);
 
-	PVOID GetvJoyManufacturerString();
+    PVOID GetvJoyManufacturerString();
 
-	PVOID GetvJoyProductString();
+    PVOID GetvJoyProductString();
 
-	PVOID GetvJoySerialNumberString();
+    PVOID GetvJoySerialNumberString();
 
-	SHORT GetvJoyVersion();
+    SHORT GetvJoyVersion();
 
-	void RelinquishVJD(UINT rID);
+    void RelinquishVJD(UINT rID);
 
-	void ResetAll();
+    void ResetAll();
 
-	BOOL ResetButtons(UINT rID);
+    BOOL ResetButtons(UINT rID);
 
-	BOOL ResetPovs(UINT rID);
+    BOOL ResetPovs(UINT rID);
 
-	BOOL ResetVJD(UINT rID);
+    BOOL ResetVJD(UINT rID);
 
-	BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
+    BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
 
-	BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
+    BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
 
-	BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
+    BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
 
-	BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
+    BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
 
-	BOOL UpdateVJD(UINT rID, PVOID pData);
+    BOOL UpdateVJD(UINT rID, PVOID pData);
 
-	BOOL vJoyEnabled();
+    BOOL vJoyEnabled();
 }

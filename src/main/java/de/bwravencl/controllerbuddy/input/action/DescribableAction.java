@@ -22,31 +22,30 @@ import de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder;
 
 public abstract class DescribableAction<V extends Number> implements IAction<V> {
 
-	@ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
-	private String description;
+    @ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
+    private String description;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty())
-			return description;
+    @Override
+    public String getDescription(final Input input) {
+        if (!isDescriptionEmpty()) return description;
 
-		return IAction.getDefaultDescription(this);
-	}
+        return IAction.getDefaultDescription(this);
+    }
 
-	boolean isDescriptionEmpty() {
-		return description == null || description.isEmpty();
-	}
+    boolean isDescriptionEmpty() {
+        return description == null || description.isEmpty();
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 }

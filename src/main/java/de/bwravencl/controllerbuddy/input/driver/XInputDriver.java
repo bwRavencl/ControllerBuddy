@@ -16,6 +16,16 @@
 
 package de.bwravencl.controllerbuddy.input.driver;
 
+import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.XInputDevice14;
+import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
+import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
+import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
+import com.sun.jna.Platform;
+import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
+import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import java.awt.EventQueue;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -27,226 +37,218 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 
-import com.github.strikerx3.jxinput.XInputDevice;
-import com.github.strikerx3.jxinput.XInputDevice14;
-import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
-import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
-import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
-import com.sun.jna.Platform;
-
-import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
-import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
-
 public class XInputDriver extends Driver implements IGamepadStateProvider {
 
-	public static class XInputDriverBuilder implements IDriverBuilder {
+    private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
+    private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
+    private static final int MAX_MOTOR_SPEED = 65_535;
+    private final Lock xinputDeviceLock = new ReentrantLock();
+    private volatile XInputDevice xinputDevice;
+    private ScheduledExecutorService executorService;
+    private volatile String batteryLevelString;
 
-		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-				final ControllerInfo selectedController) {
-			if (Platform.isIntel() && Main.isWindows && isXInputController(selectedController)
-					&& XInputDevice.isAvailable()) {
-				final var presentXInputControllers = presentControllers.stream()
-						.filter(XInputDriver::isXInputController).toList();
-				if (presentXInputControllers.size() > 1) {
-					log.log(Level.WARNING, "Found more than one XInput controller - XInput driver disabled");
-					return null;
-				}
+    private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
+        super(input, controller);
 
-				try {
-					return new XInputDriver(input, selectedController);
-				} catch (final XInputNotLoadedException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-				}
-			}
+        XInputDevice[] xinputDevices;
+        if (XInputDevice14.isAvailable()) xinputDevices = XInputDevice14.getAllDevices();
+        else xinputDevices = XInputDevice.getAllDevices();
 
-			return null;
-		}
-	}
+        final var optionalXinputDevice =
+                Arrays.stream(xinputDevices).filter(XInputDevice::poll).findFirst();
 
-	private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
+        if (optionalXinputDevice.isEmpty()) throw new IllegalStateException("No XInput Device connected");
 
-	private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
+        xinputDevice = optionalXinputDevice.get();
+        ready = true;
 
-	private static final int MAX_MOTOR_SPEED = 65535;
+        var batteryLevelAvailable = false;
+        if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
+            final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+            if (batteryInformation != null)
+                batteryLevelAvailable = switch (batteryInformation.getType()) {
+                    case ALKALINE, NIMH -> true;
+                    default -> false;};
+        }
 
-	private static boolean isXInputController(final ControllerInfo controller) {
-		return "78696e70757401000000000000000000".equals(controller.guid()) || controller.name().startsWith("Xbox")
-				|| controller.name().startsWith("XInput");
-	}
+        if (batteryLevelAvailable) {
+            executorService = Executors.newSingleThreadScheduledExecutor(
+                    Thread.ofVirtual().factory());
+            executorService.scheduleAtFixedRate(
+                    new RunnableWithDefaultExceptionHandler(this::pollBatteryLevel),
+                    0L,
+                    BATTERY_LEVEL_POLL_INTERVAL,
+                    TimeUnit.SECONDS);
+        }
 
-	private static float mapTriggerAxisValue(final float value) {
-		return Input.normalize(value, 0f, 1f, -1f, 1f);
-	}
+        log.log(
+                Level.INFO,
+                Main.assembleControllerLoggingMessage(
+                        "Using XInput "
+                                + XInputDevice.getLibraryVersion()
+                                        .name()
+                                        .substring("XINPUT_".length())
+                                        .replace('_', '.')
+                                + " controller with ID " + xinputDevice.getPlayerNum() + " as",
+                        controller));
+    }
 
-	private volatile XInputDevice xinputDevice;
-	private final Lock xinputDeviceLock = new ReentrantLock();
-	private ScheduledExecutorService executorService;
-	private volatile String batteryLevelString;
+    private static boolean isXInputController(final ControllerInfo controller) {
+        return "78696e70757401000000000000000000".equals(controller.guid())
+                || controller.name().startsWith("Xbox")
+                || controller.name().startsWith("XInput");
+    }
 
-	private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
-		super(input, controller);
+    private static float mapTriggerAxisValue(final float value) {
+        return Input.normalize(value, 0f, 1f, -1f, 1f);
+    }
 
-		XInputDevice[] xinputDevices;
-		if (XInputDevice14.isAvailable())
-			xinputDevices = XInputDevice14.getAllDevices();
-		else
-			xinputDevices = XInputDevice.getAllDevices();
+    @Override
+    public void deInit(final boolean disconnected) {
+        super.deInit(disconnected);
 
-		final var optionalXinputDevice = Arrays.stream(xinputDevices).filter(XInputDevice::poll).findFirst();
+        xinputDeviceLock.lock();
+        try {
+            if (executorService != null)
+                try {
+                    executorService.awaitTermination(2L, TimeUnit.SECONDS);
+                } catch (final InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
 
-		if (optionalXinputDevice.isEmpty())
-			throw new IllegalStateException("No XInput Device connected");
+            xinputDevice = null;
+        } finally {
+            xinputDeviceLock.unlock();
+        }
+    }
 
-		xinputDevice = optionalXinputDevice.get();
-		ready = true;
+    @Override
+    public boolean getGamepadState(final GLFWGamepadState state) {
+        if (xinputDevice == null || !xinputDevice.isConnected()) return false;
 
-		var batteryLevelAvailable = false;
-		if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
-			final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
-			if (batteryInformation != null)
-				batteryLevelAvailable = switch (batteryInformation.getType()) {
-				case ALKALINE, NIMH -> true;
-				default -> false;
-				};
-		}
+        xinputDevice.poll();
 
-		if (batteryLevelAvailable) {
-			executorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
-			executorService.scheduleAtFixedRate(new RunnableWithDefaultExceptionHandler(this::pollBatteryLevel), 0L,
-					BATTERY_LEVEL_POLL_INTERVAL, TimeUnit.SECONDS);
-		}
+        final var components = xinputDevice.getComponents();
 
-		log.log(Level.INFO,
-				Main.assembleControllerLoggingMessage(
-						"Using XInput " + XInputDevice.getLibraryVersion().name().substring("XINPUT_".length())
-								.replace('_', '.') + " controller with ID " + xinputDevice.getPlayerNum() + " as",
-						controller));
-	}
+        final var axes = components.getAxes();
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, axes.lx);
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, -axes.ly);
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, axes.rx);
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y, -axes.ry);
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, mapTriggerAxisValue(axes.lt));
+        state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, mapTriggerAxisValue(axes.rt));
 
-	@Override
-	public void deInit(final boolean disconnected) {
-		super.deInit(disconnected);
+        final var buttons = components.getButtons();
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_A, (byte) (buttons.a ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_B, (byte) (buttons.b ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_X, (byte) (buttons.x ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_Y, (byte) (buttons.y ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, (byte) (buttons.lShoulder ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, (byte) (buttons.rShoulder ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_BACK, (byte) (buttons.back ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_START, (byte) (buttons.start ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, (byte) (buttons.guide ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, (byte) (buttons.lThumb ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, (byte) (buttons.rThumb ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, (byte) (buttons.up ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, (byte) (buttons.right ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, (byte) (buttons.left ? 0x1 : 0x0));
+        state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, (byte) (buttons.down ? 0x1 : 0x0));
 
-		xinputDeviceLock.lock();
-		try {
-			if (executorService != null)
-				try {
-					executorService.awaitTermination(2L, TimeUnit.SECONDS);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
+        return true;
+    }
 
-			xinputDevice = null;
-		} finally {
-			xinputDeviceLock.unlock();
-		}
-	}
+    @Override
+    public String getTooltip(final String title) {
+        if (batteryLevelString == null) return super.getTooltip(title);
 
-	@Override
-	public boolean getGamepadState(final GLFWGamepadState state) {
-		if (xinputDevice == null || !xinputDevice.isConnected())
-			return false;
+        return MessageFormat.format(Main.strings.getString("BATTERY_TOOLTIP_STRING"), title, batteryLevelString);
+    }
 
-		xinputDevice.poll();
+    private void pollBatteryLevel() {
+        EventQueue.invokeLater(() -> {
+            if (controller.jid() != input.getController().jid()) return;
 
-		final var components = xinputDevice.getComponents();
+            if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
+                final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+                final var batteryLevel = batteryInformation.getLevel();
 
-		final var axes = components.getAxes();
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, axes.lx);
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, -axes.ly);
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, axes.rx);
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y, -axes.ry);
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER, mapTriggerAxisValue(axes.lt));
-		state.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER, mapTriggerAxisValue(axes.rt));
+                batteryLevelString = Main.strings.getString(
+                        switch (batteryInformation.getLevel()) {
+                            case EMPTY -> "BATTERY_LEVEL_EMPTY";
+                            case LOW -> "BATTERY_LEVEL_LOW";
+                            case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
+                            case FULL -> "BATTERY_LEVEL_FULL";
+                        });
 
-		final var buttons = components.getButtons();
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_A, (byte) (buttons.a ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_B, (byte) (buttons.b ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_X, (byte) (buttons.x ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_Y, (byte) (buttons.y ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, (byte) (buttons.lShoulder ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, (byte) (buttons.rShoulder ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_BACK, (byte) (buttons.back ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_START, (byte) (buttons.start ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, (byte) (buttons.guide ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, (byte) (buttons.lThumb ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, (byte) (buttons.rThumb ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, (byte) (buttons.up ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, (byte) (buttons.right ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, (byte) (buttons.left ? 0x1 : 0x0));
-		state.buttons(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, (byte) (buttons.down ? 0x1 : 0x0));
+                input.getMain().updateTitleAndTooltip();
+                if (batteryLevel == XInputBatteryLevel.LOW)
+                    input.getMain().displayLowBatteryWarning(batteryLevelString);
+            }
+        });
+    }
 
-		return true;
-	}
+    private void rumble(final long duration, final int leftMotor, final int rightMotor) {
+        if (xinputDevice == null) return;
 
-	@Override
-	public String getTooltip(final String title) {
-		if (batteryLevelString == null)
-			return super.getTooltip(title);
+        Thread.startVirtualThread(() -> {
+            xinputDeviceLock.lock();
+            try {
+                if (xinputDevice == null) return;
 
-		return MessageFormat.format(Main.strings.getString("BATTERY_TOOLTIP_STRING"), title, batteryLevelString);
-	}
+                xinputDevice.setVibration(leftMotor, rightMotor);
+                try {
+                    Thread.sleep(duration);
+                } catch (final InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                xinputDevice.setVibration(0, 0);
+            } finally {
+                xinputDeviceLock.unlock();
+            }
+        });
+    }
 
-	private void pollBatteryLevel() {
-		EventQueue.invokeLater(() -> {
-			if (controller.jid() != input.getController().jid())
-				return;
+    @Override
+    public void rumbleLight() {
+        rumble(60L, MAX_MOTOR_SPEED, 0);
+    }
 
-			if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
-				final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
-				final var batteryLevel = batteryInformation.getLevel();
+    @Override
+    public void rumbleStrong() {
+        rumble(90L, 0, MAX_MOTOR_SPEED);
+    }
 
-				batteryLevelString = Main.strings.getString(switch (batteryInformation.getLevel()) {
-				case EMPTY -> "BATTERY_LEVEL_EMPTY";
-				case LOW -> "BATTERY_LEVEL_LOW";
-				case MEDIUM -> "BATTERY_LEVEL_MEDIUM";
-				case FULL -> "BATTERY_LEVEL_FULL";
-				});
+    public static class XInputDriverBuilder implements IDriverBuilder {
 
-				input.getMain().updateTitleAndTooltip();
-				if (batteryLevel == XInputBatteryLevel.LOW)
-					input.getMain().displayLowBatteryWarning(batteryLevelString);
-			}
-		});
-	}
+        @Override
+        public Driver getIfAvailable(
+                final Input input,
+                final List<ControllerInfo> presentControllers,
+                final ControllerInfo selectedController) {
+            if (Platform.isIntel()
+                    && Main.isWindows
+                    && isXInputController(selectedController)
+                    && XInputDevice.isAvailable()) {
+                final var presentXInputControllers = presentControllers.stream()
+                        .filter(XInputDriver::isXInputController)
+                        .toList();
+                if (presentXInputControllers.size() > 1) {
+                    log.log(Level.WARNING, "Found more than one XInput controller - XInput driver disabled");
+                    return null;
+                }
 
-	private void rumble(final long duration, final int leftMotor, final int rightMotor) {
-		if (xinputDevice == null)
-			return;
+                try {
+                    return new XInputDriver(input, selectedController);
+                } catch (final XInputNotLoadedException e) {
+                    log.log(Level.SEVERE, e.getMessage(), e);
+                }
+            }
 
-		Thread.startVirtualThread(() -> {
-			xinputDeviceLock.lock();
-			try {
-				if (xinputDevice == null)
-					return;
-
-				xinputDevice.setVibration(leftMotor, rightMotor);
-				try {
-					Thread.sleep(duration);
-				} catch (final InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-				xinputDevice.setVibration(0, 0);
-			} finally {
-				xinputDeviceLock.unlock();
-			}
-		});
-	}
-
-	@Override
-	public void rumbleLight() {
-		rumble(60L, MAX_MOTOR_SPEED, 0);
-	}
-
-	@Override
-	public void rumbleStrong() {
-		rumble(90L, 0, MAX_MOTOR_SPEED);
-	}
+            return null;
+        }
+    }
 }

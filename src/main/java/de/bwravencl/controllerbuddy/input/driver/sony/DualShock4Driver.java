@@ -16,184 +16,174 @@
 
 package de.bwravencl.controllerbuddy.input.driver.sony;
 
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.hid4java.HidDevice;
-import org.lwjgl.glfw.GLFW;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
+import java.util.List;
+import java.util.logging.Logger;
+import org.hid4java.HidDevice;
+import org.lwjgl.glfw.GLFW;
 
 public final class DualShock4Driver extends SonyDriver {
 
-	public static class DualShock4DriverBuilder implements IDriverBuilder {
+    private static final Logger log = Logger.getLogger(DualShock4Driver.class.getName());
+    private static final byte USB_INPUT_REPORT_ID = 0x1;
+    private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x11;
+    private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
+    private static final Connection DongleConnection = new Connection(0, USB_INPUT_REPORT_ID);
+    private static final Connection BluetoothConnection = new Connection(2, BLUETOOTH_INPUT_REPORT_ID);
 
-		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-				final ControllerInfo selectedController) {
-			final String guid;
-			if (Main.isMac)
-				guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
-			else
-				guid = selectedController.guid();
+    private DualShock4Driver(
+            final Input input,
+            final ControllerInfo controller,
+            final HidDevice hidDevice,
+            final Connection connection) {
+        super(input, controller, hidDevice);
+    }
 
-			if (guid == null)
-				return null;
+    @Override
+    int getButtonsOffset() {
+        return 5;
+    }
 
-			final short productId;
-			Connection connection = null;
-			if (guid.matches("^0[35]0000004c050000c405.*"))
-				productId = 0x5C4;
-			else if (guid.matches("^0[35]0000004c050000cc09.*"))
-				productId = 0x9CC;
-			else if (guid.matches("^0[35]0000004c050000a00b.*")) {
-				productId = 0xBA0;
-				connection = DongleConnection;
-			} else
-				return null;
+    @Override
+    byte[] getDefaultHidReport() {
+        if (connection == null) return null;
 
-			final var hidDevice = getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log);
-			if (hidDevice != null)
-				return new DualShock4Driver(input, selectedController, hidDevice, connection);
+        final byte[] defaultHidReport;
+        if (connection.isBluetooth()) {
+            defaultHidReport = new byte[333];
 
-			return null;
-		}
-	}
+            defaultHidReport[0] = (byte) 0xC0;
+            defaultHidReport[2] = (byte) 0xF7;
+        } else {
+            defaultHidReport = new byte[31];
 
-	private static final Logger log = Logger.getLogger(DualShock4Driver.class.getName());
+            defaultHidReport[0] = (byte) 0xF;
+        }
 
-	private static final byte USB_INPUT_REPORT_ID = 0x1;
-	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x11;
+        defaultHidReport[5 + connection.offset()] = (byte) 0xC;
+        defaultHidReport[6 + connection.offset()] = (byte) 0x18;
+        defaultHidReport[7 + connection.offset()] = (byte) 0x1C;
 
-	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
-	private static final Connection DongleConnection = new Connection(0, USB_INPUT_REPORT_ID);
-	private static final Connection BluetoothConnection = new Connection(2, BLUETOOTH_INPUT_REPORT_ID);
+        return defaultHidReport;
+    }
 
-	private DualShock4Driver(final Input input, final ControllerInfo controller, final HidDevice hidDevice,
-			final Connection connection) {
-		super(input, controller, hidDevice);
-	}
+    @Override
+    byte getDefaultHidReportId() {
+        return (byte) (connection.isBluetooth() ? 0x15 : 0x5);
+    }
 
-	@Override
-	int getButtonsOffset() {
-		return 5;
-	}
+    @Override
+    int getL2Offset() {
+        return 8;
+    }
 
-	@Override
-	byte[] getDefaultHidReport() {
-		if (connection == null)
-			return null;
+    @Override
+    long getLightRumbleDuration() {
+        return 20L;
+    }
 
-		final byte[] defaultHidReport;
-		if (connection.isBluetooth()) {
-			defaultHidReport = new byte[333];
+    @Override
+    byte getLightRumbleStrength() {
+        return Byte.MAX_VALUE;
+    }
 
-			defaultHidReport[0] = (byte) 0xC0;
-			defaultHidReport[2] = (byte) 0xF7;
-		} else {
-			defaultHidReport = new byte[31];
+    @Override
+    int getLightbarOffset() {
+        return 5;
+    }
 
-			defaultHidReport[0] = (byte) 0xF;
-		}
+    @Override
+    Logger getLogger() {
+        return log;
+    }
 
-		defaultHidReport[5 + connection.offset()] = (byte) 0xC;
-		defaultHidReport[6 + connection.offset()] = (byte) 0x18;
-		defaultHidReport[7 + connection.offset()] = (byte) 0x1C;
+    @Override
+    int getRumbleOffset() {
+        return 4;
+    }
 
-		return defaultHidReport;
-	}
+    @Override
+    long getStrongRumbleDuration() {
+        return 80L;
+    }
 
-	@Override
-	byte getDefaultHidReportId() {
-		return (byte) (connection.isBluetooth() ? 0x15 : 0x5);
-	}
+    @Override
+    byte getStrongRumbleStrength() {
+        return Byte.MAX_VALUE;
+    }
 
-	@Override
-	int getL2Offset() {
-		return 8;
-	}
+    @Override
+    int getTouchpadOffset() {
+        return 35;
+    }
 
-	@Override
-	int getLightbarOffset() {
-		return 5;
-	}
+    @Override
+    void handleBattery(final byte[] reportData, final int offset) {
+        final var cableConnected = (reportData[30 + offset] >> 4 & 0x1) != 0;
+        final var batteryData = reportData[30 + offset] & 0xF;
+        final int batteryCapacity;
+        final boolean charging;
+        if (cableConnected) {
+            if (batteryData < 10) {
+                batteryCapacity = batteryData * 10 + 5;
+                charging = true;
+            } else if (batteryData == 10) {
+                batteryCapacity = 100;
+                charging = true;
+            } else {
+                if (batteryData == 11) batteryCapacity = 100;
+                else batteryCapacity = 0;
 
-	@Override
-	long getLightRumbleDuration() {
-		return 20L;
-	}
+                charging = false;
+            }
+        } else {
+            if (batteryData < 10) batteryCapacity = batteryData * 10 + 5;
+            else batteryCapacity = 100;
 
-	@Override
-	byte getLightRumbleStrength() {
-		return Byte.MAX_VALUE;
-	}
+            charging = false;
+        }
 
-	@Override
-	Logger getLogger() {
-		return log;
-	}
+        setCharging(charging);
+        setBatteryCapacity(batteryCapacity);
+    }
 
-	@Override
-	int getRumbleOffset() {
-		return 4;
-	}
+    @Override
+    void handleNewConnection(final int reportLength) {
+        DualShock4Driver.this.connection = connection != null
+                ? connection
+                : isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
+    }
 
-	@Override
-	long getStrongRumbleDuration() {
-		return 80L;
-	}
+    public static class DualShock4DriverBuilder implements IDriverBuilder {
 
-	@Override
-	byte getStrongRumbleStrength() {
-		return Byte.MAX_VALUE;
-	}
+        @Override
+        public Driver getIfAvailable(
+                final Input input,
+                final List<ControllerInfo> presentControllers,
+                final ControllerInfo selectedController) {
+            final String guid;
+            if (Main.isMac) guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
+            else guid = selectedController.guid();
 
-	@Override
-	int getTouchpadOffset() {
-		return 35;
-	}
+            if (guid == null) return null;
 
-	@Override
-	void handleBattery(final byte[] reportData, final int offset) {
-		final var cableConnected = (reportData[30 + offset] >> 4 & 0x1) != 0;
-		final var batteryData = reportData[30 + offset] & 0xF;
-		final int batteryCapacity;
-		final boolean charging;
-		if (cableConnected) {
-			if (batteryData < 10) {
-				batteryCapacity = batteryData * 10 + 5;
-				charging = true;
-			} else if (batteryData == 10) {
-				batteryCapacity = 100;
-				charging = true;
-			} else {
-				if (batteryData == 11)
-					batteryCapacity = 100;
-				else
-					batteryCapacity = 0;
+            final short productId;
+            Connection connection = null;
+            if (guid.matches("^0[35]0000004c050000c405.*")) productId = 0x5C4;
+            else if (guid.matches("^0[35]0000004c050000cc09.*")) productId = 0x9CC;
+            else if (guid.matches("^0[35]0000004c050000a00b.*")) {
+                productId = 0xBA0;
+                connection = DongleConnection;
+            } else return null;
 
-				charging = false;
-			}
-		} else {
-			if (batteryData < 10)
-				batteryCapacity = batteryData * 10 + 5;
-			else
-				batteryCapacity = 100;
+            final var hidDevice = getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log);
+            if (hidDevice != null) return new DualShock4Driver(input, selectedController, hidDevice, connection);
 
-			charging = false;
-		}
-
-		setCharging(charging);
-		setBatteryCapacity(batteryCapacity);
-	}
-
-	@Override
-	void handleNewConnection(final int reportLength) {
-		DualShock4Driver.this.connection = connection != null ? connection
-				: isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
-	}
+            return null;
+        }
+    }
 }

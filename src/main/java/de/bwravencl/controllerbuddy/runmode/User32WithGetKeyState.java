@@ -22,7 +22,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 interface User32WithGetKeyState extends User32 {
 
-	User32WithGetKeyState INSTANCE = Native.load("user32", User32WithGetKeyState.class, W32APIOptions.DEFAULT_OPTIONS);
+    User32WithGetKeyState INSTANCE = Native.load("user32", User32WithGetKeyState.class, W32APIOptions.DEFAULT_OPTIONS);
 
-	short GetKeyState(int KeyState);
+    short GetKeyState(int KeyState);
 }

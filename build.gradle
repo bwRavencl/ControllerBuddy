@@ -1,10 +1,8 @@
+import com.github.spotbugs.snom.SpotBugsTask
 import java.util.regex.Pattern
-
 import org.ajoberstar.grgit.Grgit
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-
-import com.github.spotbugs.snom.SpotBugsTask
 
 plugins {
 	id 'application'

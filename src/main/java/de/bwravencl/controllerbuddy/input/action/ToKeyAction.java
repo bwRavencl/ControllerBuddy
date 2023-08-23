@@ -16,8 +16,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.text.MessageFormat;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -25,108 +23,103 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import java.text.MessageFormat;
 
 public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
-		implements IActivatableAction<V>, ILongPressAction<V> {
+        implements IActivatableAction<V>, ILongPressAction<V> {
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+    @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+    private Activation activation = Activation.REPEAT;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
-	private KeyStroke keystroke = new KeyStroke();
+    @ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
+    private KeyStroke keystroke = new KeyStroke();
 
-	private transient Activatable activatable;
+    private transient Activatable activatable;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		final var toKeyAction = (ToKeyAction<?>) super.clone();
-		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        final var toKeyAction = (ToKeyAction<?>) super.clone();
+        toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
 
-		return toKeyAction;
-	}
+        return toKeyAction;
+    }
 
-	@Override
-	public Activatable getActivatable() {
-		return activatable;
-	}
+    @Override
+    public Activatable getActivatable() {
+        return activatable;
+    }
 
-	@Override
-	public Activation getActivation() {
-		return activation;
-	}
+    @Override
+    public Activation getActivation() {
+        return activation;
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty())
-			return super.getDescription(input);
+    @Override
+    public String getDescription(final Input input) {
+        if (!isDescriptionEmpty()) return super.getDescription(input);
 
-		return MessageFormat.format(Main.strings.getString("PRESS"), keystroke);
-	}
+        return MessageFormat.format(Main.strings.getString("PRESS"), keystroke);
+    }
 
-	public KeyStroke getKeystroke() {
-		return keystroke;
-	}
+    public KeyStroke getKeystroke() {
+        return keystroke;
+    }
 
-	void handleAction(final boolean hot, final Input input) {
-		if (activatable == Activatable.ALWAYS) {
-			input.getDownUpKeyStrokes().add(keystroke);
-			return;
-		}
+    void handleAction(final boolean hot, final Input input) {
+        if (activatable == Activatable.ALWAYS) {
+            input.getDownUpKeyStrokes().add(keystroke);
+            return;
+        }
 
-		switch (activation) {
-		case REPEAT -> {
-			final var downKeyStrokes = input.getDownKeyStrokes();
-			if (!hot)
-				downKeyStrokes.remove(keystroke);
-			else
-				downKeyStrokes.add(keystroke);
-		}
-		case SINGLE_IMMEDIATELY -> {
-			if (!hot)
-				activatable = Activatable.YES;
-			else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpKeyStrokes().add(keystroke);
-			}
-		}
-		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO)
-					activatable = Activatable.YES;
-				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
-					activatable = Activatable.NO;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpKeyStrokes().add(keystroke);
-			}
-		}
-		}
-	}
+        switch (activation) {
+            case REPEAT -> {
+                final var downKeyStrokes = input.getDownKeyStrokes();
+                if (!hot) downKeyStrokes.remove(keystroke);
+                else downKeyStrokes.add(keystroke);
+            }
+            case SINGLE_IMMEDIATELY -> {
+                if (!hot) activatable = Activatable.YES;
+                else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    input.getDownUpKeyStrokes().add(keystroke);
+                }
+            }
+            case SINGLE_ON_RELEASE -> {
+                if (hot) {
+                    if (activatable == Activatable.NO) activatable = Activatable.YES;
+                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                } else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    input.getDownUpKeyStrokes().add(keystroke);
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public void setActivatable(final Activatable activatable) {
-		this.activatable = activatable;
-	}
+    @Override
+    public void setActivatable(final Activatable activatable) {
+        this.activatable = activatable;
+    }
 
-	@Override
-	public void setActivation(final Activation activation) {
-		this.activation = activation;
-	}
+    @Override
+    public void setActivation(final Activation activation) {
+        this.activation = activation;
+    }
 
-	public void setKeystroke(final KeyStroke keystroke) {
-		this.keystroke = keystroke;
-	}
+    public void setKeystroke(final KeyStroke keystroke) {
+        this.keystroke = keystroke;
+    }
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 }

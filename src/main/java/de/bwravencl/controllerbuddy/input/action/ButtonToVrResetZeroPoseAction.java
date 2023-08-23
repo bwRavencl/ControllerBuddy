@@ -23,9 +23,9 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 @Action(label = "TO_VR_RESET_ZERO_POSE_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 610)
 public class ButtonToVrResetZeroPoseAction extends ToVrResetZeroPoseAction<Byte> implements IButtonToAction {
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
-		handleAction(value != 0, input);
-	}
+    @Override
+    public void doAction(final Input input, final int component, Byte value) {
+        value = handleLongPress(input, component, value);
+        handleAction(value != 0, input);
+    }
 }

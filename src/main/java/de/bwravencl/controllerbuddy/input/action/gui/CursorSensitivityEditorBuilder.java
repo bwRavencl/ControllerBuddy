@@ -16,31 +16,34 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.lang.reflect.InvocationTargetException;
 
 public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	public CursorSensitivityEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public CursorSensitivityEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	Comparable<Integer> getMaximum() {
-		return 100000;
-	}
+    @Override
+    Comparable<Integer> getMaximum() {
+        return 100_000;
+    }
 
-	@Override
-	Comparable<Integer> getMinimum() {
-		return 1;
-	}
+    @Override
+    Comparable<Integer> getMinimum() {
+        return 1;
+    }
 
-	@Override
-	Number getStepSize() {
-		return 1f;
-	}
+    @Override
+    Number getStepSize() {
+        return 1f;
+    }
 }

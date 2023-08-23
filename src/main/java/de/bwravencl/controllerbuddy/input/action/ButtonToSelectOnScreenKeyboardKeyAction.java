@@ -16,9 +16,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
@@ -26,105 +23,107 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import java.text.MessageFormat;
+import java.util.Locale;
 
-@Action(label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
+@Action(
+        label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION",
+        category = ActionCategory.ON_SCREEN_KEYBOARD_MODE,
+        order = 510)
 public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction {
 
-	public enum Direction {
+    private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
+    private static final long PEAK_MIN_ELAPSE_TIME = 90L;
+    private static final long ACCELERATION_TIME = 300L;
+    private static final float peakElapseTimeReduction =
+            (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME) / (float) ACCELERATION_TIME;
 
-		UP("DIRECTION_UP"), DOWN("DIRECTION_DOWN"), LEFT("DIRECTION_LEFT"), RIGHT("DIRECTION_RIGHT");
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-		private final String label;
+    @ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
+    private Direction direction = Direction.UP;
 
-		Direction(final String labelKey) {
-			label = Main.strings.getString(labelKey);
-		}
+    private transient long initialPressTime;
+    private transient long lastPressTime;
 
-		@Override
-		public String toString() {
-			return label;
-		}
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
+    @Override
+    public void doAction(final Input input, final int component, Byte value) {
+        value = handleLongPress(input, component, value);
 
-	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
+        if (value != 0) {
+            final var currentTime = System.currentTimeMillis();
+            if (initialPressTime == 0) initialPressTime = currentTime;
 
-	private static final long ACCELERATION_TIME = 300L;
+            final var accelerationFactor = Math.min(currentTime - initialPressTime, ACCELERATION_TIME);
+            final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
 
-	private static final float peakElapseTimeReduction = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
-			/ (float) ACCELERATION_TIME;
+            if (currentTime - lastPressTime >= minElapseTime) {
+                final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+                switch (direction) {
+                    case UP -> onScreenKeyboard.moveSelectorUp();
+                    case DOWN -> onScreenKeyboard.moveSelectorDown();
+                    case LEFT -> onScreenKeyboard.moveSelectorLeft();
+                    case RIGHT -> onScreenKeyboard.moveSelectorRight();
+                }
 
-	@ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
-	private Direction direction = Direction.UP;
+                lastPressTime = currentTime;
+            }
+        } else initialPressTime = 0;
+    }
 
-	private transient long initialPressTime;
+    @Override
+    public String getDescription(final Input input) {
+        return MessageFormat.format(
+                Main.strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+                direction.toString().toLowerCase(Locale.ROOT));
+    }
 
-	private transient long lastPressTime;
+    public Direction getDirection() {
+        return direction;
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
+    @Override
+    public void reset(final Input input) {
+        initialPressTime = 0L;
+        lastPressTime = 0L;
+    }
 
-		if (value != 0) {
-			final var currentTime = System.currentTimeMillis();
-			if (initialPressTime == 0)
-				initialPressTime = currentTime;
+    public void setDirection(final Direction direction) {
+        this.direction = direction;
+    }
 
-			final var accelerationFactor = Math.min(currentTime - initialPressTime, ACCELERATION_TIME);
-			final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 
-			if (currentTime - lastPressTime >= minElapseTime) {
-				final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
+    public enum Direction {
+        UP("DIRECTION_UP"),
+        DOWN("DIRECTION_DOWN"),
+        LEFT("DIRECTION_LEFT"),
+        RIGHT("DIRECTION_RIGHT");
 
-				switch (direction) {
-				case UP -> onScreenKeyboard.moveSelectorUp();
-				case DOWN -> onScreenKeyboard.moveSelectorDown();
-				case LEFT -> onScreenKeyboard.moveSelectorLeft();
-				case RIGHT -> onScreenKeyboard.moveSelectorRight();
-				}
+        private final String label;
 
-				lastPressTime = currentTime;
-			}
-		} else
-			initialPressTime = 0;
-	}
+        Direction(final String labelKey) {
+            label = Main.strings.getString(labelKey);
+        }
 
-	@Override
-	public String getDescription(final Input input) {
-		return MessageFormat.format(Main.strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
-				direction.toString().toLowerCase(Locale.ROOT));
-	}
-
-	public Direction getDirection() {
-		return direction;
-	}
-
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
-	public void reset(final Input input) {
-		initialPressTime = 0L;
-		lastPressTime = 0L;
-	}
-
-	public void setDirection(final Direction direction) {
-		this.direction = direction;
-	}
-
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
 }

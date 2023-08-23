@@ -16,41 +16,41 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.JPanel;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.JPanel;
 
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
-	public ActivationEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public ActivationEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		final var cycleEditor = editActionsDialog.isCycleEditor();
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        final var cycleEditor = editActionsDialog.isCycleEditor();
 
-		if (cycleEditor)
-			initialValue = Activation.SINGLE_IMMEDIATELY;
+        if (cycleEditor) initialValue = Activation.SINGLE_IMMEDIATELY;
 
-		super.buildEditor(parentPanel);
+        super.buildEditor(parentPanel);
 
-		if (cycleEditor)
-			comboBox.setEnabled(false);
-	}
+        if (cycleEditor) comboBox.setEnabled(false);
+    }
 
-	@Override
-	Activation[] getValues() {
-		if (action instanceof ButtonToCycleAction)
-			return new Activation[] { Activation.SINGLE_IMMEDIATELY, Activation.SINGLE_ON_RELEASE };
+    @Override
+    Activation[] getValues() {
+        if (action instanceof ButtonToCycleAction)
+            return new Activation[] {Activation.SINGLE_IMMEDIATELY, Activation.SINGLE_ON_RELEASE};
 
-		return Activation.values();
-	}
+        return Activation.values();
+    }
 }

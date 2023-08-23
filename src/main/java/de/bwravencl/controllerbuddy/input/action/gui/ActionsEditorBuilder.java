@@ -16,50 +16,55 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.awt.event.ActionEvent;
-import java.io.Serial;
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.awt.event.ActionEvent;
+import java.io.Serial;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 public final class ActionsEditorBuilder extends EditorBuilder {
 
-	private final class EditActionsAction extends AbstractAction {
+    public ActionsEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		@Serial
-		private static final long serialVersionUID = -6538021954760621595L;
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        final var editActionsButton = new JButton(new EditActionsAction());
+        editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
+        parentPanel.add(editActionsButton);
+    }
 
-		private EditActionsAction() {
-			putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
-					IAction.getLabel(action.getClass())));
-		}
+    private final class EditActionsAction extends AbstractAction {
 
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final var editComponentDialog = new EditActionsDialog(editActionsDialog, (ButtonToCycleAction) action);
-			editComponentDialog.setVisible(true);
-		}
-	}
+        @Serial
+        private static final long serialVersionUID = -6538021954760621595L;
 
-	public ActionsEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        private EditActionsAction() {
+            putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
+            putValue(
+                    SHORT_DESCRIPTION,
+                    MessageFormat.format(
+                            Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+                            IAction.getLabel(action.getClass())));
+        }
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		final var editActionsButton = new JButton(new EditActionsAction());
-		editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
-		parentPanel.add(editActionsButton);
-	}
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            final var editComponentDialog = new EditActionsDialog(editActionsDialog, (ButtonToCycleAction) action);
+            editComponentDialog.setVisible(true);
+        }
+    }
 }

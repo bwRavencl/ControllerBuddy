@@ -16,33 +16,37 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Collectors;
-
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.lang.reflect.InvocationTargetException;
+import java.util.stream.Collectors;
 
 public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 
-	public ModeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    public ModeEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-	@Override
-	Mode[] getValues() {
-		final var profile = editActionsDialog.getInput().getProfile();
+    @Override
+    Mode[] getValues() {
+        final var profile = editActionsDialog.getInput().getProfile();
 
-		final var modes = profile.getModes().stream().filter(m -> !Profile.defaultMode.equals(m))
-				.collect(Collectors.toList());
+        final var modes = profile.getModes().stream()
+                .filter(m -> !Profile.defaultMode.equals(m))
+                .collect(Collectors.toList());
 
-		if (!profile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
-			modes.add(OnScreenKeyboard.onScreenKeyboardMode);
+        if (!profile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
+            modes.add(OnScreenKeyboard.onScreenKeyboardMode);
 
-		return modes.toArray(Mode[]::new);
-	}
+        return modes.toArray(Mode[]::new);
+    }
 }

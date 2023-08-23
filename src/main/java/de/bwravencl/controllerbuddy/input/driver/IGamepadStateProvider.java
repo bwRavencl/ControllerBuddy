@@ -20,5 +20,5 @@ import org.lwjgl.glfw.GLFWGamepadState;
 
 public interface IGamepadStateProvider {
 
-	boolean getGamepadState(final GLFWGamepadState state);
+    boolean getGamepadState(final GLFWGamepadState state);
 }

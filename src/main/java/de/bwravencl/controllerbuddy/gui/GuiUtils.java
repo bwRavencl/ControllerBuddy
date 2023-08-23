@@ -16,6 +16,12 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinUser;
+import de.bwravencl.controllerbuddy.input.Mode;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -32,7 +38,6 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
-
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -42,195 +47,197 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
-
-import de.bwravencl.controllerbuddy.input.Mode;
-
 public final class GuiUtils {
 
-	static class FrameDragListener extends MouseAdapter {
+    static JComboBox<Mode> addModePanel(
+            final Container container, final List<Mode> modes, final AbstractAction actionListener) {
+        final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
+        container.add(modePanel, BorderLayout.NORTH);
 
-		private final Main main;
-		private final JFrame frame;
-		private Point mouseDownLocation = null;
+        modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
 
-		FrameDragListener(final Main main, final JFrame frame) {
-			this.main = main;
-			this.frame = frame;
-		}
+        final var modeComboBox = new JComboBox<>(modes.toArray(Mode[]::new));
+        modeComboBox.addActionListener(actionListener);
+        modePanel.add(modeComboBox);
 
-		final boolean isDragging() {
-			return mouseDownLocation != null;
-		}
+        return modeComboBox;
+    }
 
-		@Override
-		public void mouseDragged(final MouseEvent e) {
-			if (mouseDownLocation == null)
-				return;
+    static Rectangle getAndStoreTotalDisplayBounds(final Main main) {
+        final var totalDisplayBounds = new Rectangle();
 
-			final var currentMouseLocation = e.getLocationOnScreen();
-			final var newFrameLocation = new Point(currentMouseLocation.x - mouseDownLocation.x,
-					currentMouseLocation.y - mouseDownLocation.y);
+        for (final var graphicsDevice :
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            final var graphicsConfiguration = graphicsDevice.getConfigurations()[0];
+            final var bounds = graphicsConfiguration.getBounds();
 
-			final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
-			setFrameLocationRespectingBounds(frame, newFrameLocation, totalDisplayBounds);
-		}
+            final var maxX = bounds.x + bounds.width;
+            final var maxY = bounds.y + bounds.height;
 
-		@Override
-		public void mousePressed(final MouseEvent e) {
-			mouseDownLocation = e.getPoint();
-		}
+            totalDisplayBounds.x = Math.min(totalDisplayBounds.x, bounds.x);
+            totalDisplayBounds.x = Math.min(totalDisplayBounds.x, maxX);
+            totalDisplayBounds.y = Math.min(totalDisplayBounds.y, bounds.y);
+            totalDisplayBounds.y = Math.min(totalDisplayBounds.y, maxY);
 
-		@Override
-		public void mouseReleased(final MouseEvent e) {
-			mouseDownLocation = null;
+            totalDisplayBounds.width = Math.max(totalDisplayBounds.width, bounds.x);
+            totalDisplayBounds.width = Math.max(totalDisplayBounds.width, maxX);
+            totalDisplayBounds.height = Math.max(totalDisplayBounds.height, bounds.y);
+            totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
+        }
 
-			final var frameLocation = frame.getLocation();
-			final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
-			main.getPreferences().put(getFrameLocationPreferencesKey(frame),
-					frameLocation.x / (float) totalDisplayBounds.width + ","
-							+ frameLocation.y / (float) totalDisplayBounds.height);
-		}
-	}
+        if (main != null) main.setTotalDisplayBounds(totalDisplayBounds);
 
-	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
-			final AbstractAction actionListener) {
-		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
-		container.add(modePanel, BorderLayout.NORTH);
+        return totalDisplayBounds;
+    }
 
-		modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
+    private static String getFrameLocationPreferencesKey(final JFrame frame) {
+        final var title = frame.getTitle();
+        if (title == null || title.isBlank()) return null;
 
-		final var modeComboBox = new JComboBox<>(modes.toArray(Mode[]::new));
-		modeComboBox.addActionListener(actionListener);
-		modePanel.add(modeComboBox);
+        var underscoreTitle = title.codePoints()
+                .mapToObj(c -> {
+                    if (c == ' ') return "_";
+                    return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
+                })
+                .collect(Collectors.joining());
+        underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
-		return modeComboBox;
-	}
+        return underscoreTitle + "_location";
+    }
 
-	static Rectangle getAndStoreTotalDisplayBounds(final Main main) {
-		final var totalDisplayBounds = new Rectangle();
+    static Rectangle getTotalDisplayBounds() {
+        return getAndStoreTotalDisplayBounds(null);
+    }
 
-		for (final var graphicsDevice : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-			final var graphicsConfiguration = graphicsDevice.getConfigurations()[0];
-			final var bounds = graphicsConfiguration.getBounds();
+    static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
+        if (EventQueue.isDispatchThread()) runnable.run();
+        else EventQueue.invokeLater(runnable);
+    }
 
-			final var maxX = bounds.x + bounds.width;
-			final var maxY = bounds.y + bounds.height;
+    static void loadFrameLocation(
+            final Preferences preferences,
+            final JFrame frame,
+            final Point defaultLocation,
+            final Rectangle totalDisplayBounds) {
+        final var location = new Point(defaultLocation);
 
-			totalDisplayBounds.x = Math.min(totalDisplayBounds.x, bounds.x);
-			totalDisplayBounds.x = Math.min(totalDisplayBounds.x, maxX);
-			totalDisplayBounds.y = Math.min(totalDisplayBounds.y, bounds.y);
-			totalDisplayBounds.y = Math.min(totalDisplayBounds.y, maxY);
+        final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
+        if (locationString != null) {
 
-			totalDisplayBounds.width = Math.max(totalDisplayBounds.width, bounds.x);
-			totalDisplayBounds.width = Math.max(totalDisplayBounds.width, maxX);
-			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, bounds.y);
-			totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
-		}
+            final var parts = locationString.split(",");
+            if (parts.length == 2)
+                try {
+                    location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
+                    location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
+                } catch (final NumberFormatException ignored) {
+                }
+        }
 
-		if (main != null)
-			main.setTotalDisplayBounds(totalDisplayBounds);
+        setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
+    }
 
-		return totalDisplayBounds;
-	}
+    static void makeWindowTopmost(final Window window) {
+        if (Main.isWindows) {
+            final var windowHwnd = new HWND(Native.getWindowPointer(window));
+            User32.INSTANCE.SetWindowPos(
+                    windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0, WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
+        } else {
+            window.setAlwaysOnTop(false);
+            window.setAlwaysOnTop(true);
+        }
+    }
 
-	private static String getFrameLocationPreferencesKey(final JFrame frame) {
-		final var title = frame.getTitle();
-		if (title == null || title.isBlank())
-			return null;
+    static void setEnabledRecursive(final Component component, final boolean enabled) {
+        if (component == null) return;
 
-		var underscoreTitle = title.codePoints().mapToObj(c -> {
-			if (c == ' ')
-				return "_";
-			return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
-		}).collect(Collectors.joining());
-		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
+        component.setEnabled(enabled);
 
-		return underscoreTitle + "_location";
-	}
+        if (component instanceof final Container container)
+            for (final var child : container.getComponents()) setEnabledRecursive(child, enabled);
+    }
 
-	static Rectangle getTotalDisplayBounds() {
-		return getAndStoreTotalDisplayBounds(null);
-	}
+    private static void setFrameLocationRespectingBounds(
+            final Frame frame, final Point location, final Rectangle totalDisplayBounds) {
+        location.x = Math.max(totalDisplayBounds.x, Math.min(totalDisplayBounds.width - frame.getWidth(), location.x));
+        location.y =
+                Math.max(totalDisplayBounds.y, Math.min(totalDisplayBounds.height - frame.getHeight(), location.y));
+        frame.setLocation(location);
+    }
 
-	static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
-		if (EventQueue.isDispatchThread())
-			runnable.run();
-		else
-			EventQueue.invokeLater(runnable);
-	}
+    public static void showMessageDialog(
+            @SuppressWarnings("exports") final Component parentComponent, final Object message)
+            throws HeadlessException {
+        showMessageDialog(
+                parentComponent,
+                message,
+                UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
+                JOptionPane.INFORMATION_MESSAGE);
+    }
 
-	static void loadFrameLocation(final Preferences preferences, final JFrame frame, final Point defaultLocation,
-			final Rectangle totalDisplayBounds) {
-		final var location = new Point(defaultLocation);
+    public static void showMessageDialog(
+            @SuppressWarnings("exports") final Component parentComponent,
+            final Object message,
+            final String title,
+            final int messageType)
+            throws HeadlessException {
+        showMessageDialog(parentComponent, message, title, messageType, null);
+    }
 
-		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
-		if (locationString != null) {
+    public static void showMessageDialog(
+            @SuppressWarnings("exports") final Component parentComponent,
+            final Object message,
+            final String title,
+            final int messageType,
+            @SuppressWarnings("exports") final Icon icon)
+            throws HeadlessException {
+        if (Main.skipMessageDialogs) return;
 
-			final var parts = locationString.split(",");
-			if (parts.length == 2)
-				try {
-					location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
-					location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
-				} catch (final NumberFormatException ignored) {
-				}
-		}
+        JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
+    }
 
-		setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
-	}
+    static class FrameDragListener extends MouseAdapter {
 
-	static void makeWindowTopmost(final Window window) {
-		if (Main.isWindows) {
-			final var windowHwnd = new HWND(Native.getWindowPointer(window));
-			User32.INSTANCE.SetWindowPos(windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0,
-					WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
-		} else {
-			window.setAlwaysOnTop(false);
-			window.setAlwaysOnTop(true);
-		}
-	}
+        private final Main main;
+        private final JFrame frame;
+        private Point mouseDownLocation = null;
 
-	static void setEnabledRecursive(final Component component, final boolean enabled) {
-		if (component == null)
-			return;
+        FrameDragListener(final Main main, final JFrame frame) {
+            this.main = main;
+            this.frame = frame;
+        }
 
-		component.setEnabled(enabled);
+        final boolean isDragging() {
+            return mouseDownLocation != null;
+        }
 
-		if (component instanceof final Container container)
-			for (final var child : container.getComponents())
-				setEnabledRecursive(child, enabled);
-	}
+        @Override
+        public void mouseDragged(final MouseEvent e) {
+            if (mouseDownLocation == null) return;
 
-	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
-			final Rectangle totalDisplayBounds) {
-		location.x = Math.max(totalDisplayBounds.x, Math.min(totalDisplayBounds.width - frame.getWidth(), location.x));
-		location.y = Math.max(totalDisplayBounds.y,
-				Math.min(totalDisplayBounds.height - frame.getHeight(), location.y));
-		frame.setLocation(location);
-	}
+            final var currentMouseLocation = e.getLocationOnScreen();
+            final var newFrameLocation = new Point(
+                    currentMouseLocation.x - mouseDownLocation.x, currentMouseLocation.y - mouseDownLocation.y);
 
-	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
-			final Object message) throws HeadlessException {
-		showMessageDialog(parentComponent, message,
-				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
-				JOptionPane.INFORMATION_MESSAGE);
-	}
+            final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
+            setFrameLocationRespectingBounds(frame, newFrameLocation, totalDisplayBounds);
+        }
 
-	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
-			final Object message, final String title, final int messageType) throws HeadlessException {
-		showMessageDialog(parentComponent, message, title, messageType, null);
-	}
+        @Override
+        public void mousePressed(final MouseEvent e) {
+            mouseDownLocation = e.getPoint();
+        }
 
-	public static void showMessageDialog(@SuppressWarnings("exports") final Component parentComponent,
-			final Object message, final String title, final int messageType,
-			@SuppressWarnings("exports") final Icon icon) throws HeadlessException {
-		if (Main.skipMessageDialogs)
-			return;
+        @Override
+        public void mouseReleased(final MouseEvent e) {
+            mouseDownLocation = null;
 
-		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
-	}
+            final var frameLocation = frame.getLocation();
+            final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
+            main.getPreferences()
+                    .put(
+                            getFrameLocationPreferencesKey(frame),
+                            frameLocation.x / (float) totalDisplayBounds.width + ","
+                                    + frameLocation.y / (float) totalDisplayBounds.height);
+        }
+    }
 }

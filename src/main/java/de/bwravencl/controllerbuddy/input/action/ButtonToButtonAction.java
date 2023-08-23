@@ -25,26 +25,25 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 @Action(label = "TO_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
 public final class ButtonToButtonAction extends ToButtonAction<Byte> implements IButtonToAction {
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		if (isAlreadyPressed(input))
-			return;
+    @Override
+    public void doAction(final Input input, final int component, Byte value) {
+        if (isAlreadyPressed(input)) return;
 
-		value = handleLongPress(input, component, value);
+        value = handleLongPress(input, component, value);
 
-		input.setButton(buttonId, value != 0);
-	}
+        input.setButton(buttonId, value != 0);
+    }
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 }

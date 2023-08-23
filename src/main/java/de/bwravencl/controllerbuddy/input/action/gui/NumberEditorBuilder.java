@@ -16,6 +16,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -23,7 +25,6 @@ import java.math.RoundingMode;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -32,79 +33,77 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
-	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
+    private static final int FLOAT_ROUNDING_DECIMALS = 3;
+    private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+    JSpinner spinner;
+    JFormattedTextField textField;
 
-		private Consumer<Object> valueConsumer;
+    NumberEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
-			super(action, setterMethod);
-		}
+    static float roundFloat(final Float value) {
+        return new BigDecimal(value.toString())
+                .setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP)
+                .floatValue();
+    }
 
-		void setValueConsumer(final Consumer<Object> valueConsumer) {
-			this.valueConsumer = valueConsumer;
-		}
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
+        spinner = new JSpinner(model);
 
-		@Override
-		public void stateChanged(final ChangeEvent e) {
-			try {
-				var value = ((JSpinner) e.getSource()).getValue();
+        final var editor = spinner.getEditor();
+        textField = ((JSpinner.DefaultEditor) editor).getTextField();
+        textField.setColumns(4);
 
-				if (value instanceof final Float floatValue)
-					value = roundFloat(floatValue);
+        final var formatter = (DefaultFormatter) textField.getFormatter();
+        formatter.setCommitsOnValidEdit(true);
 
-				setterMethod.invoke(action, value);
+        spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod));
 
-				if (valueConsumer != null)
-					valueConsumer.accept(value);
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
-			}
-		}
-	}
+        parentPanel.add(spinner);
+    }
 
-	private static final int FLOAT_ROUNDING_DECIMALS = 3;
+    abstract Comparable<T> getMaximum();
 
-	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+    abstract Comparable<T> getMinimum();
 
-	static float roundFloat(final Float value) {
-		return new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP).floatValue();
-	}
+    abstract Number getStepSize();
 
-	JSpinner spinner;
+    static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 
-	JFormattedTextField textField;
+        private Consumer<Object> valueConsumer;
 
-	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
+            super(action, setterMethod);
+        }
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
-		spinner = new JSpinner(model);
+        void setValueConsumer(final Consumer<Object> valueConsumer) {
+            this.valueConsumer = valueConsumer;
+        }
 
-		final var editor = spinner.getEditor();
-		textField = ((JSpinner.DefaultEditor) editor).getTextField();
-		textField.setColumns(4);
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            try {
+                var value = ((JSpinner) e.getSource()).getValue();
 
-		final var formatter = (DefaultFormatter) textField.getFormatter();
-		formatter.setCommitsOnValidEdit(true);
+                if (value instanceof final Float floatValue) value = roundFloat(floatValue);
 
-		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod));
+                setterMethod.invoke(action, value);
 
-		parentPanel.add(spinner);
-	}
-
-	abstract Comparable<T> getMaximum();
-
-	abstract Comparable<T> getMinimum();
-
-	abstract Number getStepSize();
+                if (valueConsumer != null) valueConsumer.accept(value);
+            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+                log.log(Level.SEVERE, e1.getMessage(), e1);
+            }
+        }
+    }
 }

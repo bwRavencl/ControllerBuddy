@@ -16,117 +16,112 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.text.MessageFormat;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
+import java.text.MessageFormat;
 
 abstract class ToMouseButtonAction<V extends Number> extends DescribableAction<V>
-		implements IActivatableAction<V>, ILongPressAction<V> {
+        implements IActivatableAction<V>, ILongPressAction<V> {
 
-	private static final int DEFAULT_MOUSE_BUTTON = 1;
+    private static final int DEFAULT_MOUSE_BUTTON = 1;
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+    @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+    private Activation activation = Activation.REPEAT;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
-	private int mouseButton = DEFAULT_MOUSE_BUTTON;
+    @ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
+    private int mouseButton = DEFAULT_MOUSE_BUTTON;
 
-	private transient boolean initiator = false;
+    private transient boolean initiator = false;
 
-	private transient Activatable activatable;
+    private transient Activatable activatable;
 
-	@Override
-	public Activatable getActivatable() {
-		return activatable;
-	}
+    @Override
+    public Activatable getActivatable() {
+        return activatable;
+    }
 
-	@Override
-	public Activation getActivation() {
-		return activation;
-	}
+    @Override
+    public Activation getActivation() {
+        return activation;
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty())
-			return super.getDescription(input);
+    @Override
+    public String getDescription(final Input input) {
+        if (!isDescriptionEmpty()) return super.getDescription(input);
 
-		return MessageFormat.format(Main.strings.getString("MOUSE_BUTTON_NO"), mouseButton);
-	}
+        return MessageFormat.format(Main.strings.getString("MOUSE_BUTTON_NO"), mouseButton);
+    }
 
-	public int getMouseButton() {
-		return mouseButton;
-	}
+    public int getMouseButton() {
+        return mouseButton;
+    }
 
-	void handleAction(final boolean hot, final Input input) {
-		if (activatable == Activatable.ALWAYS) {
-			input.getDownUpMouseButtons().add(mouseButton);
-			return;
-		}
+    void handleAction(final boolean hot, final Input input) {
+        if (activatable == Activatable.ALWAYS) {
+            input.getDownUpMouseButtons().add(mouseButton);
+            return;
+        }
 
-		switch (activation) {
-		case REPEAT -> {
-			final var downMouseButtons = input.getDownMouseButtons();
-			if (!hot) {
-				if (initiator) {
-					initiator = false;
-					downMouseButtons.remove(mouseButton);
-				}
-			} else {
-				initiator = true;
-				downMouseButtons.add(mouseButton);
-			}
-		}
-		case SINGLE_IMMEDIATELY -> {
-			if (!hot)
-				activatable = Activatable.YES;
-			else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpMouseButtons().add(mouseButton);
-			}
-		}
-		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO)
-					activatable = Activatable.YES;
-				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
-					activatable = Activatable.NO;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpMouseButtons().add(mouseButton);
-			}
-		}
-		}
-	}
+        switch (activation) {
+            case REPEAT -> {
+                final var downMouseButtons = input.getDownMouseButtons();
+                if (!hot) {
+                    if (initiator) {
+                        initiator = false;
+                        downMouseButtons.remove(mouseButton);
+                    }
+                } else {
+                    initiator = true;
+                    downMouseButtons.add(mouseButton);
+                }
+            }
+            case SINGLE_IMMEDIATELY -> {
+                if (!hot) activatable = Activatable.YES;
+                else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    input.getDownUpMouseButtons().add(mouseButton);
+                }
+            }
+            case SINGLE_ON_RELEASE -> {
+                if (hot) {
+                    if (activatable == Activatable.NO) activatable = Activatable.YES;
+                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                } else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    input.getDownUpMouseButtons().add(mouseButton);
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public void setActivatable(final Activatable activatable) {
-		this.activatable = activatable;
-	}
+    @Override
+    public void setActivatable(final Activatable activatable) {
+        this.activatable = activatable;
+    }
 
-	@Override
-	public void setActivation(final Activation activation) {
-		this.activation = activation;
-	}
+    @Override
+    public void setActivation(final Activation activation) {
+        this.activation = activation;
+    }
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 
-	public void setMouseButton(final int mouseButton) {
-		this.mouseButton = mouseButton;
-	}
+    public void setMouseButton(final int mouseButton) {
+        this.mouseButton = mouseButton;
+    }
 }

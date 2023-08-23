@@ -16,132 +16,126 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import org.lwjgl.openvr.VR;
-import org.lwjgl.openvr.VRChaperone;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VrCoordinateSystemEditorBuilder;
+import org.lwjgl.openvr.VR;
+import org.lwjgl.openvr.VRChaperone;
 
 public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActivatableAction<V>, ILongPressAction<V> {
 
-	public enum VrCoordinateSystem {
+    @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+    private Activation activation = Activation.REPEAT;
 
-		SEATED(VR.ETrackingUniverseOrigin_TrackingUniverseSeated, "VR_COORDINATE_SYSTEM_SEATED"),
-		STANDING(VR.ETrackingUniverseOrigin_TrackingUniverseStanding, "VR_COORDINATE_SYSTEM_STANDING"),
-		RAW_AND_UNCALIBRATED(VR.ETrackingUniverseOrigin_TrackingUniverseRawAndUncalibrated,
-				"VR_COORDINATE_SYSTEM_RAW_AND_UNCALIBRATED");
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-		private final int value;
+    @ActionProperty(label = "VR_COORDINATE_SYSTEM", editorBuilder = VrCoordinateSystemEditorBuilder.class, order = 10)
+    private VrCoordinateSystem vrCoordinateSystem = VrCoordinateSystem.SEATED;
 
-		private final String label;
+    private transient Activatable activatable;
 
-		VrCoordinateSystem(final int value, final String labelKey) {
-			this.value = value;
-			label = Main.strings.getString(labelKey);
-		}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-		@Override
-		public String toString() {
-			return label;
-		}
-	}
+    @Override
+    public Activatable getActivatable() {
+        return activatable;
+    }
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+    @Override
+    public Activation getActivation() {
+        return activation;
+    }
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @Override
+    public String getDescription(final Input input) {
+        return Main.strings.getString("TO_VR_RESET_ZERO_POSE_ACTION");
+    }
 
-	@ActionProperty(label = "VR_COORDINATE_SYSTEM", editorBuilder = VrCoordinateSystemEditorBuilder.class, order = 10)
-	private VrCoordinateSystem vrCoordinateSystem = VrCoordinateSystem.SEATED;
+    public VrCoordinateSystem getVrCoordinateSystem() {
+        return vrCoordinateSystem;
+    }
 
-	private transient Activatable activatable;
+    void handleAction(final boolean hot, final Input input) {
+        if (!input.getMain().isOpenVrOverlayActive()) return;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+        if (activatable == Activatable.ALWAYS) {
+            VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+            return;
+        }
 
-	@Override
-	public Activatable getActivatable() {
-		return activatable;
-	}
+        switch (activation) {
+            case REPEAT -> {
+                if (hot) VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+            }
+            case SINGLE_IMMEDIATELY -> {
+                if (!hot) activatable = Activatable.YES;
+                else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+                }
+            }
+            case SINGLE_ON_RELEASE -> {
+                if (hot) {
+                    if (activatable == Activatable.NO) activatable = Activatable.YES;
+                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                } else if (activatable == Activatable.YES) {
+                    activatable = Activatable.NO;
+                    VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+                }
+            }
+        }
+    }
 
-	@Override
-	public Activation getActivation() {
-		return activation;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		return Main.strings.getString("TO_VR_RESET_ZERO_POSE_ACTION");
-	}
+    @Override
+    public void setActivatable(final Activatable activatable) {
+        this.activatable = activatable;
+    }
 
-	public VrCoordinateSystem getVrCoordinateSystem() {
-		return vrCoordinateSystem;
-	}
+    @Override
+    public void setActivation(final Activation activation) {
+        this.activation = activation;
+    }
 
-	void handleAction(final boolean hot, final Input input) {
-		if (!input.getMain().isOpenVrOverlayActive())
-			return;
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 
-		if (activatable == Activatable.ALWAYS) {
-			VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
-			return;
-		}
+    public void setVrCoordinateSystem(final VrCoordinateSystem vrCoordinateSystem) {
+        this.vrCoordinateSystem = vrCoordinateSystem;
+    }
 
-		switch (activation) {
-		case REPEAT -> {
-			if (hot)
-				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
-		}
-		case SINGLE_IMMEDIATELY -> {
-			if (!hot)
-				activatable = Activatable.YES;
-			else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
-			}
-		}
-		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO)
-					activatable = Activatable.YES;
-				else if (activatable == Activatable.DENIED_BY_OTHER_ACTION)
-					activatable = Activatable.NO;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
-			}
-		}
-		}
-	}
+    public enum VrCoordinateSystem {
+        SEATED(VR.ETrackingUniverseOrigin_TrackingUniverseSeated, "VR_COORDINATE_SYSTEM_SEATED"),
+        STANDING(VR.ETrackingUniverseOrigin_TrackingUniverseStanding, "VR_COORDINATE_SYSTEM_STANDING"),
+        RAW_AND_UNCALIBRATED(
+                VR.ETrackingUniverseOrigin_TrackingUniverseRawAndUncalibrated,
+                "VR_COORDINATE_SYSTEM_RAW_AND_UNCALIBRATED");
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+        private final int value;
 
-	@Override
-	public void setActivatable(final Activatable activatable) {
-		this.activatable = activatable;
-	}
+        private final String label;
 
-	@Override
-	public void setActivation(final Activation activation) {
-		this.activation = activation;
-	}
+        VrCoordinateSystem(final int value, final String labelKey) {
+            this.value = value;
+            label = Main.strings.getString(labelKey);
+        }
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
-
-	public void setVrCoordinateSystem(final VrCoordinateSystem vrCoordinateSystem) {
-		this.vrCoordinateSystem = vrCoordinateSystem;
-	}
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
 }

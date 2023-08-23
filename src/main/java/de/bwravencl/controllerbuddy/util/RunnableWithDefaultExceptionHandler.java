@@ -18,18 +18,18 @@ package de.bwravencl.controllerbuddy.util;
 
 public final class RunnableWithDefaultExceptionHandler implements Runnable {
 
-	private final Runnable runnable;
+    private final Runnable runnable;
 
-	public RunnableWithDefaultExceptionHandler(final Runnable runnable) {
-		this.runnable = runnable;
-	}
+    public RunnableWithDefaultExceptionHandler(final Runnable runnable) {
+        this.runnable = runnable;
+    }
 
-	@Override
-	public void run() {
-		try {
-			runnable.run();
-		} catch (final Throwable t) {
-			Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-		}
-	}
+    @Override
+    public void run() {
+        try {
+            runnable.run();
+        } catch (final Throwable t) {
+            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
+        }
+    }
 }

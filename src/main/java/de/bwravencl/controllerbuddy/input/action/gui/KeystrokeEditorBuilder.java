@@ -16,6 +16,11 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -29,7 +34,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -45,196 +49,184 @@ import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
-import de.bwravencl.controllerbuddy.input.ScanCode;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
-	private static final class CheckboxJList<E> extends JList<E> {
+    private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+    private final JTextArea keyStrokeTextArea = new JTextArea();
+    private CheckboxJList<?> modifierList;
+    private CheckboxJList<?> keyList;
 
-		private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
+    public KeystrokeEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-			@Serial
-			private static final long serialVersionUID = -7958791166718006570L;
+    private static int getListModelIndex(final ListModel<?> model, final Object value) {
+        if (value == null) return -1;
 
-			@Override
-			public Component getListCellRendererComponent(final JList<? extends E> list, final E value, final int index,
-					final boolean isSelected, final boolean cellHasFocus) {
-				setComponentOrientation(list.getComponentOrientation());
+        if (model instanceof final DefaultListModel<?> defaultListModel) return defaultListModel.indexOf(value);
 
-				setFont(list.getFont());
-				setText(String.valueOf(value));
+        for (var i = 0; i < model.getSize(); i++) if (value.equals(model.getElementAt(i))) return i;
 
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
+        return -1;
+    }
 
-				setSelected(isSelected);
-				setEnabled(list.isEnabled());
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
+        parentPanel.add(keystrokePanel);
 
-				return this;
-			}
-		}
+        final var keyStroke = (KeyStroke) initialValue;
 
-		@Serial
-		private static final long serialVersionUID = 5413881551745215922L;
+        final var availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
 
-		private CheckboxJList(final E[] listData) {
-			super(listData);
+        final var modifiersPanel = new JPanel();
+        modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
+        final var modifiersLabel = new JLabel(Main.strings.getString("MODIFIERS_LABEL"));
+        modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        modifiersPanel.add(modifiersLabel);
+        modifiersPanel.add(Box.createVerticalStrut(5));
+        modifierList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
+        modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
-			setCellRenderer(new CheckboxListCellRenderer<>());
+        final var addedModifiers = new ArrayList<String>();
+        for (final var modifierCode : keyStroke.getModifierCodes()) addedModifiers.add(modifierCode.name());
+        addedModifiers.forEach(s1 -> {
+            final var index1 = getListModelIndex(modifierList.getModel(), s1);
+            if (index1 >= 0) modifierList.addSelectionInterval(index1, index1);
+        });
 
-			for (final var mouseMotionListener : getMouseMotionListeners())
-				if (mouseMotionListener instanceof ListSelectionListener)
-					removeMouseMotionListener(mouseMotionListener);
+        final var modifiersScrollPane = new JScrollPane(modifierList);
+        modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
+        modifiersPanel.add(modifiersScrollPane);
+        keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
 
-			setSelectionModel(new DefaultListSelectionModel() {
+        final var keysPanel = new JPanel();
+        keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
+        final var keysLabel = new JLabel(Main.strings.getString("KEYS_LABEL"));
+        keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        keysPanel.add(keysLabel);
+        keysPanel.add(Box.createVerticalStrut(5));
+        keyList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
+        keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
-				@Serial
-				private static final long serialVersionUID = 8997996268575032389L;
+        final var addedKeys = new ArrayList<String>();
+        for (final var keyCode : keyStroke.getKeyCodes()) addedKeys.add(keyCode.name());
+        addedKeys.forEach(s2 -> {
+            final var index2 = getListModelIndex(keyList.getModel(), s2);
+            if (index2 >= 0) keyList.addSelectionInterval(index2, index2);
+        });
 
-				@Override
-				public void setSelectionInterval(final int index0, final int index1) {
-					if (super.isSelectedIndex(index0))
-						super.removeSelectionInterval(index0, index1);
-					else
-						super.addSelectionInterval(index0, index1);
-				}
-			});
-		}
-	}
+        final var keysScrollPane = new JScrollPane(keyList);
+        keysScrollPane.setPreferredSize(new Dimension(130, 200));
+        keysPanel.add(keysScrollPane);
+        keystrokePanel.add(keysPanel, BorderLayout.EAST);
 
-	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
+        keyStrokeTextArea.setLineWrap(true);
+        keyStrokeTextArea.setWrapStyleWord(true);
+        keyStrokeTextArea.setEditable(false);
+        keyStrokeTextArea.setFocusable(false);
+        keystrokePanel.add(keyStrokeTextArea, BorderLayout.SOUTH);
+    }
 
-		private final Method setterMethod;
-		private final KeyStroke keyStroke;
-		private final boolean modifiers;
+    private static final class CheckboxJList<E> extends JList<E> {
 
-		private JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
-				final boolean modifiers) {
-			this.setterMethod = setterMethod;
-			this.keyStroke = keyStroke;
-			this.modifiers = modifiers;
-		}
+        @Serial
+        private static final long serialVersionUID = 5413881551745215922L;
 
-		@Override
-		public void valueChanged(final ListSelectionEvent e) {
-			try {
-				final Set<ScanCode> scanCodes = new HashSet<>();
+        private CheckboxJList(final E[] listData) {
+            super(listData);
 
-				((JList<?>) e.getSource()).getSelectedValuesList()
-						.forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
+            setCellRenderer(new CheckboxListCellRenderer<>());
 
-				final var scanCodesArray = scanCodes.toArray(ScanCode[]::new);
+            for (final var mouseMotionListener : getMouseMotionListeners())
+                if (mouseMotionListener instanceof ListSelectionListener)
+                    removeMouseMotionListener(mouseMotionListener);
 
-				if (modifiers)
-					keyStroke.setModifierCodes(scanCodesArray);
-				else
-					keyStroke.setKeyCodes(scanCodesArray);
+            setSelectionModel(new DefaultListSelectionModel() {
 
-				setterMethod.invoke(action, keyStroke);
+                @Serial
+                private static final long serialVersionUID = 8997996268575032389L;
 
-				final Set<Object> keyStrokeSet = new LinkedHashSet<>();
-				if (modifierList != null)
-					keyStrokeSet.addAll(modifierList.getSelectedValuesList());
-				if (keyList != null)
-					keyStrokeSet.addAll(keyList.getSelectedValuesList());
+                @Override
+                public void setSelectionInterval(final int index0, final int index1) {
+                    if (super.isSelectedIndex(index0)) super.removeSelectionInterval(index0, index1);
+                    else super.addSelectionInterval(index0, index1);
+                }
+            });
+        }
 
-				keyStrokeTextArea
-						.setText(keyStrokeSet.stream().map(Object::toString).collect(Collectors.joining(" + ")));
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
-			}
-		}
-	}
+        private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
 
-	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+            @Serial
+            private static final long serialVersionUID = -7958791166718006570L;
 
-	private static int getListModelIndex(final ListModel<?> model, final Object value) {
-		if (value == null)
-			return -1;
+            @Override
+            public Component getListCellRendererComponent(
+                    final JList<? extends E> list,
+                    final E value,
+                    final int index,
+                    final boolean isSelected,
+                    final boolean cellHasFocus) {
+                setComponentOrientation(list.getComponentOrientation());
 
-		if (model instanceof final DefaultListModel<?> defaultListModel)
-			return defaultListModel.indexOf(value);
+                setFont(list.getFont());
+                setText(String.valueOf(value));
 
-		for (var i = 0; i < model.getSize(); i++)
-			if (value.equals(model.getElementAt(i)))
-				return i;
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
 
-		return -1;
-	}
+                setSelected(isSelected);
+                setEnabled(list.isEnabled());
 
-	private CheckboxJList<?> modifierList;
-	private CheckboxJList<?> keyList;
-	private final JTextArea keyStrokeTextArea = new JTextArea();
+                return this;
+            }
+        }
+    }
 
-	public KeystrokeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+    private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
-		parentPanel.add(keystrokePanel);
+        private final Method setterMethod;
+        private final KeyStroke keyStroke;
+        private final boolean modifiers;
 
-		final var keyStroke = (KeyStroke) initialValue;
+        private JListSetPropertyListSelectionListener(
+                final Method setterMethod, final KeyStroke keyStroke, final boolean modifiers) {
+            this.setterMethod = setterMethod;
+            this.keyStroke = keyStroke;
+            this.modifiers = modifiers;
+        }
 
-		final var availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
+        @Override
+        public void valueChanged(final ListSelectionEvent e) {
+            try {
+                final Set<ScanCode> scanCodes = new HashSet<>();
 
-		final var modifiersPanel = new JPanel();
-		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
-		final var modifiersLabel = new JLabel(Main.strings.getString("MODIFIERS_LABEL"));
-		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-		modifiersPanel.add(modifiersLabel);
-		modifiersPanel.add(Box.createVerticalStrut(5));
-		modifierList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
-		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
+                ((JList<?>) e.getSource())
+                        .getSelectedValuesList()
+                        .forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
 
-		final var addedModifiers = new ArrayList<String>();
-		for (final var modifierCode : keyStroke.getModifierCodes())
-			addedModifiers.add(modifierCode.name());
-		addedModifiers.forEach(s1 -> {
-			final var index1 = getListModelIndex(modifierList.getModel(), s1);
-			if (index1 >= 0)
-				modifierList.addSelectionInterval(index1, index1);
-		});
+                final var scanCodesArray = scanCodes.toArray(ScanCode[]::new);
 
-		final var modifiersScrollPane = new JScrollPane(modifierList);
-		modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
-		modifiersPanel.add(modifiersScrollPane);
-		keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
+                if (modifiers) keyStroke.setModifierCodes(scanCodesArray);
+                else keyStroke.setKeyCodes(scanCodesArray);
 
-		final var keysPanel = new JPanel();
-		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
-		final var keysLabel = new JLabel(Main.strings.getString("KEYS_LABEL"));
-		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-		keysPanel.add(keysLabel);
-		keysPanel.add(Box.createVerticalStrut(5));
-		keyList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
-		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
+                setterMethod.invoke(action, keyStroke);
 
-		final var addedKeys = new ArrayList<String>();
-		for (final var keyCode : keyStroke.getKeyCodes())
-			addedKeys.add(keyCode.name());
-		addedKeys.forEach(s2 -> {
-			final var index2 = getListModelIndex(keyList.getModel(), s2);
-			if (index2 >= 0)
-				keyList.addSelectionInterval(index2, index2);
-		});
+                final Set<Object> keyStrokeSet = new LinkedHashSet<>();
+                if (modifierList != null) keyStrokeSet.addAll(modifierList.getSelectedValuesList());
+                if (keyList != null) keyStrokeSet.addAll(keyList.getSelectedValuesList());
 
-		final var keysScrollPane = new JScrollPane(keyList);
-		keysScrollPane.setPreferredSize(new Dimension(130, 200));
-		keysPanel.add(keysScrollPane);
-		keystrokePanel.add(keysPanel, BorderLayout.EAST);
-
-		keyStrokeTextArea.setLineWrap(true);
-		keyStrokeTextArea.setWrapStyleWord(true);
-		keyStrokeTextArea.setEditable(false);
-		keyStrokeTextArea.setFocusable(false);
-		keystrokePanel.add(keyStrokeTextArea, BorderLayout.SOUTH);
-	}
+                keyStrokeTextArea.setText(
+                        keyStrokeSet.stream().map(Object::toString).collect(Collectors.joining(" + ")));
+            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+                log.log(Level.SEVERE, e1.getMessage(), e1);
+            }
+        }
+    }
 }

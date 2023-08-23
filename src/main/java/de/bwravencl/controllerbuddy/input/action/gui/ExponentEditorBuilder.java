@@ -16,6 +16,10 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import com.formdev.flatlaf.ui.FlatRoundBorder;
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -23,110 +27,108 @@ import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.function.Consumer;
-
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.formdev.flatlaf.ui.FlatRoundBorder;
-
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
-	private static final class PowerFunctionPlotter extends JComponent implements Consumer<Object> {
+    public ExponentEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		@Serial
-		private static final long serialVersionUID = 5075932419255249325L;
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        super.buildEditor(parentPanel);
 
-		private float power;
+        parentPanel.add(Box.createHorizontalStrut(Main.DEFAULT_HGAP));
 
-		private final Color defaultBackground;
-		private final Color defaultForeground;
+        final var powerFunctionPlotter = new PowerFunctionPlotter((float) initialValue);
+        parentPanel.add(powerFunctionPlotter);
 
-		private PowerFunctionPlotter(final float power) {
-			this.power = power;
+        Arrays.stream(spinner.getChangeListeners())
+                .filter(changeListener -> changeListener instanceof JSpinnerSetPropertyChangeListener)
+                .findFirst()
+                .ifPresent(changeListener ->
+                        ((JSpinnerSetPropertyChangeListener) changeListener).setValueConsumer(powerFunctionPlotter));
+    }
 
-			defaultBackground = UIManager.getColor("Button.background");
-			defaultForeground = UIManager.getColor("Button.foreground");
+    @Override
+    Comparable<Float> getMaximum() {
+        return 10f;
+    }
 
-			setBorder(new FlatRoundBorder());
-			setPreferredSize(new Dimension(48, 48));
-		}
+    @Override
+    Comparable<Float> getMinimum() {
+        return 1f;
+    }
 
-		@Override
-		public void accept(final Object t) {
-			if (t instanceof final Float floatValue) {
-				power = floatValue;
-				repaint();
-			}
-		}
+    @Override
+    Number getStepSize() {
+        return 0.1f;
+    }
 
-		private int calculateY(final int x, final int plotWidth, final int plotHeight) {
-			return plotHeight - 1
-					- (x == 0 ? 0 : (int) (plotHeight / Math.pow((double) (plotWidth - 1) / (double) x, power)));
-		}
+    private static final class PowerFunctionPlotter extends JComponent implements Consumer<Object> {
 
-		@Override
-		public void paintComponent(final Graphics g) {
-			super.paintComponent(g);
+        @Serial
+        private static final long serialVersionUID = 5075932419255249325L;
 
-			final var insets = getInsets();
+        private final Color defaultBackground;
+        private final Color defaultForeground;
+        private float power;
 
-			final var plotWidth = getWidth() - (insets.left + insets.right);
-			final var plotHeight = getHeight() - (insets.bottom + insets.top);
+        private PowerFunctionPlotter(final float power) {
+            this.power = power;
 
-			g.setColor(defaultBackground);
-			g.fillRect(insets.left, insets.top, plotWidth, plotHeight);
+            defaultBackground = UIManager.getColor("Button.background");
+            defaultForeground = UIManager.getColor("Button.foreground");
 
-			g.setColor(defaultForeground);
+            setBorder(new FlatRoundBorder());
+            setPreferredSize(new Dimension(48, 48));
+        }
 
-			for (var x1 = 0; x1 < plotWidth - 1; x1++) {
-				final var y1 = calculateY(x1, plotWidth, plotHeight);
-				final var x2 = x1 + 1;
-				final var y2 = calculateY(x2, plotWidth, plotHeight);
+        @Override
+        public void accept(final Object t) {
+            if (t instanceof final Float floatValue) {
+                power = floatValue;
+                repaint();
+            }
+        }
 
-				g.drawLine(x1 + insets.left, y1 + insets.bottom, x2 + insets.left, y2 + insets.bottom);
-			}
-		}
-	}
+        private int calculateY(final int x, final int plotWidth, final int plotHeight) {
+            return plotHeight
+                    - 1
+                    - (x == 0 ? 0 : (int) (plotHeight / Math.pow((double) (plotWidth - 1) / (double) x, power)));
+        }
 
-	public ExponentEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        @Override
+        public void paintComponent(final Graphics g) {
+            super.paintComponent(g);
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		super.buildEditor(parentPanel);
+            final var insets = getInsets();
 
-		parentPanel.add(Box.createHorizontalStrut(Main.DEFAULT_HGAP));
+            final var plotWidth = getWidth() - (insets.left + insets.right);
+            final var plotHeight = getHeight() - (insets.bottom + insets.top);
 
-		final var powerFunctionPlotter = new PowerFunctionPlotter((float) initialValue);
-		parentPanel.add(powerFunctionPlotter);
+            g.setColor(defaultBackground);
+            g.fillRect(insets.left, insets.top, plotWidth, plotHeight);
 
-		Arrays.stream(spinner.getChangeListeners())
-				.filter(changeListener -> changeListener instanceof JSpinnerSetPropertyChangeListener).findFirst()
-				.ifPresent(changeListener -> ((JSpinnerSetPropertyChangeListener) changeListener)
-						.setValueConsumer(powerFunctionPlotter));
-	}
+            g.setColor(defaultForeground);
 
-	@Override
-	Comparable<Float> getMaximum() {
-		return 10f;
-	}
+            for (var x1 = 0; x1 < plotWidth - 1; x1++) {
+                final var y1 = calculateY(x1, plotWidth, plotHeight);
+                final var x2 = x1 + 1;
+                final var y2 = calculateY(x2, plotWidth, plotHeight);
 
-	@Override
-	Comparable<Float> getMinimum() {
-		return 1f;
-	}
-
-	@Override
-	Number getStepSize() {
-		return 0.1f;
-	}
+                g.drawLine(x1 + insets.left, y1 + insets.bottom, x2 + insets.left, y2 + insets.bottom);
+            }
+        }
+    }
 }

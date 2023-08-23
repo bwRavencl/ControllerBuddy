@@ -16,71 +16,75 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public final class StringEditorBuilder extends EditorBuilder {
 
-	private static class MyDocumentListener extends PropertySetter implements DocumentListener {
+    private static final Logger log = Logger.getLogger(StringEditorBuilder.class.getName());
 
-		private MyDocumentListener(final IAction<?> action, final Method setterMethod) {
-			super(action, setterMethod);
-		}
+    public StringEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		@Override
-		public void changedUpdate(final DocumentEvent e) {
-			update(e);
-		}
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        final var textField = new JTextField(23);
+        textField.setText((String) initialValue);
+        textField.setCaretPosition(0);
+        textField.getDocument().addDocumentListener(new MyDocumentListener(action, setterMethod));
 
-		@Override
-		public void insertUpdate(final DocumentEvent e) {
-			update(e);
-		}
+        parentPanel.add(textField);
+    }
 
-		@Override
-		public void removeUpdate(final DocumentEvent e) {
-			update(e);
-		}
+    private static class MyDocumentListener extends PropertySetter implements DocumentListener {
 
-		private void update(final DocumentEvent e) {
-			try {
-				final var document = e.getDocument();
-				final var text = document.getText(0, document.getLength());
+        private MyDocumentListener(final IAction<?> action, final Method setterMethod) {
+            super(action, setterMethod);
+        }
 
-				setterMethod.invoke(action, text);
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| BadLocationException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
-			}
-		}
-	}
+        @Override
+        public void changedUpdate(final DocumentEvent e) {
+            update(e);
+        }
 
-	private static final Logger log = Logger.getLogger(StringEditorBuilder.class.getName());
+        @Override
+        public void insertUpdate(final DocumentEvent e) {
+            update(e);
+        }
 
-	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        @Override
+        public void removeUpdate(final DocumentEvent e) {
+            update(e);
+        }
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		final var textField = new JTextField(23);
-		textField.setText((String) initialValue);
-		textField.setCaretPosition(0);
-		textField.getDocument().addDocumentListener(new MyDocumentListener(action, setterMethod));
+        private void update(final DocumentEvent e) {
+            try {
+                final var document = e.getDocument();
+                final var text = document.getText(0, document.getLength());
 
-		parentPanel.add(textField);
-	}
+                setterMethod.invoke(action, text);
+            } catch (final IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException
+                    | BadLocationException e1) {
+                log.log(Level.SEVERE, e1.getMessage(), e1);
+            }
+        }
+    }
 }

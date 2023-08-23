@@ -16,81 +16,76 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import java.util.HashMap;
+import java.util.Map;
 
 public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<Float> {
 
-	Map<IAxisToLongPressAction, Long> actionToDownSinceMap = new HashMap<>();
-	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
+    Map<IAxisToLongPressAction, Long> actionToDownSinceMap = new HashMap<>();
+    Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
-	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
-		return action.getActivation() == Activation.SINGLE_ON_RELEASE;
-	}
+    private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
+        return action.getActivation() == Activation.SINGLE_ON_RELEASE;
+    }
 
-	static void reset() {
-		actionToDownSinceMap.clear();
-		actionToMustDenyActivationMap.clear();
-	}
+    static void reset() {
+        actionToDownSinceMap.clear();
+        actionToMustDenyActivationMap.clear();
+    }
 
-	float getMaxAxisValue();
+    float getMaxAxisValue();
 
-	float getMinAxisValue();
+    float getMinAxisValue();
 
-	default Float handleLongPress(final Input input, final int component, final Float value) {
-		if (!isLongPress())
-			return value;
+    default Float handleLongPress(final Input input, final int component, final Float value) {
+        if (!isLongPress()) return value;
 
-		final var currentTime = System.currentTimeMillis();
+        final var currentTime = System.currentTimeMillis();
 
-		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
-			if (!actionToDownSinceMap.containsKey(this))
-				actionToDownSinceMap.put(this, currentTime);
-			else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
-				for (final var mode : input.getProfile().getModes()) {
-					final var actions = mode.getAxisToActionsMap().get(component);
+        if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
+            if (!actionToDownSinceMap.containsKey(this)) actionToDownSinceMap.put(this, currentTime);
+            else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+                for (final var mode : input.getProfile().getModes()) {
+                    final var actions = mode.getAxisToActionsMap().get(component);
 
-					if (actions != null && actions.contains(this)) {
-						for (final IAction<?> action : actions) {
-							if (action == this)
-								continue;
+                    if (actions != null && actions.contains(this)) {
+                        for (final IAction<?> action : actions) {
+                            if (action == this) continue;
 
-							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
+                            var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
-							if (isUndelayedOnReleaseAction == null) {
-								isUndelayedOnReleaseAction = false;
+                            if (isUndelayedOnReleaseAction == null) {
+                                isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final AxisToKeyAction axisToKeyAction) {
-									if (!axisToKeyAction.isLongPress())
-										isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
-								} else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction)
-									if (!axisToMouseButtonAction.isLongPress())
-										isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
+                                if (action instanceof final AxisToKeyAction axisToKeyAction) {
+                                    if (!axisToKeyAction.isLongPress())
+                                        isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
+                                } else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction)
+                                    if (!axisToMouseButtonAction.isLongPress())
+                                        isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
 
-								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
-							}
+                                actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
+                            }
 
-							if (isUndelayedOnReleaseAction)
-								((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
-						}
+                            if (isUndelayedOnReleaseAction)
+                                ((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+                        }
 
-						break;
-					}
-				}
+                        break;
+                    }
+                }
 
-				return value;
-			}
-		} else
-			actionToDownSinceMap.remove(this);
+                return value;
+            }
+        } else actionToDownSinceMap.remove(this);
 
-		return Float.MIN_VALUE;
-	}
+        return Float.MIN_VALUE;
+    }
 
-	void setMaxAxisValue(final float maxAxisValue);
+    void setMaxAxisValue(final float maxAxisValue);
 
-	void setMinAxisValue(final float minAxisValue);
+    void setMinAxisValue(final float minAxisValue);
 }

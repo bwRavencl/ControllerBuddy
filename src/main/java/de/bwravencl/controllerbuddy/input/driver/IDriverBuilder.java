@@ -16,22 +16,21 @@
 
 package de.bwravencl.controllerbuddy.input.driver;
 
-import java.util.List;
-
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
+import java.util.List;
 
 public interface IDriverBuilder extends Comparable<IDriverBuilder> {
 
-	@Override
-	default int compareTo(final IDriverBuilder o) {
-		return Integer.compare(getOrder(), o.getOrder());
-	}
+    @Override
+    default int compareTo(final IDriverBuilder o) {
+        return Integer.compare(getOrder(), o.getOrder());
+    }
 
-	Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
-			final ControllerInfo selectedController);
+    Driver getIfAvailable(
+            final Input input, final List<ControllerInfo> presentControllers, final ControllerInfo selectedController);
 
-	default int getOrder() {
-		return 0;
-	}
+    default int getOrder() {
+        return 0;
+    }
 }

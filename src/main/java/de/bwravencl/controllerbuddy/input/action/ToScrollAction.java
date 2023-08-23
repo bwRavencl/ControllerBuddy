@@ -16,51 +16,51 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
+import java.text.MessageFormat;
+import java.util.Locale;
 
 abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
-	private static final int DEFAULT_CLICKS = 10;
+    private static final int DEFAULT_CLICKS = 10;
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class, order = 10)
-	int clicks = DEFAULT_CLICKS;
+    @ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class, order = 10)
+    int clicks = DEFAULT_CLICKS;
 
-	transient float remainingD = 0f;
+    transient float remainingD = 0f;
 
-	public int getClicks() {
-		return clicks;
-	}
+    public int getClicks() {
+        return clicks;
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty())
-			return super.getDescription(input);
+    @Override
+    public String getDescription(final Input input) {
+        if (!isDescriptionEmpty()) return super.getDescription(input);
 
-		return MessageFormat.format(Main.strings.getString("SCROLL_DIRECTION"),
-				Main.strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
-	}
+        return MessageFormat.format(
+                Main.strings.getString("SCROLL_DIRECTION"),
+                Main.strings
+                        .getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP")
+                        .toLowerCase(Locale.ROOT));
+    }
 
-	void scroll(final Input input, float d) {
-		d = invert ? -d : d;
+    void scroll(final Input input, float d) {
+        d = invert ? -d : d;
 
-		d += remainingD;
+        d += remainingD;
 
-		if (d >= -1f && d <= 1f)
-			remainingD = d;
-		else {
-			remainingD = 0f;
+        if (d >= -1f && d <= 1f) remainingD = d;
+        else {
+            remainingD = 0f;
 
-			input.setScrollClicks(Math.round(d));
-		}
-	}
+            input.setScrollClicks(Math.round(d));
+        }
+    }
 
-	public void setClicks(final int clicks) {
-		this.clicks = clicks;
-	}
+    public void setClicks(final int clicks) {
+        this.clicks = clicks;
+    }
 }

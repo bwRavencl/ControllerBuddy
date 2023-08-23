@@ -16,76 +16,74 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import java.awt.EventQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JOptionPane;
-
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import java.awt.EventQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public abstract class RunMode implements Runnable {
 
-	private static final Logger log = Logger.getLogger(RunMode.class.getName());
+    public static final int DEFAULT_POLL_INTERVAL = 1;
+    private static final Logger log = Logger.getLogger(RunMode.class.getName());
+    final Main main;
+    final Input input;
+    long pollInterval = DEFAULT_POLL_INTERVAL;
+    int minAxisValue;
+    int maxAxisValue;
+    int nButtons;
 
-	public static final int DEFAULT_POLL_INTERVAL = 1;
+    RunMode(final Main main, final Input input) {
+        this.main = main;
+        this.input = input;
+        input.setRunMode(this);
+    }
 
-	final Main main;
-	final Input input;
-	long pollInterval = DEFAULT_POLL_INTERVAL;
-	int minAxisValue;
-	int maxAxisValue;
-	int nButtons;
+    final void controllerDisconnected() {
+        Thread.startVirtualThread(() -> main.stopAll(true, true, true));
 
-	RunMode(final Main main, final Input input) {
-		this.main = main;
-		this.input = input;
-		input.setRunMode(this);
-	}
+        log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
+        EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                main.getFrame(),
+                Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
+                Main.strings.getString("ERROR_DIALOG_TITLE"),
+                JOptionPane.ERROR_MESSAGE));
+    }
 
-	final void controllerDisconnected() {
-		Thread.startVirtualThread(() -> main.stopAll(true, true, true));
+    abstract Logger getLogger();
 
-		log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
-		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main.getFrame(),
-				Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-				Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-	}
+    public final int getMaxAxisValue() {
+        return maxAxisValue;
+    }
 
-	abstract Logger getLogger();
+    public final int getMinAxisValue() {
+        return minAxisValue;
+    }
 
-	public final int getMaxAxisValue() {
-		return maxAxisValue;
-	}
+    public final long getPollInterval() {
+        return pollInterval;
+    }
 
-	public final int getMinAxisValue() {
-		return minAxisValue;
-	}
+    public final int getnButtons() {
+        return nButtons;
+    }
 
-	public final int getnButtons() {
-		return nButtons;
-	}
+    final void logStart() {
+        getLogger().log(Level.INFO, "Starting output");
+    }
 
-	public final long getPollInterval() {
-		return pollInterval;
-	}
+    final void logStop() {
+        getLogger().log(Level.INFO, "Stopped output");
+    }
 
-	final void logStart() {
-		getLogger().log(Level.INFO, "Starting output");
-	}
+    public final void setPollInterval(final long pollInterval) {
+        this.pollInterval = pollInterval;
+    }
 
-	final void logStop() {
-		getLogger().log(Level.INFO, "Stopped output");
-	}
-
-	void setnButtons(final int nButtons) {
-		this.nButtons = nButtons;
-		input.initButtons();
-	}
-
-	public final void setPollInterval(final long pollInterval) {
-		this.pollInterval = pollInterval;
-	}
+    void setnButtons(final int nButtons) {
+        this.nButtons = nButtons;
+        input.initButtons();
+    }
 }

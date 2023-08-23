@@ -24,42 +24,42 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
 @Action(label = "TO_VR_RESET_ZERO_POSE_ACTION", category = ActionCategory.AXIS, order = 50)
 public final class AxisToVrResetZeroPoseAction extends ToVrResetZeroPoseAction<Float>
-		implements IAxisToLongPressAction {
+        implements IAxisToLongPressAction {
 
-	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
-	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
+    private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
+    private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
-	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
-	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
+    @ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+    private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
-	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 101)
-	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
+    @ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 101)
+    private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
-	@Override
-	public void doAction(final Input input, final int component, Float value) {
-		value = handleLongPress(input, component, value);
+    @Override
+    public void doAction(final Input input, final int component, Float value) {
+        value = handleLongPress(input, component, value);
 
-		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
-		handleAction(inZone, input);
-	}
+        final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
+        handleAction(inZone, input);
+    }
 
-	@Override
-	public float getMaxAxisValue() {
-		return maxAxisValue;
-	}
+    @Override
+    public float getMaxAxisValue() {
+        return maxAxisValue;
+    }
 
-	@Override
-	public float getMinAxisValue() {
-		return minAxisValue;
-	}
+    @Override
+    public float getMinAxisValue() {
+        return minAxisValue;
+    }
 
-	@Override
-	public void setMaxAxisValue(final float maxAxisValue) {
-		this.maxAxisValue = maxAxisValue;
-	}
+    @Override
+    public void setMaxAxisValue(final float maxAxisValue) {
+        this.maxAxisValue = maxAxisValue;
+    }
 
-	@Override
-	public void setMinAxisValue(final float minAxisValue) {
-		this.minAxisValue = minAxisValue;
-	}
+    @Override
+    public void setMinAxisValue(final float minAxisValue) {
+        this.minAxisValue = minAxisValue;
+    }
 }

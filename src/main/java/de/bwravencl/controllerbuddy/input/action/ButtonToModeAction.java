@@ -16,12 +16,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import java.text.MessageFormat;
-import java.util.LinkedList;
-import java.util.UUID;
-
-import org.lwjgl.glfw.GLFW;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -33,179 +27,179 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
+import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.UUID;
+import org.lwjgl.glfw.GLFW;
 
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
 public final class ButtonToModeAction implements IButtonToAction, IResetableAction {
 
-	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
+    private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
-	public static LinkedList<ButtonToModeAction> getButtonToModeActionStack() {
-		return buttonToModeActionStack;
-	}
+    @ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
+    private boolean toggle = false;
 
-	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
-	private boolean toggle = false;
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @ActionProperty(
+            label = "MODE_UUID",
+            editorBuilder = ModeEditorBuilder.class,
+            overrideFieldName = "mode",
+            overrideFieldType = Mode.class,
+            order = 10)
+    private UUID modeUuid;
 
-	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
-	private UUID modeUuid;
+    private transient boolean up = true;
 
-	private transient boolean up = true;
+    public static LinkedList<ButtonToModeAction> getButtonToModeActionStack() {
+        return buttonToModeActionStack;
+    }
 
-	private void activateMode(final Input input, final Profile profile) {
-		if (!buttonToModeActionStack.contains(this)) {
-			buttonToModeActionStack.push(this);
-			profile.setActiveMode(input, modeUuid);
+    private void activateMode(final Input input, final Profile profile) {
+        if (!buttonToModeActionStack.contains(this)) {
+            buttonToModeActionStack.push(this);
+            profile.setActiveMode(input, modeUuid);
 
-			if (targetsOnScreenKeyboardMode())
-				input.getMain().setOnScreenKeyboardVisible(true);
-		}
-	}
+            if (targetsOnScreenKeyboardMode()) input.getMain().setOnScreenKeyboardVisible(true);
+        }
+    }
 
-	private boolean buttonNotUsedByActiveModes(final Input input) {
-		final var profile = input.getProfile();
+    private boolean buttonNotUsedByActiveModes(final Input input) {
+        final var profile = input.getProfile();
 
-		Integer myButton = null;
-		buttonLoop: for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
-			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
-			if (buttonToModeActions != null)
-				for (final var action : buttonToModeActions)
-					if (equals(action)) {
-						myButton = button;
-						break buttonLoop;
-					}
-		}
+        Integer myButton = null;
+        buttonLoop:
+        for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
+            final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
+            if (buttonToModeActions != null)
+                for (final var action : buttonToModeActions)
+                    if (equals(action)) {
+                        myButton = button;
+                        break buttonLoop;
+                    }
+        }
 
-		if (myButton != null)
-			for (final var action : buttonToModeActionStack) {
-				final var buttonToActionMap = action.getMode(input).getButtonToActionsMap();
-				if (buttonToActionMap.containsKey(myButton))
-					return false;
-			}
+        if (myButton != null)
+            for (final var action : buttonToModeActionStack) {
+                final var buttonToActionMap = action.getMode(input).getButtonToActionsMap();
+                if (buttonToActionMap.containsKey(myButton)) return false;
+            }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	private void deactivateMode(final Input input, final Profile profile) {
-		for (var topmostModeAction = buttonToModeActionStack
-				.peek(); topmostModeAction != this; topmostModeAction = buttonToModeActionStack.peek()) {
-			if (topmostModeAction != null)
-				topmostModeAction.deactivateMode(input, profile);
+    private void deactivateMode(final Input input, final Profile profile) {
+        for (var topmostModeAction = buttonToModeActionStack.peek();
+                topmostModeAction != this;
+                topmostModeAction = buttonToModeActionStack.peek()) {
+            if (topmostModeAction != null) topmostModeAction.deactivateMode(input, profile);
 
-			input.repeatModeActionWalk();
-		}
+            input.repeatModeActionWalk();
+        }
 
-		buttonToModeActionStack.pop();
+        buttonToModeActionStack.pop();
 
-		final Mode previousMode;
-		final var previousButtonToModeAction = buttonToModeActionStack.peek();
-		if (previousButtonToModeAction != null)
-			previousMode = previousButtonToModeAction.getMode(input);
-		else
-			previousMode = profile.getModes().get(0);
+        final Mode previousMode;
+        final var previousButtonToModeAction = buttonToModeActionStack.peek();
+        if (previousButtonToModeAction != null) previousMode = previousButtonToModeAction.getMode(input);
+        else previousMode = profile.getModes().get(0);
 
-		final var activeMode = profile.getActiveMode();
+        final var activeMode = profile.getActiveMode();
 
-		activeMode.getAllActions().stream().filter(action -> action instanceof IActivatableAction)
-				.forEach(action -> ((IActivatableAction<?>) action).init(input));
+        activeMode.getAllActions().stream()
+                .filter(action -> action instanceof IActivatableAction)
+                .forEach(action -> ((IActivatableAction<?>) action).init(input));
 
-		final var axes = activeMode.getAxisToActionsMap().keySet();
-		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
-		final var main = input.getMain();
-		if (defaultAxisToActionsMap != null)
-			axes.stream().filter(defaultAxisToActionsMap::containsKey)
-					.forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
-							.filter(action -> action instanceof IAxisToAction)
-							.forEach(action -> input.suspendAxis(axis)));
+        final var axes = activeMode.getAxisToActionsMap().keySet();
+        final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
+        final var main = input.getMain();
+        if (defaultAxisToActionsMap != null)
+            axes.stream()
+                    .filter(defaultAxisToActionsMap::containsKey)
+                    .forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
+                            .filter(action -> action instanceof IAxisToAction)
+                            .forEach(action -> input.suspendAxis(axis)));
 
-		profile.setActiveMode(input, previousMode.getUuid());
+        profile.setActiveMode(input, previousMode.getUuid());
 
-		if (targetsOnScreenKeyboardMode())
-			main.setOnScreenKeyboardVisible(false);
-	}
+        if (targetsOnScreenKeyboardMode()) main.setOnScreenKeyboardVisible(false);
+    }
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
+    @Override
+    public void doAction(final Input input, final int component, Byte value) {
+        value = handleLongPress(input, component, value);
 
-		final var profile = input.getProfile();
+        final var profile = input.getProfile();
 
-		if (value == 0) {
-			if (toggle)
-				up = true;
-			else if (buttonToModeActionStack.contains(this))
-				deactivateMode(input, profile);
-		} else if (toggle) {
-			if (up) {
-				if (buttonToModeActionStack.peek() == this)
-					deactivateMode(input, profile);
-				else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
-					activateMode(input, profile);
+        if (value == 0) {
+            if (toggle) up = true;
+            else if (buttonToModeActionStack.contains(this)) deactivateMode(input, profile);
+        } else if (toggle) {
+            if (up) {
+                if (buttonToModeActionStack.peek() == this) deactivateMode(input, profile);
+                else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
+                    activateMode(input, profile);
 
-				up = false;
-			}
-		} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
-			activateMode(input, profile);
-	}
+                up = false;
+            }
+        } else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
+            activateMode(input, profile);
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		final var mode = getMode(input);
-		if (mode == null)
-			return null;
+    @Override
+    public String getDescription(final Input input) {
+        final var mode = getMode(input);
+        if (mode == null) return null;
 
-		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
-	}
+        return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
+    }
 
-	public Mode getMode(final Input input) {
-		for (final var mode : input.getProfile().getModes())
-			if (mode.getUuid().equals(modeUuid))
-				return mode;
+    public Mode getMode(final Input input) {
+        for (final var mode : input.getProfile().getModes()) if (mode.getUuid().equals(modeUuid)) return mode;
 
-		if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid))
-			return OnScreenKeyboard.onScreenKeyboardMode;
+        if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid))
+            return OnScreenKeyboard.onScreenKeyboardMode;
 
-		return Profile.defaultMode;
-	}
+        return Profile.defaultMode;
+    }
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	public boolean isToggle() {
-		return toggle;
-	}
+    public boolean isToggle() {
+        return toggle;
+    }
 
-	@Override
-	public void reset(final Input input) {
-		buttonToModeActionStack.clear();
+    @Override
+    public void reset(final Input input) {
+        buttonToModeActionStack.clear();
 
-		if (targetsOnScreenKeyboardMode())
-			input.getMain().setOnScreenKeyboardVisible(false);
-	}
+        if (targetsOnScreenKeyboardMode()) input.getMain().setOnScreenKeyboardVisible(false);
+    }
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 
-	public void setMode(final Mode mode) {
-		modeUuid = mode.getUuid();
-	}
+    public void setMode(final Mode mode) {
+        modeUuid = mode.getUuid();
+    }
 
-	public void setToggle(final boolean toggle) {
-		this.toggle = toggle;
-	}
+    public void setToggle(final boolean toggle) {
+        this.toggle = toggle;
+    }
 
-	public boolean targetsOnScreenKeyboardMode() {
-		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
-	}
+    public boolean targetsOnScreenKeyboardMode() {
+        return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
+    }
 }

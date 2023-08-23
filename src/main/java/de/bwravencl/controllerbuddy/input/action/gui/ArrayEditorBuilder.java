@@ -16,57 +16,58 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
-	private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
+    private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
+    JComboBox<T> comboBox;
 
-		@Serial
-		private static final long serialVersionUID = 1938012378184518954L;
+    ArrayEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		JComboBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
-			super(action, setterMethod);
-		}
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        comboBox = new JComboBox<>(getValues());
+        comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
+        comboBox.setSelectedItem(initialValue);
+        parentPanel.add(comboBox);
+    }
 
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			try {
-				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
-			}
-		}
-	}
+    abstract T[] getValues();
 
-	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
+    private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
 
-	JComboBox<T> comboBox;
+        @Serial
+        private static final long serialVersionUID = 1938012378184518954L;
 
-	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
+        JComboBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
+            super(action, setterMethod);
+        }
 
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		comboBox = new JComboBox<>(getValues());
-		comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
-		comboBox.setSelectedItem(initialValue);
-		parentPanel.add(comboBox);
-	}
-
-	abstract T[] getValues();
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            try {
+                setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
+            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+                log.log(Level.SEVERE, e1.getMessage(), e1);
+            }
+        }
+    }
 }

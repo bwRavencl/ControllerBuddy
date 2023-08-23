@@ -16,176 +16,171 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.lwjgl.glfw.GLFW;
-
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import org.lwjgl.glfw.GLFW;
 
 public final class Profile implements Cloneable {
 
-	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
+    public static final Mode defaultMode;
+    private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
+    private static final boolean DEFAULT_SHOW_OVERLAY = true;
+    private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
+    private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
 
-	private static final boolean DEFAULT_SHOW_OVERLAY = true;
+    static {
+        defaultMode = new Mode(DEFAULT_MODE_UUID);
+        defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+    }
 
-	private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
+    private String version;
+    private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
+    private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
+    private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
+    private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
+    private List<Mode> modes = new ArrayList<>();
+    private transient int activeModeIndex = 0;
+    private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
 
-	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
+    Profile() {
+        modes.add(defaultMode);
+    }
 
-	public static final Mode defaultMode;
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        final var profile = (Profile) super.clone();
 
-	static {
-		defaultMode = new Mode(DEFAULT_MODE_UUID);
-		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
-	}
+        profile.setVersion(version);
+        profile.setShowOverlay(showOverlay);
+        profile.setShowVrOverlay(showVrOverlay);
+        profile.setKeyRepeatInterval(keyRepeatInterval);
 
-	private String version;
-	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
-	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
-	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
-	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
-	private List<Mode> modes = new ArrayList<>();
-	private transient int activeModeIndex = 0;
-	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
+        final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
+        for (final var entry : buttonToModeActionsMap.entrySet()) {
+            final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
+            for (final var action : entry.getValue()) buttonToModeActions.add((ButtonToModeAction) action.clone());
+            clonedButtonToModeActionsMap.put(entry.getKey(), buttonToModeActions);
+        }
+        profile.setButtonToModeActionsMap(clonedButtonToModeActionsMap);
 
-	Profile() {
-		modes.add(defaultMode);
-	}
+        final var clonedModes = new ArrayList<Mode>();
+        for (final var mode : modes) clonedModes.add((Mode) mode.clone());
+        profile.setModes(clonedModes);
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		final var profile = (Profile) super.clone();
+        final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
+        for (final var entry : virtualAxisToOverlayAxisMap.entrySet())
+            clonedVirtualAxisToOverlayAxisMap.put(
+                    entry.getKey(), (OverlayAxis) entry.getValue().clone());
+        profile.virtualAxisToOverlayAxisMap = clonedVirtualAxisToOverlayAxisMap;
 
-		profile.setVersion(version);
-		profile.setShowOverlay(showOverlay);
-		profile.setShowVrOverlay(showVrOverlay);
-		profile.setKeyRepeatInterval(keyRepeatInterval);
+        return profile;
+    }
 
-		final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
-		for (final var entry : buttonToModeActionsMap.entrySet()) {
-			final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
-			for (final var action : entry.getValue())
-				buttonToModeActions.add((ButtonToModeAction) action.clone());
-			clonedButtonToModeActionsMap.put(entry.getKey(), buttonToModeActions);
-		}
-		profile.setButtonToModeActionsMap(clonedButtonToModeActionsMap);
+    public Mode getActiveMode() {
+        return modes.get(activeModeIndex);
+    }
 
-		final var clonedModes = new ArrayList<Mode>();
-		for (final var mode : modes)
-			clonedModes.add((Mode) mode.clone());
-		profile.setModes(clonedModes);
+    public Map<Integer, List<ButtonToModeAction>> getButtonToModeActionsMap() {
+        return buttonToModeActionsMap;
+    }
 
-		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
-		for (final var entry : virtualAxisToOverlayAxisMap.entrySet())
-			clonedVirtualAxisToOverlayAxisMap.put(entry.getKey(), (OverlayAxis) entry.getValue().clone());
-		profile.virtualAxisToOverlayAxisMap = clonedVirtualAxisToOverlayAxisMap;
+    public long getKeyRepeatInterval() {
+        return keyRepeatInterval;
+    }
 
-		return profile;
-	}
+    public List<Mode> getModes() {
+        return modes;
+    }
 
-	public Mode getActiveMode() {
-		return modes.get(activeModeIndex);
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public Map<Integer, List<ButtonToModeAction>> getButtonToModeActionsMap() {
-		return buttonToModeActionsMap;
-	}
+    public Map<VirtualAxis, OverlayAxis> getVirtualAxisToOverlayAxisMap() {
+        return virtualAxisToOverlayAxisMap;
+    }
 
-	public long getKeyRepeatInterval() {
-		return keyRepeatInterval;
-	}
+    public boolean isShowOverlay() {
+        return showOverlay;
+    }
 
-	public List<Mode> getModes() {
-		return modes;
-	}
+    public boolean isShowVrOverlay() {
+        return showVrOverlay;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public void removeMode(final Input input, final Mode mode) {
+        buttonToModeActionsMap.entrySet().removeIf(entry -> {
+            for (final var action : entry.getValue()) if (action.getMode(input).equals(mode)) return true;
 
-	public Map<VirtualAxis, OverlayAxis> getVirtualAxisToOverlayAxisMap() {
-		return virtualAxisToOverlayAxisMap;
-	}
+            return false;
+        });
 
-	public boolean isShowOverlay() {
-		return showOverlay;
-	}
+        modes.remove(mode);
+    }
 
-	public boolean isShowVrOverlay() {
-		return showVrOverlay;
-	}
+    void setActiveMode(final Input input, final int index) {
+        if (modes.size() > index) {
+            input.scheduleClearOnNextPoll();
 
-	public void removeMode(final Input input, final Mode mode) {
-		buttonToModeActionsMap.entrySet().removeIf(entry -> {
-			for (final var action : entry.getValue())
-				if (action.getMode(input).equals(mode))
-					return true;
+            final var newMode = modes.get(index);
 
-			return false;
-		});
+            if (input.getRunMode() != null)
+                newMode.getAxisToActionsMap().keySet().forEach(axis -> {
+                    final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
+                    if (currentAxisToActionsMap.containsKey(axis))
+                        currentAxisToActionsMap.get(axis).forEach(action -> {
+                            if (action instanceof final AxisToAxisAction axisToAxisAction
+                                    && !(action instanceof AxisToRelativeAxisAction)) {
+                                final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
+                                                || axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER
+                                        ? -1f
+                                        : 0f;
+                                input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
+                            }
+                        });
+                });
 
-		modes.remove(mode);
-	}
+            activeModeIndex = index;
+            input.getMain().setOverlayText(newMode.getDescription());
+        }
+    }
 
-	void setActiveMode(final Input input, final int index) {
-		if (modes.size() > index) {
-			input.scheduleClearOnNextPoll();
+    public void setActiveMode(final Input input, final UUID modeUuid) {
+        modes.stream()
+                .filter(mode -> mode.getUuid().equals(modeUuid))
+                .findFirst()
+                .ifPresent(mode -> setActiveMode(input, modes.indexOf(mode)));
+    }
 
-			final var newMode = modes.get(index);
+    private void setButtonToModeActionsMap(final Map<Integer, List<ButtonToModeAction>> buttonToModeActionMap) {
+        buttonToModeActionsMap = buttonToModeActionMap;
+    }
 
-			if (input.getRunMode() != null)
-				newMode.getAxisToActionsMap().keySet().forEach(axis -> {
-					final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
-					if (currentAxisToActionsMap.containsKey(axis))
-						currentAxisToActionsMap.get(axis).forEach(action -> {
-							if (action instanceof final AxisToAxisAction axisToAxisAction
-									&& !(action instanceof AxisToRelativeAxisAction)) {
-								final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
-										|| axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
-							}
-						});
-				});
+    public void setKeyRepeatInterval(final long minKeyRepeatInterval) {
+        keyRepeatInterval = minKeyRepeatInterval;
+    }
 
-			activeModeIndex = index;
-			input.getMain().setOverlayText(newMode.getDescription());
-		}
-	}
+    private void setModes(final List<Mode> modes) {
+        this.modes = modes;
+    }
 
-	public void setActiveMode(final Input input, final UUID modeUuid) {
-		modes.stream().filter(mode -> mode.getUuid().equals(modeUuid)).findFirst()
-				.ifPresent(mode -> setActiveMode(input, modes.indexOf(mode)));
-	}
+    public void setShowOverlay(final boolean showOverlay) {
+        this.showOverlay = showOverlay;
+    }
 
-	private void setButtonToModeActionsMap(final Map<Integer, List<ButtonToModeAction>> buttonToModeActionMap) {
-		buttonToModeActionsMap = buttonToModeActionMap;
-	}
+    public void setShowVrOverlay(final boolean showVrOverlay) {
+        this.showVrOverlay = showVrOverlay;
+    }
 
-	public void setKeyRepeatInterval(final long minKeyRepeatInterval) {
-		keyRepeatInterval = minKeyRepeatInterval;
-	}
-
-	private void setModes(final List<Mode> modes) {
-		this.modes = modes;
-	}
-
-	public void setShowOverlay(final boolean showOverlay) {
-		this.showOverlay = showOverlay;
-	}
-
-	public void setShowVrOverlay(final boolean showVrOverlay) {
-		this.showVrOverlay = showVrOverlay;
-	}
-
-	public void setVersion(final String version) {
-		this.version = version;
-	}
+    public void setVersion(final String version) {
+        this.version = version;
+    }
 }

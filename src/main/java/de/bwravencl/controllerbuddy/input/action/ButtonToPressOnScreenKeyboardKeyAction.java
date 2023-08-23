@@ -24,71 +24,71 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-@Action(label = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
+@Action(
+        label = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION",
+        category = ActionCategory.ON_SCREEN_KEYBOARD_MODE,
+        order = 520)
 public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction {
 
-	@ActionProperty(label = "LOCK_KEY", editorBuilder = BooleanEditorBuilder.class, order = 10)
-	private boolean lockKey = false;
+    @ActionProperty(label = "LOCK_KEY", editorBuilder = BooleanEditorBuilder.class, order = 10)
+    private boolean lockKey = false;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+    private boolean longPress = DEFAULT_LONG_PRESS;
 
-	private transient boolean wasUp = true;
+    private transient boolean wasUp = true;
 
-	private transient boolean wasDown = false;
+    private transient boolean wasDown = false;
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	@Override
-	public void doAction(final Input input, final int component, Byte value) {
-		value = handleLongPress(input, component, value);
+    @Override
+    public void doAction(final Input input, final int component, Byte value) {
+        value = handleLongPress(input, component, value);
 
-		final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
+        final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 
-		if (value == 0) {
-			if (lockKey)
-				wasUp = true;
-			else {
-				if (wasDown)
-					onScreenKeyboard.releaseSelected();
-				wasDown = false;
-			}
-		} else if (lockKey) {
-			if (wasUp) {
-				onScreenKeyboard.toggleLock();
-				wasUp = false;
-			}
-		} else {
-			onScreenKeyboard.pressSelected();
-			wasDown = true;
-		}
-	}
+        if (value == 0) {
+            if (lockKey) wasUp = true;
+            else {
+                if (wasDown) onScreenKeyboard.releaseSelected();
+                wasDown = false;
+            }
+        } else if (lockKey) {
+            if (wasUp) {
+                onScreenKeyboard.toggleLock();
+                wasUp = false;
+            }
+        } else {
+            onScreenKeyboard.pressSelected();
+            wasDown = true;
+        }
+    }
 
-	@Override
-	public String getDescription(final Input input) {
-		return Main.strings
-				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
+    @Override
+    public String getDescription(final Input input) {
+        return Main.strings.getString(
+                lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
+    }
 
-	}
+    public boolean isLockKey() {
+        return lockKey;
+    }
 
-	public boolean isLockKey() {
-		return lockKey;
-	}
+    @Override
+    public boolean isLongPress() {
+        return longPress;
+    }
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
+    public void setLockKey(final boolean lockKey) {
+        this.lockKey = lockKey;
+    }
 
-	public void setLockKey(final boolean lockKey) {
-		this.lockKey = lockKey;
-	}
-
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
-	}
+    @Override
+    public void setLongPress(final boolean longPress) {
+        this.longPress = longPress;
+    }
 }

@@ -16,55 +16,56 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.IAction;
-
 public class BooleanEditorBuilder extends EditorBuilder {
 
-	private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
+    private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
+    JCheckBox checkBox;
 
-		@Serial
-		private static final long serialVersionUID = -33052386834598414L;
+    public BooleanEditorBuilder(
+            final EditActionsDialog editActionsDialog,
+            final IAction<?> action,
+            final String fieldName,
+            final Class<?> fieldType)
+            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
+                    InvocationTargetException {
+        super(editActionsDialog, action, fieldName, fieldType);
+    }
 
-		private JCheckBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
-			super(action, setterMethod);
-		}
+    @Override
+    public void buildEditor(final JPanel parentPanel) {
+        checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));
+        checkBox.setSelected((boolean) initialValue);
+        parentPanel.add(checkBox);
+    }
 
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			try {
-				final var selected = ((JCheckBox) e.getSource()).isSelected();
-				setterMethod.invoke(action, selected);
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
-			}
-		}
-	}
+    private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
 
-	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
+        @Serial
+        private static final long serialVersionUID = -33052386834598414L;
 
-	JCheckBox checkBox;
+        private JCheckBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
+            super(action, setterMethod);
+        }
 
-	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super(editActionsDialog, action, fieldName, fieldType);
-	}
-
-	@Override
-	public void buildEditor(final JPanel parentPanel) {
-		checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));
-		checkBox.setSelected((boolean) initialValue);
-		parentPanel.add(checkBox);
-	}
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            try {
+                final var selected = ((JCheckBox) e.getSource()).isSelected();
+                setterMethod.invoke(action, selected);
+            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+                log.log(Level.SEVERE, e1.getMessage(), e1);
+            }
+        }
+    }
 }
