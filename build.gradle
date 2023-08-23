@@ -57,8 +57,6 @@ ext {
 	spotbugsMaxRank = '20'
 	spotbugsReportLevel = 'Low'
 
-	spotlessImportOrderFile = 'spotless.importorder'
-
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
@@ -280,7 +278,7 @@ spotless {
 			'SafeButNotConsensual',
 			'SafeButControversial'
 		])
-		importOrderFile spotlessImportOrderFile
+		importOrder()
 		removeUnusedImports()
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
@@ -304,7 +302,7 @@ spotless {
 	groovyGradle {
 		target '*.gradle'
 		greclipse()
-		importOrderFile spotlessImportOrderFile
+		importOrder()
 	}
 	format 'xml', {
 		target "$resourcesDir/**/*.svg".toString()
@@ -316,7 +314,7 @@ spotless {
 		trimTrailingWhitespace()
 	}
 	format 'onlyNewline', {
-		target 'LICENSE', '*.gitignore', '*.importorder', '*.md', '*.txt', "$resourcesDir/**/*.txt".toString()
+		target 'LICENSE', '*.gitignore', '*.md', '*.txt', "$resourcesDir/**/*.txt".toString()
 		targetExclude gamecontrollerdbFile
 		endWithNewline()
 	}
