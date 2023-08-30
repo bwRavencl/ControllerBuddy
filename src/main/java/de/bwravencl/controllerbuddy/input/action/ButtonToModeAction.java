@@ -33,7 +33,7 @@ import java.util.UUID;
 import org.lwjgl.glfw.GLFW;
 
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
-public final class ButtonToModeAction implements IButtonToAction, IResetableAction {
+public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Byte> {
 
     private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 

@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.text.MessageFormat;
 
 public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
-        implements IActivatableAction<V>, ILongPressAction<V> {
+        implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
 
     @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
     private Activation activation = Activation.REPEAT;
@@ -38,6 +38,8 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
     private KeyStroke keystroke = new KeyStroke();
 
     private transient Activatable activatable;
+
+    private transient boolean wasDown;
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -77,8 +79,15 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
         switch (activation) {
             case REPEAT -> {
                 final var downKeyStrokes = input.getDownKeyStrokes();
-                if (!hot) downKeyStrokes.remove(keystroke);
-                else downKeyStrokes.add(keystroke);
+                if (!hot) {
+                    if (wasDown) {
+                        downKeyStrokes.remove(keystroke);
+                        wasDown = false;
+                    }
+                } else {
+                    downKeyStrokes.add(keystroke);
+                    wasDown = true;
+                }
             }
             case SINGLE_IMMEDIATELY -> {
                 if (!hot) activatable = Activatable.YES;
@@ -102,6 +111,11 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
     @Override
     public boolean isLongPress() {
         return longPress;
+    }
+
+    @Override
+    public void reset(final Input input) {
+        wasDown = false;
     }
 
     @Override

@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Byte>
-        implements IButtonToAction, IResetableAction, IActivatableAction<Byte> {
+        implements IActivatableAction<Byte>, IButtonToAction, IResetableAction<Byte> {
 
     private transient Activatable activatable = Activatable.YES;
 

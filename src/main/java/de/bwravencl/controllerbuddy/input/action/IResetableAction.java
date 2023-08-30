@@ -18,7 +18,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public interface IResetableAction extends IAction<Byte> {
+public interface IResetableAction<V extends Number> extends IAction<V> {
 
     void reset(final Input input);
 }

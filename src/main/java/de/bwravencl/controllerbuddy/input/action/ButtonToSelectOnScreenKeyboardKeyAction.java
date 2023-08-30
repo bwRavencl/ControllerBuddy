@@ -30,7 +30,7 @@ import java.util.Locale;
         label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION",
         category = ActionCategory.ON_SCREEN_KEYBOARD_MODE,
         order = 510)
-public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction {
+public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction<Byte> {
 
     private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
     private static final long PEAK_MIN_ELAPSE_TIME = 90L;
