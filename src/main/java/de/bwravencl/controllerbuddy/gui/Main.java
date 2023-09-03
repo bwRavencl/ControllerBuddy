@@ -2726,7 +2726,7 @@ public final class Main {
                         repaint = true;
                     }
 
-                    final var newValue = -input.getAxes().get(virtualAxis) - minimum;
+                    final var newValue = -input.getAxes().get(virtualAxis) - minimum - (negativeMinAxisValue ? 1 : 0);
                     if (progressBar.getValue() != newValue) {
                         progressBar.setValue(newValue);
                         repaint = true;
