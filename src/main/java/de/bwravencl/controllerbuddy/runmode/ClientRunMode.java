@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.io.ObjectInputFilter.Status;
 import java.io.ObjectInputStream;
+import java.io.UncheckedIOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -307,9 +308,29 @@ public final class ClientRunMode extends OutputRunMode {
 
         try {
             if (init()) {
-                hostAddress = InetAddress.getByName(host);
                 clientSocket = new DatagramSocket(port + 1);
-                clientSocket.connect(hostAddress, port);
+
+                IOException ioException = null;
+                for (final var hostAddress : InetAddress.getAllByName(host)) {
+                    try {
+                        clientSocket.connect(hostAddress, port);
+                        this.hostAddress = hostAddress;
+                        break;
+                    } catch (final UncheckedIOException e) {
+                        final var causingIoException = e.getCause();
+
+                        if (ioException == null) {
+                            ioException = causingIoException;
+                        } else {
+                            ioException.addSuppressed(causingIoException);
+                        }
+                    }
+                }
+
+                if (ioException != null) {
+                    throw ioException;
+                }
+
                 clientSocket.setSoTimeout(timeout);
 
                 while (!Thread.interrupted()) {
@@ -332,14 +353,7 @@ public final class ClientRunMode extends OutputRunMode {
         } catch (final SocketException e) {
             log.log(Level.FINE, e.getMessage(), e);
         } catch (final IOException e) {
-            forceStop = true;
-
-            log.log(Level.SEVERE, e.getMessage(), e);
-            EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
-                    main.getFrame(),
-                    Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-                    Main.strings.getString("ERROR_DIALOG_TITLE"),
-                    JOptionPane.ERROR_MESSAGE));
+            handleIOException(e);
         } finally {
             if (clientSocket != null) {
                 clientSocket.close();

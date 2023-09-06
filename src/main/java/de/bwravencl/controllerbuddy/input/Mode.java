@@ -131,19 +131,6 @@ public final class Mode implements Cloneable {
 
     public record Component(Mode.Component.ComponentType type, int index) {
 
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            final var other = (Component) obj;
-
-            return index == other.index && type == other.type;
-        }
-
         public enum ComponentType {
             AXIS,
             BUTTON

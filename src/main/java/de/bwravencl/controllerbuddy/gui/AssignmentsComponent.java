@@ -369,7 +369,7 @@ final class AssignmentsComponent extends JScrollPane {
 
                     final var g2d = (Graphics2D) g;
 
-                    if (contentAreaFilled && (model.isEnabled() || peerModel != null && peerModel.isEnabled())) {
+                    if (contentAreaFilled && (model.isEnabled() || (peerModel != null && peerModel.isEnabled()))) {
                         beginBackground(g2d);
 
                         if (shape == null) {

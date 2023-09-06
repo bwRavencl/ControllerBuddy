@@ -29,12 +29,14 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 import java.text.MessageFormat;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import org.lwjgl.glfw.GLFW;
 
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
 public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Byte> {
 
+    @SuppressWarnings("JdkObsolete")
     private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
     @ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
@@ -53,7 +55,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
     private transient boolean up = true;
 
-    public static LinkedList<ButtonToModeAction> getButtonToModeActionStack() {
+    public static List<ButtonToModeAction> getButtonToModeActionStack() {
         return buttonToModeActionStack;
     }
 

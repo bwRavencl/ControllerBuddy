@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.runmode.X11WithLockKeyFunctions;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public record LockKey(String name, int virtualKeyCode, int mask, KeySym keySym) {
@@ -47,7 +48,7 @@ public record LockKey(String name, int virtualKeyCode, int mask, KeySym keySym) 
             KeyEvent.VK_SCROLL_LOCK,
             X11WithLockKeyFunctions.STATE_SCROLL_LOCK_MASK,
             new KeySym(X11WithLockKeyFunctions.XK_ScrollLock));
-    public static final LockKey[] LOCK_KEYS = {CapsLockLockKey, NumLockLockKey, ScrollLockLockKey};
+    public static final List<LockKey> LOCK_KEYS = List.of(CapsLockLockKey, NumLockLockKey, ScrollLockLockKey);
 
     static {
         final var modifiableNameToLockKeyMap = new HashMap<String, LockKey>();

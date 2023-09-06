@@ -41,6 +41,8 @@ public final class DualShock4Driver extends SonyDriver {
             final HidDevice hidDevice,
             final Connection connection) {
         super(input, controller, hidDevice);
+
+        this.connection = connection;
     }
 
     @Override

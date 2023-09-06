@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import uk.co.bithatch.linuxio.CLib;
-import uk.co.bithatch.linuxio.EventCode.Type;
+import uk.co.bithatch.linuxio.EventCode;
 import uk.co.bithatch.linuxio.Input.Macros;
 import uk.co.bithatch.linuxio.Input.input_id;
 import uk.co.bithatch.linuxio.Ioctl;
@@ -135,7 +135,7 @@ public class EvdevDriver extends Driver {
 
         final var playEvent = new uk.co.bithatch.linuxio.Input.input_event();
         playEvent.code = effectId;
-        playEvent.type = (short) Type.EV_FF.code();
+        playEvent.type = (short) EventCode.Type.EV_FF.code();
         playEvent.value = value;
         playEvent.time.tv_sec = new NativeLong(0);
         playEvent.time.tv_usec = new NativeLong(0);
@@ -146,7 +146,7 @@ public class EvdevDriver extends Driver {
     private void setGain(final int gain) throws IOException {
         final var gainEvent = new uk.co.bithatch.linuxio.Input.input_event();
         gainEvent.code = FF_GAIN;
-        gainEvent.type = (short) Type.EV_FF.code();
+        gainEvent.type = (short) EventCode.Type.EV_FF.code();
         gainEvent.value = gain;
         gainEvent.time.tv_sec = new NativeLong(0);
         gainEvent.time.tv_usec = new NativeLong(0);
@@ -255,7 +255,7 @@ public class EvdevDriver extends Driver {
                                             if (CLib.INSTANCE.ioctl(
                                                             fd,
                                                             Macros.EVIOCGBIT(
-                                                                    Type.EV_FF.code(),
+                                                                    EventCode.Type.EV_FF.code(),
                                                                     ffFeatures.length * Character.BYTES),
                                                             ffFeatures)
                                                     != -1) {
@@ -302,6 +302,7 @@ public class EvdevDriver extends Driver {
         }
     }
 
+    @SuppressWarnings("unused")
     private record EvdevInfo(int fd, boolean hasGain) {}
 
     @FieldOrder({"right_saturation", "left_saturation", "right_coeff", "left_coeff", "deadband", "center"})

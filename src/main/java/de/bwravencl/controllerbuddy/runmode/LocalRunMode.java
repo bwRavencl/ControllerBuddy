@@ -38,11 +38,8 @@ public final class LocalRunMode extends OutputRunMode {
     }
 
     @Override
-    boolean readInput() {
-        try {
-            super.readInput();
-        } catch (final IOException ignored) {
-        }
+    boolean readInput() throws IOException {
+        super.readInput();
 
         if (!input.poll()) {
             controllerDisconnected();
@@ -144,7 +141,10 @@ public final class LocalRunMode extends OutputRunMode {
             } else {
                 forceStop = true;
             }
+        } catch (final IOException e) {
+            handleIOException(e);
         } catch (final InterruptedException ignored) {
+            // expected whenever the run mode gets stopped
         } finally {
             deInit();
         }

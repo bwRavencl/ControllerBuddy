@@ -72,6 +72,7 @@ class OpenVrOverlay {
     private short classAtom = 0;
     private long hwnd = MemoryUtil.NULL;
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private OpenVrOverlay(final Main main) {
         this.main = main;
         onScreenKeyboard = main.getOnScreenKeyboard();
@@ -253,6 +254,7 @@ class OpenVrOverlay {
         try {
             capabilities = GL.getCapabilities();
         } catch (final IllegalStateException ignored) {
+            // handled below
         }
 
         if (capabilities == null) {

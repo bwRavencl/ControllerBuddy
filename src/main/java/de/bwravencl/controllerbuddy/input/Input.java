@@ -598,8 +598,8 @@ public final class Input {
             if (value == minAxisValue || value == maxAxisValue) {
                 driver.rumbleStrong();
             } else if (dententValue != null
-                    && (prevValue > dententValue && value <= dententValue
-                            || prevValue < dententValue && value >= dententValue)) {
+                    && ((prevValue > dententValue && value <= dententValue)
+                            || (prevValue < dententValue && value >= dententValue))) {
                 driver.rumbleLight();
             }
         }

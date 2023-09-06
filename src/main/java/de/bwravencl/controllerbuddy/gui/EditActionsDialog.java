@@ -576,6 +576,7 @@ public final class EditActionsDialog extends JDialog {
         throw new NotSerializableException(EditActionsDialog.class.getName());
     }
 
+    @SuppressWarnings("unused")
     private record AssignedAction(IAction<?> action) {
 
         @Override
@@ -584,6 +585,7 @@ public final class EditActionsDialog extends JDialog {
         }
     }
 
+    @SuppressWarnings("unused")
     private record AvailableAction(Class<?> actionClass) {
 
         @Override

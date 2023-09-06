@@ -132,13 +132,14 @@ public final class GuiUtils {
 
         final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
         if (locationString != null) {
+            final var parts = locationString.split(",", -1);
 
-            final var parts = locationString.split(",");
             if (parts.length == 2) {
                 try {
                     location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
                     location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
                 } catch (final NumberFormatException ignored) {
+                    // ignore an invalid location string that does not contain numeric values
                 }
             }
         }

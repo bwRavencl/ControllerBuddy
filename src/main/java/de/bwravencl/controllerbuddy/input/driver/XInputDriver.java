@@ -50,6 +50,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
     private ScheduledExecutorService executorService;
     private volatile String batteryLevelString;
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
         super(input, controller);
 

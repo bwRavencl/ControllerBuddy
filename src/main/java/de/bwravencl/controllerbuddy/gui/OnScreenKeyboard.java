@@ -660,6 +660,7 @@ public final class OnScreenKeyboard extends JFrame {
             });
         }
 
+        @SuppressWarnings("NarrowingCompoundAssignment")
         @Override
         public Dimension getPreferredSize() {
             final var preferredSize = super.getPreferredSize();

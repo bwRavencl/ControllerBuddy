@@ -1098,9 +1098,9 @@ public final class Main {
         final var presentControllers = new ArrayList<ControllerInfo>();
         for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++) {
             if (isMac
-                    || GLFW.glfwJoystickPresent(jid)
+                    || (GLFW.glfwJoystickPresent(jid)
                             && GLFW.glfwJoystickIsGamepad(jid)
-                            && !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid))) {
+                            && !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))) {
                 presentControllers.add(new ControllerInfo(jid));
             }
         }
@@ -1254,6 +1254,7 @@ public final class Main {
                 return;
             }
         } catch (final ParseException ignored) {
+            // handled below
         }
 
         final var stringWriter = new StringWriter();
@@ -1648,7 +1649,7 @@ public final class Main {
     private void initOpenVrOverlay() {
         final var profile = input.getProfile();
 
-        if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay()) {
+        if (!Platform.isIntel() || (!isWindows && !isLinux) || !profile.isShowOverlay() || !profile.isShowVrOverlay()) {
             return;
         }
 
@@ -2516,6 +2517,7 @@ public final class Main {
         startOverlayTimerTask();
     }
 
+    @SuppressWarnings("FutureReturnValueIgnored")
     private void startOverlayTimerTask() {
         stopOverlayTimerTask();
 
@@ -2917,7 +2919,7 @@ public final class Main {
     }
 
     public void updateOverlayAxisIndicators(final boolean forceRepaint) {
-        if (runMode == null || !isLocalRunning() && !isServerRunning()) {
+        if (runMode == null || (!isLocalRunning() && !isServerRunning())) {
             return;
         }
 
@@ -3145,7 +3147,7 @@ public final class Main {
             assignmentsComponent.setEnabled(panelsEnabled);
         }
 
-        if (!panelsEnabled || input != null && !input.getProfile().isShowOverlay()) {
+        if (!panelsEnabled || (input != null && !input.getProfile().isShowOverlay())) {
             GuiUtils.setEnabledRecursive(indicatorsListPanel, false);
         } else {
             updateOverlayPanel();
@@ -3515,6 +3517,7 @@ public final class Main {
                 switch (result) {
                     case JOptionPane.CANCEL_OPTION:
                         cancelSelection();
+                        // fall through
                     case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
                         return;
                     default:
@@ -3562,11 +3565,11 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = 8167193907929992395L;
 
-        private final HashSet<Float> detentValues;
+        private final Set<Float> detentValues;
         private final OverlayAxis overlayAxis;
         private final int subdivisionHeight;
 
-        private IndicatorProgressBar(final HashSet<Float> detentValues, final OverlayAxis overlayAxis) {
+        private IndicatorProgressBar(final Set<Float> detentValues, final OverlayAxis overlayAxis) {
             super(SwingConstants.VERTICAL);
 
             setBorder(createOverlayBorder());
@@ -3630,7 +3633,8 @@ public final class Main {
         }
     }
 
-    private record JsonContext(Gson gson, ActionTypeAdapter actionTypeAdapter) {
+    private record JsonContext(
+            @SuppressWarnings("unused") Gson gson, @SuppressWarnings("unused") ActionTypeAdapter actionTypeAdapter) {
 
         private static JsonContext create() {
             final var actionAdapter = new ActionTypeAdapter();
@@ -4366,6 +4370,7 @@ public final class Main {
                         if (unsavedChanges) {
                             return;
                         }
+                        // fall through
                     case JOptionPane.NO_OPTION:
                         break;
                     default:

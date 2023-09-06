@@ -53,6 +53,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -224,7 +225,7 @@ public abstract class OutputRunMode extends RunMode {
             }
         } else if (Main.isLinux) {
             final var display = X11.INSTANCE.XOpenDisplay(null);
-            if (display.getPointer() == Pointer.NULL) {
+            if (Objects.equals(display.getPointer(), Pointer.NULL)) {
                 throw new RuntimeException("XOpenDisplay() unsucessful");
             }
 
@@ -462,6 +463,17 @@ public abstract class OutputRunMode extends RunMode {
         }
 
         return true;
+    }
+
+    final void handleIOException(final IOException ioException) {
+        forceStop = true;
+
+        log.log(Level.SEVERE, ioException.getMessage(), ioException);
+        EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                main.getFrame(),
+                Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+                Main.strings.getString("ERROR_DIALOG_TITLE"),
+                JOptionPane.ERROR_MESSAGE));
     }
 
     final boolean init() {
@@ -989,6 +1001,7 @@ public abstract class OutputRunMode extends RunMode {
                     forceStop = true;
                 }
             } catch (final InterruptedException ignored) {
+                // handled below
             } catch (final ExecutionException e) {
                 throw new RuntimeException(e);
             }

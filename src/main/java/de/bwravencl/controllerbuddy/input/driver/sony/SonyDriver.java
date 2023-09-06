@@ -275,11 +275,11 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
                     handleBattery(reportData, offset);
 
-                    if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning()) {
+                    if (!touchpadEnabled || (!main.isLocalRunning() && !main.isServerRunning())) {
                         return;
                     }
 
-                    final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
+                    final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 1) != 0;
 
                     final var touchpadOffset = getTouchpadOffset();
                     final var down1 = reportData[touchpadOffset + offset] >> 7 == 0;
@@ -619,7 +619,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     }
 
     void setBatteryCapacity(final int batteryCapacity) {
-        if (disconnected || !ready || this.batteryCapacity != null && this.batteryCapacity == batteryCapacity) {
+        if (disconnected || !ready || (this.batteryCapacity != null && this.batteryCapacity == batteryCapacity)) {
             return;
         }
 

@@ -35,6 +35,6 @@ public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 
     @Override
     LockKey[] getValues() {
-        return LockKey.LOCK_KEYS;
+        return LockKey.LOCK_KEYS.toArray(LockKey[]::new);
     }
 }
