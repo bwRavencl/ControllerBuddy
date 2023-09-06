@@ -50,7 +50,9 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
                             cursorSensitivity)
                     * input.getRateMultiplier();
             moveCursor(input, d);
-        } else remainingD = 0f;
+        } else {
+            remainingD = 0f;
+        }
     }
 
     public float getDeadZone() {

@@ -36,13 +36,16 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
             if (json.isJsonPrimitive()) {
                 final var jsonPrimitive = (JsonPrimitive) json;
 
-                if (jsonPrimitive.isNumber())
+                if (jsonPrimitive.isNumber()) {
                     lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(jsonPrimitive.getAsInt());
-                else if (jsonPrimitive.isString()) lockKey = LockKey.nameToLockKeyMap.get(jsonPrimitive.getAsString());
+                } else if (jsonPrimitive.isString()) {
+                    lockKey = LockKey.nameToLockKeyMap.get(jsonPrimitive.getAsString());
+                }
             }
 
-            if (lockKey == null)
+            if (lockKey == null) {
                 throw new JsonParseException("Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json);
+            }
 
             return lockKey;
         } catch (final JsonParseException e) {

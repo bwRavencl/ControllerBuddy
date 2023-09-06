@@ -45,7 +45,9 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
     }
@@ -55,14 +57,18 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
         d += remainingD;
 
-        if (d >= -1f && d <= 1f) remainingD = d;
-        else {
+        if (d >= -1f && d <= 1f) {
+            remainingD = d;
+        } else {
             remainingD = 0f;
 
             final var intD = Math.round(d);
 
-            if (axis == MouseAxis.X) input.setCursorDeltaX(input.getCursorDeltaX() + intD);
-            else input.setCursorDeltaY(input.getCursorDeltaY() + intD);
+            if (axis == MouseAxis.X) {
+                input.setCursorDeltaX(input.getCursorDeltaX() + intD);
+            } else {
+                input.setCursorDeltaY(input.getCursorDeltaY() + intD);
+            }
         }
     }
 

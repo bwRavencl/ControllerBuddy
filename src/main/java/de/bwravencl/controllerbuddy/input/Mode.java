@@ -49,13 +49,14 @@ public final class Mode implements Cloneable {
     private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
             final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
         final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
-        for (final var entry : actionMap.entrySet())
+        for (final var entry : actionMap.entrySet()) {
             for (final var action : entry.getValue()) {
                 final var key = entry.getKey();
 
                 final var clonedActions = clonedActionMap.computeIfAbsent(key, k -> new ArrayList<>());
                 clonedActions.add((IAction<V>) action.clone());
             }
+        }
 
         return clonedActionMap;
     }
@@ -74,8 +75,12 @@ public final class Mode implements Cloneable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         final var other = (Mode) obj;
 
         return Objects.equals(uuid, other.uuid);
@@ -96,7 +101,9 @@ public final class Mode implements Cloneable {
     }
 
     public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
-        if (type == ComponentType.AXIS) return axisToActionsMap;
+        if (type == ComponentType.AXIS) {
+            return axisToActionsMap;
+        }
         return buttonToActionsMap;
     }
 
@@ -126,8 +133,12 @@ public final class Mode implements Cloneable {
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
             final var other = (Component) obj;
 
             return index == other.index && type == other.type;

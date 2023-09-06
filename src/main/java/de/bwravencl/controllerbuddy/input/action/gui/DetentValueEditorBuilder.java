@@ -47,7 +47,9 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
         if (initialValue == null) {
             enabled = false;
             initialValue = 0f;
-        } else enabled = true;
+        } else {
+            enabled = true;
+        }
 
         super.buildEditor(parentPanel);
         spinner.setEnabled(enabled);
@@ -64,8 +66,11 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
                 spinner.setEnabled(selected);
 
                 final Float value;
-                if (selected) value = roundFloat((Float) spinner.getValue());
-                else value = null;
+                if (selected) {
+                    value = roundFloat((Float) spinner.getValue());
+                } else {
+                    value = null;
+                }
 
                 try {
                     setterMethod.invoke(action, value);

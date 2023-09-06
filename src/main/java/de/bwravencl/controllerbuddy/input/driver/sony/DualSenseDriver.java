@@ -46,14 +46,18 @@ public final class DualSenseDriver extends SonyDriver {
 
     @Override
     byte[] getDefaultHidReport() {
-        if (connection == null) return null;
+        if (connection == null) {
+            return null;
+        }
 
         final byte[] defaultHidReport;
         if (connection.isBluetooth()) {
             defaultHidReport = new byte[BLUETOOTH_REPORT_LENGTH - 1];
 
             defaultHidReport[0] = 0x2;
-        } else defaultHidReport = new byte[47];
+        } else {
+            defaultHidReport = new byte[47];
+        }
 
         defaultHidReport[connection.offset()] = 0x3;
         defaultHidReport[1 + connection.offset()] = 0x15;
@@ -155,16 +159,22 @@ public final class DualSenseDriver extends SonyDriver {
 
     @Override
     boolean reset() {
-        if (connection == null) return false;
+        if (connection == null) {
+            return false;
+        }
 
         if (connection.isBluetooth()) {
             final var defaultHidReport = getDefaultHidReport();
-            if (defaultHidReport == null) return false;
+            if (defaultHidReport == null) {
+                return false;
+            }
 
             hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
             hidReport[2] = 0x8;
 
-            if (!sendHidReport()) return false;
+            if (!sendHidReport()) {
+                return false;
+            }
         }
 
         return super.reset();
@@ -178,14 +188,21 @@ public final class DualSenseDriver extends SonyDriver {
                 final List<ControllerInfo> presentControllers,
                 final ControllerInfo selectedController) {
             String name;
-            if (Main.isMac) name = GLFW.glfwGetGamepadName(selectedController.jid());
-            else name = selectedController.name();
+            if (Main.isMac) {
+                name = GLFW.glfwGetGamepadName(selectedController.jid());
+            } else {
+                name = selectedController.name();
+            }
 
-            if (!"PS5 Controller".equals(name)) return null;
+            if (!"PS5 Controller".equals(name)) {
+                return null;
+            }
 
             final var hidDevice = getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log);
 
-            if (hidDevice != null) return new DualSenseDriver(input, selectedController, hidDevice);
+            if (hidDevice != null) {
+                return new DualSenseDriver(input, selectedController, hidDevice);
+            }
 
             return null;
         }

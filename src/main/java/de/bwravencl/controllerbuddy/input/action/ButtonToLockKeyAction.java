@@ -51,15 +51,22 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
         if (value != 0) {
             if (wasUp) {
                 wasUp = false;
-                if (on) input.getOnLockKeys().add(virtualKeyCode);
-                else input.getOffLockKeys().add(virtualKeyCode);
+                if (on) {
+                    input.getOnLockKeys().add(virtualKeyCode);
+                } else {
+                    input.getOffLockKeys().add(virtualKeyCode);
+                }
             }
-        } else wasUp = true;
+        } else {
+            wasUp = true;
+        }
     }
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
     }

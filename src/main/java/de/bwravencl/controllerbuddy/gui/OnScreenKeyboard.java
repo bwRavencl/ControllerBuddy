@@ -209,7 +209,9 @@ public final class OnScreenKeyboard extends JFrame {
         setTitle(OnScreenKeyboard.class.getSimpleName());
         setType(JFrame.Type.POPUP);
         setFocusableWindowState(false);
-        if (Main.isWindows) setBackground(Main.TRANSPARENT);
+        if (Main.isWindows) {
+            setBackground(Main.TRANSPARENT);
+        }
         setAlwaysOnTop(true);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -230,8 +232,9 @@ public final class OnScreenKeyboard extends JFrame {
                     row == keyboardButtons.length - 1 ? ROW_BORDER_WIDTH : 0,
                     ROW_BORDER_WIDTH));
 
-            for (var column = 0; column < keyboardButtons[row].length; column++)
+            for (var column = 0; column < keyboardButtons[row].length; column++) {
                 rowPanel.add(keyboardButtons[row][column]);
+            }
 
             parentPanel.add(rowPanel);
         }
@@ -247,12 +250,19 @@ public final class OnScreenKeyboard extends JFrame {
         shortName = shortName.replaceFirst("R ", "");
         shortName = shortName.replaceFirst("Num", "");
 
-        if (directInputKeyCodeName.matches("[A-Z]")) shortName = shortName.toLowerCase(Locale.ROOT);
-        else if (shortName.endsWith("Arrow"))
-            if (shortName.startsWith("Up")) shortName = "↑";
-            else if (shortName.startsWith("Down")) shortName = "↓";
-            else if (shortName.startsWith("Left")) shortName = "←";
-            else if (shortName.startsWith("Right")) shortName = "→";
+        if (directInputKeyCodeName.matches("[A-Z]")) {
+            shortName = shortName.toLowerCase(Locale.ROOT);
+        } else if (shortName.endsWith("Arrow")) {
+            if (shortName.startsWith("Up")) {
+                shortName = "↑";
+            } else if (shortName.startsWith("Down")) {
+                shortName = "↓";
+            } else if (shortName.startsWith("Left")) {
+                shortName = "←";
+            } else if (shortName.startsWith("Right")) {
+                shortName = "→";
+            }
+        }
 
         return shortName;
     }
@@ -260,8 +270,9 @@ public final class OnScreenKeyboard extends JFrame {
     private static String getLockKeyDisplayName(final String lockKeyName) {
         var shortName = lockKeyName;
 
-        if (!LockKey.CAPS_LOCK.equals(lockKeyName))
+        if (!LockKey.CAPS_LOCK.equals(lockKeyName)) {
             shortName = "<html><center>" + lockKeyName.replaceFirst(" ", "<br>") + "</center></html>";
+        }
 
         return shortName;
     }
@@ -273,12 +284,18 @@ public final class OnScreenKeyboard extends JFrame {
     public void forceRepoll() {
         anyChanges = true;
 
-        for (final var row : keyboardButtons) for (final var keyboardButton : row) keyboardButton.changed = true;
+        for (final var row : keyboardButtons) {
+            for (final var keyboardButton : row) {
+                keyboardButton.changed = true;
+            }
+        }
     }
 
     private int getCurrentButtonX() {
         var x = keyboardButtons[selectedRow][selectedColumn].getPreferredSize().width / 2;
-        for (var i = 0; i < selectedColumn; i++) x += keyboardButtons[selectedRow][i].getPreferredSize().width;
+        for (var i = 0; i < selectedColumn; i++) {
+            x += keyboardButtons[selectedRow][i].getPreferredSize().width;
+        }
 
         return x;
     }
@@ -292,8 +309,11 @@ public final class OnScreenKeyboard extends JFrame {
             unselectCurrentButton();
 
             final var x = getCurrentButtonX();
-            if (selectedRow < keyboardButtons.length - 1) selectedRow++;
-            else selectedRow = 0;
+            if (selectedRow < keyboardButtons.length - 1) {
+                selectedRow++;
+            } else {
+                selectedRow = 0;
+            }
             selectButtonByX(x);
         });
     }
@@ -302,8 +322,11 @@ public final class OnScreenKeyboard extends JFrame {
         EventQueue.invokeLater(() -> {
             unselectCurrentButton();
 
-            if (selectedColumn > 0) selectedColumn--;
-            else selectedColumn = keyboardButtons[selectedRow].length - 1;
+            if (selectedColumn > 0) {
+                selectedColumn--;
+            } else {
+                selectedColumn = keyboardButtons[selectedRow].length - 1;
+            }
             focusCurrentButton();
         });
     }
@@ -312,8 +335,11 @@ public final class OnScreenKeyboard extends JFrame {
         EventQueue.invokeLater(() -> {
             unselectCurrentButton();
 
-            if (selectedColumn < keyboardButtons[selectedRow].length - 1) selectedColumn++;
-            else selectedColumn = 0;
+            if (selectedColumn < keyboardButtons[selectedRow].length - 1) {
+                selectedColumn++;
+            } else {
+                selectedColumn = 0;
+            }
             focusCurrentButton();
         });
     }
@@ -323,8 +349,11 @@ public final class OnScreenKeyboard extends JFrame {
             unselectCurrentButton();
 
             final var x = getCurrentButtonX();
-            if (selectedRow > 0) selectedRow--;
-            else selectedRow = keyboardButtons.length - 1;
+            if (selectedRow > 0) {
+                selectedRow--;
+            } else {
+                selectedRow = keyboardButtons.length - 1;
+            }
             selectButtonByX(x);
         });
     }
@@ -334,8 +363,11 @@ public final class OnScreenKeyboard extends JFrame {
             if (anyChanges) {
                 anyChanges = false;
 
-                for (final var row : keyboardButtons)
-                    for (final var keyboardButton : row) anyChanges |= keyboardButton.poll(input);
+                for (final var row : keyboardButtons) {
+                    for (final var keyboardButton : row) {
+                        anyChanges |= keyboardButton.poll(input);
+                    }
+                }
             }
         }
     }
@@ -350,7 +382,11 @@ public final class OnScreenKeyboard extends JFrame {
     }
 
     public void releaseAll() {
-        for (final var row : keyboardButtons) for (final var keyboardButton : row) keyboardButton.release();
+        for (final var row : keyboardButtons) {
+            for (final var keyboardButton : row) {
+                keyboardButton.release();
+            }
+        }
     }
 
     public void releaseSelected() {
@@ -364,7 +400,9 @@ public final class OnScreenKeyboard extends JFrame {
             final var width = keyboardButtons[selectedRow][i].getPreferredSize().width;
             final var delta = Math.abs(targetX - (x + width / 2));
 
-            if (delta > minDelta) break;
+            if (delta > minDelta) {
+                break;
+            }
             selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
             minDelta = delta;
 
@@ -382,7 +420,9 @@ public final class OnScreenKeyboard extends JFrame {
             if (b) {
                 updateScaling();
                 setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
-            } else releaseAll();
+            } else {
+                releaseAll();
+            }
         }
     }
 
@@ -393,13 +433,17 @@ public final class OnScreenKeyboard extends JFrame {
     private void unselectCurrentButton() {
         final var currentButton = keyboardButtons[selectedRow][selectedColumn];
 
-        if (currentButton.pressed) currentButton.release();
+        if (currentButton.pressed) {
+            currentButton.release();
+        }
 
         currentButton.setFocus(false);
     }
 
     void updateLocation() {
-        if (frameDragListener.isDragging()) return;
+        if (frameDragListener.isDragging()) {
+            return;
+        }
 
         pack();
 
@@ -420,12 +464,13 @@ public final class OnScreenKeyboard extends JFrame {
 
         final var buttonFont = new Font(
                 Font.SANS_SERIF, Font.BOLD, Math.round(AbstractKeyboardButton.BUTTON_FONT_SIZE * overlayScaling));
-        for (final var row : keyboardButtons)
+        for (final var row : keyboardButtons) {
             for (final var keyboardButton : row) {
                 keyboardButton.setFont(buttonFont);
                 keyboardButton.setPreferredSize(buttonPreferredSize);
                 keyboardButton.updateTheme();
             }
+        }
 
         pack();
         updateLocation();
@@ -476,7 +521,9 @@ public final class OnScreenKeyboard extends JFrame {
 
         private void setFocus(final boolean focus) {
             setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
-            if (!focus) OnScreenKeyboard.this.repaint();
+            if (!focus) {
+                OnScreenKeyboard.this.repaint();
+            }
 
             Toolkit.getDefaultToolkit().sync();
         }
@@ -533,10 +580,13 @@ public final class OnScreenKeyboard extends JFrame {
 
             final var showAlternativeKeyName = locked ^ isKeyboardShifted();
 
-            for (final AbstractKeyboardButton[] row : keyboardButtons)
-                for (final AbstractKeyboardButton keyboardButton : row)
-                    if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton)
+            for (final AbstractKeyboardButton[] row : keyboardButtons) {
+                for (final AbstractKeyboardButton keyboardButton : row) {
+                    if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton) {
                         shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
+                    }
+                }
+            }
         }
     }
 
@@ -603,7 +653,9 @@ public final class OnScreenKeyboard extends JFrame {
                     if (SwingUtilities.isLeftMouseButton(e)) {
                         mouseDown = false;
                         release();
-                    } else if (SwingUtilities.isRightMouseButton(e)) toggleLock();
+                    } else if (SwingUtilities.isRightMouseButton(e)) {
+                        toggleLock();
+                    }
                 }
             });
         }
@@ -613,18 +665,27 @@ public final class OnScreenKeyboard extends JFrame {
             final var preferredSize = super.getPreferredSize();
 
             if (this instanceof NumPadKeyboardButton) {
-                if (ScanCode.DIK_NUMPAD0.equals(directInputKeyCodeName)) preferredSize.width *= 2;
+                if (ScanCode.DIK_NUMPAD0.equals(directInputKeyCodeName)) {
+                    preferredSize.width *= 2;
+                }
             } else if (ScanCode.DIK_INSERT.equals(directInputKeyCodeName)
                     || ScanCode.DIK_DELETE.equals(directInputKeyCodeName)
                     || ScanCode.DIK_HOME.equals(directInputKeyCodeName)
-                    || ScanCode.DIK_END.equals(directInputKeyCodeName)) preferredSize.width *= 0.88;
-            else if (ScanCode.DIK_TAB.equals(directInputKeyCodeName)) preferredSize.width *= 1.5;
-            else if (ScanCode.DIK_BACKSLASH.equals(directInputKeyCodeName)) preferredSize.width *= 2;
-            else if (ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
+                    || ScanCode.DIK_END.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 0.88;
+            } else if (ScanCode.DIK_TAB.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 1.5;
+            } else if (ScanCode.DIK_BACKSLASH.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 2;
+            } else if (ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
                     || ScanCode.DIK_RETURN.equals(directInputKeyCodeName)
-                    || ScanCode.DIK_BACK.equals(directInputKeyCodeName)) preferredSize.width *= 2.5;
-            else if (ScanCode.DIK_RSHIFT.equals(directInputKeyCodeName)) preferredSize.width *= 3;
-            else if (ScanCode.DIK_SPACE.equals(directInputKeyCodeName)) preferredSize.width *= 5.5;
+                    || ScanCode.DIK_BACK.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 2.5;
+            } else if (ScanCode.DIK_RSHIFT.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 3;
+            } else if (ScanCode.DIK_SPACE.equals(directInputKeyCodeName)) {
+                preferredSize.width *= 5.5;
+            }
 
             return preferredSize;
         }
@@ -639,9 +700,12 @@ public final class OnScreenKeyboard extends JFrame {
                     final var downKeyStrokes = input.getDownKeyStrokes();
 
                     if (heldButtons.contains(this)) {
-                        if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME)
+                        if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME) {
                             downKeyStrokes.add(keyStroke);
-                    } else downKeyStrokes.remove(keyStroke);
+                        }
+                    } else {
+                        downKeyStrokes.remove(keyStroke);
+                    }
                 }
 
                 changed = false;
@@ -653,7 +717,9 @@ public final class OnScreenKeyboard extends JFrame {
         void press(final boolean lock) {
             GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
-            if (heldButtons.add(this)) beginPress = System.currentTimeMillis();
+            if (heldButtons.add(this)) {
+                beginPress = System.currentTimeMillis();
+            }
 
             changed = true;
             anyChanges = true;
@@ -666,7 +732,9 @@ public final class OnScreenKeyboard extends JFrame {
             GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
 
             if (heldButtons.remove(this)) {
-                if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME) doDownUp = true;
+                if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME) {
+                    doDownUp = true;
+                }
 
                 beginPress = 0L;
                 changed = true;
@@ -678,8 +746,9 @@ public final class OnScreenKeyboard extends JFrame {
 
         @Override
         void toggleLock() {
-            if (heldButtons.contains(this)) release();
-            else {
+            if (heldButtons.contains(this)) {
+                release();
+            } else {
                 press(true);
                 beginPress = 0L;
             }
@@ -726,7 +795,9 @@ public final class OnScreenKeyboard extends JFrame {
         public Dimension getPreferredSize() {
             final var preferredSize = super.getPreferredSize();
 
-            if (lockKey.virtualKeyCode() == KeyEvent.VK_CAPS_LOCK) preferredSize.width *= 2;
+            if (lockKey.virtualKeyCode() == KeyEvent.VK_CAPS_LOCK) {
+                preferredSize.width *= 2;
+            }
 
             return preferredSize;
         }
@@ -734,8 +805,11 @@ public final class OnScreenKeyboard extends JFrame {
         @Override
         boolean poll(final Input input) {
             if (changed) {
-                if (locked) input.getOnLockKeys().add(lockKey);
-                else input.getOffLockKeys().add(lockKey);
+                if (locked) {
+                    input.getOnLockKeys().add(lockKey);
+                } else {
+                    input.getOffLockKeys().add(lockKey);
+                }
 
                 changed = false;
             }
@@ -782,10 +856,13 @@ public final class OnScreenKeyboard extends JFrame {
         void toggleLock() {
             super.toggleLock();
 
-            for (final AbstractKeyboardButton[] row : keyboardButtons)
-                for (final AbstractKeyboardButton keyboardButton : row)
-                    if (keyboardButton instanceof final NumPadKeyboardButton numPadKeyboardButton)
+            for (final AbstractKeyboardButton[] row : keyboardButtons) {
+                for (final AbstractKeyboardButton keyboardButton : row) {
+                    if (keyboardButton instanceof final NumPadKeyboardButton numPadKeyboardButton) {
                         numPadKeyboardButton.setShowAlternativeKeyName(locked);
+                    }
+                }
+            }
         }
     }
 
@@ -825,10 +902,13 @@ public final class OnScreenKeyboard extends JFrame {
 
             final var showAlternativeKeyName = isKeyboardShifted() ^ capsLockKeyButton.locked;
 
-            for (final AbstractKeyboardButton[] row : keyboardButtons)
-                for (final AbstractKeyboardButton keyboardButton : row)
-                    if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton)
+            for (final AbstractKeyboardButton[] row : keyboardButtons) {
+                for (final AbstractKeyboardButton keyboardButton : row) {
+                    if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton) {
                         shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
+                    }
+                }
+            }
         }
 
         private enum ShiftKeyboardButtonType {

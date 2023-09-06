@@ -72,7 +72,9 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
         @Override
         public Object stringToValue(final String text) {
-            if (text == null || text.isBlank()) return null;
+            if (text == null || text.isBlank()) {
+                return null;
+            }
 
             return Integer.parseInt(text) - 1;
         }

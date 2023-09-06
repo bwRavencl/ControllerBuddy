@@ -118,16 +118,24 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
             try {
                 for (; ; ) {
-                    if (disconnected || hidDevice.isClosed()) return;
+                    if (disconnected || hidDevice.isClosed()) {
+                        return;
+                    }
 
                     final var reportLength = hidDevice.read(reportData, HID_READ_TIMEOUT);
-                    if (reportLength < 0) return;
-                    if (reportLength == 0) continue;
+                    if (reportLength < 0) {
+                        return;
+                    }
+                    if (reportLength == 0) {
+                        continue;
+                    }
 
                     if (connection == null) {
                         handleNewConnection(reportLength);
 
-                        if (connection == null || !reset()) return;
+                        if (connection == null || !reset()) {
+                            return;
+                        }
                     }
 
                     final var bluetooth = connection.isBluetooth();
@@ -155,7 +163,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                         crc32.update(0xA1);
 
                         byteBuffer.limit(BLUETOOTH_REPORT_LENGTH - 4);
-                        if (Main.isLinux) crc32.update(reportId);
+                        if (Main.isLinux) {
+                            crc32.update(reportId);
+                        }
                         crc32.update(byteBuffer);
                         final var calculatedCrc32Value = crc32.getValue();
 
@@ -259,11 +269,15 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                     ready = true;
                     timestampLastInputReport = System.currentTimeMillis();
 
-                    if (controller.jid() != input.getController().jid()) continue;
+                    if (controller.jid() != input.getController().jid()) {
+                        continue;
+                    }
 
                     handleBattery(reportData, offset);
 
-                    if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning()) return;
+                    if (!touchpadEnabled || !main.isLocalRunning() && !main.isServerRunning()) {
+                        return;
+                    }
 
                     final var touchpadButtonDown = (reportData[buttonsOffset + 2 + offset] & 1 << 2 - 1) != 0;
 
@@ -276,27 +290,31 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                             + reportData[touchpadOffset + 3 + offset] * 16;
 
                     final var downMouseButtons = input.getDownMouseButtons();
-                    if (touchpadButtonDown)
+                    if (touchpadButtonDown) {
                         synchronized (downMouseButtons) {
                             downMouseButtons.add(down2 ? 2 : 1);
                         }
-                    else if (prevTouchpadButtonDown)
+                    } else if (prevTouchpadButtonDown) {
                         synchronized (downMouseButtons) {
                             downMouseButtons.clear();
                         }
+                    }
 
                     if (down1 && prevDown1) {
                         final var dX1 = x1 - prevX1;
                         final var dY1 = y1 - prevY1;
 
                         if (!prevDown2 || touchpadButtonDown) {
-                            if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA)
+                            if (prevX1 > 0 && Math.abs(dX1) < TOUCHPAD_MAX_DELTA) {
                                 input.setCursorDeltaX((int) (dX1 * touchpadCursorSensitivity));
+                            }
 
-                            if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+                            if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA) {
                                 input.setCursorDeltaY((int) (dY1 * touchpadCursorSensitivity));
-                        } else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA)
+                            }
+                        } else if (prevY1 > 0 && Math.abs(dY1) < TOUCHPAD_MAX_DELTA) {
                             input.setScrollClicks((int) (-dY1 * touchpadScrollSensitivity));
+                        }
                     }
 
                     prevTouchpadButtonDown = touchpadButtonDown;
@@ -337,7 +355,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                             + devices.stream().map(HidDevice::getPath).collect(Collectors.joining(", ")));
 
             final var count = devices.size();
-            if (count < 1) return null;
+            if (count < 1) {
+                return null;
+            }
 
             var deviceIndex = 0;
             if (count > 1) {
@@ -346,9 +366,13 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                             .filter(controller -> selectedController.guid().equals(controller.guid()))
                             .toList();
                     deviceIndex = presentJidsWithSameGuid.indexOf(selectedController);
-                } else deviceIndex = presentControllers.indexOf(selectedController);
+                } else {
+                    deviceIndex = presentControllers.indexOf(selectedController);
+                }
 
-                if (deviceIndex < 0) return null;
+                if (deviceIndex < 0) {
+                    return null;
+                }
             }
 
             final var hidDevice = devices.get(deviceIndex);
@@ -376,7 +400,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
             return null;
         } finally {
-            if (hidServices != null) hidServices.shutdown();
+            if (hidServices != null) {
+                hidServices.shutdown();
+            }
         }
     }
 
@@ -400,7 +426,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     public synchronized void deInit(final boolean disconnected) {
         super.deInit(disconnected);
 
-        if (!disconnected) reset();
+        if (!disconnected) {
+            reset();
+        }
 
         this.disconnected = true;
 
@@ -431,7 +459,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
     @Override
     public boolean getGamepadState(final GLFWGamepadState state) {
-        if (disconnected || !ready) return false;
+        if (disconnected || !ready) {
+            return false;
+        }
 
         if (System.currentTimeMillis() - timestampLastInputReport > INPUT_REPORT_TIMEOUT) {
             getLogger()
@@ -488,7 +518,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
     @Override
     public String getTooltip(final String title) {
-        if (disconnected || !ready || charging == null || batteryCapacity == null) return super.getTooltip(title);
+        if (disconnected || !ready || charging == null || batteryCapacity == null) {
+            return super.getTooltip(title);
+        }
 
         return MessageFormat.format(
                 Main.strings.getString(
@@ -505,7 +537,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
     boolean reset() {
         final var defaultHidReport = getDefaultHidReport();
-        if (defaultHidReport == null) return false;
+        if (defaultHidReport == null) {
+            return false;
+        }
 
         hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
 
@@ -513,14 +547,18 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     }
 
     private void rumble(final long duration, final byte strength) {
-        if (!canSendHidReport()) return;
+        if (!canSendHidReport()) {
+            return;
+        }
 
         final var actualRumbleOffset = getRumbleOffset() + connection.offset;
 
         Thread.startVirtualThread(() -> {
             hidDeviceLock.lock();
             try {
-                if (hidDevice == null) return;
+                if (hidDevice == null) {
+                    return;
+                }
 
                 hidReport[actualRumbleOffset] = strength;
                 if (sendHidReport()) {
@@ -549,7 +587,9 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     }
 
     boolean sendHidReport() {
-        if (!canSendHidReport()) return false;
+        if (!canSendHidReport()) {
+            return false;
+        }
 
         final var reportId = getDefaultHidReportId();
 
@@ -568,24 +608,27 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
         final var success = hidDevice.write(hidReport, hidReport.length, reportId) > 0;
 
-        if (!success)
+        if (!success) {
             getLogger()
                     .log(
                             Level.WARNING,
                             Main.assembleControllerLoggingMessage("Error while sending HID packet to", controller));
+        }
 
         return success;
     }
 
     void setBatteryCapacity(final int batteryCapacity) {
-        if (disconnected || !ready || this.batteryCapacity != null && this.batteryCapacity == batteryCapacity) return;
+        if (disconnected || !ready || this.batteryCapacity != null && this.batteryCapacity == batteryCapacity) {
+            return;
+        }
 
         this.batteryCapacity = batteryCapacity;
 
         updateLightbarColor();
 
         final var main = input.getMain();
-        if (main != null)
+        if (main != null) {
             EventQueue.invokeLater(() -> {
                 main.updateTitleAndTooltip();
 
@@ -595,14 +638,19 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                     main.displayLowBatteryWarning(batteryLevelString);
                 }
             });
+        }
     }
 
     void setCharging(final boolean charging) {
-        if (disconnected || !ready) return;
+        if (disconnected || !ready) {
+            return;
+        }
 
         final var firstCall = this.charging == null;
 
-        if (!firstCall && this.charging == charging) return;
+        if (!firstCall && this.charging == charging) {
+            return;
+        }
 
         this.charging = charging;
 
@@ -618,11 +666,15 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     }
 
     void updateLightbarColor() {
-        if (!canSendHidReport() || charging == null || batteryCapacity == null) return;
+        if (!canSendHidReport() || charging == null || batteryCapacity == null) {
+            return;
+        }
 
         hidDeviceLock.lock();
         try {
-            if (hidDevice == null) return;
+            if (hidDevice == null) {
+                return;
+            }
 
             final var lightbarOffset = getLightbarOffset();
 

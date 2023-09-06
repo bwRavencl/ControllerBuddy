@@ -39,17 +39,22 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
     public void buildEditor(final JPanel parentPanel) {
         final var cycleEditor = editActionsDialog.isCycleEditor();
 
-        if (cycleEditor) initialValue = Activation.SINGLE_IMMEDIATELY;
+        if (cycleEditor) {
+            initialValue = Activation.SINGLE_IMMEDIATELY;
+        }
 
         super.buildEditor(parentPanel);
 
-        if (cycleEditor) comboBox.setEnabled(false);
+        if (cycleEditor) {
+            comboBox.setEnabled(false);
+        }
     }
 
     @Override
     Activation[] getValues() {
-        if (action instanceof ButtonToCycleAction)
+        if (action instanceof ButtonToCycleAction) {
             return new Activation[] {Activation.SINGLE_IMMEDIATELY, Activation.SINGLE_ON_RELEASE};
+        }
 
         return Activation.values();
     }

@@ -40,11 +40,13 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
             public T read(final JsonReader in) throws IOException {
                 final var obj = delegate.read(in);
 
-                if (obj instanceof final Mode mode)
-                    if (Profile.defaultMode.equals(mode))
+                if (obj instanceof final Mode mode) {
+                    if (Profile.defaultMode.equals(mode)) {
                         mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
-                    else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode))
+                    } else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
                         mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+                    }
+                }
 
                 return obj;
             }
@@ -64,7 +66,9 @@ public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 
                     delegate.write(out, value);
                 } finally {
-                    if (prevDescription != null) ((Mode) value).setDescription(prevDescription);
+                    if (prevDescription != null) {
+                        ((Mode) value).setDescription(prevDescription);
+                    }
                 }
             }
         };

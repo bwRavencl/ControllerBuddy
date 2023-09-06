@@ -97,15 +97,20 @@ public final class EditActionsDialog extends JDialog {
                 final var annotation = actionClass.getAnnotation(Action.class);
                 final var category = annotation.category();
 
-                if (category == ActionCategory.ALL || category == ActionCategory.AXIS)
+                if (category == ActionCategory.ALL || category == ActionCategory.AXIS) {
                     axisActionClasses.add(actionClass);
+                }
                 if (category == ActionCategory.ALL
                         || category == ActionCategory.BUTTON
-                        || category == ActionCategory.BUTTON_AND_CYCLES) buttonActionClasses.add(actionClass);
-                if (category == ActionCategory.ALL || category == ActionCategory.BUTTON_AND_CYCLES)
+                        || category == ActionCategory.BUTTON_AND_CYCLES) {
+                    buttonActionClasses.add(actionClass);
+                }
+                if (category == ActionCategory.ALL || category == ActionCategory.BUTTON_AND_CYCLES) {
                     cycleActionClasses.add(actionClass);
-                if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE)
+                }
+                if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE) {
                     onScreenKeyboardActionClasses.add(actionClass);
+                }
             });
         }
     }
@@ -129,7 +134,9 @@ public final class EditActionsDialog extends JDialog {
         this.cycleAction = cycleAction;
 
         try {
-            for (final var action : cycleAction.getActions()) cycleActions.add((IAction<Byte>) action.clone());
+            for (final var action : cycleAction.getActions()) {
+                cycleActions.add((IAction<Byte>) action.clone());
+            }
         } catch (final CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
@@ -177,13 +184,17 @@ public final class EditActionsDialog extends JDialog {
     }
 
     private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
-        if (!IAction.class.isAssignableFrom(actionClass)) throw new IllegalArgumentException();
+        if (!IAction.class.isAssignableFrom(actionClass)) {
+            throw new IllegalArgumentException();
+        }
 
         final var propertyMap = new HashMap<Field, ActionProperty>();
 
         for (final var field : actionClass.getDeclaredFields()) {
             final var annotation = field.getAnnotation(ActionProperty.class);
-            if (annotation != null) propertyMap.put(field, annotation);
+            if (annotation != null) {
+                propertyMap.put(field, annotation);
+            }
         }
 
         final var parentClass = actionClass.getSuperclass();
@@ -203,9 +214,10 @@ public final class EditActionsDialog extends JDialog {
     private IAction<?> getActionClassInstance(final Class<?> actionClass)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
                     NoSuchMethodException, SecurityException {
-        if (!IAction.class.isAssignableFrom(actionClass))
+        if (!IAction.class.isAssignableFrom(actionClass)) {
             throw new IllegalArgumentException(
                     "Class '" + actionClass.getName() + "' does not implement '" + IAction.class.getSimpleName() + "'");
+        }
 
         final var action = (IAction<?>) actionClass.getConstructor().newInstance();
 
@@ -224,21 +236,23 @@ public final class EditActionsDialog extends JDialog {
 
         final var cycleEditor = isCycleEditor();
 
-        if (cycleEditor && cycleActions != null)
+        if (cycleEditor && cycleActions != null) {
             cycleActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
-        else if (component != null) {
+        } else if (component != null) {
             final var componentActions =
                     selectedMode.getComponentToActionsMap(component.type()).get(component.index());
-            if (componentActions != null)
+            if (componentActions != null) {
                 ((Collection<? extends IAction<?>>) componentActions)
                         .forEach(action -> assignedActions.add(new AssignedAction(action)));
+            }
         }
 
         if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
             final var buttonToModeActions =
                     unsavedProfile.getButtonToModeActionsMap().get(component.index());
-            if (buttonToModeActions != null)
+            if (buttonToModeActions != null) {
                 buttonToModeActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
+            }
         }
 
         return assignedActions.toArray(AssignedAction[]::new);
@@ -397,7 +411,9 @@ public final class EditActionsDialog extends JDialog {
                     final var field = entry.getKey();
                     final var annotation = entry.getValue();
 
-                    if (propertiesPanel == null) propertiesPanel = new JPanel(new GridBagLayout());
+                    if (propertiesPanel == null) {
+                        propertiesPanel = new JPanel(new GridBagLayout());
+                    }
 
                     final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
                     propertiesPanel.add(
@@ -423,10 +439,14 @@ public final class EditActionsDialog extends JDialog {
                         final var editorBuilderClass = annotation.editorBuilder();
 
                         var fieldName = annotation.overrideFieldName();
-                        if (fieldName.isEmpty()) fieldName = field.getName();
+                        if (fieldName.isEmpty()) {
+                            fieldName = field.getName();
+                        }
 
                         var fieldType = annotation.overrideFieldType();
-                        if (fieldType == Void.class) fieldType = field.getType();
+                        if (fieldType == Void.class) {
+                            fieldType = field.getType();
+                        }
 
                         final var constructor = editorBuilderClass.getDeclaredConstructor(
                                 EditActionsDialog.class, IAction.class, String.class, Class.class);
@@ -528,17 +548,23 @@ public final class EditActionsDialog extends JDialog {
         final var availableActions = new ArrayList<AvailableAction>();
 
         final List<Class<?>> actionClasses;
-        if (isCycleEditor()) actionClasses = cycleActionClasses;
-        else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode))
+        if (isCycleEditor()) {
+            actionClasses = cycleActionClasses;
+        } else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
             actionClasses = onScreenKeyboardActionClasses;
-        else if (component.type() == ComponentType.AXIS) actionClasses = axisActionClasses;
-        else actionClasses = buttonActionClasses;
+        } else if (component.type() == ComponentType.AXIS) {
+            actionClasses = axisActionClasses;
+        } else {
+            actionClasses = buttonActionClasses;
+        }
 
         for (final var actionClass : actionClasses) {
             final var availableAction = new AvailableAction(actionClass);
 
             if (ButtonToModeAction.class.equals(availableAction.actionClass)
-                    && !Profile.defaultMode.equals(selectedMode)) continue;
+                    && !Profile.defaultMode.equals(selectedMode)) {
+                continue;
+            }
             availableActions.add(availableAction);
         }
 
@@ -584,17 +610,20 @@ public final class EditActionsDialog extends JDialog {
 
                 if (action instanceof final ButtonToModeAction buttonToModeAction) {
                     final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-                    if (!buttonToModeActionsMap.containsKey(component.index()))
+                    if (!buttonToModeActionsMap.containsKey(component.index())) {
                         buttonToModeActionsMap.put(component.index(), new ArrayList<>());
+                    }
 
                     buttonToModeActionsMap.get(component.index()).add(buttonToModeAction);
-                } else if (isCycleEditor()) cycleActions.add((IAction<Byte>) action);
-                else {
+                } else if (isCycleEditor()) {
+                    cycleActions.add((IAction<Byte>) action);
+                } else {
                     final var componentToActionMap =
                             (Map<Integer, List<IAction<?>>>) selectedMode.getComponentToActionsMap(component.type());
 
-                    if (!componentToActionMap.containsKey(component.index()))
+                    if (!componentToActionMap.containsKey(component.index())) {
                         componentToActionMap.put(component.index(), new ArrayList<>());
+                    }
 
                     componentToActionMap.get(component.index()).add(action);
                 }
@@ -646,23 +675,27 @@ public final class EditActionsDialog extends JDialog {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            if (isCycleEditor()) cycleAction.setActions(cycleActions);
-            else {
+            if (isCycleEditor()) {
+                cycleAction.setActions(cycleActions);
+            } else {
                 var requiresOnScreenKeyboardMode = false;
                 outer:
                 for (final List<ButtonToModeAction> buttonToModeActions :
-                        unsavedProfile.getButtonToModeActionsMap().values())
-                    for (final ButtonToModeAction a : buttonToModeActions)
+                        unsavedProfile.getButtonToModeActionsMap().values()) {
+                    for (final ButtonToModeAction a : buttonToModeActions) {
                         if (a.targetsOnScreenKeyboardMode()) {
                             requiresOnScreenKeyboardMode = true;
                             break outer;
                         }
+                    }
+                }
 
                 if (requiresOnScreenKeyboardMode
-                        && !unsavedProfile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode))
+                        && !unsavedProfile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
                     unsavedProfile.getModes().add(OnScreenKeyboard.onScreenKeyboardMode);
-                else if (!requiresOnScreenKeyboardMode)
+                } else if (!requiresOnScreenKeyboardMode) {
                     unsavedProfile.getModes().remove(OnScreenKeyboard.onScreenKeyboardMode);
+                }
 
                 input.setProfile(unsavedProfile);
                 main.updateModesPanel(false);
@@ -689,16 +722,20 @@ public final class EditActionsDialog extends JDialog {
             if (selectedAssignedAction.action instanceof ButtonToModeAction) {
                 final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
                 buttonToModeActionsMap.get(component.index()).remove(selectedAssignedAction.action);
-                if (buttonToModeActionsMap.get(component.index()).isEmpty())
+                if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
                     buttonToModeActionsMap.remove(component.index());
-            } else if (isCycleEditor()) cycleActions.remove(selectedAssignedAction.action);
-            else {
+                }
+            } else if (isCycleEditor()) {
+                cycleActions.remove(selectedAssignedAction.action);
+            } else {
                 final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
                 @SuppressWarnings("unchecked")
                 final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
                 actions.remove(selectedAssignedAction.action);
 
-                if (actions.isEmpty()) componentToActionMap.remove(component.index());
+                if (actions.isEmpty()) {
+                    componentToActionMap.remove(component.index());
+                }
             }
 
             updateAvailableActions();

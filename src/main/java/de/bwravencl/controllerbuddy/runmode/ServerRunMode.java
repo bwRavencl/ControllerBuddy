@@ -59,7 +59,9 @@ public final class ServerRunMode extends RunMode {
     }
 
     public void close() {
-        if (serverSocket != null) serverSocket.close();
+        if (serverSocket != null) {
+            serverSocket.close();
+        }
     }
 
     @Override
@@ -84,7 +86,9 @@ public final class ServerRunMode extends RunMode {
                     main.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
             for (; ; ) {
-                if (!Platform.isMac()) GLFW.glfwPollEvents();
+                if (!Platform.isMac()) {
+                    GLFW.glfwPollEvents();
+                }
 
                 switch (serverState) {
                     case Listening -> {
@@ -182,14 +186,17 @@ public final class ServerRunMode extends RunMode {
                             try {
                                 serverSocket.receive(receivePacket);
 
-                                if (clientIPAddress.equals(receivePacket.getAddress()))
+                                if (clientIPAddress.equals(receivePacket.getAddress())) {
                                     try (final var byteArrayInputStream =
                                             new ByteArrayInputStream(receivePacket.getData())) {
                                         try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
                                             final var messageType = dataInputStream.readInt();
-                                            if (messageType == MessageType.ClientAlive.ordinal()) counter++;
+                                            if (messageType == MessageType.ClientAlive.ordinal()) {
+                                                counter++;
+                                            }
                                         }
                                     }
+                                }
                             } catch (final SocketTimeoutException e) {
                                 input.reset();
                                 input.deInit(false);
@@ -200,7 +207,9 @@ public final class ServerRunMode extends RunMode {
 
                                 serverState = ServerState.Listening;
                             }
-                        } else counter++;
+                        } else {
+                            counter++;
+                        }
                     }
                 }
             }
@@ -224,7 +233,9 @@ public final class ServerRunMode extends RunMode {
         } finally {
             input.reset();
 
-            if (serverSocket != null) serverSocket.close();
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
 
             EventQueue.invokeLater(() -> {
                 main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));

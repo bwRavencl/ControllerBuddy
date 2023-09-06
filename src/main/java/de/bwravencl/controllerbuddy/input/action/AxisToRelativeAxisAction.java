@@ -57,8 +57,9 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
             d += remainingD;
 
-            if (Math.abs(d) < input.getPlanckLength()) remainingD = d;
-            else {
+            if (Math.abs(d) < input.getPlanckLength()) {
+                remainingD = d;
+            } else {
                 remainingD = 0f;
 
                 final var runMode = input.getRunMode();

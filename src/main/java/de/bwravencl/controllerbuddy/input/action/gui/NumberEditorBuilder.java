@@ -96,11 +96,15 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
             try {
                 var value = ((JSpinner) e.getSource()).getValue();
 
-                if (value instanceof final Float floatValue) value = roundFloat(floatValue);
+                if (value instanceof final Float floatValue) {
+                    value = roundFloat(floatValue);
+                }
 
                 setterMethod.invoke(action, value);
 
-                if (valueConsumer != null) valueConsumer.accept(value);
+                if (valueConsumer != null) {
+                    valueConsumer.accept(value);
+                }
             } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
                 log.log(Level.SEVERE, e1.getMessage(), e1);
             }

@@ -41,9 +41,10 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 
     private static JsonElement get(final JsonObject wrapper, final String memberName) {
         final var jsonElement = wrapper.get(memberName);
-        if (jsonElement == null)
+        if (jsonElement == null) {
             throw new JsonParseException(
                     "No member '" + memberName + "' found in what was expected to be an interface wrapper");
+        }
 
         return jsonElement;
     }

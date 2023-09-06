@@ -38,7 +38,9 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(
                 Main.strings.getString("SCROLL_DIRECTION"),
@@ -52,8 +54,9 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
         d += remainingD;
 
-        if (d >= -1f && d <= 1f) remainingD = d;
-        else {
+        if (d >= -1f && d <= 1f) {
+            remainingD = d;
+        } else {
             remainingD = 0f;
 
             input.setScrollClicks(Math.round(d));

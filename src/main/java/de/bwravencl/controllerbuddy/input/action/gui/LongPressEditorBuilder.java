@@ -37,10 +37,14 @@ public final class LongPressEditorBuilder extends BooleanEditorBuilder {
     public void buildEditor(final JPanel parentPanel) {
         final var cycleEditor = editActionsDialog.isCycleEditor();
 
-        if (cycleEditor) initialValue = false;
+        if (cycleEditor) {
+            initialValue = false;
+        }
 
         super.buildEditor(parentPanel);
 
-        if (cycleEditor) checkBox.setEnabled(false);
+        if (cycleEditor) {
+            checkBox.setEnabled(false);
+        }
     }
 }

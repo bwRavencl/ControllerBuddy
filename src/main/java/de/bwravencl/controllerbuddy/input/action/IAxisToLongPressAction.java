@@ -41,19 +41,24 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
     float getMinAxisValue();
 
     default Float handleLongPress(final Input input, final int component, final Float value) {
-        if (!isLongPress()) return value;
+        if (!isLongPress()) {
+            return value;
+        }
 
         final var currentTime = System.currentTimeMillis();
 
         if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
-            if (!actionToDownSinceMap.containsKey(this)) actionToDownSinceMap.put(this, currentTime);
-            else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+            if (!actionToDownSinceMap.containsKey(this)) {
+                actionToDownSinceMap.put(this, currentTime);
+            } else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
                 for (final var mode : input.getProfile().getModes()) {
                     final var actions = mode.getAxisToActionsMap().get(component);
 
                     if (actions != null && actions.contains(this)) {
                         for (final IAction<?> action : actions) {
-                            if (action == this) continue;
+                            if (action == this) {
+                                continue;
+                            }
 
                             var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
@@ -61,17 +66,21 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
                                 isUndelayedOnReleaseAction = false;
 
                                 if (action instanceof final AxisToKeyAction axisToKeyAction) {
-                                    if (!axisToKeyAction.isLongPress())
+                                    if (!axisToKeyAction.isLongPress()) {
                                         isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
-                                } else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction)
-                                    if (!axisToMouseButtonAction.isLongPress())
+                                    }
+                                } else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction) {
+                                    if (!axisToMouseButtonAction.isLongPress()) {
                                         isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
+                                    }
+                                }
 
                                 actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
                             }
 
-                            if (isUndelayedOnReleaseAction)
+                            if (isUndelayedOnReleaseAction) {
                                 ((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+                            }
                         }
 
                         break;
@@ -80,7 +89,9 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 
                 return value;
             }
-        } else actionToDownSinceMap.remove(this);
+        } else {
+            actionToDownSinceMap.remove(this);
+        }
 
         return Float.MIN_VALUE;
     }

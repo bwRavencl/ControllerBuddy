@@ -48,7 +48,9 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
                     clicks);
 
             scroll(input, d);
-        } else remainingD = 0f;
+        } else {
+            remainingD = 0f;
+        }
     }
 
     public float getDeadZone() {

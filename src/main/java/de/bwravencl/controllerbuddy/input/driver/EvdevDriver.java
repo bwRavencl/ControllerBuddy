@@ -68,7 +68,9 @@ public class EvdevDriver extends Driver {
     }
 
     private static void closeFileDescriptor(final int fd) {
-        if (fd != -1) CLib.INSTANCE.close(fd);
+        if (fd != -1) {
+            CLib.INSTANCE.close(fd);
+        }
     }
 
     private short createRumbleEffect(final short length) throws IOException {
@@ -79,7 +81,9 @@ public class EvdevDriver extends Driver {
         effect.u.rumble.strong_magnitude = Short.MAX_VALUE;
         effect.replay.length = length;
 
-        if (CLib.INSTANCE.ioctl(evdevInfo.fd, EVIOCSFF, effect) != 0 || effect.id == -1) throw new IOException();
+        if (CLib.INSTANCE.ioctl(evdevInfo.fd, EVIOCSFF, effect) != 0 || effect.id == -1) {
+            throw new IOException();
+        }
 
         return effect.id;
     }
@@ -125,7 +129,9 @@ public class EvdevDriver extends Driver {
     }
 
     private void sendEffectEvent(final short effectId, final int value) throws IOException {
-        if (evdevInfo == null) return;
+        if (evdevInfo == null) {
+            return;
+        }
 
         final var playEvent = new uk.co.bithatch.linuxio.Input.input_event();
         playEvent.code = effectId;
@@ -153,12 +159,15 @@ public class EvdevDriver extends Driver {
     }
 
     private void write(final Structure pointer) throws IOException {
-        if (evdevInfo == null) return;
+        if (evdevInfo == null) {
+            return;
+        }
 
         final var pointerSize = new NativeLong(pointer.size());
 
-        if (CLib.INSTANCE.write(evdevInfo.fd, pointer, pointerSize).longValue() != pointerSize.longValue())
+        if (CLib.INSTANCE.write(evdevInfo.fd, pointer, pointerSize).longValue() != pointerSize.longValue()) {
             throw new IOException();
+        }
     }
 
     public static class EvdevDriverBuilder implements IDriverBuilder {
@@ -168,7 +177,9 @@ public class EvdevDriver extends Driver {
         private static int EVIOCGID;
 
         static {
-            if (Main.isLinux) EVIOCGID = Ioctl.INSTANCE.IOR('E', 0x02, new input_id());
+            if (Main.isLinux) {
+                EVIOCGID = Ioctl.INSTANCE.IOR('E', 0x02, new input_id());
+            }
         }
 
         private static boolean testBit(final short bit, final NativeLong[] array) {
@@ -184,7 +195,9 @@ public class EvdevDriver extends Driver {
                 final var inputDir = new File("/dev/input/");
                 final var allEventFiles = inputDir.listFiles((dir, name) -> name.matches("event(\\d+)"));
 
-                if (allEventFiles == null) return null;
+                if (allEventFiles == null) {
+                    return null;
+                }
 
                 final var evdevInfos = Arrays.stream(allEventFiles)
                         .flatMap(eventFile -> {
@@ -200,7 +213,7 @@ public class EvdevDriver extends Driver {
                                         final var versionUnsigned = Short.toUnsignedInt(inputId.version);
 
                                         String guid = null;
-                                        if (vendorUnsigned != 0 && productUnsigned != 0 && versionUnsigned != 0)
+                                        if (vendorUnsigned != 0 && productUnsigned != 0 && versionUnsigned != 0) {
                                             guid = "%02x%02x0000%02x%02x0000%02x%02x0000%02x%02x0000"
                                                     .formatted(
                                                             bustypeUnsigned & 0xff,
@@ -211,14 +224,14 @@ public class EvdevDriver extends Driver {
                                                             productUnsigned >> 8,
                                                             versionUnsigned & 0xff,
                                                             versionUnsigned >> 8);
-                                        else {
+                                        } else {
                                             final var nameBytes = new byte[256];
                                             if (CLib.INSTANCE.ioctl(
                                                             fd,
                                                             uk.co.bithatch.linuxio.Input.Macros.EVIOCGNAME(
                                                                     nameBytes.length),
                                                             nameBytes)
-                                                    != 0)
+                                                    != 0) {
                                                 guid = "%02x%02x0000%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x00"
                                                         .formatted(
                                                                 bustypeUnsigned & 0xff,
@@ -234,6 +247,7 @@ public class EvdevDriver extends Driver {
                                                                 nameBytes[8],
                                                                 nameBytes[9],
                                                                 nameBytes[10]);
+                                            }
                                         }
 
                                         if (selectedController.guid().equals(guid)) {
@@ -244,9 +258,11 @@ public class EvdevDriver extends Driver {
                                                                     Type.EV_FF.code(),
                                                                     ffFeatures.length * Character.BYTES),
                                                             ffFeatures)
-                                                    != -1)
-                                                if (testBit(FF_RUMBLE, ffFeatures))
+                                                    != -1) {
+                                                if (testBit(FF_RUMBLE, ffFeatures)) {
                                                     return Stream.of(new EvdevInfo(fd, testBit(FF_GAIN, ffFeatures)));
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -259,13 +275,16 @@ public class EvdevDriver extends Driver {
                         })
                         .toList();
 
-                if (evdevInfos.isEmpty()) return null;
+                if (evdevInfos.isEmpty()) {
+                    return null;
+                }
 
-                if (evdevInfos.size() > 1)
+                if (evdevInfos.size() > 1) {
                     log.log(
                             Level.WARNING,
                             "Found more than one controller with GUID '" + selectedController.guid()
                                     + "' - evdev driver disabled");
+                }
 
                 try {
                     return new EvdevDriver(input, selectedController, evdevInfos.get(0));

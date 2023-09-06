@@ -60,19 +60,25 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 
         switch (activation) {
             case REPEAT -> {
-                if (hot) resetAxis(input);
+                if (hot) {
+                    resetAxis(input);
+                }
             }
             case SINGLE_IMMEDIATELY -> {
-                if (!hot) activatable = Activatable.YES;
-                else if (activatable == Activatable.YES) {
+                if (!hot) {
+                    activatable = Activatable.YES;
+                } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     resetAxis(input);
                 }
             }
             case SINGLE_ON_RELEASE -> {
                 if (hot) {
-                    if (activatable == Activatable.NO) activatable = Activatable.YES;
-                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                    if (activatable == Activatable.NO) {
+                        activatable = Activatable.YES;
+                    } else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+                        activatable = Activatable.NO;
+                    }
                 } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     resetAxis(input);
@@ -93,7 +99,9 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString("RESET_VJOY_AXIS_NAME"), virtualAxis);
     }
@@ -116,8 +124,11 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
     }
 
     private void resetAxis(final Input input) {
-        if (fluid) input.moveAxis(virtualAxis, resetValue);
-        else input.setAxis(virtualAxis, resetValue, false, null);
+        if (fluid) {
+            input.moveAxis(virtualAxis, resetValue);
+        } else {
+            input.setAxis(virtualAxis, resetValue, false, null);
+        }
     }
 
     @Override

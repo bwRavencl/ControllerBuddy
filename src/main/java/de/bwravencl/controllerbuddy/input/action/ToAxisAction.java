@@ -30,7 +30,9 @@ abstract class ToAxisAction<V extends Number> extends InvertableAction<V> {
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString("VJOY_AXIS_NAME"), virtualAxis);
     }

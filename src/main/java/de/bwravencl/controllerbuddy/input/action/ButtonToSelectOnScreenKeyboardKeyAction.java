@@ -58,7 +58,9 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
         if (value != 0) {
             final var currentTime = System.currentTimeMillis();
-            if (initialPressTime == 0) initialPressTime = currentTime;
+            if (initialPressTime == 0) {
+                initialPressTime = currentTime;
+            }
 
             final var accelerationFactor = Math.min(currentTime - initialPressTime, ACCELERATION_TIME);
             final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
@@ -75,7 +77,9 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
                 lastPressTime = currentTime;
             }
-        } else initialPressTime = 0;
+        } else {
+            initialPressTime = 0;
+        }
     }
 
     @Override

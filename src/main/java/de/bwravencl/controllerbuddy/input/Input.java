@@ -94,8 +94,9 @@ public final class Input {
 
         skipAxisInitialization = axes != null;
 
-        if (skipAxisInitialization) this.axes = axes;
-        else {
+        if (skipAxisInitialization) {
+            this.axes = axes;
+        } else {
             this.axes = new EnumMap<>(VirtualAxis.class);
             EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
         }
@@ -110,7 +111,9 @@ public final class Input {
     }
 
     private static double correctNumericalImprecision(final double d) {
-        if (d < 0.000_000_1) return 0d;
+        if (d < 0.000_000_1) {
+            return 0d;
+        }
         return d;
     }
 
@@ -151,7 +154,9 @@ public final class Input {
     public static float normalize(
             final float value, final float inMin, final float inMax, final float outMin, final float outMax) {
         final var oldRange = inMax - inMin;
-        if (oldRange == 0f) return outMin;
+        if (oldRange == 0f) {
+            return outMin;
+        }
 
         final var newRange = outMax - outMin;
 
@@ -252,19 +257,27 @@ public final class Input {
 
         final var presentControllers = Main.getPresentControllers();
 
-        if (controller != null) driver = Driver.getIfAvailable(this, presentControllers, controller);
+        if (controller != null) {
+            driver = Driver.getIfAvailable(this, presentControllers, controller);
+        }
 
         if (presentControllers.size() > 1) {
             hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
 
             if (hotSwappingButtonId != HotSwappingButton.None.id && controller != null) {
-                if (driver != null) jidToDriverMap.put(controller.jid(), driver);
+                if (driver != null) {
+                    jidToDriverMap.put(controller.jid(), driver);
+                }
 
                 for (final var controller : presentControllers) {
-                    if (controller.jid() == this.controller.jid()) continue;
+                    if (controller.jid() == this.controller.jid()) {
+                        continue;
+                    }
 
                     final var driver = Driver.getIfAvailable(this, presentControllers, controller);
-                    if (driver != null) jidToDriverMap.put(controller.jid(), driver);
+                    if (driver != null) {
+                        jidToDriverMap.put(controller.jid(), driver);
+                    }
                 }
             }
         }
@@ -272,7 +285,9 @@ public final class Input {
         planckLength = 2f / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
 
         profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
-            if (action instanceof final IInitializationAction<?> initializationAction) initializationAction.init(this);
+            if (action instanceof final IInitializationAction<?> initializationAction) {
+                initializationAction.init(this);
+            }
         }));
 
         initialized = true;
@@ -301,8 +316,9 @@ public final class Input {
     public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
         final var integerTargetValue = floatToIntAxisValue(targetValue);
 
-        if (axes.get(virtualAxis) != integerTargetValue)
+        if (axes.get(virtualAxis) != integerTargetValue) {
             virtualAxisToTargetValueMap.put(virtualAxis, integerTargetValue);
+        }
     }
 
     public boolean poll() {
@@ -311,7 +327,9 @@ public final class Input {
         axisToEndSuspensionTimestampMap.values().removeIf(timestamp -> timestamp < currentTime);
 
         var elapsedTime = runMode.getPollInterval();
-        if (lastPollTime > 0L) elapsedTime = currentTime - lastPollTime;
+        if (lastPollTime > 0L) {
+            elapsedTime = currentTime - lastPollTime;
+        }
         lastPollTime = currentTime;
         rateMultiplier = (float) elapsedTime / 1000L;
 
@@ -321,17 +339,22 @@ public final class Input {
             if (hotSwappingButtonId != HotSwappingButton.None.id
                     && currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
                 for (final var controller : Main.getPresentControllers()) {
-                    if (controller.jid() == this.controller.jid()) continue;
+                    if (controller.jid() == this.controller.jid()) {
+                        continue;
+                    }
 
                     final boolean gotState;
                     final var driver = jidToDriverMap.get(controller.jid());
-                    if (driver instanceof final IGamepadStateProvider gamepadStateProvider)
+                    if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
                         gotState = gamepadStateProvider.getGamepadState(state);
-                    else gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+                    } else {
+                        gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+                    }
 
-                    if (gotState)
-                        if (state.buttons(hotSwappingButtonId) != 0) hotSwappingButtonDownJids.add(controller.jid());
-                        else if (hotSwappingButtonDownJids.contains(controller.jid())) {
+                    if (gotState) {
+                        if (state.buttons(hotSwappingButtonId) != 0) {
+                            hotSwappingButtonDownJids.add(controller.jid());
+                        } else if (hotSwappingButtonDownJids.contains(controller.jid())) {
                             log.log(
                                     Level.INFO,
                                     Main.assembleControllerLoggingMessage("Initiating hot swap to ", controller));
@@ -345,6 +368,7 @@ public final class Input {
 
                             break;
                         }
+                    }
                 }
 
                 lastHotSwapPollTime = currentTime;
@@ -352,12 +376,18 @@ public final class Input {
 
             final boolean gotState;
             if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
-                if (!driver.isReady()) return true;
+                if (!driver.isReady()) {
+                    return true;
+                }
 
                 gotState = gamepadStateProvider.getGamepadState(state);
-            } else gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+            } else {
+                gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+            }
 
-            if (!gotState) return false;
+            if (!gotState) {
+                return false;
+            }
 
             Arrays.fill(buttons, false);
 
@@ -393,8 +423,11 @@ public final class Input {
                     final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
 
                     var newValue = currentValue + d;
-                    if (delta > 0) newValue = Math.min(newValue, targetValue);
-                    else newValue = Math.max(newValue, targetValue);
+                    if (delta > 0) {
+                        newValue = Math.min(newValue, targetValue);
+                    } else {
+                        newValue = Math.max(newValue, targetValue);
+                    }
 
                     setAxis(virtualAxis, newValue, false, (Integer) null);
 
@@ -415,8 +448,9 @@ public final class Input {
             for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
                 final var axisValue = state.axes(axis);
 
-                if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE)
+                if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
                     axisToEndSuspensionTimestampMap.remove(axis);
+                }
 
                 var actions = axisToActionMap.get(axis);
                 if (actions == null) {
@@ -428,14 +462,21 @@ public final class Input {
                                 .getAxisToActionsMap()
                                 .get(axis);
 
-                        if (actions != null) break;
+                        if (actions != null) {
+                            break;
+                        }
                     }
                 }
 
-                if (actions == null)
+                if (actions == null) {
                     actions = modes.get(0).getAxisToActionsMap().get(axis);
+                }
 
-                if (actions != null) for (final var action : actions) action.doAction(this, axis, axisValue);
+                if (actions != null) {
+                    for (final var action : actions) {
+                        action.doAction(this, axis, axisValue);
+                    }
+                }
             }
 
             for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
@@ -449,27 +490,37 @@ public final class Input {
                                 .getButtonToActionsMap()
                                 .get(button);
 
-                        if (actions != null) break;
+                        if (actions != null) {
+                            break;
+                        }
                     }
                 }
 
-                if (actions == null)
+                if (actions == null) {
                     actions = modes.get(0).getButtonToActionsMap().get(button);
+                }
 
-                if (actions != null)
-                    for (final var action : actions) action.doAction(this, button, state.buttons(button));
+                if (actions != null) {
+                    for (final var action : actions) {
+                        action.doAction(this, button, state.buttons(button));
+                    }
+                }
             }
 
             for (; ; ) {
                 for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
                     final var buttonToModeActions =
                             profile.getButtonToModeActionsMap().get(button);
-                    if (buttonToModeActions != null)
-                        for (final var action : buttonToModeActions)
+                    if (buttonToModeActions != null) {
+                        for (final var action : buttonToModeActions) {
                             action.doAction(this, button, state.buttons(button));
+                        }
+                    }
                 }
 
-                if (!repeatModeActionWalk) break;
+                if (!repeatModeActionWalk) {
+                    break;
+                }
                 repeatModeActionWalk = false;
             }
         }
@@ -510,7 +561,9 @@ public final class Input {
                         buttonToModeActions.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
 
         profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
-            if (action instanceof final IResetableAction resetableAction) resetableAction.reset(this);
+            if (action instanceof final IResetableAction resetableAction) {
+                resetableAction.reset(this);
+            }
         }));
     }
 
@@ -541,16 +594,23 @@ public final class Input {
 
         final var prevValue = axes.put(virtualAxis, value);
 
-        if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != null && prevValue != value)
-            if (value == minAxisValue || value == maxAxisValue) driver.rumbleStrong();
-            else if (dententValue != null
+        if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != null && prevValue != value) {
+            if (value == minAxisValue || value == maxAxisValue) {
+                driver.rumbleStrong();
+            } else if (dententValue != null
                     && (prevValue > dententValue && value <= dententValue
-                            || prevValue < dententValue && value >= dententValue)) driver.rumbleLight();
+                            || prevValue < dententValue && value >= dententValue)) {
+                driver.rumbleLight();
+            }
+        }
     }
 
     public void setButton(final int id, final boolean value) {
-        if (id < buttons.length) buttons[id] = value;
-        else log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
+        if (id < buttons.length) {
+            buttons[id] = value;
+        } else {
+            log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
+        }
     }
 
     public void setCursorDeltaX(final int cursorDeltaX) {
@@ -562,52 +622,82 @@ public final class Input {
     }
 
     public boolean setProfile(final Profile profile) {
-        if (profile == null) throw new IllegalArgumentException();
+        if (profile == null) {
+            throw new IllegalArgumentException();
+        }
 
-        for (final var button : profile.getButtonToModeActionsMap().keySet()) if (!isValidButton(button)) return false;
+        for (final var button : profile.getButtonToModeActionsMap().keySet()) {
+            if (!isValidButton(button)) {
+                return false;
+            }
+        }
 
         final var modes = profile.getModes();
         modes.sort((o1, o2) -> {
             final var o1IsDefaultMode = Profile.defaultMode.equals(o1);
             final var o2IsDefaultMode = Profile.defaultMode.equals(o2);
 
-            if (o1IsDefaultMode && o2IsDefaultMode) return 0;
+            if (o1IsDefaultMode && o2IsDefaultMode) {
+                return 0;
+            }
 
-            if (o1IsDefaultMode) return -1;
+            if (o1IsDefaultMode) {
+                return -1;
+            }
 
-            if (o2IsDefaultMode) return 1;
+            if (o2IsDefaultMode) {
+                return 1;
+            }
 
             final var o1IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o1);
             final var o2IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o2);
 
-            if (o1IsOnScreenKeyboardMode && o2IsOnScreenKeyboardMode) return 0;
+            if (o1IsOnScreenKeyboardMode && o2IsOnScreenKeyboardMode) {
+                return 0;
+            }
 
-            if (o1IsOnScreenKeyboardMode) return -1;
+            if (o1IsOnScreenKeyboardMode) {
+                return -1;
+            }
 
-            if (o2IsOnScreenKeyboardMode) return 1;
+            if (o2IsOnScreenKeyboardMode) {
+                return 1;
+            }
 
             return o1.getDescription().compareTo(o2.getDescription());
         });
 
         for (final var mode : modes) {
-            for (final var axis : mode.getAxisToActionsMap().keySet())
-                if (axis < 0 || axis > GLFW.GLFW_GAMEPAD_AXIS_LAST) return false;
+            for (final var axis : mode.getAxisToActionsMap().keySet()) {
+                if (axis < 0 || axis > GLFW.GLFW_GAMEPAD_AXIS_LAST) {
+                    return false;
+                }
+            }
 
-            for (final var button : mode.getButtonToActionsMap().keySet()) if (!isValidButton(button)) return false;
+            for (final var button : mode.getButtonToActionsMap().keySet()) {
+                if (!isValidButton(button)) {
+                    return false;
+                }
+            }
 
-            for (final var actions : mode.getButtonToActionsMap().values())
+            for (final var actions : mode.getButtonToActionsMap().values()) {
                 actions.sort((o1, o2) -> {
                     if (o1 instanceof final IButtonToAction buttonToAction1
                             && o2 instanceof final IButtonToAction buttonToAction2) {
                         final var o1IsLongPress = buttonToAction1.isLongPress();
                         final var o2IsLongPress = buttonToAction2.isLongPress();
 
-                        if (o1IsLongPress && !o2IsLongPress) return -1;
-                        if (!o1IsLongPress && o2IsLongPress) return 1;
+                        if (o1IsLongPress && !o2IsLongPress) {
+                            return -1;
+                        }
+                        if (!o1IsLongPress && o2IsLongPress) {
+                            return 1;
+                        }
                     }
 
                     return 0;
                 });
+            }
         }
 
         this.profile = profile;

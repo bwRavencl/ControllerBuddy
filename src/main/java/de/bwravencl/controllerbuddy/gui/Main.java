@@ -445,16 +445,21 @@ public final class Main {
                         if (SINGLE_INSTANCE_INIT.equals(line)) {
                             final var receivedArgs = new ArrayList<String>();
 
-                            while (true)
+                            while (true) {
                                 try {
                                     line = bufferedReader.readLine();
-                                    if (SINGLE_INSTANCE_EOF.equals(line)) break;
+                                    if (SINGLE_INSTANCE_EOF.equals(line)) {
+                                        break;
+                                    }
                                     receivedArgs.add(line);
                                 } catch (final IOException e) {
                                     log.log(Level.SEVERE, e.getMessage(), e);
                                 }
+                            }
                             arguments = receivedArgs.toArray(String[]::new);
-                        } else log.log(Level.WARNING, "Received unexpected line on single instance socket: " + line);
+                        } else {
+                            log.log(Level.WARNING, "Received unexpected line on single instance socket: " + line);
+                        }
 
                         if (arguments != null) {
                             main.newActivation(arguments);
@@ -489,28 +494,36 @@ public final class Main {
             public void windowClosing(final WindowEvent e) {
                 super.windowClosing(e);
 
-                if (showMenuItem != null) showMenuItem.setEnabled(true);
+                if (showMenuItem != null) {
+                    showMenuItem.setEnabled(true);
+                }
             }
 
             @Override
             public void windowDeiconified(final WindowEvent e) {
                 super.windowDeiconified(e);
 
-                if (showMenuItem != null) showMenuItem.setEnabled(false);
+                if (showMenuItem != null) {
+                    showMenuItem.setEnabled(false);
+                }
             }
 
             @Override
             public void windowIconified(final WindowEvent e) {
                 super.windowIconified(e);
 
-                if (showMenuItem != null) showMenuItem.setEnabled(true);
+                if (showMenuItem != null) {
+                    showMenuItem.setEnabled(true);
+                }
             }
 
             @Override
             public void windowOpened(final WindowEvent e) {
                 super.windowOpened(e);
 
-                if (showMenuItem != null) showMenuItem.setEnabled(false);
+                if (showMenuItem != null) {
+                    showMenuItem.setEnabled(false);
+                }
 
                 updateVisualizationPanel();
             }
@@ -547,8 +560,9 @@ public final class Main {
         final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
         menuBar.add(helpMenu);
         helpMenu.add(new ShowLicensesAction());
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             helpMenu.add(new ShowWebsiteAction());
+        }
         helpMenu.add(new ShowAboutDialogAction());
 
         frame.getContentPane().add(tabbedPane);
@@ -843,19 +857,21 @@ public final class Main {
 
         onScreenKeyboard = new OnScreenKeyboard(this);
 
-        if (isMac) Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        if (isMac) {
+            Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+        }
 
         final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
         if (Boolean.FALSE.equals(glfwInitialized)) {
             log.log(Level.SEVERE, "Could not initialize GLFW");
 
-            if (isWindows || isLinux)
+            if (isWindows || isLinux) {
                 GuiUtils.showMessageDialog(
                         frame,
                         strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
                         strings.getString("ERROR_DIALOG_TITLE"),
                         JOptionPane.ERROR_MESSAGE);
-            else {
+            } else {
                 GuiUtils.showMessageDialog(
                         frame,
                         strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"),
@@ -865,7 +881,7 @@ public final class Main {
             }
         }
 
-        if (isLinux)
+        if (isLinux) {
             X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
                 final var buffer = new byte[1024];
                 X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
@@ -874,6 +890,7 @@ public final class Main {
 
                 return 0;
             });
+        }
 
         var mappingsUpdated = updateGameControllerMappings(
                 ClassLoader.getSystemResourceAsStream(Main.GAME_CONTROLLER_DATABASE_FILENAME));
@@ -882,7 +899,9 @@ public final class Main {
                 (mappingsUpdated ? "Successfully updated" : "Failed to update")
                         + " game controller mappings from internal file " + Main.GAME_CONTROLLER_DATABASE_FILENAME);
 
-        if (gameControllerDbPath != null) mappingsUpdated &= updateGameControllerMappingsFromFile(gameControllerDbPath);
+        if (gameControllerDbPath != null) {
+            mappingsUpdated &= updateGameControllerMappingsFromFile(gameControllerDbPath);
+        }
 
         if (!mappingsUpdated) {
             log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
@@ -897,7 +916,7 @@ public final class Main {
         final var presentControllers = taskRunner.run(Main::getPresentControllers);
         if (presentControllers != null && !presentControllers.isEmpty()) {
             final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-            if (lastControllerGuid != null)
+            if (lastControllerGuid != null) {
                 presentControllers.stream()
                         .filter(controller -> lastControllerGuid.equals(controller.guid))
                         .findFirst()
@@ -912,11 +931,14 @@ public final class Main {
                                     log.log(Level.INFO, "Previously used controller is not present");
                                     setSelectedController(presentControllers.get(0));
                                 });
+            }
         }
 
         newProfile(false);
 
-        if (presentControllers != null) onControllersChanged(presentControllers, true);
+        if (presentControllers != null) {
+            onControllersChanged(presentControllers, true);
+        }
 
         taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
             final var disconnected = event == GLFW.GLFW_DISCONNECTED;
@@ -927,11 +949,14 @@ public final class Main {
                     log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
 
                     if (selectedController != null && selectedController.jid == jid) {
-                        if (!isMac) selectedController = null;
+                        if (!isMac) {
+                            selectedController = null;
+                        }
                         input.deInit(true);
                     }
-                } else if (event == GLFW.GLFW_CONNECTED)
+                } else if (event == GLFW.GLFW_CONNECTED) {
                     log.log(Level.INFO, assembleControllerLoggingMessage("Connected", new ControllerInfo(jid)));
+                }
 
                 final var presentControllers1 = getPresentControllers();
 
@@ -942,19 +967,21 @@ public final class Main {
         final var noControllerConnected =
                 Boolean.TRUE.equals(glfwInitialized) && (presentControllers == null || presentControllers.isEmpty());
 
-        if (noControllerConnected)
-            if (isWindows || isLinux)
+        if (noControllerConnected) {
+            if (isWindows || isLinux) {
                 GuiUtils.showMessageDialog(
                         frame,
                         strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
                         strings.getString("INFORMATION_DIALOG_TITLE"),
                         JOptionPane.INFORMATION_MESSAGE);
-            else
+            } else {
                 GuiUtils.showMessageDialog(
                         frame,
                         strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
                         strings.getString("INFORMATION_DIALOG_TITLE"),
                         JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
 
         final var profilePath =
                 cmdProfilePath != null ? cmdProfilePath : preferences.get(PREFERENCES_LAST_PROFILE, null);
@@ -993,13 +1020,19 @@ public final class Main {
 
         final var appendGamepadName = controller.name != null;
 
-        if (appendGamepadName) sb.append(controller.name).append(" (");
+        if (appendGamepadName) {
+            sb.append(controller.name).append(" (");
+        }
 
         sb.append(controller.jid);
 
-        if (appendGamepadName) sb.append(")");
+        if (appendGamepadName) {
+            sb.append(")");
+        }
 
-        if (controller.guid != null) sb.append(" [").append(controller.guid).append("]");
+        if (controller.guid != null) {
+            sb.append(" [").append(controller.guid).append("]");
+        }
 
         return sb.toString();
     }
@@ -1009,10 +1042,11 @@ public final class Main {
     }
 
     private static void deleteSingleInstanceLockFile() {
-        if (!SINGLE_INSTANCE_LOCK_FILE.delete())
+        if (!SINGLE_INSTANCE_LOCK_FILE.delete()) {
             log.log(
                     Level.WARNING,
                     "Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
+        }
     }
 
     private static int getExtendedKeyCodeForMenu(
@@ -1034,13 +1068,27 @@ public final class Main {
     private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
         final var action = button.getAction();
         if (action != null) {
-            if (action instanceof NewAction) return KeyEvent.VK_N;
-            if (action instanceof OpenAction) return KeyEvent.VK_O;
-            if (action instanceof SaveAction) return KeyEvent.VK_S;
-            if (action instanceof StartLocalAction) return KeyEvent.VK_L;
-            if (action instanceof StartClientAction) return KeyEvent.VK_C;
-            if (action instanceof StartServerAction) return KeyEvent.VK_E;
-            if (action instanceof StopAction) return KeyEvent.VK_T;
+            if (action instanceof NewAction) {
+                return KeyEvent.VK_N;
+            }
+            if (action instanceof OpenAction) {
+                return KeyEvent.VK_O;
+            }
+            if (action instanceof SaveAction) {
+                return KeyEvent.VK_S;
+            }
+            if (action instanceof StartLocalAction) {
+                return KeyEvent.VK_L;
+            }
+            if (action instanceof StartClientAction) {
+                return KeyEvent.VK_C;
+            }
+            if (action instanceof StartServerAction) {
+                return KeyEvent.VK_E;
+            }
+            if (action instanceof StopAction) {
+                return KeyEvent.VK_T;
+            }
         }
 
         return KeyEvent.VK_UNDEFINED;
@@ -1048,35 +1096,45 @@ public final class Main {
 
     public static List<ControllerInfo> getPresentControllers() {
         final var presentControllers = new ArrayList<ControllerInfo>();
-        for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++)
+        for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++) {
             if (isMac
                     || GLFW.glfwJoystickPresent(jid)
                             && GLFW.glfwJoystickIsGamepad(jid)
-                            && !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))
+                            && !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid))) {
                 presentControllers.add(new ControllerInfo(jid));
+            }
+        }
 
         return presentControllers;
     }
 
     private static InputStream getResourceAsStream(final String resourcePath) {
         final var resourceInputStream = ClassLoader.getSystemResourceAsStream(resourcePath);
-        if (resourceInputStream == null) throw new RuntimeException("Resource not found " + resourcePath);
+        if (resourceInputStream == null) {
+            throw new RuntimeException("Resource not found " + resourcePath);
+        }
 
         return resourceInputStream;
     }
 
     private static URL getResourceLocation(final String resourcePath) {
         final var resourceLocation = Main.class.getResource(resourcePath);
-        if (resourceLocation == null) throw new RuntimeException("Resource not found " + resourcePath);
+        if (resourceLocation == null) {
+            throw new RuntimeException("Resource not found " + resourcePath);
+        }
 
         return resourceLocation;
     }
 
     private static boolean isModalDialogShowing() {
         final var windows = Window.getWindows();
-        if (windows != null)
-            for (final Window w : windows)
-                if (w.isShowing() && w instanceof final Dialog dialog && dialog.isModal()) return true;
+        if (windows != null) {
+            for (final Window w : windows) {
+                if (w.isShowing() && w instanceof final Dialog dialog && dialog.isModal()) {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
@@ -1087,7 +1145,7 @@ public final class Main {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.log(Level.SEVERE, e.getMessage(), e);
 
-            if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null)
+            if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null) {
                 GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
                     final var sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
@@ -1105,7 +1163,9 @@ public final class Main {
 
                     terminate(1);
                 });
-            else terminate(1);
+            } else {
+                terminate(1);
+            }
         });
 
         try {
@@ -1118,15 +1178,19 @@ public final class Main {
             if (!commandLine.hasOption(OPTION_HELP)) {
                 var continueLaunch = true;
 
-                if (SINGLE_INSTANCE_LOCK_FILE.exists())
+                if (SINGLE_INSTANCE_LOCK_FILE.exists()) {
                     try (var fileBufferedReader =
                             new BufferedReader(new FileReader(SINGLE_INSTANCE_LOCK_FILE, StandardCharsets.UTF_8))) {
                         final var portString = fileBufferedReader.readLine();
-                        if (portString == null) throw new IOException("Could not read port");
+                        if (portString == null) {
+                            throw new IOException("Could not read port");
+                        }
                         final var port = Integer.parseInt(portString);
 
                         final var randomNumberString = fileBufferedReader.readLine();
-                        if (randomNumberString == null) throw new IOException("Could not read random number");
+                        if (randomNumberString == null) {
+                            throw new IOException("Could not read random number");
+                        }
 
                         try (var socket = new Socket(InetAddress.getLoopbackAddress(), port);
                                 var printStream =
@@ -1137,7 +1201,9 @@ public final class Main {
                             printStream.println(randomNumberString);
                             printStream.println(SINGLE_INSTANCE_INIT);
 
-                            for (final String arg : args) printStream.println(arg);
+                            for (final String arg : args) {
+                                printStream.println(arg);
+                            }
 
                             printStream.println(SINGLE_INSTANCE_EOF);
                             printStream.flush();
@@ -1150,16 +1216,18 @@ public final class Main {
                                 }
                             }
 
-                            if (continueLaunch)
+                            if (continueLaunch) {
                                 log.log(
                                         Level.WARNING,
                                         "Other " + strings.getString("APPLICATION_NAME")
                                                 + " instance did not acknowledge invocation");
+                            }
                         }
                     } catch (IOException | NumberFormatException e) {
                         log.log(Level.WARNING, e.getMessage(), e);
                         deleteSingleInstanceLockFile();
                     }
+                }
 
                 if (continueLaunch) {
                     final var taskRunner = new TaskRunner();
@@ -1209,7 +1277,7 @@ public final class Main {
     private static void printCommandLineMessage(final String message) {
         System.out.println(message);
 
-        if (!GraphicsEnvironment.isHeadless())
+        if (!GraphicsEnvironment.isHeadless()) {
             EventQueue.invokeLater(() -> {
                 final var textArea = new JTextArea(message);
                 textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -1223,6 +1291,7 @@ public final class Main {
                         JOptionPane.INFORMATION_MESSAGE,
                         imageIcon);
             });
+        }
     }
 
     private static void terminate(final int status) {
@@ -1239,8 +1308,9 @@ public final class Main {
                         .map(action -> {
                             var description = action.getDescription(input);
 
-                            if (action instanceof final ButtonToModeAction buttonToModeAction)
+                            if (action instanceof final ButtonToModeAction buttonToModeAction) {
                                 description = (buttonToModeAction.isToggle() ? "⇪" : "⇧") + " " + description;
+                            }
 
                             return description;
                         })
@@ -1255,7 +1325,9 @@ public final class Main {
                 .getOwnerDocument()
                 .createElementNS(SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_TSPAN_TAG);
 
-        if (bold) prefixTSpanElement.setAttribute("style", "font-weight: bold;");
+        if (bold) {
+            prefixTSpanElement.setAttribute("style", "font-weight: bold;");
+        }
 
         prefixTSpanElement.setTextContent(textContent);
 
@@ -1272,7 +1344,9 @@ public final class Main {
             for (var i = 0; i < 10; i++) {
                 overlayFrame.dispose();
 
-                if (!overlayFrame.isDisplayable()) break;
+                if (!overlayFrame.isDisplayable()) {
+                    break;
+                }
 
                 try {
                     Thread.sleep(100L);
@@ -1294,25 +1368,29 @@ public final class Main {
     }
 
     public void displayChargingStateInfo(final boolean charging, final Integer batteryCapacity) {
-        if (trayIcon != null && input != null && batteryCapacity != null)
+        if (trayIcon != null && input != null && batteryCapacity != null) {
             trayIcon.displayMessage(
                     strings.getString("CHARGING_STATE_CAPTION"),
                     MessageFormat.format(
                             strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
                             batteryCapacity / 100f),
                     MessageType.INFO);
+        }
     }
 
     public void displayLowBatteryWarning(final String batteryLevelString) {
         EventQueue.invokeLater(() -> {
-            if (trayIcon != null)
+            if (trayIcon != null) {
                 trayIcon.displayMessage(
                         strings.getString("LOW_BATTERY_CAPTION"), batteryLevelString, MessageType.WARNING);
+            }
         });
     }
 
     public void exportVisualization(final File file) {
-        if (templateSvgDocument == null) return;
+        if (templateSvgDocument == null) {
+            return;
+        }
 
         try {
             final var domImplementation = DocumentBuilderFactory.newDefaultInstance()
@@ -1391,7 +1469,9 @@ public final class Main {
     }
 
     private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
-        if (templateSvgDocument == null) throw new IllegalStateException();
+        if (templateSvgDocument == null) {
+            throw new IllegalStateException();
+        }
 
         final var workingCopySvgDocument = (SVGDocument)
                 DOMUtilities.deepCloneDocument(templateSvgDocument, templateSvgDocument.getImplementation());
@@ -1442,12 +1522,16 @@ public final class Main {
             final var combinedActions = new ArrayList<IAction<Byte>>();
 
             final var normalActions = mode.getButtonToActionsMap().get(button);
-            if (normalActions != null) combinedActions.addAll(normalActions);
+            if (normalActions != null) {
+                combinedActions.addAll(normalActions);
+            }
 
             if (Profile.defaultMode.equals(mode)) {
                 final var modeActions =
                         input.getProfile().getButtonToModeActionsMap().get(button);
-                if (modeActions != null) combinedActions.addAll(modeActions);
+                if (modeActions != null) {
+                    combinedActions.addAll(modeActions);
+                }
             }
 
             updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme);
@@ -1503,12 +1587,14 @@ public final class Main {
     public void handleOnScreenKeyboardModeChange() {
         if (scheduleOnScreenKeyboardModeSwitch) {
             for (final var buttonToModeActions :
-                    input.getProfile().getButtonToModeActionsMap().values())
-                for (final var buttonToModeAction : buttonToModeActions)
+                    input.getProfile().getButtonToModeActionsMap().values()) {
+                for (final var buttonToModeAction : buttonToModeActions) {
                     if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
                         buttonToModeAction.doAction(input, -1, Byte.MAX_VALUE);
                         break;
                     }
+                }
+            }
 
             scheduleOnScreenKeyboardModeSwitch = false;
         }
@@ -1521,12 +1607,14 @@ public final class Main {
         }
 
         final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
-        if (autostartOptionValue != null)
-            if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) startLocal();
-            else if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue))
+        if (autostartOptionValue != null) {
+            if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
+                startLocal();
+            } else if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
                 startClient();
-            else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) startServer();
-            else
+            } else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
+                startServer();
+            } else {
                 GuiUtils.showMessageDialog(
                         frame,
                         MessageFormat.format(
@@ -1539,21 +1627,30 @@ public final class Main {
                                                 : strings.getString("SERVER"),
                                         strings.getString("ERROR_DIALOG_TITLE"),
                                         JOptionPane.ERROR_MESSAGE)));
+            }
+        }
 
         final var saveOptionValue = commandLine.getOptionValue(OPTION_SAVE);
-        if (saveOptionValue != null) saveProfile(new File(saveOptionValue), false);
+        if (saveOptionValue != null) {
+            saveProfile(new File(saveOptionValue), false);
+        }
 
         final var exportOptionValue = commandLine.getOptionValue(OPTION_EXPORT);
-        if (exportOptionValue != null) exportVisualization(new File(exportOptionValue));
+        if (exportOptionValue != null) {
+            exportVisualization(new File(exportOptionValue));
+        }
 
-        if (commandLine.hasOption(OPTION_QUIT)) quit();
+        if (commandLine.hasOption(OPTION_QUIT)) {
+            quit();
+        }
     }
 
     private void initOpenVrOverlay() {
         final var profile = input.getProfile();
 
-        if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay())
+        if (!Platform.isIntel() || !isWindows && !isLinux || !profile.isShowOverlay() || !profile.isShowVrOverlay()) {
             return;
+        }
 
         try {
             openVrOverlay = OpenVrOverlay.start(this);
@@ -1569,12 +1666,16 @@ public final class Main {
     }
 
     private void initOverlay() {
-        if (!input.getProfile().isShowOverlay()) return;
+        if (!input.getProfile().isShowOverlay()) {
+            return;
+        }
 
         final var modes = input.getProfile().getModes();
         final var multipleModes = modes.size() > 1;
         final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
-        if (!multipleModes && virtualAxisToOverlayAxisMap.isEmpty()) return;
+        if (!multipleModes && virtualAxisToOverlayAxisMap.isEmpty()) {
+            return;
+        }
 
         overlayFrame = new JFrame("Overlay");
         overlayFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
@@ -1632,7 +1733,9 @@ public final class Main {
                                     && axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
                                 final var detentValue = axisToRelativeAxisAction.getDetentValue();
 
-                                if (detentValue != null) detentValues.add(detentValue);
+                                if (detentValue != null) {
+                                    detentValues.add(detentValue);
+                                }
                             }
                         })));
 
@@ -1741,7 +1844,7 @@ public final class Main {
                     if (versionsComparisonResult.isEmpty()) {
                         log.log(Level.WARNING, "Trying to load a profile without version information");
 
-                        if (!skipMessageDialogs)
+                        if (!skipMessageDialogs) {
                             GuiUtils.showMessageDialog(
                                     frame,
                                     MessageFormat.format(
@@ -1749,12 +1852,13 @@ public final class Main {
                                             strings.getString("AN_UNKNOWN")),
                                     strings.getString("WARNING_DIALOG_TITLE"),
                                     JOptionPane.WARNING_MESSAGE);
+                        }
                     } else {
                         final int v = versionsComparisonResult.get();
                         if (v < 0) {
                             log.log(Level.WARNING, "Trying to load a profile for an older release");
 
-                            if (!skipMessageDialogs)
+                            if (!skipMessageDialogs) {
                                 GuiUtils.showMessageDialog(
                                         frame,
                                         MessageFormat.format(
@@ -1762,10 +1866,11 @@ public final class Main {
                                                 strings.getString("AN_OLDER")),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
+                            }
                         } else if (v > 0) {
                             log.log(Level.WARNING, "Trying to load a profile for a newer release");
 
-                            if (!skipMessageDialogs)
+                            if (!skipMessageDialogs) {
                                 GuiUtils.showMessageDialog(
                                         frame,
                                         MessageFormat.format(
@@ -1773,6 +1878,7 @@ public final class Main {
                                                 strings.getString("A_NEWER")),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
+                            }
                         }
                     }
 
@@ -1783,7 +1889,7 @@ public final class Main {
                                 "Encountered the unknown actions while loading profile:"
                                         + String.join(", ", unknownActionClasses));
 
-                        if (!skipMessageDialogs)
+                        if (!skipMessageDialogs) {
                             GuiUtils.showMessageDialog(
                                     frame,
                                     MessageFormat.format(
@@ -1791,6 +1897,7 @@ public final class Main {
                                             String.join("\n", unknownActionClasses)),
                                     strings.getString("WARNING_DIALOG_TITLE"),
                                     JOptionPane.WARNING_MESSAGE);
+                        }
                     }
 
                     profileLoaded = input.setProfile(profile);
@@ -1822,12 +1929,13 @@ public final class Main {
             if (!profileLoaded) {
                 log.log(Level.SEVERE, "Could load profile");
 
-                if (!skipMessageDialogs)
+                if (!skipMessageDialogs) {
                     GuiUtils.showMessageDialog(
                             frame,
                             strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
                             strings.getString("ERROR_DIALOG_TITLE"),
                             JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }
@@ -1835,28 +1943,33 @@ public final class Main {
     public void newActivation(final String[] args) {
         log.log(Level.INFO, "New activation with arguments: " + String.join(" ", args));
 
-        if (args.length > 0)
+        if (args.length > 0) {
             try {
                 final var commandLine = new DefaultParser().parse(options, args);
                 final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
                 final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
                 EventQueue.invokeLater(() -> {
-                    if (cmdProfilePath != null) main.loadProfile(new File(cmdProfilePath), false, true);
+                    if (cmdProfilePath != null) {
+                        main.loadProfile(new File(cmdProfilePath), false, true);
+                    }
 
-                    if (gameControllerDbPath != null) main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+                    if (gameControllerDbPath != null) {
+                        main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+                    }
 
                     EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
                 });
             } catch (final ParseException e) {
                 log.log(Level.SEVERE, e.getMessage(), e);
             }
-        else
+        } else {
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
                     main.frame,
                     strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE));
+        }
     }
 
     private void newProfile(final boolean performGarbageCollection) {
@@ -1864,7 +1977,9 @@ public final class Main {
 
         currentFile = null;
 
-        if (input != null) input.deInit(false);
+        if (input != null) {
+            input.deInit(false);
+        }
 
         input = new Input(this, selectedController, null);
 
@@ -1887,18 +2002,28 @@ public final class Main {
         fileJMenu.remove(openJMenuItem);
         fileJMenu.remove(saveJMenuItem);
         fileJMenu.remove(saveAsJMenuItem);
-        if (fileJMenu.getItemCount() > 1) fileJMenu.remove(0);
+        if (fileJMenu.getItemCount() > 1) {
+            fileJMenu.remove(0);
+        }
         deviceJMenu.removeAll();
         menuBar.remove(deviceJMenu);
 
         final var runMenuVisible = startClientJMenuItem != null || controllerConnected;
 
         runJMenu.setVisible(runMenuVisible);
-        if (startLocalJMenuItem != null) startLocalJMenuItem.setVisible(controllerConnected);
-        if (startServerJMenuItem != null) startServerJMenuItem.setVisible(controllerConnected);
+        if (startLocalJMenuItem != null) {
+            startLocalJMenuItem.setVisible(controllerConnected);
+        }
+        if (startServerJMenuItem != null) {
+            startServerJMenuItem.setVisible(controllerConnected);
+        }
 
-        if (startLocalMenuItem != null) runPopupMenu.remove(startLocalMenuItem);
-        if (startServerMenuItem != null) runPopupMenu.remove(startServerMenuItem);
+        if (startLocalMenuItem != null) {
+            runPopupMenu.remove(startLocalMenuItem);
+        }
+        if (startServerMenuItem != null) {
+            runPopupMenu.remove(startServerMenuItem);
+        }
 
         tabbedPane.remove(modesPanel);
         tabbedPane.remove(assignmentsComponent);
@@ -1909,7 +2034,9 @@ public final class Main {
         if (SystemTray.isSupported()) {
             final var systemTray = SystemTray.getSystemTray();
 
-            if (trayIcon != null) systemTray.remove(trayIcon);
+            if (trayIcon != null) {
+                systemTray.remove(trayIcon);
+            }
 
             final var popupMenu = new PopupMenu();
 
@@ -1973,8 +2100,9 @@ public final class Main {
             }
         }
 
-        if (!controllerConnected) selectedController = null;
-        else if (selectedController == null) {
+        if (!controllerConnected) {
+            selectedController = null;
+        } else if (selectedController == null) {
             setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
             updateTitleAndTooltip();
         }
@@ -2003,8 +2131,12 @@ public final class Main {
             menuBar.add(deviceJMenu, 1);
 
             if (runPopupMenu != null) {
-                if (startLocalMenuItem != null) runPopupMenu.insert(startLocalMenuItem, 0);
-                if (startServerMenuItem != null) runPopupMenu.insert(startServerMenuItem, isWindows || isLinux ? 2 : 0);
+                if (startLocalMenuItem != null) {
+                    runPopupMenu.insert(startLocalMenuItem, 0);
+                }
+                if (startServerMenuItem != null) {
+                    runPopupMenu.insert(startServerMenuItem, isWindows || isLinux ? 2 : 0);
+                }
             }
 
             modesPanel = new JPanel(new BorderLayout());
@@ -2096,13 +2228,17 @@ public final class Main {
                     profileSettingsScrollPane,
                     null,
                     tabbedPane.indexOfComponent(globalSettingsScrollPane));
-        } else log.log(Level.INFO, "No controllers connected");
+        } else {
+            log.log(Level.INFO, "No controllers connected");
+        }
 
         updateDeviceMenuSelection();
 
-        if (selectFirstTab || !controllerConnected) tabbedPane.setSelectedIndex(0);
-        else if (previousSelectedTabIndex < tabbedPane.getTabCount())
+        if (selectFirstTab || !controllerConnected) {
+            tabbedPane.setSelectedIndex(0);
+        } else if (previousSelectedTabIndex < tabbedPane.getTabCount()) {
             tabbedPane.setSelectedIndex(previousSelectedTabIndex);
+        }
 
         updateMenuShortcuts();
         updateModesPanel(false);
@@ -2118,21 +2254,37 @@ public final class Main {
     private void onRunModeChanged() {
         final var running = isRunning();
 
-        if (startLocalJMenuItem != null) startLocalJMenuItem.setEnabled(!running);
+        if (startLocalJMenuItem != null) {
+            startLocalJMenuItem.setEnabled(!running);
+        }
 
-        if (startClientJMenuItem != null) startClientJMenuItem.setEnabled(!running);
+        if (startClientJMenuItem != null) {
+            startClientJMenuItem.setEnabled(!running);
+        }
 
-        if (startServerJMenuItem != null) startServerJMenuItem.setEnabled(!running);
+        if (startServerJMenuItem != null) {
+            startServerJMenuItem.setEnabled(!running);
+        }
 
-        if (stopJMenuItem != null) stopJMenuItem.setEnabled(running);
+        if (stopJMenuItem != null) {
+            stopJMenuItem.setEnabled(running);
+        }
 
-        if (startLocalMenuItem != null) startLocalMenuItem.setEnabled(!running);
+        if (startLocalMenuItem != null) {
+            startLocalMenuItem.setEnabled(!running);
+        }
 
-        if (startClientMenuItem != null) startClientMenuItem.setEnabled(!running);
+        if (startClientMenuItem != null) {
+            startClientMenuItem.setEnabled(!running);
+        }
 
-        if (startServerMenuItem != null) startServerMenuItem.setEnabled(!running);
+        if (startServerMenuItem != null) {
+            startServerMenuItem.setEnabled(!running);
+        }
 
-        if (stopMenuItem != null) stopMenuItem.setEnabled(running);
+        if (stopMenuItem != null) {
+            stopMenuItem.setEnabled(running);
+        }
 
         updateMenuShortcuts();
         updatePanelAccess();
@@ -2143,7 +2295,9 @@ public final class Main {
     }
 
     private void quit() {
-        if (input != null) input.deInit(false);
+        if (input != null) {
+            input.deInit(false);
+        }
 
         stopAll(true, false, false);
 
@@ -2183,15 +2337,19 @@ public final class Main {
     }
 
     private void saveProfile() {
-        if (currentFile != null) saveProfile(currentFile, true);
-        else saveProfileAs();
+        if (currentFile != null) {
+            saveProfile(currentFile, true);
+        } else {
+            saveProfileAs();
+        }
     }
 
     private void saveProfile(File file, final boolean saveAsLastProfile) {
         input.reset();
 
-        if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX))
+        if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX)) {
             file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
+        }
 
         log.log(Level.INFO, "Saving profile: " + file.getAbsolutePath());
 
@@ -2202,7 +2360,9 @@ public final class Main {
         try {
             Files.writeString(file.toPath(), jsonString);
 
-            if (saveAsLastProfile) saveLastProfile(file);
+            if (saveAsLastProfile) {
+                saveLastProfile(file);
+            }
 
             loadedProfile = file.getName();
             setUnsavedChanges(false);
@@ -2220,8 +2380,9 @@ public final class Main {
 
     private void saveProfileAs() {
         profileFileChooser.setSelectedFile(currentFile != null ? currentFile : new File("*." + PROFILE_FILE_EXTENSION));
-        if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
+        if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
             saveProfile(profileFileChooser.getSelectedFile(), true);
+        }
     }
 
     public void scheduleStatusBarText(final String text) {
@@ -2238,7 +2399,9 @@ public final class Main {
             @Override
             public void run() {
                 EventQueue.invokeLater(() -> {
-                    if (statusLabel.getText().equals(originalText)) setStatusBarText(newText);
+                    if (statusLabel.getText().equals(originalText)) {
+                        setStatusBarText(newText);
+                    }
                 });
             }
         }
@@ -2247,19 +2410,24 @@ public final class Main {
     }
 
     public void setOnScreenKeyboardVisible(final boolean visible) {
-        if (isLocalRunning() || isServerRunning())
+        if (isLocalRunning() || isServerRunning()) {
             EventQueue.invokeLater(() -> {
                 onScreenKeyboard.setVisible(visible);
 
                 repaintOnScreenKeyboardAndOverlay();
             });
+        }
     }
 
     public void setOverlayText(final String text) {
-        if (currentModeLabel == null) return;
+        if (currentModeLabel == null) {
+            return;
+        }
 
         GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-            if (currentModeLabel == null) return;
+            if (currentModeLabel == null) {
+                return;
+            }
 
             currentModeLabel.setText(text);
             Toolkit.getDefaultToolkit().sync();
@@ -2271,7 +2439,9 @@ public final class Main {
 
         log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller", controller));
 
-        if (controller.guid != null) preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
+        if (controller.guid != null) {
+            preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
+        }
     }
 
     public void setSelectedControllerAndUpdateInput(
@@ -2288,7 +2458,9 @@ public final class Main {
 
         input = new Input(Main.this, selectedController, axes);
 
-        if (previousProfile != null) input.setProfile(previousProfile);
+        if (previousProfile != null) {
+            input.setProfile(previousProfile);
+        }
     }
 
     public void setStatusBarText(final String text) {
@@ -2305,7 +2477,9 @@ public final class Main {
     }
 
     private void startClient() {
-        if (isRunning()) return;
+        if (isRunning()) {
+            return;
+        }
 
         lastRunModeType = RunModeType.CLIENT;
         final var clientRunMode = new ClientRunMode(Main.this, input);
@@ -2322,7 +2496,9 @@ public final class Main {
     }
 
     private void startLocal() {
-        if (selectedController == null || isRunning()) return;
+        if (selectedController == null || isRunning()) {
+            return;
+        }
 
         lastRunModeType = RunModeType.LOCAL;
         final var localRunMode = new LocalRunMode(Main.this, input);
@@ -2353,7 +2529,9 @@ public final class Main {
     }
 
     private void startServer() {
-        if (selectedController == null || isRunning()) return;
+        if (selectedController == null || isRunning()) {
+            return;
+        }
 
         lastRunModeType = RunModeType.SERVER;
         final var serverThread = new ServerRunMode(Main.this, input);
@@ -2378,17 +2556,25 @@ public final class Main {
         }
         stopServer(initiateStop, resetLastRunModeType);
 
-        if (performGarbageCollection) System.gc();
+        if (performGarbageCollection) {
+            System.gc();
+        }
     }
 
     private void stopClient(final boolean initiateStop, final boolean resetLastRunModeType) {
         final var running = isClientRunning();
 
-        if (initiateStop && running) ((ClientRunMode) runMode).close();
+        if (initiateStop && running) {
+            ((ClientRunMode) runMode).close();
+        }
 
-        if (running) taskRunner.waitForTask();
+        if (running) {
+            taskRunner.waitForTask();
+        }
 
-        if (resetLastRunModeType) lastRunModeType = RunModeType.NONE;
+        if (resetLastRunModeType) {
+            lastRunModeType = RunModeType.NONE;
+        }
 
         GuiUtils.invokeOnEventDispatchThreadIfRequired(this::onRunModeChanged);
     }
@@ -2396,11 +2582,17 @@ public final class Main {
     private void stopLocal(final boolean initiateStop, final boolean resetLastRunModeType) {
         final var running = isLocalRunning();
 
-        if (initiateStop && running) taskRunner.stopTask();
+        if (initiateStop && running) {
+            taskRunner.stopTask();
+        }
 
-        if (running) taskRunner.waitForTask();
+        if (running) {
+            taskRunner.waitForTask();
+        }
 
-        if (resetLastRunModeType) lastRunModeType = RunModeType.NONE;
+        if (resetLastRunModeType) {
+            lastRunModeType = RunModeType.NONE;
+        }
 
         GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
             stopOverlayTimerTask();
@@ -2426,11 +2618,17 @@ public final class Main {
     private void stopServer(final boolean initiateStop, final boolean resetLastRunModeType) {
         final var running = runMode instanceof ServerRunMode;
 
-        if (initiateStop && running) ((ServerRunMode) runMode).close();
+        if (initiateStop && running) {
+            ((ServerRunMode) runMode).close();
+        }
 
-        if (running) taskRunner.waitForTask();
+        if (running) {
+            taskRunner.waitForTask();
+        }
 
-        if (resetLastRunModeType) lastRunModeType = RunModeType.NONE;
+        if (resetLastRunModeType) {
+            lastRunModeType = RunModeType.NONE;
+        }
 
         GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
             stopOverlayTimerTask();
@@ -2440,7 +2638,9 @@ public final class Main {
     }
 
     public void updateDeviceMenuSelection() {
-        if (selectedController == null) return;
+        if (selectedController == null) {
+            return;
+        }
 
         for (var i = 0; i < deviceJMenu.getItemCount(); i++) {
             final var menuItem = deviceJMenu.getItem(i);
@@ -2453,7 +2653,9 @@ public final class Main {
     }
 
     private boolean updateGameControllerMappings(final InputStream is) {
-        if (is == null) return false;
+        if (is == null) {
+            return false;
+        }
 
         var mappingsUpdated = false;
 
@@ -2469,7 +2671,9 @@ public final class Main {
                 }
             }
 
-            if (sb.charAt(sb.length() - 1) != 0) sb.append((char) 0);
+            if (sb.charAt(sb.length() - 1) != 0) {
+                sb.append((char) 0);
+            }
 
             final var content = sb.toString().getBytes(defaultCharset);
             final var byteBuffer =
@@ -2483,8 +2687,11 @@ public final class Main {
     }
 
     private boolean updateGameControllerMappingsFromFile(final String path) {
-        if (isLocalRunning()) stopLocal(true, false);
-        else if (isServerRunning()) stopServer(true, false);
+        if (isLocalRunning()) {
+            stopLocal(true, false);
+        } else if (isServerRunning()) {
+            stopServer(true, false);
+        }
 
         var mappingsUpdated = false;
 
@@ -2538,8 +2745,9 @@ public final class Main {
                     if (menuItem.isEnabled()) {
                         final var keyCode = getExtendedKeyCodeForMenuItem(menuItem);
 
-                        if (keyCode != KeyEvent.VK_UNDEFINED)
+                        if (keyCode != KeyEvent.VK_UNDEFINED) {
                             keyStroke = KeyStroke.getKeyStroke(keyCode, menuShortcutKeyMask);
+                        }
                     }
 
                     menuItem.setAccelerator(keyStroke);
@@ -2549,7 +2757,9 @@ public final class Main {
     }
 
     void updateModesPanel(final boolean newModeAdded) {
-        if (modesListPanel == null) return;
+        if (modesListPanel == null) {
+            return;
+        }
 
         modesListPanel.removeAll();
 
@@ -2638,7 +2848,9 @@ public final class Main {
             if (newModeAdded && i == numModes - 1) {
                 descriptionTextField.grabFocus();
                 descriptionTextField.selectAll();
-            } else descriptionTextField.setCaretPosition(0);
+            } else {
+                descriptionTextField.setCaretPosition(0);
+            }
 
             final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
             descriptionTextField.addActionListener(setModeDescriptionAction);
@@ -2705,7 +2917,9 @@ public final class Main {
     }
 
     public void updateOverlayAxisIndicators(final boolean forceRepaint) {
-        if (runMode == null || !isLocalRunning() && !isServerRunning()) return;
+        if (runMode == null || !isLocalRunning() && !isServerRunning()) {
+            return;
+        }
 
         EnumSet.allOf(Input.VirtualAxis.class).stream()
                 .filter(virtualAxisToProgressBarMap::containsKey)
@@ -2740,7 +2954,9 @@ public final class Main {
     }
 
     private void updateOverlayPanel() {
-        if (indicatorsListPanel == null) return;
+        if (indicatorsListPanel == null) {
+            return;
+        }
 
         indicatorsListPanel.removeAll();
 
@@ -2790,7 +3006,9 @@ public final class Main {
             if (enabled) {
                 colorLabel.setOpaque(true);
                 colorLabel.setBackground(overlayAxis.color);
-            } else colorLabel.setText(strings.getString("INDICATOR_DISABLED_LABEL"));
+            } else {
+                colorLabel.setText(strings.getString("INDICATOR_DISABLED_LABEL"));
+            }
             colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
             colorLabel.setPreferredSize(new Dimension(100, 15));
@@ -2884,9 +3102,13 @@ public final class Main {
     private void updateOverlayPosition() {
         EventQueue.invokeLater(() -> {
             if (!isModalDialogShowing()) {
-                if (overlayFrame != null) GuiUtils.makeWindowTopmost(overlayFrame);
+                if (overlayFrame != null) {
+                    GuiUtils.makeWindowTopmost(overlayFrame);
+                }
 
-                if (onScreenKeyboard.isVisible()) GuiUtils.makeWindowTopmost(onScreenKeyboard);
+                if (onScreenKeyboard.isVisible()) {
+                    GuiUtils.makeWindowTopmost(onScreenKeyboard);
+                }
             }
 
             totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
@@ -2903,8 +3125,9 @@ public final class Main {
                 onScreenKeyboard.updateLocation();
             }
 
-            if (isWindows) repaintOnScreenKeyboardAndOverlay();
-            else if (isLinux && currentModeLabel != null) {
+            if (isWindows) {
+                repaintOnScreenKeyboardAndOverlay();
+            } else if (isLinux && currentModeLabel != null) {
                 currentModeLabel.validate();
                 currentModeLabel.repaint();
                 updateOverlayAxisIndicators(true);
@@ -2918,19 +3141,27 @@ public final class Main {
         GuiUtils.setEnabledRecursive(modesListPanel, panelsEnabled);
         GuiUtils.setEnabledRecursive(newModePanel, panelsEnabled);
 
-        if (assignmentsComponent != null) assignmentsComponent.setEnabled(panelsEnabled);
+        if (assignmentsComponent != null) {
+            assignmentsComponent.setEnabled(panelsEnabled);
+        }
 
-        if (!panelsEnabled || input != null && !input.getProfile().isShowOverlay())
+        if (!panelsEnabled || input != null && !input.getProfile().isShowOverlay()) {
             GuiUtils.setEnabledRecursive(indicatorsListPanel, false);
-        else updateOverlayPanel();
+        } else {
+            updateOverlayPanel();
+        }
 
         GuiUtils.setEnabledRecursive(profileSettingsPanel, panelsEnabled);
-        if (panelsEnabled) updateProfileSettingsPanel();
+        if (panelsEnabled) {
+            updateProfileSettingsPanel();
+        }
         GuiUtils.setEnabledRecursive(globalSettingsPanel, panelsEnabled);
     }
 
     private void updateProfileSettingsPanel() {
-        if (profileSettingsPanel == null) return;
+        if (profileSettingsPanel == null) {
+            return;
+        }
 
         profileSettingsPanel.removeAll();
         showVrOverlayCheckBox = null;
@@ -2993,11 +3224,15 @@ public final class Main {
         showOverlayCheckBox.addActionListener(event -> {
             final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
             profile.setShowOverlay(showOverlay);
-            if (!showOverlay) profile.setShowVrOverlay(false);
+            if (!showOverlay) {
+                profile.setShowVrOverlay(false);
+            }
 
             if (showVrOverlayCheckBox != null) {
                 showVrOverlayCheckBox.setEnabled(showOverlay);
-                if (!showOverlay) showVrOverlayCheckBox.setSelected(false);
+                if (!showOverlay) {
+                    showVrOverlayCheckBox.setSelected(false);
+                }
             }
 
             updatePanelAccess();
@@ -3028,7 +3263,9 @@ public final class Main {
     }
 
     private void updateShowMenuItem() {
-        if (showMenuItem == null) return;
+        if (showMenuItem == null) {
+            return;
+        }
 
         showMenuItem.setEnabled(!frame.isVisible());
     }
@@ -3055,7 +3292,9 @@ public final class Main {
                         hide ? CSSConstants.CSS_NONE_VALUE : CSSConstants.CSS_INLINE_VALUE,
                         "");
 
-        if (hide) return;
+        if (hide) {
+            return;
+        }
 
         final var delayedActions = new ArrayList<ILongPressAction<?>>();
         final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
@@ -3074,7 +3313,9 @@ public final class Main {
                 addToOtherActions = false;
             }
 
-            if (addToOtherActions) otherActions.add(action);
+            if (addToOtherActions) {
+                otherActions.add(action);
+            }
         }
 
         final List<? extends IAction<?>> actionGroupA;
@@ -3103,11 +3344,15 @@ public final class Main {
         final var tSpanNode = textElement.getFirstChild();
         tSpanNode.setTextContent(null);
 
-        if (bothGroupsPresent) addTSpanElement("• " + strings.getString(groupAPrefix) + ": ", true, tSpanNode);
+        if (bothGroupsPresent) {
+            addTSpanElement("• " + strings.getString(groupAPrefix) + ": ", true, tSpanNode);
+        }
 
         addTSpanElement(actionGroupA, tSpanNode);
 
-        if (bothGroupsPresent) addTSpanElement(" • " + strings.getString(groupBPrefix) + ": ", true, tSpanNode);
+        if (bothGroupsPresent) {
+            addTSpanElement(" • " + strings.getString(groupBPrefix) + ": ", true, tSpanNode);
+        }
 
         addTSpanElement(actionGroupB, tSpanNode);
 
@@ -3149,8 +3394,9 @@ public final class Main {
     public void updateTitleAndTooltip() {
         final String title;
 
-        if (selectedController == null) title = strings.getString("APPLICATION_NAME");
-        else {
+        if (selectedController == null) {
+            title = strings.getString("APPLICATION_NAME");
+        } else {
             final var profileTitle = (unsavedChanges ? "*" : "")
                     + (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
             title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle);
@@ -3160,7 +3406,7 @@ public final class Main {
         if (Main.isLinux) {
             final var toolkit = Toolkit.getDefaultToolkit();
             final var xtoolkit = toolkit.getClass();
-            if ("sun.awt.X11.XToolkit".equals(xtoolkit.getName()))
+            if ("sun.awt.X11.XToolkit".equals(xtoolkit.getName())) {
                 try {
                     final var awtAppClassName = xtoolkit.getDeclaredField("awtAppClassName");
                     awtAppClassName.setAccessible(true);
@@ -3171,6 +3417,7 @@ public final class Main {
                         | IllegalAccessException e) {
                     log.log(Level.SEVERE, e.getMessage(), e);
                 }
+            }
         }
 
         if (trayIcon != null) {
@@ -3178,7 +3425,9 @@ public final class Main {
 
             if (input != null) {
                 final var driver = input.getDriver();
-                if (driver != null) toolTip = driver.getTooltip(title);
+                if (driver != null) {
+                    toolTip = driver.getTooltip(title);
+                }
             }
 
             trayIcon.setToolTip(toolTip);
@@ -3186,7 +3435,9 @@ public final class Main {
     }
 
     void updateVisualizationPanel() {
-        if (visualizationPanel == null) return;
+        if (visualizationPanel == null) {
+            return;
+        }
 
         final var modes = input.getProfile().getModes();
         final var model = new DefaultComboBoxModel<>(modes.toArray(Mode[]::new));
@@ -3221,8 +3472,11 @@ public final class Main {
         }
 
         private static HotSwappingButton getById(final int id) {
-            for (final var hotSwappingButton : EnumSet.allOf(HotSwappingButton.class))
-                if (hotSwappingButton.id == id) return hotSwappingButton;
+            for (final var hotSwappingButton : EnumSet.allOf(HotSwappingButton.class)) {
+                if (hotSwappingButton.id == id) {
+                    return hotSwappingButton;
+                }
+            }
 
             return None;
         }
@@ -3295,7 +3549,9 @@ public final class Main {
             if (profileFile != null) {
                 filename = profileFile.getName();
                 filename = filename.substring(0, filename.lastIndexOf('.'));
-            } else filename = "*";
+            } else {
+                filename = "*";
+            }
 
             setSelectedFile(new File(filename + ".html"));
         }
@@ -3347,14 +3603,20 @@ public final class Main {
 
         @Override
         public void setMaximum(final int n) {
-            if (overlayAxis.inverted) super.setMinimum(-n);
-            else super.setMaximum(n);
+            if (overlayAxis.inverted) {
+                super.setMinimum(-n);
+            } else {
+                super.setMaximum(n);
+            }
         }
 
         @Override
         public void setMinimum(final int n) {
-            if (overlayAxis.inverted) super.setMaximum(-n);
-            else super.setMinimum(n);
+            if (overlayAxis.inverted) {
+                super.setMaximum(-n);
+            } else {
+                super.setMinimum(n);
+            }
         }
 
         @Override
@@ -3430,7 +3692,7 @@ public final class Main {
         private void enterLoop() {
             log.log(Level.INFO, "Entering main loop");
 
-            for (; ; )
+            for (; ; ) {
                 if (task != null) {
                     result = null;
                     var notify = false;
@@ -3439,20 +3701,28 @@ public final class Main {
                         if (task instanceof final Callable<?> callable) {
                             notify = true;
                             result = callable.call();
-                        } else if (task instanceof final Runnable runnable) runnable.run();
+                        } else if (task instanceof final Runnable runnable) {
+                            runnable.run();
+                        }
                     } catch (final Throwable t) {
-                        if (task instanceof Callable) result = t;
-                        else if (task instanceof Runnable) throw new RuntimeException(t);
+                        if (task instanceof Callable) {
+                            result = t;
+                        } else if (task instanceof Runnable) {
+                            throw new RuntimeException(t);
+                        }
                     } finally {
-                        if (notify)
+                        if (notify) {
                             synchronized (this) {
                                 notifyAll();
                             }
+                        }
 
                         task = null;
                     }
                 } else {
-                    if (pollGLFWEvents) GLFW.glfwPollEvents();
+                    if (pollGLFWEvents) {
+                        GLFW.glfwPollEvents();
+                    }
 
                     try {
                         Thread.sleep(10L);
@@ -3462,10 +3732,13 @@ public final class Main {
                         return;
                     }
                 }
+            }
         }
 
         private boolean isTaskOfTypeRunning(final Class<?> clazz) {
-            if (task == null) return false;
+            if (task == null) {
+                return false;
+            }
 
             return clazz.isAssignableFrom(task.getClass());
         }
@@ -3481,7 +3754,9 @@ public final class Main {
                     this.wait();
                 }
 
-                if (result instanceof final Throwable throwable) throw new RuntimeException(throwable);
+                if (result instanceof final Throwable throwable) {
+                    throw new RuntimeException(throwable);
+                }
 
                 return (V) result;
             } catch (final InterruptedException e) {
@@ -3501,12 +3776,13 @@ public final class Main {
 
             thread.interrupt();
 
-            while (thread.isAlive())
+            while (thread.isAlive()) {
                 try {
                     Thread.sleep(10L);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
+            }
         }
 
         private void stopTask() {
@@ -3516,12 +3792,13 @@ public final class Main {
         }
 
         private void waitForTask() {
-            while (task != null)
+            while (task != null) {
                 try {
                     Thread.sleep(10L);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
+            }
         }
     }
 
@@ -3543,7 +3820,9 @@ public final class Main {
                     new JFileChooser(preferences.get(PREFERENCES_VJOY_DIRECTORY, defaultVJoyPath));
             vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) return;
+            if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
             final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
             final var dllFile = new File(
@@ -3553,12 +3832,13 @@ public final class Main {
                 final var vjoyPath = vjoyDirectory.getAbsolutePath();
                 preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
                 vJoyDirectoryLabel.setText(vjoyPath);
-            } else
+            } else {
                 GuiUtils.showMessageDialog(
                         frame,
                         MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"), defaultVJoyPath),
                         strings.getString("ERROR_DIALOG_TITLE"),
                         JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -3578,9 +3858,11 @@ public final class Main {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            if (((JCheckBox) e.getSource()).isSelected())
+            if (((JCheckBox) e.getSource()).isSelected()) {
                 input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis());
-            else input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
+            } else {
+                input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
+            }
 
             setUnsavedChanges(true);
             updateOverlayPanel();
@@ -3601,7 +3883,9 @@ public final class Main {
         public void actionPerformed(final ActionEvent e) {
             final var htmlFileChooser = new HtmlFileChooser(currentFile);
 
-            if (htmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION) return;
+            if (htmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
             exportVisualization(htmlFileChooser.getSelectedFile());
         }
@@ -3679,8 +3963,9 @@ public final class Main {
 
         @Override
         protected void doAction() {
-            if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+            if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                 loadProfile(profileFileChooser.getSelectedFile(), false, true);
+            }
         }
     }
 
@@ -3785,7 +4070,9 @@ public final class Main {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            if (selectedController != null && selectedController.jid == controller.jid) return;
+            if (selectedController != null && selectedController.jid == controller.jid) {
+                return;
+            }
 
             setSelectedControllerAndUpdateInput(controller, input.isInitialized() ? input.getAxes() : null);
             restartLast();
@@ -3823,7 +4110,9 @@ public final class Main {
 
             final var newColor = JColorChooser.showDialog(
                     frame, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"), overlayAxis.color);
-            if (newColor != null) overlayAxis.color = newColor;
+            if (newColor != null) {
+                overlayAxis.color = newColor;
+            }
 
             setUnsavedChanges(true);
             updateOverlayPanel();
@@ -3857,8 +4146,11 @@ public final class Main {
         private void setHost() {
             final var host = hostTextField.getText();
 
-            if (host != null && !host.isEmpty()) preferences.put(PREFERENCES_HOST, host);
-            else hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST));
+            if (host != null && !host.isEmpty()) {
+                preferences.put(PREFERENCES_HOST, host);
+            } else {
+                hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST));
+            }
         }
     }
 
@@ -3870,7 +4162,9 @@ public final class Main {
         @Override
         public void actionPerformed(final ActionEvent e) {
             final var hotSwappingButton = (HotSwappingButton) ((JComboBox<?>) e.getSource()).getSelectedItem();
-            if (hotSwappingButton != null) preferences.putInt(PREFERENCES_HOT_SWAPPING_BUTTON, hotSwappingButton.id);
+            if (hotSwappingButton != null) {
+                preferences.putInt(PREFERENCES_HOT_SWAPPING_BUTTON, hotSwappingButton.id);
+            }
         }
     }
 
@@ -4069,7 +4363,9 @@ public final class Main {
                 switch (selectedOption) {
                     case JOptionPane.YES_OPTION:
                         saveProfile();
-                        if (unsavedChanges) return;
+                        if (unsavedChanges) {
+                            return;
+                        }
                     case JOptionPane.NO_OPTION:
                         break;
                     default:

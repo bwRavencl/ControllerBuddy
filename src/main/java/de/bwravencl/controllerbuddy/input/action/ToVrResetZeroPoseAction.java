@@ -63,7 +63,9 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
     }
 
     void handleAction(final boolean hot, final Input input) {
-        if (!input.getMain().isOpenVrOverlayActive()) return;
+        if (!input.getMain().isOpenVrOverlayActive()) {
+            return;
+        }
 
         if (activatable == Activatable.ALWAYS) {
             VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
@@ -72,19 +74,25 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
 
         switch (activation) {
             case REPEAT -> {
-                if (hot) VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+                if (hot) {
+                    VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
+                }
             }
             case SINGLE_IMMEDIATELY -> {
-                if (!hot) activatable = Activatable.YES;
-                else if (activatable == Activatable.YES) {
+                if (!hot) {
+                    activatable = Activatable.YES;
+                } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);
                 }
             }
             case SINGLE_ON_RELEASE -> {
                 if (hot) {
-                    if (activatable == Activatable.NO) activatable = Activatable.YES;
-                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                    if (activatable == Activatable.NO) {
+                        activatable = Activatable.YES;
+                    } else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+                        activatable = Activatable.NO;
+                    }
                 } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     VRChaperone.VRChaperone_ResetZeroPose(vrCoordinateSystem.value);

@@ -28,9 +28,10 @@ public interface IAction<V extends Number> extends Cloneable {
 
     static String getLabel(final Class<?> actionClass) {
         final var annotation = actionClass.getAnnotation(Action.class);
-        if (annotation == null)
+        if (annotation == null) {
             throw new RuntimeException(
                     actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
+        }
 
         return Main.strings.getString(annotation.label());
     }

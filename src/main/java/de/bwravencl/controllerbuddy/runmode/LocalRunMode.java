@@ -134,12 +134,16 @@ public final class LocalRunMode extends OutputRunMode {
         logStart();
 
         try {
-            if (init())
+            if (init()) {
                 while (!Thread.currentThread().isInterrupted()) {
-                    if (readInput()) writeOutput();
+                    if (readInput()) {
+                        writeOutput();
+                    }
                     Thread.sleep(pollInterval);
                 }
-            else forceStop = true;
+            } else {
+                forceStop = true;
+            }
         } catch (final InterruptedException ignored) {
         } finally {
             deInit();

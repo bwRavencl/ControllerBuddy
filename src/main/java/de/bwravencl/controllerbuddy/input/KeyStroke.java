@@ -62,8 +62,12 @@ public final class KeyStroke implements Cloneable, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         final var other = (KeyStroke) obj;
         return Arrays.equals(keyCodes, other.keyCodes) && Arrays.equals(modifierCodes, other.modifierCodes);
     }
@@ -108,7 +112,9 @@ public final class KeyStroke implements Cloneable, Serializable {
     public String toString() {
         final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
         collectedKeyCodes.addAll(Arrays.asList(keyCodes));
-        if (collectedKeyCodes.isEmpty()) return Main.strings.getString("NOTHING");
+        if (collectedKeyCodes.isEmpty()) {
+            return Main.strings.getString("NOTHING");
+        }
 
         return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));
     }

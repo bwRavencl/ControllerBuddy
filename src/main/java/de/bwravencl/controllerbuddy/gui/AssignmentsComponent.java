@@ -173,7 +173,9 @@ final class AssignmentsComponent extends JScrollPane {
     }
 
     private static void checkDimensionIsSquare(final Dimension dimension) {
-        if (dimension.width != dimension.height) throw new IllegalArgumentException();
+        if (dimension.width != dimension.height) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private static JButton createComponentButton(final Main main, final String name, final Component component) {
@@ -205,7 +207,9 @@ final class AssignmentsComponent extends JScrollPane {
 
                 @Override
                 protected void paintBorder(final Graphics g) {
-                    if (!isBorderPainted()) return;
+                    if (!isBorderPainted()) {
+                        return;
+                    }
 
                     final var g2d = (Graphics2D) g;
                     beginBorder(g2d);
@@ -278,9 +282,11 @@ final class AssignmentsComponent extends JScrollPane {
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
-                        || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP))
+                        || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
             button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
-        else button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));
+        } else {
+            button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));
+        }
 
         return button;
     }
@@ -327,8 +333,10 @@ final class AssignmentsComponent extends JScrollPane {
                 } else if (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
                     setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_THUMB"), component));
                     text = Main.strings.getString("RIGHT_STICK");
-                } else throw new IllegalArgumentException();
-            } else if (peer != null)
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            } else if (peer != null) {
                 switch (component.index()) {
                     case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> setAction(
                             new EditComponentAction(main, Main.strings.getString("LEFT_STICK_X_AXIS"), component));
@@ -340,6 +348,7 @@ final class AssignmentsComponent extends JScrollPane {
                             new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_Y_AXIS"), component));
                     default -> throw new IllegalArgumentException();
                 }
+            }
 
             setIcon(new Icon() {
 
@@ -363,7 +372,9 @@ final class AssignmentsComponent extends JScrollPane {
                     if (contentAreaFilled && (model.isEnabled() || peerModel != null && peerModel.isEnabled())) {
                         beginBackground(g2d);
 
-                        if (shape == null) initShape();
+                        if (shape == null) {
+                            initShape();
+                        }
 
                         g2d.fill(shape);
                     }
@@ -391,7 +402,9 @@ final class AssignmentsComponent extends JScrollPane {
 
         @Override
         public boolean contains(final int x, final int y) {
-            if (shape == null) initShape();
+            if (shape == null) {
+                initShape();
+            }
 
             return shape.contains(x, y);
         }
@@ -412,8 +425,9 @@ final class AssignmentsComponent extends JScrollPane {
                 final var ww = getWidth() * 0.5f;
                 final var xx = ww * 0.5f;
                 final var innerShape = new Ellipse2D.Float(xx, xx, ww, ww);
-                if (CompoundButtonLocation.Center == buttonLocation) shape = innerShape;
-                else {
+                if (CompoundButtonLocation.Center == buttonLocation) {
+                    shape = innerShape;
+                } else {
                     final var outerShape = new Arc2D.Float(
                             1, 1, getWidth() - 2, getHeight() - 2, buttonLocation.startDegree, 90f, Arc2D.PIE);
                     final var outerArea = new Area(outerShape);
@@ -425,12 +439,16 @@ final class AssignmentsComponent extends JScrollPane {
 
         @Override
         protected void paintBorder(final Graphics g) {
-            if (!isBorderPainted()) return;
+            if (!isBorderPainted()) {
+                return;
+            }
 
             final var g2d = (Graphics2D) g;
             beginBorder(g2d);
 
-            if (shape == null) initShape();
+            if (shape == null) {
+                initShape();
+            }
 
             g2d.draw(shape);
         }

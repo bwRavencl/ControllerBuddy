@@ -80,8 +80,9 @@ class OpenVrOverlay {
             final var peError = stack.mallocInt(1);
             final var token = VR.VR_InitInternal(peError, VR.EVRApplicationType_VRApplication_Background);
             final var initError = peError.get();
-            if (initError != VR.EVRInitError_VRInitError_None)
+            if (initError != VR.EVRInitError_VRInitError_None) {
                 throw new RuntimeException(VR.VR_GetVRInitErrorAsEnglishDescription(initError));
+            }
 
             try {
                 OpenVR.create(token);
@@ -106,10 +107,14 @@ class OpenVrOverlay {
                     final var totalDisplayBounds = GuiUtils.getAndStoreTotalDisplayBounds(main);
 
                     var statusOverlayPositionX = STATUS_OVERLAY_POSITION_X;
-                    if (main.isOverlayInLeftHalf(totalDisplayBounds)) statusOverlayPositionX *= -1f;
+                    if (main.isOverlayInLeftHalf(totalDisplayBounds)) {
+                        statusOverlayPositionX *= -1f;
+                    }
 
                     var statusOverlayPositionY = STATUS_OVERLAY_POSITION_Y;
-                    if (!main.isOverlayInLowerHalf(totalDisplayBounds)) statusOverlayPositionY *= -1f;
+                    if (!main.isOverlayInLowerHalf(totalDisplayBounds)) {
+                        statusOverlayPositionY *= -1f;
+                    }
 
                     translate(
                             statusOverlayTransform,
@@ -162,7 +167,9 @@ class OpenVrOverlay {
                 MemoryUtil.memPutAddress(wc.address() + WNDCLASSEX.LPFNWNDPROC, User32.Functions.DefWindowProc);
 
                 classAtom = User32.RegisterClassEx(wc);
-                if (classAtom == 0) throw new IllegalStateException("Failed to register WGL window class");
+                if (classAtom == 0) {
+                    throw new IllegalStateException("Failed to register WGL window class");
+                }
 
                 hwnd = Checks.check(User32.nCreateWindowEx(
                         0,
@@ -186,16 +193,19 @@ class OpenVrOverlay {
                         .nVersion((short) 1)
                         .dwFlags(GDI32.PFD_SUPPORT_OPENGL);
                 final var pixelFormat = GDI32.ChoosePixelFormat(hdc, pfd);
-                if (pixelFormat == 0)
+                if (pixelFormat == 0) {
                     WindowsUtil.windowsThrowException(
                             getClass().getName() + ": failed to choose an OpenGL-compatible pixel format");
+                }
 
-                if (GDI32.DescribePixelFormat(hdc, pixelFormat, pfd) == 0)
+                if (GDI32.DescribePixelFormat(hdc, pixelFormat, pfd) == 0) {
                     WindowsUtil.windowsThrowException(
                             getClass().getName() + ": failed to obtain pixel format information");
+                }
 
-                if (!GDI32.SetPixelFormat(hdc, pixelFormat, pfd))
+                if (!GDI32.SetPixelFormat(hdc, pixelFormat, pfd)) {
                     WindowsUtil.windowsThrowException("Failed to set the pixel format");
+                }
 
                 hglrc = Checks.check(WGL.wglCreateContext(hdc));
 
@@ -224,7 +234,7 @@ class OpenVrOverlay {
 
         final var buffer = stack.malloc(width * height * 4);
 
-        for (var y = 0; y < height; y++)
+        for (var y = 0; y < height; y++) {
             for (var x = 0; x < width; x++) {
                 final var pixel = pixels[y * width + x];
                 buffer.put((byte) (pixel >> 16 & 0xFF));
@@ -232,6 +242,7 @@ class OpenVrOverlay {
                 buffer.put((byte) (pixel & 0xFF));
                 buffer.put((byte) (pixel >> 24 & 0xFF));
             }
+        }
 
         return buffer.flip();
     }
@@ -244,7 +255,9 @@ class OpenVrOverlay {
         } catch (final IllegalStateException ignored) {
         }
 
-        if (capabilities == null) GL.createCapabilities();
+        if (capabilities == null) {
+            GL.createCapabilities();
+        }
     }
 
     private static HmdMatrix34 createIdentityHmdMatrix34(final MemoryStack stack) {
@@ -315,7 +328,9 @@ class OpenVrOverlay {
     }
 
     static synchronized OpenVrOverlay start(final Main main) {
-        if (!VR.VR_IsRuntimeInstalled() || !VR.VR_IsHmdPresent()) return null;
+        if (!VR.VR_IsRuntimeInstalled() || !VR.VR_IsHmdPresent()) {
+            return null;
+        }
 
         return new OpenVrOverlay(main);
     }
@@ -327,31 +342,43 @@ class OpenVrOverlay {
     }
 
     private void checkOverlayError(final int overlayError) {
-        if (overlayError != VR.EVROverlayError_VROverlayError_None)
+        if (overlayError != VR.EVROverlayError_VROverlayError_None) {
             throw new RuntimeException(VROverlay.VROverlay_GetOverlayErrorNameFromEnum(overlayError));
+        }
     }
 
     private void deInit() {
         VR.VR_ShutdownInternal();
 
-        if (hwnd != MemoryUtil.NULL) User32.DestroyWindow(hwnd);
+        if (hwnd != MemoryUtil.NULL) {
+            User32.DestroyWindow(hwnd);
+        }
 
-        if (classAtom != 0) User32.nUnregisterClass(classAtom & 0xFFFF, WindowsLibrary.HINSTANCE);
+        if (classAtom != 0) {
+            User32.nUnregisterClass(classAtom & 0xFFFF, WindowsLibrary.HINSTANCE);
+        }
     }
 
     private void render() {
         renderingMemoryStack.push();
         try {
             final var vrEvent = VREvent.malloc(renderingMemoryStack);
-            while (VROverlay.VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent))
-                if (vrEvent.eventType() == VR.EVREventType_VREvent_Quit) EventQueue.invokeLater(this::stop);
+            while (VROverlay.VROverlay_PollNextOverlayEvent(onScreenKeyboardOverlayHandle, vrEvent)) {
+                if (vrEvent.eventType() == VR.EVREventType_VREvent_Quit) {
+                    EventQueue.invokeLater(this::stop);
+                }
+            }
 
             final var overlayFrame = main.getOverlayFrame();
-            if (overlayFrame != null && overlayFrame.isDisplayable()) updateOverlay(statusOverlayHandle, overlayFrame);
+            if (overlayFrame != null && overlayFrame.isDisplayable()) {
+                updateOverlay(statusOverlayHandle, overlayFrame);
+            }
 
             updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
         } finally {
-            if (WGL.wglGetCurrentContext() == hglrc) WGL.wglMakeCurrent(MemoryUtil.NULL, MemoryUtil.NULL);
+            if (WGL.wglGetCurrentContext() == hglrc) {
+                WGL.wglMakeCurrent(MemoryUtil.NULL, MemoryUtil.NULL);
+            }
 
             renderingMemoryStack.pop();
         }
@@ -361,7 +388,9 @@ class OpenVrOverlay {
         executorService.shutdown();
 
         try {
-            if (executorService.awaitTermination(2L, TimeUnit.SECONDS)) deInit();
+            if (executorService.awaitTermination(2L, TimeUnit.SECONDS)) {
+                deInit();
+            }
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -394,12 +423,15 @@ class OpenVrOverlay {
                     final var byteBuffer = bufferedImageToByteBuffer(textureData.image, renderingMemoryStack);
 
                     if (WGL.wglGetCurrentContext() != hglrc) {
-                        if (!WGL.wglMakeCurrent(hdc, hglrc))
+                        if (!WGL.wglMakeCurrent(hdc, hglrc)) {
                             throw new RuntimeException("Could not acquire OpenGL context");
+                        }
                         createGLCapabilitiesIfRequired();
                     }
 
-                    if (imageResized) textureData.textureObject = GL11.glGenTextures();
+                    if (imageResized) {
+                        textureData.textureObject = GL11.glGenTextures();
+                    }
 
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureData.textureObject);
                     GL11.glTexImage2D(
@@ -423,7 +455,9 @@ class OpenVrOverlay {
                             VR.EColorSpace_ColorSpace_Auto);
                     checkOverlayError(VROverlay.VROverlay_SetOverlayTexture(overlayHandle, texture));
                 }
-            } else checkOverlayError(VROverlay.VROverlay_HideOverlay(overlayHandle));
+            } else {
+                checkOverlayError(VROverlay.VROverlay_HideOverlay(overlayHandle));
+            }
         } finally {
             renderingMemoryStack.pop();
         }

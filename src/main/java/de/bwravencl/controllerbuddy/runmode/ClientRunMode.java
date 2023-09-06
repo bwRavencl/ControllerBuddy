@@ -67,7 +67,9 @@ public final class ClientRunMode extends OutputRunMode {
     }
 
     public void close() {
-        if (clientSocket != null) clientSocket.close();
+        if (clientSocket != null) {
+            clientSocket.close();
+        }
     }
 
     @Override
@@ -210,7 +212,9 @@ public final class ClientRunMode extends OutputRunMode {
                                 axisS1.setValue(inputAxes.get(VirtualAxis.S1));
 
                                 final var inputButtons = (boolean[]) objectInputStream.readObject();
-                                for (var i = 0; i < nButtons; i++) buttons[i].setValue(inputButtons[i] ? 1 : 0);
+                                for (var i = 0; i < nButtons; i++) {
+                                    buttons[i].setValue(inputButtons[i] ? 1 : 0);
+                                }
 
                                 cursorDeltaX = objectInputStream.readInt();
                                 cursorDeltaY = objectInputStream.readInt();
@@ -266,7 +270,7 @@ public final class ClientRunMode extends OutputRunMode {
                             }
                         }
 
-                        if (messageType == MessageType.UpdateRequestAlive)
+                        if (messageType == MessageType.UpdateRequestAlive) {
                             try (final var byteArrayOutputStream = new ByteArrayOutputStream();
                                     var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                                 dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
@@ -276,6 +280,7 @@ public final class ClientRunMode extends OutputRunMode {
                                         new DatagramPacket(keepAliveBuf, keepAliveBuf.length, hostAddress, port);
                                 clientSocket.send(keepAlivePacket);
                             }
+                        }
                     } catch (final ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -307,8 +312,14 @@ public final class ClientRunMode extends OutputRunMode {
                 clientSocket.connect(hostAddress, port);
                 clientSocket.setSoTimeout(timeout);
 
-                while (!Thread.interrupted()) if (readInput()) writeOutput();
-            } else forceStop = true;
+                while (!Thread.interrupted()) {
+                    if (readInput()) {
+                        writeOutput();
+                    }
+                }
+            } else {
+                forceStop = true;
+            }
         } catch (final UnknownHostException e) {
             forceStop = true;
 
@@ -330,7 +341,9 @@ public final class ClientRunMode extends OutputRunMode {
                     Main.strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE));
         } finally {
-            if (clientSocket != null) clientSocket.close();
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
             deInit();
         }
 

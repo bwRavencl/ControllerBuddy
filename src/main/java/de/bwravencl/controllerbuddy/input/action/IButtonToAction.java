@@ -37,19 +37,24 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
     }
 
     default byte handleLongPress(final Input input, final int component, final byte value) {
-        if (!isLongPress()) return value;
+        if (!isLongPress()) {
+            return value;
+        }
 
         final var currentTime = System.currentTimeMillis();
 
         if (value != 0) {
-            if (!actionToDownSinceMap.containsKey(this)) actionToDownSinceMap.put(this, currentTime);
-            else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+            if (!actionToDownSinceMap.containsKey(this)) {
+                actionToDownSinceMap.put(this, currentTime);
+            } else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
                 for (final var mode : input.getProfile().getModes()) {
                     final var actions = mode.getButtonToActionsMap().get(component);
 
                     if (actions != null && actions.contains(this)) {
                         for (final IAction<?> action : actions) {
-                            if (action == this) continue;
+                            if (action == this) {
+                                continue;
+                            }
 
                             var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
@@ -57,20 +62,26 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
                                 isUndelayedOnReleaseAction = false;
 
                                 if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
-                                    if (!buttonToKeyAction.isLongPress())
+                                    if (!buttonToKeyAction.isLongPress()) {
                                         isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
+                                    }
                                 } else if (action
                                         instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
-                                    if (!buttonToMouseButtonAction.isLongPress())
+                                    if (!buttonToMouseButtonAction.isLongPress()) {
                                         isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
-                                } else if (action instanceof final ButtonToCycleAction buttonToCycleAction)
-                                    if (!buttonToCycleAction.isLongPress()) isUndelayedOnReleaseAction = true;
+                                    }
+                                } else if (action instanceof final ButtonToCycleAction buttonToCycleAction) {
+                                    if (!buttonToCycleAction.isLongPress()) {
+                                        isUndelayedOnReleaseAction = true;
+                                    }
+                                }
 
                                 actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
                             }
 
-                            if (isUndelayedOnReleaseAction)
+                            if (isUndelayedOnReleaseAction) {
                                 ((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+                            }
                         }
 
                         break;
@@ -79,7 +90,9 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
 
                 return value;
             }
-        } else actionToDownSinceMap.remove(this);
+        } else {
+            actionToDownSinceMap.remove(this);
+        }
 
         return 0;
     }

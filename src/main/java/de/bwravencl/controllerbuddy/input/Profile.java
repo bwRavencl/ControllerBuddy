@@ -66,19 +66,24 @@ public final class Profile implements Cloneable {
         final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
         for (final var entry : buttonToModeActionsMap.entrySet()) {
             final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
-            for (final var action : entry.getValue()) buttonToModeActions.add((ButtonToModeAction) action.clone());
+            for (final var action : entry.getValue()) {
+                buttonToModeActions.add((ButtonToModeAction) action.clone());
+            }
             clonedButtonToModeActionsMap.put(entry.getKey(), buttonToModeActions);
         }
         profile.setButtonToModeActionsMap(clonedButtonToModeActionsMap);
 
         final var clonedModes = new ArrayList<Mode>();
-        for (final var mode : modes) clonedModes.add((Mode) mode.clone());
+        for (final var mode : modes) {
+            clonedModes.add((Mode) mode.clone());
+        }
         profile.setModes(clonedModes);
 
         final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
-        for (final var entry : virtualAxisToOverlayAxisMap.entrySet())
+        for (final var entry : virtualAxisToOverlayAxisMap.entrySet()) {
             clonedVirtualAxisToOverlayAxisMap.put(
                     entry.getKey(), (OverlayAxis) entry.getValue().clone());
+        }
         profile.virtualAxisToOverlayAxisMap = clonedVirtualAxisToOverlayAxisMap;
 
         return profile;
@@ -118,7 +123,11 @@ public final class Profile implements Cloneable {
 
     public void removeMode(final Input input, final Mode mode) {
         buttonToModeActionsMap.entrySet().removeIf(entry -> {
-            for (final var action : entry.getValue()) if (action.getMode(input).equals(mode)) return true;
+            for (final var action : entry.getValue()) {
+                if (action.getMode(input).equals(mode)) {
+                    return true;
+                }
+            }
 
             return false;
         });
@@ -132,10 +141,10 @@ public final class Profile implements Cloneable {
 
             final var newMode = modes.get(index);
 
-            if (input.getRunMode() != null)
+            if (input.getRunMode() != null) {
                 newMode.getAxisToActionsMap().keySet().forEach(axis -> {
                     final var currentAxisToActionsMap = getActiveMode().getAxisToActionsMap();
-                    if (currentAxisToActionsMap.containsKey(axis))
+                    if (currentAxisToActionsMap.containsKey(axis)) {
                         currentAxisToActionsMap.get(axis).forEach(action -> {
                             if (action instanceof final AxisToAxisAction axisToAxisAction
                                     && !(action instanceof AxisToRelativeAxisAction)) {
@@ -146,7 +155,9 @@ public final class Profile implements Cloneable {
                                 input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
                             }
                         });
+                    }
                 });
+            }
 
             activeModeIndex = index;
             input.getMain().setOverlayText(newMode.getDescription());

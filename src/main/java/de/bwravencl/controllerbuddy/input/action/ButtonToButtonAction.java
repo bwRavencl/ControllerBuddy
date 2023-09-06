@@ -30,7 +30,9 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 
     @Override
     public void doAction(final Input input, final int component, Byte value) {
-        if (isAlreadyPressed(input)) return;
+        if (isAlreadyPressed(input)) {
+            return;
+        }
 
         value = handleLongPress(input, component, value);
 

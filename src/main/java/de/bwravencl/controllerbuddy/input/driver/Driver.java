@@ -67,7 +67,9 @@ public abstract class Driver {
 
         for (final var driverBuilder : driverBuilders) {
             final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
-            if (driver != null) return driver;
+            if (driver != null) {
+                return driver;
+            }
         }
 
         return null;

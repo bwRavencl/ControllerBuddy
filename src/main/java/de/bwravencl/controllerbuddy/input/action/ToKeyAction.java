@@ -61,7 +61,9 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString("PRESS"), keystroke);
     }
@@ -90,16 +92,20 @@ public abstract class ToKeyAction<V extends Number> extends DescribableAction<V>
                 }
             }
             case SINGLE_IMMEDIATELY -> {
-                if (!hot) activatable = Activatable.YES;
-                else if (activatable == Activatable.YES) {
+                if (!hot) {
+                    activatable = Activatable.YES;
+                } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     input.getDownUpKeyStrokes().add(keystroke);
                 }
             }
             case SINGLE_ON_RELEASE -> {
                 if (hot) {
-                    if (activatable == Activatable.NO) activatable = Activatable.YES;
-                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                    if (activatable == Activatable.NO) {
+                        activatable = Activatable.YES;
+                    } else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+                        activatable = Activatable.NO;
+                    }
                 } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     input.getDownUpKeyStrokes().add(keystroke);

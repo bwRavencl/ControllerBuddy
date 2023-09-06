@@ -85,18 +85,24 @@ public final class GuiUtils {
             totalDisplayBounds.height = Math.max(totalDisplayBounds.height, maxY);
         }
 
-        if (main != null) main.setTotalDisplayBounds(totalDisplayBounds);
+        if (main != null) {
+            main.setTotalDisplayBounds(totalDisplayBounds);
+        }
 
         return totalDisplayBounds;
     }
 
     private static String getFrameLocationPreferencesKey(final JFrame frame) {
         final var title = frame.getTitle();
-        if (title == null || title.isBlank()) return null;
+        if (title == null || title.isBlank()) {
+            return null;
+        }
 
         var underscoreTitle = title.codePoints()
                 .mapToObj(c -> {
-                    if (c == ' ') return "_";
+                    if (c == ' ') {
+                        return "_";
+                    }
                     return (Character.isUpperCase(c) ? "_" : "") + Character.toLowerCase((char) c);
                 })
                 .collect(Collectors.joining());
@@ -110,8 +116,11 @@ public final class GuiUtils {
     }
 
     static void invokeOnEventDispatchThreadIfRequired(final Runnable runnable) {
-        if (EventQueue.isDispatchThread()) runnable.run();
-        else EventQueue.invokeLater(runnable);
+        if (EventQueue.isDispatchThread()) {
+            runnable.run();
+        } else {
+            EventQueue.invokeLater(runnable);
+        }
     }
 
     static void loadFrameLocation(
@@ -125,12 +134,13 @@ public final class GuiUtils {
         if (locationString != null) {
 
             final var parts = locationString.split(",");
-            if (parts.length == 2)
+            if (parts.length == 2) {
                 try {
                     location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
                     location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
                 } catch (final NumberFormatException ignored) {
                 }
+            }
         }
 
         setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
@@ -148,12 +158,17 @@ public final class GuiUtils {
     }
 
     static void setEnabledRecursive(final Component component, final boolean enabled) {
-        if (component == null) return;
+        if (component == null) {
+            return;
+        }
 
         component.setEnabled(enabled);
 
-        if (component instanceof final Container container)
-            for (final var child : container.getComponents()) setEnabledRecursive(child, enabled);
+        if (component instanceof final Container container) {
+            for (final var child : container.getComponents()) {
+                setEnabledRecursive(child, enabled);
+            }
+        }
     }
 
     private static void setFrameLocationRespectingBounds(
@@ -190,7 +205,9 @@ public final class GuiUtils {
             final int messageType,
             @SuppressWarnings("exports") final Icon icon)
             throws HeadlessException {
-        if (Main.skipMessageDialogs) return;
+        if (Main.skipMessageDialogs) {
+            return;
+        }
 
         JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
     }
@@ -212,7 +229,9 @@ public final class GuiUtils {
 
         @Override
         public void mouseDragged(final MouseEvent e) {
-            if (mouseDownLocation == null) return;
+            if (mouseDownLocation == null) {
+                return;
+            }
 
             final var currentMouseLocation = e.getLocationOnScreen();
             final var newFrameLocation = new Point(

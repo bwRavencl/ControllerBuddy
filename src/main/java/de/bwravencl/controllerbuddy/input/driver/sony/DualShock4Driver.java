@@ -50,7 +50,9 @@ public final class DualShock4Driver extends SonyDriver {
 
     @Override
     byte[] getDefaultHidReport() {
-        if (connection == null) return null;
+        if (connection == null) {
+            return null;
+        }
 
         final byte[] defaultHidReport;
         if (connection.isBluetooth()) {
@@ -135,14 +137,20 @@ public final class DualShock4Driver extends SonyDriver {
                 batteryCapacity = 100;
                 charging = true;
             } else {
-                if (batteryData == 11) batteryCapacity = 100;
-                else batteryCapacity = 0;
+                if (batteryData == 11) {
+                    batteryCapacity = 100;
+                } else {
+                    batteryCapacity = 0;
+                }
 
                 charging = false;
             }
         } else {
-            if (batteryData < 10) batteryCapacity = batteryData * 10 + 5;
-            else batteryCapacity = 100;
+            if (batteryData < 10) {
+                batteryCapacity = batteryData * 10 + 5;
+            } else {
+                batteryCapacity = 100;
+            }
 
             charging = false;
         }
@@ -166,22 +174,33 @@ public final class DualShock4Driver extends SonyDriver {
                 final List<ControllerInfo> presentControllers,
                 final ControllerInfo selectedController) {
             final String guid;
-            if (Main.isMac) guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
-            else guid = selectedController.guid();
+            if (Main.isMac) {
+                guid = GLFW.glfwGetJoystickGUID(selectedController.jid());
+            } else {
+                guid = selectedController.guid();
+            }
 
-            if (guid == null) return null;
+            if (guid == null) {
+                return null;
+            }
 
             final short productId;
             Connection connection = null;
-            if (guid.matches("^0[35]0000004c050000c405.*")) productId = 0x5C4;
-            else if (guid.matches("^0[35]0000004c050000cc09.*")) productId = 0x9CC;
-            else if (guid.matches("^0[35]0000004c050000a00b.*")) {
+            if (guid.matches("^0[35]0000004c050000c405.*")) {
+                productId = 0x5C4;
+            } else if (guid.matches("^0[35]0000004c050000cc09.*")) {
+                productId = 0x9CC;
+            } else if (guid.matches("^0[35]0000004c050000a00b.*")) {
                 productId = 0xBA0;
                 connection = DongleConnection;
-            } else return null;
+            } else {
+                return null;
+            }
 
             final var hidDevice = getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log);
-            if (hidDevice != null) return new DualShock4Driver(input, selectedController, hidDevice, connection);
+            if (hidDevice != null) {
+                return new DualShock4Driver(input, selectedController, hidDevice, connection);
+            }
 
             return null;
         }

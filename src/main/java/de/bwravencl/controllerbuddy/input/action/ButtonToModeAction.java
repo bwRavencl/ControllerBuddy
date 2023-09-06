@@ -62,7 +62,9 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
             buttonToModeActionStack.push(this);
             profile.setActiveMode(input, modeUuid);
 
-            if (targetsOnScreenKeyboardMode()) input.getMain().setOnScreenKeyboardVisible(true);
+            if (targetsOnScreenKeyboardMode()) {
+                input.getMain().setOnScreenKeyboardVisible(true);
+            }
         }
     }
 
@@ -73,19 +75,24 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
         buttonLoop:
         for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
             final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
-            if (buttonToModeActions != null)
-                for (final var action : buttonToModeActions)
+            if (buttonToModeActions != null) {
+                for (final var action : buttonToModeActions) {
                     if (equals(action)) {
                         myButton = button;
                         break buttonLoop;
                     }
+                }
+            }
         }
 
-        if (myButton != null)
+        if (myButton != null) {
             for (final var action : buttonToModeActionStack) {
                 final var buttonToActionMap = action.getMode(input).getButtonToActionsMap();
-                if (buttonToActionMap.containsKey(myButton)) return false;
+                if (buttonToActionMap.containsKey(myButton)) {
+                    return false;
+                }
             }
+        }
 
         return true;
     }
@@ -99,7 +106,9 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
         for (var topmostModeAction = buttonToModeActionStack.peek();
                 topmostModeAction != this;
                 topmostModeAction = buttonToModeActionStack.peek()) {
-            if (topmostModeAction != null) topmostModeAction.deactivateMode(input, profile);
+            if (topmostModeAction != null) {
+                topmostModeAction.deactivateMode(input, profile);
+            }
 
             input.repeatModeActionWalk();
         }
@@ -108,8 +117,11 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
         final Mode previousMode;
         final var previousButtonToModeAction = buttonToModeActionStack.peek();
-        if (previousButtonToModeAction != null) previousMode = previousButtonToModeAction.getMode(input);
-        else previousMode = profile.getModes().get(0);
+        if (previousButtonToModeAction != null) {
+            previousMode = previousButtonToModeAction.getMode(input);
+        } else {
+            previousMode = profile.getModes().get(0);
+        }
 
         final var activeMode = profile.getActiveMode();
 
@@ -120,16 +132,19 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
         final var axes = activeMode.getAxisToActionsMap().keySet();
         final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
         final var main = input.getMain();
-        if (defaultAxisToActionsMap != null)
+        if (defaultAxisToActionsMap != null) {
             axes.stream()
                     .filter(defaultAxisToActionsMap::containsKey)
                     .forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
                             .filter(action -> action instanceof IAxisToAction)
                             .forEach(action -> input.suspendAxis(axis)));
+        }
 
         profile.setActiveMode(input, previousMode.getUuid());
 
-        if (targetsOnScreenKeyboardMode()) main.setOnScreenKeyboardVisible(false);
+        if (targetsOnScreenKeyboardMode()) {
+            main.setOnScreenKeyboardVisible(false);
+        }
     }
 
     @Override
@@ -139,33 +154,46 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
         final var profile = input.getProfile();
 
         if (value == 0) {
-            if (toggle) up = true;
-            else if (buttonToModeActionStack.contains(this)) deactivateMode(input, profile);
+            if (toggle) {
+                up = true;
+            } else if (buttonToModeActionStack.contains(this)) {
+                deactivateMode(input, profile);
+            }
         } else if (toggle) {
             if (up) {
-                if (buttonToModeActionStack.peek() == this) deactivateMode(input, profile);
-                else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
+                if (buttonToModeActionStack.peek() == this) {
+                    deactivateMode(input, profile);
+                } else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
                     activateMode(input, profile);
+                }
 
                 up = false;
             }
-        } else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input))
+        } else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
             activateMode(input, profile);
+        }
     }
 
     @Override
     public String getDescription(final Input input) {
         final var mode = getMode(input);
-        if (mode == null) return null;
+        if (mode == null) {
+            return null;
+        }
 
         return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
     }
 
     public Mode getMode(final Input input) {
-        for (final var mode : input.getProfile().getModes()) if (mode.getUuid().equals(modeUuid)) return mode;
+        for (final var mode : input.getProfile().getModes()) {
+            if (mode.getUuid().equals(modeUuid)) {
+                return mode;
+            }
+        }
 
-        if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid))
+        if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid)) {
             return OnScreenKeyboard.onScreenKeyboardMode;
+        }
 
         return Profile.defaultMode;
     }
@@ -183,7 +211,9 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
     public void reset(final Input input) {
         buttonToModeActionStack.clear();
 
-        if (targetsOnScreenKeyboardMode()) input.getMain().setOnScreenKeyboardVisible(false);
+        if (targetsOnScreenKeyboardMode()) {
+            input.getMain().setOnScreenKeyboardVisible(false);
+        }
     }
 
     @Override

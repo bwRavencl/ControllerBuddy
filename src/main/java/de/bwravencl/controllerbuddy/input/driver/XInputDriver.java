@@ -54,13 +54,18 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
         super(input, controller);
 
         XInputDevice[] xinputDevices;
-        if (XInputDevice14.isAvailable()) xinputDevices = XInputDevice14.getAllDevices();
-        else xinputDevices = XInputDevice.getAllDevices();
+        if (XInputDevice14.isAvailable()) {
+            xinputDevices = XInputDevice14.getAllDevices();
+        } else {
+            xinputDevices = XInputDevice.getAllDevices();
+        }
 
         final var optionalXinputDevice =
                 Arrays.stream(xinputDevices).filter(XInputDevice::poll).findFirst();
 
-        if (optionalXinputDevice.isEmpty()) throw new IllegalStateException("No XInput Device connected");
+        if (optionalXinputDevice.isEmpty()) {
+            throw new IllegalStateException("No XInput Device connected");
+        }
 
         xinputDevice = optionalXinputDevice.get();
         ready = true;
@@ -68,10 +73,11 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
         var batteryLevelAvailable = false;
         if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
             final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
-            if (batteryInformation != null)
+            if (batteryInformation != null) {
                 batteryLevelAvailable = switch (batteryInformation.getType()) {
                     case ALKALINE, NIMH -> true;
                     default -> false;};
+            }
         }
 
         if (batteryLevelAvailable) {
@@ -112,12 +118,13 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
         xinputDeviceLock.lock();
         try {
-            if (executorService != null)
+            if (executorService != null) {
                 try {
                     executorService.awaitTermination(2L, TimeUnit.SECONDS);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
+            }
 
             xinputDevice = null;
         } finally {
@@ -127,7 +134,9 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
     @Override
     public boolean getGamepadState(final GLFWGamepadState state) {
-        if (xinputDevice == null || !xinputDevice.isConnected()) return false;
+        if (xinputDevice == null || !xinputDevice.isConnected()) {
+            return false;
+        }
 
         xinputDevice.poll();
 
@@ -163,14 +172,18 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
     @Override
     public String getTooltip(final String title) {
-        if (batteryLevelString == null) return super.getTooltip(title);
+        if (batteryLevelString == null) {
+            return super.getTooltip(title);
+        }
 
         return MessageFormat.format(Main.strings.getString("BATTERY_TOOLTIP_STRING"), title, batteryLevelString);
     }
 
     private void pollBatteryLevel() {
         EventQueue.invokeLater(() -> {
-            if (controller.jid() != input.getController().jid()) return;
+            if (controller.jid() != input.getController().jid()) {
+                return;
+            }
 
             if (xinputDevice instanceof final XInputDevice14 xinputDevice14) {
                 final var batteryInformation = xinputDevice14.getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
@@ -185,19 +198,24 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
                         });
 
                 input.getMain().updateTitleAndTooltip();
-                if (batteryLevel == XInputBatteryLevel.LOW)
+                if (batteryLevel == XInputBatteryLevel.LOW) {
                     input.getMain().displayLowBatteryWarning(batteryLevelString);
+                }
             }
         });
     }
 
     private void rumble(final long duration, final int leftMotor, final int rightMotor) {
-        if (xinputDevice == null) return;
+        if (xinputDevice == null) {
+            return;
+        }
 
         Thread.startVirtualThread(() -> {
             xinputDeviceLock.lock();
             try {
-                if (xinputDevice == null) return;
+                if (xinputDevice == null) {
+                    return;
+                }
 
                 xinputDevice.setVibration(leftMotor, rightMotor);
                 try {

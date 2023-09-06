@@ -52,7 +52,9 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
         final var cycleAction = (ButtonToCycleAction) super.clone();
 
         final var clonedActions = new ArrayList<IAction<Byte>>();
-        for (final var action : actions) clonedActions.add((IAction<Byte>) action.clone());
+        for (final var action : actions) {
+            clonedActions.add((IAction<Byte>) action.clone());
+        }
         cycleAction.setActions(clonedActions);
 
         return cycleAction;
@@ -67,16 +69,20 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
         switch (activation) {
             case REPEAT -> throw new IllegalStateException();
             case SINGLE_IMMEDIATELY -> {
-                if (!hot) activatable = Activatable.YES;
-                else if (activatable == Activatable.YES) {
+                if (!hot) {
+                    activatable = Activatable.YES;
+                } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     doActionAndAdvanceIndex(input, component);
                 }
             }
             case SINGLE_ON_RELEASE -> {
                 if (hot) {
-                    if (activatable == Activatable.NO) activatable = Activatable.YES;
-                    else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) activatable = Activatable.NO;
+                    if (activatable == Activatable.NO) {
+                        activatable = Activatable.YES;
+                    } else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+                        activatable = Activatable.NO;
+                    }
                 } else if (activatable == Activatable.YES) {
                     activatable = Activatable.NO;
                     doActionAndAdvanceIndex(input, component);
@@ -88,8 +94,11 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
     private void doActionAndAdvanceIndex(final Input input, final int component) {
         actions.get(index).doAction(input, component, Byte.MAX_VALUE);
 
-        if (index == actions.size() - 1) index = 0;
-        else index++;
+        if (index == actions.size() - 1) {
+            index = 0;
+        } else {
+            index++;
+        }
     }
 
     public List<IAction<Byte>> getActions() {
@@ -108,7 +117,9 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(
                 Main.strings.getString("CYCLE"),
@@ -120,10 +131,13 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
         IActivatableAction.super.init(input);
 
         actions.forEach(action -> {
-            if (action instanceof final IInitializationAction<?> initializationAction) initializationAction.init(input);
+            if (action instanceof final IInitializationAction<?> initializationAction) {
+                initializationAction.init(input);
+            }
 
-            if (action instanceof final IActivatableAction<?> activatableAction)
+            if (action instanceof final IActivatableAction<?> activatableAction) {
                 activatableAction.setActivatable(Activatable.ALWAYS);
+            }
         });
     }
 

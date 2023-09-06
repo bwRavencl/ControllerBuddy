@@ -33,17 +33,20 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
             throws JsonParseException {
         try {
             Integer rgba = null;
-            if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber()) rgba = json.getAsInt();
-            else if (json.isJsonObject()) {
+            if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber()) {
+                rgba = json.getAsInt();
+            } else if (json.isJsonObject()) {
                 final var jsonObject = json.getAsJsonObject();
 
                 final var valueMember = jsonObject.get("value");
-                if (valueMember != null && valueMember.isJsonPrimitive() && ((JsonPrimitive) valueMember).isNumber())
+                if (valueMember != null && valueMember.isJsonPrimitive() && ((JsonPrimitive) valueMember).isNumber()) {
                     rgba = valueMember.getAsInt();
+                }
             }
 
-            if (rgba == null)
+            if (rgba == null) {
                 throw new JsonParseException("Could not deserialize as " + Color.class.getSimpleName() + ": " + json);
+            }
 
             return new Color(rgba, true);
         } catch (final JsonParseException e) {

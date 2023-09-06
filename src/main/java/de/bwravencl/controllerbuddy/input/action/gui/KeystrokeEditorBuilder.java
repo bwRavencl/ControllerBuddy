@@ -67,11 +67,19 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
     }
 
     private static int getListModelIndex(final ListModel<?> model, final Object value) {
-        if (value == null) return -1;
+        if (value == null) {
+            return -1;
+        }
 
-        if (model instanceof final DefaultListModel<?> defaultListModel) return defaultListModel.indexOf(value);
+        if (model instanceof final DefaultListModel<?> defaultListModel) {
+            return defaultListModel.indexOf(value);
+        }
 
-        for (var i = 0; i < model.getSize(); i++) if (value.equals(model.getElementAt(i))) return i;
+        for (var i = 0; i < model.getSize(); i++) {
+            if (value.equals(model.getElementAt(i))) {
+                return i;
+            }
+        }
 
         return -1;
     }
@@ -95,10 +103,14 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
         modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
         final var addedModifiers = new ArrayList<String>();
-        for (final var modifierCode : keyStroke.getModifierCodes()) addedModifiers.add(modifierCode.name());
+        for (final var modifierCode : keyStroke.getModifierCodes()) {
+            addedModifiers.add(modifierCode.name());
+        }
         addedModifiers.forEach(s1 -> {
             final var index1 = getListModelIndex(modifierList.getModel(), s1);
-            if (index1 >= 0) modifierList.addSelectionInterval(index1, index1);
+            if (index1 >= 0) {
+                modifierList.addSelectionInterval(index1, index1);
+            }
         });
 
         final var modifiersScrollPane = new JScrollPane(modifierList);
@@ -116,10 +128,14 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
         keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
         final var addedKeys = new ArrayList<String>();
-        for (final var keyCode : keyStroke.getKeyCodes()) addedKeys.add(keyCode.name());
+        for (final var keyCode : keyStroke.getKeyCodes()) {
+            addedKeys.add(keyCode.name());
+        }
         addedKeys.forEach(s2 -> {
             final var index2 = getListModelIndex(keyList.getModel(), s2);
-            if (index2 >= 0) keyList.addSelectionInterval(index2, index2);
+            if (index2 >= 0) {
+                keyList.addSelectionInterval(index2, index2);
+            }
         });
 
         final var keysScrollPane = new JScrollPane(keyList);
@@ -144,9 +160,11 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
             setCellRenderer(new CheckboxListCellRenderer<>());
 
-            for (final var mouseMotionListener : getMouseMotionListeners())
-                if (mouseMotionListener instanceof ListSelectionListener)
+            for (final var mouseMotionListener : getMouseMotionListeners()) {
+                if (mouseMotionListener instanceof ListSelectionListener) {
                     removeMouseMotionListener(mouseMotionListener);
+                }
+            }
 
             setSelectionModel(new DefaultListSelectionModel() {
 
@@ -155,8 +173,11 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
                 @Override
                 public void setSelectionInterval(final int index0, final int index1) {
-                    if (super.isSelectedIndex(index0)) super.removeSelectionInterval(index0, index1);
-                    else super.addSelectionInterval(index0, index1);
+                    if (super.isSelectedIndex(index0)) {
+                        super.removeSelectionInterval(index0, index1);
+                    } else {
+                        super.addSelectionInterval(index0, index1);
+                    }
                 }
             });
         }
@@ -213,14 +234,21 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
                 final var scanCodesArray = scanCodes.toArray(ScanCode[]::new);
 
-                if (modifiers) keyStroke.setModifierCodes(scanCodesArray);
-                else keyStroke.setKeyCodes(scanCodesArray);
+                if (modifiers) {
+                    keyStroke.setModifierCodes(scanCodesArray);
+                } else {
+                    keyStroke.setKeyCodes(scanCodesArray);
+                }
 
                 setterMethod.invoke(action, keyStroke);
 
                 final Set<Object> keyStrokeSet = new LinkedHashSet<>();
-                if (modifierList != null) keyStrokeSet.addAll(modifierList.getSelectedValuesList());
-                if (keyList != null) keyStrokeSet.addAll(keyList.getSelectedValuesList());
+                if (modifierList != null) {
+                    keyStrokeSet.addAll(modifierList.getSelectedValuesList());
+                }
+                if (keyList != null) {
+                    keyStrokeSet.addAll(keyList.getSelectedValuesList());
+                }
 
                 keyStrokeTextArea.setText(
                         keyStrokeSet.stream().map(Object::toString).collect(Collectors.joining(" + ")));

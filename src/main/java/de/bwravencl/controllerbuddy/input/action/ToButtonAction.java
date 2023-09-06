@@ -33,7 +33,9 @@ public abstract class ToButtonAction<V extends Number> extends DescribableAction
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return super.getDescription(input);
+        if (!isDescriptionEmpty()) {
+            return super.getDescription(input);
+        }
 
         return MessageFormat.format(Main.strings.getString("VJOY_BUTTON_NO"), buttonId + 1);
     }

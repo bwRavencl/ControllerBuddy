@@ -40,7 +40,9 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 
     @Override
     public void doAction(final Input input, final int component, Float value) {
-        if (isAlreadyPressed(input)) return;
+        if (isAlreadyPressed(input)) {
+            return;
+        }
 
         value = handleLongPress(input, component, value);
 

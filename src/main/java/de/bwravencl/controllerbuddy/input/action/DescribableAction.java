@@ -36,7 +36,9 @@ public abstract class DescribableAction<V extends Number> implements IAction<V> 
 
     @Override
     public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) return description;
+        if (!isDescriptionEmpty()) {
+            return description;
+        }
 
         return IAction.getDefaultDescription(this);
     }
