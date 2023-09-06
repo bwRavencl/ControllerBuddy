@@ -98,7 +98,7 @@ public final class ServerRunMode extends RunMode {
                         serverSocket.receive(receivePacket);
                         clientIPAddress = receivePacket.getAddress();
 
-                        try (var dataInputStream =
+                        try (final var dataInputStream =
                                 new DataInputStream(new ByteArrayInputStream(receivePacket.getData()))) {
                             final var messageType = dataInputStream.readInt();
 
@@ -108,7 +108,7 @@ public final class ServerRunMode extends RunMode {
                                 setnButtons(dataInputStream.readInt());
 
                                 try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-                                        var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                                        final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                                     dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
                                     dataOutputStream.writeByte(PROTOCOL_VERSION);
                                     dataOutputStream.writeLong(pollInterval);
@@ -134,8 +134,8 @@ public final class ServerRunMode extends RunMode {
 
                         final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
                         try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-                                var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-                                var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+                                final var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+                                final var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
                             dataOutputStream.writeInt(
                                     (doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
                             dataOutputStream.writeLong(counter);
@@ -189,7 +189,7 @@ public final class ServerRunMode extends RunMode {
                                 if (clientIPAddress.equals(receivePacket.getAddress())) {
                                     try (final var byteArrayInputStream =
                                             new ByteArrayInputStream(receivePacket.getData())) {
-                                        try (var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+                                        try (final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
                                             final var messageType = dataInputStream.readInt();
                                             if (messageType == MessageType.ClientAlive.ordinal()) {
                                                 counter++;
@@ -230,6 +230,7 @@ public final class ServerRunMode extends RunMode {
                     Main.strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE));
         } catch (final InterruptedException ignored) {
+            // expected whenever the run mode gets stopped
         } finally {
             input.reset();
 

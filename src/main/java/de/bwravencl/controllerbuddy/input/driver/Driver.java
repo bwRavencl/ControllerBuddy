@@ -39,7 +39,7 @@ public abstract class Driver {
                                     .loadClass(IDriverBuilder.class)
                                     .getDeclaredConstructor()
                                     .newInstance();
-                        } catch (InstantiationException
+                        } catch (final InstantiationException
                                 | IllegalAccessException
                                 | IllegalArgumentException
                                 | InvocationTargetException

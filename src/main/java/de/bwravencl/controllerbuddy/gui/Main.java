@@ -430,8 +430,8 @@ public final class Main {
                 for (; ; ) {
                     String line;
                     String[] arguments = null;
-                    try (var socket = singleInstanceServerSocket.accept();
-                            var bufferedReader = new BufferedReader(
+                    try (final var socket = singleInstanceServerSocket.accept();
+                            final var bufferedReader = new BufferedReader(
                                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
                         line = bufferedReader.readLine();
                         if (!String.valueOf(randomNumber).equals(line)) {
@@ -464,7 +464,7 @@ public final class Main {
                         if (arguments != null) {
                             main.newActivation(arguments);
 
-                            try (var printStream =
+                            try (final var printStream =
                                     new PrintStream(socket.getOutputStream(), false, StandardCharsets.UTF_8)) {
                                 printStream.println(SINGLE_INSTANCE_ACK);
                                 printStream.flush();
@@ -1179,7 +1179,7 @@ public final class Main {
                 var continueLaunch = true;
 
                 if (SINGLE_INSTANCE_LOCK_FILE.exists()) {
-                    try (var fileBufferedReader =
+                    try (final var fileBufferedReader =
                             new BufferedReader(new FileReader(SINGLE_INSTANCE_LOCK_FILE, StandardCharsets.UTF_8))) {
                         final var portString = fileBufferedReader.readLine();
                         if (portString == null) {
@@ -1192,10 +1192,10 @@ public final class Main {
                             throw new IOException("Could not read random number");
                         }
 
-                        try (var socket = new Socket(InetAddress.getLoopbackAddress(), port);
-                                var printStream =
+                        try (final var socket = new Socket(InetAddress.getLoopbackAddress(), port);
+                                final var printStream =
                                         new PrintStream(socket.getOutputStream(), false, StandardCharsets.UTF_8);
-                                var socketBufferedReader = new BufferedReader(
+                                final var socketBufferedReader = new BufferedReader(
                                         new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
                             socket.setSoTimeout(5000);
                             printStream.println(randomNumberString);
@@ -1223,7 +1223,7 @@ public final class Main {
                                                 + " instance did not acknowledge invocation");
                             }
                         }
-                    } catch (IOException | NumberFormatException e) {
+                    } catch (final IOException | NumberFormatException e) {
                         log.log(Level.WARNING, e.getMessage(), e);
                         deleteSingleInstanceLockFile();
                     }
@@ -2660,7 +2660,7 @@ public final class Main {
         var mappingsUpdated = false;
 
         final var defaultCharset = Charset.defaultCharset();
-        try (var bufferedReader = new BufferedReader(new InputStreamReader(is, defaultCharset))) {
+        try (final var bufferedReader = new BufferedReader(new InputStreamReader(is, defaultCharset))) {
             final var sb = new StringBuilder();
 
             while (bufferedReader.ready()) {
@@ -2695,7 +2695,7 @@ public final class Main {
 
         var mappingsUpdated = false;
 
-        try (var fileInputStream = new FileInputStream(path)) {
+        try (final var fileInputStream = new FileInputStream(path)) {
             mappingsUpdated = updateGameControllerMappings(fileInputStream);
 
             log.log(
@@ -3673,7 +3673,7 @@ public final class Main {
         public void actionPerformed(final ActionEvent e) {
             try {
                 Desktop.getDesktop().browse(new URI(WEBSITE_URL));
-            } catch (IOException | URISyntaxException e1) {
+            } catch (final IOException | URISyntaxException e1) {
                 log.log(Level.SEVERE, e1.getMessage(), e1);
             }
         }

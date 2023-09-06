@@ -333,7 +333,7 @@ public final class Input {
         lastPollTime = currentTime;
         rateMultiplier = (float) elapsedTime / 1000L;
 
-        try (var stack = MemoryStack.stackPush()) {
+        try (final var stack = MemoryStack.stackPush()) {
             final var state = GLFWGamepadState.calloc(stack);
 
             if (hotSwappingButtonId != HotSwappingButton.None.id

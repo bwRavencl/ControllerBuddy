@@ -454,7 +454,7 @@ public final class EditActionsDialog extends JDialog {
                                 constructor.newInstance(this, selectedAssignedAction.action, fieldName, fieldType);
 
                         editorBuilder.buildEditor(propertyPanel);
-                    } catch (NoSuchMethodException
+                    } catch (final NoSuchMethodException
                             | SecurityException
                             | InstantiationException
                             | IllegalAccessException
@@ -636,7 +636,7 @@ public final class EditActionsDialog extends JDialog {
 
                 assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
                         - (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
-            } catch (InstantiationException
+            } catch (final InstantiationException
                     | IllegalAccessException
                     | IllegalArgumentException
                     | InvocationTargetException

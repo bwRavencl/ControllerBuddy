@@ -53,7 +53,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
     private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {
         super(input, controller);
 
-        XInputDevice[] xinputDevices;
+        final XInputDevice[] xinputDevices;
         if (XInputDevice14.isAvailable()) {
             xinputDevices = XInputDevice14.getAllDevices();
         } else {

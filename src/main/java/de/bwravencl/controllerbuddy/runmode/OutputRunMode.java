@@ -465,7 +465,7 @@ public abstract class OutputRunMode extends RunMode {
     }
 
     final boolean init() {
-        int nButtons;
+        final int nButtons;
         if (Main.isWindows) {
             try {
                 final var vJoyPath = main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
@@ -1021,7 +1021,7 @@ public abstract class OutputRunMode extends RunMode {
             if (Main.isWindows) {
                 try {
                     vJoyValue = windowsClass.getDeclaredConstructor().newInstance();
-                } catch (InstantiationException
+                } catch (final InstantiationException
                         | IllegalAccessException
                         | InvocationTargetException
                         | NoSuchMethodException e) {

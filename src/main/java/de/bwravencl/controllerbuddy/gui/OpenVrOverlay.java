@@ -76,7 +76,7 @@ class OpenVrOverlay {
         this.main = main;
         onScreenKeyboard = main.getOnScreenKeyboard();
 
-        try (var stack = MemoryStack.stackPush()) {
+        try (final var stack = MemoryStack.stackPush()) {
             final var peError = stack.mallocInt(1);
             final var token = VR.VR_InitInternal(peError, VR.EVRApplicationType_VRApplication_Background);
             final var initError = peError.get();

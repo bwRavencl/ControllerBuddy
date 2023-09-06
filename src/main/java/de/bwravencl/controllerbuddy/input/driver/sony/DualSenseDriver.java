@@ -187,7 +187,7 @@ public final class DualSenseDriver extends SonyDriver {
                 final Input input,
                 final List<ControllerInfo> presentControllers,
                 final ControllerInfo selectedController) {
-            String name;
+            final String name;
             if (Main.isMac) {
                 name = GLFW.glfwGetGamepadName(selectedController.jid());
             } else {

@@ -91,7 +91,7 @@ public final class ClientRunMode extends OutputRunMode {
                         MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
                 try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-                        var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                        final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                     dataOutputStream.writeInt(MessageType.ClientHello.ordinal());
                     dataOutputStream.writeInt(minAxisValue);
                     dataOutputStream.writeInt(maxAxisValue);
@@ -110,7 +110,7 @@ public final class ClientRunMode extends OutputRunMode {
                             clientSocket.receive(receivePacket);
 
                             try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
-                                    var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+                                    final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
                                 final var messageType = dataInputStream.readInt();
                                 if (messageType == MessageType.ServerHello.ordinal()) {
                                     final var serverProtocolVersion = dataInputStream.readByte();
@@ -180,8 +180,8 @@ public final class ClientRunMode extends OutputRunMode {
                     clientSocket.receive(receivePacket);
 
                     try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
-                            var dataInputStream = new DataInputStream(byteArrayInputStream);
-                            var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
+                            final var dataInputStream = new DataInputStream(byteArrayInputStream);
+                            final var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
                         objectInputStream.setObjectInputFilter(ObjectInputFilter.allowFilter(
                                 clazz -> clazz == null
                                         || clazz.isArray()
@@ -272,7 +272,7 @@ public final class ClientRunMode extends OutputRunMode {
 
                         if (messageType == MessageType.UpdateRequestAlive) {
                             try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-                                    var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                                    final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                                 dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
 
                                 final var keepAliveBuf = byteArrayOutputStream.toByteArray();
