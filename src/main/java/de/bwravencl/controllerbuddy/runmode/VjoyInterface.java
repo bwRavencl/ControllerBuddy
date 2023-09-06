@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WinDef.UCHAR;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.WORDByReference;
 
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 interface VjoyInterface extends Library {
 
     UINT HID_USAGE_X = new UINT(0x30L);

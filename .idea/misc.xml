@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" />
+    <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" method="get*" />
+    <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" method="is*" />
+    <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" method="set*" />
+    <pattern value="de.bwravencl.controllerbuddy.input.driver.IDriverBuilder" hierarchically="true" />
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_20" default="true" project-jdk-name="20" project-jdk-type="JavaSDK" />
 </project>

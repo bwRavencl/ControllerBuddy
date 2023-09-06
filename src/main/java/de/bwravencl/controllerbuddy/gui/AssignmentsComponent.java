@@ -283,6 +283,7 @@ final class AssignmentsComponent extends JScrollPane {
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
                         || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
+            //noinspection SuspiciousNameCombination
             button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
         } else {
             button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));
@@ -460,7 +461,7 @@ final class AssignmentsComponent extends JScrollPane {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(CompoundButton.class.getName());
         }
 
@@ -474,7 +475,7 @@ final class AssignmentsComponent extends JScrollPane {
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(CompoundButton.class.getName());
         }
 
@@ -642,12 +643,12 @@ final class AssignmentsComponent extends JScrollPane {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(EditComponentAction.class.getName());
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(EditComponentAction.class.getName());
         }
     }

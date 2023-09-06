@@ -427,6 +427,7 @@ public final class Main {
                     log.log(Level.SEVERE, e.getMessage(), e);
                 }
 
+                //noinspection InfiniteLoopStatement
                 for (; ; ) {
                     String line;
                     String[] arguments = null;
@@ -940,6 +941,7 @@ public final class Main {
             onControllersChanged(presentControllers, true);
         }
 
+        //noinspection resource
         taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
             final var disconnected = event == GLFW.GLFW_DISCONNECTED;
             if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
@@ -2608,6 +2610,7 @@ public final class Main {
             overlayExecutorService.shutdown();
 
             try {
+                //noinspection ResultOfMethodCallIgnored
                 overlayExecutorService.awaitTermination(2L, TimeUnit.SECONDS);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -3325,6 +3328,7 @@ public final class Main {
         final String groupAPrefix;
         final String groupBPrefix;
 
+        //noinspection SuspiciousMethodCalls
         if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
             actionGroupA = Stream.concat(otherActions.stream(), delayedActions.stream())
                     .toList();
@@ -3600,7 +3604,7 @@ public final class Main {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(IndicatorProgressBar.class.getName());
         }
 
@@ -3628,7 +3632,7 @@ public final class Main {
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(IndicatorProgressBar.class.getName());
         }
     }
@@ -3729,6 +3733,7 @@ public final class Main {
                     }
 
                     try {
+                        //noinspection BusyWait
                         Thread.sleep(10L);
                     } catch (final InterruptedException e) {
                         log.log(Level.INFO, "Exiting main loop");
@@ -3782,6 +3787,7 @@ public final class Main {
 
             while (thread.isAlive()) {
                 try {
+                    //noinspection BusyWait
                     Thread.sleep(10L);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -3798,6 +3804,7 @@ public final class Main {
         private void waitForTask() {
             while (task != null) {
                 try {
+                    //noinspection BusyWait
                     Thread.sleep(10L);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -4014,12 +4021,12 @@ public final class Main {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(RemoveModeAction.class.getName());
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(RemoveModeAction.class.getName());
         }
     }
@@ -4083,12 +4090,12 @@ public final class Main {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(SelectControllerAction.class.getName());
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(SelectControllerAction.class.getName());
         }
     }

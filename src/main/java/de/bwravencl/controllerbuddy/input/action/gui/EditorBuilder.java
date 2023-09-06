@@ -91,12 +91,12 @@ public abstract class EditorBuilder {
         }
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(PropertySetterAction.class.getName());
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(PropertySetterAction.class.getName());
         }
     }

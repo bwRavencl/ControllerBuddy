@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -377,7 +378,7 @@ public final class OnScreenKeyboard extends JFrame {
     }
 
     @Serial
-    private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+    private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
         throw new NotSerializableException(OnScreenKeyboard.class.getName());
     }
 
@@ -477,7 +478,7 @@ public final class OnScreenKeyboard extends JFrame {
     }
 
     @Serial
-    private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+    private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
         throw new NotSerializableException(OnScreenKeyboard.class.getName());
     }
 
@@ -513,7 +514,7 @@ public final class OnScreenKeyboard extends JFrame {
         abstract void press(final boolean lock);
 
         @Serial
-        private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(AbstractKeyboardButton.class.getName());
         }
 
@@ -550,7 +551,7 @@ public final class OnScreenKeyboard extends JFrame {
         }
 
         @Serial
-        private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
             throw new NotSerializableException(AbstractKeyboardButton.class.getName());
         }
     }
@@ -578,7 +579,7 @@ public final class OnScreenKeyboard extends JFrame {
         void toggleLock() {
             super.toggleLock();
 
-            final var showAlternativeKeyName = locked ^ isKeyboardShifted();
+            final var showAlternativeKeyName = locked.get() ^ isKeyboardShifted();
 
             for (final AbstractKeyboardButton[] row : keyboardButtons) {
                 for (final AbstractKeyboardButton keyboardButton : row) {
@@ -660,7 +661,7 @@ public final class OnScreenKeyboard extends JFrame {
             });
         }
 
-        @SuppressWarnings("NarrowingCompoundAssignment")
+        @SuppressWarnings({"NarrowingCompoundAssignment", "lossy-conversions"})
         @Override
         public Dimension getPreferredSize() {
             final var preferredSize = super.getPreferredSize();
@@ -781,8 +782,8 @@ public final class OnScreenKeyboard extends JFrame {
         @Serial
         private static final long serialVersionUID = 4014130700331413635L;
 
+        final AtomicBoolean locked = new AtomicBoolean();
         private final LockKey lockKey;
-        volatile boolean locked;
         private boolean wasUp = true;
 
         private LockKeyButton(final LockKey lockKey) {
@@ -806,7 +807,7 @@ public final class OnScreenKeyboard extends JFrame {
         @Override
         boolean poll(final Input input) {
             if (changed) {
-                if (locked) {
+                if (locked.get()) {
                     input.getOnLockKeys().add(lockKey);
                 } else {
                     input.getOffLockKeys().add(lockKey);
@@ -836,7 +837,13 @@ public final class OnScreenKeyboard extends JFrame {
 
         @Override
         void toggleLock() {
-            locked = !locked;
+            boolean temp;
+            do {
+                temp = locked.get();
+            } while (!locked.compareAndSet(temp, !temp));
+
+            final var locked = !temp;
+
             GuiUtils.invokeOnEventDispatchThreadIfRequired(
                     () -> setForeground(locked ? Color.GREEN : defaultForeground));
             changed = true;
@@ -860,7 +867,7 @@ public final class OnScreenKeyboard extends JFrame {
             for (final AbstractKeyboardButton[] row : keyboardButtons) {
                 for (final AbstractKeyboardButton keyboardButton : row) {
                     if (keyboardButton instanceof final NumPadKeyboardButton numPadKeyboardButton) {
-                        numPadKeyboardButton.setShowAlternativeKeyName(locked);
+                        numPadKeyboardButton.setShowAlternativeKeyName(locked.get());
                     }
                 }
             }
@@ -901,7 +908,7 @@ public final class OnScreenKeyboard extends JFrame {
         void setPressed(final boolean pressed) {
             super.setPressed(pressed);
 
-            final var showAlternativeKeyName = isKeyboardShifted() ^ capsLockKeyButton.locked;
+            final var showAlternativeKeyName = isKeyboardShifted() ^ capsLockKeyButton.locked.get();
 
             for (final AbstractKeyboardButton[] row : keyboardButtons) {
                 for (final AbstractKeyboardButton keyboardButton : row) {

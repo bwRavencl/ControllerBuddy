@@ -536,7 +536,7 @@ public final class EditActionsDialog extends JDialog {
     }
 
     @Serial
-    private void readObject(final ObjectInputStream stream) throws NotSerializableException {
+    private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
         throw new NotSerializableException(EditActionsDialog.class.getName());
     }
 
@@ -572,7 +572,7 @@ public final class EditActionsDialog extends JDialog {
     }
 
     @Serial
-    private void writeObject(final ObjectOutputStream stream) throws NotSerializableException {
+    private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
         throw new NotSerializableException(EditActionsDialog.class.getName());
     }
 
@@ -721,9 +721,9 @@ public final class EditActionsDialog extends JDialog {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            if (selectedAssignedAction.action instanceof ButtonToModeAction) {
+            if (selectedAssignedAction.action instanceof final ButtonToModeAction buttonToModeAction) {
                 final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-                buttonToModeActionsMap.get(component.index()).remove(selectedAssignedAction.action);
+                buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
                 if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
                     buttonToModeActionsMap.remove(component.index());
                 }

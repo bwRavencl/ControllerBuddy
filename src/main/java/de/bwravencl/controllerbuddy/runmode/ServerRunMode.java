@@ -130,6 +130,7 @@ public final class ServerRunMode extends RunMode {
                         }
                     }
                     case Connected -> {
+                        //noinspection BusyWait
                         Thread.sleep(pollInterval);
 
                         final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;

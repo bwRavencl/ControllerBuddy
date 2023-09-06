@@ -33,6 +33,7 @@ public final class OverlayAxis implements Cloneable {
         this.inverted = inverted;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Object clone() {
         return new OverlayAxis(new Color(color.getRGB(), true), inverted);

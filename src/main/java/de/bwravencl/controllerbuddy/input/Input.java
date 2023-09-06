@@ -561,7 +561,7 @@ public final class Input {
                         buttonToModeActions.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
 
         profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
-            if (action instanceof final IResetableAction resetableAction) {
+            if (action instanceof final IResetableAction<?> resetableAction) {
                 resetableAction.reset(this);
             }
         }));

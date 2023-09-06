@@ -136,6 +136,7 @@ public final class LocalRunMode extends OutputRunMode {
                     if (readInput()) {
                         writeOutput();
                     }
+                    //noinspection BusyWait
                     Thread.sleep(pollInterval);
                 }
             } else {

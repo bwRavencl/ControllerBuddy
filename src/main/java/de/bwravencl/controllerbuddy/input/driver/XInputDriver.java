@@ -121,6 +121,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
         try {
             if (executorService != null) {
                 try {
+                    //noinspection ResultOfMethodCallIgnored
                     executorService.awaitTermination(2L, TimeUnit.SECONDS);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();

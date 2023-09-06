@@ -305,6 +305,7 @@ public class EvdevDriver extends Driver {
     @SuppressWarnings("unused")
     private record EvdevInfo(int fd, boolean hasGain) {}
 
+    @SuppressWarnings("unused")
     @FieldOrder({"right_saturation", "left_saturation", "right_coeff", "left_coeff", "deadband", "center"})
     public static class ff_condition_effect extends Structure {
 
@@ -316,6 +317,7 @@ public class EvdevDriver extends Driver {
         public short center;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"level", "envelope"})
     public static class ff_constant_effect extends Structure {
 
@@ -323,6 +325,7 @@ public class EvdevDriver extends Driver {
         public ff_envelope envelope;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"type", "id", "direction", "trigger", "replay", "u"})
     public static class ff_effect extends Structure {
 
@@ -361,6 +364,7 @@ public class EvdevDriver extends Driver {
         }
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"attack_length", "attack_level", "fade_length", "fade_level"})
     public static class ff_envelope extends Structure {
 
@@ -370,6 +374,7 @@ public class EvdevDriver extends Driver {
         public short fade_level;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"waveform", "period", "magnitude", "offset", "phase", "envelope", "custom_len", "custom_data"})
     public static class ff_periodic_effect extends Structure {
 
@@ -383,6 +388,7 @@ public class EvdevDriver extends Driver {
         public ShortByReference custom_data;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"start_level", "end_level", "envelope"})
     public static class ff_ramp_effect extends Structure {
 
@@ -391,6 +397,7 @@ public class EvdevDriver extends Driver {
         public ff_envelope envelope;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"length", "delay"})
     public static class ff_replay extends Structure {
 
@@ -398,6 +405,7 @@ public class EvdevDriver extends Driver {
         public short delay;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"strong_magnitude", "weak_magnitude"})
     public static class ff_rumble_effect extends Structure {
 
@@ -405,6 +413,7 @@ public class EvdevDriver extends Driver {
         public short weak_magnitude;
     }
 
+    @SuppressWarnings("unused")
     @FieldOrder({"button", "interval"})
     public static class ff_trigger extends Structure {
 

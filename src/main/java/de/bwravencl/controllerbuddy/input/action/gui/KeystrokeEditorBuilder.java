@@ -228,6 +228,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
             try {
                 final Set<ScanCode> scanCodes = new HashSet<>();
 
+                //noinspection SuspiciousMethodCalls
                 ((JList<?>) e.getSource())
                         .getSelectedValuesList()
                         .forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
