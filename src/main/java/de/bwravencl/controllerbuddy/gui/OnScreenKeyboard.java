@@ -416,8 +416,6 @@ public final class OnScreenKeyboard extends JFrame {
     @Override
     public void setVisible(final boolean b) {
         synchronized (keyboardButtons) {
-            super.setVisible(b);
-
             if (b) {
                 updateScaling();
                 setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
@@ -425,6 +423,10 @@ public final class OnScreenKeyboard extends JFrame {
                 releaseAll();
             }
         }
+
+        EventQueue.invokeLater(() -> {
+            super.setVisible(b);
+        });
     }
 
     public void toggleLock() {
