@@ -163,9 +163,7 @@ public final class DualShock4Driver extends SonyDriver {
 
     @Override
     void handleNewConnection(final int reportLength) {
-        DualShock4Driver.this.connection = connection != null
-                ? connection
-                : isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
+        connection = isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
     }
 
     public static class DualShock4DriverBuilder implements IDriverBuilder {
