@@ -424,9 +424,7 @@ public final class OnScreenKeyboard extends JFrame {
             }
         }
 
-        EventQueue.invokeLater(() -> {
-            super.setVisible(b);
-        });
+        EventQueue.invokeLater(() -> super.setVisible(b));
     }
 
     public void toggleLock() {
