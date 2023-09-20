@@ -17,8 +17,8 @@ plugins {
 version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst(Pattern.quote('-g'), '-')
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_20
-	targetCompatibility = JavaVersion.VERSION_20
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 base {
@@ -41,8 +41,6 @@ ext {
 	resourcesDir = 'src/main/resources'
 	tmpDir = layout.buildDirectory.dir('tmp')
 	runtimeDir = tmpDir.map { it.dir('runtime') }
-
-	enablePreviewJvmArg = '--enable-preview'
 
 	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
@@ -362,15 +360,11 @@ tasks.spotlessXml.dependsOn copyGameControllerDB
 compileJava {
 	dependsOn generateModuleInfo, generateVersion
 	source generateVersion.outputs.files, sourceSets.main.java
-	options.compilerArgs += [
-		'-Xlint:deprecation',
-		enablePreviewJvmArg
-	]
+	options.compilerArgs += '-Xlint:deprecation'
 	options.encoding = 'UTF-8'
 }
 
 run {
-	jvmArgs += enablePreviewJvmArg
 	if (os.linux)
 		jvmArgs += linuxJvmArgs
 }
@@ -429,9 +423,7 @@ tasks.register('jpackage', Exec) {
 		"Copyright ${new Date().format('yyyy')} Matteo Hausner",
 		'--vendor',
 		'Matteo Hausner',
-		'--verbose',
-		'--java-options',
-		enablePreviewJvmArg
+		'--verbose'
 	]
 	if (os.linux)
 		linuxJvmArgs.each { commandLineParts.addAll(['--java-options', it]) }
