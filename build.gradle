@@ -49,11 +49,6 @@ ext {
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
 
-	spotbugsBaselineFile = 'spotbugs-baseline.xml'
-	spotbugsEffort = 'max'
-	spotbugsMaxRank = '20'
-	spotbugsReportLevel = 'Low'
-
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
@@ -257,11 +252,11 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 spotbugs {
-	baselineFile = file(spotbugsBaselineFile)
-	effort = spotbugsEffort
-	extraArgs = ['-maxRank', spotbugsMaxRank]
+	baselineFile = file('spotbugs-baseline.xml')
+	effort = 'max'
+	extraArgs = ['-maxRank', '20']
 	onlyAnalyze = ['de.bwravencl.-']
-	reportLevel = spotbugsReportLevel
+	reportLevel = 'Low'
 }
 
 tasks.withType(SpotBugsTask) {
