@@ -267,6 +267,7 @@ spotbugs {
 }
 
 tasks.withType(SpotBugsTask) {
+	enabled = JavaVersion.current() < JavaVersion.VERSION_21
 	reports {
 		html { required.set(true) }
 		xml { required.set(true) }
