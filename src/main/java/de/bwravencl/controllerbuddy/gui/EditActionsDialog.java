@@ -24,6 +24,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -221,10 +223,29 @@ public final class EditActionsDialog extends JDialog {
 
         final var action = (IAction<?>) actionClass.getConstructor().newInstance();
 
-        if (action instanceof final ButtonToModeAction buttonToModeAction) {
-            final var modes = input.getProfile().getModes();
-            final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode;
-            buttonToModeAction.setMode(defaultMode);
+        switch (action) {
+            case final ButtonToModeAction buttonToModeAction -> {
+                final var modes = input.getProfile().getModes();
+                final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode;
+                buttonToModeAction.setMode(defaultMode);
+            }
+            case final ToButtonAction<?> toButtonAction -> {
+                final var maxButtonId = unsavedProfile.getModes().stream()
+                        .flatMapToInt(mode -> mode.getButtonToActionsMap().values().stream()
+                                .flatMapToInt(actions -> actions.stream().flatMapToInt(action1 -> {
+                                    if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
+                                        return IntStream.of(toButtonAction1.getButtonId());
+                                    }
+
+                                    return IntStream.empty();
+                                })))
+                        .max()
+                        .orElse(-1);
+
+                final var buttonId = Math.min(maxButtonId + 1, Input.MAX_N_BUTTONS - 1);
+                toButtonAction.setButtonId(buttonId);
+            }
+            default -> {}
         }
 
         return action;
