@@ -33,8 +33,6 @@ application {
 ext {
 	os = DefaultNativePlatform.currentOperatingSystem
 
-	versionWithoutHash = version.substring(0, version.indexOf('-'))
-
 	moduleInfoFile = 'src/main/java/module-info.java'
 	versionFile = 'src/main/java/de/bwravencl/controllerbuddy/version/Version.java'
 
@@ -411,7 +409,7 @@ tasks.register('jpackage', Exec) {
 		'--module',
 		"${project.application.mainModule.get()}/${project.application.mainClass.get()}",
 		'--app-version',
-		versionWithoutHash,
+		version.substring(0, version.indexOf('-')),
 		'--icon',
 		"$projectDir/icon.${os.windows ? 'ico' : 'png'}",
 		'--copyright',
