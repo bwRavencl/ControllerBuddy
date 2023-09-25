@@ -145,6 +145,15 @@ dependencies {
 	}
 }
 
+configurations.named('spotbugs').configure {
+	resolutionStrategy.eachDependency {
+		if (requested.group == 'org.ow2.asm') {
+			useVersion '9.5'
+			because 'ASM 9.5 is required for JDK 21 support'
+		}
+	}
+}
+
 dependencyUpdates {
 	revision = 'release'
 	rejectVersionIf {
