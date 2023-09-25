@@ -14,7 +14,7 @@ plugins {
 	id 'org.gradlex.extra-java-module-info' version '1.4.2'
 }
 
-version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst(Pattern.quote('-g'), '-')
+version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst Pattern.quote('-g'), '-'
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
@@ -37,8 +37,8 @@ ext {
 	versionFile = 'src/main/java/de/bwravencl/controllerbuddy/version/Version.java'
 
 	resourcesDir = 'src/main/resources'
-	tmpDir = layout.buildDirectory.dir('tmp')
-	runtimeDir = tmpDir.map { it.dir('runtime') }
+	tmpDir = layout.buildDirectory.dir 'tmp'
+	runtimeDir = tmpDir.map { it.dir 'runtime' }
 
 	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
@@ -209,14 +209,14 @@ extraJavaModuleInfo {
 	}
 
 	module("commons-cli-${commonsCliVersion}.jar", 'commons.cli', commonsCliVersion) {
-		exports('org.apache.commons.cli')
+		exports 'org.apache.commons.cli'
 	}
 }
 
 tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
-		new File(moduleInfoFile).write("""\
+		new File(moduleInfoFile).write """\
 			@SuppressWarnings("Java9RedundantRequiresStatement")
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
@@ -250,16 +250,16 @@ tasks.register('generateModuleInfo') {
 			${openVrSupport ? '    requires org.lwjgl.openvr.natives;' : ''}
 			    requires uk.co.bithatch.linuxio;
 			}
-			""".stripIndent())
+			""".stripIndent()
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	options.errorprone.error('MissingBraces')
+	options.errorprone.error 'MissingBraces'
 }
 
 spotbugs {
-	baselineFile = file('spotbugs-baseline.xml')
+	baselineFile = file 'spotbugs-baseline.xml'
 	effort = 'max'
 	extraArgs = ['-maxRank', '20']
 	onlyAnalyze = ['de.bwravencl.-']
@@ -268,8 +268,8 @@ spotbugs {
 
 tasks.withType(SpotBugsTask) {
 	reports {
-		html { required.set(true) }
-		xml { required.set(true) }
+		html { required.set true }
+		xml { required.set true }
 	}
 }
 
@@ -278,7 +278,7 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, versionFile
-		palantirJavaFormat('2.38.0')
+		palantirJavaFormat '2.38.0'
 		formatAnnotations()
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
@@ -312,7 +312,7 @@ spotless {
 	}
 	format 'xml', {
 		target "$resourcesDir/**/*.svg".toString()
-		eclipseWtp('xml')
+		eclipseWtp 'xml'
 	}
 	format 'newlineAndTrailingWhitespace', {
 		target '.github/**/*.yml', "$resourcesDir/**/*.properties", "$resourcesDir/**/*.svg".toString()
@@ -421,7 +421,7 @@ tasks.register('jpackage', Exec) {
 		'--icon',
 		"$projectDir/icon.${os.windows ? 'ico' : 'png'}",
 		'--copyright',
-		"Copyright ${new Date().format('yyyy')} Matteo Hausner",
+		"Copyright ${new Date().format 'yyyy'} Matteo Hausner",
 		'--vendor',
 		'Matteo Hausner',
 		'--verbose'
