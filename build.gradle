@@ -266,7 +266,7 @@ spotbugs {
 	reportLevel = 'Low'
 }
 
-tasks.withType(SpotBugsTask) {
+tasks.withType(SpotBugsTask).configureEach {
 	reports {
 		html { required.set true }
 		xml { required.set true }
