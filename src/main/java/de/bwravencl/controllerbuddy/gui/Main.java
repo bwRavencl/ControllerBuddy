@@ -1852,6 +1852,7 @@ public final class Main {
                                     frame,
                                     MessageFormat.format(
                                             strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+                                            file.getName(),
                                             strings.getString("AN_UNKNOWN")),
                                     strings.getString("WARNING_DIALOG_TITLE"),
                                     JOptionPane.WARNING_MESSAGE);
@@ -1866,6 +1867,7 @@ public final class Main {
                                         frame,
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+                                                file.getName(),
                                                 strings.getString("AN_OLDER")),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
@@ -1878,6 +1880,7 @@ public final class Main {
                                         frame,
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+                                                file.getName(),
                                                 strings.getString("A_NEWER")),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
