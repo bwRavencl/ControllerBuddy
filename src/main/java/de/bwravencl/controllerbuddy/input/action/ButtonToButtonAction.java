@@ -30,13 +30,15 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 
     @Override
     public void doAction(final Input input, final int component, Byte value) {
+        value = handleLongPress(input, component, value);
+
+        final var hot = handleMinActivationInterval(value != 0);
+
         if (isAlreadyPressed(input)) {
             return;
         }
 
-        value = handleLongPress(input, component, value);
-
-        input.setButton(buttonId, value != 0);
+        input.setButton(buttonId, hot);
     }
 
     @Override

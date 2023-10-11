@@ -40,15 +40,16 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 
     @Override
     public void doAction(final Input input, final int component, Float value) {
+        value = handleLongPress(input, component, value);
+
+        var hot = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
+        hot = handleMinActivationInterval(hot);
+
         if (isAlreadyPressed(input)) {
             return;
         }
 
-        value = handleLongPress(input, component, value);
-
-        final var down = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
-
-        input.setButton(buttonId, down);
+        input.setButton(buttonId, hot);
     }
 
     @Override
