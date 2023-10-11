@@ -1605,7 +1605,7 @@ public final class Main {
 
     private void handleRemainingCommandLine(final CommandLine commandLine) {
         if (frame != null) {
-            frame.setVisible(!commandLine.hasOption(OPTION_TRAY));
+            frame.setVisible(!commandLine.hasOption(OPTION_TRAY) || isModalDialogShowing());
             updateShowMenuItem();
         }
 
