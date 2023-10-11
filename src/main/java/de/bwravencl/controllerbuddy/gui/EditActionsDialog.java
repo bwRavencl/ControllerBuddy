@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -231,7 +232,9 @@ public final class EditActionsDialog extends JDialog {
             }
             case final ToButtonAction<?> toButtonAction -> {
                 final var maxButtonId = unsavedProfile.getModes().stream()
-                        .flatMapToInt(mode -> mode.getButtonToActionsMap().values().stream()
+                        .flatMapToInt(mode -> Stream.concat(
+                                        mode.getAxisToActionsMap().values().stream(),
+                                        mode.getButtonToActionsMap().values().stream())
                                 .flatMapToInt(actions -> actions.stream().flatMapToInt(action1 -> {
                                     if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
                                         return IntStream.of(toButtonAction1.getButtonId());
