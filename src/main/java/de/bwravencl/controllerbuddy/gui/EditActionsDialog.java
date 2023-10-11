@@ -74,7 +74,7 @@ public final class EditActionsDialog extends JDialog {
 
     private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
     private static final int DIALOG_BOUNDS_WIDTH = 980;
-    private static final int DIALOG_BOUNDS_HEIGHT = 570;
+    private static final int DIALOG_BOUNDS_HEIGHT = 600;
     private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
     private static final List<Class<?>> axisActionClasses = new ArrayList<>();
     private static final List<Class<?>> buttonActionClasses = new ArrayList<>();
