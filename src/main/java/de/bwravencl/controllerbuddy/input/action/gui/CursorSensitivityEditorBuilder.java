@@ -44,6 +44,6 @@ public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<In
 
     @Override
     Number getStepSize() {
-        return 1f;
+        return 1;
     }
 }
