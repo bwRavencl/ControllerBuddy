@@ -3977,8 +3977,19 @@ public final class Main {
 
         @Override
         protected void doAction() {
+            final var frameVisible = frame.isVisible();
+            if (!frameVisible) {
+                frame.setVisible(true);
+                updateShowMenuItem();
+            }
+
             if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                 loadProfile(profileFileChooser.getSelectedFile(), false, true);
+            }
+
+            if (!frameVisible) {
+                frame.setVisible(false);
+                updateShowMenuItem();
             }
         }
     }
