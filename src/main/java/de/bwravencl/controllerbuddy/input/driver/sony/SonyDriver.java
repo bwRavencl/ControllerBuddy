@@ -89,7 +89,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
     volatile boolean l1;
     volatile boolean ps;
     volatile boolean disconnected;
-    volatile long timestampLastInputReport = Long.MAX_VALUE;
+    volatile long lastInputReportTime = Long.MAX_VALUE;
     private boolean prevTouchpadButtonDown;
     private boolean prevDown1;
     private boolean prevDown2;
@@ -267,7 +267,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
                     ps = (reportData[buttonsOffset + 2 + offset] & 1) != 0;
 
                     ready = true;
-                    timestampLastInputReport = System.currentTimeMillis();
+                    lastInputReportTime = System.currentTimeMillis();
 
                     if (controller.jid() != input.getController().jid()) {
                         continue;
@@ -463,7 +463,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
             return false;
         }
 
-        if (System.currentTimeMillis() - timestampLastInputReport > INPUT_REPORT_TIMEOUT) {
+        if (System.currentTimeMillis() - lastInputReportTime > INPUT_REPORT_TIMEOUT) {
             getLogger()
                     .log(
                             Level.WARNING,

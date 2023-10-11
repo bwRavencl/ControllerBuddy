@@ -601,7 +601,7 @@ public final class OnScreenKeyboard extends JFrame {
         private final KeyStroke keyStroke;
         private volatile boolean mouseDown;
         private volatile boolean doDownUp;
-        private volatile long beginPress;
+        private volatile long beginPressTime;
 
         private DefaultKeyboardButton(final String directInputKeyCodeName) {
             super(getDefaultKeyDisplayName(directInputKeyCodeName));
@@ -702,7 +702,7 @@ public final class OnScreenKeyboard extends JFrame {
                     final var downKeyStrokes = input.getDownKeyStrokes();
 
                     if (heldButtons.contains(this)) {
-                        if (System.currentTimeMillis() - beginPress >= MIN_REPEAT_PRESS_TIME) {
+                        if (System.currentTimeMillis() - beginPressTime >= MIN_REPEAT_PRESS_TIME) {
                             downKeyStrokes.add(keyStroke);
                         }
                     } else {
@@ -720,7 +720,7 @@ public final class OnScreenKeyboard extends JFrame {
             GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
             if (heldButtons.add(this)) {
-                beginPress = System.currentTimeMillis();
+                beginPressTime = System.currentTimeMillis();
             }
 
             changed = true;
@@ -734,11 +734,11 @@ public final class OnScreenKeyboard extends JFrame {
             GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
 
             if (heldButtons.remove(this)) {
-                if (System.currentTimeMillis() - beginPress < MIN_REPEAT_PRESS_TIME) {
+                if (System.currentTimeMillis() - beginPressTime < MIN_REPEAT_PRESS_TIME) {
                     doDownUp = true;
                 }
 
-                beginPress = 0L;
+                beginPressTime = 0L;
                 changed = true;
                 anyChanges = true;
             }
@@ -752,7 +752,7 @@ public final class OnScreenKeyboard extends JFrame {
                 release();
             } else {
                 press(true);
-                beginPress = 0L;
+                beginPressTime = 0L;
             }
         }
     }
