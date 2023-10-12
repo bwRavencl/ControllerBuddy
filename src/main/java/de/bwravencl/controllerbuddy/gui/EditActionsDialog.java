@@ -30,6 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -132,8 +133,9 @@ public final class EditActionsDialog extends JDialog {
 
     @SuppressWarnings("unchecked")
     public EditActionsDialog(
-            @SuppressWarnings("exports") final java.awt.Component parentComponent,
+            @SuppressWarnings("exports") final Dialog parentDialog,
             @SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
+        super(parentDialog);
         this.cycleAction = cycleAction;
 
         try {
@@ -144,7 +146,7 @@ public final class EditActionsDialog extends JDialog {
             throw new RuntimeException(e);
         }
 
-        preInit(parentComponent);
+        preInit(parentDialog);
         setTitle(MessageFormat.format(
                 Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
                 IAction.getLabel(cycleAction.getClass())));
