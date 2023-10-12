@@ -1838,7 +1838,7 @@ public final class Main {
             var profileLoaded = false;
 
             try {
-                final var jsonString = Files.readString(file.toPath());
+                final var jsonString = Files.readString(file.toPath(), StandardCharsets.UTF_8);
                 final var jsonContext = JsonContext.create();
 
                 try {
@@ -2364,7 +2364,7 @@ public final class Main {
 
         final var jsonString = JsonContext.create().gson.toJson(profile);
         try {
-            Files.writeString(file.toPath(), jsonString);
+            Files.writeString(file.toPath(), jsonString, StandardCharsets.UTF_8);
 
             if (saveAsLastProfile) {
                 saveLastProfile(file);
