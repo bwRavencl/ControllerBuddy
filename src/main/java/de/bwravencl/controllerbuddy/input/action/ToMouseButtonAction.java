@@ -110,6 +110,12 @@ abstract class ToMouseButtonAction<V extends Number> extends MinActivationInterv
     }
 
     @Override
+    public void init(final Input input) {
+        super.init(input);
+        IActivatableAction.super.init(input);
+    }
+
+    @Override
     public boolean isLongPress() {
         return longPress;
     }

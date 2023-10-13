@@ -117,6 +117,12 @@ abstract class ToKeyAction<V extends Number> extends MinActivationIntervalAction
     }
 
     @Override
+    public void init(final Input input) {
+        super.init(input);
+        IActivatableAction.super.init(input);
+    }
+
+    @Override
     public boolean isLongPress() {
         return longPress;
     }
