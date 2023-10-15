@@ -120,7 +120,7 @@ dependencies {
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
 	implementation "commons-cli:commons-cli:$commonsCliVersion"
-	implementation 'com.formdev:flatlaf:3.2.1'
+	implementation 'com.formdev:flatlaf:3.2.2'
 	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
 	implementation "com.github.strikerx3:jxinput:$jxinputVersion"
 	implementation 'com.google.code.gson:gson:2.10.1'
