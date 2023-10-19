@@ -34,6 +34,7 @@ public abstract class RunMode implements Runnable {
     int minAxisValue;
     int maxAxisValue;
     int nButtons;
+    private boolean stopping;
 
     RunMode(final Main main, final Input input) {
         this.main = main;
@@ -42,6 +43,10 @@ public abstract class RunMode implements Runnable {
     }
 
     final void controllerDisconnected() {
+        if (stopping) {
+            return;
+        }
+
         Thread.startVirtualThread(() -> main.stopAll(true, true, true));
 
         log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
@@ -50,6 +55,8 @@ public abstract class RunMode implements Runnable {
                 Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
                 Main.strings.getString("ERROR_DIALOG_TITLE"),
                 JOptionPane.ERROR_MESSAGE));
+
+        stopping = true;
     }
 
     abstract Logger getLogger();
