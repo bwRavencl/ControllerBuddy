@@ -190,10 +190,6 @@ extraJavaModuleInfo {
 		requiresTransitive('batik.shared.resources')
 		requiresTransitive('xml.apis.ext')
 	}
-
-	module("commons-cli-${commonsCliVersion}.jar", 'commons.cli', commonsCliVersion) {
-		exports 'org.apache.commons.cli'
-	}
 }
 
 tasks.register('generateModuleInfo') {
@@ -216,13 +212,13 @@ tasks.register('generateModuleInfo') {
 			    requires com.formdev.flatlaf;
 			    requires com.sun.jna;
 			    requires com.sun.jna.platform;
-			    requires commons.cli;
 			    requires hid4java;
 			    requires io.github.classgraph;
 			    requires java.logging;
 			    requires java.prefs;
 			    requires jdk.xml.dom;
 			    requires jxinput;
+			    requires org.apache.commons.cli;
 			    requires org.lwjgl;
 			    requires org.lwjgl.natives;
 			    requires org.lwjgl.glfw;
