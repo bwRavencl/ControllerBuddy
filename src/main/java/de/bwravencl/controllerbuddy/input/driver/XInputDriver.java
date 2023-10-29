@@ -136,11 +136,9 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 
     @Override
     public boolean getGamepadState(final GLFWGamepadState state) {
-        if (xinputDevice == null || !xinputDevice.isConnected()) {
+        if (xinputDevice == null || !xinputDevice.poll()) {
             return false;
         }
-
-        xinputDevice.poll();
 
         final var components = xinputDevice.getComponents();
 
