@@ -181,9 +181,10 @@ public final class GuiUtils {
     }
 
     public static void showMessageDialog(
-            @SuppressWarnings("exports") final Component parentComponent, final Object message)
+            final Main main, @SuppressWarnings("exports") final Component parentComponent, final Object message)
             throws HeadlessException {
         showMessageDialog(
+                main,
                 parentComponent,
                 message,
                 UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
@@ -191,15 +192,17 @@ public final class GuiUtils {
     }
 
     public static void showMessageDialog(
+            final Main main,
             @SuppressWarnings("exports") final Component parentComponent,
             final Object message,
             final String title,
             final int messageType)
             throws HeadlessException {
-        showMessageDialog(parentComponent, message, title, messageType, null);
+        showMessageDialog(main, parentComponent, message, title, messageType, null);
     }
 
     public static void showMessageDialog(
+            final Main main,
             @SuppressWarnings("exports") final Component parentComponent,
             final Object message,
             final String title,
@@ -208,6 +211,10 @@ public final class GuiUtils {
             throws HeadlessException {
         if (Main.skipMessageDialogs) {
             return;
+        }
+
+        if (main != null) {
+            main.show();
         }
 
         JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);

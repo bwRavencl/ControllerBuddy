@@ -217,6 +217,7 @@ public final class ServerRunMode extends RunMode {
         } catch (final BindException e) {
             log.log(Level.WARNING, "Could not bind socket on port " + port);
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
                     main.getFrame(),
                     MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
                     Main.strings.getString("ERROR_DIALOG_TITLE"),
@@ -226,6 +227,7 @@ public final class ServerRunMode extends RunMode {
         } catch (final IOException e) {
             log.log(Level.SEVERE, e.getMessage(), e);
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
                     main.getFrame(),
                     Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
                     Main.strings.getString("ERROR_DIALOG_TITLE"),

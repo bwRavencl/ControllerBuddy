@@ -868,12 +868,14 @@ public final class Main {
 
             if (isWindows || isLinux) {
                 GuiUtils.showMessageDialog(
+                        this,
                         frame,
                         strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
                         strings.getString("ERROR_DIALOG_TITLE"),
                         JOptionPane.ERROR_MESSAGE);
             } else {
                 GuiUtils.showMessageDialog(
+                        this,
                         frame,
                         strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"),
                         strings.getString("ERROR_DIALOG_TITLE"),
@@ -908,6 +910,7 @@ public final class Main {
             log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
 
             GuiUtils.showMessageDialog(
+                    this,
                     frame,
                     strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
@@ -972,12 +975,14 @@ public final class Main {
         if (noControllerConnected) {
             if (isWindows || isLinux) {
                 GuiUtils.showMessageDialog(
+                        this,
                         frame,
                         strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
                         strings.getString("INFORMATION_DIALOG_TITLE"),
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
                 GuiUtils.showMessageDialog(
+                        this,
                         frame,
                         strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
                         strings.getString("INFORMATION_DIALOG_TITLE"),
@@ -994,6 +999,17 @@ public final class Main {
                 preferences.remove(PREFERENCES_LAST_PROFILE);
             }
         }
+    }
+
+    boolean show() {
+        if (frame == null || frame.isVisible()) {
+            return false;
+        }
+
+        frame.setVisible(true);
+        updateShowMenuItem();
+
+        return true;
     }
 
     private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
@@ -1161,7 +1177,11 @@ public final class Main {
                     scrollPane.setPreferredSize(new Dimension(600, 400));
                     panel.add(scrollPane, BorderLayout.CENTER);
                     GuiUtils.showMessageDialog(
-                            main.frame, panel, strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+                            main,
+                            main.frame,
+                            panel,
+                            strings.getString("ERROR_DIALOG_TITLE"),
+                            JOptionPane.ERROR_MESSAGE);
 
                     terminate(1);
                 });
@@ -1288,6 +1308,7 @@ public final class Main {
 
                 final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
                 GuiUtils.showMessageDialog(
+                        null,
                         null,
                         textArea,
                         strings.getString("APPLICATION_NAME"),
@@ -1464,6 +1485,7 @@ public final class Main {
         } catch (final DOMException | ParserConfigurationException | TransformerException | IOException e) {
             log.log(Level.SEVERE, e.getMessage(), e);
             GuiUtils.showMessageDialog(
+                    main,
                     frame,
                     strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
@@ -1619,6 +1641,7 @@ public final class Main {
                 startServer();
             } else {
                 GuiUtils.showMessageDialog(
+                        this,
                         frame,
                         MessageFormat.format(
                                 strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
@@ -1661,6 +1684,7 @@ public final class Main {
             log.log(Level.WARNING, t.getMessage(), t);
 
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
                     main.getFrame(),
                     Main.strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
                     Main.strings.getString("WARNING_DIALOG_TITLE"),
@@ -1849,6 +1873,7 @@ public final class Main {
 
                         if (!skipMessageDialogs) {
                             GuiUtils.showMessageDialog(
+                                    main,
                                     frame,
                                     MessageFormat.format(
                                             strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
@@ -1864,6 +1889,7 @@ public final class Main {
 
                             if (!skipMessageDialogs) {
                                 GuiUtils.showMessageDialog(
+                                        main,
                                         frame,
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
@@ -1877,6 +1903,7 @@ public final class Main {
 
                             if (!skipMessageDialogs) {
                                 GuiUtils.showMessageDialog(
+                                        main,
                                         frame,
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
@@ -1897,6 +1924,7 @@ public final class Main {
 
                         if (!skipMessageDialogs) {
                             GuiUtils.showMessageDialog(
+                                    main,
                                     frame,
                                     MessageFormat.format(
                                             strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
@@ -1937,6 +1965,7 @@ public final class Main {
 
                 if (!skipMessageDialogs) {
                     GuiUtils.showMessageDialog(
+                            main,
                             frame,
                             strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
                             strings.getString("ERROR_DIALOG_TITLE"),
@@ -1971,6 +2000,7 @@ public final class Main {
             }
         } else {
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
                     main.frame,
                     strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
@@ -2377,6 +2407,7 @@ public final class Main {
         } catch (final IOException e) {
             log.log(Level.SEVERE, e.getMessage(), e);
             GuiUtils.showMessageDialog(
+                    main,
                     frame,
                     strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
@@ -2714,6 +2745,7 @@ public final class Main {
             log.log(Level.WARNING, "Could not read external game controller mappings file: " + path);
 
             GuiUtils.showMessageDialog(
+                    main,
                     frame,
                     MessageFormat.format(
                             strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
@@ -2727,6 +2759,7 @@ public final class Main {
             log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
 
             GuiUtils.showMessageDialog(
+                    main,
                     frame,
                     strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
                     strings.getString("ERROR_DIALOG_TITLE"),
@@ -3848,6 +3881,7 @@ public final class Main {
                 vJoyDirectoryLabel.setText(vjoyPath);
             } else {
                 GuiUtils.showMessageDialog(
+                        main,
                         frame,
                         MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"), defaultVJoyPath),
                         strings.getString("ERROR_DIALOG_TITLE"),
@@ -3977,17 +4011,13 @@ public final class Main {
 
         @Override
         protected void doAction() {
-            final var frameVisible = frame.isVisible();
-            if (!frameVisible) {
-                frame.setVisible(true);
-                updateShowMenuItem();
-            }
+            final var wasInvisible = show();
 
             if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                 loadProfile(profileFileChooser.getSelectedFile(), false, true);
             }
 
-            if (!frameVisible) {
+            if (wasInvisible) {
                 frame.setVisible(false);
                 updateShowMenuItem();
             }
@@ -4251,6 +4281,7 @@ public final class Main {
             final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
 
             GuiUtils.showMessageDialog(
+                    main,
                     frame,
                     MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
                     (String) getValue(NAME),
@@ -4298,7 +4329,8 @@ public final class Main {
                 textArea.setEditable(false);
                 final var scrollPane = new JScrollPane(textArea);
                 scrollPane.setPreferredSize(new Dimension(600, 400));
-                GuiUtils.showMessageDialog(frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
+                GuiUtils.showMessageDialog(
+                        main, frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
             } catch (final IOException e1) {
                 throw new RuntimeException(e1);
             }

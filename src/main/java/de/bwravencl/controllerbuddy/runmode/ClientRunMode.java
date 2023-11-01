@@ -121,6 +121,7 @@ public final class ClientRunMode extends OutputRunMode {
                                                 "Protocol version mismatch: client " + ServerRunMode.PROTOCOL_VERSION
                                                         + " vs server " + serverProtocolVersion);
                                         EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                                                main,
                                                 main.getFrame(),
                                                 MessageFormat.format(
                                                         Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
@@ -162,6 +163,7 @@ public final class ClientRunMode extends OutputRunMode {
                         if (retry != -1 && !Thread.currentThread().isInterrupted()) {
                             log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
                             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                                    main,
                                     main.getFrame(),
                                     MessageFormat.format(
                                             Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
@@ -288,6 +290,7 @@ public final class ClientRunMode extends OutputRunMode {
                 } catch (final SocketTimeoutException e) {
                     log.log(Level.FINE, e.getMessage(), e);
                     EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                            main,
                             main.getFrame(),
                             Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
                             Main.strings.getString("ERROR_DIALOG_TITLE"),
@@ -346,6 +349,7 @@ public final class ClientRunMode extends OutputRunMode {
 
             log.log(Level.INFO, "Could not resolve host: " + host);
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
                     main.getFrame(),
                     MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
                     Main.strings.getString("ERROR_DIALOG_TITLE"),

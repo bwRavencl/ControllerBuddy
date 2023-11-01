@@ -51,6 +51,7 @@ public abstract class RunMode implements Runnable {
 
         log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
         EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                main,
                 main.getFrame(),
                 Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
                 Main.strings.getString("ERROR_DIALOG_TITLE"),
