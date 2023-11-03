@@ -13,7 +13,8 @@ plugins {
 	id 'org.gradlex.extra-java-module-info' version '1.5'
 }
 
-version = Grgit.open(dir: projectDir).describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst Pattern.quote('-g'), '-'
+def git = Grgit.open(dir: projectDir)
+version = "${git.describe(longDescr: true).replaceFirst(Pattern.quote('-'), '.').replaceFirst(Pattern.quote('-g'), '-')}${((!git.status().isClean()) ? '.dirty' : '')}"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21

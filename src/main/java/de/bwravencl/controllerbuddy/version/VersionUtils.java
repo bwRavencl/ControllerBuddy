@@ -16,42 +16,57 @@
 
 package de.bwravencl.controllerbuddy.version;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public final class VersionUtils {
 
-    public static Optional<Integer> compareVersions(final String version) throws IllegalArgumentException {
-        if (version == null) {
+    public static Optional<Integer> compareVersions(final String otherVersion) throws IllegalArgumentException {
+        if (otherVersion == null) {
             return Optional.empty();
         }
 
-        final var versionParts = getVersionParts(version);
-        if (versionParts.length < 2) {
-            return Optional.empty();
-        }
-
-        final var currentVersionParts = getVersionParts(Version.VERSION);
-        for (var i = 0; i < 2; i++) {
-            try {
-                if (Integer.parseInt(versionParts[i]) < Integer.parseInt(currentVersionParts[i])) {
-                    return Optional.of(-1);
-                }
-                if (Integer.parseInt(versionParts[i]) > Integer.parseInt(currentVersionParts[i])) {
-                    return Optional.of(1);
-                }
-            } catch (final NumberFormatException e) {
+        try {
+            final var otherVersionParts = getVersionIntegerParts(otherVersion);
+            if (otherVersionParts.length < 2) {
                 return Optional.empty();
             }
+
+            final var currentVersionParts = getVersionIntegerParts(Version.VERSION);
+            for (var i = 0; i < 2; i++) {
+                if (otherVersionParts[i] < currentVersionParts[i]) {
+                    return Optional.of(-1);
+                }
+                if (otherVersionParts[i] > currentVersionParts[i]) {
+                    return Optional.of(1);
+                }
+            }
+        } catch (final NumberFormatException e) {
+            return Optional.empty();
         }
 
         return Optional.of(0);
     }
 
-    public static String getMajorAndMinorVersion() {
-        return Version.VERSION.substring(0, Version.VERSION.lastIndexOf('.'));
+    private static String stripHashSuffix(final String version) {
+        final var dashIndex = version.indexOf('-');
+
+        if (dashIndex < 0) {
+            return version;
+        }
+
+        return version.substring(0, dashIndex);
     }
 
-    private static String[] getVersionParts(final String version) {
-        return version.split("\\.");
+    public static String getMajorAndMinorVersion() {
+        final var versionWithoutSuffix = stripHashSuffix(Version.VERSION);
+        return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
+    }
+
+    private static int[] getVersionIntegerParts(final String version) {
+        final var versionWithoutSuffix = stripHashSuffix(version);
+        return Arrays.stream(versionWithoutSuffix.split("\\."))
+                .mapToInt(Integer::parseInt)
+                .toArray();
     }
 }
