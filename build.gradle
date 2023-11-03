@@ -416,7 +416,7 @@ startScripts.enabled = false
 tasks.replace('distTar', Tar).configure {
 	dependsOn jpackage
 	from tmpDir
-	include "$project.name/**"
+	include "$project.name${os.macOsX ? '.app' : ''}/**"
 	archiveAppendix = distAppendix
 	compression Compression.GZIP
 }
@@ -424,13 +424,13 @@ tasks.replace('distTar', Tar).configure {
 tasks.replace('distZip', Zip).configure {
 	dependsOn jpackage
 	from tmpDir
-	include "$project.name/**"
+	include "$project.name${os.macOsX ? '.app' : ''}/**"
 	archiveAppendix = distAppendix
 }
 
 tasks.replace('installDist', Sync).configure {
 	dependsOn jpackage
 	from tmpDir
-	into "$buildDir/install"
-	include "$project.name/**"
+	into layout.buildDirectory.dir('install')
+	include "$project.name${os.macOsX ? '.app' : ''}/**"
 }
