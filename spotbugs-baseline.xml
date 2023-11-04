@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.8.0" sequence="0" timestamp="1697152277350" analysisTimestamp="1697152277350" release="">
+<BugCollection version="4.8.0" sequence="0" timestamp="1699086969134" analysisTimestamp="1699086969134" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$CompoundButton$1.class</Jar>
@@ -211,6 +211,8 @@
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ModeAwareTypeAdapterFactory$1.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ModeAwareTypeAdapterFactory.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\json\ScanCodeAdapter.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\metadata\Metadata.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\metadata\VersionUtils.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ClientRunMode$ClientState.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\ClientRunMode.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\LocalRunMode.class</Jar>
@@ -226,15 +228,13 @@
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\VjoyInterface.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\runmode\X11WithLockKeyFunctions.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\util\RunnableWithDefaultExceptionHandler.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\Version.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\version\VersionUtils.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\module-info.class</Jar>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\2bcb3a41d05d5d4cba2ed58abeff98c0\transformed\commons-cli-1.5.0-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\3.2.1\90f4bd7e9208c38cc065e84555a423e871aade18\flatlaf-3.2.1.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\b6ac2039fb06f83a34bb1e3bdefe039b\transformed\hid4java-85d76ecd85-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\e7690ea07766a0b3c31e9dfc8efdaf11\transformed\jxinput-1.0.0-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.6.0\38166a23afb5bd5520f739b87b3be87f7f0fb96d\commons-cli-1.6.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.formdev\flatlaf\3.2.5\a180d2525801750f8be57a1fae71181593c9bb36\flatlaf-3.2.5.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\af048a959ebc5896978d867f325aebcf\transformed\hid4java-85d76ecd85-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\b01852e2536d84ba281ff7f4bcc63055\transformed\jxinput-1.0.0-module.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.10.1\b3add478d4382b78ea20b1671390a858002feb6c\gson-2.10.1.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.162\85bc1625bc8aac51ad32971ebb26a3e35cb97356\classgraph-4.8.162.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.164\7d36e6edec37553e1f282fd759af7f9548f41629\classgraph-4.8.164.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform-jpms\5.13.0\17bfd2ca13edbc1b83a5979013c55242dd15407\jna-platform-jpms-5.13.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-jpms\5.13.0\722326930a147b82b73fb1bdcffba29af921a1b2\jna-jpms-5.13.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.3.3\efa1eb78c5ccd840e9f329717109b5e892d72f8e\lwjgl-glfw-3.3.3.jar</AuxClasspathEntry>
@@ -245,28 +245,28 @@
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-openvr\3.3.3\88da228eda93862da163ba355afa9f62526225bd\lwjgl-openvr-3.3.3-natives-windows.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.3\29589b5f87ed335a6c7e7ee6a5775f81f97ecb84\lwjgl-3.3.3.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.3\a5ed18a2b82fc91b81f40d717cb1f64c9dcb0540\lwjgl-3.3.3-natives-windows.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\3a5cdbd429a340126bf359fa6961b7c5\transformed\batik-swing-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d0d93f2d63455bffe3a6264c2ebb8e2e\transformed\batik-swing-1.17-module.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\uk.co.bithatch\linuxio4j\2.1\f7d312bfd93646a3e9a9ad66319d94a5ae9ef10e\linuxio4j-2.1.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d7566abf4582a94e7f74c794eaf99ff5\transformed\batik-bridge-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\e7576d113684a13dccbf1ccfe11591d4\transformed\batik-script-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\ee90b8c038a4afdcc4e827ca65744ea0\transformed\batik-anim-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\6624771033560d9b2db961321c24c73e\transformed\batik-gvt-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\65029f533f36a8b6423660e993cdac87\transformed\batik-svg-dom-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\341a1ef924065da97ce91c4896080b7c\transformed\batik-parser-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\72d488f0ef71c60703f97108b6b62408\transformed\batik-awt-util-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\22d333566851498e9d0f192481a5b47b\transformed\batik-dom-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\44977d3ccfd6c198790790f6139e2130\transformed\batik-css-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\f9af9e8af2bca14166bb47d964238501\transformed\batik-ext-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\60269413a8257d5d1d02d1d75d9783a9\transformed\batik-gui-util-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\0b0b1252ea3c99156552ec4962174ea4\transformed\batik-xml-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\3f69876a1e6e051d0b6865790f66fad9\transformed\batik-util-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\4d920225916ee2b3e04dfbe396544887\transformed\batik-constants-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\2a475ecc05658fad92f734444b7adfd0\transformed\batik-i18n-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\27f759fd657915c27db9d1b0a9ee97c2\transformed\batik-shared-resources-1.17-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\7fedacd99134d14165d3c7ac4795da8f\transformed\xml-apis-ext-1.3.04-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\ad97757cb5a7706cb6e394329bbe89a7\transformed\batik-bridge-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\7b5aa92ef10944295eba8dcdcd7d2679\transformed\batik-script-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\43c995e33527ee48e57495f87027c04c\transformed\batik-anim-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\89716527e8b4f346cc3b9f8b4490b851\transformed\batik-gvt-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\76a517f8f820ece483d19a2981fddf9d\transformed\batik-svg-dom-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\c4a0539bace466f6a517cd24861f56e7\transformed\batik-parser-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\09a3d852628dc0bb076b6245ff737ab0\transformed\batik-awt-util-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\e8b5b6f28cd01d6778c7ce70aa7d86b4\transformed\batik-dom-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\5ce1b3239f76cb10797010dd126159e3\transformed\batik-css-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\a95093b57738d29bd0c7e0524aedb493\transformed\batik-ext-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\bc974bd1de41c7d912b016b8f7f4a4d1\transformed\batik-gui-util-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\d823e8667cccc1bb11d3d65b22aeb2be\transformed\batik-xml-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\5b89fb86cfadb40f3f0540010b582b2f\transformed\batik-util-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\8ff7b48f43b9282794cb558b12312299\transformed\batik-constants-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\b585442568368fe4372229353c971db8\transformed\batik-i18n-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\841fa6073a47141f9e53799576b5539b\transformed\batik-shared-resources-1.17-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\85eee29e86734bfad61905c4ff4d10c7\transformed\xml-apis-ext-1.3.04-module.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\xmlgraphics-commons\2.9\de2d1bd8d40474bbe876bb269410c750489f08e5\xmlgraphics-commons-2.9.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\commons-io\commons-io\2.11.0\a2503f302b11ebde7ebc3df41daebe0e4eea3689\commons-io-2.11.0.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\f41c20558db506f575b23a26c07d8415\transformed\commons-logging-1.0.4-module.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\transforms-3\926cad7ee3093350e687a6ad53271279\transformed\commons-logging-1.0.4-module.jar</AuxClasspathEntry>
     <SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\src\main\resources</SrcDir>
     <SrcDir>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\src\main\java</SrcDir>
   </Project>
@@ -400,8 +400,8 @@
     <ShortMessage>Random object created and used only once</ShortMessage>
     <LongMessage>Random object created and used only once in de.bwravencl.controllerbuddy.gui.Main.lambda$new$2()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
@@ -421,68 +421,68 @@
     <ShortMessage>Method invokes System.exit(...)</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.terminate(int) invokes System.exit(...), which shuts down the entire virtual machine</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="terminate" signature="(I)V" isStatic="true" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1301" end="1306" startBytecode="0" endBytecode="77" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1311" end="1316" startBytecode="0" endBytecode="77" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.terminate(int)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1305" end="1305" startBytecode="20" endBytecode="20" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 1305]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1315" end="1315" startBytecode="20" endBytecode="20" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 1315]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DM_GC" priority="1" rank="16" abbrev="Dm" category="PERFORMANCE" instanceHash="8bb6fee0f6655bafb52751c3d836ad10" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Explicit garbage collection; extremely dubious except in benchmarking code</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean) forces garbage collection; extremely dubious except in benchmarking code</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="stopAll" signature="(ZZZ)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2560" end="2569" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="2595" end="2604" startBytecode="0" endBytecode="144" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.stopAll(boolean, boolean, boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="2567" end="2567" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 2567]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="2602" end="2602" startBytecode="34" endBytecode="34" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 2602]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="DP_DO_INSIDE_DO_PRIVILEGED" priority="3" rank="20" abbrev="DP" category="MALICIOUS_CODE" instanceHash="531188ba9d1b6e63cbf04a48f02d1c34" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Method invoked that should be only be invoked inside a doPrivileged block</ShortMessage>
     <LongMessage>Invocation of reflect.Field.setAccessible(boolean), which should be invoked from within a doPrivileged block, in de.bwravencl.controllerbuddy.gui.Main.updateTitleAndTooltip()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="updateTitleAndTooltip" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="3406" end="3444" startBytecode="0" endBytecode="555" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="3445" end="3484" startBytecode="0" endBytecode="563" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.updateTitleAndTooltip()</Message>
     </Method>
     <Method classname="java.lang.reflect.Field" name="setAccessible" signature="(Z)V" isStatic="false" role="METHOD_CALLED">
       <SourceLine classname="java.lang.reflect.Field" start="176" end="179" startBytecode="0" endBytecode="93" sourcefile="Field.java" sourcepath="java/lang/reflect/Field.java"/>
       <Message>Called method reflect.Field.setAccessible(boolean)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="3421" end="3421" startBytecode="134" endBytecode="134" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 3421]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="3461" end="3461" startBytecode="134" endBytecode="134" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 3461]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE" instanceHash="e8581828e4463dec0c6cfc57c648299b" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
     <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.getFrame() may expose internal representation by returning Main.frame</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="getFrame" signature="()Ljavax/swing/JFrame;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1548" end="1548" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1559" end="1559" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.getFrame()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.Main" name="frame" signature="Ljavax/swing/JFrame;" isStatic="false" primary="true">
@@ -491,21 +491,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.Main.frame</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1548" end="1548" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 1548]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1559" end="1559" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 1559]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE" instanceHash="2110736f7578d87f2632137f956c313a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
     <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.getOnScreenKeyboard() may expose internal representation by returning Main.onScreenKeyboard</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="getOnScreenKeyboard" signature="()Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1556" end="1556" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1567" end="1567" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.getOnScreenKeyboard()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.Main" name="onScreenKeyboard" signature="Lde/bwravencl/controllerbuddy/gui/OnScreenKeyboard;" isStatic="false" primary="true">
@@ -514,21 +514,21 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.Main.onScreenKeyboard</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1556" end="1556" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 1556]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1567" end="1567" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 1567]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="EI_EXPOSE_REP" priority="2" rank="18" abbrev="EI" category="MALICIOUS_CODE" instanceHash="b61eff00457858dcb199d814c052716" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
     <ShortMessage>May expose internal representation by returning reference to mutable object</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.gui.Main.getPreferences() may expose internal representation by returning Main.preferences</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main" name="getPreferences" signature="()Ljava/util/prefs/Preferences;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1569" end="1569" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="1580" end="1580" startBytecode="0" endBytecode="46" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main.getPreferences()</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.gui.Main" name="preferences" signature="Ljava/util/prefs/Preferences;" isStatic="false" primary="true">
@@ -537,154 +537,154 @@
       </SourceLine>
       <Message>Field de.bwravencl.controllerbuddy.gui.Main.preferences</Message>
     </Field>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1569" end="1569" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 1569]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" primary="true" start="1580" end="1580" startBytecode="4" endBytecode="4" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 1580]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="994905dee551a966972374b3d80c53a0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 216-3455]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 216-3495]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3455" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 216-3455]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main" start="216" end="3495" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 216-3495]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="SF_SWITCH_FALLTHROUGH" priority="2" rank="17" abbrev="SF" category="STYLE" instanceHash="401cd345ae2348cf4462e863fb0d6d1a" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="484">
     <ShortMessage>Switch statement found where one case falls through to the next case</ShortMessage>
     <LongMessage>Switch statement found in de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection() where one case falls through to the next case</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="3511" end="3535" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 3511-3535]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="3551" end="3575" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 3551-3575]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" name="approveSelection" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="3517" end="3535" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" start="3557" end="3575" startBytecode="0" endBytecode="218" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser.approveSelection()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="3526" end="3529" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[lines 3526-3529]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$AbstractProfileFileChooser" primary="true" start="3566" end="3569" startBytecode="89" endBytecode="92" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[lines 3566-3569]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="84e364cae769e6c91ca9407824a8719e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$NewAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$NewAction" start="3937" end="3945" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 3937-3945]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$NewAction" start="3983" end="3991" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 3983-3991]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$NewAction</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$NewAction" start="3937" end="3945" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 3937-3945]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$NewAction" start="3983" end="3991" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 3983-3991]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="6c143e975fcc9b4b1a06c6c7e7db58b7" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$OpenAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$OpenAction" start="3973" end="3994" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 3973-3994]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$OpenAction" start="4019" end="4036" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 4019-4036]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$OpenAction</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$OpenAction" start="3973" end="3994" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 3973-3994]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$OpenAction" start="4019" end="4036" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 4019-4036]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="91e3daeb87a8b18afa75008b55cb7a15" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$SaveAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAction" start="4053" end="4061" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 4053-4061]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAction" start="4097" end="4105" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 4097-4105]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$SaveAction</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAction" start="4053" end="4061" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 4053-4061]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAction" start="4097" end="4105" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 4097-4105]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="95efdc35e51d8fc70de82cd58b6295ef" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction" start="4069" end="4077" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 4069-4077]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction" start="4113" end="4121" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 4113-4121]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$SaveAsAction</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction" start="4069" end="4077" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 4069-4077]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$SaveAsAction" start="4113" end="4121" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 4113-4121]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="ace1305a55d7511a9951053be6a4000e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
     <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$ShowAction" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$ShowAction" start="4267" end="4278" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-        <Message>At Main.java:[lines 4267-4278]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$ShowAction" start="4313" end="4324" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+        <Message>At Main.java:[lines 4313-4324]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$ShowAction</Message>
     </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$ShowAction" start="4267" end="4278" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
-      <Message>At Main.java:[lines 4267-4278]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$ShowAction" start="4313" end="4324" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java" synthetic="true">
+      <Message>At Main.java:[lines 4313-4324]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="NN_NAKED_NOTIFY" priority="2" rank="14" abbrev="NN" category="MT_CORRECTNESS" instanceHash="cd4f6dacd7f7cbe546da6d75a744990" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Naked notify</ShortMessage>
     <LongMessage>Naked notify in de.bwravencl.controllerbuddy.gui.Main$TaskRunner.enterLoop()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3693" end="3816" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 3693-3816]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3738" end="3861" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 3738-3861]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" name="enterLoop" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3704" end="3744" startBytecode="0" endBytecode="728" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3749" end="3789" startBytecode="0" endBytecode="728" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$TaskRunner.enterLoop()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3727" end="3727" startBytecode="95" endBytecode="95" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 3727]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3772" end="3772" startBytecode="95" endBytecode="95" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 3772]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UW_UNCOND_WAIT" priority="2" rank="14" abbrev="UW" category="MT_CORRECTNESS" instanceHash="5a28d929bd40bcf01fe0b43a4a6fcfc9" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Unconditional wait</ShortMessage>
     <LongMessage>Unconditional wait in de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3693" end="3816" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 3693-3816]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3738" end="3861" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 3738-3861]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" name="run" signature="(Ljava/util/concurrent/Callable;)Ljava/lang/Object;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3760" end="3778" startBytecode="0" endBytecode="255" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3805" end="3823" startBytecode="0" endBytecode="255" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3766" end="3766" startBytecode="14" endBytecode="14" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 3766]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3811" end="3811" startBytecode="14" endBytecode="14" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 3811]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="WA_NOT_IN_LOOP" priority="2" rank="14" abbrev="Wa" category="MT_CORRECTNESS" instanceHash="df56b4e6badde11af6800b75bc5eddc0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Wait not in loop</ShortMessage>
     <LongMessage>Wait not in loop in de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3693" end="3816" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-        <Message>At Main.java:[lines 3693-3816]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3738" end="3861" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+        <Message>At Main.java:[lines 3738-3861]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.gui.Main$TaskRunner</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" name="run" signature="(Ljava/util/concurrent/Callable;)Ljava/lang/Object;" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3760" end="3778" startBytecode="0" endBytecode="255" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" start="3805" end="3823" startBytecode="0" endBytecode="255" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java"/>
       <Message>In method de.bwravencl.controllerbuddy.gui.Main$TaskRunner.run(Callable)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3766" end="3766" startBytecode="14" endBytecode="14" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
-      <Message>At Main.java:[line 3766]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.gui.Main$TaskRunner" primary="true" start="3811" end="3811" startBytecode="14" endBytecode="14" sourcefile="Main.java" sourcepath="de/bwravencl/controllerbuddy/gui/Main.java" relSourcepath="java\de\bwravencl\controllerbuddy\gui\Main.java">
+      <Message>At Main.java:[line 3811]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="1d7e09f1e16338e85125df088899d557" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
@@ -2821,8 +2821,8 @@
     <ShortMessage>Be wary of letting constructors throw exceptions.</ShortMessage>
     <LongMessage>Exception thrown in class de.bwravencl.controllerbuddy.input.driver.XInputDriver at new de.bwravencl.controllerbuddy.input.driver.XInputDriver(Input, Main$ControllerInfo) will leave the constructor. The object under construction remains partially initialized and may be vulnerable to Finalizer attacks.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver" start="45" end="243" sourcefile="XInputDriver.java" sourcepath="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\XInputDriver.java">
-        <Message>At XInputDriver.java:[lines 45-243]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.driver.XInputDriver" start="45" end="241" sourcefile="XInputDriver.java" sourcepath="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\driver\XInputDriver.java">
+        <Message>At XInputDriver.java:[lines 45-241]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.input.driver.XInputDriver</Message>
     </Class>
@@ -3003,12 +3003,25 @@
       <Message>At ScanCodeAdapter.java:[line 37]</Message>
     </SourceLine>
   </BugInstance>
+  <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="c244f78c4b7d6bce4f329f2ef506406f" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
+    <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.metadata.Metadata" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.metadata.Metadata" start="3" end="3" sourcefile="Metadata.java" sourcepath="de/bwravencl/controllerbuddy/metadata/Metadata.java" relSourcepath="java\de\bwravencl\controllerbuddy\metadata\Metadata.java" synthetic="true">
+        <Message>At Metadata.java:[line 3]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.metadata.Metadata</Message>
+    </Class>
+    <SourceLine classname="de.bwravencl.controllerbuddy.metadata.Metadata" start="3" end="3" sourcefile="Metadata.java" sourcepath="de/bwravencl/controllerbuddy/metadata/Metadata.java" relSourcepath="java\de\bwravencl\controllerbuddy\metadata\Metadata.java" synthetic="true">
+      <Message>At Metadata.java:[line 3]</Message>
+    </SourceLine>
+  </BugInstance>
   <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="bf6dae1b7f2e73cdfc0905c697110ff8" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
     <LongMessage>ClientRunMode.clientSocket not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.runmode.ClientRunMode.readInput()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="55" end="377" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java">
-        <Message>At ClientRunMode.java:[lines 55-377]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="55" end="381" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java">
+        <Message>At ClientRunMode.java:[lines 55-381]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.ClientRunMode</Message>
     </Class>
@@ -3019,27 +3032,27 @@
       <Message>Field de.bwravencl.controllerbuddy.runmode.ClientRunMode.clientSocket</Message>
     </Field>
     <Method classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" name="readInput" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="84" end="302" startBytecode="0" endBytecode="3300" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="84" end="305" startBytecode="0" endBytecode="3300" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java"/>
       <Message>In method de.bwravencl.controllerbuddy.runmode.ClientRunMode.readInput()</Message>
     </Method>
     <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" primary="true" start="107" end="107" startBytecode="163" endBytecode="163" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java">
       <Message>At ClientRunMode.java:[line 107]</Message>
     </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="181" end="181" startBytecode="592" endBytecode="592" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
-      <Message>Another occurrence at ClientRunMode.java:[line 181]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="183" end="183" startBytecode="592" endBytecode="592" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java" role="SOURCE_LINE_ANOTHER_INSTANCE">
+      <Message>Another occurrence at ClientRunMode.java:[line 183]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="EI_EXPOSE_REP2" priority="2" rank="18" abbrev="EI2" category="MALICIOUS_CODE" instanceHash="19f055e0f089d81375f65d513b0e49dd" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="374">
     <ShortMessage>May expose internal representation by incorporating reference to mutable object</ShortMessage>
     <LongMessage>de.bwravencl.controllerbuddy.runmode.OutputRunMode.setvJoyDevice(WinDef$UINT) may expose internal representation by storing an externally mutable object into OutputRunMode.vJoyDevice</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1011" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 71-1011]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1022" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+        <Message>At OutputRunMode.java:[lines 71-1022]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" name="setvJoyDevice" signature="(Lcom/sun/jna/platform/win32/WinDef$UINT;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="750" end="751" startBytecode="0" endBytecode="61" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="761" end="762" startBytecode="0" endBytecode="61" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
       <Message>In method de.bwravencl.controllerbuddy.runmode.OutputRunMode.setvJoyDevice(WinDef$UINT)</Message>
     </Method>
     <Field classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" name="vJoyDevice" signature="Lcom/sun/jna/platform/win32/WinDef$UINT;" isStatic="false" primary="true">
@@ -3051,16 +3064,16 @@
     <LocalVariable name="vJoyDevice" register="1" pc="2" role="LOCAL_VARIABLE_NAMED">
       <Message>Local variable named vJoyDevice</Message>
     </LocalVariable>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="750" end="750" startBytecode="2" endBytecode="2" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-      <Message>At OutputRunMode.java:[line 750]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="761" end="761" startBytecode="2" endBytecode="2" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+      <Message>At OutputRunMode.java:[line 761]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="b169ce944dc7f8b0a6635eaa733218b0" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
     <LongMessage>OutputRunMode.buttons not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.runmode.ClientRunMode.readInput()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1011" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 71-1011]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1022" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+        <Message>At OutputRunMode.java:[lines 71-1022]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
     </Class>
@@ -3071,19 +3084,19 @@
       <Message>Field de.bwravencl.controllerbuddy.runmode.OutputRunMode.buttons</Message>
     </Field>
     <Method classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" name="readInput" signature="()Z" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="84" end="302" startBytecode="0" endBytecode="3300" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" start="84" end="305" startBytecode="0" endBytecode="3300" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java"/>
       <Message>In method de.bwravencl.controllerbuddy.runmode.ClientRunMode.readInput()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" primary="true" start="217" end="217" startBytecode="893" endBytecode="893" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java">
-      <Message>At ClientRunMode.java:[line 217]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ClientRunMode" primary="true" start="219" end="219" startBytecode="893" endBytecode="893" sourcefile="ClientRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ClientRunMode.java">
+      <Message>At ClientRunMode.java:[line 219]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="4a318eab47805ea8ab03c87b669aa7f7" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
     <LongMessage>OutputRunMode.buttons not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.runmode.LocalRunMode.readInput()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1011" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 71-1011]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1022" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+        <Message>At OutputRunMode.java:[lines 71-1022]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
     </Class>
@@ -3105,8 +3118,8 @@
     <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
     <LongMessage>OutputRunMode.buttons not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1011" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 71-1011]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="71" end="1022" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+        <Message>At OutputRunMode.java:[lines 71-1022]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode</Message>
     </Class>
@@ -3117,59 +3130,59 @@
       <Message>Field de.bwravencl.controllerbuddy.runmode.OutputRunMode.buttons</Message>
     </Field>
     <Method classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" name="writeOutput" signature="()V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="754" end="1011" startBytecode="0" endBytecode="3266" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" start="765" end="1022" startBytecode="0" endBytecode="3266" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
       <Message>In method de.bwravencl.controllerbuddy.runmode.OutputRunMode.writeOutput()</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="861" end="861" startBytecode="793" endBytecode="793" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-      <Message>At OutputRunMode.java:[line 861]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode" primary="true" start="872" end="872" startBytecode="793" endBytecode="793" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+      <Message>At OutputRunMode.java:[line 872]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="CT_CONSTRUCTOR_THROW" priority="2" rank="16" abbrev="CT" category="BAD_PRACTICE" instanceHash="d0fb555573466b54cf38597850e3e179" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Be wary of letting constructors throw exceptions.</ShortMessage>
     <LongMessage>Exception thrown in class de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue at new de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue(Class) will leave the constructor. The object under construction remains partially initialized and may be vulnerable to Finalizer attacks.</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1033" end="1074" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-        <Message>At OutputRunMode.java:[lines 1033-1074]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1044" end="1085" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+        <Message>At OutputRunMode.java:[lines 1044-1085]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" name="&lt;init&gt;" signature="(Ljava/lang/Class;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1033" end="1046" startBytecode="0" endBytecode="225" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1044" end="1057" startBytecode="0" endBytecode="225" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java"/>
       <Message>In method new de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue(Class)</Message>
     </Method>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" primary="true" start="1041" end="1041" startBytecode="44" endBytecode="44" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-      <Message>At OutputRunMode.java:[line 1041]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" primary="true" start="1052" end="1052" startBytecode="44" endBytecode="44" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+      <Message>At OutputRunMode.java:[line 1052]</Message>
     </SourceLine>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1041" end="1041" startBytecode="44" endBytecode="44" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
-      <Message>At OutputRunMode.java:[line 1041]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.OutputRunMode$DeviceValue" start="1052" end="1052" startBytecode="44" endBytecode="44" sourcefile="OutputRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\OutputRunMode.java">
+      <Message>At OutputRunMode.java:[line 1052]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="2cd74c5e1d2664c4a5ae8cca267bd179" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>An overridable method is called from a constructor</ShortMessage>
     <LongMessage>Overridable method setRunMode is called from constructor new de.bwravencl.controllerbuddy.runmode.RunMode(Main, Input).</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.RunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="30" end="88" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java">
-        <Message>At RunMode.java:[lines 30-88]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="30" end="96" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java">
+        <Message>At RunMode.java:[lines 30-96]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.RunMode</Message>
     </Class>
     <Method classname="de.bwravencl.controllerbuddy.runmode.RunMode" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/gui/Main;Lde/bwravencl/controllerbuddy/input/Input;)V" isStatic="false" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="38" end="42" startBytecode="0" endBytecode="106" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java"/>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" start="39" end="43" startBytecode="0" endBytecode="106" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java"/>
       <Message>In method new de.bwravencl.controllerbuddy.runmode.RunMode(Main, Input)</Message>
     </Method>
     <String value="setRunMode">
       <Message>Value setRunMode</Message>
     </String>
-    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" primary="true" start="41" end="41" startBytecode="21" endBytecode="21" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java">
-      <Message>At RunMode.java:[line 41]</Message>
+    <SourceLine classname="de.bwravencl.controllerbuddy.runmode.RunMode" primary="true" start="42" end="42" startBytecode="21" endBytecode="21" sourcefile="RunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/RunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\RunMode.java">
+      <Message>At RunMode.java:[line 42]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="979f22fed2b2157a4512f5308d43616e" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
     <ShortMessage>Field not initialized in constructor but dereferenced without null check</ShortMessage>
     <LongMessage>ServerRunMode.clientIPAddress not initialized in constructor and dereferenced in de.bwravencl.controllerbuddy.runmode.ServerRunMode.lambda$run$1(int)</LongMessage>
     <Class classname="de.bwravencl.controllerbuddy.runmode.ServerRunMode" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ServerRunMode" start="50" end="257" sourcefile="ServerRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ServerRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ServerRunMode.java">
-        <Message>At ServerRunMode.java:[lines 50-257]</Message>
+      <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ServerRunMode" start="50" end="259" sourcefile="ServerRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ServerRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ServerRunMode.java">
+        <Message>At ServerRunMode.java:[lines 50-259]</Message>
       </SourceLine>
       <Message>In class de.bwravencl.controllerbuddy.runmode.ServerRunMode</Message>
     </Class>
@@ -3185,19 +3198,6 @@
     </Method>
     <SourceLine classname="de.bwravencl.controllerbuddy.runmode.ServerRunMode" primary="true" start="126" end="126" startBytecode="23" endBytecode="23" sourcefile="ServerRunMode.java" sourcepath="de/bwravencl/controllerbuddy/runmode/ServerRunMode.java" relSourcepath="java\de\bwravencl\controllerbuddy\runmode\ServerRunMode.java">
       <Message>At ServerRunMode.java:[line 126]</Message>
-    </SourceLine>
-  </BugInstance>
-  <BugInstance type="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES" priority="2" rank="16" abbrev="PI" category="BAD_PRACTICE" instanceHash="f48ec6c33e232ebe9fbf9fe7fb9d2891" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
-    <ShortMessage>Do not reuse public identifiers from JSL as class name</ShortMessage>
-    <LongMessage>Class name ?&gt;?1/1??? in source file ?&gt;?2/1??? shadows the publicly available identifier from the Java Standard Library.</LongMessage>
-    <Class classname="de.bwravencl.controllerbuddy.version.Version" primary="true">
-      <SourceLine classname="de.bwravencl.controllerbuddy.version.Version" start="3" end="3" sourcefile="Version.java" sourcepath="de/bwravencl/controllerbuddy/version/Version.java" relSourcepath="java\de\bwravencl\controllerbuddy\version\Version.java" synthetic="true">
-        <Message>At Version.java:[line 3]</Message>
-      </SourceLine>
-      <Message>In class de.bwravencl.controllerbuddy.version.Version</Message>
-    </Class>
-    <SourceLine classname="de.bwravencl.controllerbuddy.version.Version" start="3" end="3" sourcefile="Version.java" sourcepath="de/bwravencl/controllerbuddy/version/Version.java" relSourcepath="java\de\bwravencl\controllerbuddy\version\Version.java" synthetic="true">
-      <Message>At Version.java:[line 3]</Message>
     </SourceLine>
   </BugInstance>
   <BugCategory category="BAD_PRACTICE">
@@ -3582,10 +3582,10 @@ defined in an interface references a mutable
       <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1221)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Fri, 13 Oct 2023 01:11:17 +0200" total_classes="0" referenced_classes="0" total_bugs="141" total_size="0" num_packages="10" java_version="21" vm_version="21+35" cpu_seconds="8.55" clock_seconds="8.59" peak_mbytes="622.76" alloc_mbytes="8180.00" gc_seconds="0.12" priority_3="23" priority_2="116" priority_1="2">
+  <FindBugsSummary timestamp="Sat, 4 Nov 2023 09:36:09 +0100" total_classes="0" referenced_classes="0" total_bugs="141" total_size="0" num_packages="10" java_version="21.0.1" vm_version="21.0.1+12-LTS" cpu_seconds="7.45" clock_seconds="8.55" peak_mbytes="639.39" alloc_mbytes="8180.00" gc_seconds="0.13" priority_3="23" priority_2="116" priority_1="2">
     <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" bugCount="2" size="0" bugHash="183faaeca4574304d2a7e2ab59ee28da"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" bugCount="3" size="0" bugHash="73ad34a6553ccc898b002bffeb7bd55b"/>
-    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="17" size="0" bugHash="4aa07d30aca7c1eace6ea70a3a6546ce"/>
+    <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="17" size="0" bugHash="a9b1d52e15bc4d4215e52fb54a80471b"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/OnScreenKeyboard.java" bugCount="2" size="0" bugHash="53f6602726633f5626fefde480dd75e8"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/OpenVrOverlay.java" bugCount="1" size="0" bugHash="69b50554e7a0f1201ef61704a5342542"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/Input.java" bugCount="16" size="0" bugHash="87cdb0130163065b8c49e67661b5392f"/>
@@ -3616,12 +3616,12 @@ defined in an interface references a mutable
     <FileStats path="de/bwravencl/controllerbuddy/json/ColorTypeAdapter.java" bugCount="1" size="0" bugHash="62a677862b95f662f3e6d5d1f4fa41b9"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/LockKeyAdapter.java" bugCount="1" size="0" bugHash="278bea27a32e763f177b9613d896666a"/>
     <FileStats path="de/bwravencl/controllerbuddy/json/ScanCodeAdapter.java" bugCount="1" size="0" bugHash="e7a90c2a2e5439a04fd0258270ca2e44"/>
-    <FileStats path="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" bugCount="2" size="0" bugHash="eb13d395e805049fd904ec4820a9e103"/>
+    <FileStats path="de/bwravencl/controllerbuddy/metadata/Metadata.java" bugCount="1" size="0" bugHash="3ca4918a2b65a7a775862bee9c33d0eb"/>
+    <FileStats path="de/bwravencl/controllerbuddy/runmode/ClientRunMode.java" bugCount="2" size="0" bugHash="81b467d723ae2f163ca6e8be9dbab19a"/>
     <FileStats path="de/bwravencl/controllerbuddy/runmode/LocalRunMode.java" bugCount="1" size="0" bugHash="eec544f15be73fde0df909daa8172a5e"/>
-    <FileStats path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" bugCount="3" size="0" bugHash="1479aebf8ed4386b2ff64cd720e9b92d"/>
-    <FileStats path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="1" size="0" bugHash="aecadb752f273e1bea8c8c322bffeff1"/>
+    <FileStats path="de/bwravencl/controllerbuddy/runmode/OutputRunMode.java" bugCount="3" size="0" bugHash="183fad1ca4ab44ed9f97fd7270133160"/>
+    <FileStats path="de/bwravencl/controllerbuddy/runmode/RunMode.java" bugCount="1" size="0" bugHash="9f4026ef2a9a856f98a66caefc418684"/>
     <FileStats path="de/bwravencl/controllerbuddy/runmode/ServerRunMode.java" bugCount="1" size="0" bugHash="6d2f70658ca7eb1b05af265a9bb8d83c"/>
-    <FileStats path="de/bwravencl/controllerbuddy/version/Version.java" bugCount="1" size="0" bugHash="8439a14f0e1aaaf52fb27542c2a7f408"/>
     <FindBugsProfile></FindBugsProfile>
   </FindBugsSummary>
   <ClassFeatures></ClassFeatures>
