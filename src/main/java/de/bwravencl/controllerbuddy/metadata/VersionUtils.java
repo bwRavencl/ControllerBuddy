@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.version;
+package de.bwravencl.controllerbuddy.metadata;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -32,7 +32,7 @@ public final class VersionUtils {
                 return Optional.empty();
             }
 
-            final var currentVersionParts = getVersionIntegerParts(Version.VERSION);
+            final var currentVersionParts = getVersionIntegerParts(Metadata.VERSION);
             for (var i = 0; i < 2; i++) {
                 if (otherVersionParts[i] < currentVersionParts[i]) {
                     return Optional.of(-1);
@@ -48,18 +48,8 @@ public final class VersionUtils {
         return Optional.of(0);
     }
 
-    private static String stripHashSuffix(final String version) {
-        final var dashIndex = version.indexOf('-');
-
-        if (dashIndex < 0) {
-            return version;
-        }
-
-        return version.substring(0, dashIndex);
-    }
-
     public static String getMajorAndMinorVersion() {
-        final var versionWithoutSuffix = stripHashSuffix(Version.VERSION);
+        final var versionWithoutSuffix = stripHashSuffix(Metadata.VERSION);
         return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
     }
 
@@ -68,5 +58,15 @@ public final class VersionUtils {
         return Arrays.stream(versionWithoutSuffix.split("\\."))
                 .mapToInt(Integer::parseInt)
                 .toArray();
+    }
+
+    private static String stripHashSuffix(final String version) {
+        final var dashIndex = version.indexOf('-');
+
+        if (dashIndex < 0) {
+            return version;
+        }
+
+        return version.substring(0, dashIndex);
     }
 }

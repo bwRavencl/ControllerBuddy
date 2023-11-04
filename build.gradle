@@ -34,7 +34,7 @@ ext {
 	os = DefaultNativePlatform.currentOperatingSystem
 
 	moduleInfoFile = 'src/main/java/module-info.java'
-	versionFile = 'src/main/java/de/bwravencl/controllerbuddy/version/Version.java'
+	metadataFile = 'src/main/java/de/bwravencl/controllerbuddy/metadata/Metadata.java'
 
 	resourcesDir = 'src/main/resources'
 	tmpDir = layout.buildDirectory.dir 'tmp'
@@ -68,9 +68,9 @@ tasks.register('cleanModuleInfo') {
 	doLast { delete moduleInfoFile }
 }
 
-tasks.register('cleanVersion') {
-	description = "Removes the \'$versionFile\' source file"
-	doLast { delete versionFile }
+tasks.register('cleanMetadata') {
+	description = "Removes the \'$metadataFile\' source file"
+	doLast { delete metadataFile }
 }
 
 tasks.register('cleanGameControllerDB') {
@@ -78,7 +78,7 @@ tasks.register('cleanGameControllerDB') {
 	doLast { delete gamecontrollerdbFile }
 }
 
-clean.dependsOn cleanModuleInfo, cleanVersion, cleanGameControllerDB
+clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
 
 dependencies {
 	errorprone('com.google.errorprone:error_prone_core:2.23.0')
@@ -257,7 +257,7 @@ spotless {
 	encoding 'UTF-8'
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
-		targetExclude moduleInfoFile, versionFile
+		targetExclude moduleInfoFile, metadataFile
 		palantirJavaFormat '2.38.0'
 		formatAnnotations()
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
@@ -313,12 +313,14 @@ tasks.register('cleanLibsDirectory') {
 
 jar.dependsOn cleanLibsDirectory
 
-tasks.register('generateVersion') {
-	description = "Generates the \'$versionFile\' source file"
+tasks.register('generateMetadata') {
+	description = "Generates the \'$metadataFile\' source file"
 	doLast {
-		new File(versionFile).write("""\
-			package de.bwravencl.controllerbuddy.version;\n
-			public class Version {
+		new File(metadataFile).write("""\
+			package de.bwravencl.controllerbuddy.metadata;\n
+			public class Metadata {
+
+			    public static final String APPLICATION_NAME = "$application.applicationName";
 
 			    public static final String VERSION = "$project.version";
 			}
@@ -339,8 +341,8 @@ tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
 
 compileJava {
-	dependsOn generateModuleInfo, generateVersion
-	source generateVersion.outputs.files, sourceSets.main.java
+	dependsOn generateModuleInfo, generateMetadata
+	source generateMetadata.outputs.files, sourceSets.main.java
 	options.compilerArgs += '-Xlint:deprecation'
 	options.encoding = 'UTF-8'
 }

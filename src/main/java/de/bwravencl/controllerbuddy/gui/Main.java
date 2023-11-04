@@ -44,14 +44,14 @@ import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
 import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
 import de.bwravencl.controllerbuddy.json.ScanCodeAdapter;
+import de.bwravencl.controllerbuddy.metadata.Metadata;
+import de.bwravencl.controllerbuddy.metadata.VersionUtils;
 import de.bwravencl.controllerbuddy.runmode.ClientRunMode;
 import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
-import de.bwravencl.controllerbuddy.version.Version;
-import de.bwravencl.controllerbuddy.version.VersionUtils;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -315,8 +315,8 @@ public final class Main {
         options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
         options.addOption(OPTION_HELP, false, strings.getString("HELP_OPTION_DESCRIPTION"));
 
-        SINGLE_INSTANCE_LOCK_FILE = new File(System.getProperty("java.io.tmpdir") + File.separator
-                + strings.getString("APPLICATION_NAME") + ".lock");
+        SINGLE_INSTANCE_LOCK_FILE =
+                new File(System.getProperty("java.io.tmpdir") + File.separator + Metadata.APPLICATION_NAME + ".lock");
 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
@@ -870,7 +870,8 @@ public final class Main {
                 GuiUtils.showMessageDialog(
                         this,
                         frame,
-                        strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+                        MessageFormat.format(
+                                strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"), Metadata.APPLICATION_NAME),
                         strings.getString("ERROR_DIALOG_TITLE"),
                         JOptionPane.ERROR_MESSAGE);
             } else {
@@ -912,7 +913,9 @@ public final class Main {
             GuiUtils.showMessageDialog(
                     this,
                     frame,
-                    strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+                    MessageFormat.format(
+                            strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+                            Metadata.APPLICATION_NAME),
                     strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -977,7 +980,8 @@ public final class Main {
                 GuiUtils.showMessageDialog(
                         this,
                         frame,
-                        strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+                        MessageFormat.format(
+                                strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"), Metadata.APPLICATION_NAME),
                         strings.getString("INFORMATION_DIALOG_TITLE"),
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -999,17 +1003,6 @@ public final class Main {
                 preferences.remove(PREFERENCES_LAST_PROFILE);
             }
         }
-    }
-
-    boolean show() {
-        if (frame == null || frame.isVisible()) {
-            return false;
-        }
-
-        frame.setVisible(true);
-        updateShowMenuItem();
-
-        return true;
     }
 
     private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
@@ -1158,7 +1151,7 @@ public final class Main {
     }
 
     public static void main(final String[] args) {
-        log.log(Level.INFO, "Launching " + strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+        log.log(Level.INFO, "Launching " + Metadata.APPLICATION_NAME + " " + Metadata.VERSION);
 
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             log.log(Level.SEVERE, e.getMessage(), e);
@@ -1170,7 +1163,10 @@ public final class Main {
 
                     final var panel = new JPanel();
                     panel.setLayout(new BorderLayout(5, 5));
-                    panel.add(new JLabel(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT")), BorderLayout.NORTH);
+                    panel.add(
+                            new JLabel(MessageFormat.format(
+                                    strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"), Metadata.APPLICATION_NAME)),
+                            BorderLayout.NORTH);
                     final var textArea = new JTextArea(sw.toString());
                     textArea.setEditable(false);
                     final var scrollPane = new JScrollPane(textArea);
@@ -1193,7 +1189,7 @@ public final class Main {
         try {
             final var commandLine = new DefaultParser().parse(options, args);
             if (commandLine.hasOption(OPTION_VERSION)) {
-                printCommandLineMessage(strings.getString("APPLICATION_NAME") + " " + Version.VERSION);
+                printCommandLineMessage(Metadata.APPLICATION_NAME + " " + Metadata.VERSION);
 
                 return;
             }
@@ -1241,7 +1237,7 @@ public final class Main {
                             if (continueLaunch) {
                                 log.log(
                                         Level.WARNING,
-                                        "Other " + strings.getString("APPLICATION_NAME")
+                                        "Other " + Metadata.APPLICATION_NAME
                                                 + " instance did not acknowledge invocation");
                             }
                         }
@@ -1268,9 +1264,7 @@ public final class Main {
 
                     taskRunner.enterLoop();
                 } else {
-                    log.log(
-                            Level.INFO,
-                            "Another " + strings.getString("APPLICATION_NAME") + " instance is already running");
+                    log.log(Level.INFO, "Another " + Metadata.APPLICATION_NAME + " instance is already running");
                     terminate(0);
                 }
                 return;
@@ -1285,7 +1279,7 @@ public final class Main {
             helpFormatter.printHelp(
                     printWriter,
                     helpFormatter.getWidth(),
-                    strings.getString("APPLICATION_NAME"),
+                    Metadata.APPLICATION_NAME,
                     null,
                     options,
                     helpFormatter.getLeftPadding(),
@@ -1308,12 +1302,7 @@ public final class Main {
 
                 final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
                 GuiUtils.showMessageDialog(
-                        null,
-                        null,
-                        textArea,
-                        strings.getString("APPLICATION_NAME"),
-                        JOptionPane.INFORMATION_MESSAGE,
-                        imageIcon);
+                        null, null, textArea, Metadata.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE, imageIcon);
             });
         }
     }
@@ -1878,7 +1867,8 @@ public final class Main {
                                     MessageFormat.format(
                                             strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
                                             file.getName(),
-                                            strings.getString("AN_UNKNOWN")),
+                                            strings.getString("AN_UNKNOWN"),
+                                            Metadata.APPLICATION_NAME),
                                     strings.getString("WARNING_DIALOG_TITLE"),
                                     JOptionPane.WARNING_MESSAGE);
                         }
@@ -1894,7 +1884,8 @@ public final class Main {
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
                                                 file.getName(),
-                                                strings.getString("AN_OLDER")),
+                                                strings.getString("AN_OLDER"),
+                                                Metadata.APPLICATION_NAME),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
                             }
@@ -1908,7 +1899,8 @@ public final class Main {
                                         MessageFormat.format(
                                                 strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
                                                 file.getName(),
-                                                strings.getString("A_NEWER")),
+                                                strings.getString("A_NEWER"),
+                                                Metadata.APPLICATION_NAME),
                                         strings.getString("WARNING_DIALOG_TITLE"),
                                         JOptionPane.WARNING_MESSAGE);
                             }
@@ -1967,7 +1959,8 @@ public final class Main {
                     GuiUtils.showMessageDialog(
                             main,
                             frame,
-                            strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+                            MessageFormat.format(
+                                    strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"), Metadata.APPLICATION_NAME),
                             strings.getString("ERROR_DIALOG_TITLE"),
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -2002,7 +1995,7 @@ public final class Main {
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
                     main,
                     main.frame,
-                    strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+                    MessageFormat.format(strings.getString("ALREADY_RUNNING_DIALOG_TEXT"), Metadata.APPLICATION_NAME),
                     strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE));
         }
@@ -2513,6 +2506,17 @@ public final class Main {
         updateTitleAndTooltip();
     }
 
+    boolean show() {
+        if (frame == null || frame.isVisible()) {
+            return false;
+        }
+
+        frame.setVisible(true);
+        updateShowMenuItem();
+
+        return true;
+    }
+
     private void startClient() {
         if (isRunning()) {
             return;
@@ -2761,7 +2765,9 @@ public final class Main {
             GuiUtils.showMessageDialog(
                     main,
                     frame,
-                    strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+                    MessageFormat.format(
+                            strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
+                            Metadata.APPLICATION_NAME),
                     strings.getString("ERROR_DIALOG_TITLE"),
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -3437,11 +3443,12 @@ public final class Main {
         final String title;
 
         if (selectedController == null) {
-            title = strings.getString("APPLICATION_NAME");
+            title = Metadata.APPLICATION_NAME;
         } else {
             final var profileTitle = (unsavedChanges ? "*" : "")
                     + (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
-            title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle);
+            title = MessageFormat.format(
+                    strings.getString("MAIN_FRAME_TITLE"), profileTitle, Metadata.APPLICATION_NAME);
         }
 
         frame.setTitle(title);
@@ -3697,7 +3704,9 @@ public final class Main {
         private static final long serialVersionUID = -4669170626378955605L;
 
         private ProfileFileChooser() {
-            super(new FileNameExtensionFilter(strings.getString("PROFILE_FILE_DESCRIPTION"), PROFILE_FILE_EXTENSION));
+            super(new FileNameExtensionFilter(
+                    MessageFormat.format(strings.getString("PROFILE_FILE_DESCRIPTION"), Metadata.APPLICATION_NAME),
+                    PROFILE_FILE_EXTENSION));
 
             setSelectedFile(new File(PROFILE_FILE_SUFFIX));
         }
@@ -3710,7 +3719,10 @@ public final class Main {
 
         private ShowWebsiteAction() {
             putValue(NAME, strings.getString("SHOW_WEBSITE_ACTION_NAME"));
-            putValue(SHORT_DESCRIPTION, strings.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"));
+            putValue(
+                    SHORT_DESCRIPTION,
+                    MessageFormat.format(
+                            strings.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"), Metadata.APPLICATION_NAME));
         }
 
         @Override
@@ -4031,7 +4043,9 @@ public final class Main {
 
         private QuitAction() {
             putValue(NAME, strings.getString("QUIT_ACTION_NAME"));
-            putValue(SHORT_DESCRIPTION, strings.getString("QUIT_ACTION_DESCRIPTION"));
+            putValue(
+                    SHORT_DESCRIPTION,
+                    MessageFormat.format(strings.getString("QUIT_ACTION_DESCRIPTION"), Metadata.APPLICATION_NAME));
         }
 
         @Override
@@ -4283,7 +4297,8 @@ public final class Main {
             GuiUtils.showMessageDialog(
                     main,
                     frame,
-                    MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Version.VERSION),
+                    MessageFormat.format(
+                            strings.getString("ABOUT_DIALOG_TEXT"), Metadata.APPLICATION_NAME, Metadata.VERSION),
                     (String) getValue(NAME),
                     JOptionPane.INFORMATION_MESSAGE,
                     imageIcon);
