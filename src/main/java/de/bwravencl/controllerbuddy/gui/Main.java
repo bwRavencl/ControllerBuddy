@@ -3896,7 +3896,7 @@ public final class Main {
 
             try {
                 synchronized (this) {
-                    this.wait();
+                    wait();
                 }
 
                 if (result instanceof final Throwable throwable) {

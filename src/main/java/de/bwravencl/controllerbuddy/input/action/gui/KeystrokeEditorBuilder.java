@@ -173,10 +173,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
                 @Override
                 public void setSelectionInterval(final int index0, final int index1) {
-                    if (super.isSelectedIndex(index0)) {
-                        super.removeSelectionInterval(index0, index1);
+                    if (isSelectedIndex(index0)) {
+                        removeSelectionInterval(index0, index1);
                     } else {
-                        super.addSelectionInterval(index0, index1);
+                        addSelectionInterval(index0, index1);
                     }
                 }
             });

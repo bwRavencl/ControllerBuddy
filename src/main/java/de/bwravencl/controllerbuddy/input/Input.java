@@ -253,7 +253,7 @@ public final class Input {
     }
 
     public void init() {
-        this.hapticFeedback = main.isHapticFeedback();
+        hapticFeedback = main.isHapticFeedback();
 
         final var presentControllers = Main.getPresentControllers();
 
