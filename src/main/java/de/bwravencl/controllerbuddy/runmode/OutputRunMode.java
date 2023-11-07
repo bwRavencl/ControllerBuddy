@@ -483,7 +483,7 @@ public abstract class OutputRunMode extends RunMode {
         final int nButtons;
         if (Main.isWindows) {
             try {
-                final var vJoyPath = main.getPreferences().get(Main.PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
+                final var vJoyPath = main.getVJoyDirectory();
                 final var libraryPath = new File(vJoyPath, getVJoyArchFolderName()).getAbsolutePath();
 
                 log.log(Level.INFO, "Using vJoy library path: " + libraryPath);

@@ -86,7 +86,7 @@ public final class Input {
     private int hotSwappingButtonId = HotSwappingButton.None.id;
     private boolean skipAxisInitialization;
     private boolean initialized;
-    private boolean hapticFeedbackEnabled;
+    private boolean hapticFeedback;
 
     public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
         this.main = main;
@@ -253,7 +253,7 @@ public final class Input {
     }
 
     public void init() {
-        hapticFeedbackEnabled = main.getPreferences().getBoolean(Main.PREFERENCES_HAPTIC_FEEDBACK, true);
+        this.hapticFeedback = main.isHapticFeedback();
 
         final var presentControllers = Main.getPresentControllers();
 
@@ -301,8 +301,8 @@ public final class Input {
         return axisToEndSuspensionTimestampMap.containsKey(axis);
     }
 
-    public boolean isHapticFeedbackEnabled() {
-        return hapticFeedbackEnabled;
+    public boolean isHapticFeedback() {
+        return hapticFeedback;
     }
 
     public boolean isInitialized() {
@@ -576,16 +576,16 @@ public final class Input {
     }
 
     public void setAxis(
-            final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback, final Float dententValue) {
+            final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback, final Float detentValue) {
         setAxis(
                 virtualAxis,
                 floatToIntAxisValue(value),
                 hapticFeedback,
-                dententValue != null ? floatToIntAxisValue(dententValue) : null);
+                detentValue != null ? floatToIntAxisValue(detentValue) : null);
     }
 
     private void setAxis(
-            final VirtualAxis virtualAxis, int value, final boolean hapticFeedback, final Integer dententValue) {
+            final VirtualAxis virtualAxis, int value, final boolean hapticFeedback, final Integer detentValue) {
         final var minAxisValue = runMode.getMinAxisValue();
         final var maxAxisValue = runMode.getMaxAxisValue();
 
@@ -594,12 +594,12 @@ public final class Input {
 
         final var prevValue = axes.put(virtualAxis, value);
 
-        if (hapticFeedbackEnabled && hapticFeedback && driver != null && prevValue != null && prevValue != value) {
+        if (this.hapticFeedback && hapticFeedback && driver != null && prevValue != null && prevValue != value) {
             if (value == minAxisValue || value == maxAxisValue) {
                 driver.rumbleStrong();
-            } else if (dententValue != null
-                    && ((prevValue > dententValue && value <= dententValue)
-                            || (prevValue < dententValue && value >= dententValue))) {
+            } else if (detentValue != null
+                    && ((prevValue > detentValue && value <= detentValue)
+                            || (prevValue < detentValue && value >= detentValue))) {
                 driver.rumbleLight();
             }
         }

@@ -47,15 +47,17 @@ public abstract class RunMode implements Runnable {
             return;
         }
 
-        Thread.startVirtualThread(() -> main.stopAll(true, true, true));
+        Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
 
         log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
-        EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
-                main,
-                main.getFrame(),
-                Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-                Main.strings.getString("ERROR_DIALOG_TITLE"),
-                JOptionPane.ERROR_MESSAGE));
+        if (!main.isSkipControllerDialogs()) {
+            EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
+                    main,
+                    main.getFrame(),
+                    Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
+                    Main.strings.getString("ERROR_DIALOG_TITLE"),
+                    JOptionPane.ERROR_MESSAGE));
+        }
 
         stopping = true;
     }

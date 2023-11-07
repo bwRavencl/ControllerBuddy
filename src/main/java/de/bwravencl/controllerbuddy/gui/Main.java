@@ -222,12 +222,6 @@ public final class Main {
     @SuppressWarnings("exports")
     public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
 
-    public static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
-    public static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
-    public static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
-    public static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
-    public static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
-
     @SuppressWarnings("exports")
     public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
@@ -240,7 +234,7 @@ public final class Main {
     private static final int DIALOG_BOUNDS_X = 100;
     private static final int DIALOG_BOUNDS_Y = 100;
     private static final int DIALOG_BOUNDS_WIDTH = 935;
-    private static final int DIALOG_BOUNDS_HEIGHT = 655;
+    private static final int DIALOG_BOUNDS_HEIGHT = 710;
     private static final int SVG_VIEWBOX_MARGIN = 20;
     private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
     private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
@@ -268,6 +262,13 @@ public final class Main {
     private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
     private static final String PREFERENCES_LAST_PROFILE = "last_profile";
     private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
+    private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+    private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
+    private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
+    private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
+    private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
+    private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
+    private static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
     private static final String PREFERENCES_HOST = "host";
     private static final String PREFERENCES_PORT = "port";
     private static final String PREFERENCES_TIMEOUT = "timeout";
@@ -589,7 +590,7 @@ public final class Main {
 
         final var inputSettingsPanel = new JPanel();
         inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
-        inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_SETTINGS_BORDER_TITLE")));
+        inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
         globalSettingsPanel.add(inputSettingsPanel, constraints);
 
         final var pollIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -599,8 +600,7 @@ public final class Main {
         pollIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
         pollIntervalPanel.add(pollIntervalLabel);
 
-        final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(
-                preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL), 1, 100, 1));
+        final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(getPollInterval(), 1, 100, 1));
         final var pollIntervalSpinnerEditor =
                 new JSpinner.NumberEditor(pollIntervalSpinner, "# " + strings.getString("MILLISECOND_SYMBOL"));
         ((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -617,11 +617,10 @@ public final class Main {
         hapticFeedbackPanel.add(hapticFeedbackLabel);
 
         final var hapticFeedbackCheckBox = new JCheckBox(strings.getString("HAPTIC_FEEDBACK_CHECK_BOX"));
-        hapticFeedbackCheckBox.setSelected(preferences.getBoolean(PREFERENCES_HAPTIC_FEEDBACK, true));
+        hapticFeedbackCheckBox.setSelected(isHapticFeedback());
         hapticFeedbackCheckBox.addActionListener(event -> {
             final var hapticFeedback = ((JCheckBox) event.getSource()).isSelected();
             preferences.putBoolean(PREFERENCES_HAPTIC_FEEDBACK, hapticFeedback);
-            updateTheme();
         });
         hapticFeedbackPanel.add(hapticFeedbackCheckBox);
 
@@ -641,6 +640,38 @@ public final class Main {
         hotSwapPanel.add(hotSwapButtonComboBox);
         hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
 
+        final var noControllerDialogsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+        inputSettingsPanel.add(noControllerDialogsPanel, constraints);
+
+        final var noControllerDialogsLabel = new JLabel(strings.getString("SKIP_CONTROLLER_DIALOGS_LABEL"));
+        noControllerDialogsLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+        noControllerDialogsPanel.add(noControllerDialogsLabel);
+
+        final var noControllerDialogsCheckBox = new JCheckBox(strings.getString("SKIP_CONTROLLER_DIALOGS_CHECK_BOX"));
+        noControllerDialogsCheckBox.setSelected(isSkipControllerDialogs());
+        noControllerDialogsCheckBox.addActionListener(event -> {
+            final var noControllerDialogs = ((JCheckBox) event.getSource()).isSelected();
+            preferences.putBoolean(PREFERENCES_SKIP_CONTROLLER_DIALOGS, noControllerDialogs);
+        });
+        noControllerDialogsPanel.add(noControllerDialogsCheckBox);
+
+        if (!isMac) {
+            final var autoRestartOutputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+            inputSettingsPanel.add(autoRestartOutputPanel, constraints);
+
+            final var autoRestartOutputLabel = new JLabel(strings.getString("AUTO_RESTART_OUTPUT_LABEL"));
+            autoRestartOutputLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+            autoRestartOutputPanel.add(autoRestartOutputLabel);
+
+            final var autoRestartOutputCheckBox = new JCheckBox(strings.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
+            autoRestartOutputCheckBox.setSelected(isAutoRestartOutput());
+            autoRestartOutputCheckBox.addActionListener(event -> {
+                final var autoRestartOutput = ((JCheckBox) event.getSource()).isSelected();
+                preferences.putBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, autoRestartOutput);
+            });
+            autoRestartOutputPanel.add(autoRestartOutputCheckBox);
+        }
+
         if (isWindows) {
             final var vJoySettingsPanel = new JPanel();
             vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.PAGE_AXIS));
@@ -654,8 +685,7 @@ public final class Main {
             vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
             vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
-            this.vJoyDirectoryLabel =
-                    new JLabel(preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultVJoyPath()));
+            this.vJoyDirectoryLabel = new JLabel(getVJoyDirectory());
             vJoyDirectoryPanel.add(this.vJoyDirectoryLabel);
 
             final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
@@ -668,8 +698,7 @@ public final class Main {
             vJoyDeviceLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
             vJoyDevicePanel.add(vJoyDeviceLabel);
 
-            final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(
-                    preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE), 1, 16, 1));
+            final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(getVJoyDevice(), 1, 16, 1));
             final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
             ((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
             vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
@@ -691,7 +720,7 @@ public final class Main {
             hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
             hostPanel.add(hostLabel);
 
-            hostTextField = new JTextField(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST), 15);
+            hostTextField = new JTextField(getHost(), 15);
             hostTextField.setCaretPosition(0);
             final var setHostAction = new SetHostAction(hostTextField);
             hostTextField.addActionListener(setHostAction);
@@ -706,8 +735,7 @@ public final class Main {
         portLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
         portPanel.add(portLabel);
 
-        final var portSpinner = new JSpinner(new SpinnerNumberModel(
-                preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT), 1024, 65_535, 1));
+        final var portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
         final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
         ((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
         portSpinner.setEditor(portSpinnerEditor);
@@ -722,8 +750,7 @@ public final class Main {
         timeoutLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
         timeoutPanel.add(timeoutLabel);
 
-        final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(
-                preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT), 10, 60_000, 1));
+        final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
         final var timeoutSpinnerEditor =
                 new JSpinner.NumberEditor(timeoutSpinner, "# " + strings.getString("MILLISECOND_SYMBOL"));
         ((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -746,7 +773,7 @@ public final class Main {
         darkThemePanel.add(darkThemeLabel);
 
         final var darkThemeCheckBox = new JCheckBox(strings.getString("DARK_THEME_CHECK_BOX"));
-        darkThemeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_DARK_THEME, false));
+        darkThemeCheckBox.setSelected(isDarkTheme());
         darkThemeCheckBox.addActionListener(event -> {
             final var darkTheme = ((JCheckBox) event.getSource()).isSelected();
             preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
@@ -779,7 +806,7 @@ public final class Main {
 
             final var preventPowerSaveModeCheckBox =
                     new JCheckBox(strings.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
-            preventPowerSaveModeCheckBox.setSelected(preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true));
+            preventPowerSaveModeCheckBox.setSelected(isPreventPowerSaveMode());
             preventPowerSaveModeCheckBox.addActionListener(event -> {
                 final var preventPowerSaveMode = ((JCheckBox) event.getSource()).isSelected();
                 preferences.putBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, preventPowerSaveMode);
@@ -896,12 +923,12 @@ public final class Main {
             });
         }
 
-        var mappingsUpdated = updateGameControllerMappings(
-                ClassLoader.getSystemResourceAsStream(Main.GAME_CONTROLLER_DATABASE_FILENAME));
+        var mappingsUpdated =
+                updateGameControllerMappings(ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME));
         log.log(
                 mappingsUpdated ? Level.INFO : Level.WARNING,
                 (mappingsUpdated ? "Successfully updated" : "Failed to update")
-                        + " game controller mappings from internal file " + Main.GAME_CONTROLLER_DATABASE_FILENAME);
+                        + " game controller mappings from internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
 
         if (gameControllerDbPath != null) {
             mappingsUpdated &= updateGameControllerMappingsFromFile(gameControllerDbPath);
@@ -966,16 +993,14 @@ public final class Main {
                     log.log(Level.INFO, assembleControllerLoggingMessage("Connected", new ControllerInfo(jid)));
                 }
 
-                final var presentControllers1 = getPresentControllers();
-
-                EventQueue.invokeLater(() -> onControllersChanged(presentControllers1, false));
+                EventQueue.invokeLater(() -> onControllersChanged(getPresentControllers(), false));
             }
         }));
 
         final var noControllerConnected =
                 Boolean.TRUE.equals(glfwInitialized) && (presentControllers == null || presentControllers.isEmpty());
 
-        if (noControllerConnected) {
+        if (noControllerConnected && !isSkipControllerDialogs()) {
             if (isWindows || isLinux) {
                 GuiUtils.showMessageDialog(
                         this,
@@ -1300,7 +1325,7 @@ public final class Main {
                 textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
                 textArea.setEditable(false);
 
-                final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
+                final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
                 GuiUtils.showMessageDialog(
                         null, null, textArea, Metadata.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE, imageIcon);
             });
@@ -1559,6 +1584,10 @@ public final class Main {
         return frame;
     }
 
+    private String getHost() {
+        return preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST);
+    }
+
     Input getInput() {
         return input;
     }
@@ -1573,6 +1602,14 @@ public final class Main {
 
     float getOverlayScaling() {
         return preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
+    }
+
+    private int getPollInterval() {
+        return preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
+    }
+
+    private int getPort() {
+        return preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT);
     }
 
     @SuppressWarnings("exports")
@@ -1590,12 +1627,24 @@ public final class Main {
 
     public float getSonyCursorSensitivity() {
         return preferences.getFloat(
-                Main.PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY, SonyDriver.DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY);
+                PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY, SonyDriver.DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY);
     }
 
     public float getSonyScrollSensitivity() {
         return preferences.getFloat(
-                Main.PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY, SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+                PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY, SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+    }
+
+    private int getTimeout() {
+        return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
+    }
+
+    private int getVJoyDevice() {
+        return preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE);
+    }
+
+    public String getVJoyDirectory() {
+        return preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultVJoyPath());
     }
 
     public void handleOnScreenKeyboardModeChange() {
@@ -1675,8 +1724,8 @@ public final class Main {
             EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
                     main,
                     main.getFrame(),
-                    Main.strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
-                    Main.strings.getString("WARNING_DIALOG_TITLE"),
+                    strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
+                    strings.getString("WARNING_DIALOG_TITLE"),
                     JOptionPane.WARNING_MESSAGE));
         }
     }
@@ -1809,8 +1858,24 @@ public final class Main {
         overlayFrame.setVisible(true);
     }
 
+    public boolean isAutoRestartOutput() {
+        if (isMac) {
+            return false;
+        }
+
+        return preferences.getBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, false);
+    }
+
     private boolean isClientRunning() {
         return taskRunner.isTaskOfTypeRunning(ClientRunMode.class);
+    }
+
+    private boolean isDarkTheme() {
+        return preferences.getBoolean(PREFERENCES_DARK_THEME, false);
+    }
+
+    public boolean isHapticFeedback() {
+        return preferences.getBoolean(PREFERENCES_HAPTIC_FEEDBACK, true);
     }
 
     public boolean isLocalRunning() {
@@ -1829,6 +1894,10 @@ public final class Main {
         return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
     }
 
+    private boolean isPreventPowerSaveMode() {
+        return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
+    }
+
     private boolean isRunning() {
         return isLocalRunning() || isClientRunning() || isServerRunning();
     }
@@ -1837,12 +1906,17 @@ public final class Main {
         return taskRunner.isTaskOfTypeRunning(ServerRunMode.class);
     }
 
+    public boolean isSkipControllerDialogs() {
+        return preferences.getBoolean(PREFERENCES_SKIP_CONTROLLER_DIALOGS, false);
+    }
+
     public boolean isSonyTouchpadEnabled() {
-        return preferences.getBoolean(Main.PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
+        return preferences.getBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
     }
 
     private void loadProfile(
             final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection) {
+        final var wasRunning = isRunning();
         stopAll(true, false, performGarbageCollection);
 
         EventQueue.invokeLater(() -> {
@@ -1941,7 +2015,9 @@ public final class Main {
                         scheduleStatusBarText(strings.getString("STATUS_READY"));
                         profileFileChooser.setSelectedFile(file);
 
-                        restartLast();
+                        if (wasRunning) {
+                            restartLast();
+                        }
                     }
                 } catch (final JsonParseException e) {
                     log.log(Level.SEVERE, e.getMessage(), e);
@@ -2129,15 +2205,22 @@ public final class Main {
             }
         }
 
+        var restartOutput = false;
         if (!controllerConnected) {
             selectedController = null;
         } else if (selectedController == null) {
             setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
             updateTitleAndTooltip();
+
+            if (isAutoRestartOutput()) {
+                restartOutput = switch (lastRunModeType) {
+                    case NONE, CLIENT -> false;
+                    case LOCAL, SERVER -> true;};
+            }
         }
 
         try (final var bufferedReader = new BufferedReader(
-                new InputStreamReader(getResourceAsStream(Main.CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+                new InputStreamReader(getResourceAsStream(CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
             final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
             templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
         } catch (final IOException e) {
@@ -2278,6 +2361,10 @@ public final class Main {
 
         frame.getContentPane().invalidate();
         frame.getContentPane().repaint();
+
+        if (restartOutput) {
+            restartLast();
+        }
     }
 
     private void onRunModeChanged() {
@@ -2320,7 +2407,7 @@ public final class Main {
     }
 
     public boolean preventPowerSaveMode() {
-        return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
+        return isPreventPowerSaveMode();
     }
 
     private void quit() {
@@ -2486,7 +2573,7 @@ public final class Main {
             previousProfile = input.getProfile();
         }
 
-        input = new Input(Main.this, selectedController, axes);
+        input = new Input(this, selectedController, axes);
 
         if (previousProfile != null) {
             input.setProfile(previousProfile);
@@ -2518,17 +2605,17 @@ public final class Main {
     }
 
     private void startClient() {
+        lastRunModeType = RunModeType.CLIENT;
+
         if (isRunning()) {
             return;
         }
 
-        lastRunModeType = RunModeType.CLIENT;
-        final var clientRunMode = new ClientRunMode(Main.this, input);
-        clientRunMode.setvJoyDevice(
-                new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
+        final var clientRunMode = new ClientRunMode(this, input);
+        clientRunMode.setvJoyDevice(new UINT(getVJoyDevice()));
         clientRunMode.setHost(hostTextField.getText());
-        clientRunMode.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
-        clientRunMode.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
+        clientRunMode.setPort(getPort());
+        clientRunMode.setTimeout(getTimeout());
 
         runMode = clientRunMode;
         taskRunner.run(clientRunMode);
@@ -2537,15 +2624,15 @@ public final class Main {
     }
 
     private void startLocal() {
+        lastRunModeType = RunModeType.LOCAL;
+
         if (selectedController == null || isRunning()) {
             return;
         }
 
-        lastRunModeType = RunModeType.LOCAL;
-        final var localRunMode = new LocalRunMode(Main.this, input);
-        localRunMode.setvJoyDevice(
-                new UINT(preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE)));
-        localRunMode.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
+        final var localRunMode = new LocalRunMode(this, input);
+        localRunMode.setvJoyDevice(new UINT(getVJoyDevice()));
+        localRunMode.setPollInterval(getPollInterval());
 
         runMode = localRunMode;
         taskRunner.run(localRunMode);
@@ -2571,15 +2658,16 @@ public final class Main {
     }
 
     private void startServer() {
+        lastRunModeType = RunModeType.SERVER;
+
         if (selectedController == null || isRunning()) {
             return;
         }
 
-        lastRunModeType = RunModeType.SERVER;
-        final var serverThread = new ServerRunMode(Main.this, input);
-        serverThread.setPort(preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT));
-        serverThread.setTimeout(preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT));
-        serverThread.setPollInterval(preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL));
+        final var serverThread = new ServerRunMode(this, input);
+        serverThread.setPort(getPort());
+        serverThread.setTimeout(getTimeout());
+        serverThread.setPollInterval(getPollInterval());
 
         runMode = serverThread;
         taskRunner.run(serverThread);
@@ -3228,7 +3316,7 @@ public final class Main {
 
         final var inputSettingsPanel = new JPanel();
         inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
-        inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_SETTINGS_BORDER_TITLE")));
+        inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
         profileSettingsPanel.add(inputSettingsPanel, constraints);
 
         final var keyRepeatIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -3426,7 +3514,7 @@ public final class Main {
     }
 
     private void updateTheme() {
-        lookAndFeel = preferences.getBoolean(PREFERENCES_DARK_THEME, false) ? new FlatDarkLaf() : new FlatLightLaf();
+        lookAndFeel = isDarkTheme() ? new FlatDarkLaf() : new FlatLightLaf();
 
         try {
             UIManager.setLookAndFeel(lookAndFeel);
@@ -3452,7 +3540,7 @@ public final class Main {
         }
 
         frame.setTitle(title);
-        if (Main.isLinux) {
+        if (isLinux) {
             final var toolkit = Toolkit.getDefaultToolkit();
             final var xtoolkit = toolkit.getClass();
             if ("sun.awt.X11.XToolkit".equals(xtoolkit.getName())) {
@@ -3517,7 +3605,7 @@ public final class Main {
 
         HotSwappingButton(final int id, final String labelKey) {
             this.id = id;
-            label = Main.strings.getString(labelKey);
+            label = strings.getString(labelKey);
         }
 
         private static HotSwappingButton getById(final int id) {
@@ -3873,10 +3961,7 @@ public final class Main {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            final var defaultVJoyPath = OutputRunMode.getDefaultVJoyPath();
-
-            final var vJoyDirectoryFileChooser =
-                    new JFileChooser(preferences.get(PREFERENCES_VJOY_DIRECTORY, defaultVJoyPath));
+            final var vJoyDirectoryFileChooser = new JFileChooser(getVJoyDirectory());
             vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
             if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
@@ -3895,7 +3980,9 @@ public final class Main {
                 GuiUtils.showMessageDialog(
                         main,
                         frame,
-                        MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"), defaultVJoyPath),
+                        MessageFormat.format(
+                                strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+                                OutputRunMode.getDefaultVJoyPath()),
                         strings.getString("ERROR_DIALOG_TITLE"),
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -4143,8 +4230,12 @@ public final class Main {
                 return;
             }
 
+            final var wasRunning = isRunning();
             setSelectedControllerAndUpdateInput(controller, input.isInitialized() ? input.getAxes() : null);
-            restartLast();
+
+            if (wasRunning) {
+                restartLast();
+            }
         }
 
         @Serial
@@ -4218,7 +4309,7 @@ public final class Main {
             if (host != null && !host.isEmpty()) {
                 preferences.put(PREFERENCES_HOST, host);
             } else {
-                hostTextField.setText(preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST));
+                hostTextField.setText(getHost());
             }
         }
     }
@@ -4292,7 +4383,7 @@ public final class Main {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            final var imageIcon = new ImageIcon(getResourceLocation(Main.ICON_RESOURCE_PATHS[2]));
+            final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
 
             GuiUtils.showMessageDialog(
                     main,
@@ -4337,7 +4428,7 @@ public final class Main {
         @Override
         public void actionPerformed(final ActionEvent e) {
             try (final var bufferedReader = new BufferedReader(
-                    new InputStreamReader(getResourceAsStream(Main.LICENSES_FILENAME), StandardCharsets.UTF_8))) {
+                    new InputStreamReader(getResourceAsStream(LICENSES_FILENAME), StandardCharsets.UTF_8))) {
                 final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
                 final var textArea = new JTextArea(text);
                 textArea.setLineWrap(true);
