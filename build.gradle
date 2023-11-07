@@ -7,7 +7,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
 	id 'application'
 	id 'com.diffplug.spotless' version '6.22.0'
-	id 'com.github.spotbugs' version '5.2.1'
+	id 'com.github.spotbugs' version '5.2.3'
 	id 'net.ltgt.errorprone' version '3.1.0'
 	id 'org.ajoberstar.grgit' version '5.2.1'
 	id 'org.gradlex.extra-java-module-info' version '1.5'
