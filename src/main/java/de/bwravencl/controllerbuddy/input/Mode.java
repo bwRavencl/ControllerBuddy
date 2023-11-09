@@ -75,15 +75,7 @@ public final class Mode implements Cloneable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final var other = (Mode) obj;
-
-        return Objects.equals(uuid, other.uuid);
+        return obj instanceof final Mode mode && Objects.equals(uuid, mode.uuid);
     }
 
     public Set<IAction<?>> getAllActions() {

@@ -62,14 +62,9 @@ public final class KeyStroke implements Cloneable, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final var other = (KeyStroke) obj;
-        return Arrays.equals(keyCodes, other.keyCodes) && Arrays.equals(modifierCodes, other.modifierCodes);
+        return obj instanceof final KeyStroke keyStroke
+                && Arrays.equals(keyCodes, keyStroke.keyCodes)
+                && Arrays.equals(modifierCodes, keyStroke.modifierCodes);
     }
 
     public ScanCode[] getKeyCodes() {
