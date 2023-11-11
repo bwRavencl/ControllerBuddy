@@ -45,6 +45,7 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
+import de.bwravencl.controllerbuddy.metadata.Metadata;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
@@ -662,11 +663,9 @@ public abstract class OutputRunMode extends RunMode {
                 return false;
             }
 
-            final var applicationName = Main.strings.getString("APPLICATION_NAME");
-
             try {
-                joystickInputDevice =
-                        new InputDevice(applicationName + " Joystick", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
+                joystickInputDevice = new InputDevice(
+                        Metadata.APPLICATION_NAME + " Joystick", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
                 joystickInputDevice.addCapability(
                         EventCode.ABS_X,
                         EventCode.ABS_Y,
@@ -683,7 +682,8 @@ public abstract class OutputRunMode extends RunMode {
                 minAxisValue = Short.MIN_VALUE;
                 maxAxisValue = Short.MAX_VALUE;
 
-                mouseInputDevice = new InputDevice(applicationName + " Mouse", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
+                mouseInputDevice =
+                        new InputDevice(Metadata.APPLICATION_NAME + " Mouse", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
                 mouseInputDevice.addCapability(
                         EventCode.BTN_LEFT,
                         EventCode.BTN_RIGHT,
@@ -694,8 +694,8 @@ public abstract class OutputRunMode extends RunMode {
                 mouseInputDevice.open();
                 log.log(Level.INFO, "Opened UINPUT mouse device: " + mouseInputDevice.toString());
 
-                keyboardInputDevice =
-                        new InputDevice(applicationName + " Keyboard", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
+                keyboardInputDevice = new InputDevice(
+                        Metadata.APPLICATION_NAME + " Keyboard", UINPUT_VENDOR_CODE, UINPUT_PRODUCT_CODE);
                 for (final var eventCode : EventCode.values()) {
                     if (eventCode.isKey()) {
                         keyboardInputDevice.addCapability(eventCode);
