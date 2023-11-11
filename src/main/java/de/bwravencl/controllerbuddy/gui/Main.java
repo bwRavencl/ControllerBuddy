@@ -3855,13 +3855,13 @@ public final class Main {
                             throw new RuntimeException(t);
                         }
                     } finally {
+                        task = null;
+
                         if (notify) {
                             synchronized (this) {
                                 notifyAll();
                             }
                         }
-
-                        task = null;
                     }
                 } else {
                     if (pollGLFWEvents) {
@@ -3896,7 +3896,9 @@ public final class Main {
 
             try {
                 synchronized (this) {
-                    wait();
+                    while (task != null) {
+                        wait();
+                    }
                 }
 
                 if (result instanceof final Throwable throwable) {
