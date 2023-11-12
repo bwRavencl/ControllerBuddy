@@ -33,7 +33,10 @@ public final class KeyStroke implements Cloneable, Serializable {
     @Serial
     private static final long serialVersionUID = 3572153768203547877L;
 
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private ScanCode[] keyCodes;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private ScanCode[] modifierCodes;
 
     public KeyStroke() {

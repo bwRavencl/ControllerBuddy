@@ -68,6 +68,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+@SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
     @Serial
@@ -119,16 +120,34 @@ public final class EditActionsDialog extends JDialog {
         }
     }
 
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private final List<IAction<Byte>> cycleActions = new ArrayList<>();
+
     private final JList<AvailableAction> availableActionsList = new JList<>();
     private final JList<AssignedAction> assignedActionsList = new JList<>();
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Main main;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Component component;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Input input;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Profile unsavedProfile;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private ButtonToCycleAction cycleAction;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Mode selectedMode;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private AvailableAction selectedAvailableAction;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private AssignedAction selectedAssignedAction;
 
     @SuppressWarnings("unchecked")

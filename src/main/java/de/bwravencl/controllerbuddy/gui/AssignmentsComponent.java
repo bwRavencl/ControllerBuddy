@@ -304,8 +304,13 @@ final class AssignmentsComponent extends JScrollPane {
 
         private final CompoundButtonLocation buttonLocation;
         private final Dimension preferredSize;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private Shape shape;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private Shape base;
+
         private String text;
         private CompoundButton peer;
 
@@ -621,8 +626,12 @@ final class AssignmentsComponent extends JScrollPane {
         @Serial
         private static final long serialVersionUID = -2879419156880580931L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final Main main;
+
         private final String name;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final Component component;
 
         private EditComponentAction(final Main main, final String name, final Component component) {

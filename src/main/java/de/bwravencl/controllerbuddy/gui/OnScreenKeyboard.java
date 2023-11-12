@@ -55,9 +55,9 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
+@SuppressWarnings("exports")
 public final class OnScreenKeyboard extends JFrame {
 
-    @SuppressWarnings("exports")
     public static final Mode onScreenKeyboardMode;
 
     @Serial
@@ -74,12 +74,17 @@ public final class OnScreenKeyboard extends JFrame {
         onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
     }
 
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private final Main main;
+
     private final CapsLockKeyButton capsLockKeyButton;
     private final ShiftKeyboardButton leftShiftKeyboardButton;
     private final ShiftKeyboardButton rightShiftKeyboardButton;
     private final AbstractKeyboardButton[][] keyboardButtons;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private final FrameDragListener frameDragListener;
+
     private volatile boolean anyChanges;
     private int selectedRow;
     private int selectedColumn;
@@ -494,8 +499,13 @@ public final class OnScreenKeyboard extends JFrame {
         volatile boolean changed;
         Color defaultBackground;
         Color defaultForeground;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         Border defaultButtonBorder;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         Border focusedButtonBorder;
+
         private volatile boolean pressed;
 
         private AbstractKeyboardButton(final String text) {
@@ -783,7 +793,10 @@ public final class OnScreenKeyboard extends JFrame {
         private static final long serialVersionUID = 4014130700331413635L;
 
         final AtomicBoolean locked = new AtomicBoolean();
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final LockKey lockKey;
+
         private boolean wasUp = true;
 
         private LockKeyButton(final LockKey lockKey) {

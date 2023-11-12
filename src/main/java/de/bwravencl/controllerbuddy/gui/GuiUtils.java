@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+@SuppressWarnings({"exports", "missing-explicit-ctor"})
 public final class GuiUtils {
 
     static JComboBox<Mode> addModePanel(

@@ -3640,6 +3640,7 @@ public final class Main {
             setFileFilter(fileFilter);
         }
 
+        @SuppressWarnings("fallthrough")
         @Override
         public void approveSelection() {
             final var file = getSelectedFile();
@@ -3652,7 +3653,6 @@ public final class Main {
                 switch (result) {
                     case JOptionPane.CANCEL_OPTION:
                         cancelSelection();
-                        // fall through
                     case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
                         return;
                     default:
@@ -3700,8 +3700,12 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = 8167193907929992395L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final Set<Float> detentValues;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final OverlayAxis overlayAxis;
+
         private final int subdivisionHeight;
 
         private IndicatorProgressBar(final Set<Float> detentValues, final OverlayAxis overlayAxis) {
@@ -4148,6 +4152,7 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = -1056071724769862582L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final Mode mode;
 
         private RemoveModeAction(final Mode mode) {
@@ -4215,6 +4220,7 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = -2043467156713598592L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final ControllerInfo controller;
 
         private SelectControllerAction(final ControllerInfo controller) {
@@ -4335,7 +4341,9 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = -6706537047137827688L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         private final Mode mode;
+
         private final JTextField modeDescriptionTextField;
 
         private SetModeDescriptionAction(final Mode mode, final JTextField modeDescriptionTextField) {
@@ -4514,6 +4522,7 @@ public final class Main {
         @Serial
         private static final long serialVersionUID = 1387266903295357716L;
 
+        @SuppressWarnings("fallthrough")
         @Override
         public void actionPerformed(final ActionEvent e) {
             if (unsavedChanges) {
@@ -4531,7 +4540,6 @@ public final class Main {
                         if (unsavedChanges) {
                             return;
                         }
-                        // fall through
                     case JOptionPane.NO_OPTION:
                         break;
                     default:

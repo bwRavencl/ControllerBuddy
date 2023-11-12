@@ -197,7 +197,7 @@ tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
 		new File(moduleInfoFile).write """\
-			@SuppressWarnings("Java9RedundantRequiresStatement")
+			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
 
@@ -232,10 +232,6 @@ tasks.register('generateModuleInfo') {
 			}
 			""".stripIndent()
 	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	options.errorprone.error 'MissingBraces'
 }
 
 spotbugs {
@@ -340,11 +336,13 @@ tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
 tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
 
-compileJava {
+tasks.withType(JavaCompile).configureEach {
 	dependsOn generateModuleInfo, generateMetadata
 	source generateMetadata.outputs.files, sourceSets.main.java
-	options.compilerArgs += '-Xlint:deprecation'
+	options.compilerArgs << '-Xlint:all' << '-Werror'
 	options.encoding = 'UTF-8'
+	options.deprecation = true
+	options.errorprone.error 'MissingBraces'
 }
 
 run {

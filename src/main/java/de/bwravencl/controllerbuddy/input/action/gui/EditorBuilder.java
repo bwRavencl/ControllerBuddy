@@ -57,7 +57,7 @@ public abstract class EditorBuilder {
         final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
         final var modeProperty = fieldType == Mode.class;
 
-        final var getterParams = modeProperty ? new Class[] {Input.class} : null;
+        final var getterParams = modeProperty ? new Class<?>[] {Input.class} : null;
         final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
 
         final var getterArgs = modeProperty ? new Object[] {editActionsDialog.getInput()} : null;
@@ -82,7 +82,10 @@ public abstract class EditorBuilder {
         @Serial
         private static final long serialVersionUID = 4141747329971720525L;
 
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         final IAction<?> action;
+
+        @SuppressWarnings({"serial", "RedundantSuppression"})
         final Method setterMethod;
 
         PropertySetterAction(final IAction<?> action, final Method setterMethod) {
