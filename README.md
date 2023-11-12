@@ -18,7 +18,8 @@ ControllerBuddy's goal is to enable the user to control target applications sole
 
 ## Download and Installation
 
-**Hint:** You may want to use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script) which automates the steps below and more.
+**Tip:** Check out the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script),
+it automates all the steps below and much more!
 
 ### Windows x86-64
 
