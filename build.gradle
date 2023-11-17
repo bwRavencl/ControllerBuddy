@@ -50,10 +50,7 @@ ext {
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
-	batikVersion = '1.17'
-	commonsCliVersion = '1.6.0'
 	hid4javaVersion = '85d76ecd85'
-	jxinputVersion = '1.0.0'
 
 	openVrSupport = false
 }
@@ -120,10 +117,10 @@ dependencies {
 
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
-	implementation "commons-cli:commons-cli:$commonsCliVersion"
+	implementation 'commons-cli:commons-cli:1.6.0'
 	implementation 'com.formdev:flatlaf:3.2.5'
 	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
-	implementation "com.github.strikerx3:jxinput:$jxinputVersion"
+	implementation 'com.github.strikerx3:jxinput:1.0.0'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'io.github.classgraph:classgraph:4.8.165'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
@@ -134,7 +131,7 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
-	implementation("org.apache.xmlgraphics:batik-swing:$batikVersion") { exclude group: 'xml-apis', module: 'xml-apis' }
+	implementation('org.apache.xmlgraphics:batik-swing:1.17') { exclude group: 'xml-apis', module: 'xml-apis' }
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
@@ -146,51 +143,10 @@ dependencies {
 }
 
 extraJavaModuleInfo {
+	deriveAutomaticModuleNamesFromFileNames = true
 	failOnMissingModuleInfo = false
 
-	automaticModule("batik-anim-${batikVersion}.jar", 'batik.anim')
-	automaticModule("batik-awt-util-${batikVersion}.jar", 'batik.awt.util')
-	automaticModule("batik-bridge-${batikVersion}.jar", 'batik.bridge')
-	automaticModule("batik-constants-${batikVersion}.jar", 'batik.constants')
-	automaticModule("batik-css-${batikVersion}.jar", 'batik.css')
-	automaticModule("batik-dom-${batikVersion}.jar", 'batik.dom')
-	automaticModule("batik-ext-${batikVersion}.jar", 'batik.ext')
-	automaticModule("batik-gui-util-${batikVersion}.jar", 'batik.gui.util')
-	automaticModule("batik-gvt-${batikVersion}.jar", 'batik.gvt')
-	automaticModule("batik-i18n-${batikVersion}.jar", 'batik.i18n')
-	automaticModule("batik-script-${batikVersion}.jar", 'batik.script')
-	automaticModule("batik-shared-resources-${batikVersion}.jar", 'batik.shared.resources')
-	automaticModule("batik-svg-dom-${batikVersion}.jar", 'batik.svg.dom')
-	automaticModule("batik-util-${batikVersion}.jar", 'batik.util')
-	automaticModule("batik-parser-${batikVersion}.jar", 'batik.parser')
-	automaticModule("batik-xml-${batikVersion}.jar", 'batik.xml')
-	automaticModule('commons-logging-1.0.4.jar', 'commons.logging')
-	automaticModule("jxinput-${jxinputVersion}.jar", 'jxinput')
 	automaticModule("hid4java-${hid4javaVersion}.jar", 'hid4java')
-	automaticModule('xml-apis-ext-1.3.04.jar', 'xml.apis.ext')
-
-	module("batik-swing-${batikVersion}.jar", 'batik.swing', batikVersion) {
-		exports('org.apache.batik.swing')
-		requiresTransitive('java.desktop')
-		requiresTransitive('commons.logging')
-		requiresTransitive('batik.anim')
-		requiresTransitive('batik.bridge')
-		requiresTransitive('batik.constants')
-		requiresTransitive('batik.css')
-		requiresTransitive('batik.dom')
-		requiresTransitive('batik.ext')
-		requiresTransitive('batik.gvt')
-		requiresTransitive('batik.script')
-		requiresTransitive('batik.svg.dom')
-		requiresTransitive('batik.util')
-		requiresTransitive('batik.xml')
-		requiresTransitive('batik.parser')
-		requiresTransitive('batik.awt.util')
-		requiresTransitive('batik.gui.util')
-		requiresTransitive('batik.i18n')
-		requiresTransitive('batik.shared.resources')
-		requiresTransitive('xml.apis.ext')
-	}
 }
 
 tasks.register('generateModuleInfo') {
