@@ -10,7 +10,7 @@ plugins {
 	id 'com.github.spotbugs' version '5.2.3'
 	id 'net.ltgt.errorprone' version '3.1.0'
 	id 'org.ajoberstar.grgit' version '5.2.1'
-	id 'org.gradlex.extra-java-module-info' version '1.5'
+	id 'org.gradlex.extra-java-module-info' version '1.6'
 }
 
 def git = Grgit.open(dir: projectDir)
