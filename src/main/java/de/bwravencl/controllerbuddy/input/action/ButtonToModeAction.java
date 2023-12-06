@@ -122,7 +122,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
         if (previousButtonToModeAction != null) {
             previousMode = previousButtonToModeAction.getMode(input);
         } else {
-            previousMode = profile.getModes().get(0);
+            previousMode = profile.getModes().getFirst();
         }
 
         final var activeMode = profile.getActiveMode();

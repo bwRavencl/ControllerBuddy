@@ -963,7 +963,7 @@ public final class Main {
                                 },
                                 () -> {
                                     log.log(Level.INFO, "Previously used controller is not present");
-                                    setSelectedController(presentControllers.get(0));
+                                    setSelectedController(presentControllers.getFirst());
                                 });
             }
         }
@@ -2209,7 +2209,7 @@ public final class Main {
         if (!controllerConnected) {
             selectedController = null;
         } else if (selectedController == null) {
-            setSelectedControllerAndUpdateInput(presentControllers.get(0), null);
+            setSelectedControllerAndUpdateInput(presentControllers.getFirst(), null);
             updateTitleAndTooltip();
 
             if (isAutoRestartOutput()) {

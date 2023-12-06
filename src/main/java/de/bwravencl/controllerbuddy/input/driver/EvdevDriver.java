@@ -288,7 +288,7 @@ public class EvdevDriver extends Driver {
                 }
 
                 try {
-                    return new EvdevDriver(input, selectedController, evdevInfos.get(0));
+                    return new EvdevDriver(input, selectedController, evdevInfos.getFirst());
                 } catch (final IOException e) {
                     log.log(Level.SEVERE, e.getMessage(), e);
                 }

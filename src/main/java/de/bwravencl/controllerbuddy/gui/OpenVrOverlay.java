@@ -407,11 +407,7 @@ class OpenVrOverlay {
                 checkOverlayError(VROverlay.VROverlay_ShowOverlay(overlayHandle));
 
                 if (VROverlay.VROverlay_IsOverlayVisible(overlayHandle)) {
-                    var textureData = textureDataCache.get(overlayHandle);
-                    if (textureData == null) {
-                        textureData = new TextureData();
-                        textureDataCache.put(overlayHandle, textureData);
-                    }
+                    final var textureData = textureDataCache.computeIfAbsent(overlayHandle, k -> new TextureData());
 
                     final var imageResized = textureData.image == null
                             || textureData.image.getWidth() != frame.getWidth()

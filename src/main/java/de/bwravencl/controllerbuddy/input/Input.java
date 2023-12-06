@@ -469,7 +469,7 @@ public final class Input {
                 }
 
                 if (actions == null) {
-                    actions = modes.get(0).getAxisToActionsMap().get(axis);
+                    actions = modes.getFirst().getAxisToActionsMap().get(axis);
                 }
 
                 if (actions != null) {
@@ -497,7 +497,7 @@ public final class Input {
                 }
 
                 if (actions == null) {
-                    actions = modes.get(0).getButtonToActionsMap().get(button);
+                    actions = modes.getFirst().getButtonToActionsMap().get(button);
                 }
 
                 if (actions != null) {

@@ -189,7 +189,7 @@ public final class EditActionsDialog extends JDialog {
         setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
         final var modes = unsavedProfile.getModes();
-        selectedMode = modes.get(0);
+        selectedMode = modes.getFirst();
         GuiUtils.addModePanel(getContentPane(), modes, new AbstractAction() {
 
             @Serial
