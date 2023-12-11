@@ -82,7 +82,7 @@ clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
 dependencies {
 	errorprone('com.google.errorprone:error_prone_core:2.23.0')
 
-	def jnaVersion = '5.13.0'
+	def jnaVersion = '5.14.0'
 	def lwjglVersion = '3.3.3'
 
 	def lwjglOs
