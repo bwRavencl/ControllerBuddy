@@ -166,7 +166,12 @@ tasks.register('generateModuleInfo') {
 			    opens de.bwravencl.controllerbuddy.input.driver to
 				        com.sun.jna;
 
+			    requires batik.anim;
+			    requires batik.bridge;
+			    requires batik.constants;
+			    requires batik.dom;
 			    requires batik.swing;
+			    requires batik.util;
 			    requires com.google.gson;
 			    requires com.formdev.flatlaf;
 			    requires com.sun.jna;
@@ -187,6 +192,7 @@ tasks.register('generateModuleInfo') {
 			    requires org.lwjgl.openvr;
 			${openVrSupport ? '    requires org.lwjgl.openvr.natives;' : ''}
 			    requires uk.co.bithatch.linuxio;
+			    requires xml.apis.ext;
 			}
 			""".stripIndent()
 	}
