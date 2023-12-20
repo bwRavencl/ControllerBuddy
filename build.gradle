@@ -9,6 +9,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
 	id 'application'
 	id 'com.diffplug.spotless' version '6.23.3'
+	id 'com.benjaminsproule.license-report' version '0.16.2'
 	id 'com.github.spotbugs' version '6.0.4'
 	id 'net.ltgt.errorprone' version '3.1.0'
 	id 'org.ajoberstar.grgit' version '5.2.1'
@@ -299,6 +300,34 @@ tasks.spotlessGroovyGradleCheck.dependsOn copyGameControllerDB
 tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
 tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
+
+downloadLicenses {
+	def mit = license('MIT', 'https://opensource.org/license/mit/')
+
+	includeProjectDependencies = true
+	ignoreFatalParseErrors = false
+	licenses = ['com.github.strikerx3:jxinput:1.0.0': mit]
+	aliases = [(license('Apache-2.0', 'https://www.apache.org/licenses/LICENSE-2.0')): [
+			'Apache-2.0',
+			'Apache License, Version 2.0',
+			'The Apache License, Version 2.0',
+			'The Apache Software License, Version 2.0'
+		],
+		(mit)                                                                 : [
+			'MIT',
+			'The MIT License (MIT)'
+		]]
+	dependencyConfiguration = 'runtimeClasspath'
+
+	report {
+		reportByLicenseType = false
+		json.enabled = false
+		xml.enabled = false
+		html.destination = resourcesDir
+	}
+}
+
+tasks.processResources.dependsOn 'downloadLicenses'
 
 tasks.withType(JavaCompile).configureEach {
 	dependsOn generateModuleInfo, generateMetadata

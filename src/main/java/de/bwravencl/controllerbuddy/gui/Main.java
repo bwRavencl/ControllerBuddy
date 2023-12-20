@@ -150,6 +150,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -178,6 +179,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
@@ -283,7 +285,7 @@ public final class Main {
     private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
     private static final String[] ICON_RESOURCE_PATHS = {"/icon_16.png", "/icon_32.png", "/icon_64.png", "/icon_128.png"
     };
-    private static final String LICENSES_FILENAME = "licenses.txt";
+    private static final String LICENSES_FILENAME = "dependency-license.html";
     private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
     private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
     private static final String VJOY_GUID = "0300000034120000adbe000000000000";
@@ -4436,19 +4438,41 @@ public final class Main {
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
+        public void actionPerformed(final ActionEvent actionEvent) {
             try (final var bufferedReader = new BufferedReader(
                     new InputStreamReader(getResourceAsStream(LICENSES_FILENAME), StandardCharsets.UTF_8))) {
-                final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
-                final var textArea = new JTextArea(text);
-                textArea.setLineWrap(true);
-                textArea.setEditable(false);
-                final var scrollPane = new JScrollPane(textArea);
-                scrollPane.setPreferredSize(new Dimension(600, 400));
+                final var editorPane = new JEditorPane();
+                editorPane.setContentType("text/html");
+                editorPane.setEditable(false);
+                editorPane.setCaretColor(editorPane.getBackground());
+                editorPane.addHyperlinkListener(hyperlinkEvent -> {
+                    if (hyperlinkEvent.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                        return;
+                    }
+
+                    final var description = hyperlinkEvent.getDescription();
+                    if (description != null && description.startsWith("#")) {
+                        editorPane.scrollToReference(description.substring(1));
+                        return;
+                    }
+
+                    try {
+                        Desktop.getDesktop().browse(hyperlinkEvent.getURL().toURI());
+                    } catch (final IOException | URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                var text = bufferedReader.lines().collect(Collectors.joining("\n"));
+                text = text.replaceAll("<style>[\\s\\S]*</style>", "");
+                editorPane.setText(text);
+                editorPane.setCaretPosition(0);
+
+                final var scrollPane = new JScrollPane(editorPane);
+                scrollPane.setPreferredSize(new Dimension(750, 400));
                 GuiUtils.showMessageDialog(
                         main, frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
-            } catch (final IOException e1) {
-                throw new RuntimeException(e1);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
