@@ -54,6 +54,7 @@ import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -153,6 +154,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -180,6 +182,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatter;
@@ -311,7 +314,6 @@ public final class Main {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
-	private static final String LICENSES_FILENAME = "licenses.txt";
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
 	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
@@ -585,9 +587,7 @@ public final class Main {
 		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowLicensesAction());
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-			helpMenu.add(new ShowWebsiteAction());
-		}
+		helpMenu.add(new ShowWebsiteAction());
 		helpMenu.add(new ShowAboutDialogAction());
 
 		frame.getContentPane().add(tabbedPane);
@@ -620,8 +620,13 @@ public final class Main {
 		indicatorsScrollPane = new JScrollPane();
 		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 
+		final var controllerSvgInputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
+		if (controllerSvgInputStream == null) {
+			throw new RuntimeException("Resource not found " + CONTROLLER_SVG_FILENAME);
+		}
+
 		try (final var bufferedReader = new BufferedReader(
-				new InputStreamReader(getResourceAsStream(CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+				new InputStreamReader(controllerSvgInputStream, StandardCharsets.UTF_8))) {
 			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
 		} catch (final IOException e) {
@@ -1173,15 +1178,6 @@ public final class Main {
 		return presentControllers;
 	}
 
-	private static InputStream getResourceAsStream(final String resourcePath) {
-		final var resourceInputStream = ClassLoader.getSystemResourceAsStream(resourcePath);
-		if (resourceInputStream == null) {
-			throw new RuntimeException("Resource not found " + resourcePath);
-		}
-
-		return resourceInputStream;
-	}
-
 	private static URL getResourceLocation(final String resourcePath) {
 		final var resourceLocation = Main.class.getResource(resourcePath);
 		if (resourceLocation == null) {
@@ -1329,6 +1325,20 @@ public final class Main {
 			printWriter.flush();
 		}
 		printCommandLineMessage(stringWriter.toString());
+	}
+
+	private static void openBrowser(final Component parentComponent, final URI uri) {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			try {
+				Desktop.getDesktop().browse(uri);
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			JOptionPane.showMessageDialog(parentComponent,
+					MessageFormat.format(strings.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
+					strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 	private static void printCommandLineMessage(final String message) {
@@ -3625,9 +3635,9 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				Desktop.getDesktop().browse(new URI(WEBSITE_URL));
-			} catch (final IOException | URISyntaxException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				openBrowser(main.frame, new URI(WEBSITE_URL));
+			} catch (final URISyntaxException e1) {
+				throw new RuntimeException(e1);
 			}
 		}
 	}
@@ -4284,20 +4294,37 @@ public final class Main {
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
-			try (final var bufferedReader = new BufferedReader(
-					new InputStreamReader(getResourceAsStream(LICENSES_FILENAME), StandardCharsets.UTF_8))) {
-				final var text = bufferedReader.lines().collect(Collectors.joining("\n"));
-				final var textArea = new JTextArea(text);
-				textArea.setLineWrap(true);
-				textArea.setEditable(false);
-				final var scrollPane = new JScrollPane(textArea);
-				scrollPane.setPreferredSize(new Dimension(600, 400));
-				GuiUtils.showMessageDialog(main, frame, scrollPane, (String) getValue(NAME),
-						JOptionPane.DEFAULT_OPTION);
-			} catch (final IOException e1) {
-				throw new RuntimeException(e1);
-			}
+		public void actionPerformed(final ActionEvent actionEvent) {
+			final var editorPane = new JEditorPane();
+			editorPane.setContentType("text/html");
+			editorPane.setEditable(false);
+			editorPane.setCaretColor(editorPane.getBackground());
+
+			final var scrollPane = new JScrollPane(editorPane);
+			scrollPane.setPreferredSize(new Dimension(850, 400));
+
+			editorPane.addHyperlinkListener(hyperlinkEvent -> {
+				if (hyperlinkEvent.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+					return;
+				}
+
+				final var description = hyperlinkEvent.getDescription();
+				if (description != null && description.startsWith("#")) {
+					editorPane.scrollToReference(description.substring(1));
+					return;
+				}
+
+				try {
+					openBrowser(scrollPane, hyperlinkEvent.getURL().toURI());
+				} catch (final URISyntaxException e) {
+					throw new RuntimeException(e);
+				}
+			});
+
+			editorPane.setText(Metadata.LICENSES_HTML);
+			editorPane.setCaretPosition(0);
+
+			GuiUtils.showMessageDialog(main, frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
 		}
 	}
 
