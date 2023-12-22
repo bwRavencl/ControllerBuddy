@@ -42,28 +42,30 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 
     @Override
     public void doAction(final Input input, final int component, Float value) {
-        if (!input.isAxisSuspended(component)) {
-            if (Math.abs(value) <= deadZone) {
-                value = 0f;
+        if (input.isAxisSuspended(component)) {
+            return;
+        }
+
+        if (Math.abs(value) <= deadZone) {
+            value = 0f;
+        } else {
+            final float inMax;
+            if (exponent > 1f) {
+                inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+
+                value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
             } else {
-                final float inMax;
-                if (exponent > 1f) {
-                    inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
-
-                    value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
-                } else {
-                    inMax = 1f;
-                }
-
-                if (value >= 0f) {
-                    value = Input.normalize(value, deadZone, inMax, 0f, 1f);
-                } else {
-                    value = Input.normalize(value, -inMax, -deadZone, -1f, 0f);
-                }
+                inMax = 1f;
             }
 
-            input.setAxis(virtualAxis, invert ? -value : value, false, null);
+            if (value >= 0f) {
+                value = Input.normalize(value, deadZone, inMax, 0f, 1f);
+            } else {
+                value = Input.normalize(value, -inMax, -deadZone, -1f, 0f);
+            }
         }
+
+        input.setAxis(virtualAxis, invert ? -value : value, false, null);
     }
 
     public float getDeadZone() {

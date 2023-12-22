@@ -44,34 +44,32 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
     public void doAction(final Input input, final int component, final Float value) {
         final var absValue = Math.abs(value);
 
-        if (!input.isAxisSuspended(component) && absValue > deadZone) {
-            final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+        if (input.isAxisSuspended(component) || absValue <= deadZone) {
+            return;
+        }
 
-            var d = Input.normalize(
-                            Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent),
-                            -inMax,
-                            inMax,
-                            -maxRelativeSpeed,
-                            maxRelativeSpeed)
-                    * input.getRateMultiplier();
+        final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-            d += remainingD;
+        var d = Input.normalize(
+                        Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent),
+                        -inMax,
+                        inMax,
+                        -maxRelativeSpeed,
+                        maxRelativeSpeed)
+                * input.getRateMultiplier();
 
-            if (Math.abs(d) < input.getPlanckLength()) {
-                remainingD = d;
-            } else {
-                remainingD = 0f;
+        d += remainingD;
 
-                final var runMode = input.getRunMode();
-                final var oldValue = Input.normalize(
-                        input.getAxes().get(virtualAxis),
-                        runMode.getMinAxisValue(),
-                        runMode.getMaxAxisValue(),
-                        -1f,
-                        1f);
+        if (Math.abs(d) < input.getPlanckLength()) {
+            remainingD = d;
+        } else {
+            remainingD = 0f;
 
-                input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
-            }
+            final var runMode = input.getRunMode();
+            final var oldValue = Input.normalize(
+                    input.getAxes().get(virtualAxis), runMode.getMinAxisValue(), runMode.getMaxAxisValue(), -1f, 1f);
+
+            input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
         }
     }
 
