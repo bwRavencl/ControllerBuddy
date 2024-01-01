@@ -30,7 +30,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -127,6 +126,9 @@ public final class EditActionsDialog extends JDialog {
     private final JList<AssignedAction> assignedActionsList = new JList<>();
 
     @SuppressWarnings({"serial", "RedundantSuppression"})
+    private final Profile unsavedProfile;
+
+    @SuppressWarnings({"serial", "RedundantSuppression"})
     private Main main;
 
     @SuppressWarnings({"serial", "RedundantSuppression"})
@@ -134,9 +136,6 @@ public final class EditActionsDialog extends JDialog {
 
     @SuppressWarnings({"serial", "RedundantSuppression"})
     private Input input;
-
-    @SuppressWarnings({"serial", "RedundantSuppression"})
-    private Profile unsavedProfile;
 
     @SuppressWarnings({"serial", "RedundantSuppression"})
     private ButtonToCycleAction cycleAction;
@@ -152,7 +151,7 @@ public final class EditActionsDialog extends JDialog {
 
     @SuppressWarnings("unchecked")
     public EditActionsDialog(
-            @SuppressWarnings("exports") final Dialog parentDialog,
+            @SuppressWarnings("exports") final EditActionsDialog parentDialog,
             @SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
         super(parentDialog);
         this.cycleAction = cycleAction;
@@ -164,6 +163,8 @@ public final class EditActionsDialog extends JDialog {
         } catch (final CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+
+        unsavedProfile = parentDialog.unsavedProfile;
 
         preInit(parentDialog);
         setTitle(MessageFormat.format(
