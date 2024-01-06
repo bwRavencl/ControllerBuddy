@@ -319,7 +319,7 @@ tasks.register('jlink', Exec) {
 	dependsOn check
 	group
 	doFirst { delete runtimeDir }
-	commandLine 'jlink', '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.xml.dom'
+	commandLine 'jlink', '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.xml.dom'
 }
 
 tasks.register('copyLibs', Copy) {
