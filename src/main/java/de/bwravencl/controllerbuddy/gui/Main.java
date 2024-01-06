@@ -3524,6 +3524,8 @@ public final class Main {
 
         FlatLaf.updateUI();
 
+        profileFileChooser.updateUI();
+
         updateVisualizationPanel();
     }
 
