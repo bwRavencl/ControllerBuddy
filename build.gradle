@@ -218,7 +218,7 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, metadataFile
-		palantirJavaFormat '2.39.0'
+		palantirJavaFormat '2.40.0'
 		formatAnnotations()
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
