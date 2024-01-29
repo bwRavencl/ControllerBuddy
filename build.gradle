@@ -303,10 +303,14 @@ tasks.spotlessXml.dependsOn copyGameControllerDB
 tasks.withType(JavaCompile).configureEach {
 	dependsOn generateModuleInfo, generateMetadata
 	source generateMetadata.outputs.files, sourceSets.main.java
-	options.compilerArgs << '-Xlint:all' << '-Werror'
 	options.encoding = 'UTF-8'
-	options.deprecation = true
-	options.errorprone.error 'MissingBraces'
+	gradle.taskGraph.whenReady {
+		if (!it.hasTask(run)) {
+			options.compilerArgs << '-Xlint:all' << '-Werror'
+			options.deprecation = true
+			options.errorprone.error 'MissingBraces'
+		}
+	}
 }
 
 run {
