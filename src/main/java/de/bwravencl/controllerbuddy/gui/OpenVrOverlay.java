@@ -254,7 +254,7 @@ class OpenVrOverlay {
 
         try {
             capabilities = GL.getCapabilities();
-        } catch (final IllegalStateException ignored) {
+        } catch (final IllegalStateException _) {
             // handled below
         }
 
@@ -395,7 +395,7 @@ class OpenVrOverlay {
             if (executorService.awaitTermination(2L, TimeUnit.SECONDS)) {
                 deInit();
             }
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException _) {
             Thread.currentThread().interrupt();
         }
     }

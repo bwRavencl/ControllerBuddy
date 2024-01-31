@@ -1346,7 +1346,7 @@ public final class Main {
                 }
                 return;
             }
-        } catch (final ParseException ignored) {
+        } catch (final ParseException _) {
             // handled below
         }
 
@@ -1440,7 +1440,7 @@ public final class Main {
 
                 try {
                     Thread.sleep(100L);
-                } catch (final InterruptedException e) {
+                } catch (final InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
             }
@@ -2671,7 +2671,7 @@ public final class Main {
             try {
                 //noinspection ResultOfMethodCallIgnored
                 overlayExecutorService.awaitTermination(2L, TimeUnit.SECONDS);
-            } catch (final InterruptedException e) {
+            } catch (final InterruptedException _) {
                 Thread.currentThread().interrupt();
             } finally {
                 overlayExecutorService = null;
@@ -3836,7 +3836,7 @@ public final class Main {
                     try {
                         //noinspection BusyWait
                         Thread.sleep(10L);
-                    } catch (final InterruptedException e) {
+                    } catch (final InterruptedException _) {
                         log.log(Level.INFO, "Exiting main loop");
 
                         return;
@@ -3871,7 +3871,7 @@ public final class Main {
                 }
 
                 return (V) result;
-            } catch (final InterruptedException e) {
+            } catch (final InterruptedException _) {
                 Thread.currentThread().interrupt();
             }
 
@@ -3892,7 +3892,7 @@ public final class Main {
                 try {
                     //noinspection BusyWait
                     Thread.sleep(10L);
-                } catch (final InterruptedException e) {
+                } catch (final InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
             }
@@ -3909,7 +3909,7 @@ public final class Main {
                 try {
                     //noinspection BusyWait
                     Thread.sleep(10L);
-                } catch (final InterruptedException e) {
+                } catch (final InterruptedException _) {
                     Thread.currentThread().interrupt();
                 }
             }
