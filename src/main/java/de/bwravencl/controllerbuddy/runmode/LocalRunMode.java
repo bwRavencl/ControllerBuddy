@@ -144,7 +144,7 @@ public final class LocalRunMode extends OutputRunMode {
 			}
 		} catch (final IOException e) {
 			handleIOException(e);
-		} catch (final InterruptedException ignored) {
+		} catch (final InterruptedException _) {
 			// expected whenever the run mode gets stopped
 		} finally {
 			deInit();

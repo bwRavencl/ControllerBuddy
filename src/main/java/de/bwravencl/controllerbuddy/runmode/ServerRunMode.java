@@ -221,7 +221,7 @@ public final class ServerRunMode extends RunMode {
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-		} catch (final InterruptedException ignored) {
+		} catch (final InterruptedException _) {
 			// expected whenever the run mode gets stopped
 		} finally {
 			input.reset();

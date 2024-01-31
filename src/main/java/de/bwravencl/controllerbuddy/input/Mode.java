@@ -53,7 +53,7 @@ public final class Mode implements Cloneable {
 			for (final var action : entry.getValue()) {
 				final var key = entry.getKey();
 
-				final var clonedActions = clonedActionMap.computeIfAbsent(key, k -> new ArrayList<>());
+				final var clonedActions = clonedActionMap.computeIfAbsent(key, _ -> new ArrayList<>());
 				clonedActions.add((IAction<V>) action.clone());
 			}
 		}

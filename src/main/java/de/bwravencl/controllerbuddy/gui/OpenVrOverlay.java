@@ -220,7 +220,7 @@ class OpenVrOverlay {
 
 		try {
 			capabilities = GL.getCapabilities();
-		} catch (final IllegalStateException ignored) {
+		} catch (final IllegalStateException _) {
 			// handled below
 		}
 
@@ -361,7 +361,7 @@ class OpenVrOverlay {
 			if (executorService.awaitTermination(2L, TimeUnit.SECONDS)) {
 				deInit();
 			}
-		} catch (final InterruptedException e) {
+		} catch (final InterruptedException _) {
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -373,7 +373,7 @@ class OpenVrOverlay {
 				checkOverlayError(VROverlay.VROverlay_ShowOverlay(overlayHandle));
 
 				if (VROverlay.VROverlay_IsOverlayVisible(overlayHandle)) {
-					final var textureData = textureDataCache.computeIfAbsent(overlayHandle, k -> new TextureData());
+					final var textureData = textureDataCache.computeIfAbsent(overlayHandle, _ -> new TextureData());
 
 					final var imageResized = textureData.image == null
 							|| textureData.image.getWidth() != frame.getWidth()

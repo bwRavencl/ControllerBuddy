@@ -1171,7 +1171,7 @@ public final class Main {
 	public static void main(final String[] args) {
 		log.log(Level.INFO, "Launching " + Metadata.APPLICATION_NAME + " " + Metadata.VERSION);
 
-		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
 			log.log(Level.SEVERE, e.getMessage(), e);
 
 			if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null) {
@@ -1279,7 +1279,7 @@ public final class Main {
 				}
 				return;
 			}
-		} catch (final ParseException ignored) {
+		} catch (final ParseException _) {
 			// handled below
 		}
 
@@ -1358,7 +1358,7 @@ public final class Main {
 
 				try {
 					Thread.sleep(100L);
-				} catch (final InterruptedException e) {
+				} catch (final InterruptedException _) {
 					Thread.currentThread().interrupt();
 				}
 			}
@@ -2548,7 +2548,7 @@ public final class Main {
 			try {
 				// noinspection ResultOfMethodCallIgnored
 				overlayExecutorService.awaitTermination(2L, TimeUnit.SECONDS);
-			} catch (final InterruptedException e) {
+			} catch (final InterruptedException _) {
 				Thread.currentThread().interrupt();
 			} finally {
 				overlayExecutorService = null;
@@ -3496,7 +3496,7 @@ public final class Main {
 					try {
 						// noinspection BusyWait
 						Thread.sleep(10L);
-					} catch (final InterruptedException e) {
+					} catch (final InterruptedException _) {
 						log.log(Level.INFO, "Exiting main loop");
 
 						return;
@@ -3531,7 +3531,7 @@ public final class Main {
 				}
 
 				return (V) result;
-			} catch (final InterruptedException e) {
+			} catch (final InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 
@@ -3552,7 +3552,7 @@ public final class Main {
 				try {
 					// noinspection BusyWait
 					Thread.sleep(10L);
-				} catch (final InterruptedException e) {
+				} catch (final InterruptedException _) {
 					Thread.currentThread().interrupt();
 				}
 			}
@@ -3569,7 +3569,7 @@ public final class Main {
 				try {
 					// noinspection BusyWait
 					Thread.sleep(10L);
-				} catch (final InterruptedException e) {
+				} catch (final InterruptedException _) {
 					Thread.currentThread().interrupt();
 				}
 			}

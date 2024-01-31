@@ -127,10 +127,8 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
 		final var main = input.getMain();
 		if (defaultAxisToActionsMap != null) {
-			axes.stream().filter(defaultAxisToActionsMap::containsKey)
-					.forEach(axis -> defaultAxisToActionsMap.get(axis).stream()
-							.filter(action -> action instanceof IAxisToAction)
-							.forEach(action -> input.suspendAxis(axis)));
+			axes.stream().filter(defaultAxisToActionsMap::containsKey).forEach(axis -> defaultAxisToActionsMap.get(axis)
+					.stream().filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
 		}
 
 		profile.setActiveMode(input, previousMode.getUuid());

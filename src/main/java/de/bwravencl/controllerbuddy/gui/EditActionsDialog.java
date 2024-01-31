@@ -322,7 +322,7 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		availableActionsList.addListSelectionListener(event -> {
+		availableActionsList.addListSelectionListener(_ -> {
 			selectedAvailableAction = availableActionsList.getSelectedValue();
 			addButton.setEnabled(selectedAvailableAction != null);
 		});
@@ -344,7 +344,7 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		assignedActionsList.addListSelectionListener(event -> {
+		assignedActionsList.addListSelectionListener(_ -> {
 			selectedAssignedAction = assignedActionsList.getSelectedValue();
 			removeButton.setEnabled(selectedAssignedAction != null);
 

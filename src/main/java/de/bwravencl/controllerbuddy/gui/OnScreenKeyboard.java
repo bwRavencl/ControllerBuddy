@@ -767,7 +767,7 @@ public final class OnScreenKeyboard extends JFrame {
 			super(getLockKeyDisplayName(lockKey.name()));
 			this.lockKey = lockKey;
 
-			addActionListener(arg0 -> toggleLock());
+			addActionListener(_ -> toggleLock());
 		}
 
 		@Override
