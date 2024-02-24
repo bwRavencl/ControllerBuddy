@@ -43,7 +43,7 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
         value = handleLongPress(input, component, value);
 
         var hot = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
-        hot = handleMinActivationInterval(hot);
+        hot = handleActivationInterval(hot);
 
         if (isAlreadyPressed(input)) {
             return;

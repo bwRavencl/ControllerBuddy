@@ -32,7 +32,7 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
     public void doAction(final Input input, final int component, Byte value) {
         value = handleLongPress(input, component, value);
 
-        final var hot = handleMinActivationInterval(value != 0);
+        final var hot = handleActivationInterval(value != 0);
 
         if (isAlreadyPressed(input)) {
             return;

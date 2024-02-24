@@ -24,9 +24,9 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.text.DefaultFormatter;
 
-public final class MinActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
+public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
-    public MinActivationIntervalEditorBuilder(
+    public ActivationIntervalEditorBuilder(
             final EditActionsDialog editActionsDialog,
             final IAction<?> action,
             final String fieldName,

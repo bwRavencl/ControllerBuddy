@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.text.MessageFormat;
 
-abstract class ToKeyAction<V extends Number> extends MinActivationIntervalAction<V>
+abstract class ToKeyAction<V extends Number> extends ActivationIntervalAction<V>
         implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
 
     @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
@@ -73,7 +73,7 @@ abstract class ToKeyAction<V extends Number> extends MinActivationIntervalAction
     }
 
     void handleAction(boolean hot, final Input input) {
-        hot = handleMinActivationInterval(hot);
+        hot = handleActivationInterval(hot);
 
         if (activatable == Activatable.ALWAYS) {
             input.getDownUpKeyStrokes().add(keystroke);

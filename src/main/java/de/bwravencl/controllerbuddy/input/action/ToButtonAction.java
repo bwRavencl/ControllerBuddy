@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
 import java.text.MessageFormat;
 
-public abstract class ToButtonAction<V extends Number> extends MinActivationIntervalAction<V> {
+public abstract class ToButtonAction<V extends Number> extends ActivationIntervalAction<V> {
 
     @ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
     int buttonId = 0;

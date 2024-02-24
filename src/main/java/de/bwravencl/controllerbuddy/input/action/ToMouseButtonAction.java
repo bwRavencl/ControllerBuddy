@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 import java.text.MessageFormat;
 
-abstract class ToMouseButtonAction<V extends Number> extends MinActivationIntervalAction<V>
+abstract class ToMouseButtonAction<V extends Number> extends ActivationIntervalAction<V>
         implements IActivatableAction<V>, ILongPressAction<V> {
 
     private static final int DEFAULT_MOUSE_BUTTON = 1;
@@ -66,7 +66,7 @@ abstract class ToMouseButtonAction<V extends Number> extends MinActivationInterv
     }
 
     void handleAction(boolean hot, final Input input) {
-        hot = handleMinActivationInterval(hot);
+        hot = handleActivationInterval(hot);
 
         if (activatable == Activatable.ALWAYS) {
             input.getDownUpMouseButtons().add(mouseButton);
