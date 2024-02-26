@@ -1,4 +1,4 @@
-/* Copyright (C) 2019  Matteo Hausner
+/* Copyright (C) 2024  Matteo Hausner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.InvocationTargetException;
 
-public final class InitialValueEditorBuilder extends NumberEditorBuilder<Float> {
+public final class MinAxisValueEditorBuilder extends AxisValueEditorBuilder {
 
-    public InitialValueEditorBuilder(
+    public MinAxisValueEditorBuilder(
             final EditActionsDialog editActionsDialog,
             final IAction<?> action,
             final String fieldName,
@@ -34,16 +34,6 @@ public final class InitialValueEditorBuilder extends NumberEditorBuilder<Float> 
 
     @Override
     Comparable<Float> getMaximum() {
-        return 1f;
-    }
-
-    @Override
-    Comparable<Float> getMinimum() {
-        return -1f;
-    }
-
-    @Override
-    Number getStepSize() {
-        return 0.05f;
+        return 0f;
     }
 }

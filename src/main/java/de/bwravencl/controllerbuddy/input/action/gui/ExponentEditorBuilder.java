@@ -67,7 +67,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
     @Override
     Comparable<Float> getMinimum() {
-        return 1f;
+        return 0.1f;
     }
 
     @Override
