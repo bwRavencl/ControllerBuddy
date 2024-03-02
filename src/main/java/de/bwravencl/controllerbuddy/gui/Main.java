@@ -464,7 +464,7 @@ public final class Main {
                         }
 
                         if (arguments != null) {
-                            main.newActivation(arguments);
+                            newActivation(arguments);
 
                             try (final var printStream =
                                     new PrintStream(socket.getOutputStream(), false, StandardCharsets.UTF_8)) {
