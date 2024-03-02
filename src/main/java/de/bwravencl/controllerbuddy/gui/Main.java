@@ -4379,6 +4379,7 @@ public final class Main {
             if (description != null && !description.isEmpty()) {
                 mode.setDescription(description);
                 setUnsavedChanges(true);
+                updateVisualizationPanel();
             }
         }
     }
