@@ -340,17 +340,11 @@ public final class Main {
     private final StartServerAction startServerAction = new StartServerAction();
     private final StopAction stopAction = new StopAction();
     private final JMenuBar menuBar = new JMenuBar();
-    private final JMenu fileJMenu = new JMenu(strings.getString("FILE_MENU"));
     private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
     private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
-    private final JMenuItem newJMenuItem = fileJMenu.add(new NewAction());
-    private final JMenuItem openJMenuItem = fileJMenu.add(openAction);
-    private final JMenuItem saveJMenuItem = fileJMenu.add(new SaveAction());
-    private final JMenuItem saveAsJMenuItem = fileJMenu.add(new SaveAsAction());
     private final JMenuItem startServerJMenuItem;
     private final JMenuItem stopJMenuItem;
     private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-    private final JScrollPane globalSettingsScrollPane = new JScrollPane();
     private final JPanel globalSettingsPanel;
     private final JPanel sonyCursorSensitivityPanel;
     private final JPanel sonyScrollSensitivityPanel;
@@ -358,6 +352,16 @@ public final class Main {
     private final JFileChooser profileFileChooser = new ProfileFileChooser();
     private final Timer timer = new Timer();
     private final OnScreenKeyboard onScreenKeyboard;
+    private final JScrollPane modesScrollPane;
+    private final JPanel modesListPanel;
+    private final JPanel newModePanel;
+    private final AssignmentsComponent assignmentsComponent;
+    private final JPanel profileSettingsPanel;
+    private final JScrollPane indicatorsScrollPane;
+    private final JPanel indicatorsListPanel;
+    private final JPanel visualizationPanel;
+    private final JSVGCanvas svgCanvas;
+    private final SVGDocument templateSvgDocument;
     private volatile RunMode runMode;
     private volatile ControllerInfo selectedController;
     private Input input;
@@ -370,18 +374,7 @@ public final class Main {
     private MenuItem startClientMenuItem;
     private MenuItem startServerMenuItem;
     private MenuItem stopMenuItem;
-    private JPanel modesPanel;
-    private JScrollPane modesScrollPane;
-    private JPanel modesListPanel;
-    private JPanel newModePanel;
-    private JPanel overlayPanel;
-    private JPanel visualizationPanel;
-    private AssignmentsComponent assignmentsComponent;
-    private JScrollPane profileSettingsScrollPane;
-    private JPanel profileSettingsPanel;
     private JCheckBox showVrOverlayCheckBox;
-    private JScrollPane indicatorsScrollPane;
-    private JPanel indicatorsListPanel;
     private ScheduledExecutorService overlayExecutorService;
     private JLabel vJoyDirectoryLabel;
     private JTextField hostTextField;
@@ -397,8 +390,6 @@ public final class Main {
     private Rectangle prevTotalDisplayBounds;
     private volatile JFrame overlayFrame;
     private JComboBox<Mode> modeComboBox;
-    private JSVGCanvas svgCanvas;
-    private SVGDocument templateSvgDocument;
     private FlatLaf lookAndFeel;
     private volatile Rectangle totalDisplayBounds;
 
@@ -543,9 +534,15 @@ public final class Main {
 
         frame.setJMenuBar(menuBar);
 
-        menuBar.add(fileJMenu);
-
+        final JMenu fileJMenu = new JMenu(strings.getString("FILE_MENU"));
+        fileJMenu.add(new NewAction());
+        fileJMenu.add(openAction);
+        fileJMenu.add(new SaveAction());
+        fileJMenu.add(new SaveAsAction());
+        fileJMenu.insertSeparator(4);
         fileJMenu.add(quitAction);
+
+        menuBar.add(fileJMenu);
         menuBar.add(deviceJMenu);
 
         if (isWindows || isLinux) {
@@ -568,6 +565,61 @@ public final class Main {
         helpMenu.add(new ShowAboutDialogAction());
 
         frame.getContentPane().add(tabbedPane);
+
+        final JPanel modesPanel = new JPanel(new BorderLayout());
+        final JScrollPane globalSettingsScrollPane = new JScrollPane();
+        tabbedPane.addTab(strings.getString("MODES_TAB"), modesPanel);
+
+        modesListPanel = new JPanel();
+        modesListPanel.setLayout(new GridBagLayout());
+
+        modesScrollPane = new JScrollPane();
+        modesPanel.add(modesScrollPane, BorderLayout.CENTER);
+
+        newModePanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
+        final var newModeButton = new JButton(new NewModeAction());
+        newModeButton.setPreferredSize(BUTTON_DIMENSION);
+        newModePanel.add(newModeButton);
+        modesPanel.add(newModePanel, BorderLayout.SOUTH);
+
+        assignmentsComponent = new AssignmentsComponent(this);
+        tabbedPane.addTab(strings.getString("ASSIGNMENTS_TAB"), assignmentsComponent);
+
+        final JPanel overlayPanel = new JPanel(new BorderLayout());
+        tabbedPane.addTab(strings.getString("OVERLAY_TAB"), overlayPanel);
+
+        indicatorsListPanel = new JPanel();
+        indicatorsListPanel.setLayout(new GridBagLayout());
+
+        indicatorsScrollPane = new JScrollPane();
+        overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
+
+        try (final var bufferedReader = new BufferedReader(
+                new InputStreamReader(getResourceAsStream(CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
+            final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+            templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        visualizationPanel = new JPanel(new BorderLayout());
+        tabbedPane.addTab(strings.getString("VISUALIZATION_TAB"), visualizationPanel);
+
+        svgCanvas = new JSVGCanvas(null, false, false);
+        svgCanvas.setBackground(TRANSPARENT);
+        visualizationPanel.add(new JScrollPane(svgCanvas), BorderLayout.CENTER);
+
+        final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
+        final var exportButton = new JButton(new ExportAction());
+        exportButton.setPreferredSize(BUTTON_DIMENSION);
+        exportPanel.add(exportButton);
+        visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
+
+        profileSettingsPanel = new JPanel();
+        profileSettingsPanel.setLayout(new GridBagLayout());
+
+        final JScrollPane profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
+        tabbedPane.addTab(strings.getString("PROFILE_SETTINGS_TAB"), profileSettingsScrollPane);
 
         globalSettingsPanel = new JPanel();
         globalSettingsPanel.setLayout(new GridBagLayout());
@@ -881,8 +933,6 @@ public final class Main {
         statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
         frame.add(statusLabel, BorderLayout.SOUTH);
 
-        updateTheme();
-
         onScreenKeyboard = new OnScreenKeyboard(this);
 
         if (isMac) {
@@ -969,6 +1019,8 @@ public final class Main {
         }
 
         newProfile(false);
+
+        updateTheme();
 
         if (presentControllers != null) {
             onControllersChanged(presentControllers, true);
@@ -2103,13 +2155,6 @@ public final class Main {
         final var controllerConnected = !presentControllers.isEmpty();
 
         final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
-        fileJMenu.remove(newJMenuItem);
-        fileJMenu.remove(openJMenuItem);
-        fileJMenu.remove(saveJMenuItem);
-        fileJMenu.remove(saveAsJMenuItem);
-        if (fileJMenu.getItemCount() > 1) {
-            fileJMenu.remove(0);
-        }
         deviceJMenu.removeAll();
         menuBar.remove(deviceJMenu);
 
@@ -2130,12 +2175,6 @@ public final class Main {
             runPopupMenu.remove(startServerMenuItem);
         }
 
-        tabbedPane.remove(modesPanel);
-        tabbedPane.remove(assignmentsComponent);
-        tabbedPane.remove(overlayPanel);
-        tabbedPane.remove(visualizationPanel);
-        tabbedPane.remove(profileSettingsScrollPane);
-
         if (SystemTray.isSupported()) {
             final var systemTray = SystemTray.getSystemTray();
 
@@ -2153,11 +2192,9 @@ public final class Main {
 
             popupMenu.addSeparator();
 
-            if (controllerConnected) {
-                final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
-                openMenuItem.addActionListener(openAction);
-                popupMenu.add(openMenuItem);
-            }
+            final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
+            openMenuItem.addActionListener(openAction);
+            popupMenu.add(openMenuItem);
 
             if (runMenuVisible) {
                 runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
@@ -2219,21 +2256,7 @@ public final class Main {
             }
         }
 
-        try (final var bufferedReader = new BufferedReader(
-                new InputStreamReader(getResourceAsStream(CONTROLLER_SVG_FILENAME), StandardCharsets.UTF_8))) {
-            final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
-            templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-
         if (controllerConnected) {
-            fileJMenu.insert(newJMenuItem, 0);
-            fileJMenu.insert(openJMenuItem, 1);
-            fileJMenu.insert(saveJMenuItem, 2);
-            fileJMenu.insert(saveAsJMenuItem, 3);
-            fileJMenu.insertSeparator(4);
-
             final var devicesButtonGroup = new ButtonGroup();
             presentControllers.forEach(controller -> {
                 final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
@@ -2250,103 +2273,13 @@ public final class Main {
                     runPopupMenu.insert(startServerMenuItem, isWindows || isLinux ? 2 : 0);
                 }
             }
-
-            modesPanel = new JPanel(new BorderLayout());
-            tabbedPane.insertTab(
-                    strings.getString("MODES_TAB"),
-                    null,
-                    modesPanel,
-                    null,
-                    tabbedPane.indexOfComponent(globalSettingsScrollPane));
-
-            modesListPanel = new JPanel();
-            modesListPanel.setLayout(new GridBagLayout());
-
-            modesScrollPane = new JScrollPane();
-            modesPanel.add(modesScrollPane, BorderLayout.CENTER);
-
-            newModePanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
-            final var newModeButton = new JButton(new NewModeAction());
-            newModeButton.setPreferredSize(BUTTON_DIMENSION);
-            newModePanel.add(newModeButton);
-            modesPanel.add(newModePanel, BorderLayout.SOUTH);
-
-            assignmentsComponent = new AssignmentsComponent(this);
-            tabbedPane.insertTab(
-                    strings.getString("ASSIGNMENTS_TAB"),
-                    null,
-                    assignmentsComponent,
-                    null,
-                    tabbedPane.indexOfComponent(globalSettingsScrollPane));
-
-            overlayPanel = new JPanel(new BorderLayout());
-            tabbedPane.insertTab(
-                    strings.getString("OVERLAY_TAB"),
-                    null,
-                    overlayPanel,
-                    null,
-                    tabbedPane.indexOfComponent(globalSettingsScrollPane));
-
-            indicatorsListPanel = new JPanel();
-            indicatorsListPanel.setLayout(new GridBagLayout());
-
-            indicatorsScrollPane = new JScrollPane();
-            overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
-
-            if (templateSvgDocument != null) {
-                visualizationPanel = new JPanel(new BorderLayout());
-                tabbedPane.insertTab(
-                        strings.getString("VISUALIZATION_TAB"),
-                        null,
-                        visualizationPanel,
-                        null,
-                        tabbedPane.indexOfComponent(globalSettingsScrollPane));
-
-                final var modes = input.getProfile().getModes();
-                modeComboBox = GuiUtils.addModePanel(visualizationPanel, modes, new AbstractAction() {
-
-                    @Serial
-                    private static final long serialVersionUID = -9107064465015662054L;
-
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
-
-                        final var workingCopySvgDocument = generateSvgDocument(selectedMode, lookAndFeel.isDark());
-
-                        svgCanvas.setSVGDocument(workingCopySvgDocument);
-                    }
-                });
-
-                svgCanvas = new JSVGCanvas(null, false, false);
-                svgCanvas.setBackground(TRANSPARENT);
-                visualizationPanel.add(new JScrollPane(svgCanvas), BorderLayout.CENTER);
-
-                final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
-                final var exportButton = new JButton(new ExportAction());
-                exportButton.setPreferredSize(BUTTON_DIMENSION);
-                exportPanel.add(exportButton);
-                visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
-            }
-
-            profileSettingsPanel = new JPanel();
-            profileSettingsPanel.setLayout(new GridBagLayout());
-
-            profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
-            tabbedPane.insertTab(
-                    strings.getString("PROFILE_SETTINGS_TAB"),
-                    null,
-                    profileSettingsScrollPane,
-                    null,
-                    tabbedPane.indexOfComponent(globalSettingsScrollPane));
         } else {
             log.log(Level.INFO, "No controllers connected");
         }
 
         updateDeviceMenuSelection();
 
-        if (selectFirstTab || !controllerConnected) {
+        if (selectFirstTab) {
             tabbedPane.setSelectedIndex(0);
         } else if (previousSelectedTabIndex < tabbedPane.getTabCount()) {
             tabbedPane.setSelectedIndex(previousSelectedTabIndex);
@@ -2898,6 +2831,10 @@ public final class Main {
 
         modesListPanel.removeAll();
 
+        if (input == null) {
+            return;
+        }
+
         final var buttonGridBagConstraints = new GridBagConstraints(
                 4,
                 GridBagConstraints.RELATIVE,
@@ -3094,6 +3031,10 @@ public final class Main {
         }
 
         indicatorsListPanel.removeAll();
+
+        if (input == null) {
+            return;
+        }
 
         final var borderColor = UIManager.getColor("Component.borderColor");
 
@@ -3300,6 +3241,10 @@ public final class Main {
 
         profileSettingsPanel.removeAll();
         showVrOverlayCheckBox = null;
+
+        if (input == null) {
+            return;
+        }
 
         final var constraints = new GridBagConstraints(
                 0,
@@ -3580,8 +3525,27 @@ public final class Main {
 
         final var modes = input.getProfile().getModes();
         final var model = new DefaultComboBoxModel<>(modes.toArray(Mode[]::new));
-        modeComboBox.setModel(model);
-        modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
+
+        if (modeComboBox == null) {
+            modeComboBox = GuiUtils.addModePanel(visualizationPanel, modes, new AbstractAction() {
+
+                @Serial
+                private static final long serialVersionUID = -9107064465015662054L;
+
+                @SuppressWarnings("unchecked")
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
+
+                    final var workingCopySvgDocument = generateSvgDocument(selectedMode, lookAndFeel.isDark());
+
+                    svgCanvas.setSVGDocument(workingCopySvgDocument);
+                }
+            });
+        } else {
+            modeComboBox.setModel(model);
+            modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
+        }
     }
 
     public enum HotSwappingButton {
