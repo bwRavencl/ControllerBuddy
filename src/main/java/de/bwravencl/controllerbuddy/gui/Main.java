@@ -4340,7 +4340,7 @@ public final class Main {
         private void setModeDescription() {
             final var description = modeDescriptionTextField.getText();
 
-            if (description != null && !description.isEmpty()) {
+            if (description != null && !description.isEmpty() && !description.equals(mode.getDescription())) {
                 mode.setDescription(description);
                 setUnsavedChanges(true);
                 updateVisualizationPanel();
