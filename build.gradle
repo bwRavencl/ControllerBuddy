@@ -124,7 +124,7 @@ dependencies {
 	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
 	implementation 'com.github.strikerx3:jxinput:1.0.0'
 	implementation 'com.google.code.gson:gson:2.10.1'
-	implementation 'io.github.classgraph:classgraph:4.8.167'
+	implementation 'io.github.classgraph:classgraph:4.8.168'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
 	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion"
