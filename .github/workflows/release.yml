@@ -38,7 +38,7 @@ jobs:
           tag: ${{ steps.extract_release_variables.outputs.tag_name }}
       - name: Release
         id: release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
@@ -69,7 +69,7 @@ jobs:
           echo "archive_path=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
       - name: Release
         id: release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
