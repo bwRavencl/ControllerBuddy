@@ -93,7 +93,7 @@ public final class ClientRunMode extends OutputRunMode {
 
                 try (final var byteArrayOutputStream = new ByteArrayOutputStream();
                         final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                    dataOutputStream.writeInt(MessageType.ClientHello.ordinal());
+                    dataOutputStream.writeInt(MessageType.ClientHello.getId());
                     dataOutputStream.writeInt(minAxisValue);
                     dataOutputStream.writeInt(maxAxisValue);
                     dataOutputStream.writeInt(nButtons);
@@ -113,7 +113,7 @@ public final class ClientRunMode extends OutputRunMode {
                             try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
                                     final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
                                 final var messageType = dataInputStream.readInt();
-                                if (messageType == MessageType.ServerHello.ordinal()) {
+                                if (messageType == MessageType.ServerHello.getId()) {
                                     final var serverProtocolVersion = dataInputStream.readByte();
                                     if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
                                         log.log(
@@ -276,7 +276,7 @@ public final class ClientRunMode extends OutputRunMode {
                         if (messageType == MessageType.UpdateRequestAlive) {
                             try (final var byteArrayOutputStream = new ByteArrayOutputStream();
                                     final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                                dataOutputStream.writeInt(MessageType.ClientAlive.ordinal());
+                                dataOutputStream.writeInt(MessageType.ClientAlive.getId());
 
                                 final var keepAliveBuf = byteArrayOutputStream.toByteArray();
                                 final var keepAlivePacket =

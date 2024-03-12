@@ -102,14 +102,14 @@ public final class ServerRunMode extends RunMode {
                                 new DataInputStream(new ByteArrayInputStream(receivePacket.getData()))) {
                             final var messageType = dataInputStream.readInt();
 
-                            if (messageType == MessageType.ClientHello.ordinal()) {
+                            if (messageType == MessageType.ClientHello.getId()) {
                                 minAxisValue = dataInputStream.readInt();
                                 maxAxisValue = dataInputStream.readInt();
                                 setnButtons(dataInputStream.readInt());
 
                                 try (final var byteArrayOutputStream = new ByteArrayOutputStream();
                                         final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                                    dataOutputStream.writeInt(MessageType.ServerHello.ordinal());
+                                    dataOutputStream.writeInt(MessageType.ServerHello.getId());
                                     dataOutputStream.writeByte(PROTOCOL_VERSION);
                                     dataOutputStream.writeLong(pollInterval);
 
@@ -138,7 +138,7 @@ public final class ServerRunMode extends RunMode {
                                 final var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
                                 final var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
                             dataOutputStream.writeInt(
-                                    (doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).ordinal());
+                                    (doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).getId());
                             dataOutputStream.writeLong(counter);
 
                             if (!input.poll()) {
@@ -192,7 +192,7 @@ public final class ServerRunMode extends RunMode {
                                             new ByteArrayInputStream(receivePacket.getData())) {
                                         try (final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
                                             final var messageType = dataInputStream.readInt();
-                                            if (messageType == MessageType.ClientAlive.ordinal()) {
+                                            if (messageType == MessageType.ClientAlive.getId()) {
                                                 counter++;
                                             }
                                         }
@@ -258,12 +258,22 @@ public final class ServerRunMode extends RunMode {
         this.timeout = timeout;
     }
 
-    public enum MessageType {
-        ClientHello,
-        ServerHello,
-        Update,
-        UpdateRequestAlive,
-        ClientAlive
+    enum MessageType {
+        ClientHello(0),
+        ServerHello(1),
+        Update(2),
+        UpdateRequestAlive(3),
+        ClientAlive(4);
+
+        private final int id;
+
+        MessageType(final int id) {
+            this.id = id;
+        }
+
+        int getId() {
+            return id;
+        }
     }
 
     public enum ServerState {
