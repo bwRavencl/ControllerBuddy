@@ -80,7 +80,7 @@ tasks.register('cleanGameControllerDB') {
 clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
 
 dependencies {
-	errorprone('com.google.errorprone:error_prone_core:2.26.0')
+	errorprone('com.google.errorprone:error_prone_core:2.26.1')
 
 	def jnaVersion = '5.14.0'
 	def lwjglVersion = '3.3.3'
