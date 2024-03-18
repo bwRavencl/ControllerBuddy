@@ -3484,10 +3484,10 @@ public final class Main {
         frame.setTitle(title);
         if (isLinux) {
             final var toolkit = Toolkit.getDefaultToolkit();
-            final var xtoolkit = toolkit.getClass();
-            if ("sun.awt.X11.XToolkit".equals(xtoolkit.getName())) {
+            final var toolkitClass = toolkit.getClass();
+            if ("sun.awt.X11.XToolkit".equals(toolkitClass.getName())) {
                 try {
-                    final var awtAppClassName = xtoolkit.getDeclaredField("awtAppClassName");
+                    final var awtAppClassName = toolkitClass.getDeclaredField("awtAppClassName");
                     awtAppClassName.setAccessible(true);
                     awtAppClassName.set(null, title);
                 } catch (final NoSuchFieldException
