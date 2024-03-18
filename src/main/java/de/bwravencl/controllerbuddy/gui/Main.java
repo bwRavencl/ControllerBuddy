@@ -3477,14 +3477,9 @@ public final class Main {
     public void updateTitleAndTooltip() {
         final String title;
 
-        if (selectedController == null) {
-            title = Metadata.APPLICATION_NAME;
-        } else {
-            final var profileTitle = (unsavedChanges ? "*" : "")
-                    + (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
-            title = MessageFormat.format(
-                    strings.getString("MAIN_FRAME_TITLE"), profileTitle, Metadata.APPLICATION_NAME);
-        }
+        final var profileTitle =
+                (unsavedChanges ? "*" : "") + (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
+        title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle, Metadata.APPLICATION_NAME);
 
         frame.setTitle(title);
         if (isLinux) {
