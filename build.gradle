@@ -28,7 +28,7 @@ application {
 }
 
 ext {
-	javaLanguageVersion = JavaLanguageVersion.of(21)
+	javaLanguageVersion = JavaLanguageVersion.of(22)
 
 	def launcher = javaToolchains.launcherFor {
 		languageVersion.set(javaLanguageVersion)
