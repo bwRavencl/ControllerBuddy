@@ -1477,6 +1477,23 @@ public final class Main {
         });
     }
 
+    public <T> T executeWhileVisible(final Callable<T> callable) {
+        final var wasInvisible = show();
+
+        try {
+            final var result = callable.call();
+
+            if (wasInvisible) {
+                frame.setVisible(false);
+                updateShowMenuItem();
+            }
+
+            return result;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void exportVisualization(final File file) {
         if (templateSvgDocument == null) {
             return;
@@ -4077,16 +4094,13 @@ public final class Main {
 
         @Override
         protected void doAction() {
-            final var wasInvisible = show();
+            executeWhileVisible(() -> {
+                if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                    loadProfile(profileFileChooser.getSelectedFile(), false, true);
+                }
 
-            if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                loadProfile(profileFileChooser.getSelectedFile(), false, true);
-            }
-
-            if (wasInvisible) {
-                frame.setVisible(false);
-                updateShowMenuItem();
-            }
+                return null;
+            });
         }
     }
 

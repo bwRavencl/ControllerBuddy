@@ -998,11 +998,11 @@ public abstract class OutputRunMode extends RunMode {
                     throw new UnsupportedOperationException();
                 }
 
-                return JOptionPane.showConfirmDialog(
+                return main.executeWhileVisible(() -> JOptionPane.showConfirmDialog(
                         main.getFrame(),
                         Main.strings.getString(message),
                         Main.strings.getString("ERROR_DIALOG_TITLE"),
-                        JOptionPane.YES_NO_OPTION);
+                        JOptionPane.YES_NO_OPTION));
             });
             EventQueue.invokeLater(confirmDialogTask);
             try {
