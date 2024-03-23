@@ -44,6 +44,8 @@ ext {
 	tmpDir = layout.buildDirectory.dir 'tmp'
 	runtimeDir = tmpDir.map { it.dir 'runtime' }
 
+	xmsJvmArg = '-Xms128m'
+
 	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
 		"--add-opens=$linuxAddOpensValue"
@@ -323,6 +325,8 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 run {
+	jvmArgs += xmsJvmArg
+
 	if (os.linux)
 		jvmArgs += linuxJvmArgs
 }
@@ -381,7 +385,9 @@ tasks.register('jpackage', Exec) {
 		"Copyright ${new Date().format 'yyyy'} Matteo Hausner",
 		'--vendor',
 		'Matteo Hausner',
-		'--verbose'
+		'--verbose',
+		'--java-options',
+		xmsJvmArg
 	]
 	if (os.linux)
 		linuxJvmArgs.each { commandLineParts.addAll(['--java-options', it]) }
