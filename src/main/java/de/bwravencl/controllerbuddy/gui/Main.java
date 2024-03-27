@@ -2257,14 +2257,15 @@ public final class Main {
             } catch (final AWTException e) {
                 log.log(Level.SEVERE, e.getMessage(), e);
             }
+            updateTitleAndTooltip();
         }
 
         var restartOutput = false;
         if (!controllerConnected) {
             selectedController = null;
+            setSelectedControllerAndUpdateInput(null, null);
         } else if (selectedController == null) {
             setSelectedControllerAndUpdateInput(presentControllers.getFirst(), null);
-            updateTitleAndTooltip();
 
             if (isAutoRestartOutput()) {
                 restartOutput = switch (lastRunModeType) {
@@ -2504,10 +2505,12 @@ public final class Main {
     private void setSelectedController(final ControllerInfo controller) {
         selectedController = controller;
 
-        log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller", controller));
+        if (controller != null) {
+            log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller", controller));
 
-        if (controller.guid != null) {
-            preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
+            if (controller.guid != null) {
+                preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
+            }
         }
     }
 
