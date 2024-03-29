@@ -56,7 +56,7 @@ ext {
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
-	hid4javaVersion = '85d76ecd85'
+	hid4javaVersion = 'b1ab409a37'
 
 	openVrSupport = false
 }
