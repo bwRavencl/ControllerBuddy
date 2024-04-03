@@ -133,7 +133,7 @@ dependencies {
 	implementation 'commons-cli:commons-cli:1.6.0'
 	implementation 'com.formdev:flatlaf:3.4.1'
 	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
-	implementation 'com.github.strikerx3:jxinput:1.0.0'
+	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'io.github.classgraph:classgraph:4.8.168'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
@@ -192,7 +192,7 @@ tasks.register('generateModuleInfo') {
 			    requires java.logging;
 			    requires java.prefs;
 			    requires jdk.xml.dom;
-			    requires jxinput;
+			    requires JXInput;
 			    requires org.apache.commons.cli;
 			    requires org.lwjgl;
 			    requires org.lwjgl.natives;
