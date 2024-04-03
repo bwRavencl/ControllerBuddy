@@ -56,7 +56,7 @@ ext {
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
-	hid4javaVersion = '35bfe4bf12'
+	hid4javaVersion = 'develop-20240329.185624-11'
 
 	openVrSupport = false
 }
@@ -70,7 +70,7 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://jitpack.io' }
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 tasks.register('cleanModuleInfo') {
@@ -132,7 +132,7 @@ dependencies {
 
 	implementation 'commons-cli:commons-cli:1.6.0'
 	implementation 'com.formdev:flatlaf:3.4.1'
-	implementation("com.github.gary-rowe:hid4java:$hid4javaVersion") { exclude module: 'jna' }
+	implementation("org.hid4java:hid4java:$hid4javaVersion") { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'io.github.classgraph:classgraph:4.8.168'
