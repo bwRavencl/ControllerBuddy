@@ -46,15 +46,15 @@ public abstract class EditorBuilder {
 
 		final var fieldNameChars = fieldName.toCharArray();
 		fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
-		final var capizalizedFieldName = String.valueOf(fieldNameChars);
+		final var capitalizedFieldName = String.valueOf(fieldNameChars);
 
-		setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
+		setterMethod = clazz.getMethod("set" + capitalizedFieldName, fieldType);
 
 		final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
 		final var modeProperty = fieldType == Mode.class;
 
 		final var getterParams = modeProperty ? new Class<?>[] { Input.class } : null;
-		final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
+		final var getterMethod = clazz.getMethod(getterMethodPrefix + capitalizedFieldName, getterParams);
 
 		final var getterArgs = modeProperty ? new Object[] { editActionsDialog.getInput() } : null;
 		initialValue = getterMethod.invoke(action, getterArgs);
