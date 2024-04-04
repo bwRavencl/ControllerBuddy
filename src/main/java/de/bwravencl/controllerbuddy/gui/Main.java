@@ -1098,35 +1098,21 @@ public final class Main {
 
 	private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
 		final var action = button.getAction();
-		if (action != null) {
-			switch (action) {
-			case final NewAction _ -> {
-				return KeyEvent.VK_N;
-			}
-			case final OpenAction _ -> {
-				return KeyEvent.VK_O;
-			}
-			case final SaveAction _ -> {
-				return KeyEvent.VK_S;
-			}
-			case final StartLocalAction _ -> {
-				return KeyEvent.VK_L;
-			}
-			case final StartClientAction _ -> {
-				return KeyEvent.VK_C;
-			}
-			case final StartServerAction _ -> {
-				return KeyEvent.VK_E;
-			}
-			case final StopAction _ -> {
-				return KeyEvent.VK_T;
-			}
-			default -> {
-			}
-			}
+
+		if (action == null) {
+			return KeyEvent.VK_UNDEFINED;
 		}
 
-		return KeyEvent.VK_UNDEFINED;
+		return switch (action) {
+		case final NewAction _ -> KeyEvent.VK_N;
+		case final OpenAction _ -> KeyEvent.VK_O;
+		case final SaveAction _ -> KeyEvent.VK_S;
+		case final StartLocalAction _ -> KeyEvent.VK_L;
+		case final StartClientAction _ -> KeyEvent.VK_C;
+		case final StartServerAction _ -> KeyEvent.VK_E;
+		case final StopAction _ -> KeyEvent.VK_T;
+		default -> KeyEvent.VK_UNDEFINED;
+		};
 	}
 
 	public static List<ControllerInfo> getPresentControllers() {
@@ -1752,7 +1738,7 @@ public final class Main {
 		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
 		indicatorPanel.setBackground(TRANSPARENT);
 
-		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
+		EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			if (overlayAxis != null) {
 				final var detentValues = new HashSet<Float>();
@@ -2781,7 +2767,7 @@ public final class Main {
 			return;
 		}
 
-		EnumSet.allOf(Input.VirtualAxis.class).stream().filter(virtualAxisToProgressBarMap::containsKey)
+		EnumSet.allOf(VirtualAxis.class).stream().filter(virtualAxisToProgressBarMap::containsKey)
 				.forEach(virtualAxis -> {
 					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
 					var repaint = forceRepaint;
@@ -2825,7 +2811,7 @@ public final class Main {
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
 
-		EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> {
+		EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
