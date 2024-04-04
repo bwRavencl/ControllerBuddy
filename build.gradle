@@ -229,13 +229,13 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, metadataFile
-		palantirJavaFormat '2.41.0'
+		eclipse('4.27').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
 			'SafeButControversial'
 		])
-		importOrder()
+		importOrderFile 'spotless.importorder'
 		removeUnusedImports()
 		licenseHeader '''\
 			/* Copyright (C) $YEAR  Matteo Hausner
