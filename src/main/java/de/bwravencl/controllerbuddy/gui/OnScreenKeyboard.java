@@ -52,7 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 
 @SuppressWarnings("exports")
@@ -185,7 +184,7 @@ public final class OnScreenKeyboard extends JFrame {
 			setBackground(Main.TRANSPARENT);
 		}
 		setAlwaysOnTop(true);
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		addMouseListener(frameDragListener);
 		addMouseMotionListener(frameDragListener);

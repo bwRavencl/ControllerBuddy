@@ -1099,26 +1099,30 @@ public final class Main {
 	private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
 		final var action = button.getAction();
 		if (action != null) {
-			if (action instanceof NewAction) {
+			switch (action) {
+			case final NewAction _ -> {
 				return KeyEvent.VK_N;
 			}
-			if (action instanceof OpenAction) {
+			case final OpenAction _ -> {
 				return KeyEvent.VK_O;
 			}
-			if (action instanceof SaveAction) {
+			case final SaveAction _ -> {
 				return KeyEvent.VK_S;
 			}
-			if (action instanceof StartLocalAction) {
+			case final StartLocalAction _ -> {
 				return KeyEvent.VK_L;
 			}
-			if (action instanceof StartClientAction) {
+			case final StartClientAction _ -> {
 				return KeyEvent.VK_C;
 			}
-			if (action instanceof StartServerAction) {
+			case final StartServerAction _ -> {
 				return KeyEvent.VK_E;
 			}
-			if (action instanceof StopAction) {
+			case final StopAction _ -> {
 				return KeyEvent.VK_T;
+			}
+			default -> {
+			}
 			}
 		}
 
@@ -3335,7 +3339,7 @@ public final class Main {
 		private final int subdivisionHeight;
 
 		private IndicatorProgressBar(final Set<Float> detentValues, final OverlayAxis overlayAxis) {
-			super(SwingConstants.VERTICAL);
+			super(VERTICAL);
 
 			setBorder(createOverlayBorder());
 			this.detentValues = detentValues;
