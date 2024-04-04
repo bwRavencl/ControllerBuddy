@@ -23,18 +23,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> {
 
-    public MouseAxisEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public MouseAxisEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    MouseAxis[] getValues() {
-        return MouseAxis.values();
-    }
+	@Override
+	MouseAxis[] getValues() {
+		return MouseAxis.values();
+	}
 }

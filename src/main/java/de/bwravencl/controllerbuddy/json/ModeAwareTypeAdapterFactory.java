@@ -30,47 +30,46 @@ import java.io.IOException;
 
 public final class ModeAwareTypeAdapterFactory implements TypeAdapterFactory {
 
-    @Override
-    public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
-        final var delegate = gson.getDelegateAdapter(this, type);
+	@Override
+	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+		final var delegate = gson.getDelegateAdapter(this, type);
 
-        return new TypeAdapter<>() {
+		return new TypeAdapter<>() {
 
-            @Override
-            public T read(final JsonReader in) throws IOException {
-                final var obj = delegate.read(in);
+			@Override
+			public T read(final JsonReader in) throws IOException {
+				final var obj = delegate.read(in);
 
-                if (obj instanceof final Mode mode) {
-                    if (Profile.defaultMode.equals(mode)) {
-                        mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
-                    } else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
-                        mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
-                    }
-                }
+				if (obj instanceof final Mode mode) {
+					if (Profile.defaultMode.equals(mode)) {
+						mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+					} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
+						mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+					}
+				}
 
-                return obj;
-            }
+				return obj;
+			}
 
-            @Override
-            public void write(final JsonWriter out, final T value) throws IOException {
-                final var delegate = gson.getDelegateAdapter(ModeAwareTypeAdapterFactory.this, type);
+			@Override
+			public void write(final JsonWriter out, final T value) throws IOException {
+				final var delegate = gson.getDelegateAdapter(ModeAwareTypeAdapterFactory.this, type);
 
-                String prevDescription = null;
-                try {
-                    if (value instanceof final Mode mode
-                            && (Profile.defaultMode.equals(value)
-                                    || OnScreenKeyboard.onScreenKeyboardMode.equals(value))) {
-                        prevDescription = mode.getDescription();
-                        mode.setDescription(null);
-                    }
+				String prevDescription = null;
+				try {
+					if (value instanceof final Mode mode && (Profile.defaultMode.equals(value)
+							|| OnScreenKeyboard.onScreenKeyboardMode.equals(value))) {
+						prevDescription = mode.getDescription();
+						mode.setDescription(null);
+					}
 
-                    delegate.write(out, value);
-                } finally {
-                    if (prevDescription != null) {
-                        ((Mode) value).setDescription(prevDescription);
-                    }
-                }
-            }
-        };
-    }
+					delegate.write(out, value);
+				} finally {
+					if (prevDescription != null) {
+						((Mode) value).setDescription(prevDescription);
+					}
+				}
+			}
+		};
+	}
 }

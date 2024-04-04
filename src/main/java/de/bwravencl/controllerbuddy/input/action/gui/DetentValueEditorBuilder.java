@@ -29,74 +29,70 @@ import javax.swing.JPanel;
 
 public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
-    private static final Logger log = Logger.getLogger(DetentValueEditorBuilder.class.getName());
+	private static final Logger log = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
-    public DetentValueEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public DetentValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        final boolean enabled;
-        if (initialValue == null) {
-            enabled = false;
-            initialValue = 0f;
-        } else {
-            enabled = true;
-        }
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		final boolean enabled;
+		if (initialValue == null) {
+			enabled = false;
+			initialValue = 0f;
+		} else {
+			enabled = true;
+		}
 
-        super.buildEditor(parentPanel);
-        spinner.setEnabled(enabled);
+		super.buildEditor(parentPanel);
+		spinner.setEnabled(enabled);
 
-        final var checkBox = new JCheckBox(new AbstractAction() {
+		final var checkBox = new JCheckBox(new AbstractAction() {
 
-            @Serial
-            private static final long serialVersionUID = 3326369393786088402L;
+			@Serial
+			private static final long serialVersionUID = 3326369393786088402L;
 
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final var selected = ((JCheckBox) e.getSource()).isSelected();
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				final var selected = ((JCheckBox) e.getSource()).isSelected();
 
-                spinner.setEnabled(selected);
+				spinner.setEnabled(selected);
 
-                final Float value;
-                if (selected) {
-                    value = roundFloat((Float) spinner.getValue());
-                } else {
-                    value = null;
-                }
+				final Float value;
+				if (selected) {
+					value = roundFloat((Float) spinner.getValue());
+				} else {
+					value = null;
+				}
 
-                try {
-                    setterMethod.invoke(action, value);
-                } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                    log.log(Level.SEVERE, e1.getMessage(), e1);
-                }
+				try {
+					setterMethod.invoke(action, value);
+				} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+					log.log(Level.SEVERE, e1.getMessage(), e1);
+				}
 
-                spinner.setEnabled(selected);
-            }
-        });
-        checkBox.setSelected(enabled);
-        parentPanel.add(checkBox, 1);
-    }
+				spinner.setEnabled(selected);
+			}
+		});
+		checkBox.setSelected(enabled);
+		parentPanel.add(checkBox, 1);
+	}
 
-    @Override
-    Comparable<Float> getMaximum() {
-        return 1f;
-    }
+	@Override
+	Comparable<Float> getMaximum() {
+		return 1f;
+	}
 
-    @Override
-    Comparable<Float> getMinimum() {
-        return -1f;
-    }
+	@Override
+	Comparable<Float> getMinimum() {
+		return -1f;
+	}
 
-    @Override
-    Number getStepSize() {
-        return 0.05f;
-    }
+	@Override
+	Number getStepSize() {
+		return 0.05f;
+	}
 }

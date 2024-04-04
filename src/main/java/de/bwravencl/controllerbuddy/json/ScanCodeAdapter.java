@@ -28,36 +28,36 @@ import java.lang.reflect.Type;
 
 public final class ScanCodeAdapter implements JsonSerializer<ScanCode>, JsonDeserializer<ScanCode> {
 
-    @Override
-    public ScanCode deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-            throws JsonParseException {
-        try {
-            ScanCode scanCode = null;
-            if (json.isJsonPrimitive()) {
-                final var jsonPrimitive = (JsonPrimitive) json;
+	@Override
+	public ScanCode deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+			throws JsonParseException {
+		try {
+			ScanCode scanCode = null;
+			if (json.isJsonPrimitive()) {
+				final var jsonPrimitive = (JsonPrimitive) json;
 
-                if (jsonPrimitive.isNumber()) {
-                    scanCode = ScanCode.keyCodeToScanCodeMap.get(jsonPrimitive.getAsInt());
-                } else if (jsonPrimitive.isString()) {
-                    scanCode = ScanCode.nameToScanCodeMap.get(jsonPrimitive.getAsString());
-                }
-            }
+				if (jsonPrimitive.isNumber()) {
+					scanCode = ScanCode.keyCodeToScanCodeMap.get(jsonPrimitive.getAsInt());
+				} else if (jsonPrimitive.isString()) {
+					scanCode = ScanCode.nameToScanCodeMap.get(jsonPrimitive.getAsString());
+				}
+			}
 
-            if (scanCode == null) {
-                throw new JsonParseException(
-                        "Could not deserialize as " + ScanCode.class.getSimpleName() + ": " + json);
-            }
+			if (scanCode == null) {
+				throw new JsonParseException(
+						"Could not deserialize as " + ScanCode.class.getSimpleName() + ": " + json);
+			}
 
-            return scanCode;
-        } catch (final JsonParseException e) {
-            throw e;
-        } catch (final Throwable t) {
-            throw new JsonParseException(t);
-        }
-    }
+			return scanCode;
+		} catch (final JsonParseException e) {
+			throw e;
+		} catch (final Throwable t) {
+			throw new JsonParseException(t);
+		}
+	}
 
-    @Override
-    public JsonElement serialize(final ScanCode src, final Type typeOfSrc, final JsonSerializationContext context) {
-        return new JsonPrimitive(src.name());
-    }
+	@Override
+	public JsonElement serialize(final ScanCode src, final Type typeOfSrc, final JsonSerializationContext context) {
+		return new JsonPrimitive(src.name());
+	}
 }

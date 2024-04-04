@@ -25,74 +25,74 @@ import java.text.MessageFormat;
 
 public abstract class ToCursorAction<V extends Number> extends InvertableAction<V> {
 
-    private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
+	private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
 
-    @ActionProperty(label = "CURSOR_SENSITIVITY", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
-    int cursorSensitivity = DEFAULT_CURSOR_SENSITIVITY;
+	@ActionProperty(label = "CURSOR_SENSITIVITY", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
+	int cursorSensitivity = DEFAULT_CURSOR_SENSITIVITY;
 
-    transient float remainingD;
+	transient float remainingD;
 
-    @ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
-    private MouseAxis axis = MouseAxis.X;
+	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
+	private MouseAxis axis = MouseAxis.X;
 
-    public MouseAxis getAxis() {
-        return axis;
-    }
+	public MouseAxis getAxis() {
+		return axis;
+	}
 
-    public int getCursorSensitivity() {
-        return cursorSensitivity;
-    }
+	public int getCursorSensitivity() {
+		return cursorSensitivity;
+	}
 
-    @Override
-    public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) {
-            return super.getDescription(input);
-        }
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty()) {
+			return super.getDescription(input);
+		}
 
-        return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
-    }
+		return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
+	}
 
-    void moveCursor(final Input input, float d) {
-        d = invert ? -d : d;
+	void moveCursor(final Input input, float d) {
+		d = invert ? -d : d;
 
-        d += remainingD;
+		d += remainingD;
 
-        if (d >= -1f && d <= 1f) {
-            remainingD = d;
-        } else {
-            remainingD = 0f;
+		if (d >= -1f && d <= 1f) {
+			remainingD = d;
+		} else {
+			remainingD = 0f;
 
-            final var intD = Math.round(d);
+			final var intD = Math.round(d);
 
-            if (axis == MouseAxis.X) {
-                input.setCursorDeltaX(input.getCursorDeltaX() + intD);
-            } else {
-                input.setCursorDeltaY(input.getCursorDeltaY() + intD);
-            }
-        }
-    }
+			if (axis == MouseAxis.X) {
+				input.setCursorDeltaX(input.getCursorDeltaX() + intD);
+			} else {
+				input.setCursorDeltaY(input.getCursorDeltaY() + intD);
+			}
+		}
+	}
 
-    public void setAxis(final MouseAxis axis) {
-        this.axis = axis;
-    }
+	public void setAxis(final MouseAxis axis) {
+		this.axis = axis;
+	}
 
-    public void setCursorSensitivity(final int cursorSensitivity) {
-        this.cursorSensitivity = cursorSensitivity;
-    }
+	public void setCursorSensitivity(final int cursorSensitivity) {
+		this.cursorSensitivity = cursorSensitivity;
+	}
 
-    public enum MouseAxis {
-        X("MOUSE_AXIS_X"),
-        Y("MOUSE_AXIS_Y");
+	public enum MouseAxis {
 
-        private final String label;
+		X("MOUSE_AXIS_X"), Y("MOUSE_AXIS_Y");
 
-        MouseAxis(final String labelKey) {
-            label = Main.strings.getString(labelKey);
-        }
+		private final String label;
 
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
+		MouseAxis(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
+	}
 }

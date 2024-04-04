@@ -20,5 +20,5 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public interface IInitializationAction<V extends Number> extends IAction<V> {
 
-    void init(final Input input);
+	void init(final Input input);
 }

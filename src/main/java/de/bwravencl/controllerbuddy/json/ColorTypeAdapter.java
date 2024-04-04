@@ -28,36 +28,36 @@ import java.lang.reflect.Type;
 
 public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 
-    @Override
-    public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-            throws JsonParseException {
-        try {
-            Integer rgba = null;
-            if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber()) {
-                rgba = json.getAsInt();
-            } else if (json.isJsonObject()) {
-                final var jsonObject = json.getAsJsonObject();
+	@Override
+	public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+			throws JsonParseException {
+		try {
+			Integer rgba = null;
+			if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber()) {
+				rgba = json.getAsInt();
+			} else if (json.isJsonObject()) {
+				final var jsonObject = json.getAsJsonObject();
 
-                final var valueMember = jsonObject.get("value");
-                if (valueMember != null && valueMember.isJsonPrimitive() && ((JsonPrimitive) valueMember).isNumber()) {
-                    rgba = valueMember.getAsInt();
-                }
-            }
+				final var valueMember = jsonObject.get("value");
+				if (valueMember != null && valueMember.isJsonPrimitive() && ((JsonPrimitive) valueMember).isNumber()) {
+					rgba = valueMember.getAsInt();
+				}
+			}
 
-            if (rgba == null) {
-                throw new JsonParseException("Could not deserialize as " + Color.class.getSimpleName() + ": " + json);
-            }
+			if (rgba == null) {
+				throw new JsonParseException("Could not deserialize as " + Color.class.getSimpleName() + ": " + json);
+			}
 
-            return new Color(rgba, true);
-        } catch (final JsonParseException e) {
-            throw e;
-        } catch (final Throwable t) {
-            throw new JsonParseException(t);
-        }
-    }
+			return new Color(rgba, true);
+		} catch (final JsonParseException e) {
+			throw e;
+		} catch (final Throwable t) {
+			throw new JsonParseException(t);
+		}
+	}
 
-    @Override
-    public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
-        return new JsonPrimitive(src.getRGB());
-    }
+	@Override
+	public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
+		return new JsonPrimitive(src.getRGB());
+	}
 }

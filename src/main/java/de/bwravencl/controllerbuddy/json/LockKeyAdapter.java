@@ -28,35 +28,35 @@ import java.lang.reflect.Type;
 
 public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeserializer<LockKey> {
 
-    @Override
-    public LockKey deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-            throws JsonParseException {
-        try {
-            LockKey lockKey = null;
-            if (json.isJsonPrimitive()) {
-                final var jsonPrimitive = (JsonPrimitive) json;
+	@Override
+	public LockKey deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+			throws JsonParseException {
+		try {
+			LockKey lockKey = null;
+			if (json.isJsonPrimitive()) {
+				final var jsonPrimitive = (JsonPrimitive) json;
 
-                if (jsonPrimitive.isNumber()) {
-                    lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(jsonPrimitive.getAsInt());
-                } else if (jsonPrimitive.isString()) {
-                    lockKey = LockKey.nameToLockKeyMap.get(jsonPrimitive.getAsString());
-                }
-            }
+				if (jsonPrimitive.isNumber()) {
+					lockKey = LockKey.virtualKeyCodeToLockKeyMap.get(jsonPrimitive.getAsInt());
+				} else if (jsonPrimitive.isString()) {
+					lockKey = LockKey.nameToLockKeyMap.get(jsonPrimitive.getAsString());
+				}
+			}
 
-            if (lockKey == null) {
-                throw new JsonParseException("Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json);
-            }
+			if (lockKey == null) {
+				throw new JsonParseException("Could not deserialize as " + LockKey.class.getSimpleName() + ": " + json);
+			}
 
-            return lockKey;
-        } catch (final JsonParseException e) {
-            throw e;
-        } catch (final Throwable t) {
-            throw new JsonParseException(t);
-        }
-    }
+			return lockKey;
+		} catch (final JsonParseException e) {
+			throw e;
+		} catch (final Throwable t) {
+			throw new JsonParseException(t);
+		}
+	}
 
-    @Override
-    public JsonElement serialize(final LockKey src, final Type typeOfSrc, final JsonSerializationContext context) {
-        return new JsonPrimitive(src.name());
-    }
+	@Override
+	public JsonElement serialize(final LockKey src, final Type typeOfSrc, final JsonSerializationContext context) {
+		return new JsonPrimitive(src.name());
+	}
 }

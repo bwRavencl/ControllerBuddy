@@ -26,13 +26,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ActionProperty {
 
-    Class<? extends EditorBuilder> editorBuilder();
+	Class<? extends EditorBuilder> editorBuilder();
 
-    String label();
+	String label();
 
-    int order();
+	int order();
 
-    String overrideFieldName() default "";
+	String overrideFieldName() default "";
 
-    Class<?> overrideFieldType() default Void.class;
+	Class<?> overrideFieldType() default Void.class;
 }

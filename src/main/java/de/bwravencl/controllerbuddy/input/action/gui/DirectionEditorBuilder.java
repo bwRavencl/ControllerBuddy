@@ -23,18 +23,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class DirectionEditorBuilder extends ArrayEditorBuilder<Direction> {
 
-    public DirectionEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public DirectionEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    Direction[] getValues() {
-        return Direction.values();
-    }
+	@Override
+	Direction[] getValues() {
+		return Direction.values();
+	}
 }

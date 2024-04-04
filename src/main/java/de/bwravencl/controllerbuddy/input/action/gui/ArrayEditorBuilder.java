@@ -29,45 +29,41 @@ import javax.swing.JPanel;
 
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
-    private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
-    JComboBox<T> comboBox;
+	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
+	JComboBox<T> comboBox;
 
-    ArrayEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        comboBox = new JComboBox<>(getValues());
-        comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
-        comboBox.setSelectedItem(initialValue);
-        parentPanel.add(comboBox);
-    }
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		comboBox = new JComboBox<>(getValues());
+		comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
+		comboBox.setSelectedItem(initialValue);
+		parentPanel.add(comboBox);
+	}
 
-    abstract T[] getValues();
+	abstract T[] getValues();
 
-    private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
+	private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
 
-        @Serial
-        private static final long serialVersionUID = 1938012378184518954L;
+		@Serial
+		private static final long serialVersionUID = 1938012378184518954L;
 
-        JComboBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
-            super(action, setterMethod);
-        }
+		JComboBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
+			super(action, setterMethod);
+		}
 
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            try {
-                setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
-            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                log.log(Level.SEVERE, e1.getMessage(), e1);
-            }
-        }
-    }
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try {
+				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				log.log(Level.SEVERE, e1.getMessage(), e1);
+			}
+		}
+	}
 }

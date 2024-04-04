@@ -22,23 +22,23 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 
 public interface IAction<V extends Number> extends Cloneable {
 
-    static String getDefaultDescription(final IAction<?> action) {
-        return getLabel(action.getClass());
-    }
+	static String getDefaultDescription(final IAction<?> action) {
+		return getLabel(action.getClass());
+	}
 
-    static String getLabel(final Class<?> actionClass) {
-        final var annotation = actionClass.getAnnotation(Action.class);
-        if (annotation == null) {
-            throw new RuntimeException(
-                    actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
-        }
+	static String getLabel(final Class<?> actionClass) {
+		final var annotation = actionClass.getAnnotation(Action.class);
+		if (annotation == null) {
+			throw new RuntimeException(
+					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
+		}
 
-        return Main.strings.getString(annotation.label());
-    }
+		return Main.strings.getString(annotation.label());
+	}
 
-    Object clone() throws CloneNotSupportedException;
+	Object clone() throws CloneNotSupportedException;
 
-    void doAction(final Input input, int component, V value);
+	void doAction(final Input input, int component, V value);
 
-    String getDescription(final Input input);
+	String getDescription(final Input input);
 }

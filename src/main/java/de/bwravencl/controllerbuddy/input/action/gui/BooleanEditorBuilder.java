@@ -29,43 +29,39 @@ import javax.swing.JPanel;
 
 public class BooleanEditorBuilder extends EditorBuilder {
 
-    private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
-    JCheckBox checkBox;
+	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
+	JCheckBox checkBox;
 
-    public BooleanEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));
-        checkBox.setSelected((boolean) initialValue);
-        parentPanel.add(checkBox);
-    }
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));
+		checkBox.setSelected((boolean) initialValue);
+		parentPanel.add(checkBox);
+	}
 
-    private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
+	private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
 
-        @Serial
-        private static final long serialVersionUID = -33052386834598414L;
+		@Serial
+		private static final long serialVersionUID = -33052386834598414L;
 
-        private JCheckBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
-            super(action, setterMethod);
-        }
+		private JCheckBoxSetPropertyAction(final IAction<?> action, final Method setterMethod) {
+			super(action, setterMethod);
+		}
 
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            try {
-                final var selected = ((JCheckBox) e.getSource()).isSelected();
-                setterMethod.invoke(action, selected);
-            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                log.log(Level.SEVERE, e1.getMessage(), e1);
-            }
-        }
-    }
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try {
+				final var selected = ((JCheckBox) e.getSource()).isSelected();
+				setterMethod.invoke(action, selected);
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				log.log(Level.SEVERE, e1.getMessage(), e1);
+			}
+		}
+	}
 }

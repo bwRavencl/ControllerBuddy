@@ -27,77 +27,68 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuild
 @Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-    private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
-    private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
-    transient float remainingD;
+	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
+	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
+	transient float remainingD;
 
-    @ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
-    private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
+	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
+	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
-    @ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
-    private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
+	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
+	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
-    @ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
-    private Float detentValue = null;
+	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
+	private Float detentValue = null;
 
-    @Override
-    public void doAction(final Input input, final int component, final Float value) {
-        final var absValue = Math.abs(value);
+	@Override
+	public void doAction(final Input input, final int component, final Float value) {
+		final var absValue = Math.abs(value);
 
-        if (input.isAxisSuspended(component) || absValue <= deadZone) {
-            return;
-        }
+		if (input.isAxisSuspended(component) || absValue <= deadZone) {
+			return;
+		}
 
-        final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+		final var inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-        var d = Input.normalize(
-                        Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent),
-                        -inMax,
-                        inMax,
-                        -maxRelativeSpeed,
-                        maxRelativeSpeed)
-                * input.getRateMultiplier();
+		var d = Input.normalize(Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent), -inMax,
+				inMax, -maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
 
-        d += remainingD;
+		d += remainingD;
 
-        if (Math.abs(d) < input.getPlanckLength()) {
-            remainingD = d;
-        } else {
-            remainingD = 0f;
+		if (Math.abs(d) < input.getPlanckLength()) {
+			remainingD = d;
+		} else {
+			remainingD = 0f;
 
-            final var runMode = input.getRunMode();
-            final var oldValue = Input.normalize(
-                    input.getAxes().get(virtualAxis),
-                    runMode.getMinAxisValue(),
-                    runMode.getMaxAxisValue(),
-                    minValue,
-                    maxValue);
+			final var runMode = input.getRunMode();
+			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
+					runMode.getMaxAxisValue(), minValue, maxValue);
 
-            input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
-        }
-    }
+			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
+		}
+	}
 
-    public Float getDetentValue() {
-        return detentValue;
-    }
+	public Float getDetentValue() {
+		return detentValue;
+	}
 
-    public float getMaxRelativeSpeed() {
-        return maxRelativeSpeed;
-    }
+	public float getMaxRelativeSpeed() {
+		return maxRelativeSpeed;
+	}
 
-    public boolean isHapticFeedback() {
-        return hapticFeedback;
-    }
+	public boolean isHapticFeedback() {
+		return hapticFeedback;
+	}
 
-    public void setDetentValue(final Float detentValue) {
-        this.detentValue = detentValue;
-    }
+	public void setDetentValue(final Float detentValue) {
+		this.detentValue = detentValue;
+	}
 
-    public void setHapticFeedback(final boolean hapticFeedback) {
-        this.hapticFeedback = hapticFeedback;
-    }
+	public void setHapticFeedback(final boolean hapticFeedback) {
+		this.hapticFeedback = hapticFeedback;
+	}
 
-    public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
-        this.maxRelativeSpeed = maxRelativeSpeed;
-    }
+	public void setMaxRelativeSpeed(final float maxRelativeSpeed) {
+		this.maxRelativeSpeed = maxRelativeSpeed;
+	}
 }

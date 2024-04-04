@@ -23,28 +23,24 @@ import javax.swing.JPanel;
 
 public final class LongPressEditorBuilder extends BooleanEditorBuilder {
 
-    public LongPressEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public LongPressEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        final var cycleEditor = editActionsDialog.isCycleEditor();
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		final var cycleEditor = editActionsDialog.isCycleEditor();
 
-        if (cycleEditor) {
-            initialValue = false;
-        }
+		if (cycleEditor) {
+			initialValue = false;
+		}
 
-        super.buildEditor(parentPanel);
+		super.buildEditor(parentPanel);
 
-        if (cycleEditor) {
-            checkBox.setEnabled(false);
-        }
-    }
+		if (cycleEditor) {
+			checkBox.setEnabled(false);
+		}
+	}
 }

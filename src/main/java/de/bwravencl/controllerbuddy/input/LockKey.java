@@ -27,44 +27,35 @@ import java.util.Map;
 
 public record LockKey(String name, int virtualKeyCode, int mask, KeySym keySym) {
 
-    public static final String LOCK_SUFFIX = " Lock";
-    public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
-    public static final LockKey CapsLockLockKey = new LockKey(
-            CAPS_LOCK,
-            KeyEvent.VK_CAPS_LOCK,
-            X11WithLockKeyFunctions.STATE_CAPS_LOCK_MASK,
-            new KeySym(X11.XK_CapsLock));
-    public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
-    public static final LockKey NumLockLockKey = new LockKey(
-            NUM_LOCK,
-            KeyEvent.VK_NUM_LOCK,
-            X11WithLockKeyFunctions.STATE_NUM_LOCK_MASK,
-            new KeySym(X11WithLockKeyFunctions.XK_NumLock));
-    public static final Map<String, LockKey> nameToLockKeyMap;
-    public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
-    private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
-    public static final LockKey ScrollLockLockKey = new LockKey(
-            SCROLL_LOCK,
-            KeyEvent.VK_SCROLL_LOCK,
-            X11WithLockKeyFunctions.STATE_SCROLL_LOCK_MASK,
-            new KeySym(X11WithLockKeyFunctions.XK_ScrollLock));
-    public static final List<LockKey> LOCK_KEYS = List.of(CapsLockLockKey, NumLockLockKey, ScrollLockLockKey);
+	public static final String LOCK_SUFFIX = " Lock";
+	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
+	public static final LockKey CapsLockLockKey = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK,
+			X11WithLockKeyFunctions.STATE_CAPS_LOCK_MASK, new KeySym(X11.XK_CapsLock));
+	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
+	public static final LockKey NumLockLockKey = new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK,
+			X11WithLockKeyFunctions.STATE_NUM_LOCK_MASK, new KeySym(X11WithLockKeyFunctions.XK_NumLock));
+	public static final Map<String, LockKey> nameToLockKeyMap;
+	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
+	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
+	public static final LockKey ScrollLockLockKey = new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK,
+			X11WithLockKeyFunctions.STATE_SCROLL_LOCK_MASK, new KeySym(X11WithLockKeyFunctions.XK_ScrollLock));
+	public static final List<LockKey> LOCK_KEYS = List.of(CapsLockLockKey, NumLockLockKey, ScrollLockLockKey);
 
-    static {
-        final var modifiableNameToLockKeyMap = new HashMap<String, LockKey>();
-        final var modifiableVirtualKeyCodeToLockKeyMap = new HashMap<Integer, LockKey>();
+	static {
+		final var modifiableNameToLockKeyMap = new HashMap<String, LockKey>();
+		final var modifiableVirtualKeyCodeToLockKeyMap = new HashMap<Integer, LockKey>();
 
-        for (final var lockKey : LOCK_KEYS) {
-            modifiableNameToLockKeyMap.put(lockKey.name, lockKey);
-            modifiableVirtualKeyCodeToLockKeyMap.put(lockKey.virtualKeyCode, lockKey);
-        }
+		for (final var lockKey : LOCK_KEYS) {
+			modifiableNameToLockKeyMap.put(lockKey.name, lockKey);
+			modifiableVirtualKeyCodeToLockKeyMap.put(lockKey.virtualKeyCode, lockKey);
+		}
 
-        nameToLockKeyMap = Collections.unmodifiableMap(modifiableNameToLockKeyMap);
-        virtualKeyCodeToLockKeyMap = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
-    }
+		nameToLockKeyMap = Collections.unmodifiableMap(modifiableNameToLockKeyMap);
+		virtualKeyCodeToLockKeyMap = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 }

@@ -22,28 +22,24 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class MouseButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
-    public MouseButtonEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public MouseButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    Comparable<Integer> getMaximum() {
-        return 3;
-    }
+	@Override
+	Comparable<Integer> getMaximum() {
+		return 3;
+	}
 
-    @Override
-    Comparable<Integer> getMinimum() {
-        return 1;
-    }
+	@Override
+	Comparable<Integer> getMinimum() {
+		return 1;
+	}
 
-    @Override
-    Number getStepSize() {
-        return 1;
-    }
+	@Override
+	Number getStepSize() {
+		return 1;
+	}
 }

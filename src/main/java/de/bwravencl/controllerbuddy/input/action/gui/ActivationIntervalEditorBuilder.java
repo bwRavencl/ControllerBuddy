@@ -26,41 +26,37 @@ import javax.swing.text.DefaultFormatter;
 
 public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
-    public ActivationIntervalEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public ActivationIntervalEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        super.buildEditor(parentPanel);
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		super.buildEditor(parentPanel);
 
-        final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.strings.getString("MILLISECOND_SYMBOL"));
-        spinner.setEditor(editor);
-        textField = editor.getTextField();
-        textField.setColumns(6);
+		final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.strings.getString("MILLISECOND_SYMBOL"));
+		spinner.setEditor(editor);
+		textField = editor.getTextField();
+		textField.setColumns(6);
 
-        final var formatter = (DefaultFormatter) textField.getFormatter();
-        formatter.setCommitsOnValidEdit(true);
-    }
+		final var formatter = (DefaultFormatter) textField.getFormatter();
+		formatter.setCommitsOnValidEdit(true);
+	}
 
-    @Override
-    Comparable<Integer> getMaximum() {
-        return 10_000;
-    }
+	@Override
+	Comparable<Integer> getMaximum() {
+		return 10_000;
+	}
 
-    @Override
-    Comparable<Integer> getMinimum() {
-        return 0;
-    }
+	@Override
+	Comparable<Integer> getMinimum() {
+		return 0;
+	}
 
-    @Override
-    Number getStepSize() {
-        return 10;
-    }
+	@Override
+	Number getStepSize() {
+		return 10;
+	}
 }

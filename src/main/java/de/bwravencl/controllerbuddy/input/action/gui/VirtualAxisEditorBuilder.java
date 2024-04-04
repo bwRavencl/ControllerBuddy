@@ -23,18 +23,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class VirtualAxisEditorBuilder extends ArrayEditorBuilder<VirtualAxis> {
 
-    public VirtualAxisEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public VirtualAxisEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    VirtualAxis[] getValues() {
-        return VirtualAxis.values();
-    }
+	@Override
+	VirtualAxis[] getValues() {
+		return VirtualAxis.values();
+	}
 }

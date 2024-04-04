@@ -23,18 +23,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 
-    public LockKeyEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public LockKeyEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    LockKey[] getValues() {
-        return LockKey.LOCK_KEYS.toArray(LockKey[]::new);
-    }
+	@Override
+	LockKey[] getValues() {
+		return LockKey.LOCK_KEYS.toArray(LockKey[]::new);
+	}
 }

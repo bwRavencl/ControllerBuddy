@@ -23,18 +23,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class VrCoordinateSystemEditorBuilder extends ArrayEditorBuilder<VrCoordinateSystem> {
 
-    public VrCoordinateSystemEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public VrCoordinateSystemEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    VrCoordinateSystem[] getValues() {
-        return VrCoordinateSystem.values();
-    }
+	@Override
+	VrCoordinateSystem[] getValues() {
+		return VrCoordinateSystem.values();
+	}
 }

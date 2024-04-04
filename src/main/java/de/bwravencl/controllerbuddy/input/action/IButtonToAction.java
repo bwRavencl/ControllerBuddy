@@ -24,76 +24,75 @@ import java.util.Map;
 
 public interface IButtonToAction extends ILongPressAction<Byte> {
 
-    Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
-    Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
+	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
-    private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
-        return action.getActivation() == Activation.SINGLE_ON_RELEASE;
-    }
+	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
+		return action.getActivation() == Activation.SINGLE_ON_RELEASE;
+	}
 
-    static void reset() {
-        actionToDownSinceMap.clear();
-        actionToMustDenyActivationMap.clear();
-    }
+	static void reset() {
+		actionToDownSinceMap.clear();
+		actionToMustDenyActivationMap.clear();
+	}
 
-    default byte handleLongPress(final Input input, final int component, final byte value) {
-        if (!isLongPress()) {
-            return value;
-        }
+	default byte handleLongPress(final Input input, final int component, final byte value) {
+		if (!isLongPress()) {
+			return value;
+		}
 
-        final var currentTime = System.currentTimeMillis();
+		final var currentTime = System.currentTimeMillis();
 
-        if (value != 0) {
-            if (!actionToDownSinceMap.containsKey(this)) {
-                actionToDownSinceMap.put(this, currentTime);
-            } else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
-                for (final var mode : input.getProfile().getModes()) {
-                    final var actions = mode.getButtonToActionsMap().get(component);
+		if (value != 0) {
+			if (!actionToDownSinceMap.containsKey(this)) {
+				actionToDownSinceMap.put(this, currentTime);
+			} else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+				for (final var mode : input.getProfile().getModes()) {
+					final var actions = mode.getButtonToActionsMap().get(component);
 
-                    if (actions != null && actions.contains(this)) {
-                        for (final IAction<?> action : actions) {
-                            if (action == this) {
-                                continue;
-                            }
+					if (actions != null && actions.contains(this)) {
+						for (final IAction<?> action : actions) {
+							if (action == this) {
+								continue;
+							}
 
-                            var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
+							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
 
-                            if (isUndelayedOnReleaseAction == null) {
-                                isUndelayedOnReleaseAction = false;
+							if (isUndelayedOnReleaseAction == null) {
+								isUndelayedOnReleaseAction = false;
 
-                                if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
-                                    if (!buttonToKeyAction.isLongPress()) {
-                                        isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
-                                    }
-                                } else if (action
-                                        instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
-                                    if (!buttonToMouseButtonAction.isLongPress()) {
-                                        isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
-                                    }
-                                } else if (action instanceof final ButtonToCycleAction buttonToCycleAction) {
-                                    if (!buttonToCycleAction.isLongPress()) {
-                                        isUndelayedOnReleaseAction = true;
-                                    }
-                                }
+								if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
+									if (!buttonToKeyAction.isLongPress()) {
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
+									}
+								} else if (action instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
+									if (!buttonToMouseButtonAction.isLongPress()) {
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
+									}
+								} else if (action instanceof final ButtonToCycleAction buttonToCycleAction) {
+									if (!buttonToCycleAction.isLongPress()) {
+										isUndelayedOnReleaseAction = true;
+									}
+								}
 
-                                actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
-                            }
+								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
+							}
 
-                            if (isUndelayedOnReleaseAction) {
-                                ((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
-                            }
-                        }
+							if (isUndelayedOnReleaseAction) {
+								((IActivatableAction<?>) action).setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+							}
+						}
 
-                        break;
-                    }
-                }
+						break;
+					}
+				}
 
-                return value;
-            }
-        } else {
-            actionToDownSinceMap.remove(this);
-        }
+				return value;
+			}
+		} else {
+			actionToDownSinceMap.remove(this);
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 }

@@ -20,5 +20,5 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public interface IResetableAction<V extends Number> extends IAction<V> {
 
-    void reset(final Input input);
+	void reset(final Input input);
 }

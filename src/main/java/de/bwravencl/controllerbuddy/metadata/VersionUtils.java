@@ -21,52 +21,50 @@ import java.util.Optional;
 
 public final class VersionUtils {
 
-    public static Optional<Integer> compareVersions(final String otherVersion) throws IllegalArgumentException {
-        if (otherVersion == null) {
-            return Optional.empty();
-        }
+	public static Optional<Integer> compareVersions(final String otherVersion) throws IllegalArgumentException {
+		if (otherVersion == null) {
+			return Optional.empty();
+		}
 
-        try {
-            final var otherVersionParts = getVersionIntegerParts(otherVersion);
-            if (otherVersionParts.length < 2) {
-                return Optional.empty();
-            }
+		try {
+			final var otherVersionParts = getVersionIntegerParts(otherVersion);
+			if (otherVersionParts.length < 2) {
+				return Optional.empty();
+			}
 
-            final var currentVersionParts = getVersionIntegerParts(Metadata.VERSION);
-            for (var i = 0; i < 2; i++) {
-                if (otherVersionParts[i] < currentVersionParts[i]) {
-                    return Optional.of(-1);
-                }
-                if (otherVersionParts[i] > currentVersionParts[i]) {
-                    return Optional.of(1);
-                }
-            }
-        } catch (final NumberFormatException e) {
-            return Optional.empty();
-        }
+			final var currentVersionParts = getVersionIntegerParts(Metadata.VERSION);
+			for (var i = 0; i < 2; i++) {
+				if (otherVersionParts[i] < currentVersionParts[i]) {
+					return Optional.of(-1);
+				}
+				if (otherVersionParts[i] > currentVersionParts[i]) {
+					return Optional.of(1);
+				}
+			}
+		} catch (final NumberFormatException e) {
+			return Optional.empty();
+		}
 
-        return Optional.of(0);
-    }
+		return Optional.of(0);
+	}
 
-    public static String getMajorAndMinorVersion() {
-        final var versionWithoutSuffix = stripHashSuffix(Metadata.VERSION);
-        return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
-    }
+	public static String getMajorAndMinorVersion() {
+		final var versionWithoutSuffix = stripHashSuffix(Metadata.VERSION);
+		return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
+	}
 
-    private static int[] getVersionIntegerParts(final String version) {
-        final var versionWithoutSuffix = stripHashSuffix(version);
-        return Arrays.stream(versionWithoutSuffix.split("\\."))
-                .mapToInt(Integer::parseInt)
-                .toArray();
-    }
+	private static int[] getVersionIntegerParts(final String version) {
+		final var versionWithoutSuffix = stripHashSuffix(version);
+		return Arrays.stream(versionWithoutSuffix.split("\\.")).mapToInt(Integer::parseInt).toArray();
+	}
 
-    private static String stripHashSuffix(final String version) {
-        final var dashIndex = version.indexOf('-');
+	private static String stripHashSuffix(final String version) {
+		final var dashIndex = version.indexOf('-');
 
-        if (dashIndex < 0) {
-            return version;
-        }
+		if (dashIndex < 0) {
+			return version;
+		}
 
-        return version.substring(0, dashIndex);
-    }
+		return version.substring(0, dashIndex);
+	}
 }

@@ -22,18 +22,14 @@ import java.lang.reflect.InvocationTargetException;
 
 public final class MaxAxisValueEditorBuilder extends AxisValueEditorBuilder {
 
-    public MaxAxisValueEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public MaxAxisValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    Comparable<Float> getMinimum() {
-        return 0f;
-    }
+	@Override
+	Comparable<Float> getMinimum() {
+		return 0f;
+	}
 }

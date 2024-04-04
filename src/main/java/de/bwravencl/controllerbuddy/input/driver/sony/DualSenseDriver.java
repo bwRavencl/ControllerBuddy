@@ -29,182 +29,179 @@ import org.lwjgl.glfw.GLFW;
 
 public final class DualSenseDriver extends SonyDriver {
 
-    private static final Logger log = Logger.getLogger(DualSenseDriver.class.getName());
-    private static final byte USB_INPUT_REPORT_ID = 0x1;
-    private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x31;
-    private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
-    private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
+	private static final Logger log = Logger.getLogger(DualSenseDriver.class.getName());
+	private static final byte USB_INPUT_REPORT_ID = 0x1;
+	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x31;
+	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
+	private static final Connection BluetoothConnection = new Connection(1, BLUETOOTH_INPUT_REPORT_ID);
 
-    private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDevice hidDevice) {
-        super(input, controller, hidDevice);
-    }
+	private DualSenseDriver(final Input input, final ControllerInfo controller, final HidDevice hidDevice) {
+		super(input, controller, hidDevice);
+	}
 
-    @Override
-    int getButtonsOffset() {
-        return 8;
-    }
+	@Override
+	int getButtonsOffset() {
+		return 8;
+	}
 
-    @Override
-    byte[] getDefaultHidReport() {
-        if (connection == null) {
-            return null;
-        }
+	@Override
+	byte[] getDefaultHidReport() {
+		if (connection == null) {
+			return null;
+		}
 
-        final byte[] defaultHidReport;
-        if (connection.isBluetooth()) {
-            defaultHidReport = new byte[BLUETOOTH_REPORT_LENGTH - 1];
+		final byte[] defaultHidReport;
+		if (connection.isBluetooth()) {
+			defaultHidReport = new byte[BLUETOOTH_REPORT_LENGTH - 1];
 
-            defaultHidReport[0] = 0x2;
-        } else {
-            defaultHidReport = new byte[47];
-        }
+			defaultHidReport[0] = 0x2;
+		} else {
+			defaultHidReport = new byte[47];
+		}
 
-        defaultHidReport[connection.offset()] = 0x3;
-        defaultHidReport[1 + connection.offset()] = 0x15;
+		defaultHidReport[connection.offset()] = 0x3;
+		defaultHidReport[1 + connection.offset()] = 0x15;
 
-        defaultHidReport[44 + connection.offset()] = (byte) 0x0;
-        defaultHidReport[45 + connection.offset()] = (byte) 0x0;
-        defaultHidReport[46 + connection.offset()] = (byte) 0xFF;
+		defaultHidReport[44 + connection.offset()] = (byte) 0x0;
+		defaultHidReport[45 + connection.offset()] = (byte) 0x0;
+		defaultHidReport[46 + connection.offset()] = (byte) 0xFF;
 
-        return defaultHidReport;
-    }
+		return defaultHidReport;
+	}
 
-    @Override
-    byte getDefaultHidReportId() {
-        if (connection.isBluetooth()) {
-            return (byte) 0x31;
-        } else {
-            return (byte) 0x2;
-        }
-    }
+	@Override
+	byte getDefaultHidReportId() {
+		if (connection.isBluetooth()) {
+			return (byte) 0x31;
+		} else {
+			return (byte) 0x2;
+		}
+	}
 
-    @Override
-    int getL2Offset() {
-        return 5;
-    }
+	@Override
+	int getL2Offset() {
+		return 5;
+	}
 
-    @Override
-    long getLightRumbleDuration() {
-        return 38L;
-    }
+	@Override
+	long getLightRumbleDuration() {
+		return 38L;
+	}
 
-    @Override
-    byte getLightRumbleStrength() {
-        return 25;
-    }
+	@Override
+	byte getLightRumbleStrength() {
+		return 25;
+	}
 
-    @Override
-    int getLightbarOffset() {
-        return 44;
-    }
+	@Override
+	int getLightbarOffset() {
+		return 44;
+	}
 
-    @Override
-    Logger getLogger() {
-        return log;
-    }
+	@Override
+	Logger getLogger() {
+		return log;
+	}
 
-    @Override
-    int getRumbleOffset() {
-        return 3;
-    }
+	@Override
+	int getRumbleOffset() {
+		return 3;
+	}
 
-    @Override
-    long getStrongRumbleDuration() {
-        return 50L;
-    }
+	@Override
+	long getStrongRumbleDuration() {
+		return 50L;
+	}
 
-    @Override
-    byte getStrongRumbleStrength() {
-        return 64;
-    }
+	@Override
+	byte getStrongRumbleStrength() {
+		return 64;
+	}
 
-    @Override
-    int getTouchpadOffset() {
-        return 33;
-    }
+	@Override
+	int getTouchpadOffset() {
+		return 33;
+	}
 
-    @Override
-    void handleBattery(final byte[] reportData, final int offset) {
-        final var chargingStatus = (reportData[53 + offset] & 0xF0) >> 4;
-        final var batteryData = reportData[53 + offset] & 0xF;
+	@Override
+	void handleBattery(final byte[] reportData, final int offset) {
+		final var chargingStatus = (reportData[53 + offset] & 0xF0) >> 4;
+		final var batteryData = reportData[53 + offset] & 0xF;
 
-        final int batteryCapacity;
-        final var charging =
-                switch (chargingStatus) {
-                    case 0x0 -> {
-                        batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-                        yield false;
-                    }
-                    case 0x1 -> {
-                        batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
-                        yield true;
-                    }
-                    case 0x2 -> {
-                        batteryCapacity = 100;
-                        yield false;
-                    }
-                    default -> {
-                        batteryCapacity = 0;
-                        yield false;
-                    }
-                };
-        setCharging(charging);
-        setBatteryCapacity(batteryCapacity);
-    }
+		final int batteryCapacity;
+		final var charging = switch (chargingStatus) {
+		case 0x0 -> {
+			batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+			yield false;
+		}
+		case 0x1 -> {
+			batteryCapacity = batteryData == 10 ? 100 : batteryData * 10 + 5;
+			yield true;
+		}
+		case 0x2 -> {
+			batteryCapacity = 100;
+			yield false;
+		}
+		default -> {
+			batteryCapacity = 0;
+			yield false;
+		}
+		};
+		setCharging(charging);
+		setBatteryCapacity(batteryCapacity);
+	}
 
-    @Override
-    void handleNewConnection(final int reportLength) {
-        connection = isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
-    }
+	@Override
+	void handleNewConnection(final int reportLength) {
+		connection = isBluetoothConnection(reportLength) ? BluetoothConnection : UsbConnection;
+	}
 
-    @Override
-    boolean reset() {
-        if (connection == null) {
-            return false;
-        }
+	@Override
+	boolean reset() {
+		if (connection == null) {
+			return false;
+		}
 
-        if (connection.isBluetooth()) {
-            final var defaultHidReport = getDefaultHidReport();
-            if (defaultHidReport == null) {
-                return false;
-            }
+		if (connection.isBluetooth()) {
+			final var defaultHidReport = getDefaultHidReport();
+			if (defaultHidReport == null) {
+				return false;
+			}
 
-            hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
-            hidReport[2] = 0x8;
+			hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
+			hidReport[2] = 0x8;
 
-            if (!sendHidReport()) {
-                return false;
-            }
-        }
+			if (!sendHidReport()) {
+				return false;
+			}
+		}
 
-        return super.reset();
-    }
+		return super.reset();
+	}
 
-    public static class DualSenseDriverBuilder implements IDriverBuilder {
+	public static class DualSenseDriverBuilder implements IDriverBuilder {
 
-        @Override
-        public Driver getIfAvailable(
-                final Input input,
-                final List<ControllerInfo> presentControllers,
-                final ControllerInfo selectedController) {
-            final String name;
-            if (Main.isMac) {
-                name = GLFW.glfwGetGamepadName(selectedController.jid());
-            } else {
-                name = selectedController.name();
-            }
+		@Override
+		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+				final ControllerInfo selectedController) {
+			final String name;
+			if (Main.isMac) {
+				name = GLFW.glfwGetGamepadName(selectedController.jid());
+			} else {
+				name = selectedController.name();
+			}
 
-            if (!"PS5 Controller".equals(name)) {
-                return null;
-            }
+			if (!"PS5 Controller".equals(name)) {
+				return null;
+			}
 
-            final var hidDevice = getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log);
+			final var hidDevice = getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log);
 
-            if (hidDevice != null) {
-                return new DualSenseDriver(input, selectedController, hidDevice);
-            }
+			if (hidDevice != null) {
+				return new DualSenseDriver(input, selectedController, hidDevice);
+			}
 
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 }

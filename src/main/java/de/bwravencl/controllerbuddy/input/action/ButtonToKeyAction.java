@@ -23,9 +23,9 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 @Action(label = "TO_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
 public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButtonToAction {
 
-    @Override
-    public void doAction(final Input input, final int component, Byte value) {
-        value = handleLongPress(input, component, value);
-        handleAction(value != 0, input);
-    }
+	@Override
+	public void doAction(final Input input, final int component, Byte value) {
+		value = handleLongPress(input, component, value);
+		handleAction(value != 0, input);
+	}
 }

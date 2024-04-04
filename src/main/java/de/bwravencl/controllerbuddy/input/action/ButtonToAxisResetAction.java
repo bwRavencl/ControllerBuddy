@@ -31,130 +31,130 @@ import java.text.MessageFormat;
 
 @Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
 public final class ButtonToAxisResetAction extends DescribableAction<Byte>
-        implements IButtonToAction, IActivatableAction<Byte> {
+		implements IButtonToAction, IActivatableAction<Byte> {
 
-    private static final float DEFAULT_RESET_VALUE = 0f;
+	private static final float DEFAULT_RESET_VALUE = 0f;
 
-    private static final boolean DEFAULT_FLUID = false;
+	private static final boolean DEFAULT_FLUID = false;
 
-    @ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
-    private VirtualAxis virtualAxis = VirtualAxis.X;
+	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	private VirtualAxis virtualAxis = VirtualAxis.X;
 
-    @ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
-    private float resetValue = DEFAULT_RESET_VALUE;
+	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
+	private float resetValue = DEFAULT_RESET_VALUE;
 
-    @ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
-    private boolean fluid = DEFAULT_FLUID;
+	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
+	private boolean fluid = DEFAULT_FLUID;
 
-    @ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 50)
-    private boolean longPress = DEFAULT_LONG_PRESS;
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 50)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
-    @ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
-    private Activation activation = Activation.SINGLE_IMMEDIATELY;
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
-    private transient Activatable activatable;
+	private transient Activatable activatable;
 
-    @Override
-    public void doAction(final Input input, final int component, final Byte value) {
-        final var hot = handleLongPress(input, component, value) != 0;
+	@Override
+	public void doAction(final Input input, final int component, final Byte value) {
+		final var hot = handleLongPress(input, component, value) != 0;
 
-        switch (activation) {
-            case REPEAT -> {
-                if (hot) {
-                    resetAxis(input);
-                }
-            }
-            case SINGLE_IMMEDIATELY -> {
-                if (!hot) {
-                    activatable = Activatable.YES;
-                } else if (activatable == Activatable.YES) {
-                    activatable = Activatable.NO;
-                    resetAxis(input);
-                }
-            }
-            case SINGLE_ON_RELEASE -> {
-                if (hot) {
-                    if (activatable == Activatable.NO) {
-                        activatable = Activatable.YES;
-                    } else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
-                        activatable = Activatable.NO;
-                    }
-                } else if (activatable == Activatable.YES) {
-                    activatable = Activatable.NO;
-                    resetAxis(input);
-                }
-            }
-        }
-    }
+		switch (activation) {
+		case REPEAT -> {
+			if (hot) {
+				resetAxis(input);
+			}
+		}
+		case SINGLE_IMMEDIATELY -> {
+			if (!hot) {
+				activatable = Activatable.YES;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				resetAxis(input);
+			}
+		}
+		case SINGLE_ON_RELEASE -> {
+			if (hot) {
+				if (activatable == Activatable.NO) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+					activatable = Activatable.NO;
+				}
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				resetAxis(input);
+			}
+		}
+		}
+	}
 
-    @Override
-    public Activatable getActivatable() {
-        return activatable;
-    }
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
+	}
 
-    @Override
-    public Activation getActivation() {
-        return activation;
-    }
+	@Override
+	public Activation getActivation() {
+		return activation;
+	}
 
-    @Override
-    public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) {
-            return super.getDescription(input);
-        }
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty()) {
+			return super.getDescription(input);
+		}
 
-        return MessageFormat.format(Main.strings.getString("RESET_VJOY_AXIS_NAME"), virtualAxis);
-    }
+		return MessageFormat.format(Main.strings.getString("RESET_VJOY_AXIS_NAME"), virtualAxis);
+	}
 
-    public float getResetValue() {
-        return resetValue;
-    }
+	public float getResetValue() {
+		return resetValue;
+	}
 
-    public VirtualAxis getVirtualAxis() {
-        return virtualAxis;
-    }
+	public VirtualAxis getVirtualAxis() {
+		return virtualAxis;
+	}
 
-    public boolean isFluid() {
-        return fluid;
-    }
+	public boolean isFluid() {
+		return fluid;
+	}
 
-    @Override
-    public boolean isLongPress() {
-        return longPress;
-    }
+	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
 
-    private void resetAxis(final Input input) {
-        if (fluid) {
-            input.moveAxis(virtualAxis, resetValue);
-        } else {
-            input.setAxis(virtualAxis, resetValue, false, null);
-        }
-    }
+	private void resetAxis(final Input input) {
+		if (fluid) {
+			input.moveAxis(virtualAxis, resetValue);
+		} else {
+			input.setAxis(virtualAxis, resetValue, false, null);
+		}
+	}
 
-    @Override
-    public void setActivatable(final Activatable activatable) {
-        this.activatable = activatable;
-    }
+	@Override
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
+	}
 
-    @Override
-    public void setActivation(final Activation activation) {
-        this.activation = activation;
-    }
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
+	}
 
-    public void setFluid(final boolean fluid) {
-        this.fluid = fluid;
-    }
+	public void setFluid(final boolean fluid) {
+		this.fluid = fluid;
+	}
 
-    @Override
-    public void setLongPress(final boolean longPress) {
-        this.longPress = longPress;
-    }
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
+	}
 
-    public void setResetValue(final float resetValue) {
-        this.resetValue = resetValue;
-    }
+	public void setResetValue(final float resetValue) {
+		this.resetValue = resetValue;
+	}
 
-    public void setVirtualAxis(final VirtualAxis virtualAxis) {
-        this.virtualAxis = virtualAxis;
-    }
+	public void setVirtualAxis(final VirtualAxis virtualAxis) {
+		this.virtualAxis = virtualAxis;
+	}
 }

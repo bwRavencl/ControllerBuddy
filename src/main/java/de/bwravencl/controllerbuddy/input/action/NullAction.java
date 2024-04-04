@@ -23,16 +23,17 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 @Action(label = "NULL_ACTION", category = ActionCategory.ALL, order = 999)
 public final class NullAction implements IAction<Number> {
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 
-    @Override
-    public void doAction(final Input input, final int component, final Number value) {}
+	@Override
+	public void doAction(final Input input, final int component, final Number value) {
+	}
 
-    @Override
-    public String getDescription(final Input input) {
-        return IAction.getDefaultDescription(this);
-    }
+	@Override
+	public String getDescription(final Input input) {
+		return IAction.getDefaultDescription(this);
+	}
 }

@@ -21,40 +21,37 @@ import de.bwravencl.controllerbuddy.input.Input;
 
 public interface IActivatableAction<V extends Number> extends IInitializationAction<V> {
 
-    Activatable getActivatable();
+	Activatable getActivatable();
 
-    Activation getActivation();
+	Activation getActivation();
 
-    @Override
-    default void init(final Input input) {
-        setActivatable(getActivation() == Activation.SINGLE_ON_RELEASE ? Activatable.NO : Activatable.YES);
-    }
+	@Override
+	default void init(final Input input) {
+		setActivatable(getActivation() == Activation.SINGLE_ON_RELEASE ? Activatable.NO : Activatable.YES);
+	}
 
-    void setActivatable(final Activatable activatable);
+	void setActivatable(final Activatable activatable);
 
-    void setActivation(final Activation activation);
+	void setActivation(final Activation activation);
 
-    enum Activatable {
-        YES,
-        NO,
-        DENIED_BY_OTHER_ACTION,
-        ALWAYS
-    }
+	enum Activatable {
+		YES, NO, DENIED_BY_OTHER_ACTION, ALWAYS
+	}
 
-    enum Activation {
-        REPEAT("ACTIVATION_REPEAT"),
-        SINGLE_IMMEDIATELY("ACTIVATION_SINGLE_IMMEDIATELY"),
-        SINGLE_ON_RELEASE("ACTIVATION_SINGLE_ON_RELEASE");
+	enum Activation {
 
-        private final String label;
+		REPEAT("ACTIVATION_REPEAT"), SINGLE_IMMEDIATELY("ACTIVATION_SINGLE_IMMEDIATELY"),
+		SINGLE_ON_RELEASE("ACTIVATION_SINGLE_ON_RELEASE");
 
-        Activation(final String labelKey) {
-            label = Main.strings.getString(labelKey);
-        }
+		private final String label;
 
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
+		Activation(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
+	}
 }

@@ -29,71 +29,66 @@ import java.text.MessageFormat;
 @Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Byte> implements IButtonToAction {
 
-    private boolean longPress = DEFAULT_LONG_PRESS;
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
-    @ActionProperty(
-            label = "KEY",
-            editorBuilder = LockKeyEditorBuilder.class,
-            overrideFieldName = "lockKey",
-            overrideFieldType = LockKey.class,
-            order = 10)
-    private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
+	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
+	private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
 
-    @ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
-    private boolean on = true;
+	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	private boolean on = true;
 
-    private transient boolean wasUp = true;
+	private transient boolean wasUp = true;
 
-    @Override
-    public void doAction(final Input input, final int component, Byte value) {
-        value = handleLongPress(input, component, value);
+	@Override
+	public void doAction(final Input input, final int component, Byte value) {
+		value = handleLongPress(input, component, value);
 
-        if (value != 0) {
-            if (wasUp) {
-                wasUp = false;
-                if (on) {
-                    input.getOnLockKeys().add(virtualKeyCode);
-                } else {
-                    input.getOffLockKeys().add(virtualKeyCode);
-                }
-            }
-        } else {
-            wasUp = true;
-        }
-    }
+		if (value != 0) {
+			if (wasUp) {
+				wasUp = false;
+				if (on) {
+					input.getOnLockKeys().add(virtualKeyCode);
+				} else {
+					input.getOffLockKeys().add(virtualKeyCode);
+				}
+			}
+		} else {
+			wasUp = true;
+		}
+	}
 
-    @Override
-    public String getDescription(final Input input) {
-        if (!isDescriptionEmpty()) {
-            return super.getDescription(input);
-        }
+	@Override
+	public String getDescription(final Input input) {
+		if (!isDescriptionEmpty()) {
+			return super.getDescription(input);
+		}
 
-        return MessageFormat.format(Main.strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
-    }
+		return MessageFormat.format(Main.strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
+	}
 
-    public LockKey getLockKey() {
-        return virtualKeyCode;
-    }
+	public LockKey getLockKey() {
+		return virtualKeyCode;
+	}
 
-    @Override
-    public boolean isLongPress() {
-        return longPress;
-    }
+	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
 
-    public boolean isOn() {
-        return on;
-    }
+	public boolean isOn() {
+		return on;
+	}
 
-    public void setLockKey(final LockKey lockKey) {
-        virtualKeyCode = lockKey;
-    }
+	public void setLockKey(final LockKey lockKey) {
+		virtualKeyCode = lockKey;
+	}
 
-    @Override
-    public void setLongPress(final boolean longPress) {
-        this.longPress = longPress;
-    }
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
+	}
 
-    public void setOn(final boolean on) {
-        this.on = on;
-    }
+	public void setOn(final boolean on) {
+		this.on = on;
+	}
 }

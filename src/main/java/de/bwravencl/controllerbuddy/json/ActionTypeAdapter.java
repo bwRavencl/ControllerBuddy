@@ -33,58 +33,56 @@ import java.util.logging.Logger;
 
 public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
-    private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
+	private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
 
-    private static final String PROPERTY_TYPE = "type";
-    private static final String PROPERTY_DATA = "data";
-    private final Set<String> unknownActionClasses = new HashSet<>();
+	private static final String PROPERTY_TYPE = "type";
+	private static final String PROPERTY_DATA = "data";
+	private final Set<String> unknownActionClasses = new HashSet<>();
 
-    private static JsonElement get(final JsonObject wrapper, final String memberName) {
-        final var jsonElement = wrapper.get(memberName);
-        if (jsonElement == null) {
-            throw new JsonParseException(
-                    "No member '" + memberName + "' found in what was expected to be an interface wrapper");
-        }
+	private static JsonElement get(final JsonObject wrapper, final String memberName) {
+		final var jsonElement = wrapper.get(memberName);
+		if (jsonElement == null) {
+			throw new JsonParseException(
+					"No member '" + memberName + "' found in what was expected to be an interface wrapper");
+		}
 
-        return jsonElement;
-    }
+		return jsonElement;
+	}
 
-    @Override
-    public IAction<?> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-            throws JsonParseException {
-        final var wrapper = json.getAsJsonObject();
-        final var typeName = get(wrapper, PROPERTY_TYPE);
-        final var typeNameString = typeName.getAsString();
-        final var data = get(wrapper, PROPERTY_DATA);
+	@Override
+	public IAction<?> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+			throws JsonParseException {
+		final var wrapper = json.getAsJsonObject();
+		final var typeName = get(wrapper, PROPERTY_TYPE);
+		final var typeNameString = typeName.getAsString();
+		final var data = get(wrapper, PROPERTY_DATA);
 
-        try {
-            final var actualType = Class.forName(typeNameString);
-            return context.deserialize(data, actualType);
-        } catch (final ClassNotFoundException e) {
-            if (typeOfT == IAction.class) {
-                log.log(
-                        Level.WARNING,
-                        "Action class '" + typeNameString + "' not found, substituting with '"
-                                + NullAction.class.getSimpleName() + "'");
-                unknownActionClasses.add(typeNameString);
+		try {
+			final var actualType = Class.forName(typeNameString);
+			return context.deserialize(data, actualType);
+		} catch (final ClassNotFoundException e) {
+			if (typeOfT == IAction.class) {
+				log.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
+						+ NullAction.class.getSimpleName() + "'");
+				unknownActionClasses.add(typeNameString);
 
-                return new NullAction();
-            }
+				return new NullAction();
+			}
 
-            throw new JsonParseException(e);
-        }
-    }
+			throw new JsonParseException(e);
+		}
+	}
 
-    public Set<String> getUnknownActionClasses() {
-        return unknownActionClasses;
-    }
+	public Set<String> getUnknownActionClasses() {
+		return unknownActionClasses;
+	}
 
-    @Override
-    public JsonElement serialize(final IAction<?> src, final Type typeOfSrc, final JsonSerializationContext context) {
-        final var wrapper = new JsonObject();
-        wrapper.addProperty(PROPERTY_TYPE, src.getClass().getName());
-        wrapper.add(PROPERTY_DATA, context.serialize(src));
+	@Override
+	public JsonElement serialize(final IAction<?> src, final Type typeOfSrc, final JsonSerializationContext context) {
+		final var wrapper = new JsonObject();
+		wrapper.addProperty(PROPERTY_TYPE, src.getClass().getName());
+		wrapper.add(PROPERTY_DATA, context.serialize(src));
 
-        return wrapper;
-    }
+		return wrapper;
+	}
 }

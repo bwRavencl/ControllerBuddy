@@ -26,46 +26,44 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 @Action(label = "TO_SCROLL_ACTION", category = ActionCategory.AXIS, order = 35)
 public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
-    private static final float DEFAULT_DEAD_ZONE = 0.1f;
-    private static final float DEFAULT_EXPONENT = 1f;
+	private static final float DEFAULT_DEAD_ZONE = 0.1f;
+	private static final float DEFAULT_EXPONENT = 1f;
 
-    @ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
-    private float deadZone = DEFAULT_DEAD_ZONE;
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	private float deadZone = DEFAULT_DEAD_ZONE;
 
-    @ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
-    private float exponent = DEFAULT_EXPONENT;
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
+	private float exponent = DEFAULT_EXPONENT;
 
-    @Override
-    public void doAction(final Input input, final int component, final Float value) {
-        if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
-            final var rateMultiplier = input.getRateMultiplier();
+	@Override
+	public void doAction(final Input input, final int component, final Float value) {
+		if (!input.isAxisSuspended(component) && Math.abs(value) > deadZone) {
+			final var rateMultiplier = input.getRateMultiplier();
 
-            final var d = -Input.normalize(
-                    Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
-                    (float) -Math.pow(99.9f, exponent) * rateMultiplier,
-                    (float) Math.pow(99.9f, exponent) * rateMultiplier,
-                    -clicks,
-                    clicks);
+			final var d = -Input.normalize(
+					Math.signum(value) * (float) Math.pow(Math.abs(value) * 100f, exponent) * rateMultiplier,
+					(float) -Math.pow(99.9f, exponent) * rateMultiplier,
+					(float) Math.pow(99.9f, exponent) * rateMultiplier, -clicks, clicks);
 
-            scroll(input, d);
-        } else {
-            remainingD = 0f;
-        }
-    }
+			scroll(input, d);
+		} else {
+			remainingD = 0f;
+		}
+	}
 
-    public float getDeadZone() {
-        return deadZone;
-    }
+	public float getDeadZone() {
+		return deadZone;
+	}
 
-    public float getExponent() {
-        return exponent;
-    }
+	public float getExponent() {
+		return exponent;
+	}
 
-    public void setDeadZone(final float deadZone) {
-        this.deadZone = deadZone;
-    }
+	public void setDeadZone(final float deadZone) {
+		this.deadZone = deadZone;
+	}
 
-    public void setExponent(final float exponent) {
-        this.exponent = exponent;
-    }
+	public void setExponent(final float exponent) {
+		this.exponent = exponent;
+	}
 }

@@ -30,41 +30,34 @@ import javax.swing.JPanel;
 
 public final class ActionsEditorBuilder extends EditorBuilder {
 
-    public ActionsEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public ActionsEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        final var editActionsButton = new JButton(new EditActionsAction());
-        editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
-        parentPanel.add(editActionsButton);
-    }
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		final var editActionsButton = new JButton(new EditActionsAction());
+		editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		parentPanel.add(editActionsButton);
+	}
 
-    private final class EditActionsAction extends AbstractAction {
+	private final class EditActionsAction extends AbstractAction {
 
-        @Serial
-        private static final long serialVersionUID = -6538021954760621595L;
+		@Serial
+		private static final long serialVersionUID = -6538021954760621595L;
 
-        private EditActionsAction() {
-            putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
-            putValue(
-                    SHORT_DESCRIPTION,
-                    MessageFormat.format(
-                            Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
-                            IAction.getLabel(action.getClass())));
-        }
+		private EditActionsAction() {
+			putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+					IAction.getLabel(action.getClass())));
+		}
 
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            final var editComponentDialog = new EditActionsDialog(editActionsDialog, (ButtonToCycleAction) action);
-            editComponentDialog.setVisible(true);
-        }
-    }
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var editComponentDialog = new EditActionsDialog(editActionsDialog, (ButtonToCycleAction) action);
+			editComponentDialog.setVisible(true);
+		}
+	}
 }

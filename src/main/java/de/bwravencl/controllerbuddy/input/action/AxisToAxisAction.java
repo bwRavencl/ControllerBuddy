@@ -29,99 +29,99 @@ import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
 @Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
-    private static final float DEFAULT_INITIAL_VALUE = 0f;
-    private static final float DEFAULT_MIN_VALUE = -1f;
-    private static final float DEFAULT_MAX_VALUE = 1f;
-    private static final float DEFAULT_DEAD_ZONE = 0f;
-    private static final float DEFAULT_EXPONENT = 1f;
+	private static final float DEFAULT_INITIAL_VALUE = 0f;
+	private static final float DEFAULT_MIN_VALUE = -1f;
+	private static final float DEFAULT_MAX_VALUE = 1f;
+	private static final float DEFAULT_DEAD_ZONE = 0f;
+	private static final float DEFAULT_EXPONENT = 1f;
 
-    @ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
-    float deadZone = DEFAULT_DEAD_ZONE;
+	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	float deadZone = DEFAULT_DEAD_ZONE;
 
-    @ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
-    float minValue = DEFAULT_MIN_VALUE;
+	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
+	float minValue = DEFAULT_MIN_VALUE;
 
-    @ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
-    float maxValue = DEFAULT_MAX_VALUE;
+	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
+	float maxValue = DEFAULT_MAX_VALUE;
 
-    @ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 103)
-    float exponent = DEFAULT_EXPONENT;
+	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 103)
+	float exponent = DEFAULT_EXPONENT;
 
-    @ActionProperty(label = "INITIAL_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 202)
-    float initialValue = DEFAULT_INITIAL_VALUE;
+	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 202)
+	float initialValue = DEFAULT_INITIAL_VALUE;
 
-    @Override
-    public void doAction(final Input input, final int component, Float value) {
-        if (input.isAxisSuspended(component)) {
-            return;
-        }
+	@Override
+	public void doAction(final Input input, final int component, Float value) {
+		if (input.isAxisSuspended(component)) {
+			return;
+		}
 
-        if (Math.abs(value) <= deadZone) {
-            value = 0f;
-        } else {
-            final float inMax;
-            if (exponent != 0f) {
-                inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+		if (Math.abs(value) <= deadZone) {
+			value = 0f;
+		} else {
+			final float inMax;
+			if (exponent != 0f) {
+				inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-                value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
-            } else {
-                inMax = 1f;
-            }
+				value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
+			} else {
+				inMax = 1f;
+			}
 
-            if (value >= 0f) {
-                value = Input.normalize(value, deadZone, inMax, 0f, maxValue);
-            } else {
-                value = Input.normalize(value, -inMax, -deadZone, minValue, 0f);
-            }
-        }
+			if (value >= 0f) {
+				value = Input.normalize(value, deadZone, inMax, 0f, maxValue);
+			} else {
+				value = Input.normalize(value, -inMax, -deadZone, minValue, 0f);
+			}
+		}
 
-        input.setAxis(virtualAxis, invert ? -value : value, false, null);
-    }
+		input.setAxis(virtualAxis, invert ? -value : value, false, null);
+	}
 
-    public float getDeadZone() {
-        return deadZone;
-    }
+	public float getDeadZone() {
+		return deadZone;
+	}
 
-    public float getExponent() {
-        return exponent;
-    }
+	public float getExponent() {
+		return exponent;
+	}
 
-    public float getInitialValue() {
-        return initialValue;
-    }
+	public float getInitialValue() {
+		return initialValue;
+	}
 
-    public float getMaxValue() {
-        return maxValue;
-    }
+	public float getMaxValue() {
+		return maxValue;
+	}
 
-    public float getMinValue() {
-        return minValue;
-    }
+	public float getMinValue() {
+		return minValue;
+	}
 
-    @Override
-    public void init(final Input input) {
-        if (!input.isSkipAxisInitialization()) {
-            input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
-        }
-    }
+	@Override
+	public void init(final Input input) {
+		if (!input.isSkipAxisInitialization()) {
+			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
+		}
+	}
 
-    public void setDeadZone(final float deadZone) {
-        this.deadZone = deadZone;
-    }
+	public void setDeadZone(final float deadZone) {
+		this.deadZone = deadZone;
+	}
 
-    public void setExponent(final float exponent) {
-        this.exponent = exponent;
-    }
+	public void setExponent(final float exponent) {
+		this.exponent = exponent;
+	}
 
-    public void setInitialValue(final float initialValue) {
-        this.initialValue = initialValue;
-    }
+	public void setInitialValue(final float initialValue) {
+		this.initialValue = initialValue;
+	}
 
-    public void setMaxValue(final float maxValue) {
-        this.maxValue = maxValue;
-    }
+	public void setMaxValue(final float maxValue) {
+		this.maxValue = maxValue;
+	}
 
-    public void setMinValue(final float minValue) {
-        this.minValue = minValue;
-    }
+	public void setMinValue(final float minValue) {
+		this.minValue = minValue;
+	}
 }

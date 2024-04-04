@@ -26,74 +26,71 @@ import javax.swing.JOptionPane;
 
 public abstract class RunMode implements Runnable {
 
-    public static final int DEFAULT_POLL_INTERVAL = 1;
-    private static final Logger log = Logger.getLogger(RunMode.class.getName());
-    final Main main;
-    final Input input;
-    long pollInterval = DEFAULT_POLL_INTERVAL;
-    int minAxisValue;
-    int maxAxisValue;
-    int nButtons;
-    private boolean stopping;
+	public static final int DEFAULT_POLL_INTERVAL = 1;
+	private static final Logger log = Logger.getLogger(RunMode.class.getName());
+	final Main main;
+	final Input input;
+	long pollInterval = DEFAULT_POLL_INTERVAL;
+	int minAxisValue;
+	int maxAxisValue;
+	int nButtons;
+	private boolean stopping;
 
-    RunMode(final Main main, final Input input) {
-        this.main = main;
-        this.input = input;
-        input.setRunMode(this);
-    }
+	RunMode(final Main main, final Input input) {
+		this.main = main;
+		this.input = input;
+		input.setRunMode(this);
+	}
 
-    final void controllerDisconnected() {
-        if (stopping) {
-            return;
-        }
+	final void controllerDisconnected() {
+		if (stopping) {
+			return;
+		}
 
-        Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
+		Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
 
-        log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
-        if (!main.isSkipControllerDialogs()) {
-            EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(
-                    main,
-                    main.getFrame(),
-                    Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-                    Main.strings.getString("ERROR_DIALOG_TITLE"),
-                    JOptionPane.ERROR_MESSAGE));
-        }
+		log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not read from", input.getController()));
+		if (!main.isSkipControllerDialogs()) {
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+					Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+		}
 
-        stopping = true;
-    }
+		stopping = true;
+	}
 
-    abstract Logger getLogger();
+	abstract Logger getLogger();
 
-    public final int getMaxAxisValue() {
-        return maxAxisValue;
-    }
+	public final int getMaxAxisValue() {
+		return maxAxisValue;
+	}
 
-    public final int getMinAxisValue() {
-        return minAxisValue;
-    }
+	public final int getMinAxisValue() {
+		return minAxisValue;
+	}
 
-    public final long getPollInterval() {
-        return pollInterval;
-    }
+	public final long getPollInterval() {
+		return pollInterval;
+	}
 
-    public final int getnButtons() {
-        return nButtons;
-    }
+	public final int getnButtons() {
+		return nButtons;
+	}
 
-    final void logStart() {
-        getLogger().log(Level.INFO, "Starting output");
-    }
+	final void logStart() {
+		getLogger().log(Level.INFO, "Starting output");
+	}
 
-    final void logStop() {
-        getLogger().log(Level.INFO, "Stopped output");
-    }
+	final void logStop() {
+		getLogger().log(Level.INFO, "Stopped output");
+	}
 
-    public final void setPollInterval(final long pollInterval) {
-        this.pollInterval = pollInterval;
-    }
+	public final void setPollInterval(final long pollInterval) {
+		this.pollInterval = pollInterval;
+	}
 
-    void setnButtons(final int nButtons) {
-        this.nButtons = nButtons;
-        input.initButtons();
-    }
+	void setnButtons(final int nButtons) {
+		this.nButtons = nButtons;
+		input.initButtons();
+	}
 }

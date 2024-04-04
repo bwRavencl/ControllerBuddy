@@ -16,4 +16,5 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public interface IAxisToAction extends IAction<Float> {}
+public interface IAxisToAction extends IAction<Float> {
+}

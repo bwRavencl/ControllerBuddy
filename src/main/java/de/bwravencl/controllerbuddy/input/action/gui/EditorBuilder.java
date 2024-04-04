@@ -31,76 +31,72 @@ import javax.swing.JPanel;
 
 public abstract class EditorBuilder {
 
-    protected final EditActionsDialog editActionsDialog;
-    protected final IAction<?> action;
-    protected final Method setterMethod;
-    protected Object initialValue;
+	protected final EditActionsDialog editActionsDialog;
+	protected final IAction<?> action;
+	protected final Method setterMethod;
+	protected Object initialValue;
 
-    EditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        this.editActionsDialog = editActionsDialog;
-        this.action = action;
+	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		this.editActionsDialog = editActionsDialog;
+		this.action = action;
 
-        final var clazz = action.getClass();
+		final var clazz = action.getClass();
 
-        final var fieldNameChars = fieldName.toCharArray();
-        fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
-        final var capizalizedFieldName = String.valueOf(fieldNameChars);
+		final var fieldNameChars = fieldName.toCharArray();
+		fieldNameChars[0] = Character.toUpperCase(fieldNameChars[0]);
+		final var capizalizedFieldName = String.valueOf(fieldNameChars);
 
-        setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
+		setterMethod = clazz.getMethod("set" + capizalizedFieldName, fieldType);
 
-        final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
-        final var modeProperty = fieldType == Mode.class;
+		final var getterMethodPrefix = fieldType == boolean.class || fieldType == Boolean.class ? "is" : "get";
+		final var modeProperty = fieldType == Mode.class;
 
-        final var getterParams = modeProperty ? new Class<?>[] {Input.class} : null;
-        final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
+		final var getterParams = modeProperty ? new Class<?>[] { Input.class } : null;
+		final var getterMethod = clazz.getMethod(getterMethodPrefix + capizalizedFieldName, getterParams);
 
-        final var getterArgs = modeProperty ? new Object[] {editActionsDialog.getInput()} : null;
-        initialValue = getterMethod.invoke(action, getterArgs);
-    }
+		final var getterArgs = modeProperty ? new Object[] { editActionsDialog.getInput() } : null;
+		initialValue = getterMethod.invoke(action, getterArgs);
+	}
 
-    public abstract void buildEditor(final JPanel parentPanel);
+	public abstract void buildEditor(final JPanel parentPanel);
 
-    abstract static class PropertySetter {
+	abstract static class PropertySetter {
 
-        final IAction<?> action;
-        final Method setterMethod;
+		final IAction<?> action;
+		final Method setterMethod;
 
-        PropertySetter(final IAction<?> action, final Method setterMethod) {
-            this.action = action;
-            this.setterMethod = setterMethod;
-        }
-    }
+		PropertySetter(final IAction<?> action, final Method setterMethod) {
+			this.action = action;
+			this.setterMethod = setterMethod;
+		}
+	}
 
-    abstract static class PropertySetterAction extends AbstractAction {
+	abstract static class PropertySetterAction extends AbstractAction {
 
-        @Serial
-        private static final long serialVersionUID = 4141747329971720525L;
+		@Serial
+		private static final long serialVersionUID = 4141747329971720525L;
 
-        @SuppressWarnings({"serial", "RedundantSuppression"})
-        final IAction<?> action;
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		final IAction<?> action;
 
-        @SuppressWarnings({"serial", "RedundantSuppression"})
-        final Method setterMethod;
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		final Method setterMethod;
 
-        PropertySetterAction(final IAction<?> action, final Method setterMethod) {
-            this.action = action;
-            this.setterMethod = setterMethod;
-        }
+		PropertySetterAction(final IAction<?> action, final Method setterMethod) {
+			this.action = action;
+			this.setterMethod = setterMethod;
+		}
 
-        @Serial
-        private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
-            throw new NotSerializableException(PropertySetterAction.class.getName());
-        }
+		@Serial
+		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(PropertySetterAction.class.getName());
+		}
 
-        @Serial
-        private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
-            throw new NotSerializableException(PropertySetterAction.class.getName());
-        }
-    }
+		@Serial
+		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(PropertySetterAction.class.getName());
+		}
+	}
 }

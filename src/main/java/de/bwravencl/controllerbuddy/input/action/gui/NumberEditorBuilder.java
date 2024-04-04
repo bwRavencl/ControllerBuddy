@@ -35,79 +35,73 @@ import javax.swing.text.DefaultFormatter;
 
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
-    private static final int FLOAT_ROUNDING_DECIMALS = 3;
-    private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
-    JSpinner spinner;
-    JFormattedTextField textField;
+	private static final int FLOAT_ROUNDING_DECIMALS = 3;
+	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+	JSpinner spinner;
+	JFormattedTextField textField;
 
-    NumberEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
+			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    static float roundFloat(final Float value) {
-        return new BigDecimal(value.toString())
-                .setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP)
-                .floatValue();
-    }
+	static float roundFloat(final Float value) {
+		return new BigDecimal(value.toString()).setScale(FLOAT_ROUNDING_DECIMALS, RoundingMode.HALF_UP).floatValue();
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
-        spinner = new JSpinner(model);
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
+		spinner = new JSpinner(model);
 
-        final var editor = spinner.getEditor();
-        textField = ((JSpinner.DefaultEditor) editor).getTextField();
-        textField.setColumns(4);
+		final var editor = spinner.getEditor();
+		textField = ((JSpinner.DefaultEditor) editor).getTextField();
+		textField.setColumns(4);
 
-        final var formatter = (DefaultFormatter) textField.getFormatter();
-        formatter.setCommitsOnValidEdit(true);
+		final var formatter = (DefaultFormatter) textField.getFormatter();
+		formatter.setCommitsOnValidEdit(true);
 
-        spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod));
+		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod));
 
-        parentPanel.add(spinner);
-    }
+		parentPanel.add(spinner);
+	}
 
-    abstract Comparable<T> getMaximum();
+	abstract Comparable<T> getMaximum();
 
-    abstract Comparable<T> getMinimum();
+	abstract Comparable<T> getMinimum();
 
-    abstract Number getStepSize();
+	abstract Number getStepSize();
 
-    static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
+	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 
-        private Consumer<Object> valueConsumer;
+		private Consumer<Object> valueConsumer;
 
-        private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
-            super(action, setterMethod);
-        }
+		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
+			super(action, setterMethod);
+		}
 
-        void setValueConsumer(final Consumer<Object> valueConsumer) {
-            this.valueConsumer = valueConsumer;
-        }
+		void setValueConsumer(final Consumer<Object> valueConsumer) {
+			this.valueConsumer = valueConsumer;
+		}
 
-        @Override
-        public void stateChanged(final ChangeEvent e) {
-            try {
-                var value = ((JSpinner) e.getSource()).getValue();
+		@Override
+		public void stateChanged(final ChangeEvent e) {
+			try {
+				var value = ((JSpinner) e.getSource()).getValue();
 
-                if (value instanceof final Float floatValue) {
-                    value = roundFloat(floatValue);
-                }
+				if (value instanceof final Float floatValue) {
+					value = roundFloat(floatValue);
+				}
 
-                setterMethod.invoke(action, value);
+				setterMethod.invoke(action, value);
 
-                if (valueConsumer != null) {
-                    valueConsumer.accept(value);
-                }
-            } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                log.log(Level.SEVERE, e1.getMessage(), e1);
-            }
-        }
-    }
+				if (valueConsumer != null) {
+					valueConsumer.accept(value);
+				}
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				log.log(Level.SEVERE, e1.getMessage(), e1);
+			}
+		}
+	}
 }

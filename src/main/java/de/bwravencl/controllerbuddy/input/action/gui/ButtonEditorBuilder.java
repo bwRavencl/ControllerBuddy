@@ -29,70 +29,66 @@ import javax.swing.text.DefaultFormatterFactory;
 
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
-    public ButtonEditorBuilder(
-            final EditActionsDialog editActionsDialog,
-            final IAction<?> action,
-            final String fieldName,
-            final Class<?> fieldType)
-            throws SecurityException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
-                    InvocationTargetException {
-        super(editActionsDialog, action, fieldName, fieldType);
-    }
+	public ButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		super(editActionsDialog, action, fieldName, fieldType);
+	}
 
-    @Override
-    public void buildEditor(final JPanel parentPanel) {
-        super.buildEditor(parentPanel);
+	@Override
+	public void buildEditor(final JPanel parentPanel) {
+		super.buildEditor(parentPanel);
 
-        final var formatterFactory = new ZeroBasedFormatterFactory();
-        textField.setFormatterFactory(formatterFactory);
+		final var formatterFactory = new ZeroBasedFormatterFactory();
+		textField.setFormatterFactory(formatterFactory);
 
-        final var formatter = (DefaultFormatter) textField.getFormatter();
-        formatter.setCommitsOnValidEdit(true);
-    }
+		final var formatter = (DefaultFormatter) textField.getFormatter();
+		formatter.setCommitsOnValidEdit(true);
+	}
 
-    @Override
-    Comparable<Integer> getMaximum() {
-        return Input.MAX_N_BUTTONS - 1;
-    }
+	@Override
+	Comparable<Integer> getMaximum() {
+		return Input.MAX_N_BUTTONS - 1;
+	}
 
-    @Override
-    Comparable<Integer> getMinimum() {
-        return 0;
-    }
+	@Override
+	Comparable<Integer> getMinimum() {
+		return 0;
+	}
 
-    @Override
-    Number getStepSize() {
-        return 1;
-    }
+	@Override
+	Number getStepSize() {
+		return 1;
+	}
 
-    private static final class ZeroBasedFormatter extends DefaultFormatter {
+	private static final class ZeroBasedFormatter extends DefaultFormatter {
 
-        @Serial
-        private static final long serialVersionUID = -7229427356426148291L;
+		@Serial
+		private static final long serialVersionUID = -7229427356426148291L;
 
-        @Override
-        public Object stringToValue(final String text) {
-            if (text == null || text.isBlank()) {
-                return null;
-            }
+		@Override
+		public Object stringToValue(final String text) {
+			if (text == null || text.isBlank()) {
+				return null;
+			}
 
-            return Integer.parseInt(text) - 1;
-        }
+			return Integer.parseInt(text) - 1;
+		}
 
-        @Override
-        public String valueToString(final Object value) {
-            return Integer.toString((int) value + 1);
-        }
-    }
+		@Override
+		public String valueToString(final Object value) {
+			return Integer.toString((int) value + 1);
+		}
+	}
 
-    private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
+	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
 
-        @Serial
-        private static final long serialVersionUID = -7273246342105584827L;
+		@Serial
+		private static final long serialVersionUID = -7273246342105584827L;
 
-        @Override
-        public AbstractFormatter getFormatter(final JFormattedTextField tf) {
-            return new ZeroBasedFormatter();
-        }
-    }
+		@Override
+		public AbstractFormatter getFormatter(final JFormattedTextField tf) {
+			return new ZeroBasedFormatter();
+		}
+	}
 }

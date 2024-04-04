@@ -25,17 +25,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Action {
 
-    ActionCategory category();
+	ActionCategory category();
 
-    String label();
+	String label();
 
-    int order();
+	int order();
 
-    enum ActionCategory {
-        ALL,
-        AXIS,
-        BUTTON,
-        BUTTON_AND_CYCLES,
-        ON_SCREEN_KEYBOARD_MODE
-    }
+	enum ActionCategory {
+		ALL, AXIS, BUTTON, BUTTON_AND_CYCLES, ON_SCREEN_KEYBOARD_MODE
+	}
 }

@@ -31,101 +31,99 @@ import java.util.stream.Stream;
 
 public final class Mode implements Cloneable {
 
-    private UUID uuid;
-    private String description;
-    private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
-    private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
+	private UUID uuid;
+	private String description;
+	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
+	private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
 
-    public Mode() {
-        uuid = UUID.randomUUID();
-        description = Main.strings.getString("NEW_MODE_DESCRIPTION");
-    }
+	public Mode() {
+		uuid = UUID.randomUUID();
+		description = Main.strings.getString("NEW_MODE_DESCRIPTION");
+	}
 
-    public Mode(final UUID uuid) {
-        this.uuid = uuid;
-    }
+	public Mode(final UUID uuid) {
+		this.uuid = uuid;
+	}
 
-    @SuppressWarnings("unchecked")
-    private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
-            final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
-        final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
-        for (final var entry : actionMap.entrySet()) {
-            for (final var action : entry.getValue()) {
-                final var key = entry.getKey();
+	@SuppressWarnings("unchecked")
+	private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
+			final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
+		final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
+		for (final var entry : actionMap.entrySet()) {
+			for (final var action : entry.getValue()) {
+				final var key = entry.getKey();
 
-                final var clonedActions = clonedActionMap.computeIfAbsent(key, k -> new ArrayList<>());
-                clonedActions.add((IAction<V>) action.clone());
-            }
-        }
+				final var clonedActions = clonedActionMap.computeIfAbsent(key, k -> new ArrayList<>());
+				clonedActions.add((IAction<V>) action.clone());
+			}
+		}
 
-        return clonedActionMap;
-    }
+		return clonedActionMap;
+	}
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        final var mode = (Mode) super.clone();
-        mode.uuid = uuid;
-        mode.setDescription(description);
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		final var mode = (Mode) super.clone();
+		mode.uuid = uuid;
+		mode.setDescription(description);
 
-        mode.axisToActionsMap = cloneActionMap(axisToActionsMap);
-        mode.buttonToActionsMap = cloneActionMap(buttonToActionsMap);
+		mode.axisToActionsMap = cloneActionMap(axisToActionsMap);
+		mode.buttonToActionsMap = cloneActionMap(buttonToActionsMap);
 
-        return mode;
-    }
+		return mode;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof final Mode mode && Objects.equals(uuid, mode.uuid);
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof final Mode mode && Objects.equals(uuid, mode.uuid);
+	}
 
-    public Set<IAction<?>> getAllActions() {
-        return Stream.concat(axisToActionsMap.values().stream(), buttonToActionsMap.values().stream())
-                .flatMap(List::stream)
-                .collect(Collectors.toUnmodifiableSet());
-    }
+	public Set<IAction<?>> getAllActions() {
+		return Stream.concat(axisToActionsMap.values().stream(), buttonToActionsMap.values().stream())
+				.flatMap(List::stream).collect(Collectors.toUnmodifiableSet());
+	}
 
-    public Map<Integer, List<IAction<Float>>> getAxisToActionsMap() {
-        return axisToActionsMap;
-    }
+	public Map<Integer, List<IAction<Float>>> getAxisToActionsMap() {
+		return axisToActionsMap;
+	}
 
-    public Map<Integer, List<IAction<Byte>>> getButtonToActionsMap() {
-        return buttonToActionsMap;
-    }
+	public Map<Integer, List<IAction<Byte>>> getButtonToActionsMap() {
+		return buttonToActionsMap;
+	}
 
-    public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
-        if (type == ComponentType.AXIS) {
-            return axisToActionsMap;
-        }
-        return buttonToActionsMap;
-    }
+	public Map<Integer, ?> getComponentToActionsMap(final ComponentType type) {
+		if (type == ComponentType.AXIS) {
+			return axisToActionsMap;
+		}
+		return buttonToActionsMap;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public UUID getUuid() {
-        return uuid;
-    }
+	public UUID getUuid() {
+		return uuid;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(uuid);
+	}
 
-    public void setDescription(final String description) {
-        this.description = description;
-    }
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
-    @Override
-    public String toString() {
-        return description;
-    }
+	@Override
+	public String toString() {
+		return description;
+	}
 
-    public record Component(Mode.Component.ComponentType type, int index) {
+	public record Component(Mode.Component.ComponentType type, int index) {
 
-        public enum ComponentType {
-            AXIS,
-            BUTTON
-        }
-    }
+		public enum ComponentType {
+			AXIS, BUTTON
+		}
+	}
 }
