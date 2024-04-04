@@ -40,6 +40,7 @@ public abstract class DescribableAction<V extends Number> implements IAction<V> 
 			return description;
 		}
 
+		// noinspection UnnecessarilyQualifiedStaticUsage
 		return IAction.getDefaultDescription(this);
 	}
 
