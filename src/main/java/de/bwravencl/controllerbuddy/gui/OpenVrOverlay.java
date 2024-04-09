@@ -244,7 +244,7 @@ class OpenVrOverlay {
 		rotate(mat, (float) -Math.atan(mat.m(7) / mat.m(11)), 1f, 0f, 0f);
 	}
 
-	@SuppressWarnings("SameParameterValue")
+	@SuppressWarnings({ "DuplicatedCode", "SameParameterValue" })
 	private static void rotate(final HmdMatrix34 mat, final float angle, final float x, final float y, final float z) {
 		final var c = (float) Math.cos(angle);
 		final var s = (float) Math.sin(angle);

@@ -128,6 +128,7 @@ public class EvdevDriver extends Driver {
 		}
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	private void sendEffectEvent(final short effectId, final int value) throws IOException {
 		if (evdevInfo == null) {
 			return;
@@ -143,6 +144,7 @@ public class EvdevDriver extends Driver {
 		write(playEvent);
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	private void setGain(final int gain) throws IOException {
 		final var gainEvent = new uk.co.bithatch.linuxio.Input.input_event();
 		gainEvent.code = FF_GAIN;

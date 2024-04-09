@@ -80,6 +80,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		return -1;
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
