@@ -1,3 +1,5 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GrUnresolvedAccess
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
