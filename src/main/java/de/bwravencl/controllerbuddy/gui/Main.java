@@ -1417,6 +1417,10 @@ public final class Main {
 			final var headElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "head");
 			htmlDocument.getDocumentElement().appendChild(headElement);
 
+			final var styleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "style");
+			styleElement.setTextContent(".svg-div{aspect-ratio:2.5;margin-top:50px}");
+			headElement.appendChild(styleElement);
+
 			final var titleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "title");
 			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNTITLED");
 			titleElement.setTextContent(title);
@@ -1447,8 +1451,7 @@ public final class Main {
 
 				svgDivElement.setAttribute("id", svgDivElementId);
 				svgDivElement.setAttribute("class", "svg-div");
-				svgDivElement.setAttribute("style",
-						"margin-top:50px;display:" + (Profile.defaultMode.equals(mode) ? "block" : "none"));
+				svgDivElement.setAttribute("style", "display:" + (Profile.defaultMode.equals(mode) ? "block" : "none"));
 				bodyElement.appendChild(svgDivElement);
 
 				final var svgDocument = generateSvgDocument(mode, false);
