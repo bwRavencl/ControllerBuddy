@@ -59,8 +59,6 @@ ext {
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 
-	hid4javaVersion = '0.8.0'
-
 	openVrSupport = false
 }
 
@@ -134,7 +132,7 @@ dependencies {
 
 	implementation 'commons-cli:commons-cli:1.6.0'
 	implementation 'com.formdev:flatlaf:3.4.1'
-	implementation("org.hid4java:hid4java:$hid4javaVersion") { exclude module: 'jna' }
+	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'io.github.classgraph:classgraph:4.8.170'
@@ -160,8 +158,6 @@ dependencies {
 extraJavaModuleInfo {
 	deriveAutomaticModuleNamesFromFileNames = true
 	failOnMissingModuleInfo = false
-
-	automaticModule("hid4java-${hid4javaVersion}.jar", 'hid4java')
 }
 
 tasks.register('generateModuleInfo') {
