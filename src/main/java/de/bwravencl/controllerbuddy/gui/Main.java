@@ -1417,9 +1417,20 @@ public final class Main {
 			final var headElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "head");
 			htmlDocument.getDocumentElement().appendChild(headElement);
 
-			final var styleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "style");
-			styleElement.setTextContent(".svg-div{aspect-ratio:2.5;margin-top:50px}");
-			headElement.appendChild(styleElement);
+			final var colorSchemeMetaElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "meta");
+			colorSchemeMetaElement.setAttribute("name", "color-scheme");
+			colorSchemeMetaElement.setAttribute("content", "light dark");
+			headElement.appendChild(colorSchemeMetaElement);
+
+			final var darkColorSchemeStyleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI,
+					"style");
+			darkColorSchemeStyleElement
+					.setTextContent("@media(prefers-color-scheme:dark){body{background-color:#969696}}");
+			headElement.appendChild(darkColorSchemeStyleElement);
+
+			final var svgDivStyleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "style");
+			svgDivStyleElement.setTextContent(".svg-div{aspect-ratio:2.5;margin-top:50px}");
+			headElement.appendChild(svgDivStyleElement);
 
 			final var titleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "title");
 			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNTITLED");
