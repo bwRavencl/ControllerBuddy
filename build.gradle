@@ -130,7 +130,7 @@ dependencies {
 
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
-	implementation 'commons-cli:commons-cli:1.6.0'
+	implementation 'commons-cli:commons-cli:1.7.0'
 	implementation 'com.formdev:flatlaf:3.4.1'
 	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
