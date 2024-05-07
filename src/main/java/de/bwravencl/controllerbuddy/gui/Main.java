@@ -175,7 +175,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -622,7 +621,8 @@ public final class Main {
 
 		final var inputSettingsPanel = new JPanel();
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
-		inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
+		inputSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
 
 		final var pollIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -707,7 +707,8 @@ public final class Main {
 		if (isWindows) {
 			final var vJoySettingsPanel = new JPanel();
 			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.PAGE_AXIS));
-			vJoySettingsPanel.setBorder(new TitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
+			vJoySettingsPanel
+					.setBorder(BorderFactory.createTitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
 			globalSettingsPanel.add(vJoySettingsPanel, constraints);
 
 			final var vJoyDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -741,7 +742,8 @@ public final class Main {
 
 		final var networkSettingsPanel = new JPanel();
 		networkSettingsPanel.setLayout(new BoxLayout(networkSettingsPanel, BoxLayout.PAGE_AXIS));
-		networkSettingsPanel.setBorder(new TitledBorder(strings.getString("NETWORK_SETTINGS_BORDER_TITLE")));
+		networkSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("NETWORK_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(networkSettingsPanel, constraints);
 
 		if (isWindows || isLinux) {
@@ -793,7 +795,8 @@ public final class Main {
 
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
-		appearanceSettingsPanel.setBorder(new TitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+		appearanceSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
 		globalSettingsPanel.add(appearanceSettingsPanel, constraints);
 
@@ -848,8 +851,8 @@ public final class Main {
 
 		final var sonyControllersSettingsPanel = new JPanel();
 		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.PAGE_AXIS));
-		sonyControllersSettingsPanel
-				.setBorder(new TitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
+		sonyControllersSettingsPanel.setBorder(
+				BorderFactory.createTitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(sonyControllersSettingsPanel, constraints);
 
 		final var sonyTouchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -2953,7 +2956,8 @@ public final class Main {
 
 		final var inputSettingsPanel = new JPanel();
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
-		inputSettingsPanel.setBorder(new TitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
+		inputSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		profileSettingsPanel.add(inputSettingsPanel, constraints);
 
 		final var keyRepeatIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -2980,7 +2984,8 @@ public final class Main {
 
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
-		appearanceSettingsPanel.setBorder(new TitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+		appearanceSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
 		profileSettingsPanel.add(appearanceSettingsPanel, constraints);
 

@@ -55,6 +55,7 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -65,7 +66,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
@@ -303,7 +303,7 @@ public final class EditActionsDialog extends JDialog {
 
 	private void init() {
 		final var actionsPanel = new JPanel(new GridBagLayout());
-		actionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
 		actionsPanel.add(new JLabel(Main.strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
