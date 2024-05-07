@@ -595,8 +595,8 @@ public final class Main {
 		tabbedPane.addTab(strings.getString("VISUALIZATION_TAB"), visualizationPanel);
 
 		svgCanvas = new JSVGCanvas(null, false, false);
-		svgCanvas.setBackground(TRANSPARENT);
-		visualizationPanel.add(new JScrollPane(svgCanvas), BorderLayout.CENTER);
+		svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
 
 		final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
 		final var exportButton = new JButton(new ExportAction());
@@ -3227,6 +3227,8 @@ public final class Main {
 			modeComboBox.setModel(model);
 			modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 		}
+
+		svgCanvas.setBackground(UIManager.getColor("Panel.background"));
 	}
 
 	public enum HotSwappingButton {
