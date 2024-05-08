@@ -93,6 +93,7 @@ clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
 dependencies {
 	errorprone('com.google.errorprone:error_prone_core:2.27.1')
 
+	def dbusJavaVersion = '5.0.0'
 	def jnaVersion = '5.14.0'
 	def lwjglVersion = '3.3.3'
 
@@ -132,6 +133,8 @@ dependencies {
 
 	implementation 'commons-cli:commons-cli:1.7.0'
 	implementation 'com.formdev:flatlaf:3.4.1'
+	implementation("com.github.hypfvieh:dbus-java-core:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
+	implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.10.1'
@@ -145,6 +148,7 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
+	implementation 'org.slf4j:slf4j-jdk14:2.0.13'
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
@@ -192,6 +196,7 @@ tasks.register('generateModuleInfo') {
 			    requires jdk.xml.dom;
 			    requires JXInput;
 			    requires org.apache.commons.cli;
+			    requires org.freedesktop.dbus;
 			    requires org.lwjgl;
 			    requires org.lwjgl.natives;
 			    requires org.lwjgl.glfw;
@@ -334,7 +339,7 @@ tasks.register('jlink', Exec) {
 	dependsOn check
 	group
 	doFirst { delete runtimeDir }
-	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.xml.dom'
+	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom'
 }
 
 tasks.register('copyLibs', Copy) {

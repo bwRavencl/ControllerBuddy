@@ -46,6 +46,8 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.metadata.Metadata;
+import de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaver;
+import de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaverType;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
@@ -61,6 +63,11 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.freedesktop.dbus.connections.impl.DBusConnection;
+import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
+import org.freedesktop.dbus.exceptions.DBusException;
+import org.freedesktop.dbus.exceptions.DBusExecutionException;
+import org.freedesktop.dbus.types.UInt32;
 import org.lwjgl.glfw.GLFW;
 import uk.co.bithatch.linuxio.EventCode;
 import uk.co.bithatch.linuxio.InputDevice;
@@ -135,6 +142,9 @@ public abstract class OutputRunMode extends RunMode {
 	private InputDevice joystickInputDevice;
 	private InputDevice mouseInputDevice;
 	private InputDevice keyboardInputDevice;
+	private DBusConnection dBusConnection;
+	private ScreenSaver screenSaver;
+	private UInt32 screenSaverCookie;
 
 	OutputRunMode(final Main main, final Input input) {
 		super(main, input);
@@ -277,8 +287,28 @@ public abstract class OutputRunMode extends RunMode {
 		input.reset();
 		input.deInit(false);
 
-		if (Main.isWindows && main.preventPowerSaveMode()) {
-			Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
+		if (main.preventPowerSaveMode()) {
+			if (Main.isWindows) {
+				Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
+			} else if (Main.isLinux && dBusConnection != null) {
+				try {
+					if (screenSaver != null && screenSaverCookie != null) {
+						screenSaver.UnInhibit(screenSaverCookie);
+					}
+				} catch (final Throwable t) {
+					log.log(Level.SEVERE, t.getMessage(), t);
+				} finally {
+					try {
+						dBusConnection.close();
+					} catch (final IOException e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+					} finally {
+						dBusConnection = null;
+						screenSaver = null;
+						screenSaverCookie = null;
+					}
+				}
+			}
 		}
 
 		if (Main.isWindows && vJoy != null) {
@@ -590,6 +620,20 @@ public abstract class OutputRunMode extends RunMode {
 
 				EventQueue.invokeLater(
 						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
+
+				if (main.preventPowerSaveMode()) {
+					for (final var screenSaverType : ScreenSaverType.values()) {
+						try {
+							dBusConnection = DBusConnectionBuilder.forSessionBus().build();
+							screenSaver = dBusConnection.getRemoteObject(screenSaverType.busname,
+									screenSaverType.objectpath, screenSaverType.clazz);
+							screenSaverCookie = screenSaver.Inhibit(Metadata.APPLICATION_NAME, "Feeder running");
+							break;
+						} catch (final DBusException | DBusExecutionException _) {
+							// ignore errors caused by D-Bus
+						}
+					}
+				}
 			} catch (final Throwable t) {
 				log.log(Level.WARNING, t.getMessage(), t);
 

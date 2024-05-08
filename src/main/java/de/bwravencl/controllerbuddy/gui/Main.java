@@ -831,7 +831,7 @@ public final class Main {
 				((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
 		overlayScalingPanel.add(overlayScalingSpinner);
 
-		if (isWindows) {
+		if (!isMac) {
 			final var preventPowerSaveModeSettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel, constraints);
 
