@@ -213,7 +213,11 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	}
 
 	public void setMode(final Mode mode) {
-		modeUuid = mode.getUuid();
+		if (mode != null) {
+			modeUuid = mode.getUuid();
+		} else {
+			modeUuid = null;
+		}
 	}
 
 	public void setToggle(final boolean toggle) {

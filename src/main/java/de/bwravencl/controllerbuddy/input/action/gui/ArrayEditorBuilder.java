@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
@@ -40,9 +41,16 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		comboBox = new JComboBox<>(getValues());
+		final var values = getValues();
+
+		comboBox = new JComboBox<>(values);
 		comboBox.setAction(new JComboBoxSetPropertyAction(action, setterMethod));
-		comboBox.setSelectedItem(initialValue);
+		if (initialValue != null && Arrays.stream(values).noneMatch(initialValue::equals)) {
+			comboBox.setSelectedItem(null);
+		} else {
+			comboBox.setSelectedItem(initialValue);
+		}
+
 		parentPanel.add(comboBox);
 	}
 
