@@ -2119,18 +2119,12 @@ public final class Main {
 			quitMenuItem.addActionListener(quitAction);
 			popupMenu.add(quitMenuItem);
 
-			final var trayIconSize = systemTray.getTrayIconSize();
 			final var trayIconImage = frame.getIconImages().stream()
-					.filter(iconImage -> iconImage.getWidth(null) == trayIconSize.width
-							&& iconImage.getWidth(null) == trayIconSize.height)
-					.findFirst()
-					.orElseGet(() -> frame.getIconImages().stream()
-							.max(Comparator
-									.comparingInt(iconImage -> iconImage.getWidth(null) * iconImage.getHeight(null)))
-							.orElseThrow()
-							.getScaledInstance(trayIconSize.width, trayIconSize.height, Image.SCALE_SMOOTH));
+					.max(Comparator.comparingInt(iconImage -> iconImage.getWidth(null) * iconImage.getHeight(null)))
+					.orElseThrow();
 
 			trayIcon = new TrayIcon(trayIconImage);
+			trayIcon.setImageAutoSize(true);
 			trayIcon.addActionListener(showAction);
 			trayIcon.setPopupMenu(popupMenu);
 			try {
