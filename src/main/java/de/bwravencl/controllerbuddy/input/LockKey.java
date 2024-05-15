@@ -16,29 +16,27 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import com.sun.jna.platform.unix.X11;
-import com.sun.jna.platform.unix.X11.KeySym;
-import de.bwravencl.controllerbuddy.runmode.X11WithLockKeyFunctions;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import uk.co.bithatch.linuxio.EventCode;
 
-public record LockKey(String name, int virtualKeyCode, int mask, KeySym keySym) {
+public record LockKey(String name, int virtualKeyCode, EventCode eventCode, String sysfsLedName) {
 
 	public static final String LOCK_SUFFIX = " Lock";
 	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
-	public static final LockKey CapsLockLockKey = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK,
-			X11WithLockKeyFunctions.STATE_CAPS_LOCK_MASK, new KeySym(X11.XK_CapsLock));
+	public static final LockKey CapsLockLockKey = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK, EventCode.KEY_CAPSLOCK,
+			"capslock");
 	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
-	public static final LockKey NumLockLockKey = new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK,
-			X11WithLockKeyFunctions.STATE_NUM_LOCK_MASK, new KeySym(X11WithLockKeyFunctions.XK_NumLock));
+	public static final LockKey NumLockLockKey = new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK, EventCode.KEY_NUMLOCK,
+			"numlock");
 	public static final Map<String, LockKey> nameToLockKeyMap;
 	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
 	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
 	public static final LockKey ScrollLockLockKey = new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK,
-			X11WithLockKeyFunctions.STATE_SCROLL_LOCK_MASK, new KeySym(X11WithLockKeyFunctions.XK_ScrollLock));
+			EventCode.KEY_SCROLLLOCK, "scrolllock");
 	public static final List<LockKey> LOCK_KEYS = List.of(CapsLockLockKey, NumLockLockKey, ScrollLockLockKey);
 
 	static {

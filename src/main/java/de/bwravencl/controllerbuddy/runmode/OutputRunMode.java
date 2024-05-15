@@ -17,11 +17,8 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import com.sun.jna.IntegerType;
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
@@ -51,17 +48,21 @@ import de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaverType;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
@@ -109,6 +110,10 @@ public abstract class OutputRunMode extends RunMode {
 			EventCode.BTN_TRIGGER_HAPPY33, EventCode.BTN_TRIGGER_HAPPY34, EventCode.BTN_TRIGGER_HAPPY35,
 			EventCode.BTN_TRIGGER_HAPPY36, EventCode.BTN_TRIGGER_HAPPY37, EventCode.BTN_TRIGGER_HAPPY38,
 			EventCode.BTN_TRIGGER_HAPPY39, EventCode.BTN_TRIGGER_HAPPY40 };
+	private static final String SYSFS_LEDS_DIR = File.separator + "sys" + File.separator + "class" + File.separator
+			+ "leds";
+	private static final String SYSFS_INPUT_DIR_REGEX_PREFIX = "input\\d+::";
+	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
 	private static VjoyInterface vJoy;
 	final Set<Integer> oldDownMouseButtons = new HashSet<>();
 	final Set<Integer> newUpMouseButtons = new HashSet<>();
@@ -145,6 +150,7 @@ public abstract class OutputRunMode extends RunMode {
 	private DBusConnection dBusConnection;
 	private ScreenSaver screenSaver;
 	private UInt32 screenSaverCookie;
+	private Map<LockKey, File> lockKeyToBrightnessFileMap;
 
 	OutputRunMode(final Main main, final Input input) {
 		super(main, input);
@@ -181,52 +187,6 @@ public abstract class OutputRunMode extends RunMode {
 			return "x64";
 		} else {
 			return "x86";
-		}
-	}
-
-	private static void setLockKeyState(final LockKey lockKey, final boolean on) {
-		if (Main.isWindows) {
-			final var virtualKeyCode = lockKey.virtualKeyCode();
-
-			final var state = (User32WithGetKeyState.INSTANCE.GetKeyState(virtualKeyCode) & 0x1) != 0;
-			if (state != on) {
-				final var toolkit = Toolkit.getDefaultToolkit();
-
-				toolkit.setLockingKeyState(virtualKeyCode, true);
-				toolkit.setLockingKeyState(virtualKeyCode, false);
-			}
-		} else if (Main.isLinux) {
-			final var display = X11.INSTANCE.XOpenDisplay(null);
-			if (Objects.equals(display.getPointer(), Pointer.NULL)) {
-				throw new RuntimeException("XOpenDisplay() unsucessful");
-			}
-
-			try {
-				final var state_return = new Memory(Integer.SIZE);
-				if (X11WithLockKeyFunctions.INSTANCE.XkbGetIndicatorState(display,
-						X11WithLockKeyFunctions.XkbUseCoreKbd, state_return) != X11.Success) {
-					throw new RuntimeException("XkbGetIndicatorState() unsucessful");
-				}
-
-				final var state = (state_return.getInt(0L) & lockKey.mask()) != 0;
-				if (state != on) {
-					final var modifierMask = X11WithLockKeyFunctions.INSTANCE.XkbKeysymToModifiers(display,
-							lockKey.keySym());
-					if (modifierMask == 0) {
-						log.log(Level.WARNING, lockKey + " key is not supported on this system");
-						return;
-					}
-
-					if (!X11WithLockKeyFunctions.INSTANCE.XkbLockModifiers(display,
-							X11WithLockKeyFunctions.XkbUseCoreKbd, modifierMask, on ? modifierMask : 0)) {
-						throw new RuntimeException("XkbLockModifiers() unsucessful");
-					}
-				}
-			} finally {
-				X11.INSTANCE.XCloseDisplay(display);
-			}
-		} else {
-			throw new UnsupportedOperationException();
 		}
 	}
 
@@ -642,6 +602,35 @@ public abstract class OutputRunMode extends RunMode {
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
+
+			try {
+				lockKeyToBrightnessFileMap = LockKey.LOCK_KEYS.stream()
+						.collect(Collectors.toUnmodifiableMap(lockKey -> lockKey, lockKey -> {
+							try (final var filesStream = Files.list(Path.of(SYSFS_LEDS_DIR))) {
+								final var brightnessFile = filesStream.sorted().filter(p -> {
+									final var fileName = p.getFileName();
+									return fileName != null && fileName.toString()
+											.matches(SYSFS_INPUT_DIR_REGEX_PREFIX + lockKey.sysfsLedName());
+								}).findFirst().orElseThrow(() -> new RuntimeException(lockKey.sysfsLedName()))
+										.resolve(SYSFS_BRIGHTNESS_FILENAME).toFile();
+
+								if (!brightnessFile.isFile() || !brightnessFile.canRead()) {
+									throw new IOException("Unable to read: " + brightnessFile);
+								}
+
+								return brightnessFile;
+							} catch (final IOException e) {
+								throw new RuntimeException(e);
+							}
+						}));
+			} catch (final Throwable t) {
+				log.log(Level.WARNING, t.getMessage(), t);
+
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+						Main.strings.getString("CANNOT_READ_LED_STATUS_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -668,6 +657,33 @@ public abstract class OutputRunMode extends RunMode {
 		}
 
 		return true;
+	}
+
+	private void setLockKeyState(final LockKey lockKey, final boolean on) throws IOException {
+		if (Main.isWindows) {
+			final var virtualKeyCode = lockKey.virtualKeyCode();
+
+			final var state = (User32WithGetKeyState.INSTANCE.GetKeyState(virtualKeyCode) & 0x1) != 0;
+			if (state != on) {
+				final var toolkit = Toolkit.getDefaultToolkit();
+
+				toolkit.setLockingKeyState(virtualKeyCode, true);
+				toolkit.setLockingKeyState(virtualKeyCode, false);
+			}
+		} else if (Main.isLinux) {
+			final var brightnessFile = lockKeyToBrightnessFileMap.get(lockKey);
+
+			try (final var fileInputStream = new FileInputStream(brightnessFile)) {
+				final var ledState = fileInputStream.read();
+
+				if (ledState != (on ? '1' : '0')) {
+					keyboardInputDevice.emit(new Event(lockKey.eventCode(), 1));
+					keyboardInputDevice.emit(new Event(lockKey.eventCode(), 0));
+				}
+			}
+		} else {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	@Override
