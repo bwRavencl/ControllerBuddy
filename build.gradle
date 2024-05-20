@@ -137,7 +137,7 @@ dependencies {
 	implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
-	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.google.code.gson:gson:2.11.0'
 	implementation 'io.github.classgraph:classgraph:4.8.172'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
 	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
