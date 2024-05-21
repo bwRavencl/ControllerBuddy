@@ -146,13 +146,13 @@ Local mode:
               |
               v
        ControllerBuddy
-       |             |
-       |             |
-       v             v
-vJoy / uinput   Win32 / X11
-      |                |
-      |                |
-      v                v
+              |
+              |
+              v
+    vJoy + Win32 / uinput
+              |
+              |
+              v
       Target Application
 ```
 
@@ -166,13 +166,13 @@ Server-Client mode:
                 |
                 v                  UDP
          ControllerBuddy  -------------------->  ControllerBuddy
-                                                 |             |
-                                                 |             |
-                                                 v             v
-                                          vJoy / uinput   Win32 / X11
-                                                |                |
-                                                |                |
-                                                v                v
+                                                        |
+                                                        |
+                                                        v
+                                              vJoy + Win32 / uinput
+                                                        |
+                                                        |
+                                                        v
                                                 Target Application
 ```
 
