@@ -34,6 +34,7 @@ it automates all the steps below and much more!
     - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
     - Red-Hat-based: `sudo yum install SDL2`
     - Arch Linux: `sudo pacman -S sdl2`
+    - SUSE Linux: `sudo zypper install SDL2`
 2. Configure uinput and hidraw:
     1. Create an uinput group: `sudo groupadd -f uinput`
     2. Add yourself to the group: `sudo gpasswd -a "$USER" uinput`
