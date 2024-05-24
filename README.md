@@ -23,14 +23,14 @@ it automates all the steps below and much more!
 
 ### Windows x86-64
 
-1. First ensure you have correctly installed [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
+1. First download and install [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
 ### Linux x86-64
 
-1. First ensure you have installed libsdl2 on your system:
+1. First, make sure you have libsdl2 installed on your system:
     - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
     - Red-Hat-based: `sudo yum install SDL2`
     - Arch Linux: `sudo pacman -S sdl2`
