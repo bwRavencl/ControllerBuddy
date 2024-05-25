@@ -5,16 +5,16 @@
 
 [![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
 
-Check out the [ControllerBuddy Homepage](https://controllerbuddy.org) for getting started.  
-For further support join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp).
+Visit the [ControllerBuddy Homepage](https://controllerbuddy.org) to get started.  
+For more support, join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp).
 
 ## Description
 
-ControllerBuddy is a highly advanced gamepad mapping software, which supports the creation of input profiles for complex target applications such as flight simulators.
+ControllerBuddy is an advanced gamepad mapping software that supports the creation of input profiles for complex target applications such as flight simulators.
 
-In addition to the simplistic mapping of buttons and axes of a physical game-controller to keyboard and mouse input, ControllerBuddy also supports the feeding of input commands to a virtual joystick device (vJoy / uinput).
+In addition to the simple mapping of buttons and axes of a physical game controller to keyboard and mouse input, ControllerBuddy also supports feeding input commands to a virtual joystick device (vJoy / uinput).
 
-ControllerBuddy's goal is to enable the user to control target applications solely via a gamepad and not having to reach for a keyboard or mouse at any point in time.
+The goal of ControllerBuddy is to allow the user to control target applications exclusively with a gamepad without ever having to reach for a keyboard or mouse.
 
 ## Download and Installation
 
@@ -68,12 +68,12 @@ it automates all the steps below and much more!
     - Configuration of settings
     - Support for a light and dark UI theme
 - In-game overlay:
-    - Displays currently active mode
-    - Can display current position of virtual axes
-    - On-Screen-Keyboard that can be controlled via gamepad
+    - Displays current mode
+    - Can show current position of virtual axes
+    - On-Screen-Keyboard that can be controlled by gamepad
     - VR support (OpenVR)
     - Customizable position and colors
-- Two scenarios of operation:
+- Two operating scenarios:
     - Local
     - Server to client (experimental! use only in trusted networks!)
 - Supported gamepads:
@@ -86,15 +86,15 @@ it automates all the steps below and much more!
     - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
 - Supported operating systems:
     - Windows / Linux (local / client / server)
-    - macOS (only server - no binaries provided!)
+    - macOS (server only - no binaries provided!)
 - Language support for:
     - English
     - German
 
 ## Profiles
 
-Profiles are used to configure your gamepad for a certain target application.  
-A profile has the following general structure:
+Profiles are used to configure your gamepad for a specific target application.  
+The general structure of a profile is as follows:
 
 ```
 Profile (.json file)
@@ -126,14 +126,14 @@ Profile (.json file)
         └── some Action
 ```
 
-When switching from one Mode to another, all the axes and buttons that are not used by the other mode retain their function from the previous mode. This works over multiple levels of Modes.
+When switching from one Mode to another, all the axes and buttons that are not used by the other mode retain their function from the previous mode. This works across multiple levels of modes.
 
-Mode switching can be configured to operate in two different ways:
+Mode switching can be configured to work in two different ways:
 
 - Default: works like the SHIFT key on your keyboard
 - Toggle: works like the Caps Lock key
 
-A set of well-thought-out profiles for the most popular flight simulators are available in the [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
+A number of well thought out profiles for the most popular flight simulators are available in the [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
 
 ## Architecture
 
@@ -210,14 +210,14 @@ Server-Client mode:
 | -tray               |                         | launches the application in the system tray                                                                 |           yes           |
 | -version            |                         | prints the version information and exits                                                                    |           no            |
 
-If an instance of ControllerBuddy is already running, launching a second instance with the parameters denoted as "available for scripting" will trigger the corresponding action in the first instance and immediately shutdown the second instance.
+If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and immediately shut down the second instance.
 
 This can be used to integrate ControllerBuddy into third party applications.  
-For more information please check out [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), an exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
+For more information see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), an exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
 
 ## Attribution
 
-ControllerBuddy uses the following awesome software technologies and libraries:
+ControllerBuddy makes use of these awesome software technologies and libraries:
 
 - [OpenJDK](https://openjdk.org)
 - [Apache Batik](https://xmlgraphics.apache.org/batik)
@@ -236,7 +236,7 @@ ControllerBuddy uses the following awesome software technologies and libraries:
 
 ## Building
 
-If you want to build ControllerBuddy from its source code this section might be helpful to get you started.  
+If you want to build ControllerBuddy from source, this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
 | Task                                   | Command                 |
