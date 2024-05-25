@@ -64,7 +64,7 @@ public class EvdevDriver extends Driver {
 		strongRumbleEffectId = createRumbleEffect((short) 90);
 		lightRumbleEffectId = createRumbleEffect((short) 60);
 
-		log.log(Level.INFO, Main.assembleControllerLoggingMessage("Using evdev driver for controller", controller));
+		log.log(Level.INFO, Main.assembleControllerLoggingMessage("Using evdev driver for controller ", controller));
 	}
 
 	private static void closeFileDescriptor(final int fd) {

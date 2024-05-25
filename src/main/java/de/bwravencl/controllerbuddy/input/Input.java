@@ -355,8 +355,8 @@ public final class Input {
 						if (state.buttons(hotSwappingButtonId) != 0) {
 							hotSwappingButtonDownJids.add(controller.jid());
 						} else if (hotSwappingButtonDownJids.contains(controller.jid())) {
-							log.log(Level.INFO,
-									Main.assembleControllerLoggingMessage("Initiating hot swap to ", controller));
+							log.log(Level.INFO, Main.assembleControllerLoggingMessage(
+									"Initiating hot swap to controller ", controller));
 
 							hotSwappingButtonId = HotSwappingButton.None.id;
 							EventQueue.invokeLater(() -> {

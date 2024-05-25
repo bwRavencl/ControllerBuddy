@@ -970,11 +970,17 @@ public final class Main {
 
 		final var presentControllers = taskRunner.run(Main::getPresentControllers);
 		if (presentControllers != null && !presentControllers.isEmpty()) {
+			log.log(Level.INFO,
+					"Present controllers:" + presentControllers.stream()
+							.map(controllerInfo -> assembleControllerLoggingMessage("\n\t", controllerInfo))
+							.collect(Collectors.joining()));
+
 			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 			if (lastControllerGuid != null) {
 				presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
 						.ifPresentOrElse(controller -> {
-							log.log(Level.INFO, assembleControllerLoggingMessage("Found previously used", controller));
+							log.log(Level.INFO,
+									assembleControllerLoggingMessage("Found previously used controller ", controller));
 							setSelectedController(controller);
 						}, () -> {
 							log.log(Level.INFO, "Previously used controller is not present");
@@ -997,7 +1003,8 @@ public final class Main {
 			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
 				if (disconnected && presentControllers != null
 						&& presentControllers.stream().anyMatch(controller -> controller.jid == jid)) {
-					log.log(Level.INFO, assembleControllerLoggingMessage("Disconnected", new ControllerInfo(jid)));
+					log.log(Level.INFO,
+							assembleControllerLoggingMessage("Disconnected controller ", new ControllerInfo(jid)));
 
 					if (selectedController != null && selectedController.jid == jid) {
 						if (!isMac) {
@@ -1006,7 +1013,8 @@ public final class Main {
 						input.deInit(true);
 					}
 				} else if (event == GLFW.GLFW_CONNECTED) {
-					log.log(Level.INFO, assembleControllerLoggingMessage("Connected", new ControllerInfo(jid)));
+					log.log(Level.INFO,
+							assembleControllerLoggingMessage("Connected controller ", new ControllerInfo(jid)));
 				}
 
 				EventQueue.invokeLater(() -> onControllersChanged(getPresentControllers(), false));
@@ -1051,7 +1059,7 @@ public final class Main {
 
 	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
 		final var sb = new StringBuilder();
-		sb.append(prefix).append(" controller ");
+		sb.append(prefix);
 
 		final var appendGamepadName = controller.name != null;
 
@@ -1163,6 +1171,8 @@ public final class Main {
 
 	public static void main(final String[] args) {
 		log.log(Level.INFO, "Launching " + Metadata.APPLICATION_NAME + " " + Metadata.VERSION);
+		log.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
+				+ System.getProperty("os.version") + " " + System.getProperty("os.arch"));
 
 		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -2379,7 +2389,7 @@ public final class Main {
 		selectedController = controller;
 
 		if (controller != null) {
-			log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller", controller));
+			log.log(Level.INFO, assembleControllerLoggingMessage("Selected controller ", controller));
 
 			if (controller.guid != null) {
 				preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);

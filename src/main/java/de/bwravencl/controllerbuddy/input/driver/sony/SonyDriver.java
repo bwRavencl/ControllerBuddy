@@ -142,9 +142,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 					final var reportId = reportData[0];
 					if (reportId != connection.inputReportId || (bluetooth ? reportLength < BLUETOOTH_REPORT_LENGTH
 							: reportLength != USB_REPORT_LENGTH)) {
-						getLogger().log(Level.WARNING,
-								Main.assembleControllerLoggingMessage("Received unexpected HID input report with ID "
-										+ reportId + " and length " + reportLength + " from", controller));
+						getLogger()
+								.log(Level.WARNING,
+										Main.assembleControllerLoggingMessage(
+												"Received unexpected HID input report with ID " + reportId
+														+ " and length " + reportLength + " from controller ",
+												controller));
 
 						continue;
 					}
@@ -168,7 +171,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 						if (receivedCrc32Value != calculatedCrc32Value) {
 							getLogger().log(Level.WARNING, Main.assembleControllerLoggingMessage(
-									"Received faulty HID input report from", controller));
+									"Received faulty HID input report from controller ", controller));
 							continue;
 						}
 					}
@@ -362,15 +365,15 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 			final var hidDevice = devices.get(deviceIndex);
 
 			if (!hidDevice.open()) {
-				log.log(Level.WARNING, Main.assembleControllerLoggingMessage("Could not open HID device "
-						+ humanReadableName + " with path " + hidDevice.getPath() + " to use as", selectedController));
+				log.log(Level.WARNING,
+						Main.assembleControllerLoggingMessage("Could not open HID device " + humanReadableName
+								+ " with path " + hidDevice.getPath() + " to use as controller ", selectedController));
 				return null;
 			}
 
-			log.log(Level.INFO,
-					Main.assembleControllerLoggingMessage(
-							"Using " + humanReadableName + " controller with path " + hidDevice.getPath() + " as",
-							selectedController));
+			log.log(Level.INFO, Main.assembleControllerLoggingMessage(
+					"Using " + humanReadableName + " controller with path " + hidDevice.getPath() + " as controller ",
+					selectedController));
 
 			hidServices = null;
 			return hidDevice;
@@ -444,7 +447,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		if (System.currentTimeMillis() - lastInputReportTime > INPUT_REPORT_TIMEOUT) {
 			getLogger().log(Level.WARNING, Main.assembleControllerLoggingMessage(
-					"No new input report for more than " + INPUT_REPORT_TIMEOUT + " ms from", controller));
+					"No new input report for more than " + INPUT_REPORT_TIMEOUT + " ms from controller ", controller));
 
 			return false;
 		}
@@ -584,7 +587,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		if (!success) {
 			getLogger().log(Level.WARNING,
-					Main.assembleControllerLoggingMessage("Error while sending HID packet to", controller));
+					Main.assembleControllerLoggingMessage("Error while sending HID packet to controller ", controller));
 		}
 
 		return success;

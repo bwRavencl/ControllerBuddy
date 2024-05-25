@@ -88,10 +88,9 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 		}
 
 		log.log(Level.INFO,
-				Main.assembleControllerLoggingMessage(
-						"Using XInput " + XInputDevice.getLibraryVersion().name().substring("XINPUT_".length())
-								.replace('_', '.') + " controller with ID " + xinputDevice.getPlayerNum() + " as",
-						controller));
+				Main.assembleControllerLoggingMessage("Using XInput controller "
+						+ XInputDevice.getLibraryVersion().name().substring("XINPUT_".length()).replace('_', '.')
+						+ " controller with ID " + xinputDevice.getPlayerNum() + " as", controller));
 	}
 
 	private static boolean isXInputController(final ControllerInfo controller) {
