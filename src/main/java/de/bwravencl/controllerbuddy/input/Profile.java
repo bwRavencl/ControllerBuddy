@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.lwjgl.glfw.GLFW;
 
@@ -100,6 +101,10 @@ public final class Profile implements Cloneable {
 		return keyRepeatInterval;
 	}
 
+	public Optional<Mode> getModeByUuid(final UUID modeUuid) {
+		return modes.stream().filter(mode -> mode.getUuid().equals(modeUuid)).findFirst();
+	}
+
 	public List<Mode> getModes() {
 		return modes;
 	}
@@ -161,9 +166,8 @@ public final class Profile implements Cloneable {
 		}
 	}
 
-	public void setActiveMode(final Input input, final UUID modeUuid) {
-		modes.stream().filter(mode -> mode.getUuid().equals(modeUuid)).findFirst()
-				.ifPresent(mode -> setActiveMode(input, modes.indexOf(mode)));
+	public void setActiveMode(final Input input, final Mode mode) {
+		setActiveMode(input, modes.indexOf(mode));
 	}
 
 	private void setButtonToModeActionsMap(final Map<Integer, List<ButtonToModeAction>> buttonToModeActionMap) {

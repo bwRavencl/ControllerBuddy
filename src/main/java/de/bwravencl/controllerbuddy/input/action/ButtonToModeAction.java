@@ -57,7 +57,15 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	private void activateMode(final Input input, final Profile profile) {
 		if (!buttonToModeActionStack.contains(this)) {
 			buttonToModeActionStack.push(this);
-			profile.setActiveMode(input, modeUuid);
+			final var activeMode = profile.getActiveMode();
+
+			profile.getModeByUuid(modeUuid).ifPresent(newMode -> {
+				IAxisToLongPressAction.onModeActivated(activeMode, newMode);
+				// noinspection UnnecessarilyQualifiedStaticUsage
+				IButtonToAction.onModeActivated(activeMode, newMode);
+
+				profile.setActiveMode(input, newMode);
+			});
 
 			if (targetsOnScreenKeyboardMode()) {
 				input.getMain().setOnScreenKeyboardVisible(true);
@@ -131,7 +139,11 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 					.stream().filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
 		}
 
-		profile.setActiveMode(input, previousMode.getUuid());
+		IAxisToLongPressAction.onModeDeactivated(activeMode);
+		// noinspection UnnecessarilyQualifiedStaticUsage
+		IButtonToAction.onModeDeactivated(activeMode);
+
+		profile.setActiveMode(input, previousMode);
 
 		if (targetsOnScreenKeyboardMode()) {
 			main.setOnScreenKeyboardVisible(false);

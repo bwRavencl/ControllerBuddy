@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
@@ -29,6 +30,23 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
 		return action.getActivation() == Activation.SINGLE_ON_RELEASE;
+	}
+
+	static void onModeActivated(final Mode activeMode, final Mode newMode) {
+		actionToDownSinceMap.keySet().removeIf(action -> {
+			if (activeMode.getAllActions().contains(action)) {
+				final var optionalButtonId = activeMode.getButtonToActionsMap().entrySet().stream()
+						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
+				return optionalButtonId.isPresent()
+						&& newMode.getButtonToActionsMap().containsKey(optionalButtonId.get());
+			}
+
+			return false;
+		});
+	}
+
+	static void onModeDeactivated(final Mode activeMode) {
+		actionToDownSinceMap.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
 	}
 
 	static void reset() {
