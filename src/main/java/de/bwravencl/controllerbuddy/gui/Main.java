@@ -219,7 +219,7 @@ public final class Main {
 	public static final int DEFAULT_HGAP = 10;
 
 	@SuppressWarnings("exports")
-	public static final Dimension BUTTON_DIMENSION = new Dimension(110, 25);
+	public static final Dimension BUTTON_DIMENSION = new Dimension(120, 25);
 
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
@@ -232,7 +232,7 @@ public final class Main {
 	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
 	private static final int DIALOG_BOUNDS_X = 100;
 	private static final int DIALOG_BOUNDS_Y = 100;
-	private static final int DIALOG_BOUNDS_WIDTH = 965;
+	private static final int DIALOG_BOUNDS_WIDTH = 985;
 	private static final int DIALOG_BOUNDS_HEIGHT = 710;
 	private static final int SVG_VIEWBOX_MARGIN = 20;
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
