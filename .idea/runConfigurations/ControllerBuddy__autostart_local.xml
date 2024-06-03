@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ControllerBuddy -autostart local" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="22" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="de.bwravencl.controllerbuddy.gui.Main" />
+    <module name="ControllerBuddy.main" />
+    <option name="PROGRAM_PARAMETERS" value="-autostart local" />
+    <option name="VM_PARAMETERS" value="-Xms128m --add-opens=java.desktop/sun.awt.X11=de.bwravencl.controllerbuddy -Duser.country=DE -Duser.language=de" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

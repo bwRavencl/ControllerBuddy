@@ -280,13 +280,6 @@ spotless {
 	}
 }
 
-tasks.register('cleanLibsDirectory') {
-	description = "Removes the \'${base.libsDirectory.get()}\' directory."
-	doLast { delete base.libsDirectory }
-}
-
-jar.dependsOn cleanLibsDirectory
-
 tasks.register('generateMetadata') {
 	description = "Generates the \'$metadataFile\' source file"
 	doLast {
@@ -342,9 +335,16 @@ tasks.register('jlink', Exec) {
 	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom'
 }
 
+tasks.register('cleanLibsDirectory') {
+	description = "Removes the \'${base.libsDirectory.get()}\' directory."
+	doLast { delete base.libsDirectory }
+}
+
+jar.mustRunAfter cleanLibsDirectory
+
 tasks.register('copyLibs', Copy) {
 	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
-	dependsOn jar
+	dependsOn cleanLibsDirectory, jar
 	from configurations.runtimeClasspath
 	into base.libsDirectory
 }
