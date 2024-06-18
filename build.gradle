@@ -138,7 +138,7 @@ dependencies {
 	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
 	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.11.0'
-	implementation 'io.github.classgraph:classgraph:4.8.173'
+	implementation 'io.github.classgraph:classgraph:4.8.174'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
 	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
 	implementation('org.apache.xmlgraphics:batik-swing:1.17') { exclude group: 'xml-apis', module: 'xml-apis' }
