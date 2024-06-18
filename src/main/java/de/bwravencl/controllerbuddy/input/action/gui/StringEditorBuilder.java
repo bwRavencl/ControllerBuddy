@@ -72,7 +72,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 		private void update(final DocumentEvent e) {
 			try {
 				final var document = e.getDocument();
-				final var text = document.getText(0, document.getLength());
+				final var text = document.getText(0, document.getLength()).strip();
 
 				setterMethod.invoke(action, text);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException
