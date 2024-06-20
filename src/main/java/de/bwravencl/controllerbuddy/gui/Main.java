@@ -2758,8 +2758,8 @@ public final class Main {
 
 			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
-			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 			descriptionTextField.addFocusListener(setModeDescriptionAction);
+			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
