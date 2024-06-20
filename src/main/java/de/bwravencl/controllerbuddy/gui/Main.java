@@ -123,6 +123,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
@@ -2758,6 +2759,7 @@ public final class Main {
 			final var setModeDescriptionAction = new SetModeDescriptionAction(mode, descriptionTextField);
 			descriptionTextField.addActionListener(setModeDescriptionAction);
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
+			descriptionTextField.addFocusListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
@@ -3972,7 +3974,7 @@ public final class Main {
 		}
 	}
 
-	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener {
+	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener, FocusListener {
 
 		@Serial
 		private static final long serialVersionUID = -6706537047137827688L;
@@ -3989,29 +3991,49 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			setModeDescription();
+			setModeDescription(true);
 		}
 
 		@Override
 		public void changedUpdate(final DocumentEvent e) {
-			setModeDescription();
+			setModeDescription(false);
+		}
+
+		@Override
+		public void focusGained(final FocusEvent e) {
+		}
+
+		@Override
+		public void focusLost(final FocusEvent e) {
+			setModeDescription(true);
 		}
 
 		@Override
 		public void insertUpdate(final DocumentEvent e) {
-			setModeDescription();
+			setModeDescription(false);
 		}
 
 		@Override
 		public void removeUpdate(final DocumentEvent e) {
-			setModeDescription();
+			setModeDescription(false);
 		}
 
-		private void setModeDescription() {
-			final var description = modeDescriptionTextField.getText();
+		private void setModeDescription(final boolean updateTextField) {
+			var description = modeDescriptionTextField.getText();
 
-			if (description != null && !description.isEmpty() && !description.equals(mode.getDescription())) {
-				mode.setDescription(description.strip());
+			if (!Objects.equals(mode.getDescription(), description)) {
+				if (description != null && !description.isEmpty()) {
+					final var strippedDescription = description.strip();
+
+					if (updateTextField && !strippedDescription.equals(description)) {
+						EventQueue.invokeLater(() -> modeDescriptionTextField.setText(strippedDescription));
+					}
+
+					description = strippedDescription;
+				}
+
+				mode.setDescription(description);
+
 				setUnsavedChanges(true);
 				updateVisualizationPanel();
 			}
