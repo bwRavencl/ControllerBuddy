@@ -13,7 +13,7 @@ plugins {
 	id 'application'
 	id 'com.diffplug.spotless' version '6.25.0'
 	id 'com.github.spotbugs' version '6.0.17'
-	id 'net.ltgt.errorprone' version '4.0.0'
+	id 'net.ltgt.errorprone' version '4.0.1'
 	id 'org.ajoberstar.grgit' version '5.2.2'
 	id 'org.gradlex.extra-java-module-info' version '1.8'
 }
