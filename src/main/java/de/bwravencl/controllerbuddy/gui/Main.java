@@ -263,6 +263,7 @@ public final class Main {
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
 	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
@@ -641,6 +642,22 @@ public final class Main {
 		pollIntervalSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_POLL_INTERVAL,
 				(int) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
+
+		final var mapCircularAxesToSquarePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		inputSettingsPanel.add(mapCircularAxesToSquarePanel, constraints);
+
+		final var mapCircularAxesToSquareLabel = new JLabel(strings.getString("MAP_CIRCULAR_AXES_TO_SQUARE_LABEL"));
+		mapCircularAxesToSquareLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		mapCircularAxesToSquarePanel.add(mapCircularAxesToSquareLabel);
+
+		final var mapCircularAxesToSquareCheckBox = new JCheckBox(
+				strings.getString("MAP_CIRCULAR_AXES_TO_SQUARE_CHECK_BOX"));
+		mapCircularAxesToSquareCheckBox.setSelected(isMapCircularAxesToSquareAxes());
+		mapCircularAxesToSquareCheckBox.addActionListener(event -> {
+			final var mapCircularAxesToSquare = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, mapCircularAxesToSquare);
+		});
+		mapCircularAxesToSquarePanel.add(mapCircularAxesToSquareCheckBox);
 
 		final var hapticFeedbackPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
@@ -1858,6 +1875,10 @@ public final class Main {
 
 	public boolean isLocalRunning() {
 		return taskRunner.isTaskOfTypeRunning(LocalRunMode.class);
+	}
+
+	public boolean isMapCircularAxesToSquareAxes() {
+		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
 	public boolean isOpenVrOverlayActive() {

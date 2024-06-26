@@ -86,6 +86,7 @@ public final class Input {
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
 	private boolean skipAxisInitialization;
 	private boolean initialized;
+	private boolean mapCircularAxesToSquareAxes;
 	private boolean hapticFeedback;
 
 	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
@@ -253,6 +254,7 @@ public final class Input {
 	}
 
 	public void init() {
+		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
 		hapticFeedback = main.isHapticFeedback();
 
 		final var presentControllers = Main.getPresentControllers();
@@ -437,8 +439,10 @@ public final class Input {
 			final var axisToActionMap = activeMode.getAxisToActionsMap();
 			final var buttonToActionMap = activeMode.getButtonToActionsMap();
 
-			mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-			mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+			if (mapCircularAxesToSquareAxes) {
+				mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
+				mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+			}
 
 			for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
 				final var axisValue = state.axes(axis);
