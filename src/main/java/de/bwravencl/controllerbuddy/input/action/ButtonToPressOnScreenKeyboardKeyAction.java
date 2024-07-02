@@ -53,7 +53,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 				wasUp = true;
 			} else {
 				if (wasDown) {
-					onScreenKeyboard.releaseSelected();
+					onScreenKeyboard.releaseSelectedButton();
 				}
 				wasDown = false;
 			}
@@ -63,7 +63,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 				wasUp = false;
 			}
 		} else {
-			onScreenKeyboard.pressSelected();
+			onScreenKeyboard.pressSelectedButton();
 			wasDown = true;
 		}
 	}

@@ -207,11 +207,15 @@ public final class OnScreenKeyboard extends JFrame {
 			parentPanel.add(rowPanel);
 		}
 
-		focusCurrentButton();
+		focusSelectedButton();
 		add(parentPanel);
 	}
 
 	private static String getDefaultKeyDisplayName(final String directInputKeyCodeName) {
+		if (ScanCode.DIK_SYSRQ.equals(directInputKeyCodeName)) {
+			return multilineDisplayName("Sys Rq");
+		}
+
 		var shortName = directInputKeyCodeName;
 
 		shortName = shortName.replaceFirst("L ", "");
@@ -236,17 +240,36 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	private static String getLockKeyDisplayName(final String lockKeyName) {
-		var shortName = lockKeyName;
-
-		if (!LockKey.CAPS_LOCK.equals(lockKeyName)) {
-			shortName = "<html><center>" + lockKeyName.replaceFirst(" ", "<br>") + "</center></html>";
+		if (LockKey.CAPS_LOCK.equals(lockKeyName)) {
+			return lockKeyName;
 		}
 
-		return shortName;
+		return multilineDisplayName(lockKeyName);
 	}
 
-	private void focusCurrentButton() {
-		keyboardButtons[selectedRow][selectedColumn].setFocus(true);
+	private static String multilineDisplayName(final String displayName) {
+		return "<html><center>" + displayName.replaceFirst(" ", "<br>") + "</center></html>";
+	}
+
+	private void deselectButton() {
+		final var selectedButton = getSelectedButton();
+		if (selectedButton == null) {
+			return;
+		}
+
+		if (selectedButton.pressed) {
+			selectedButton.release();
+		}
+
+		selectedButton.setFocus(false);
+	}
+
+	private void focusSelectedButton() {
+		final var selectedButton = getSelectedButton();
+
+		if (selectedButton != null) {
+			selectedButton.setFocus(true);
+		}
 	}
 
 	public void forceRepoll() {
@@ -259,8 +282,21 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
-	private int getCurrentButtonX() {
-		var x = keyboardButtons[selectedRow][selectedColumn].getPreferredSize().width / 2;
+	private AbstractKeyboardButton getSelectedButton() {
+		if (keyboardButtons == null) {
+			return null;
+		}
+
+		return keyboardButtons[selectedRow][selectedColumn];
+	}
+
+	private int getSelectedButtonX() {
+		final var selectedButton = getSelectedButton();
+		if (selectedButton == null) {
+			throw new IllegalStateException();
+		}
+
+		var x = selectedButton.getPreferredSize().width / 2;
 		for (var i = 0; i < selectedColumn; i++) {
 			x += keyboardButtons[selectedRow][i].getPreferredSize().width;
 		}
@@ -274,9 +310,9 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorDown() {
 		EventQueue.invokeLater(() -> {
-			unselectCurrentButton();
+			deselectButton();
 
-			final var x = getCurrentButtonX();
+			final var x = getSelectedButtonX();
 			if (selectedRow < keyboardButtons.length - 1) {
 				selectedRow++;
 			} else {
@@ -288,35 +324,35 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelectorLeft() {
 		EventQueue.invokeLater(() -> {
-			unselectCurrentButton();
+			deselectButton();
 
 			if (selectedColumn > 0) {
 				selectedColumn--;
 			} else {
 				selectedColumn = keyboardButtons[selectedRow].length - 1;
 			}
-			focusCurrentButton();
+			focusSelectedButton();
 		});
 	}
 
 	public void moveSelectorRight() {
 		EventQueue.invokeLater(() -> {
-			unselectCurrentButton();
+			deselectButton();
 
 			if (selectedColumn < keyboardButtons[selectedRow].length - 1) {
 				selectedColumn++;
 			} else {
 				selectedColumn = 0;
 			}
-			focusCurrentButton();
+			focusSelectedButton();
 		});
 	}
 
 	public void moveSelectorUp() {
 		EventQueue.invokeLater(() -> {
-			unselectCurrentButton();
+			deselectButton();
 
-			final var x = getCurrentButtonX();
+			final var x = getSelectedButtonX();
 			if (selectedRow > 0) {
 				selectedRow--;
 			} else {
@@ -340,8 +376,12 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
-	public void pressSelected() {
-		keyboardButtons[selectedRow][selectedColumn].press(false);
+	public void pressSelectedButton() {
+		final var selectedButton = getSelectedButton();
+
+		if (selectedButton != null) {
+			selectedButton.press(false);
+		}
 	}
 
 	@Serial
@@ -349,7 +389,7 @@ public final class OnScreenKeyboard extends JFrame {
 		throw new NotSerializableException(OnScreenKeyboard.class.getName());
 	}
 
-	public void releaseAll() {
+	public void releaseAllButtons() {
 		for (final var row : keyboardButtons) {
 			for (final var keyboardButton : row) {
 				keyboardButton.release();
@@ -357,8 +397,12 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
-	public void releaseSelected() {
-		keyboardButtons[selectedRow][selectedColumn].release();
+	public void releaseSelectedButton() {
+		final var selectedButton = getSelectedButton();
+
+		if (selectedButton != null) {
+			selectedButton.release();
+		}
 	}
 
 	private void selectButtonByX(final int targetX) {
@@ -377,7 +421,7 @@ public final class OnScreenKeyboard extends JFrame {
 			x += width;
 		}
 
-		focusCurrentButton();
+		focusSelectedButton();
 	}
 
 	@Override
@@ -387,7 +431,7 @@ public final class OnScreenKeyboard extends JFrame {
 				updateScaling();
 				setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
 			} else {
-				releaseAll();
+				releaseAllButtons();
 			}
 		}
 
@@ -395,17 +439,11 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void toggleLock() {
-		keyboardButtons[selectedRow][selectedColumn].toggleLock();
-	}
+		final var selectedButton = getSelectedButton();
 
-	private void unselectCurrentButton() {
-		final var currentButton = keyboardButtons[selectedRow][selectedColumn];
-
-		if (currentButton.pressed) {
-			currentButton.release();
+		if (selectedButton != null) {
+			selectedButton.toggleLock();
 		}
-
-		currentButton.setFocus(false);
 	}
 
 	void updateLocation() {
@@ -641,10 +679,8 @@ public final class OnScreenKeyboard extends JFrame {
 					preferredSize.width *= 2;
 				}
 			} else if (ScanCode.DIK_INSERT.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_DELETE.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_HOME.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_END.equals(directInputKeyCodeName)) {
-				preferredSize.width *= 0.88;
+					|| ScanCode.DIK_DELETE.equals(directInputKeyCodeName)) {
+				preferredSize.width *= 0.75;
 			} else if (ScanCode.DIK_TAB.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 1.5;
 			} else if (ScanCode.DIK_BACKSLASH.equals(directInputKeyCodeName)) {
