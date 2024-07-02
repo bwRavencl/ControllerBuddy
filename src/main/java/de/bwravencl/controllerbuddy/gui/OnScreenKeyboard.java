@@ -548,6 +548,10 @@ public final class OnScreenKeyboard extends JFrame {
 			focusedButtonBorder = BorderFactory.createCompoundBorder(defaultButtonBorder,
 					BorderFactory.createLineBorder(Color.RED,
 							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling())));
+
+			if (this == getSelectedButton()) {
+				setFocus(true);
+			}
 		}
 
 		@Override
