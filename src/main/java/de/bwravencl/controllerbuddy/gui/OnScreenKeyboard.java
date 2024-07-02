@@ -493,10 +493,6 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private void setFocus(final boolean focus) {
 			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
-			if (!focus) {
-				OnScreenKeyboard.this.repaint();
-			}
-
 			Toolkit.getDefaultToolkit().sync();
 		}
 
@@ -511,8 +507,9 @@ public final class OnScreenKeyboard extends JFrame {
 			defaultForeground = UIManager.getColor("Button.foreground");
 
 			defaultButtonBorder = UIManager.getBorder("Button.border");
-			focusedButtonBorder = BorderFactory.createLineBorder(Color.RED,
-					Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling()));
+			focusedButtonBorder = BorderFactory.createCompoundBorder(defaultButtonBorder,
+					BorderFactory.createLineBorder(Color.RED,
+							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling())));
 		}
 
 		@Override
