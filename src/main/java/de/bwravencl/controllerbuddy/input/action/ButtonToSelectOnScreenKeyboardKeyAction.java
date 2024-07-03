@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -63,15 +64,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
 
 			if (currentTime - lastPressTime >= minElapseTime) {
-				final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
-
-				switch (direction) {
-				case UP -> onScreenKeyboard.moveSelectorUp();
-				case DOWN -> onScreenKeyboard.moveSelectorDown();
-				case LEFT -> onScreenKeyboard.moveSelectorLeft();
-				case RIGHT -> onScreenKeyboard.moveSelectorRight();
-				}
-
+				input.getMain().getOnScreenKeyboard().moveSelector(direction);
 				lastPressTime = currentTime;
 			}
 		} else {
@@ -107,21 +100,5 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 	@Override
 	public void setLongPress(final boolean longPress) {
 		this.longPress = longPress;
-	}
-
-	public enum Direction {
-
-		UP("DIRECTION_UP"), DOWN("DIRECTION_DOWN"), LEFT("DIRECTION_LEFT"), RIGHT("DIRECTION_RIGHT");
-
-		private final String label;
-
-		Direction(final String labelKey) {
-			label = Main.strings.getString(labelKey);
-		}
-
-		@Override
-		public String toString() {
-			return label;
-		}
 	}
 }

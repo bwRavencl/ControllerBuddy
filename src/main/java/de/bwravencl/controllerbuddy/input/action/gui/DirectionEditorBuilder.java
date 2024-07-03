@@ -17,7 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction.Direction;
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.InvocationTargetException;
 

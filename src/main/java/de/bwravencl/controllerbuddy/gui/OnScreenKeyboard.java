@@ -251,17 +251,18 @@ public final class OnScreenKeyboard extends JFrame {
 		return "<html><center>" + displayName.replaceFirst(" ", "<br>") + "</center></html>";
 	}
 
-	private void deselectButton() {
+	private AbstractKeyboardButton deselectButton() {
 		final var selectedButton = getSelectedButton();
-		if (selectedButton == null) {
-			return;
+
+		if (selectedButton != null) {
+			if (selectedButton.pressed) {
+				selectedButton.release();
+			}
+
+			selectedButton.setFocus(false);
 		}
 
-		if (selectedButton.pressed) {
-			selectedButton.release();
-		}
-
-		selectedButton.setFocus(false);
+		return selectedButton;
 	}
 
 	private void focusSelectedButton() {
@@ -290,75 +291,50 @@ public final class OnScreenKeyboard extends JFrame {
 		return keyboardButtons[selectedRow][selectedColumn];
 	}
 
-	private int getSelectedButtonX() {
-		final var selectedButton = getSelectedButton();
-		if (selectedButton == null) {
-			throw new IllegalStateException();
-		}
-
-		var x = selectedButton.getPreferredSize().width / 2;
-		for (var i = 0; i < selectedColumn; i++) {
-			x += keyboardButtons[selectedRow][i].getPreferredSize().width;
-		}
-
-		return x;
-	}
-
 	private boolean isKeyboardShifted() {
 		return leftShiftKeyboardButton.isShifting() || rightShiftKeyboardButton.isShifting();
 	}
 
-	public void moveSelectorDown() {
+	public void moveSelector(final Direction direction) {
 		EventQueue.invokeLater(() -> {
-			deselectButton();
+			final var previousButton = deselectButton();
 
-			final var x = getSelectedButtonX();
-			if (selectedRow < keyboardButtons.length - 1) {
-				selectedRow++;
-			} else {
-				selectedRow = 0;
+			switch (direction) {
+			case UP -> {
+				if (selectedRow > 0) {
+					selectedRow--;
+				} else {
+					selectedRow = keyboardButtons.length - 1;
+				}
+
+				updateSelectedColumn(previousButton);
 			}
-			selectButtonByX(x);
-		});
-	}
+			case DOWN -> {
+				if (selectedRow < keyboardButtons.length - 1) {
+					selectedRow++;
+				} else {
+					selectedRow = 0;
+				}
 
-	public void moveSelectorLeft() {
-		EventQueue.invokeLater(() -> {
-			deselectButton();
-
-			if (selectedColumn > 0) {
-				selectedColumn--;
-			} else {
-				selectedColumn = keyboardButtons[selectedRow].length - 1;
+				updateSelectedColumn(previousButton);
 			}
+			case LEFT -> {
+				if (selectedColumn > 0) {
+					selectedColumn--;
+				} else {
+					selectedColumn = keyboardButtons[selectedRow].length - 1;
+				}
+			}
+			case RIGHT -> {
+				if (selectedColumn < keyboardButtons[selectedRow].length - 1) {
+					selectedColumn++;
+				} else {
+					selectedColumn = 0;
+				}
+			}
+			}
+
 			focusSelectedButton();
-		});
-	}
-
-	public void moveSelectorRight() {
-		EventQueue.invokeLater(() -> {
-			deselectButton();
-
-			if (selectedColumn < keyboardButtons[selectedRow].length - 1) {
-				selectedColumn++;
-			} else {
-				selectedColumn = 0;
-			}
-			focusSelectedButton();
-		});
-	}
-
-	public void moveSelectorUp() {
-		EventQueue.invokeLater(() -> {
-			deselectButton();
-
-			final var x = getSelectedButtonX();
-			if (selectedRow > 0) {
-				selectedRow--;
-			} else {
-				selectedRow = keyboardButtons.length - 1;
-			}
-			selectButtonByX(x);
 		});
 	}
 
@@ -403,25 +379,6 @@ public final class OnScreenKeyboard extends JFrame {
 		if (selectedButton != null) {
 			selectedButton.release();
 		}
-	}
-
-	private void selectButtonByX(final int targetX) {
-		var x = 0;
-		var minDelta = Integer.MAX_VALUE;
-		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
-			final var width = keyboardButtons[selectedRow][i].getPreferredSize().width;
-			final var delta = Math.abs(targetX - (x + width / 2));
-
-			if (delta > minDelta) {
-				break;
-			}
-			selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
-			minDelta = delta;
-
-			x += width;
-		}
-
-		focusSelectedButton();
 	}
 
 	@Override
@@ -481,9 +438,55 @@ public final class OnScreenKeyboard extends JFrame {
 		updateLocation();
 	}
 
+	private void updateSelectedColumn(final AbstractKeyboardButton previousButton) {
+		final var previousButtonX = previousButton.getX();
+		final var previousButtonWidth = previousButton.getPreferredSize().width;
+		final var previousButtonCenter = previousButtonX + previousButtonWidth / 2;
+		final var previousButtonMaxX = previousButtonX + previousButtonWidth;
+
+		var minDelta = Integer.MAX_VALUE;
+		for (var i = 0; i < keyboardButtons[selectedRow].length; i++) {
+			final var iButton = keyboardButtons[selectedRow][i];
+
+			final var iX = iButton.getX();
+			final var iWidth = iButton.getPreferredSize().width;
+			final var iCenter = iX + iWidth / 2;
+			final var iMaxX = iX + iWidth;
+
+			if (previousButtonX >= iX && previousButtonMaxX <= iMaxX) {
+				selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+				break;
+			}
+
+			final var delta = Math.abs(previousButtonCenter - iCenter);
+			if (delta > minDelta) {
+				break;
+			}
+
+			selectedColumn = Math.min(i, keyboardButtons[selectedRow].length - 1);
+			minDelta = delta;
+		}
+	}
+
 	@Serial
 	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(OnScreenKeyboard.class.getName());
+	}
+
+	public enum Direction {
+
+		UP("DIRECTION_UP"), DOWN("DIRECTION_DOWN"), LEFT("DIRECTION_LEFT"), RIGHT("DIRECTION_RIGHT");
+
+		private final String label;
+
+		Direction(final String labelKey) {
+			label = Main.strings.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
 	}
 
 	private abstract class AbstractKeyboardButton extends JButton {
