@@ -422,8 +422,10 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 		hidDeviceLock.lock();
 		try {
-			hidDevice.close();
-			hidDevice = null;
+			if (hidDevice != null) {
+				hidDevice.close();
+				hidDevice = null;
+			}
 
 			HidManager.getHidServices().shutdown();
 		} catch (final HidException e) {
