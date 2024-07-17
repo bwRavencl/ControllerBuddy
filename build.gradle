@@ -91,7 +91,7 @@ tasks.register('cleanGameControllerDB') {
 clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
 
 dependencies {
-	errorprone('com.google.errorprone:error_prone_core:2.29.0')
+	errorprone('com.google.errorprone:error_prone_core:2.29.1')
 
 	def dbusJavaVersion = '5.0.0'
 	def jnaVersion = '5.14.0'
