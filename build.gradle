@@ -95,7 +95,7 @@ dependencies {
 
 	def dbusJavaVersion = '5.0.0'
 	def jnaVersion = '5.14.0'
-	def lwjglVersion = '3.3.3'
+	def lwjglVersion = '3.3.4'
 
 	def lwjglOs
 	if (os.windows) {
@@ -123,7 +123,6 @@ dependencies {
 			break
 		case { Architectures.AARCH64.isAlias(it) }:
 			lwjglArch = 'arm64'
-			openVrSupport = false
 			break
 		default:
 			throw new GradleException("Unsupported system architecture $arch.displayName")
