@@ -126,6 +126,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -2103,7 +2104,32 @@ public final class Main {
 			runPopupMenu.remove(startServerMenuItem);
 		}
 
-		if (SystemTray.isSupported()) {
+		var systemTraySupported = SystemTray.isSupported();
+		if (systemTraySupported && isLinux) {
+			switch (System.getenv("XDG_SESSION_DESKTOP")) {
+			case "gnome" -> {
+				String output = null;
+				try (final var inputStream = Runtime.getRuntime()
+						.exec(new String[] { "/usr/bin/gnome-extensions", "list", "--enabled" }).getInputStream();
+						final var scanner = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A")) {
+					output = scanner.hasNext() ? scanner.next() : null;
+				} catch (final IOException e) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+
+				systemTraySupported = (output != null && (output.contains("appindicatorsupport@rgcjonas.gmail.com")
+						|| output.contains("ubuntu-appindicators@ubuntu.com")));
+			}
+			case "KDE" -> {
+				final var kdeSessionVersion = System.getenv("KDE_SESSION_VERSION");
+				systemTraySupported = !"6".equals(kdeSessionVersion);
+			}
+			default -> {
+			}
+			}
+		}
+
+		if (systemTraySupported) {
 			final var systemTray = SystemTray.getSystemTray();
 
 			if (trayIcon != null) {
