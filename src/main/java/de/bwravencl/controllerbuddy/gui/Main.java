@@ -1725,7 +1725,8 @@ public final class Main {
 	private void initOpenVrOverlay() {
 		final var profile = input.getProfile();
 
-		if (!Platform.isIntel() || (!isWindows && !isLinux) || !profile.isShowOverlay() || !profile.isShowVrOverlay()) {
+		if (!(Platform.isIntel() || (Platform.isARM() && Platform.is64Bit())) || (!isWindows && !isLinux)
+				|| !profile.isShowOverlay() || !profile.isShowVrOverlay()) {
 			return;
 		}
 
