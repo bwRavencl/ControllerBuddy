@@ -5,7 +5,7 @@ on:
 
 env:
   JAVA_DISTRIBUTION: zulu
-  JAVA_VERSION: 22.0.1+8
+  JAVA_VERSION: 22.0.2+9
   GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
