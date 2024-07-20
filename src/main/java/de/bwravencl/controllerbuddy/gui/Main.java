@@ -84,6 +84,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -514,7 +515,6 @@ public final class Main {
 		});
 
 		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
-		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		final var icons = new ArrayList<Image>();
 		for (final var path : ICON_RESOURCE_PATHS) {
@@ -1673,7 +1673,16 @@ public final class Main {
 
 	private void handleRemainingCommandLine(final CommandLine commandLine) {
 		if (frame != null) {
-			frame.setVisible(!commandLine.hasOption(OPTION_TRAY) || isModalDialogShowing());
+			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
+
+			var visible = !hasTrayOption || isModalDialogShowing();
+			if (trayIcon == null && hasTrayOption) {
+				log.log(Level.WARNING,
+						"System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
+				visible = true;
+			}
+
+			frame.setVisible(visible);
 			updateShowMenuItem();
 		}
 
@@ -2165,6 +2174,40 @@ public final class Main {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 			updateTitleAndTooltip();
+
+			frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		} else {
+			frame.addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(final WindowEvent e) {
+				}
+
+				@Override
+				public void windowClosed(final WindowEvent e) {
+				}
+
+				@Override
+				public void windowClosing(final WindowEvent e) {
+					quit();
+				}
+
+				@Override
+				public void windowDeactivated(final WindowEvent e) {
+				}
+
+				@Override
+				public void windowDeiconified(final WindowEvent e) {
+				}
+
+				@Override
+				public void windowIconified(final WindowEvent e) {
+				}
+
+				@Override
+				public void windowOpened(final WindowEvent e) {
+				}
+			});
 		}
 
 		var restartOutput = false;
