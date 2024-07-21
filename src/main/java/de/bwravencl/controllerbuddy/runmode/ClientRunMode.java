@@ -51,13 +51,13 @@ import javax.swing.JOptionPane;
 
 public final class ClientRunMode extends OutputRunMode {
 
-	public static final String DEFAULT_HOST = "127.0.0.1";
 	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
 	private static final int N_CONNECTION_RETRIES = 10;
+	private static final int N_RECEIVE_PACKET_RETRIES = 10;
 	private final byte[] receiveBuf = new byte[1024];
-	private String host = DEFAULT_HOST;
-	private int port = ServerRunMode.DEFAULT_PORT;
-	private int timeout = ServerRunMode.DEFAULT_TIMEOUT;
+	private final String host;
+	private final int port;
+	private final int timeout;
 	private ClientState clientState = ClientState.Connecting;
 	private InetAddress hostAddress;
 	private DatagramSocket clientSocket;
@@ -65,6 +65,10 @@ public final class ClientRunMode extends OutputRunMode {
 
 	public ClientRunMode(final Main main, final Input input) {
 		super(main, input);
+
+		host = main.getHost();
+		port = main.getPort();
+		timeout = main.getTimeout();
 	}
 
 	public void close() {
@@ -168,77 +172,93 @@ public final class ClientRunMode extends OutputRunMode {
 		case Connected -> {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-				clientSocket.receive(receivePacket);
+				SocketTimeoutException socketTimeoutException = null;
+				for (int i = 0; i < N_RECEIVE_PACKET_RETRIES; i++) {
+					try {
+						clientSocket.receive(receivePacket);
+						socketTimeoutException = null;
+						break;
+					} catch (final SocketTimeoutException e) {
+						socketTimeoutException = e;
+					}
+				}
+
+				if (socketTimeoutException != null) {
+					throw socketTimeoutException;
+				}
 
 				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
-						final var dataInputStream = new DataInputStream(byteArrayInputStream);
-						final var objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-					objectInputStream.setObjectInputFilter(ObjectInputFilter.allowFilter(
-							clazz -> clazz == null || clazz.isArray() || clazz == Number.class || clazz == Integer.class
-									|| clazz == Enum.class || clazz == HashSet.class || clazz == EnumMap.class
-									|| clazz == VirtualAxis.class || clazz == KeyStroke.class,
-							Status.REJECTED));
-
+						final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 					final var messageType = MessageType.values()[dataInputStream.readInt()];
 
-					if (messageType == MessageType.Update || messageType == MessageType.UpdateRequestAlive) {
+					switch (messageType) {
+					case Update -> {
 						final var newCounter = dataInputStream.readLong();
-						if (newCounter > counter) {
 
-							final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream.readObject();
-							axisX.setValue(inputAxes.get(VirtualAxis.X));
-							axisY.setValue(inputAxes.get(VirtualAxis.Y));
-							axisZ.setValue(inputAxes.get(VirtualAxis.Z));
-							axisRX.setValue(inputAxes.get(VirtualAxis.RX));
-							axisRY.setValue(inputAxes.get(VirtualAxis.RY));
-							axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
-							axisS0.setValue(inputAxes.get(VirtualAxis.S0));
-							axisS1.setValue(inputAxes.get(VirtualAxis.S1));
+						try (final var objectInputStream = new ObjectInputStream(dataInputStream)) {
+							objectInputStream
+									.setObjectInputFilter(ObjectInputFilter.allowFilter(
+											clazz -> clazz == null || clazz.isArray() || clazz == Number.class
+													|| clazz == Integer.class || clazz == Enum.class
+													|| clazz == HashSet.class || clazz == EnumMap.class
+													|| clazz == VirtualAxis.class || clazz == KeyStroke.class,
+											Status.REJECTED));
 
-							final var inputButtons = (boolean[]) objectInputStream.readObject();
-							for (var i = 0; i < nButtons; i++) {
-								buttons[i].setValue(inputButtons[i] ? 1 : 0);
+							if (newCounter > counter) {
+								final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream.readObject();
+								axisX.setValue(inputAxes.get(VirtualAxis.X));
+								axisY.setValue(inputAxes.get(VirtualAxis.Y));
+								axisZ.setValue(inputAxes.get(VirtualAxis.Z));
+								axisRX.setValue(inputAxes.get(VirtualAxis.RX));
+								axisRY.setValue(inputAxes.get(VirtualAxis.RY));
+								axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
+								axisS0.setValue(inputAxes.get(VirtualAxis.S0));
+								axisS1.setValue(inputAxes.get(VirtualAxis.S1));
+
+								final var inputButtons = (boolean[]) objectInputStream.readObject();
+								for (var i = 0; i < nButtons; i++) {
+									buttons[i].setValue(inputButtons[i] ? 1 : 0);
+								}
+
+								cursorDeltaX = objectInputStream.readInt();
+								cursorDeltaY = objectInputStream.readInt();
+
+								updateOutputSets((Set<Integer>) objectInputStream.readObject(), oldDownMouseButtons,
+										newUpMouseButtons, newDownMouseButtons, false);
+
+								downUpMouseButtons.clear();
+								downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
+
+								final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
+								final var inputDownModifiers = downKeyStrokes.stream().map(KeyStroke::getModifierCodes)
+										.flatMap(Stream::of).collect(Collectors.toSet());
+								updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers, newDownModifiers,
+										false);
+
+								final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
+										.flatMap(Stream::of).collect(Collectors.toSet());
+								updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys,
+										newDownNormalKeys, true);
+
+								downUpKeyStrokes.clear();
+								downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
+
+								scrollClicks = objectInputStream.readInt();
+
+								onLockKeys.clear();
+								((Set<Integer>) objectInputStream.readObject()).stream()
+										.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(onLockKeys::add);
+
+								offLockKeys.clear();
+								((Set<Integer>) objectInputStream.readObject()).stream()
+										.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(offLockKeys::add);
+
+								counter = newCounter;
+								retVal = true;
 							}
-
-							cursorDeltaX = objectInputStream.readInt();
-							cursorDeltaY = objectInputStream.readInt();
-
-							updateOutputSets((Set<Integer>) objectInputStream.readObject(), oldDownMouseButtons,
-									newUpMouseButtons, newDownMouseButtons, false);
-
-							downUpMouseButtons.clear();
-							downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
-
-							final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
-							final var inputDownModifiers = downKeyStrokes.stream().map(KeyStroke::getModifierCodes)
-									.flatMap(Stream::of).collect(Collectors.toSet());
-							updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers, newDownModifiers,
-									false);
-
-							final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
-									.flatMap(Stream::of).collect(Collectors.toSet());
-							updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys,
-									true);
-
-							downUpKeyStrokes.clear();
-							downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
-
-							scrollClicks = objectInputStream.readInt();
-
-							onLockKeys.clear();
-							((Set<Integer>) objectInputStream.readObject()).stream()
-									.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(onLockKeys::add);
-
-							offLockKeys.clear();
-							((Set<Integer>) objectInputStream.readObject()).stream()
-									.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(offLockKeys::add);
-
-							counter = newCounter;
-							retVal = true;
 						}
 					}
-
-					if (messageType == MessageType.UpdateRequestAlive) {
+					case RequestAlive -> {
 						try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 								final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 							dataOutputStream.writeInt(MessageType.ClientAlive.getId());
@@ -248,6 +268,9 @@ public final class ClientRunMode extends OutputRunMode {
 									hostAddress, port);
 							clientSocket.send(keepAlivePacket);
 						}
+					}
+					default -> {
+					}
 					}
 				} catch (final ClassNotFoundException e) {
 					throw new RuntimeException(e);
@@ -325,18 +348,6 @@ public final class ClientRunMode extends OutputRunMode {
 		}
 
 		logStop();
-	}
-
-	public void setHost(final String host) {
-		this.host = host;
-	}
-
-	public void setPort(final int port) {
-		this.port = port;
-	}
-
-	public void setTimeout(final int timeout) {
-		this.timeout = timeout;
 	}
 
 	private enum ClientState {

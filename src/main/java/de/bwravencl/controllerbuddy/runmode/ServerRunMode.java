@@ -44,18 +44,22 @@ import org.lwjgl.glfw.GLFW;
 
 public final class ServerRunMode extends RunMode {
 
-	public static final int DEFAULT_PORT = 28_789;
-	public static final int DEFAULT_TIMEOUT = 2000;
-	static final byte PROTOCOL_VERSION = 1;
+	public static final int DEFAULT_PORT = 28789;
+	public static final int DEFAULT_TIMEOUT = 100;
+	static final byte PROTOCOL_VERSION = 2;
 	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
-	private int port = DEFAULT_PORT;
-	private int timeout = DEFAULT_TIMEOUT;
+	private static final int N_REQUEST_ALIVE_RETRIES = 10;
+	private final int port;
+	private final int timeout;
 	private DatagramSocket serverSocket;
-	private InetAddress clientIPAddress;
+	private InetAddress clientAddress;
 
 	public ServerRunMode(final Main main, final Input input) {
 		super(main, input);
+
+		port = main.getPort();
+		timeout = main.getTimeout();
 	}
 
 	public void close() {
@@ -96,7 +100,7 @@ public final class ServerRunMode extends RunMode {
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(0);
 					serverSocket.receive(receivePacket);
-					clientIPAddress = receivePacket.getAddress();
+					clientAddress = receivePacket.getAddress();
 
 					try (final var dataInputStream = new DataInputStream(
 							new ByteArrayInputStream(receivePacket.getData()))) {
@@ -114,7 +118,7 @@ public final class ServerRunMode extends RunMode {
 								dataOutputStream.writeLong(pollInterval);
 
 								final var sendBuf = byteArrayOutputStream.toByteArray();
-								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress,
+								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
 										clientPort);
 								serverSocket.send(sendPacket);
 							}
@@ -123,7 +127,7 @@ public final class ServerRunMode extends RunMode {
 							input.init();
 							EventQueue.invokeLater(() -> main.setStatusBarText(
 									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-											clientIPAddress.getCanonicalHostName(), clientPort, pollInterval)));
+											clientAddress.getCanonicalHostName(), clientPort, pollInterval)));
 						}
 					}
 				}
@@ -131,69 +135,87 @@ public final class ServerRunMode extends RunMode {
 					// noinspection BusyWait
 					Thread.sleep(pollInterval);
 
-					final var doAliveCheck = counter % REQUEST_ALIVE_INTERVAL == 0;
 					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-							final var dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-							final var objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-						dataOutputStream
-								.writeInt((doAliveCheck ? MessageType.UpdateRequestAlive : MessageType.Update).getId());
+							final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+						dataOutputStream.writeInt(MessageType.Update.getId());
 						dataOutputStream.writeLong(counter);
 
 						if (!input.poll()) {
 							controllerDisconnected();
 							return;
 						}
+						try (final var objectOutputStream = new ObjectOutputStream(dataOutputStream)) {
+							objectOutputStream.writeObject(input.getAxes());
+							objectOutputStream.writeObject(input.getButtons());
+							objectOutputStream.writeInt(input.getCursorDeltaX());
+							objectOutputStream.writeInt(input.getCursorDeltaY());
+							objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
+							objectOutputStream.writeObject(input.getDownUpMouseButtons());
+							objectOutputStream.writeObject(input.getDownKeyStrokes());
+							objectOutputStream.writeObject(input.getDownUpKeyStrokes());
 
-						objectOutputStream.writeObject(input.getAxes());
-						objectOutputStream.writeObject(input.getButtons());
-						objectOutputStream.writeInt(input.getCursorDeltaX());
-						objectOutputStream.writeInt(input.getCursorDeltaY());
-						objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
-						objectOutputStream.writeObject(input.getDownUpMouseButtons());
-						objectOutputStream.writeObject(input.getDownKeyStrokes());
-						objectOutputStream.writeObject(input.getDownUpKeyStrokes());
+							objectOutputStream.writeInt(input.getScrollClicks());
 
-						objectOutputStream.writeInt(input.getScrollClicks());
+							objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
+									.collect(Collectors.toSet()));
+							objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
+									.collect(Collectors.toSet()));
 
-						objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
-								.collect(Collectors.toSet()));
-						objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
-								.collect(Collectors.toSet()));
+							input.setCursorDeltaX(0);
+							input.setCursorDeltaY(0);
 
-						input.setCursorDeltaX(0);
-						input.setCursorDeltaY(0);
+							input.getDownUpMouseButtons().clear();
+							input.getDownUpKeyStrokes().clear();
 
-						input.getDownUpMouseButtons().clear();
-						input.getDownUpKeyStrokes().clear();
+							input.setScrollClicks(0);
 
-						input.setScrollClicks(0);
+							input.getOnLockKeys().clear();
+							input.getOffLockKeys().clear();
 
-						input.getOnLockKeys().clear();
-						input.getOffLockKeys().clear();
-
-						final var sendBuf = byteArrayOutputStream.toByteArray();
-						final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientIPAddress, clientPort);
-						serverSocket.send(sendPacket);
+							final var sendBuf = byteArrayOutputStream.toByteArray();
+							final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
+									clientPort);
+							serverSocket.send(sendPacket);
+							counter++;
+						}
 					}
 
-					if (doAliveCheck) {
-						receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-						serverSocket.setSoTimeout(timeout);
-						try {
-							serverSocket.receive(receivePacket);
+					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
+						var gotClientAlive = false;
+						for (int i = 0; i < N_REQUEST_ALIVE_RETRIES; i++) {
+							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+								dataOutputStream.writeInt(MessageType.RequestAlive.getId());
 
-							if (clientIPAddress.equals(receivePacket.getAddress())) {
-								try (final var byteArrayInputStream = new ByteArrayInputStream(
-										receivePacket.getData())) {
-									try (final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
+								final var sendBuf = byteArrayOutputStream.toByteArray();
+								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
+										clientPort);
+								serverSocket.send(sendPacket);
+							}
+
+							receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+							serverSocket.setSoTimeout(timeout);
+							try {
+								serverSocket.receive(receivePacket);
+
+								if (clientAddress.equals(receivePacket.getAddress())) {
+									try (final var byteArrayInputStream = new ByteArrayInputStream(
+											receivePacket.getData());
+											final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 										final var messageType = dataInputStream.readInt();
 										if (messageType == MessageType.ClientAlive.getId()) {
 											counter++;
+											gotClientAlive = true;
+											break;
 										}
 									}
 								}
+							} catch (final SocketTimeoutException _) {
+								// handled below
 							}
-						} catch (final SocketTimeoutException e) {
+						}
+
+						if (!gotClientAlive) {
 							input.reset();
 							input.deInit(false);
 
@@ -203,8 +225,6 @@ public final class ServerRunMode extends RunMode {
 
 							serverState = ServerState.Listening;
 						}
-					} else {
-						counter++;
 					}
 				}
 				}
@@ -239,17 +259,9 @@ public final class ServerRunMode extends RunMode {
 		logStop();
 	}
 
-	public void setPort(final int port) {
-		this.port = port;
-	}
-
-	public void setTimeout(final int timeout) {
-		this.timeout = timeout;
-	}
-
 	enum MessageType {
 
-		ClientHello(0), ServerHello(1), Update(2), UpdateRequestAlive(3), ClientAlive(4);
+		ClientHello(0), ServerHello(1), Update(2), RequestAlive(3), ClientAlive(4);
 
 		private final int id;
 

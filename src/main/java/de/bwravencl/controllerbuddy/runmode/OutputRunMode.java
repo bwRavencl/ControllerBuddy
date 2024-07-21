@@ -156,7 +156,7 @@ public abstract class OutputRunMode extends RunMode {
 		super(main, input);
 
 		if (Main.isWindows) {
-			vJoyDevice = new UINT(VJOY_DEFAULT_DEVICE);
+			vJoyDevice = new UINT(main.getVJoyDevice());
 		}
 	}
 
@@ -696,10 +696,6 @@ public abstract class OutputRunMode extends RunMode {
 				buttons[i] = new ButtonValue();
 			}
 		}
-	}
-
-	public final void setvJoyDevice(final UINT vJoyDevice) {
-		this.vJoyDevice = vJoyDevice;
 	}
 
 	final void writeOutput() {

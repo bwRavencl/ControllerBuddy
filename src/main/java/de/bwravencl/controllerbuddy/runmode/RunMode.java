@@ -30,7 +30,7 @@ public abstract class RunMode implements Runnable {
 	private static final Logger log = Logger.getLogger(RunMode.class.getName());
 	final Main main;
 	final Input input;
-	long pollInterval = DEFAULT_POLL_INTERVAL;
+	long pollInterval;
 	int minAxisValue;
 	int maxAxisValue;
 	int nButtons;
@@ -39,6 +39,8 @@ public abstract class RunMode implements Runnable {
 	RunMode(final Main main, final Input input) {
 		this.main = main;
 		this.input = input;
+		pollInterval = main.getPollInterval();
+
 		input.setRunMode(this);
 	}
 
@@ -84,10 +86,6 @@ public abstract class RunMode implements Runnable {
 
 	final void logStop() {
 		getLogger().log(Level.INFO, "Stopped output");
-	}
-
-	public final void setPollInterval(final long pollInterval) {
-		this.pollInterval = pollInterval;
 	}
 
 	void setnButtons(final int nButtons) {

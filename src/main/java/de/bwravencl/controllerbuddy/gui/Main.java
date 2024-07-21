@@ -24,7 +24,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -240,7 +239,10 @@ public final class Main {
 	private static final int SVG_VIEWBOX_MARGIN = 20;
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
-	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, 15);
+	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
+	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
+	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
+			SETTINGS_LABEL_DIMENSION_HEIGHT);
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP,
 			DEFAULT_VGAP);
 	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
@@ -376,7 +378,6 @@ public final class Main {
 	private JCheckBox showVrOverlayCheckBox;
 	private ScheduledExecutorService overlayExecutorService;
 	private JLabel vJoyDirectoryLabel;
-	private JTextField hostTextField;
 	private TrayIcon trayIcon;
 	private boolean unsavedChanges = false;
 	private String loadedProfile = null;
@@ -758,59 +759,6 @@ public final class Main {
 					(int) ((JSpinner) event.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 		}
-
-		final var networkSettingsPanel = new JPanel();
-		networkSettingsPanel.setLayout(new BoxLayout(networkSettingsPanel, BoxLayout.PAGE_AXIS));
-		networkSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(strings.getString("NETWORK_SETTINGS_BORDER_TITLE")));
-		globalSettingsPanel.add(networkSettingsPanel, constraints);
-
-		if (isWindows || isLinux) {
-			final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			networkSettingsPanel.add(hostPanel);
-
-			final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
-			hostLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			hostPanel.add(hostLabel);
-
-			hostTextField = new JTextField(getHost(), 15);
-			hostTextField.setCaretPosition(0);
-			final var setHostAction = new SetHostAction(hostTextField);
-			hostTextField.addActionListener(setHostAction);
-			hostTextField.addFocusListener(setHostAction);
-			hostPanel.add(hostTextField);
-		}
-
-		final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		networkSettingsPanel.add(portPanel, constraints);
-
-		final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
-		portLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		portPanel.add(portLabel);
-
-		final var portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
-		final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
-		((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		portSpinner.setEditor(portSpinnerEditor);
-		portSpinner.addChangeListener(
-				event -> preferences.putInt(PREFERENCES_PORT, (int) ((JSpinner) event.getSource()).getValue()));
-		portPanel.add(portSpinner);
-
-		final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		networkSettingsPanel.add(timeoutPanel, constraints);
-
-		final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
-		timeoutLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		timeoutPanel.add(timeoutLabel);
-
-		final var timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
-		final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
-				"# " + strings.getString("MILLISECOND_SYMBOL"));
-		((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		timeoutSpinner.setEditor(timeoutSpinnerEditor);
-		timeoutSpinner.addChangeListener(
-				event -> preferences.putInt(PREFERENCES_TIMEOUT, (int) ((JSpinner) event.getSource()).getValue()));
-		timeoutPanel.add(timeoutSpinner);
 
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
@@ -1597,8 +1545,8 @@ public final class Main {
 		return frame;
 	}
 
-	private String getHost() {
-		return preferences.get(PREFERENCES_HOST, ClientRunMode.DEFAULT_HOST);
+	public String getHost() {
+		return preferences.get(PREFERENCES_HOST, "");
 	}
 
 	Input getInput() {
@@ -1617,11 +1565,11 @@ public final class Main {
 		return preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
 	}
 
-	private int getPollInterval() {
+	public int getPollInterval() {
 		return preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
 	}
 
-	private int getPort() {
+	public int getPort() {
 		return preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT);
 	}
 
@@ -1645,11 +1593,11 @@ public final class Main {
 				SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
 	}
 
-	private int getTimeout() {
+	public int getTimeout() {
 		return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
 	}
 
-	private int getVJoyDevice() {
+	public int getVJoyDevice() {
 		return preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE);
 	}
 
@@ -2544,11 +2492,6 @@ public final class Main {
 		}
 
 		final var clientRunMode = new ClientRunMode(this, input);
-		clientRunMode.setvJoyDevice(new UINT(getVJoyDevice()));
-		clientRunMode.setHost(hostTextField.getText());
-		clientRunMode.setPort(getPort());
-		clientRunMode.setTimeout(getTimeout());
-
 		runMode = clientRunMode;
 		taskRunner.run(clientRunMode);
 
@@ -2563,9 +2506,6 @@ public final class Main {
 		}
 
 		final var localRunMode = new LocalRunMode(this, input);
-		localRunMode.setvJoyDevice(new UINT(getVJoyDevice()));
-		localRunMode.setPollInterval(getPollInterval());
-
 		runMode = localRunMode;
 		taskRunner.run(localRunMode);
 
@@ -2593,10 +2533,6 @@ public final class Main {
 		}
 
 		final var serverThread = new ServerRunMode(this, input);
-		serverThread.setPort(getPort());
-		serverThread.setTimeout(getTimeout());
-		serverThread.setPollInterval(getPollInterval());
-
 		runMode = serverThread;
 		taskRunner.run(serverThread);
 
@@ -3740,6 +3676,75 @@ public final class Main {
 		}
 	}
 
+	private class ConnectionSettingsPanel extends JPanel {
+
+		@Serial
+		private static final long serialVersionUID = 2959405425250777631L;
+
+		private final JSpinner portSpinner;
+		private final JSpinner timeoutSpinner;
+		private JTextField hostTextField;
+
+		private ConnectionSettingsPanel(final boolean withHost) {
+			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
+			if (withHost) {
+				final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+				add(hostPanel);
+
+				final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
+				hostLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+				hostPanel.add(hostLabel);
+
+				hostTextField = new JTextField(getHost(), 15);
+				hostTextField.setCaretPosition(0);
+				hostPanel.add(hostTextField);
+			}
+
+			final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			add(portPanel);
+
+			final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
+			portLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			portPanel.add(portLabel);
+
+			portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
+			final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
+			((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+			portSpinner.setEditor(portSpinnerEditor);
+			portPanel.add(portSpinner);
+
+			final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			add(timeoutPanel);
+
+			final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
+			timeoutLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			timeoutPanel.add(timeoutLabel);
+
+			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
+			final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
+					"# " + strings.getString("MILLISECOND_SYMBOL"));
+			((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+			timeoutSpinner.setEditor(timeoutSpinnerEditor);
+			timeoutPanel.add(timeoutSpinner);
+		}
+
+		private void saveSettings() {
+			if (hostTextField != null) {
+				final var host = hostTextField.getText();
+
+				if (host != null && !host.isEmpty()) {
+					preferences.put(PREFERENCES_HOST, host);
+				} else {
+					hostTextField.setText(getHost());
+				}
+			}
+
+			preferences.putInt(PREFERENCES_PORT, (int) portSpinner.getValue());
+			preferences.putInt(PREFERENCES_TIMEOUT, (int) timeoutSpinner.getValue());
+		}
+	}
+
 	private final class DisplayIndicatorAction extends AbstractAction {
 
 		@Serial
@@ -4025,42 +4030,6 @@ public final class Main {
 		}
 	}
 
-	private final class SetHostAction extends AbstractAction implements FocusListener {
-
-		@Serial
-		private static final long serialVersionUID = -7674562782751876814L;
-
-		private final JTextField hostTextField;
-
-		private SetHostAction(final JTextField hostTextField) {
-			this.hostTextField = hostTextField;
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			setHost();
-		}
-
-		@Override
-		public void focusGained(final FocusEvent e) {
-		}
-
-		@Override
-		public void focusLost(final FocusEvent e) {
-			setHost();
-		}
-
-		private void setHost() {
-			final var host = hostTextField.getText();
-
-			if (host != null && !host.isEmpty()) {
-				preferences.put(PREFERENCES_HOST, host);
-			} else {
-				hostTextField.setText(getHost());
-			}
-		}
-	}
-
 	private final class SetHotSwapButtonAction extends AbstractAction {
 
 		@Serial
@@ -4220,7 +4189,14 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			startClient();
+			final var connectionSettingsPanel = new ConnectionSettingsPanel(true);
+
+			if (JOptionPane.showConfirmDialog(main.frame, connectionSettingsPanel,
+					strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+				connectionSettingsPanel.saveSettings();
+				startClient();
+			}
 		}
 	}
 
@@ -4252,7 +4228,14 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			startServer();
+			final var connectionSettingsPanel = new ConnectionSettingsPanel(false);
+
+			if (JOptionPane.showConfirmDialog(main.frame, connectionSettingsPanel,
+					strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+				connectionSettingsPanel.saveSettings();
+				startServer();
+			}
 		}
 	}
 
