@@ -1832,13 +1832,20 @@ public final class Main {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-				updateOverlayAlignment(totalDisplayBounds);
+				if (!isMac) {
+					totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+					updateOverlayAlignment(totalDisplayBounds);
+				}
 			}
 
 			@Override
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
+
+				if (isMac) {
+					deInitOverlay();
+					initOverlay();
+				}
 			}
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
@@ -2880,6 +2887,12 @@ public final class Main {
 		}
 
 		overlayFrame.pack();
+
+		if (isMac) {
+			final var overlayFrameContentPane = overlayFrame.getContentPane();
+			overlayFrameContentPane.invalidate();
+			overlayFrameContentPane.repaint();
+		}
 	}
 
 	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
