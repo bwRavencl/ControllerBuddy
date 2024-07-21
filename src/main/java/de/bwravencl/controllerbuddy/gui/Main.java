@@ -1754,7 +1754,9 @@ public final class Main {
 		}
 
 		overlayFrame = new JFrame("Overlay");
-		overlayFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+		final var overlayFrameRootPane = overlayFrame.getRootPane();
+		overlayFrameRootPane.setWindowDecorationStyle(JRootPane.NONE);
+		overlayFrameRootPane.setBackground(TRANSPARENT);
 		overlayFrame.setUndecorated(true);
 		overlayFrame.setType(JFrame.Type.POPUP);
 		overlayFrame.setLayout(new BorderLayout());
