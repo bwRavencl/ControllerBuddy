@@ -2357,13 +2357,15 @@ public final class Main {
 
 	private void repaintOnScreenKeyboardAndOverlay() {
 		if (onScreenKeyboard.isVisible()) {
-			onScreenKeyboard.getContentPane().validate();
-			onScreenKeyboard.getContentPane().repaint();
+			final var onScreenKeyboardContentPane = onScreenKeyboard.getContentPane();
+			onScreenKeyboardContentPane.validate();
+			onScreenKeyboardContentPane.repaint();
 		}
 
 		if (isWindows && overlayFrame != null) {
-			overlayFrame.getContentPane().validate();
-			overlayFrame.getContentPane().repaint();
+			final var overlayFrameContentPane = overlayFrame.getContentPane();
+			overlayFrameContentPane.validate();
+			overlayFrameContentPane.repaint();
 		}
 
 		Toolkit.getDefaultToolkit().sync();
