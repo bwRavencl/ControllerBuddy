@@ -182,7 +182,6 @@ public final class ClientRunMode extends OutputRunMode {
 					final var messageType = MessageType.values()[dataInputStream.readInt()];
 
 					if (messageType == MessageType.Update || messageType == MessageType.UpdateRequestAlive) {
-
 						final var newCounter = dataInputStream.readLong();
 						if (newCounter > counter) {
 
