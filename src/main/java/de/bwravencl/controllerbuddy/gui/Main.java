@@ -1832,20 +1832,13 @@ public final class Main {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				if (isWindows) {
-					totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-					updateOverlayAlignment(totalDisplayBounds);
-				}
+				totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+				updateOverlayAlignment(totalDisplayBounds);
 			}
 
 			@Override
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
-
-				if (!isWindows) {
-					deInitOverlay();
-					initOverlay();
-				}
 			}
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
