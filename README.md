@@ -133,7 +133,7 @@ Mode switching can be configured to work in two different ways:
 - Default: works like the SHIFT key on your keyboard
 - Toggle: works like the Caps Lock key
 
-A number of well thought out profiles for the most popular flight simulators are available in the [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
+A number of well-thought-out profiles for the most popular flight simulators are available in the [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
 
 ## Architecture
 
