@@ -36,6 +36,18 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.extract_release_variables.outputs.tag_name }}
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
+      - name: Sign Archive
+        id: sign_archive
+        shell: bash
+        run: |
+          signature_path="${{ steps.extract_release_variables.outputs.archive_path }}.sig"
+          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.extract_release_variables.outputs.archive_path }}
+          echo "signature_path=$signature_path" >> $GITHUB_OUTPUT
       - name: Release
         id: release
         uses: softprops/action-gh-release@v2
@@ -43,7 +55,9 @@ jobs:
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
-          files: ${{ steps.extract_release_variables.outputs.archive_path }}
+          files: |
+            ${{ steps.extract_release_variables.outputs.archive_path }}
+            ${{ steps.sign_archive.outputs.signature_path }}
   linux:
     needs: windows
     runs-on: ubuntu-latest
@@ -67,6 +81,18 @@ jobs:
         run: |
           echo "tag_name=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed s/-linux-x86-64//)" >> $GITHUB_OUTPUT
           echo "archive_path=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
+      - name: Sign Archive
+        id: sign_archive
+        shell: bash
+        run: |
+          signature_path="${{ steps.extract_release_variables.outputs.archive_path }}.sig"
+          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.extract_release_variables.outputs.archive_path }}
+          echo "signature_path=$signature_path" >> $GITHUB_OUTPUT
       - name: Release
         id: release
         uses: softprops/action-gh-release@v2
@@ -75,4 +101,6 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-          files: ${{ steps.extract_release_variables.outputs.archive_path }}
+          files: |
+            ${{ steps.extract_release_variables.outputs.archive_path }}
+            ${{ steps.sign_archive.outputs.signature_path }}
