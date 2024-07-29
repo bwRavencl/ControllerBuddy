@@ -2003,7 +2003,7 @@ public final class Main {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 		} else {
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.frame,
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, frame,
 					MessageFormat.format(strings.getString("ALREADY_RUNNING_DIALOG_TEXT"), Metadata.APPLICATION_NAME),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		}
@@ -3696,9 +3696,14 @@ public final class Main {
 				hostLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
 				hostPanel.add(hostLabel);
 
-				hostTextField = new JTextField(getHost(), 15);
+				final var host = getHost();
+				hostTextField = new JTextField(host, 15);
 				hostTextField.setCaretPosition(0);
 				hostPanel.add(hostTextField);
+
+				if (host == null || host.isBlank()) {
+					hostTextField.grabFocus();
+				}
 			}
 
 			final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -3729,19 +3734,19 @@ public final class Main {
 			timeoutPanel.add(timeoutSpinner);
 		}
 
-		private void saveSettings() {
+		private boolean saveSettings() {
 			if (hostTextField != null) {
 				final var host = hostTextField.getText();
-
-				if (host != null && !host.isEmpty()) {
-					preferences.put(PREFERENCES_HOST, host);
-				} else {
-					hostTextField.setText(getHost());
+				if (host == null || host.isBlank()) {
+					return false;
 				}
+				preferences.put(PREFERENCES_HOST, host);
 			}
 
 			preferences.putInt(PREFERENCES_PORT, (int) portSpinner.getValue());
 			preferences.putInt(PREFERENCES_TIMEOUT, (int) timeoutSpinner.getValue());
+
+			return true;
 		}
 	}
 
@@ -4189,14 +4194,27 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			showConnectDialog();
+		}
+
+		private void showConnectDialog() {
 			final var connectionSettingsPanel = new ConnectionSettingsPanel(true);
 
-			if (JOptionPane.showConfirmDialog(main.frame, connectionSettingsPanel,
-					strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-				connectionSettingsPanel.saveSettings();
-				startClient();
-			}
+			executeWhileVisible(() -> {
+				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
+						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+					if (connectionSettingsPanel.saveSettings()) {
+						startClient();
+					} else {
+						GuiUtils.showMessageDialog(main, frame, strings.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT"),
+								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						showConnectDialog();
+					}
+				}
+
+				return null;
+			});
 		}
 	}
 
@@ -4230,12 +4248,16 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var connectionSettingsPanel = new ConnectionSettingsPanel(false);
 
-			if (JOptionPane.showConfirmDialog(main.frame, connectionSettingsPanel,
-					strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-				connectionSettingsPanel.saveSettings();
-				startServer();
-			}
+			executeWhileVisible(() -> {
+				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
+						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+					connectionSettingsPanel.saveSettings();
+					startServer();
+				}
+
+				return null;
+			});
 		}
 	}
 
