@@ -147,7 +147,7 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
-	implementation 'org.slf4j:slf4j-jdk14:2.0.13'
+	implementation 'org.slf4j:slf4j-jdk14:2.0.14'
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
