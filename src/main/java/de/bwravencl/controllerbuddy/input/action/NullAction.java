@@ -34,7 +34,6 @@ public final class NullAction implements IAction<Number> {
 
 	@Override
 	public String getDescription(final Input input) {
-		// noinspection UnnecessarilyQualifiedStaticUsage
 		return IAction.getDefaultDescription(this);
 	}
 }

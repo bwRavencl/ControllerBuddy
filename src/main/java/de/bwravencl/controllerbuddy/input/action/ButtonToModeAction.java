@@ -61,7 +61,6 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
 			profile.getModeByUuid(modeUuid).ifPresent(newMode -> {
 				IAxisToLongPressAction.onModeActivated(activeMode, newMode);
-				// noinspection UnnecessarilyQualifiedStaticUsage
 				IButtonToAction.onModeActivated(activeMode, newMode);
 
 				profile.setActiveMode(input, newMode);
@@ -140,7 +139,6 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		}
 
 		IAxisToLongPressAction.onModeDeactivated(activeMode);
-		// noinspection UnnecessarilyQualifiedStaticUsage
 		IButtonToAction.onModeDeactivated(activeMode);
 
 		profile.setActiveMode(input, previousMode);
