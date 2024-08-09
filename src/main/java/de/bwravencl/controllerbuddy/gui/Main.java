@@ -83,7 +83,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -480,6 +479,11 @@ public final class Main {
 			@Override
 			public void windowClosing(final WindowEvent e) {
 				super.windowClosing(e);
+
+				if (trayIcon == null) {
+					quit();
+					return;
+				}
 
 				if (showMenuItem != null) {
 					showMenuItem.setEnabled(true);
@@ -2153,38 +2157,6 @@ public final class Main {
 			updateTitleAndTooltip();
 
 			frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		} else {
-			frame.addWindowListener(new WindowListener() {
-
-				@Override
-				public void windowActivated(final WindowEvent e) {
-				}
-
-				@Override
-				public void windowClosed(final WindowEvent e) {
-				}
-
-				@Override
-				public void windowClosing(final WindowEvent e) {
-					quit();
-				}
-
-				@Override
-				public void windowDeactivated(final WindowEvent e) {
-				}
-
-				@Override
-				public void windowDeiconified(final WindowEvent e) {
-				}
-
-				@Override
-				public void windowIconified(final WindowEvent e) {
-				}
-
-				@Override
-				public void windowOpened(final WindowEvent e) {
-				}
-			});
 		}
 
 		var restartOutput = false;
