@@ -269,6 +269,7 @@ public final class Main {
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
+	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
 	private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
 	private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
@@ -287,6 +288,7 @@ public final class Main {
 	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
+	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 	private static final String LICENSES_FILENAME = "licenses.txt";
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
@@ -488,6 +490,8 @@ public final class Main {
 				if (showMenuItem != null) {
 					showMenuItem.setEnabled(true);
 				}
+
+				EventQueue.invokeLater(() -> showTrayIconHint());
 			}
 
 			@Override
@@ -1637,6 +1641,10 @@ public final class Main {
 
 			frame.setVisible(visible);
 			updateShowMenuItem();
+
+			if (!visible) {
+				showTrayIconHint();
+			}
 		}
 
 		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
@@ -2454,6 +2462,27 @@ public final class Main {
 		updateShowMenuItem();
 
 		return true;
+	}
+
+	private void showTrayIconHint() {
+		if (preferences.getBoolean(PREFERENCES_SKIP_TRAY_ICON_HINT, false)) {
+			return;
+		}
+
+		final var imageLabel = new JLabel(new ImageIcon(getResourceLocation(TRAY_ICON_HINT_IMAGE_RESOURCE_PATH)));
+		imageLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 25, 10),
+				BorderFactory.createLoweredBevelBorder()));
+
+		final var doNotShowMessageAgainCheckbox = new JCheckBox(strings.getString("DO_NOT_SHOW_MESSAGE_AGAIN"));
+
+		GuiUtils.showMessageDialog(null, frame,
+				new Object[] { MessageFormat.format(strings.getString("TRAY_ICON_HINT_DIALOG_TEXT"),
+						Metadata.APPLICATION_NAME), imageLabel, doNotShowMessageAgainCheckbox },
+				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+
+		if (doNotShowMessageAgainCheckbox.isSelected()) {
+			preferences.putBoolean(PREFERENCES_SKIP_TRAY_ICON_HINT, true);
+		}
 	}
 
 	private void startClient() {
