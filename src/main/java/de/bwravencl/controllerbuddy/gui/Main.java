@@ -114,6 +114,7 @@ import java.nio.file.NoSuchFileException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -135,6 +136,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
@@ -298,6 +300,9 @@ public final class Main {
 	private static final String SINGLE_INSTANCE_INIT = "INIT";
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
+	private static final String[] GNOME_SYSTEM_TRAY_EXTENSIONS = { "appindicatorsupport@rgcjonas.gmail.com",
+			"ubuntu-appindicators@ubuntu.com", "topIcons@adel.gadllah@gmail.com", "topiconsfix@aleskva@devnullmail.com",
+			"TopIcons@phocean.net", "topicons-redux@pop-planet.info" };
 	static volatile Main main;
 	static boolean skipMessageDialogs;
 	private static volatile boolean terminated;
@@ -1064,6 +1069,18 @@ public final class Main {
 			log.log(Level.WARNING,
 					"Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 		}
+	}
+
+	private static String execCommandForOutput(final String[] cmdarray) {
+		String output = null;
+		try (final var inputStream = Runtime.getRuntime().exec(cmdarray).getInputStream();
+				final var scanner = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A")) {
+			output = scanner.hasNext() ? scanner.next() : null;
+		} catch (final IOException e) {
+			log.log(Level.WARNING, e.getMessage(), e);
+		}
+
+		return output;
 	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
@@ -2071,17 +2088,25 @@ public final class Main {
 		if (systemTraySupported && isLinux) {
 			switch (System.getenv("XDG_SESSION_DESKTOP")) {
 			case "gnome" -> {
-				String output = null;
-				try (final var inputStream = Runtime.getRuntime()
-						.exec(new String[] { "/usr/bin/gnome-extensions", "list", "--enabled" }).getInputStream();
-						final var scanner = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A")) {
-					output = scanner.hasNext() ? scanner.next() : null;
-				} catch (final IOException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
+				final var gnomeExtensions = execCommandForOutput(
+						new String[] { "/usr/bin/gnome-extensions", "list", "--enabled" });
+				if (gnomeExtensions == null
+						|| Arrays.stream(GNOME_SYSTEM_TRAY_EXTENSIONS).noneMatch(gnomeExtensions::contains)) {
+					systemTraySupported = false;
 
-				systemTraySupported = (output != null && (output.contains("appindicatorsupport@rgcjonas.gmail.com")
-						|| output.contains("ubuntu-appindicators@ubuntu.com")));
+					final var gnomeVersion = execCommandForOutput(new String[] { "/usr/bin/gnome-shell", "--version" });
+					if (gnomeVersion == null) {
+						break;
+					}
+
+					final var matcher = Pattern.compile("^GNOME Shell (\\d+)\\.(\\d+).*").matcher(gnomeVersion);
+					if (matcher.matches()) {
+						final var majorVersion = Integer.parseInt(matcher.group(1));
+						final var minorVersion = Integer.parseInt(matcher.group(2));
+
+						systemTraySupported = majorVersion < 3 || (majorVersion == 3 && minorVersion < 26);
+					}
+				}
 			}
 			case "KDE" -> {
 				final var kdeSessionVersion = System.getenv("KDE_SESSION_VERSION");
