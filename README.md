@@ -1,7 +1,7 @@
 # ControllerBuddy
 
 <!--suppress HtmlDeprecatedAttribute -->
-<img src="src/main/resources/icon_128.png" alt="ControllerBuddy Logo" align="right"/>
+<img src="icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/>
 
 [![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
 

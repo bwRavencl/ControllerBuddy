@@ -264,7 +264,7 @@ spotless {
 		importOrder()
 	}
 	format 'xml', {
-		target "$resourcesDir/**/*.svg".toString()
+		target '*.svg'
 		eclipseWtp EclipseWtpFormatterStep.XML
 	}
 	format 'newlineAndTrailingWhitespace', {
