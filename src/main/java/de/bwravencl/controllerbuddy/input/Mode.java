@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.lwjgl.glfw.GLFW;
 
 public final class Mode implements Cloneable {
 
@@ -120,7 +121,42 @@ public final class Mode implements Cloneable {
 		return description;
 	}
 
-	public record Component(Mode.Component.ComponentType type, int index) {
+	public static final class Component {
+
+		private final Main main;
+		private final ComponentType type;
+		private final int index;
+
+		public Component(final Main main, final ComponentType type, final int index) {
+			this.main = main;
+			this.type = type;
+			this.index = index;
+		}
+
+		public int getIndex() {
+			if (main.isSwapLeftAndRightSticks()) {
+				return switch (type) {
+				case AXIS -> switch (index) {
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+				default -> index;
+				};
+				case BUTTON -> switch (index) {
+				case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+				case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+				default -> index;
+				};
+				};
+			}
+
+			return index;
+		}
+
+		public ComponentType getType() {
+			return type;
+		}
 
 		public enum ComponentType {
 			AXIS, BUTTON

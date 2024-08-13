@@ -86,6 +86,7 @@ public final class Input {
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
 	private boolean skipAxisInitialization;
 	private boolean initialized;
+	private boolean swapLeftAndRightSticks;
 	private boolean mapCircularAxesToSquareAxes;
 	private boolean hapticFeedback;
 
@@ -253,7 +254,30 @@ public final class Input {
 		return scrollClicks;
 	}
 
+	private void handleStickSwap(final GLFWGamepadState gamepadState) {
+		if (!swapLeftAndRightSticks) {
+			return;
+		}
+
+		final var tempLeftXAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
+		final var tempLeftYAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
+		final var tempRightXAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
+		final var tempRightYAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, tempRightXAxis);
+		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, tempRightYAxis);
+		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, tempLeftXAxis);
+		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y, tempLeftYAxis);
+
+		final var tempLeftThumb = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB);
+		final var tempRightThumb = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB);
+
+		gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, tempRightThumb);
+		gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, tempLeftThumb);
+	}
+
 	public void init() {
+		swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
 		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
 		hapticFeedback = main.isHapticFeedback();
 
@@ -336,7 +360,7 @@ public final class Input {
 		rateMultiplier = (float) elapsedTime / 1000L;
 
 		try (final var stack = MemoryStack.stackPush()) {
-			final var state = GLFWGamepadState.calloc(stack);
+			final var gamepadState = GLFWGamepadState.calloc(stack);
 
 			if (hotSwappingButtonId != HotSwappingButton.None.id
 					&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
@@ -348,13 +372,15 @@ public final class Input {
 					final boolean gotState;
 					final var driver = jidToDriverMap.get(controller.jid());
 					if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
-						gotState = gamepadStateProvider.getGamepadState(state);
+						gotState = gamepadStateProvider.getGamepadState(gamepadState);
 					} else {
-						gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+						gotState = GLFW.glfwGetGamepadState(controller.jid(), gamepadState);
 					}
 
 					if (gotState) {
-						if (state.buttons(hotSwappingButtonId) != 0) {
+						handleStickSwap(gamepadState);
+
+						if (gamepadState.buttons(hotSwappingButtonId) != 0) {
 							hotSwappingButtonDownJids.add(controller.jid());
 						} else if (hotSwappingButtonDownJids.contains(controller.jid())) {
 							log.log(Level.INFO, Main.assembleControllerLoggingMessage(
@@ -381,14 +407,16 @@ public final class Input {
 					return true;
 				}
 
-				gotState = gamepadStateProvider.getGamepadState(state);
+				gotState = gamepadStateProvider.getGamepadState(gamepadState);
 			} else {
-				gotState = GLFW.glfwGetGamepadState(controller.jid(), state);
+				gotState = GLFW.glfwGetGamepadState(controller.jid(), gamepadState);
 			}
 
 			if (!gotState) {
 				return false;
 			}
+
+			handleStickSwap(gamepadState);
 
 			Arrays.fill(buttons, false);
 
@@ -440,12 +468,13 @@ public final class Input {
 			final var buttonToActionMap = activeMode.getButtonToActionsMap();
 
 			if (mapCircularAxesToSquareAxes) {
-				mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-				mapCircularAxesToSquareAxes(state, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+				mapCircularAxesToSquareAxes(gamepadState, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
+				mapCircularAxesToSquareAxes(gamepadState, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X,
+						GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
 			}
 
 			for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
-				final var axisValue = state.axes(axis);
+				final var axisValue = gamepadState.axes(axis);
 
 				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
 					axisToEndSuspensionTimestampMap.remove(axis);
@@ -493,7 +522,7 @@ public final class Input {
 
 				if (actions != null) {
 					for (final var action : actions) {
-						action.doAction(this, button, state.buttons(button));
+						action.doAction(this, button, gamepadState.buttons(button));
 					}
 				}
 			}
@@ -503,7 +532,7 @@ public final class Input {
 					final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 					if (buttonToModeActions != null) {
 						for (final var action : buttonToModeActions) {
-							action.doAction(this, button, state.buttons(button));
+							action.doAction(this, button, gamepadState.buttons(button));
 						}
 					}
 				}

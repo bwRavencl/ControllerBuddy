@@ -279,15 +279,16 @@ public final class EditActionsDialog extends JDialog {
 		if (cycleEditor && cycleActions != null) {
 			cycleActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
 		} else if (component != null) {
-			final var componentActions = selectedMode.getComponentToActionsMap(component.type()).get(component.index());
+			final var componentActions = selectedMode.getComponentToActionsMap(component.getType())
+					.get(component.getIndex());
 			if (componentActions != null) {
 				((Collection<? extends IAction<?>>) componentActions)
 						.forEach(action -> assignedActions.add(new AssignedAction(action)));
 			}
 		}
 
-		if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
-			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index());
+		if (!cycleEditor && component.getType() == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
+			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.getIndex());
 			if (buttonToModeActions != null) {
 				buttonToModeActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
 			}
@@ -466,7 +467,7 @@ public final class EditActionsDialog extends JDialog {
 			actionClasses = cycleActionClasses;
 		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
 			actionClasses = onScreenKeyboardActionClasses;
-		} else if (component.type() == ComponentType.AXIS) {
+		} else if (component.getType() == ComponentType.AXIS) {
 			actionClasses = axisActionClasses;
 		} else {
 			actionClasses = buttonActionClasses;
@@ -526,22 +527,22 @@ public final class EditActionsDialog extends JDialog {
 
 				if (action instanceof final ButtonToModeAction buttonToModeAction) {
 					final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-					if (!buttonToModeActionsMap.containsKey(component.index())) {
-						buttonToModeActionsMap.put(component.index(), new ArrayList<>());
+					if (!buttonToModeActionsMap.containsKey(component.getIndex())) {
+						buttonToModeActionsMap.put(component.getIndex(), new ArrayList<>());
 					}
 
-					buttonToModeActionsMap.get(component.index()).add(buttonToModeAction);
+					buttonToModeActionsMap.get(component.getIndex()).add(buttonToModeAction);
 				} else if (isCycleEditor()) {
 					cycleActions.add((IAction<Byte>) action);
 				} else {
 					final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
-							.getComponentToActionsMap(component.type());
+							.getComponentToActionsMap(component.getType());
 
-					if (!componentToActionMap.containsKey(component.index())) {
-						componentToActionMap.put(component.index(), new ArrayList<>());
+					if (!componentToActionMap.containsKey(component.getIndex())) {
+						componentToActionMap.put(component.getIndex(), new ArrayList<>());
 					}
 
-					componentToActionMap.get(component.index()).add(action);
+					componentToActionMap.get(component.getIndex()).add(action);
 				}
 
 				updateAvailableActions();
@@ -632,20 +633,20 @@ public final class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			if (selectedAssignedAction.action instanceof final ButtonToModeAction buttonToModeAction) {
 				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-				buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
-				if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
-					buttonToModeActionsMap.remove(component.index());
+				buttonToModeActionsMap.get(component.getIndex()).remove(buttonToModeAction);
+				if (buttonToModeActionsMap.get(component.getIndex()).isEmpty()) {
+					buttonToModeActionsMap.remove(component.getIndex());
 				}
 			} else if (isCycleEditor()) {
 				cycleActions.remove(selectedAssignedAction.action);
 			} else {
-				final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
+				final var componentToActionMap = selectedMode.getComponentToActionsMap(component.getType());
 				@SuppressWarnings("unchecked")
-				final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
+				final var actions = (List<IAction<?>>) componentToActionMap.get(component.getIndex());
 				actions.remove(selectedAssignedAction.action);
 
 				if (actions.isEmpty()) {
-					componentToActionMap.remove(component.index());
+					componentToActionMap.remove(component.getIndex());
 				}
 			}
 

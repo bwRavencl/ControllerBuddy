@@ -240,6 +240,27 @@ public final class Main {
 	private static final int SVG_VIEWBOX_MARGIN = 20;
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
+	private static final String SVG_ID_LEFT_TRIGGER = "lefttrigger";
+	private static final String SVG_ID_LEFT_X = "leftx";
+	private static final String SVG_ID_LEFT_Y = "lefty";
+	private static final String SVG_ID_RIGHT_TRIGGER = "righttrigger";
+	private static final String SVG_ID_RIGHT_X = "rightx";
+	private static final String SVG_ID_RIGHT_Y = "righty";
+	private static final String SVG_ID_A = "a";
+	private static final String SVG_ID_B = "b";
+	private static final String SVG_ID_BACK = "back";
+	private static final String SVG_ID_DPAD_DOWN = "dpdown";
+	private static final String SVG_ID_DPAD_LEFT = "dpleft";
+	private static final String SVG_ID_DPAD_RIGHT = "dpright";
+	private static final String SVG_ID_DPAD_UP = "dpup";
+	private static final String SVG_ID_GUIDE = "guide";
+	private static final String SVG_ID_LEFT_SHOULDER = "leftshoulder";
+	private static final String SVG_ID_LEFT_STICK = "leftstick";
+	private static final String SVG_ID_RIGHT_SHOULDER = "rightshoulder";
+	private static final String SVG_ID_RIGHT_STICK = "rightstick";
+	private static final String SVG_ID_START = "start";
+	private static final String SVG_ID_X = "x";
+	private static final String SVG_ID_Y = "y";
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
 	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
@@ -268,6 +289,7 @@ public final class Main {
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
 	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
 	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
@@ -658,12 +680,20 @@ public final class Main {
 				(int) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
-		final var mapCircularAxesToSquarePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		inputSettingsPanel.add(mapCircularAxesToSquarePanel, constraints);
+		final var physicalAxesPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		inputSettingsPanel.add(physicalAxesPanel, constraints);
 
-		final var mapCircularAxesToSquareLabel = new JLabel(strings.getString("MAP_CIRCULAR_AXES_TO_SQUARE_LABEL"));
-		mapCircularAxesToSquareLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		mapCircularAxesToSquarePanel.add(mapCircularAxesToSquareLabel);
+		final var leftPhysicalAxesPanel = new JPanel();
+		leftPhysicalAxesPanel.setLayout(new BoxLayout(leftPhysicalAxesPanel, BoxLayout.PAGE_AXIS));
+		physicalAxesPanel.add(leftPhysicalAxesPanel);
+
+		final var physicalAxesPanelLabel = new JLabel(strings.getString("PHYSICAL_AXES_LABEL"));
+		physicalAxesPanelLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		leftPhysicalAxesPanel.add(physicalAxesPanelLabel);
+
+		final var rightPhysicalAxesPanel = new JPanel();
+		rightPhysicalAxesPanel.setLayout(new BoxLayout(rightPhysicalAxesPanel, BoxLayout.PAGE_AXIS));
+		physicalAxesPanel.add(rightPhysicalAxesPanel);
 
 		final var mapCircularAxesToSquareCheckBox = new JCheckBox(
 				strings.getString("MAP_CIRCULAR_AXES_TO_SQUARE_CHECK_BOX"));
@@ -672,7 +702,22 @@ public final class Main {
 			final var mapCircularAxesToSquare = ((JCheckBox) event.getSource()).isSelected();
 			preferences.putBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, mapCircularAxesToSquare);
 		});
-		mapCircularAxesToSquarePanel.add(mapCircularAxesToSquareCheckBox);
+		rightPhysicalAxesPanel.add(mapCircularAxesToSquareCheckBox);
+
+		rightPhysicalAxesPanel.add(Box.createVerticalStrut(DEFAULT_VGAP));
+
+		final var swapLeftAndRightSticksCheckBox = new JCheckBox(
+				strings.getString("SWAP_LEFT_AND_RIGHT_STICKS_CHECK_BOX"));
+		swapLeftAndRightSticksCheckBox.setSelected(isSwapLeftAndRightSticks());
+		swapLeftAndRightSticksCheckBox.addActionListener(event -> {
+			final var swapLeftAndRightStick = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS, swapLeftAndRightStick);
+			updateVisualizationPanel();
+		});
+		rightPhysicalAxesPanel.add(swapLeftAndRightSticksCheckBox);
+
+		leftPhysicalAxesPanel.add(Box.createVerticalStrut(
+				rightPhysicalAxesPanel.getPreferredSize().height - physicalAxesPanelLabel.getPreferredSize().height));
 
 		final var hapticFeedbackPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
@@ -1510,14 +1555,16 @@ public final class Main {
 		bridgeContext.setDynamicState(BridgeContext.DYNAMIC);
 		new GVTBuilder().build(bridgeContext, workingCopySvgDocument);
 
+		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
+
 		for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
 			final var idPrefix = switch (axis) {
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> "lefttrigger";
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> "leftx";
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> "lefty";
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> "righttrigger";
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> "rightx";
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> "righty";
+			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
+			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> swapLeftAndRightSticks ? SVG_ID_RIGHT_X : SVG_ID_LEFT_X;
+			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> swapLeftAndRightSticks ? SVG_ID_RIGHT_Y : SVG_ID_LEFT_Y;
+			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
+			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> swapLeftAndRightSticks ? SVG_ID_LEFT_X : SVG_ID_RIGHT_X;
+			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
 			default -> null;
 			};
 
@@ -1527,21 +1574,22 @@ public final class Main {
 
 		for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
 			final var idPrefix = switch (button) {
-			case GLFW.GLFW_GAMEPAD_BUTTON_A -> "a";
-			case GLFW.GLFW_GAMEPAD_BUTTON_B -> "b";
-			case GLFW.GLFW_GAMEPAD_BUTTON_BACK -> "back";
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN -> "dpdown";
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT -> "dpleft";
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT -> "dpright";
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP -> "dpup";
-			case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE -> "guide";
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> "leftshoulder";
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> "leftstick";
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> "rightshoulder";
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> "rightstick";
-			case GLFW.GLFW_GAMEPAD_BUTTON_START -> "start";
-			case GLFW.GLFW_GAMEPAD_BUTTON_X -> "x";
-			case GLFW.GLFW_GAMEPAD_BUTTON_Y -> "y";
+			case GLFW.GLFW_GAMEPAD_BUTTON_A -> SVG_ID_A;
+			case GLFW.GLFW_GAMEPAD_BUTTON_B -> SVG_ID_B;
+			case GLFW.GLFW_GAMEPAD_BUTTON_BACK -> SVG_ID_BACK;
+			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN -> SVG_ID_DPAD_DOWN;
+			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT -> SVG_ID_DPAD_LEFT;
+			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT -> SVG_ID_DPAD_RIGHT;
+			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
+			case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
+			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SVG_ID_LEFT_SHOULDER;
+			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> swapLeftAndRightSticks ? SVG_ID_RIGHT_STICK : SVG_ID_LEFT_STICK;
+			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> SVG_ID_RIGHT_SHOULDER;
+			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB ->
+				swapLeftAndRightSticks ? SVG_ID_LEFT_STICK : SVG_ID_RIGHT_STICK;
+			case GLFW.GLFW_GAMEPAD_BUTTON_START -> SVG_ID_START;
+			case GLFW.GLFW_GAMEPAD_BUTTON_X -> SVG_ID_X;
+			case GLFW.GLFW_GAMEPAD_BUTTON_Y -> SVG_ID_Y;
 			default -> null;
 			};
 
@@ -1901,6 +1949,10 @@ public final class Main {
 
 	public boolean isSonyTouchpadEnabled() {
 		return preferences.getBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
+	}
+
+	public boolean isSwapLeftAndRightSticks() {
+		return preferences.getBoolean(PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS, false);
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs,

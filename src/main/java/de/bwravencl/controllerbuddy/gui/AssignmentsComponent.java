@@ -71,27 +71,27 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("LEFT_TRIGGER"),
-				new Component(ComponentType.AXIS, GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER)), constraints);
+				new Component(main, ComponentType.AXIS, GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("RIGHT_TRIGGER"),
-				new Component(ComponentType.AXIS, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)), constraints);
+				new Component(main, ComponentType.AXIS, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("LEFT_BUMPER"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER)), constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 1;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("GUIDE_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("RIGHT_BUMPER"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER)), constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 2;
@@ -100,31 +100,34 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridx = 1;
 		constraints.gridy = 2;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("BACK_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_BACK)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_BACK)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
 		assignmentsPanel.add(createComponentButton(main, Main.strings.getString("START_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_START)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 2;
 		assignmentsPanel.add(new FourWay(main, Main.strings.getString("Y_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_Y), Main.strings.getString("X_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_X), Main.strings.getString("B_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_B), Main.strings.getString("A_BUTTON"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_A)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_Y),
+				Main.strings.getString("X_BUTTON"),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_X),
+				Main.strings.getString("B_BUTTON"),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_B),
+				Main.strings.getString("A_BUTTON"),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_A)), constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		assignmentsPanel.add(new FourWay(main, Main.strings.getString("DPAD_UP"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP),
 				Main.strings.getString("DPAD_LEFT"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT),
 				Main.strings.getString("DPAD_RIGHT"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT),
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT),
 				Main.strings.getString("DPAD_DOWN"),
-				new Component(ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)), constraints);
+				new Component(main, ComponentType.BUTTON, GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 3;
@@ -142,11 +145,13 @@ final class AssignmentsComponent extends JScrollPane {
 	private static JButton createComponentButton(final Main main, final String name, final Component component) {
 		final boolean round;
 		final JButton button;
-		if (component.type() == ComponentType.BUTTON && (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_A
-				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_B || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_X
-				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_Y || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_BACK
-				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_START
-				|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)) {
+		if (component.getType() == ComponentType.BUTTON && (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_A
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_B
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_X
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_Y
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_BACK
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_START
+				|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_GUIDE)) {
 			round = true;
 			button = new CustomButton(new EditComponentAction(main, name, component)) {
 
@@ -235,11 +240,11 @@ final class AssignmentsComponent extends JScrollPane {
 			button = new JButton(new EditComponentAction(main, name, component));
 		}
 
-		if (component.type() == ComponentType.BUTTON
-				&& (round || component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN
-						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
-						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
-						|| component.index() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
+		if (component.getType() == ComponentType.BUTTON
+				&& (round || component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN
+						|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT
+						|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
+						|| component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
 			// noinspection SuspiciousNameCombination
 			button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
 		} else {
@@ -285,26 +290,34 @@ final class AssignmentsComponent extends JScrollPane {
 				setModel(peer.getModel());
 			}
 
-			if (component.type() == ComponentType.BUTTON) {
-				if (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
-					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_THUMB"), component));
-					text = Main.strings.getString("LEFT_STICK");
-				} else if (component.index() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
-					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_THUMB"), component));
-					text = Main.strings.getString("RIGHT_STICK");
+			final var swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
+
+			if (component.getType() == ComponentType.BUTTON) {
+				if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
+					setAction(new EditComponentAction(main,
+							Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_THUMB" : "LEFT_THUMB"), component));
+					text = Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK");
+				} else if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
+					setAction(new EditComponentAction(main,
+							Main.strings.getString(swapLeftAndRightSticks ? "LEFT_THUMB" : "RIGHT_THUMB"), component));
+					text = Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
 				} else {
 					throw new IllegalArgumentException();
 				}
 			} else if (peer != null) {
-				switch (component.index()) {
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X ->
-					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_STICK_X_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y ->
-					setAction(new EditComponentAction(main, Main.strings.getString("LEFT_STICK_Y_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X ->
-					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_X_AXIS"), component));
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y ->
-					setAction(new EditComponentAction(main, Main.strings.getString("RIGHT_STICK_Y_AXIS"), component));
+				switch (component.getIndex()) {
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> setAction(new EditComponentAction(main,
+						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
+						component));
+				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> setAction(new EditComponentAction(main,
+						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_Y_AXIS" : "LEFT_STICK_Y_AXIS"),
+						component));
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> setAction(new EditComponentAction(main,
+						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_X_AXIS" : "RIGHT_STICK_X_AXIS"),
+						component));
+				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> setAction(new EditComponentAction(main,
+						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_Y_AXIS" : "RIGHT_STICK_Y_AXIS"),
+						component));
 				default -> throw new IllegalArgumentException();
 				}
 			}
@@ -646,12 +659,12 @@ final class AssignmentsComponent extends JScrollPane {
 
 			final var left = type == StickType.Left;
 
-			add(new CompoundButton(main, this, new Component(ComponentType.BUTTON,
+			add(new CompoundButton(main, this, new Component(main, ComponentType.BUTTON,
 					left ? GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB : GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB)));
 
-			final var xComponent = new Component(ComponentType.AXIS,
+			final var xComponent = new Component(main, ComponentType.AXIS,
 					left ? GLFW.GLFW_GAMEPAD_AXIS_LEFT_X : GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
-			final var yComponent = new Component(ComponentType.AXIS,
+			final var yComponent = new Component(main, ComponentType.AXIS,
 					left ? GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y : GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
 
 			final var northernButton = new CompoundButton(main, this, yComponent,
