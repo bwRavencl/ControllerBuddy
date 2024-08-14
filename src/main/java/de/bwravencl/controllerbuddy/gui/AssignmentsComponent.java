@@ -276,6 +276,8 @@ final class AssignmentsComponent extends JScrollPane {
 		private String text;
 		private CompoundButton peer;
 
+		private boolean swapTextPossible;
+
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
 			this(main, parentPanel, component, CompoundButtonLocation.Center, null);
 		}
@@ -296,11 +298,16 @@ final class AssignmentsComponent extends JScrollPane {
 				if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
 					setAction(new EditComponentAction(main,
 							Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_THUMB" : "LEFT_THUMB"), component));
+
 					text = Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK");
+
+					swapTextPossible = true;
 				} else if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
 					setAction(new EditComponentAction(main,
 							Main.strings.getString(swapLeftAndRightSticks ? "LEFT_THUMB" : "RIGHT_THUMB"), component));
 					text = Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
+
+					swapTextPossible = true;
 				} else {
 					throw new IllegalArgumentException();
 				}
@@ -334,6 +341,19 @@ final class AssignmentsComponent extends JScrollPane {
 					return preferredSize.width;
 				}
 
+				private Rectangle getTextRectangle(final String text, final Graphics2D g2d, final int x, final int y,
+						final int line) {
+					final var metrics = g2d.getFontMetrics(getFont());
+					final var textHeight = metrics.getHeight();
+					final var ascent = metrics.getAscent();
+
+					final var stringWidth = metrics.stringWidth(text);
+					final var tx = x + (getIconWidth() - stringWidth) / 2;
+					final var ty = y + (getIconHeight() - textHeight) / 2 + ascent;
+
+					return new Rectangle(tx, ty - ascent + line * textHeight, stringWidth, textHeight);
+				}
+
 				@Override
 				public void paintIcon(final java.awt.Component c, final Graphics g, final int x, final int y) {
 					final var model = getModel();
@@ -354,17 +374,13 @@ final class AssignmentsComponent extends JScrollPane {
 					if (buttonLocation == CompoundButtonLocation.Center) {
 						beginForeground(g2d);
 
-						final var metrics = g2d.getFontMetrics(getFont());
-						final var textHeight = metrics.getHeight();
-						final var ascent = metrics.getAscent();
-
-						final var tx = x + (getIconWidth() - metrics.stringWidth(text)) / 2;
-						final var ty = y + (getIconHeight() - textHeight) / 2 + ascent;
-						final var stringWidth = metrics.stringWidth(text);
-
-						final var textRect = new Rectangle(tx, ty - ascent, stringWidth, textHeight);
-
+						final var textRect = getTextRectangle(text, g2d, x, y, 0);
 						paintText(g, textRect, text);
+
+						if (swapTextPossible && main.isSwapLeftAndRightSticks()) {
+							final var swappedTextRect = getTextRectangle(Main.SWAPPED_SYMBOL, g2d, x, y, 1);
+							paintText(g, swappedTextRect, Main.SWAPPED_SYMBOL);
+						}
 					}
 				}
 			});

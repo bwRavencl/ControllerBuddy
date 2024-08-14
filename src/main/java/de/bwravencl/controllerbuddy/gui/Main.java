@@ -220,13 +220,11 @@ public final class Main {
 	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	public static final int DEFAULT_HGAP = 10;
-
 	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(120, 25);
-
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
-
+	public static final String SWAPPED_SYMBOL = "⇆";
 	static final int DEFAULT_VGAP = 10;
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 	private static final Options options = new Options();
@@ -1558,21 +1556,37 @@ public final class Main {
 		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
 
 		for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
+			var swapped = false;
+
 			final var idPrefix = switch (axis) {
 			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> swapLeftAndRightSticks ? SVG_ID_RIGHT_X : SVG_ID_LEFT_X;
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> swapLeftAndRightSticks ? SVG_ID_RIGHT_Y : SVG_ID_LEFT_Y;
+			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_X : SVG_ID_LEFT_X;
+			}
+			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_Y : SVG_ID_LEFT_Y;
+			}
 			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> swapLeftAndRightSticks ? SVG_ID_LEFT_X : SVG_ID_RIGHT_X;
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
+			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_LEFT_X : SVG_ID_RIGHT_X;
+			}
+			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
+			}
 			default -> null;
 			};
 
 			final var actions = mode.getAxisToActionsMap().get(axis);
-			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme);
+			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
 		}
 
 		for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
+			var swapped = false;
+
 			final var idPrefix = switch (button) {
 			case GLFW.GLFW_GAMEPAD_BUTTON_A -> SVG_ID_A;
 			case GLFW.GLFW_GAMEPAD_BUTTON_B -> SVG_ID_B;
@@ -1583,10 +1597,15 @@ public final class Main {
 			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
 			case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
 			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SVG_ID_LEFT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> swapLeftAndRightSticks ? SVG_ID_RIGHT_STICK : SVG_ID_LEFT_STICK;
+			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_STICK : SVG_ID_LEFT_STICK;
+			}
 			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> SVG_ID_RIGHT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB ->
-				swapLeftAndRightSticks ? SVG_ID_LEFT_STICK : SVG_ID_RIGHT_STICK;
+			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> {
+				swapped = swapLeftAndRightSticks;
+				yield swapLeftAndRightSticks ? SVG_ID_LEFT_STICK : SVG_ID_RIGHT_STICK;
+			}
 			case GLFW.GLFW_GAMEPAD_BUTTON_START -> SVG_ID_START;
 			case GLFW.GLFW_GAMEPAD_BUTTON_X -> SVG_ID_X;
 			case GLFW.GLFW_GAMEPAD_BUTTON_Y -> SVG_ID_Y;
@@ -1607,7 +1626,7 @@ public final class Main {
 				}
 			}
 
-			updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme);
+			updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme, swapped);
 		}
 
 		return workingCopySvgDocument;
@@ -3187,7 +3206,7 @@ public final class Main {
 	}
 
 	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,
-			final List<? extends IAction<?>> actions, final boolean darkTheme) {
+			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped) {
 		final var groupElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Group");
 
 		final var hide = actions == null || actions.isEmpty();
@@ -3256,6 +3275,10 @@ public final class Main {
 		}
 
 		addTSpanElement(actionGroupB, tSpanNode);
+
+		if (swapped) {
+			addTSpanElement(" " + SWAPPED_SYMBOL, true, tSpanNode);
+		}
 
 		if (darkTheme) {
 			textElement.getStyle().setProperty(CSSConstants.CSS_FILL_PROPERTY, SVG_DARK_THEME_TEXT_COLOR, "");
