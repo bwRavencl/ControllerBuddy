@@ -1764,6 +1764,27 @@ public final class Main {
 		}
 	}
 
+	private boolean handleUnsavedChanges() {
+		if (!unsavedChanges) {
+			return true;
+		}
+
+		final var path = currentFile != null ? currentFile.getAbsolutePath() : strings.getString("UNTITLED");
+
+		final var selectedOption = JOptionPane.showConfirmDialog(frame,
+				MessageFormat.format(strings.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
+				strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+
+		return switch (selectedOption) {
+		case JOptionPane.YES_OPTION -> {
+			saveProfile();
+			yield !unsavedChanges;
+		}
+		case JOptionPane.NO_OPTION -> true;
+		default -> false;
+		};
+	}
+
 	private void initOpenVrOverlay() {
 		final var profile = input.getProfile();
 
@@ -2087,7 +2108,7 @@ public final class Main {
 				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
 				EventQueue.invokeLater(() -> {
-					if (cmdProfilePath != null) {
+					if (cmdProfilePath != null && handleUnsavedChanges()) {
 						main.loadProfile(new File(cmdProfilePath), false, true);
 					}
 
@@ -4381,30 +4402,11 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 1387266903295357716L;
 
-		@SuppressWarnings("fallthrough")
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (unsavedChanges) {
-				final var path = currentFile != null ? currentFile.getAbsolutePath() : strings.getString("UNTITLED");
-
-				final var selectedOption = JOptionPane.showConfirmDialog(frame,
-						MessageFormat.format(strings.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
-						strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-
-				switch (selectedOption) {
-				case JOptionPane.YES_OPTION:
-					saveProfile();
-					if (unsavedChanges) {
-						return;
-					}
-				case JOptionPane.NO_OPTION:
-					break;
-				default:
-					return;
-				}
+			if (handleUnsavedChanges()) {
+				doAction();
 			}
-
-			doAction();
 		}
 
 		protected abstract void doAction();
