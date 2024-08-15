@@ -67,7 +67,8 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		final var hot = value != 0;
 
 		switch (activation) {
-		case REPEAT -> throw new IllegalStateException();
+		case REPEAT -> throw new IllegalStateException(
+				ButtonToCycleAction.class.getSimpleName() + " must not have activation value: " + Activation.REPEAT);
 		case SINGLE_IMMEDIATELY -> {
 			if (!hot) {
 				activatable = Activatable.YES;

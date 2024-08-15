@@ -204,7 +204,8 @@ public final class EditActionsDialog extends JDialog {
 
 	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(
+					"Parameter actionClass does not implement " + IAction.class.getSimpleName());
 		}
 
 		final var propertyMap = new HashMap<Field, ActionProperty>();

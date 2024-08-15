@@ -1540,9 +1540,7 @@ public final class Main {
 	}
 
 	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
-		if (templateSvgDocument == null) {
-			throw new IllegalStateException();
-		}
+		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
 		final var workingCopySvgDocument = (SVGDocument) DOMUtilities.deepCloneDocument(templateSvgDocument,
 				templateSvgDocument.getImplementation());

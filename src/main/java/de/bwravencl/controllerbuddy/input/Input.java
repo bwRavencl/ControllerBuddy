@@ -35,6 +35,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -635,9 +636,7 @@ public final class Input {
 	}
 
 	public boolean setProfile(final Profile profile) {
-		if (profile == null) {
-			throw new IllegalArgumentException();
-		}
+		Objects.requireNonNull(profile, "Parameter profile must not be null");
 
 		for (final var button : profile.getButtonToModeActionsMap().keySet()) {
 			if (!isValidButton(button)) {

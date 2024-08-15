@@ -160,6 +160,14 @@ public abstract class OutputRunMode extends RunMode {
 		}
 	}
 
+	private static IllegalArgumentException buildInvalidMouseButtonException(final int button) {
+		return new IllegalArgumentException("Parameter button has invalid value: " + button);
+	}
+
+	private static UnsupportedOperationException buildNotImplementedException() {
+		return new UnsupportedOperationException("Not implemented");
+	}
+
 	private static void closeInputDevice(final InputDevice inputDevice) {
 		if (inputDevice != null && inputDevice.isOpen()) {
 			try {
@@ -330,7 +338,7 @@ public abstract class OutputRunMode extends RunMode {
 		} else if (Main.isLinux) {
 			keyboardInputDevice.emit(new Event(scanCode.eventCode(), down ? 1 : 0));
 		} else {
-			throw new UnsupportedOperationException();
+			throw buildNotImplementedException();
 		}
 	}
 
@@ -345,7 +353,7 @@ public abstract class OutputRunMode extends RunMode {
 			case 2 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
 			case 3 ->
 				input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
-			default -> throw new IllegalArgumentException();
+			default -> throw buildInvalidMouseButtonException(button);
 			}
 
 			User32.INSTANCE.SendInput(new DWORD(1L), new INPUT[] { input }, input.size());
@@ -354,12 +362,12 @@ public abstract class OutputRunMode extends RunMode {
 			case 1 -> EventCode.BTN_LEFT;
 			case 2 -> EventCode.BTN_RIGHT;
 			case 3 -> EventCode.BTN_MIDDLE;
-			default -> throw new IllegalArgumentException("Unexpected value: " + button);
+			default -> throw buildInvalidMouseButtonException(button);
 			};
 
 			mouseInputDevice.emit(new Event(eventCode, down ? 1 : 0));
 		} else {
-			throw new UnsupportedOperationException();
+			throw buildNotImplementedException();
 		}
 	}
 
@@ -391,7 +399,7 @@ public abstract class OutputRunMode extends RunMode {
 								requiredButtons),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else {
-				throw new UnsupportedOperationException();
+				throw buildNotImplementedException();
 			}
 
 			return false;
@@ -632,7 +640,7 @@ public abstract class OutputRunMode extends RunMode {
 				return false;
 			}
 		} else {
-			throw new UnsupportedOperationException();
+			throw buildNotImplementedException();
 		}
 
 		input.init();
@@ -682,7 +690,7 @@ public abstract class OutputRunMode extends RunMode {
 				}
 			}
 		} else {
-			throw new UnsupportedOperationException();
+			throw buildNotImplementedException();
 		}
 	}
 
@@ -709,7 +717,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_X, axisX.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisX.setUnchanged();
@@ -722,7 +730,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_Y, axisY.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisY.setUnchanged();
@@ -735,7 +743,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_Z, axisZ.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisZ.setUnchanged();
@@ -748,7 +756,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RX, axisRX.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisRX.setUnchanged();
@@ -761,7 +769,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RY, axisRY.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisRY.setUnchanged();
@@ -774,7 +782,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RZ, axisRZ.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisRZ.setUnchanged();
@@ -787,7 +795,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_THROTTLE, axisS0.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisS0.setUnchanged();
@@ -800,7 +808,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RUDDER, axisS1.getUinputValue()));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				axisS1.setUnchanged();
@@ -815,7 +823,7 @@ public abstract class OutputRunMode extends RunMode {
 						joystickInputDevice
 								.emit(new Event(UINPUT_JOYSTICK_BUTTON_EVENT_CODES[i], buttons[i].getUinputValue()));
 					} else {
-						throw new UnsupportedOperationException();
+						throw buildNotImplementedException();
 					}
 
 					buttons[i].setUnchanged();
@@ -843,7 +851,7 @@ public abstract class OutputRunMode extends RunMode {
 					}
 					mouseInputDevice.syn();
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 			}
 
@@ -916,7 +924,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					mouseInputDevice.emit(new Event(EventCode.REL_WHEEL, scrollClicks));
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 			}
 		} catch (final IOException e) {
@@ -932,7 +940,7 @@ public abstract class OutputRunMode extends RunMode {
 				} else if (Main.isLinux) {
 					message = "COULD_NOT_WRITE_TO_UINPUT_DEVICE_DIALOG_TEXT";
 				} else {
-					throw new UnsupportedOperationException();
+					throw buildNotImplementedException();
 				}
 
 				return main.executeWhileVisible(
@@ -1013,7 +1021,7 @@ public abstract class OutputRunMode extends RunMode {
 				changed = uinputValue != value;
 				uinputValue = value;
 			} else {
-				throw new UnsupportedOperationException();
+				throw buildNotImplementedException();
 			}
 		}
 	}

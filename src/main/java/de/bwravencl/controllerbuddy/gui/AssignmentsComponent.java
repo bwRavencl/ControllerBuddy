@@ -138,7 +138,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 	private static void checkDimensionIsSquare(final Dimension dimension) {
 		if (dimension.width != dimension.height) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Parameter dimension is not square");
 		}
 	}
 
@@ -292,27 +292,31 @@ final class AssignmentsComponent extends JScrollPane {
 				setModel(peer.getModel());
 			}
 
+			final var componentType = component.getType();
+			final var componentIndex = component.getIndex();
 			final var swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
 
-			if (component.getType() == ComponentType.BUTTON) {
-				if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB) {
+			if (componentType == ComponentType.BUTTON) {
+				switch (componentIndex) {
+				case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> {
 					setAction(new EditComponentAction(main,
 							Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_THUMB" : "LEFT_THUMB"), component));
 
 					text = Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK");
 
 					swapTextPossible = true;
-				} else if (component.getIndex() == GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) {
+				}
+				case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> {
 					setAction(new EditComponentAction(main,
 							Main.strings.getString(swapLeftAndRightSticks ? "LEFT_THUMB" : "RIGHT_THUMB"), component));
 					text = Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
 
 					swapTextPossible = true;
-				} else {
-					throw new IllegalArgumentException();
+				}
+				default -> throw buildInvalidComponentIndexException(componentType, componentIndex);
 				}
 			} else if (peer != null) {
-				switch (component.getIndex()) {
+				switch (componentIndex) {
 				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> setAction(new EditComponentAction(main,
 						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
 						component));
@@ -325,7 +329,7 @@ final class AssignmentsComponent extends JScrollPane {
 				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> setAction(new EditComponentAction(main,
 						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_Y_AXIS" : "RIGHT_STICK_Y_AXIS"),
 						component));
-				default -> throw new IllegalArgumentException();
+				default -> throw buildInvalidComponentIndexException(componentType, componentIndex);
 				}
 			}
 
@@ -386,6 +390,12 @@ final class AssignmentsComponent extends JScrollPane {
 			});
 
 			initShape();
+		}
+
+		private static IllegalArgumentException buildInvalidComponentIndexException(final ComponentType componentType,
+				final int componentIndex) {
+			return new IllegalArgumentException("Invalid componentIndex for " + ComponentType.class.getSimpleName()
+					+ " " + componentType + ": " + componentIndex);
 		}
 
 		@Override

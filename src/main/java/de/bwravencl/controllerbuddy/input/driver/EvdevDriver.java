@@ -67,6 +67,10 @@ public class EvdevDriver extends Driver {
 		log.log(Level.INFO, Main.assembleControllerLoggingMessage("Using evdev driver for controller ", controller));
 	}
 
+	private static IOException buildUnsuccessfulIoctlException() {
+		return new IOException("Unsuccessful ioctl() system call");
+	}
+
 	private static void closeFileDescriptor(final int fd) {
 		if (fd != -1) {
 			CLib.INSTANCE.close(fd);
@@ -82,7 +86,7 @@ public class EvdevDriver extends Driver {
 		effect.replay.length = length;
 
 		if (CLib.INSTANCE.ioctl(evdevInfo.fd, EVIOCSFF, effect) != 0 || effect.id == -1) {
-			throw new IOException();
+			throw buildUnsuccessfulIoctlException();
 		}
 
 		return effect.id;
@@ -168,7 +172,7 @@ public class EvdevDriver extends Driver {
 		final var pointerSize = new NativeLong(pointer.size());
 
 		if (CLib.INSTANCE.write(evdevInfo.fd, pointer, pointerSize).longValue() != pointerSize.longValue()) {
-			throw new IOException();
+			throw buildUnsuccessfulIoctlException();
 		}
 	}
 
