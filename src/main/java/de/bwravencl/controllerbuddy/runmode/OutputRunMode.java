@@ -444,8 +444,8 @@ public abstract class OutputRunMode extends RunMode {
 							"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
-									dllVersion.getValue().shortValue(), drvVersion.getValue().shortValue(),
-									Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
+									dllVersion.getValue().shortValue(), drvVersion.getValue().shortValue()),
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 					return false;
 				}
 

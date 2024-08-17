@@ -1742,10 +1742,9 @@ public final class Main {
 						MessageFormat.format(
 								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
 								OPTION_AUTOSTART, autostartOptionValue,
-								MessageFormat.format(
-										isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-												: strings.getString("SERVER"),
-										strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE)));
+								isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+										: strings.getString("SERVER")),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 

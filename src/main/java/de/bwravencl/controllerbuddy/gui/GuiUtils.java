@@ -45,7 +45,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 @SuppressWarnings({ "exports", "missing-explicit-ctor" })
 public final class GuiUtils {
@@ -173,13 +172,6 @@ public final class GuiUtils {
 		location.y = Math.max(totalDisplayBounds.y,
 				Math.min(totalDisplayBounds.height - frame.getHeight(), location.y));
 		frame.setLocation(location);
-	}
-
-	public static void showMessageDialog(final Main main, @SuppressWarnings("exports") final Component parentComponent,
-			final Object message) throws HeadlessException {
-		showMessageDialog(main, parentComponent, message,
-				UIManager.getString("OptionPane.messageDialogTitle", parentComponent.getLocale()),
-				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static void showMessageDialog(final Main main, @SuppressWarnings("exports") final Component parentComponent,
