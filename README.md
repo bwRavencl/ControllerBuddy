@@ -224,6 +224,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [dbus-java](https://hypfvieh.github.io/dbus-java/)
+- [Error Prone](https://errorprone.info/)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
 - [hid4java](https://github.com/gary-rowe/hid4java)
