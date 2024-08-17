@@ -233,6 +233,7 @@ spotless {
 		targetExclude moduleInfoFile, metadataFile
 		eclipse('4.27').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
+		//noinspection GroovyAccessibility
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
 			'SafeButControversial'
