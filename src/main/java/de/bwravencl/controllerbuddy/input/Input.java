@@ -90,6 +90,8 @@ public final class Input {
 	private boolean swapLeftAndRightSticks;
 	private boolean mapCircularAxesToSquareAxes;
 	private boolean hapticFeedback;
+	private boolean lightRumbleScheduled;
+	private boolean strongRumbleScheduled;
 
 	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;
@@ -545,6 +547,16 @@ public final class Input {
 			}
 		}
 
+		if (hapticFeedback && driver != null) {
+			if (strongRumbleScheduled) {
+				driver.rumbleStrong();
+			} else if (lightRumbleScheduled) {
+				driver.rumbleLight();
+			}
+		}
+		strongRumbleScheduled = false;
+		lightRumbleScheduled = false;
+
 		EventQueue.invokeLater(() -> main.updateOverlayAxisIndicators(false));
 		main.handleOnScreenKeyboardModeChange();
 
@@ -560,6 +572,8 @@ public final class Input {
 		repeatModeActionWalk = false;
 		skipAxisInitialization = false;
 		initialized = false;
+		strongRumbleScheduled = false;
+		lightRumbleScheduled = false;
 		lastPollTime = 0;
 		rateMultiplier = 0f;
 		virtualAxisToTargetValueMap.clear();
@@ -609,12 +623,12 @@ public final class Input {
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (this.hapticFeedback && hapticFeedback && driver != null && prevValue != null && prevValue != value) {
+		if (hapticFeedback && prevValue != null && prevValue != value) {
 			if (value == minAxisValue || value == maxAxisValue) {
-				driver.rumbleStrong();
+				strongRumbleScheduled = true;
 			} else if (detentValue != null && ((prevValue > detentValue && value <= detentValue)
 					|| (prevValue < detentValue && value >= detentValue))) {
-				driver.rumbleLight();
+				lightRumbleScheduled = true;
 			}
 		}
 	}
