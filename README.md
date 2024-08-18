@@ -55,7 +55,7 @@ it automates all the steps below and much more!
 
 ## Features
 
-- Maps gamepad axes and buttons to highly customizable actions:
+- Map gamepad axes and buttons to highly customizable actions:
     - vJoy axis movements (absolute and relative)
     - vJoy button presses
     - Keyboard inputs
@@ -66,14 +66,14 @@ it automates all the steps below and much more!
 - Powerful user interface:
     - Allows the creation of mapping profiles
     - Configuration of settings
-    - Support for a light and dark UI theme
+    - Support for light and dark UI themes
 - In-game overlay:
     - Displays current mode
     - Can show current position of virtual axes
     - On-Screen-Keyboard that can be controlled by gamepad
     - VR support (OpenVR)
     - Customizable position and colors
-- Two operating scenarios:
+- Two modes of operation:
     - Local
     - Server to client (experimental! use only in trusted networks!)
 - Supported gamepads:
@@ -133,7 +133,7 @@ Mode switching can be configured to work in two different ways:
 - Default: works like the SHIFT key on your keyboard
 - Toggle: works like the Caps Lock key
 
-A number of well-thought-out profiles for the most popular flight simulators are available in the [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
+The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository contains a number of well-thought-out profiles for many different flight simulators.
 
 ## Architecture
 
@@ -210,7 +210,7 @@ Server-Client mode:
 | -tray               |                         | launches the application in the system tray                                                                 |           yes           |
 | -version            |                         | prints the version information and exits                                                                    |           no            |
 
-If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and immediately shut down the second instance.
+If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and shut down the second instance immediately.
 
 This can be used to integrate ControllerBuddy into third party applications.  
 For more information see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), an exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
