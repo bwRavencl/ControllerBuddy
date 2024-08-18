@@ -223,12 +223,12 @@ public final class Main {
 	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	public static final int DEFAULT_HGAP = 10;
+	public static final int DEFAULT_VGAP = 10;
 	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(120, 25);
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	public static final String SWAPPED_SYMBOL = "⇆";
-	static final int DEFAULT_VGAP = 10;
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 	private static final Options options = new Options();
 	private static final Logger log = Logger.getLogger(Main.class.getName());
@@ -266,8 +266,7 @@ public final class Main {
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
 	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
 			SETTINGS_LABEL_DIMENSION_HEIGHT);
-	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEADING, DEFAULT_HGAP,
-			DEFAULT_VGAP);
+	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
 	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
 	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
@@ -662,7 +661,7 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
 
 		final var inputSettingsPanel = new JPanel();
-		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
+		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
@@ -687,7 +686,7 @@ public final class Main {
 		inputSettingsPanel.add(physicalAxesPanel, constraints);
 
 		final var leftPhysicalAxesPanel = new JPanel();
-		leftPhysicalAxesPanel.setLayout(new BoxLayout(leftPhysicalAxesPanel, BoxLayout.PAGE_AXIS));
+		leftPhysicalAxesPanel.setLayout(new BoxLayout(leftPhysicalAxesPanel, BoxLayout.Y_AXIS));
 		physicalAxesPanel.add(leftPhysicalAxesPanel);
 
 		final var physicalAxesPanelLabel = new JLabel(strings.getString("PHYSICAL_AXES_LABEL"));
@@ -695,7 +694,7 @@ public final class Main {
 		leftPhysicalAxesPanel.add(physicalAxesPanelLabel);
 
 		final var rightPhysicalAxesPanel = new JPanel();
-		rightPhysicalAxesPanel.setLayout(new BoxLayout(rightPhysicalAxesPanel, BoxLayout.PAGE_AXIS));
+		rightPhysicalAxesPanel.setLayout(new BoxLayout(rightPhysicalAxesPanel, BoxLayout.Y_AXIS));
 		physicalAxesPanel.add(rightPhysicalAxesPanel);
 
 		final var mapCircularAxesToSquareCheckBox = new JCheckBox(
@@ -787,7 +786,7 @@ public final class Main {
 
 		if (isWindows) {
 			final var vJoySettingsPanel = new JPanel();
-			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.PAGE_AXIS));
+			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.Y_AXIS));
 			vJoySettingsPanel
 					.setBorder(BorderFactory.createTitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
 			globalSettingsPanel.add(vJoySettingsPanel, constraints);
@@ -822,7 +821,7 @@ public final class Main {
 		}
 
 		final var appearanceSettingsPanel = new JPanel();
-		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
+		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.Y_AXIS));
 		appearanceSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
@@ -878,7 +877,7 @@ public final class Main {
 		}
 
 		final var sonyControllersSettingsPanel = new JPanel();
-		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.PAGE_AXIS));
+		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.Y_AXIS));
 		sonyControllersSettingsPanel.setBorder(
 				BorderFactory.createTitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(sonyControllersSettingsPanel, constraints);
@@ -1861,7 +1860,7 @@ public final class Main {
 					new Dimension(modeLabelWidth, fontMetrics.getHeight() + Math.round(1 * overlayScaling)));
 
 			currentModeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			overlayFrame.add(currentModeLabel, BorderLayout.PAGE_END);
+			overlayFrame.add(currentModeLabel, BorderLayout.SOUTH);
 		}
 
 		final var indicatorPanelFlowLayout = new FlowLayout(FlowLayout.CENTER, 10, 5);
@@ -2946,7 +2945,7 @@ public final class Main {
 		if (currentModeLabel != null) {
 			overlayFrame.remove(currentModeLabel);
 			overlayFrame.add(currentModeLabel,
-					isOverlayInLowerHalf(totalDisplayBounds) ? BorderLayout.PAGE_START : BorderLayout.PAGE_END);
+					isOverlayInLowerHalf(totalDisplayBounds) ? BorderLayout.NORTH : BorderLayout.SOUTH);
 		}
 
 		overlayFrame.pack();
@@ -3134,7 +3133,7 @@ public final class Main {
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
 
 		final var inputSettingsPanel = new JPanel();
-		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.PAGE_AXIS));
+		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		profileSettingsPanel.add(inputSettingsPanel, constraints);
@@ -3162,7 +3161,7 @@ public final class Main {
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
 
 		final var appearanceSettingsPanel = new JPanel();
-		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.PAGE_AXIS));
+		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.Y_AXIS));
 		appearanceSettingsPanel
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
@@ -3815,7 +3814,7 @@ public final class Main {
 		private JTextField hostTextField;
 
 		private ConnectionSettingsPanel(final boolean withHost) {
-			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 			if (withHost) {
 				final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
