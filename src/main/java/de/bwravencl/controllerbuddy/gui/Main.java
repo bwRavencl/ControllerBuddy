@@ -225,11 +225,15 @@ public final class Main {
 	public static final int DEFAULT_HGAP = 10;
 	public static final int DEFAULT_VGAP = 10;
 	@SuppressWarnings("exports")
-	public static final Dimension BUTTON_DIMENSION = new Dimension(120, 25);
-	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 	public static final String SWAPPED_SYMBOL = "⇆";
 	static final int DEFAULT_OVERLAY_SCALING = 1;
+	static final int BUTTON_DIMENSION_HEIGHT = 25;
+	@SuppressWarnings("exports")
+	public static final Dimension BUTTON_DIMENSION = new Dimension(120, BUTTON_DIMENSION_HEIGHT);
+	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
+	public static final Dimension SQUARE_BUTTON_DIMENSION = new Dimension(BUTTON_DIMENSION_HEIGHT,
+			BUTTON_DIMENSION_HEIGHT);
 	private static final Options options = new Options();
 	private static final Logger log = Logger.getLogger(Main.class.getName());
 	private static final String PROFILE_FILE_EXTENSION = "json";
@@ -264,6 +268,8 @@ public final class Main {
 	private static final String SVG_ID_Y = "y";
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
+	private static final Dimension OVERLAY_SETTINGS_LABEL_DIMENSION = new Dimension(100,
+			SETTINGS_LABEL_DIMENSION_HEIGHT);
 	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
 			SETTINGS_LABEL_DIMENSION_HEIGHT);
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
@@ -2903,7 +2909,7 @@ public final class Main {
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
 
 			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
-			modeNoLabel.setPreferredSize(new Dimension(100, 15));
+			modeNoLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
@@ -3023,7 +3029,7 @@ public final class Main {
 
 			final var virtualAxisLabel = new JLabel(
 					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
-			virtualAxisLabel.setPreferredSize(new Dimension(100, 15));
+			virtualAxisLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
@@ -3040,12 +3046,13 @@ public final class Main {
 			}
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-			colorLabel.setPreferredSize(new Dimension(100, 15));
+			colorLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
 			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 0.2d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
+			colorButton.setPreferredSize(SQUARE_BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
 			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));

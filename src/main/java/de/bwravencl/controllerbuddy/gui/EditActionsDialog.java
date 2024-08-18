@@ -407,7 +407,7 @@ public final class EditActionsDialog extends JDialog {
 
 		actionButtonsPanel.add(Box.createVerticalGlue());
 		final var addButton = addActionButton(new AddActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
-		actionButtonsPanel.add(Box.createVerticalStrut(Main.BUTTON_DIMENSION.height));
+		actionButtonsPanel.add(Box.createVerticalStrut(Main.BUTTON_DIMENSION_HEIGHT));
 		final var removeButton = addActionButton(new RemoveActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
 		actionButtonsPanel.add(Box.createVerticalGlue());
 
@@ -419,13 +419,11 @@ public final class EditActionsDialog extends JDialog {
 		final var insideBorderInsets = emptyBorder.getBorderInsets();
 		addComponentToPanelFixedSize(copyPastePanel, actionButtonsPanel,
 				new Dimension(Main.BUTTON_DIMENSION.width,
-						Main.BUTTON_DIMENSION.height + titledBorder.getMinimumSize(copyPastePanel).height
+						Main.BUTTON_DIMENSION_HEIGHT + titledBorder.getMinimumSize(copyPastePanel).height
 								+ insideBorderInsets.top + insideBorderInsets.bottom));
 
-		@SuppressWarnings("SuspiciousNameCombination")
-		final var squareButtonDimension = new Dimension(Main.BUTTON_DIMENSION.height, Main.BUTTON_DIMENSION.height);
-		final var copyButton = addActionButton(new CopyActionAction(), copyPastePanel, squareButtonDimension);
-		pasteButton = addActionButton(new PasteActionAction(), copyPastePanel, squareButtonDimension);
+		final var copyButton = addActionButton(new CopyActionAction(), copyPastePanel, Main.SQUARE_BUTTON_DIMENSION);
+		pasteButton = addActionButton(new PasteActionAction(), copyPastePanel, Main.SQUARE_BUTTON_DIMENSION);
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(_ -> {
