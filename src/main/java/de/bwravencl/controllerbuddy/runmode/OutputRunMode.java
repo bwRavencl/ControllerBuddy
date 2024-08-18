@@ -280,6 +280,7 @@ public abstract class OutputRunMode extends RunMode {
 		}
 
 		if (Main.isWindows && vJoy != null) {
+			vJoy.ResetButtons(vJoyDevice);
 			vJoy.ResetVJD(vJoyDevice);
 			vJoy.RelinquishVJD(vJoyDevice);
 
