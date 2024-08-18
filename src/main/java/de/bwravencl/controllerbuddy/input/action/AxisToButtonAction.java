@@ -45,7 +45,7 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 		var hot = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
 		hot = handleActivationInterval(hot);
 
-		if (isAlreadyPressed(input)) {
+		if (hot && isAlreadyPressed(input)) {
 			return;
 		}
 

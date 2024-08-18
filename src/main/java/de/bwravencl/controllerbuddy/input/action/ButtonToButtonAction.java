@@ -34,7 +34,7 @@ public final class ButtonToButtonAction extends ToButtonAction<Byte> implements 
 
 		final var hot = handleActivationInterval(value != 0);
 
-		if (isAlreadyPressed(input)) {
+		if (hot && isAlreadyPressed(input)) {
 			return;
 		}
 

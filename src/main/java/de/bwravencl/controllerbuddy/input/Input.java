@@ -421,11 +421,11 @@ public final class Input {
 
 			handleStickSwap(gamepadState);
 
-			Arrays.fill(buttons, false);
-
 			final var onScreenKeyboard = main.getOnScreenKeyboard();
 
 			if (clearOnNextPoll) {
+				Arrays.fill(buttons, false);
+
 				downKeyStrokes.clear();
 				downMouseButtons.clear();
 
@@ -576,6 +576,7 @@ public final class Input {
 		lightRumbleScheduled = false;
 		lastPollTime = 0;
 		rateMultiplier = 0f;
+		buttons = null;
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
 		jidToDriverMap.clear();
