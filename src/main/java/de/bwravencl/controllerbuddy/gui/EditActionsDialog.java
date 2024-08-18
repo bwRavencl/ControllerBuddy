@@ -47,9 +47,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -57,6 +59,7 @@ import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -66,6 +69,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
@@ -74,15 +78,22 @@ public final class EditActionsDialog extends JDialog {
 	private static final long serialVersionUID = 5007388251349678609L;
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
-	private static final int DIALOG_BOUNDS_WIDTH = 980;
+
+	private static final int DIALOG_BOUNDS_WIDTH = 1000;
 	private static final int DIALOG_BOUNDS_HEIGHT = 600;
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
-	private static final List<Class<?>> axisActionClasses = new ArrayList<>();
-	private static final List<Class<?>> buttonActionClasses = new ArrayList<>();
-	private static final List<Class<?>> cycleActionClasses = new ArrayList<>();
-	private static final List<Class<?>> onScreenKeyboardActionClasses = new ArrayList<>();
+
+	private static final List<Class<?>> axisActionClasses;
+	private static final List<Class<?>> buttonActionClasses;
+	private static final List<Class<?>> cycleActionClasses;
+	private static final List<Class<?>> onScreenKeyboardActionClasses;
 
 	static {
+		final List<Class<?>> mutableAxisActionClasses = new ArrayList<>();
+		final List<Class<?>> mutableButtonActionClasses = new ArrayList<>();
+		final List<Class<?>> mutableCycleActionClasses = new ArrayList<>();
+		final List<Class<?>> mutableOnScreenKeyboardActionClasses = new ArrayList<>();
+
 		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName()).enableClassInfo()
 				.enableAnnotationInfo().scan()) {
 			final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
@@ -99,20 +110,25 @@ public final class EditActionsDialog extends JDialog {
 				final var category = annotation.category();
 
 				if (category == ActionCategory.ALL || category == ActionCategory.AXIS) {
-					axisActionClasses.add(actionClass);
+					mutableAxisActionClasses.add(actionClass);
 				}
 				if (category == ActionCategory.ALL || category == ActionCategory.BUTTON
 						|| category == ActionCategory.BUTTON_AND_CYCLES) {
-					buttonActionClasses.add(actionClass);
+					mutableButtonActionClasses.add(actionClass);
 				}
 				if (category == ActionCategory.ALL || category == ActionCategory.BUTTON_AND_CYCLES) {
-					cycleActionClasses.add(actionClass);
+					mutableCycleActionClasses.add(actionClass);
 				}
 				if (category == ActionCategory.ALL || category == ActionCategory.ON_SCREEN_KEYBOARD_MODE) {
-					onScreenKeyboardActionClasses.add(actionClass);
+					mutableOnScreenKeyboardActionClasses.add(actionClass);
 				}
 			});
 		}
+
+		axisActionClasses = Collections.unmodifiableList(mutableAxisActionClasses);
+		buttonActionClasses = Collections.unmodifiableList(mutableButtonActionClasses);
+		cycleActionClasses = Collections.unmodifiableList(mutableCycleActionClasses);
+		onScreenKeyboardActionClasses = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
 	}
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -144,6 +160,8 @@ public final class EditActionsDialog extends JDialog {
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private AssignedAction selectedAssignedAction;
+
+	private JButton pasteButton;
 
 	@SuppressWarnings("unchecked")
 	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,
@@ -202,6 +220,27 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
+	private static JButton addActionButton(final javax.swing.Action action, final JPanel parentPanel,
+			final Dimension dimension) {
+		final var button = new JButton(action);
+		button.setEnabled(false);
+		addComponentToPanelFixedSize(button, parentPanel, dimension);
+
+		return button;
+	}
+
+	private static void addComponentToPanelFixedSize(final javax.swing.JComponent component, final JPanel parentPanel,
+			final Dimension dimension) {
+		component.setPreferredSize(dimension);
+		component.setMinimumSize(dimension);
+		component.setMaximumSize(dimension);
+
+		component.setAlignmentX(CENTER_ALIGNMENT);
+		component.setAlignmentY(CENTER_ALIGNMENT);
+
+		parentPanel.add(component);
+	}
+
 	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
@@ -224,6 +263,42 @@ public final class EditActionsDialog extends JDialog {
 		}
 
 		return propertyMap;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addAction(final IAction<?> action) {
+		try {
+			if (action instanceof final ButtonToModeAction buttonToModeAction) {
+				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
+				if (!buttonToModeActionsMap.containsKey(component.getIndex())) {
+					buttonToModeActionsMap.put(component.getIndex(), new ArrayList<>());
+				}
+
+				buttonToModeActionsMap.get(component.getIndex()).add(buttonToModeAction);
+			} else if (isCycleEditor()) {
+				cycleActions.add((IAction<Byte>) action);
+			} else {
+				final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
+						.getComponentToActionsMap(component.getType());
+
+				if (!componentToActionMap.containsKey(component.getIndex())) {
+					componentToActionMap.put(component.getIndex(), new ArrayList<>());
+				}
+
+				componentToActionMap.get(component.getIndex()).add(action);
+			}
+
+			updateAvailableActions();
+			updateAssignedActions();
+
+			final var hasModeAction = Arrays.stream(getAssignedActions())
+					.anyMatch(assignedAction -> assignedAction.action instanceof ButtonToModeAction);
+
+			assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
+					- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
+		} catch (final IllegalArgumentException | SecurityException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
 	}
 
 	private void closeDialog() {
@@ -271,6 +346,20 @@ public final class EditActionsDialog extends JDialog {
 		return action;
 	}
 
+	private List<Class<?>> getAllowedActionClasses() {
+		if (isCycleEditor()) {
+			return cycleActionClasses;
+		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
+			return onScreenKeyboardActionClasses;
+		} else if (component.getType() == ComponentType.AXIS) {
+			return axisActionClasses;
+		} else if (Profile.defaultMode.equals(selectedMode)) {
+			return buttonActionClasses;
+		}
+
+		return buttonActionClasses.stream().filter(clazz -> clazz != ButtonToModeAction.class).toList();
+	}
+
 	@SuppressWarnings("unchecked")
 	private AssignedAction[] getAssignedActions() {
 		final var assignedActions = new ArrayList<AssignedAction>();
@@ -311,17 +400,32 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JLabel(Main.strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
 				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var addButton = new JButton(new AddActionAction());
-		addButton.setPreferredSize(Main.BUTTON_DIMENSION);
-		addButton.setEnabled(false);
-		actionsPanel.add(addButton, new GridBagConstraints(1, 2, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+		final var actionButtonsPanel = new JPanel();
+		actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
+		actionsPanel.add(actionButtonsPanel, new GridBagConstraints(1, 3, 1, 0, 0d, 1d, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
 
-		final var removeButton = new JButton(new RemoveActionAction());
-		removeButton.setPreferredSize(Main.BUTTON_DIMENSION);
-		removeButton.setEnabled(false);
-		actionsPanel.add(removeButton, new GridBagConstraints(1, 4, 1, 2, 0d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+		actionButtonsPanel.add(Box.createVerticalGlue());
+		final var addButton = addActionButton(new AddActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
+		actionButtonsPanel.add(Box.createVerticalStrut(Main.BUTTON_DIMENSION.height));
+		final var removeButton = addActionButton(new RemoveActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
+		actionButtonsPanel.add(Box.createVerticalGlue());
+
+		final var copyPastePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+		final var titledBorder = BorderFactory.createTitledBorder(Main.strings.getString("CLIPBOARD_BORDER_TITLE"));
+		final var emptyBorder = (EmptyBorder) BorderFactory.createEmptyBorder(5, 0, 5, 0);
+		final var border = BorderFactory.createCompoundBorder(titledBorder, emptyBorder);
+		copyPastePanel.setBorder(border);
+		final var insideBorderInsets = emptyBorder.getBorderInsets();
+		addComponentToPanelFixedSize(copyPastePanel, actionButtonsPanel,
+				new Dimension(Main.BUTTON_DIMENSION.width,
+						Main.BUTTON_DIMENSION.height + titledBorder.getMinimumSize(copyPastePanel).height
+								+ insideBorderInsets.top + insideBorderInsets.bottom));
+
+		@SuppressWarnings("SuspiciousNameCombination")
+		final var squareButtonDimension = new Dimension(Main.BUTTON_DIMENSION.height, Main.BUTTON_DIMENSION.height);
+		final var copyButton = addActionButton(new CopyActionAction(), copyPastePanel, squareButtonDimension);
+		pasteButton = addActionButton(new PasteActionAction(), copyPastePanel, squareButtonDimension);
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(_ -> {
@@ -348,7 +452,10 @@ public final class EditActionsDialog extends JDialog {
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignedActionsList.addListSelectionListener(_ -> {
 			selectedAssignedAction = assignedActionsList.getSelectedValue();
-			removeButton.setEnabled(selectedAssignedAction != null);
+
+			final var buttonsEnabled = selectedAssignedAction != null;
+			removeButton.setEnabled(buttonsEnabled);
+			copyButton.setEnabled(buttonsEnabled);
 
 			JPanel propertiesPanel = null;
 			if (selectedAssignedAction != null) {
@@ -369,7 +476,7 @@ public final class EditActionsDialog extends JDialog {
 						propertiesPanel = new JPanel(new GridBagLayout());
 					}
 
-					final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 0));
+					final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 					propertiesPanel.add(propertyPanel,
 							new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
@@ -418,19 +525,19 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, .1d, 1d,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-		final var buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		final var okCancelButtonPanel = new JPanel();
+		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
 
 		final var okButton = new JButton(new OKAction());
 		okButton.setPreferredSize(Main.BUTTON_DIMENSION);
-		buttonPanel.add(okButton);
+		okCancelButtonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
 		final var cancelButton = new JButton(new CancelAction());
 		cancelButton.setPreferredSize(Main.BUTTON_DIMENSION);
-		buttonPanel.add(cancelButton);
+		okCancelButtonPanel.add(cancelButton);
 
 		updateAssignedActions();
 	}
@@ -461,20 +568,11 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	private void updateAvailableActions() {
+		Objects.requireNonNull(pasteButton, "Field pasteButton must not be null");
+
 		final var availableActions = new ArrayList<AvailableAction>();
 
-		final List<Class<?>> actionClasses;
-		if (isCycleEditor()) {
-			actionClasses = cycleActionClasses;
-		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
-			actionClasses = onScreenKeyboardActionClasses;
-		} else if (component.getType() == ComponentType.AXIS) {
-			actionClasses = axisActionClasses;
-		} else {
-			actionClasses = buttonActionClasses;
-		}
-
-		for (final var actionClass : actionClasses) {
+		for (final var actionClass : getAllowedActionClasses()) {
 			final var availableAction = new AvailableAction(actionClass);
 
 			if (ButtonToModeAction.class.equals(availableAction.actionClass)
@@ -485,6 +583,16 @@ public final class EditActionsDialog extends JDialog {
 		}
 
 		availableActionsList.setListData(availableActions.toArray(AvailableAction[]::new));
+
+		updatePasteButton();
+	}
+
+	private void updatePasteButton() {
+		final var clipboardAction = main.getClipboardAction();
+		final var pasteAllowed = clipboardAction != null
+				&& getAllowedActionClasses().contains(clipboardAction.getClass());
+
+		pasteButton.setEnabled(pasteAllowed);
 	}
 
 	@Serial
@@ -520,42 +628,12 @@ public final class EditActionsDialog extends JDialog {
 			putValue(SHORT_DESCRIPTION, Main.strings.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				final var action = getActionClassInstance(selectedAvailableAction.actionClass);
-
-				if (action instanceof final ButtonToModeAction buttonToModeAction) {
-					final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-					if (!buttonToModeActionsMap.containsKey(component.getIndex())) {
-						buttonToModeActionsMap.put(component.getIndex(), new ArrayList<>());
-					}
-
-					buttonToModeActionsMap.get(component.getIndex()).add(buttonToModeAction);
-				} else if (isCycleEditor()) {
-					cycleActions.add((IAction<Byte>) action);
-				} else {
-					final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
-							.getComponentToActionsMap(component.getType());
-
-					if (!componentToActionMap.containsKey(component.getIndex())) {
-						componentToActionMap.put(component.getIndex(), new ArrayList<>());
-					}
-
-					componentToActionMap.get(component.getIndex()).add(action);
-				}
-
-				updateAvailableActions();
-				updateAssignedActions();
-
-				final var hasModeAction = Arrays.stream(getAssignedActions())
-						.anyMatch(assignedAction -> assignedAction.action instanceof ButtonToModeAction);
-
-				assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
-						- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
-			} catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
+				addAction(getActionClassInstance(selectedAvailableAction.actionClass));
+			} catch (final InstantiationException | IllegalAccessException | InvocationTargetException
+					| NoSuchMethodException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
@@ -574,6 +652,27 @@ public final class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			closeDialog();
+		}
+	}
+
+	private final class CopyActionAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -6630683334825900710L;
+
+		private CopyActionAction() {
+			putValue(NAME, "🗐");
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("COPY_ACTION_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try {
+				main.setClipboardAction((IAction<?>) selectedAssignedAction.action.clone());
+				updatePasteButton();
+			} catch (final CloneNotSupportedException e1) {
+				throw new RuntimeException(e1);
+			}
 		}
 	}
 
@@ -617,6 +716,26 @@ public final class EditActionsDialog extends JDialog {
 			}
 
 			closeDialog();
+		}
+	}
+
+	private final class PasteActionAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -6630683334825900710L;
+
+		private PasteActionAction() {
+			putValue(NAME, "📋");
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("PASTE_ACTION_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			try {
+				addAction((IAction<?>) main.getClipboardAction().clone());
+			} catch (final CloneNotSupportedException e1) {
+				throw new RuntimeException(e1);
+			}
 		}
 	}
 

@@ -419,6 +419,7 @@ public final class Main {
 	private JComboBox<Mode> modeComboBox;
 	private FlatLaf lookAndFeel;
 	private volatile Rectangle totalDisplayBounds;
+	private IAction<?> clipboardAction;
 
 	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -1639,6 +1640,10 @@ public final class Main {
 		return workingCopySvgDocument;
 	}
 
+	IAction<?> getClipboardAction() {
+		return clipboardAction;
+	}
+
 	@SuppressWarnings("exports")
 	public JFrame getFrame() {
 		return frame;
@@ -2505,6 +2510,10 @@ public final class Main {
 		}
 
 		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
+	}
+
+	void setClipboardAction(final IAction<?> action) {
+		clipboardAction = action;
 	}
 
 	public void setOnScreenKeyboardVisible(final boolean visible) {
