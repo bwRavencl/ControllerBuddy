@@ -42,7 +42,7 @@ ext {
 	os = DefaultNativePlatform.currentOperatingSystem
 
 	moduleInfoFile = 'src/main/java/module-info.java'
-	metadataFile = 'src/main/java/de/bwravencl/controllerbuddy/metadata/Metadata.java'
+	constantsFile = 'src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java'
 
 	resourcesDir = 'src/main/resources'
 	tmpDir = layout.buildDirectory.dir 'tmp'
@@ -79,9 +79,9 @@ tasks.register('cleanModuleInfo') {
 	doLast { delete moduleInfoFile }
 }
 
-tasks.register('cleanMetadata') {
-	description = "Removes the \'$metadataFile\' source file"
-	doLast { delete metadataFile }
+tasks.register('cleanConstants') {
+	description = "Removes the \'$constantsFile\' source file"
+	doLast { delete constantsFile }
 }
 
 tasks.register('cleanGameControllerDB') {
@@ -89,7 +89,7 @@ tasks.register('cleanGameControllerDB') {
 	doLast { delete gamecontrollerdbFile }
 }
 
-clean.dependsOn cleanModuleInfo, cleanMetadata, cleanGameControllerDB
+clean.dependsOn cleanModuleInfo, cleanConstants, cleanGameControllerDB
 
 dependencies {
 	errorprone('com.google.errorprone:error_prone_core:2.30.0')
@@ -231,7 +231,7 @@ spotless {
 	encoding 'UTF-8'
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
-		targetExclude moduleInfoFile, metadataFile
+		targetExclude moduleInfoFile, constantsFile
 		eclipse('4.27').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
 		//noinspection GroovyAccessibility
@@ -308,9 +308,9 @@ downloadLicenses {
 	}
 }
 
-tasks.register('generateMetadata') {
+tasks.register('generateConstants') {
 	dependsOn 'downloadLicenses'
-	description = "Generates the \'$metadataFile\' source file"
+	description = "Generates the \'$constantsFile\' source file"
 	doLast {
 		def dependencyLicenseHtml = layout.buildDirectory.file('reports/license/dependency-license.html').get().getAsFile().text.replaceFirst('<head>[\\s\\S]*</head>', '').replaceFirst('<style>[\\s\\S]*</style>', '').replaceFirst('<h3>Jar</h3>', '<h3>File</h3>').replaceAll('class\\s*=\\s*\'-?[_a-zA-Z]+[_a-zA-Z0-9-]*\'', '').replaceAll('>\\s*<', '><')
 		def projectLicenseHtml = layout.projectDirectory.file('LICENSE').getAsFile().readLines().collect({ it.trim().codePoints().mapToObj({ it > 127 || '"\'<>&'.indexOf(it) != -1 ? "&#$it;" : new String(Character.toChars(it)) }).collect(Collectors.joining()) }).join '<br>'
@@ -321,9 +321,11 @@ tasks.register('generateMetadata') {
 		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</table>'), '<tr><td>SDL_GameControllerDB</td><td>gamecontrollerdb.txt</td><td>zlib License</td><td><a href=\'https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE\'>Show license agreement</a></td></tr>')
 		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</body>'), '</center>')
 
-		new File(metadataFile).write("""\
-			package de.bwravencl.controllerbuddy.metadata;\n
-			public class Metadata {
+		def file = new File(constantsFile)
+		file.getParentFile().mkdirs()
+		file.write("""\
+			package de.bwravencl.controllerbuddy.constants;\n
+			public class Constants {
 
 				public static final String APPLICATION_NAME = "$application.applicationName";
 
@@ -352,8 +354,8 @@ tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
 tasks.spotlessXml.dependsOn copyGameControllerDB
 
 tasks.withType(JavaCompile).configureEach {
-	dependsOn generateModuleInfo, generateMetadata
-	source generateMetadata.outputs.files, sourceSets.main.java
+	dependsOn generateModuleInfo, generateConstants
+	source generateConstants.outputs.files, sourceSets.main.java
 	options.encoding = 'UTF-8'
 	gradle.taskGraph.whenReady {
 		if (!it.hasTask(run)) {

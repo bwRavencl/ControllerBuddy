@@ -1,5 +1,5 @@
 src/main/java/module-info.java
-src/main/java/de/bwravencl/controllerbuddy/metadata/Metadata.java
+src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java
 src/main/resources/gamecontrollerdb.txt
 
 # Created by https://www.toptal.com/developers/gitignore/api/gradle,java,jetbrains,windows,linux,macos

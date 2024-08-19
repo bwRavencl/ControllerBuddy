@@ -14,8 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.metadata;
+package de.bwravencl.controllerbuddy.util;
 
+import de.bwravencl.controllerbuddy.constants.Constants;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public final class VersionUtils {
 				return Optional.empty();
 			}
 
-			final var currentVersionParts = getVersionIntegerParts(Metadata.VERSION);
+			final var currentVersionParts = getVersionIntegerParts(Constants.VERSION);
 			for (var i = 0; i < 2; i++) {
 				if (otherVersionParts[i] < currentVersionParts[i]) {
 					return Optional.of(-1);
@@ -49,7 +50,7 @@ public final class VersionUtils {
 	}
 
 	public static String getMajorAndMinorVersion() {
-		final var versionWithoutSuffix = stripHashSuffix(Metadata.VERSION);
+		final var versionWithoutSuffix = stripHashSuffix(Constants.VERSION);
 		return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
 	}
 

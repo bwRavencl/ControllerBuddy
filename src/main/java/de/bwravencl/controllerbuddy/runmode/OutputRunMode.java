@@ -35,6 +35,7 @@ import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinUser.INPUT;
 import com.sun.jna.platform.win32.WinUser.KEYBDINPUT;
 import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
+import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -42,7 +43,6 @@ import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
-import de.bwravencl.controllerbuddy.metadata.Metadata;
 import de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaver;
 import de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaverType;
 import java.awt.EventQueue;
@@ -559,7 +559,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			try {
-				joystickInputDevice = new InputDevice(Metadata.APPLICATION_NAME + " Joystick", UINPUT_VENDOR_CODE,
+				joystickInputDevice = new InputDevice(Constants.APPLICATION_NAME + " Joystick", UINPUT_VENDOR_CODE,
 						UINPUT_PRODUCT_CODE);
 				joystickInputDevice.addCapability(EventCode.ABS_X, EventCode.ABS_Y, EventCode.ABS_Z, EventCode.ABS_RX,
 						EventCode.ABS_RY, EventCode.ABS_RZ, EventCode.ABS_THROTTLE, EventCode.ABS_RUDDER);
@@ -570,14 +570,14 @@ public abstract class OutputRunMode extends RunMode {
 				minAxisValue = Short.MIN_VALUE;
 				maxAxisValue = Short.MAX_VALUE;
 
-				mouseInputDevice = new InputDevice(Metadata.APPLICATION_NAME + " Mouse", UINPUT_VENDOR_CODE,
+				mouseInputDevice = new InputDevice(Constants.APPLICATION_NAME + " Mouse", UINPUT_VENDOR_CODE,
 						UINPUT_PRODUCT_CODE);
 				mouseInputDevice.addCapability(EventCode.BTN_LEFT, EventCode.BTN_RIGHT, EventCode.BTN_MIDDLE,
 						EventCode.REL_X, EventCode.REL_Y, EventCode.REL_WHEEL);
 				mouseInputDevice.open();
 				log.log(Level.INFO, "Opened UINPUT mouse device: " + mouseInputDevice.toString());
 
-				keyboardInputDevice = new InputDevice(Metadata.APPLICATION_NAME + " Keyboard", UINPUT_VENDOR_CODE,
+				keyboardInputDevice = new InputDevice(Constants.APPLICATION_NAME + " Keyboard", UINPUT_VENDOR_CODE,
 						UINPUT_PRODUCT_CODE);
 				for (final var eventCode : EventCode.values()) {
 					if (eventCode.isKey()) {
@@ -596,7 +596,7 @@ public abstract class OutputRunMode extends RunMode {
 							dBusConnection = DBusConnectionBuilder.forSessionBus().build();
 							screenSaver = dBusConnection.getRemoteObject(screenSaverType.busname,
 									screenSaverType.objectpath, screenSaverType.clazz);
-							screenSaverCookie = screenSaver.Inhibit(Metadata.APPLICATION_NAME, "Feeder running");
+							screenSaverCookie = screenSaver.Inhibit(Constants.APPLICATION_NAME, "Feeder running");
 							break;
 						} catch (final DBusException | DBusExecutionException _) {
 							// ignore errors caused by D-Bus
