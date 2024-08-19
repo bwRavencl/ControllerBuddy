@@ -56,14 +56,16 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 			return;
 		}
 
-		if (Math.abs(value) <= deadZone) {
+		final var absValue = Math.abs(value);
+
+		if (absValue <= deadZone) {
 			value = 0f;
 		} else {
 			final float inMax;
 			if (exponent != 0f) {
 				inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
 
-				value = Math.signum(value) * (float) Math.pow((Math.abs(value) - deadZone) * 100f, exponent);
+				value = Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent);
 			} else {
 				inMax = 1f;
 			}
