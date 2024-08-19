@@ -131,11 +131,12 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 				.forEach(action -> ((IActivatableAction<?>) action).init(input));
 
 		final var axes = activeMode.getAxisToActionsMap().keySet();
-		final var defaultAxisToActionsMap = previousMode.getAxisToActionsMap();
+		final var previousModeAxisToActionsMap = previousMode.getAxisToActionsMap();
 		final var main = input.getMain();
-		if (defaultAxisToActionsMap != null) {
-			axes.stream().filter(defaultAxisToActionsMap::containsKey).forEach(axis -> defaultAxisToActionsMap.get(axis)
-					.stream().filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
+		if (previousModeAxisToActionsMap != null) {
+			axes.stream().filter(previousModeAxisToActionsMap::containsKey)
+					.forEach(axis -> previousModeAxisToActionsMap.get(axis).stream()
+							.filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
 		}
 
 		IAxisToLongPressAction.onModeDeactivated(activeMode);
