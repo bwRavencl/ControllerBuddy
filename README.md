@@ -177,23 +177,23 @@ Server-Client mode:
                                                 Target Application
 ```
 
-## Example Screenshots
+## Screenshots
 
-![Modes Tab](example_screenshot_1.png)
+![Modes Tab](screenshot_1.png)
 
-![Assignments Tab](example_screenshot_2.png)
+![Assignments Tab](screenshot_2.png)
 
-![Component Editor - Button](example_screenshot_3.png)
+![Component Editor - Button](screenshot_3.png)
 
-![Component Editor - Axis](example_screenshot_4.png)
+![Component Editor - Axis](screenshot_4.png)
 
-![Dark Mode](example_screenshot_5.png)
+![Dark Mode](screenshot_5.png)
 
-![Visualization Tab](example_screenshot_6.png)
+![Visualization Tab](screenshot_6.png)
 
-![Overlay](example_screenshot_7.png)
+![Overlay](screenshot_7.png)
 
-![VR Overlay](example_screenshot_8.png)
+![VR Overlay](screenshot_8.png)
 
 ## Command Line Parameters
 
