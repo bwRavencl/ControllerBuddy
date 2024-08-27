@@ -8,5 +8,6 @@
     <pattern value="de.bwravencl.controllerbuddy.input.driver.IDriverBuilder" hierarchically="true" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration" detection-enabled="false" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="22" project-jdk-type="JavaSDK" />
 </project>
