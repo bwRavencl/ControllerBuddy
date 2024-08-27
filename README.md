@@ -251,6 +251,6 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Create a TGZ-compressed jpackage image | gradlew distTar         |
 | Delete build and gen directories       | gradlew clean           |
 
-## License Information
+## License
 
-GNU General Public License v3.0
+[GNU General Public License v3.0](LICENSE)
