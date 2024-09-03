@@ -2458,8 +2458,6 @@ public final class Main {
 	}
 
 	private void saveProfile(File file, final boolean saveAsLastProfile) {
-		input.reset();
-
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX)) {
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 		}
