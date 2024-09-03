@@ -180,9 +180,8 @@ public final class OnScreenKeyboard extends JFrame {
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(JFrame.Type.POPUP);
 		setFocusableWindowState(false);
-		if (Main.isWindows) {
-			setBackground(Main.TRANSPARENT);
-		}
+		setBackground(Main.TRANSPARENT);
+		rootPane.setBackground(Main.TRANSPARENT);
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
