@@ -2430,8 +2430,6 @@ public final class Main {
 			overlayFrameContentPane.validate();
 			overlayFrameContentPane.repaint();
 		}
-
-		Toolkit.getDefaultToolkit().sync();
 	}
 
 	public void restartLast() {
@@ -2542,7 +2540,6 @@ public final class Main {
 			}
 
 			currentModeLabel.setText(text);
-			Toolkit.getDefaultToolkit().sync();
 		});
 	}
 
@@ -3002,7 +2999,6 @@ public final class Main {
 
 					if (repaint) {
 						progressBar.repaint();
-						Toolkit.getDefaultToolkit().sync();
 					}
 				});
 	}

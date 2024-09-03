@@ -30,7 +30,6 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -533,7 +532,6 @@ public final class OnScreenKeyboard extends JFrame {
 
 		private void setFocus(final boolean focus) {
 			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
-			Toolkit.getDefaultToolkit().sync();
 		}
 
 		void setPressed(final boolean pressed) {
