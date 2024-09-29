@@ -2425,9 +2425,8 @@ public final class Main {
 		}
 
 		if (isWindows && overlayFrame != null) {
-			final var overlayFrameContentPane = overlayFrame.getContentPane();
-			overlayFrameContentPane.validate();
-			overlayFrameContentPane.repaint();
+			overlayFrame.validate();
+			overlayFrame.repaint();
 		}
 	}
 
