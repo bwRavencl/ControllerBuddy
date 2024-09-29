@@ -2420,9 +2420,8 @@ public final class Main {
 
 	private void repaintOnScreenKeyboardAndOverlay() {
 		if (onScreenKeyboard.isVisible()) {
-			final var onScreenKeyboardContentPane = onScreenKeyboard.getContentPane();
-			onScreenKeyboardContentPane.validate();
-			onScreenKeyboardContentPane.repaint();
+			onScreenKeyboard.validate();
+			onScreenKeyboard.repaint();
 		}
 
 		if (isWindows && overlayFrame != null) {
