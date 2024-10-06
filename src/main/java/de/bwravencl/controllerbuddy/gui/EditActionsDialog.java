@@ -167,6 +167,7 @@ public final class EditActionsDialog extends JDialog {
 	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,
 			@SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
 		super(parentDialog);
+
 		main = parentDialog.main;
 		this.cycleAction = cycleAction;
 
@@ -189,6 +190,7 @@ public final class EditActionsDialog extends JDialog {
 
 	EditActionsDialog(final Main main, final Component component, final String name) {
 		super(main.getFrame());
+
 		this.main = main;
 		this.component = component;
 		input = main.getInput();
