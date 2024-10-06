@@ -48,16 +48,13 @@ public final class Input {
 
 	public static final int MAX_N_BUTTONS = 128;
 	private static final Logger log = Logger.getLogger(Input.class.getName());
-
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
-
 	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
-
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-
 	private static final long SUSPENSION_TIME = 500L;
 	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
 	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL = 2000L;
+
 	private final Main main;
 	private final ControllerInfo controller;
 	private final EnumMap<VirtualAxis, Integer> axes;
