@@ -167,6 +167,7 @@ public final class EditActionsDialog extends JDialog {
 	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,
 			@SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
 		super(parentDialog);
+		main = parentDialog.main;
 		this.cycleAction = cycleAction;
 
 		try {
