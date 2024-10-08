@@ -3480,10 +3480,10 @@ public final class Main {
 		public void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var result = JOptionPane.showConfirmDialog(this,
+				final var selectedOption = JOptionPane.showConfirmDialog(this,
 						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
 						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-				switch (result) {
+				switch (selectedOption) {
 				case JOptionPane.CANCEL_OPTION:
 					cancelSelection();
 				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
