@@ -141,7 +141,7 @@ public final class EditActionsDialog extends JDialog {
 	private final Profile unsavedProfile;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Main main;
+	private final Main main;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Component component;
