@@ -1779,6 +1779,7 @@ public final class Main {
 		}
 
 		if (commandLine.hasOption(OPTION_QUIT)) {
+			handleUnsavedChanges();
 			quit();
 		}
 	}
