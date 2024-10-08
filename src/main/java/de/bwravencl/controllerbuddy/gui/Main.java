@@ -49,6 +49,7 @@ import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
+import de.bwravencl.controllerbuddy.runmode.VjoyInterface;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.awt.AWTException;
@@ -3801,15 +3802,32 @@ public final class Main {
 			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
 			final var dllFile = new File(vjoyDirectory,
 					OutputRunMode.getVJoyArchFolderName() + File.separator + OutputRunMode.VJOY_LIBRARY_FILENAME);
-			if (dllFile.exists()) {
-				final var vjoyPath = vjoyDirectory.getAbsolutePath();
-				preferences.put(PREFERENCES_VJOY_DIRECTORY, vjoyPath);
-				vJoyDirectoryLabel.setText(vjoyPath);
-			} else {
+			if (!dllFile.exists()) {
 				GuiUtils.showMessageDialog(main, frame,
 						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
 								OutputRunMode.getDefaultVJoyPath()),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			final var oldVjoyPath = getVJoyDirectory();
+			final var newVjoyPath = vjoyDirectory.getAbsolutePath();
+
+			if (Objects.equals(oldVjoyPath, newVjoyPath)) {
+				return;
+			}
+
+			preferences.put(PREFERENCES_VJOY_DIRECTORY, newVjoyPath);
+			vJoyDirectoryLabel.setText(newVjoyPath);
+
+			if (VjoyInterface.isRegistered()
+					&& JOptionPane.showConfirmDialog(frame,
+							MessageFormat.format(strings.getString("RESTART_REQUIRED_DIALOG_TEXT"),
+									Constants.APPLICATION_NAME),
+							strings.getString("INFORMATION_DIALOG_TITLE"),
+							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				handleUnsavedChanges();
+				quit();
 			}
 		}
 	}

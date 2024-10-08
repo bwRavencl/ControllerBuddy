@@ -16,7 +16,7 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import com.sun.jna.Library;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -28,69 +28,80 @@ import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.WORDByReference;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-interface VjoyInterface extends Library {
+public final class VjoyInterface {
 
-	UINT HID_USAGE_X = new UINT(0x30L);
-	UINT HID_USAGE_Y = new UINT(0x31L);
-	UINT HID_USAGE_Z = new UINT(0x32L);
-	UINT HID_USAGE_RX = new UINT(0x33L);
-	UINT HID_USAGE_RY = new UINT(0x34L);
-	UINT HID_USAGE_RZ = new UINT(0x35L);
-	UINT HID_USAGE_SL0 = new UINT(0x36L);
-	UINT HID_USAGE_SL1 = new UINT(0x37L);
-	UINT HID_USAGE_WHL = new UINT(0x38L);
-	UINT HID_USAGE_POV = new UINT(0x39L);
-	int VJD_STAT_OWN = 0;
-	int VJD_STAT_FREE = 1;
-	int VJD_STAT_BUSY = 2;
-	int VJD_STAT_MISS = 3;
-	int VJD_STAT_UNKN = 4;
+	static final UINT HID_USAGE_X = new UINT(0x30L);
+	static final UINT HID_USAGE_Y = new UINT(0x31L);
+	static final UINT HID_USAGE_Z = new UINT(0x32L);
+	static final UINT HID_USAGE_RX = new UINT(0x33L);
+	static final UINT HID_USAGE_RY = new UINT(0x34L);
+	static final UINT HID_USAGE_RZ = new UINT(0x35L);
+	static final UINT HID_USAGE_SL0 = new UINT(0x36L);
+	static final UINT HID_USAGE_SL1 = new UINT(0x37L);
+	static final UINT HID_USAGE_WHL = new UINT(0x38L);
+	static final UINT HID_USAGE_POV = new UINT(0x39L);
+	static final int VJD_STAT_OWN = 0;
+	static final int VJD_STAT_FREE = 1;
+	static final int VJD_STAT_BUSY = 2;
+	static final int VJD_STAT_MISS = 3;
+	static final int VJD_STAT_UNKN = 4;
+	static final String VJOY_LIBRARY_NAME = "vJoyInterface";
 
-	BOOL AcquireVJD(UINT rID);
+	static native BOOL AcquireVJD(UINT rID);
 
-	BOOL DriverMatch(WORDByReference DllVer, WORDByReference DrvVer);
+	static native BOOL DriverMatch(WORDByReference DllVer, WORDByReference DrvVer);
 
-	BOOL GetVJDAxisExist(UINT rID, UINT Axis);
+	static native BOOL GetVJDAxisExist(UINT rID, UINT Axis);
 
-	BOOL GetVJDAxisMax(UINT rID, UINT Axis, LONGByReference Max);
+	static native BOOL GetVJDAxisMax(UINT rID, UINT Axis, LONGByReference Max);
 
-	BOOL GetVJDAxisMin(UINT rID, UINT Axis, LONGByReference Min);
+	static native BOOL GetVJDAxisMin(UINT rID, UINT Axis, LONGByReference Min);
 
-	int GetVJDButtonNumber(UINT rID);
+	static native int GetVJDButtonNumber(UINT rID);
 
-	int GetVJDContPovNumber(UINT rID);
+	static native int GetVJDContPovNumber(UINT rID);
 
-	int GetVJDDiscPovNumber(UINT rID);
+	static native int GetVJDDiscPovNumber(UINT rID);
 
-	int GetVJDStatus(UINT rID);
+	static native int GetVJDStatus(UINT rID);
 
-	PVOID GetvJoyManufacturerString();
+	static native PVOID GetvJoyManufacturerString();
 
-	PVOID GetvJoyProductString();
+	static native PVOID GetvJoyProductString();
 
-	PVOID GetvJoySerialNumberString();
+	static native PVOID GetvJoySerialNumberString();
 
-	SHORT GetvJoyVersion();
+	static native SHORT GetvJoyVersion();
 
-	void RelinquishVJD(UINT rID);
+	static native void RelinquishVJD(UINT rID);
 
-	void ResetAll();
+	static native void ResetAll();
 
-	BOOL ResetButtons(UINT rID);
+	static native BOOL ResetButtons(UINT rID);
 
-	BOOL ResetPovs(UINT rID);
+	static native BOOL ResetPovs(UINT rID);
 
-	BOOL ResetVJD(UINT rID);
+	static native BOOL ResetVJD(UINT rID);
 
-	BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
+	static native BOOL SetAxis(LONG Value, UINT rID, UINT Axis);
 
-	BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
+	static native BOOL SetBtn(BOOL Value, UINT rID, UCHAR nBtn);
 
-	BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
+	static native BOOL SetContPov(DWORD Value, UINT rID, UCHAR nPov);
 
-	BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
+	static native BOOL SetDiscPov(int Value, UINT rID, UCHAR nPov);
 
-	BOOL UpdateVJD(UINT rID, PVOID pData);
+	static native BOOL UpdateVJD(UINT rID, PVOID pData);
 
-	BOOL vJoyEnabled();
+	public static boolean isRegistered() {
+		return Native.registered(VjoyInterface.class);
+	}
+
+	static void register() {
+		if (!isRegistered()) {
+			Native.register(VJOY_LIBRARY_NAME);
+		}
+	}
+
+	static native BOOL vJoyEnabled();
 }

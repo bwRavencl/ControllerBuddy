@@ -17,7 +17,6 @@
 package de.bwravencl.controllerbuddy.runmode;
 
 import com.sun.jna.IntegerType;
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Kernel32;
@@ -77,9 +76,8 @@ import uk.co.bithatch.linuxio.InputDevice.Event;
 public abstract class OutputRunMode extends RunMode {
 
 	public static final int VJOY_DEFAULT_DEVICE = 1;
+	public static final String VJOY_LIBRARY_FILENAME = VjoyInterface.VJOY_LIBRARY_NAME + ".dll";
 	private static final Logger log = Logger.getLogger(OutputRunMode.class.getName());
-	private static final String VJOY_LIBRARY_NAME = "vJoyInterface";
-	public static final String VJOY_LIBRARY_FILENAME = VJOY_LIBRARY_NAME + ".dll";
 	private static final String VJOY_UNINSTALL_REGISTRY_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{8E31F76F-74C3-47F1-9550-E041EEDC5FBB}_is1";
 	private static final String VJOY_INSTALL_LOCATION_REGISTRY_VALUE = "InstallLocation";
 	private static final long MOUSEEVENTF_MOVE = 0x0001L;
@@ -114,7 +112,6 @@ public abstract class OutputRunMode extends RunMode {
 			+ "leds";
 	private static final String SYSFS_INPUT_DIR_REGEX_PREFIX = "input\\d+::";
 	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
-	private static VjoyInterface vJoy;
 	final Set<Integer> oldDownMouseButtons = new HashSet<>();
 	final Set<Integer> newUpMouseButtons = new HashSet<>();
 	final Set<Integer> newDownMouseButtons = new HashSet<>();
@@ -198,10 +195,6 @@ public abstract class OutputRunMode extends RunMode {
 		}
 	}
 
-	private static void setVJoy(final VjoyInterface vJoy) {
-		OutputRunMode.vJoy = vJoy;
-	}
-
 	static <T> void updateOutputSets(final Set<T> sourceSet, final Set<T> oldDownSet, final Set<T> newUpSet,
 			final Set<T> newDownSet, final boolean keepStillDown) {
 		final var stillDownSet = new HashSet<T>();
@@ -279,10 +272,12 @@ public abstract class OutputRunMode extends RunMode {
 			}
 		}
 
-		if (Main.isWindows && vJoy != null) {
-			vJoy.ResetButtons(vJoyDevice);
-			vJoy.ResetVJD(vJoyDevice);
-			vJoy.RelinquishVJD(vJoyDevice);
+		if (Main.isWindows) {
+			if (VjoyInterface.isRegistered()) {
+				VjoyInterface.ResetButtons(vJoyDevice);
+				VjoyInterface.ResetVJD(vJoyDevice);
+				VjoyInterface.RelinquishVJD(vJoyDevice);
+			}
 
 			EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat
 					.format(Main.strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice.intValue())));
@@ -428,9 +423,9 @@ public abstract class OutputRunMode extends RunMode {
 				log.log(Level.INFO, "Using vJoy library path: " + libraryPath);
 				System.setProperty("jna.library.path", libraryPath);
 
-				setVJoy(Native.load(VJOY_LIBRARY_NAME, VjoyInterface.class));
+				VjoyInterface.register();
 
-				if (!vJoy.vJoyEnabled().booleanValue()) {
+				if (!VjoyInterface.vJoyEnabled().booleanValue()) {
 					log.log(Level.WARNING, "vJoy driver is not enabled");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							Main.strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
@@ -440,7 +435,7 @@ public abstract class OutputRunMode extends RunMode {
 
 				final var dllVersion = new WORDByReference();
 				final var drvVersion = new WORDByReference();
-				if (!vJoy.DriverMatch(dllVersion, drvVersion).booleanValue()) {
+				if (!VjoyInterface.DriverMatch(dllVersion, drvVersion).booleanValue()) {
 					log.log(Level.WARNING,
 							"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
@@ -452,7 +447,7 @@ public abstract class OutputRunMode extends RunMode {
 
 				log.log(Level.INFO, "Using vJoy device: " + vJoyDevice.toString());
 
-				if (vJoy.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
+				if (VjoyInterface.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
 					log.log(Level.WARNING, "vJoy device is not available");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
@@ -461,14 +456,22 @@ public abstract class OutputRunMode extends RunMode {
 					return false;
 				}
 
-				final var hasAxisX = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_X).booleanValue();
-				final var hasAxisY = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Y).booleanValue();
-				final var hasAxisZ = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Z).booleanValue();
-				final var hasAxisRX = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RX).booleanValue();
-				final var hasAxisRY = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RY).booleanValue();
-				final var hasAxisRZ = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RZ).booleanValue();
-				final var hasAxisSL0 = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL0).booleanValue();
-				final var hasAxisSL1 = vJoy.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL1).booleanValue();
+				final var hasAxisX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_X)
+						.booleanValue();
+				final var hasAxisY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Y)
+						.booleanValue();
+				final var hasAxisZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Z)
+						.booleanValue();
+				final var hasAxisRX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RX)
+						.booleanValue();
+				final var hasAxisRY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RY)
+						.booleanValue();
+				final var hasAxisRZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RZ)
+						.booleanValue();
+				final var hasAxisSL0 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL0)
+						.booleanValue();
+				final var hasAxisSL1 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL1)
+						.booleanValue();
 				if (!hasAxisX || !hasAxisY || !hasAxisZ || !hasAxisRX || !hasAxisRY || !hasAxisRZ || !hasAxisSL0
 						|| !hasAxisSL1) {
 					final var missingAxes = new ArrayList<String>();
@@ -506,7 +509,7 @@ public abstract class OutputRunMode extends RunMode {
 					return false;
 				}
 
-				if (!vJoy.AcquireVJD(vJoyDevice).booleanValue()) {
+				if (!VjoyInterface.AcquireVJD(vJoyDevice).booleanValue()) {
 					log.log(Level.WARNING, "Could not acquire vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
@@ -515,7 +518,7 @@ public abstract class OutputRunMode extends RunMode {
 					return false;
 				}
 
-				if (!vJoy.ResetVJD(vJoyDevice).booleanValue()) {
+				if (!VjoyInterface.ResetVJD(vJoyDevice).booleanValue()) {
 					log.log(Level.WARNING, "Could not reset vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
@@ -525,14 +528,14 @@ public abstract class OutputRunMode extends RunMode {
 				}
 
 				final var Min = new LONGByReference();
-				vJoy.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, Min);
+				VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, Min);
 				minAxisValue = Min.getValue().intValue();
 
 				final var Max = new LONGByReference();
-				vJoy.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, Max);
+				VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, Max);
 				maxAxisValue = Max.getValue().intValue();
 
-				nButtons = vJoy.GetVJDButtonNumber(vJoyDevice);
+				nButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
 				if (!enoughButtons(nButtons)) {
 					return false;
 				}
@@ -713,7 +716,7 @@ public abstract class OutputRunMode extends RunMode {
 		try {
 			if (axisX.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisX.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_X)
+					writeSucessful &= VjoyInterface.SetAxis(axisX.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_X)
 							.booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_X, axisX.getUinputValue()));
@@ -726,7 +729,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisY.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisY.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_Y)
+					writeSucessful &= VjoyInterface.SetAxis(axisY.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_Y)
 							.booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_Y, axisY.getUinputValue()));
@@ -739,7 +742,7 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisZ.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisZ.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_Z)
+					writeSucessful &= VjoyInterface.SetAxis(axisZ.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_Z)
 							.booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_Z, axisZ.getUinputValue()));
@@ -752,8 +755,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRX.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisRX.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RX)
-							.booleanValue();
+					writeSucessful &= VjoyInterface
+							.SetAxis(axisRX.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RX).booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RX, axisRX.getUinputValue()));
 				} else {
@@ -765,8 +768,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRY.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisRY.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RY)
-							.booleanValue();
+					writeSucessful &= VjoyInterface
+							.SetAxis(axisRY.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RY).booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RY, axisRY.getUinputValue()));
 				} else {
@@ -778,8 +781,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisRZ.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisRZ.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RZ)
-							.booleanValue();
+					writeSucessful &= VjoyInterface
+							.SetAxis(axisRZ.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_RZ).booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RZ, axisRZ.getUinputValue()));
 				} else {
@@ -791,8 +794,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisS0.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisS0.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_SL0)
-							.booleanValue();
+					writeSucessful &= VjoyInterface
+							.SetAxis(axisS0.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_SL0).booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_THROTTLE, axisS0.getUinputValue()));
 				} else {
@@ -804,8 +807,8 @@ public abstract class OutputRunMode extends RunMode {
 
 			if (axisS1.isChanged()) {
 				if (Main.isWindows) {
-					writeSucessful &= vJoy.SetAxis(axisS1.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_SL1)
-							.booleanValue();
+					writeSucessful &= VjoyInterface
+							.SetAxis(axisS1.getvJoyValue(), vJoyDevice, VjoyInterface.HID_USAGE_SL1).booleanValue();
 				} else if (Main.isLinux) {
 					joystickInputDevice.emit(new Event(EventCode.ABS_RUDDER, axisS1.getUinputValue()));
 				} else {
@@ -818,7 +821,7 @@ public abstract class OutputRunMode extends RunMode {
 			for (var i = 0; i < buttons.length; i++) {
 				if (buttons[i].isChanged()) {
 					if (Main.isWindows) {
-						writeSucessful &= vJoy.SetBtn(buttons[i].getvJoyValue(), vJoyDevice, new UCHAR(i + 1))
+						writeSucessful &= VjoyInterface.SetBtn(buttons[i].getvJoyValue(), vJoyDevice, new UCHAR(i + 1))
 								.booleanValue();
 					} else if (Main.isLinux) {
 						joystickInputDevice
