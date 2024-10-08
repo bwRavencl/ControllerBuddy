@@ -1779,8 +1779,7 @@ public final class Main {
 			exportVisualization(new File(exportOptionValue));
 		}
 
-		if (commandLine.hasOption(OPTION_QUIT)) {
-			handleUnsavedChanges();
+		if (commandLine.hasOption(OPTION_QUIT) && handleUnsavedChanges()) {
 			quit();
 		}
 	}
@@ -3820,13 +3819,10 @@ public final class Main {
 			preferences.put(PREFERENCES_VJOY_DIRECTORY, newVjoyPath);
 			vJoyDirectoryLabel.setText(newVjoyPath);
 
-			if (VjoyInterface.isRegistered()
-					&& JOptionPane.showConfirmDialog(frame,
-							MessageFormat.format(strings.getString("RESTART_REQUIRED_DIALOG_TEXT"),
-									Constants.APPLICATION_NAME),
-							strings.getString("INFORMATION_DIALOG_TITLE"),
-							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				handleUnsavedChanges();
+			if (VjoyInterface.isRegistered() && JOptionPane.showConfirmDialog(frame,
+					MessageFormat.format(strings.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
+					strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
+					&& handleUnsavedChanges()) {
 				quit();
 			}
 		}
