@@ -179,12 +179,6 @@ tasks.register('generateModuleInfo') {
 			    opens de.bwravencl.controllerbuddy.input.driver to
 				        com.sun.jna;
 
-			    requires batik.anim;
-			    requires batik.bridge;
-			    requires batik.constants;
-			    requires batik.dom;
-			    requires batik.swing;
-			    requires batik.util;
 			    requires com.google.gson;
 			    requires com.formdev.flatlaf;
 			    requires com.sun.jna;
@@ -196,6 +190,12 @@ tasks.register('generateModuleInfo') {
 			    requires jdk.xml.dom;
 			    requires JXInput;
 			    requires org.apache.commons.cli;
+			    requires org.apache.xmlgraphics.batik.anim;
+			    requires org.apache.xmlgraphics.batik.brdige;
+			    requires org.apache.xmlgraphics.batik.constants;
+			    requires org.apache.xmlgraphics.batik.dom;
+			    requires org.apache.xmlgraphics.batik.util;
+			    requires org.apache.xmlgraphics.batik.swing;
 			    requires org.freedesktop.dbus;
 			    requires org.lwjgl;
 			    requires org.lwjgl.natives;
