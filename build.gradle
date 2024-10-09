@@ -141,7 +141,7 @@ dependencies {
 	implementation 'io.github.classgraph:classgraph:4.8.177'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
 	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
-	implementation('org.apache.xmlgraphics:batik-swing:1.17') { exclude group: 'xml-apis', module: 'xml-apis' }
+	implementation('org.apache.xmlgraphics:batik-swing:1.18') { exclude group: 'xml-apis', module: 'xml-apis' }
 	implementation "org.lwjgl:lwjgl:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
