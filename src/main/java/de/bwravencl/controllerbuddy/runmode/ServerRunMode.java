@@ -217,7 +217,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							}
 						}
 
-						if (!gotClientAlive) {
+						if (! gotClientAlive) {
 							input.reset();
 							input.deInit(false);
 

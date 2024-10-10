@@ -225,7 +225,7 @@ class OpenVrOverlay {
 			// handled below
 		}
 
-		if (capabilities == null) {
+		if ( capabilities == null) {
 			GL.createCapabilities();
 		}
 	}
