@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -193,7 +194,7 @@ public class EvdevDriver extends Driver {
 		}
 
 		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+		public Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
 			if (Main.isLinux && input.isHapticFeedback()) {
 				final var inputDir = new File("/dev/input/");
@@ -201,7 +202,7 @@ public class EvdevDriver extends Driver {
 						.listFiles((final var _, final var name) -> name.matches("event(\\d+)"));
 
 				if (allEventFiles == null) {
-					return null;
+					return Optional.empty();
 				}
 
 				final var evdevInfos = Arrays.stream(allEventFiles).flatMap(eventFile -> {
@@ -253,7 +254,7 @@ public class EvdevDriver extends Driver {
 				}).toList();
 
 				if (evdevInfos.isEmpty()) {
-					return null;
+					return Optional.empty();
 				}
 
 				if (evdevInfos.size() > 1) {
@@ -262,13 +263,13 @@ public class EvdevDriver extends Driver {
 				}
 
 				try {
-					return new EvdevDriver(input, selectedController, evdevInfos.getFirst());
+					return Optional.of(new EvdevDriver(input, selectedController, evdevInfos.getFirst()));
 				} catch (final IOException e) {
 					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 
-			return null;
+			return Optional.empty();
 		}
 
 		@Override

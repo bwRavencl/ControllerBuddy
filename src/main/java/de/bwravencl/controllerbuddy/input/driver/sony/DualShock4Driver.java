@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import org.hid4java.HidDevice;
 import org.lwjgl.glfw.GLFW;
@@ -48,9 +49,9 @@ public final class DualShock4Driver extends SonyDriver {
 	}
 
 	@Override
-	byte[] getDefaultHidReport() {
+	Optional<byte[]> getDefaultHidReport() {
 		if (connection == null) {
-			return null;
+			return Optional.empty();
 		}
 
 		final byte[] defaultHidReport;
@@ -69,7 +70,7 @@ public final class DualShock4Driver extends SonyDriver {
 		defaultHidReport[6 + connection.offset()] = (byte) 0x18;
 		defaultHidReport[7 + connection.offset()] = (byte) 0x1C;
 
-		return defaultHidReport;
+		return Optional.of(defaultHidReport);
 	}
 
 	@Override
@@ -166,7 +167,7 @@ public final class DualShock4Driver extends SonyDriver {
 	public static class DualShock4DriverBuilder implements IDriverBuilder {
 
 		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+		public Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
 			final String guid;
 			if (Main.isMac) {
@@ -176,28 +177,26 @@ public final class DualShock4Driver extends SonyDriver {
 			}
 
 			if (guid == null) {
-				return null;
+				return Optional.empty();
 			}
 
 			final short productId;
-			Connection connection = null;
+			final Connection connection;
 			if (guid.matches("^0[35]0000004c050000c405.*")) {
 				productId = 0x5C4;
+				connection = null;
 			} else if (guid.matches("^0[35]0000004c050000cc09.*")) {
 				productId = 0x9CC;
+				connection = null;
 			} else if (guid.matches("^0[35]0000004c050000a00b.*")) {
 				productId = 0xBA0;
 				connection = DongleConnection;
 			} else {
-				return null;
+				return Optional.empty();
 			}
 
-			final var hidDevice = getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log);
-			if (hidDevice != null) {
-				return new DualShock4Driver(input, selectedController, hidDevice, connection);
-			}
-
-			return null;
+			return getHidDevice(presentControllers, selectedController, productId, "DualShock 4", log)
+					.map(hidDevice -> new DualShock4Driver(input, selectedController, hidDevice, connection));
 		}
 	}
 }

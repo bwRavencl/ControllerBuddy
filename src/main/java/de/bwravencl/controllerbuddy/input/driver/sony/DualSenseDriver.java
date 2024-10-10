@@ -23,6 +23,7 @@ import de.bwravencl.controllerbuddy.input.driver.Driver;
 import de.bwravencl.controllerbuddy.input.driver.IDriverBuilder;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import org.hid4java.HidDevice;
 import org.lwjgl.glfw.GLFW;
@@ -45,9 +46,9 @@ public final class DualSenseDriver extends SonyDriver {
 	}
 
 	@Override
-	byte[] getDefaultHidReport() {
+	Optional<byte[]> getDefaultHidReport() {
 		if (connection == null) {
-			return null;
+			return Optional.empty();
 		}
 
 		final byte[] defaultHidReport;
@@ -66,7 +67,7 @@ public final class DualSenseDriver extends SonyDriver {
 		defaultHidReport[45 + connection.offset()] = (byte) 0x0;
 		defaultHidReport[46 + connection.offset()] = (byte) 0xFF;
 
-		return defaultHidReport;
+		return Optional.of(defaultHidReport);
 	}
 
 	@Override
@@ -163,11 +164,12 @@ public final class DualSenseDriver extends SonyDriver {
 		}
 
 		if (connection.isBluetooth()) {
-			final var defaultHidReport = getDefaultHidReport();
-			if (defaultHidReport == null) {
+			final var optionalDefaultHidReport = getDefaultHidReport();
+			if (optionalDefaultHidReport.isEmpty()) {
 				return false;
 			}
 
+			final var defaultHidReport = optionalDefaultHidReport.get();
 			hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
 			hidReport[2] = 0x8;
 
@@ -182,7 +184,7 @@ public final class DualSenseDriver extends SonyDriver {
 	public static class DualSenseDriverBuilder implements IDriverBuilder {
 
 		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+		public Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
 			final String name;
 			if (Main.isMac) {
@@ -192,16 +194,11 @@ public final class DualSenseDriver extends SonyDriver {
 			}
 
 			if (!"PS5 Controller".equals(name)) {
-				return null;
+				return Optional.empty();
 			}
 
-			final var hidDevice = getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log);
-
-			if (hidDevice != null) {
-				return new DualSenseDriver(input, selectedController, hidDevice);
-			}
-
-			return null;
+			return getHidDevice(presentControllers, selectedController, (short) 0xCE6, "DualSense", log)
+					.map(hidDevice -> new DualSenseDriver(input, selectedController, hidDevice));
 		}
 	}
 }

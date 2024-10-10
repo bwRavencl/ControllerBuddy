@@ -36,6 +36,7 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
@@ -91,10 +92,10 @@ public final class GuiUtils {
 		return totalDisplayBounds;
 	}
 
-	private static String getFrameLocationPreferencesKey(final JFrame frame) {
+	private static Optional<String> getFrameLocationPreferencesKey(final JFrame frame) {
 		final var title = frame.getTitle();
 		if (title == null || title.isBlank()) {
-			return null;
+			return Optional.empty();
 		}
 
 		var underscoreTitle = title.codePoints().mapToObj(c -> {
@@ -105,7 +106,7 @@ public final class GuiUtils {
 		}).collect(Collectors.joining());
 		underscoreTitle = underscoreTitle.startsWith("_") ? underscoreTitle.substring(1) : underscoreTitle;
 
-		return underscoreTitle + "_location";
+		return Optional.of(underscoreTitle + "_location");
 	}
 
 	static Rectangle getTotalDisplayBounds() {
@@ -124,19 +125,21 @@ public final class GuiUtils {
 			final Rectangle totalDisplayBounds) {
 		final var location = new Point(defaultLocation);
 
-		final var locationString = preferences.get(getFrameLocationPreferencesKey(frame), null);
-		if (locationString != null) {
-			final var parts = locationString.split(",", -1);
+		getFrameLocationPreferencesKey(frame).ifPresent(preferencesKey -> {
+			final var locationString = preferences.get(preferencesKey, null);
+			if (locationString != null) {
+				final var parts = locationString.split(",", -1);
 
-			if (parts.length == 2) {
-				try {
-					location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
-					location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
-				} catch (final NumberFormatException _) {
-					// ignore an invalid location string that does not contain numeric values
+				if (parts.length == 2) {
+					try {
+						location.x = Math.round(Float.parseFloat(parts[0]) * totalDisplayBounds.width);
+						location.y = Math.round(Float.parseFloat(parts[1]) * totalDisplayBounds.height);
+					} catch (final NumberFormatException _) {
+						// ignore an invalid location string that does not contain numeric values
+					}
 				}
 			}
-		}
+		});
 
 		setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
 	}
@@ -233,9 +236,10 @@ public final class GuiUtils {
 
 			final var frameLocation = frame.getLocation();
 			final var totalDisplayBounds = getAndStoreTotalDisplayBounds(main);
-			main.getPreferences().put(getFrameLocationPreferencesKey(frame),
+
+			getFrameLocationPreferencesKey(frame).ifPresent(preferencesKey -> main.getPreferences().put(preferencesKey,
 					frameLocation.x / (float) totalDisplayBounds.width + ","
-							+ frameLocation.y / (float) totalDisplayBounds.height);
+							+ frameLocation.y / (float) totalDisplayBounds.height));
 		}
 	}
 }

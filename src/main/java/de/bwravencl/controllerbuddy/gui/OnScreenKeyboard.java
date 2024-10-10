@@ -39,6 +39,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -249,26 +250,22 @@ public final class OnScreenKeyboard extends JFrame {
 		return "<html><center>" + displayName.replaceFirst(" ", "<br>") + "</center></html>";
 	}
 
-	private AbstractKeyboardButton deselectButton() {
-		final var selectedButton = getSelectedButton();
+	private Optional<AbstractKeyboardButton> deselectButton() {
+		final var optionalSelectedButton = getSelectedButton();
 
-		if (selectedButton != null) {
+		optionalSelectedButton.ifPresent(selectedButton -> {
 			if (selectedButton.pressed) {
 				selectedButton.release();
 			}
 
 			selectedButton.setFocus(false);
-		}
+		});
 
-		return selectedButton;
+		return optionalSelectedButton;
 	}
 
 	private void focusSelectedButton() {
-		final var selectedButton = getSelectedButton();
-
-		if (selectedButton != null) {
-			selectedButton.setFocus(true);
-		}
+		getSelectedButton().ifPresent(selectedButton -> selectedButton.setFocus(true));
 	}
 
 	public void forceRepoll() {
@@ -281,12 +278,12 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
-	private AbstractKeyboardButton getSelectedButton() {
+	private Optional<AbstractKeyboardButton> getSelectedButton() {
 		if (keyboardButtons == null) {
-			return null;
+			return Optional.empty();
 		}
 
-		return keyboardButtons[selectedRow][selectedColumn];
+		return Optional.of(keyboardButtons[selectedRow][selectedColumn]);
 	}
 
 	private boolean isKeyboardShifted() {
@@ -295,7 +292,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public void moveSelector(final Direction direction) {
 		EventQueue.invokeLater(() -> {
-			final var previousButton = deselectButton();
+			final var optionalPreviousButton = deselectButton();
 
 			switch (direction) {
 			case UP -> {
@@ -305,7 +302,7 @@ public final class OnScreenKeyboard extends JFrame {
 					selectedRow = keyboardButtons.length - 1;
 				}
 
-				updateSelectedColumn(previousButton);
+				optionalPreviousButton.ifPresent(this::updateSelectedColumn);
 			}
 			case DOWN -> {
 				if (selectedRow < keyboardButtons.length - 1) {
@@ -314,7 +311,7 @@ public final class OnScreenKeyboard extends JFrame {
 					selectedRow = 0;
 				}
 
-				updateSelectedColumn(previousButton);
+				optionalPreviousButton.ifPresent(this::updateSelectedColumn);
 			}
 			case LEFT -> {
 				if (selectedColumn > 0) {
@@ -351,11 +348,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void pressSelectedButton() {
-		final var selectedButton = getSelectedButton();
-
-		if (selectedButton != null) {
-			selectedButton.press(false);
-		}
+		getSelectedButton().ifPresent(selectedButton -> selectedButton.press(false));
 	}
 
 	@Serial
@@ -372,11 +365,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void releaseSelectedButton() {
-		final var selectedButton = getSelectedButton();
-
-		if (selectedButton != null) {
-			selectedButton.release();
-		}
+		getSelectedButton().ifPresent(AbstractKeyboardButton::release);
 	}
 
 	@Override
@@ -394,11 +383,7 @@ public final class OnScreenKeyboard extends JFrame {
 	}
 
 	public void toggleLock() {
-		final var selectedButton = getSelectedButton();
-
-		if (selectedButton != null) {
-			selectedButton.toggleLock();
-		}
+		getSelectedButton().ifPresent(AbstractKeyboardButton::toggleLock);
 	}
 
 	void updateLocation() {
@@ -549,7 +534,7 @@ public final class OnScreenKeyboard extends JFrame {
 					BorderFactory.createLineBorder(Color.RED,
 							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling())));
 
-			if (this == getSelectedButton()) {
+			if (this == getSelectedButton().orElse(null)) {
 				setFocus(true);
 			}
 		}

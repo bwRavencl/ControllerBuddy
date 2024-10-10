@@ -126,6 +126,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.Set;
@@ -957,8 +958,8 @@ public final class Main {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 
-		final var glfwInitialized = taskRunner.run(GLFW::glfwInit);
-		if (Boolean.FALSE.equals(glfwInitialized)) {
+		final var glfwInitialized = (boolean) taskRunner.run(GLFW::glfwInit).orElse(false);
+		if (!glfwInitialized) {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
 
 			if (isWindows || isLinux) {
@@ -1003,41 +1004,41 @@ public final class Main {
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
-		final var presentControllers = taskRunner.run(Main::getPresentControllers);
-		if (presentControllers != null && !presentControllers.isEmpty()) {
-			log.log(Level.INFO,
-					"Present controllers:" + presentControllers.stream()
-							.map(controllerInfo -> assembleControllerLoggingMessage("\n\t", controllerInfo))
-							.collect(Collectors.joining()));
+		final var optionalPresentControllers = taskRunner.run(Main::getPresentControllers);
 
-			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-			if (lastControllerGuid != null) {
-				presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
-						.ifPresentOrElse(controller -> {
-							log.log(Level.INFO,
-									assembleControllerLoggingMessage("Found previously used controller ", controller));
-							setSelectedController(controller);
-						}, () -> {
-							log.log(Level.INFO, "Previously used controller is not present");
-							setSelectedController(presentControllers.getFirst());
-						});
+		optionalPresentControllers.ifPresent(presentControllers -> {
+			if (!presentControllers.isEmpty()) {
+				log.log(Level.INFO,
+						"Present controllers:" + presentControllers.stream()
+								.map(controllerInfo -> assembleControllerLoggingMessage("\n\t", controllerInfo))
+								.collect(Collectors.joining()));
+
+				final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
+				if (lastControllerGuid != null) {
+					presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid))
+							.findFirst().ifPresentOrElse(controller -> {
+								log.log(Level.INFO, assembleControllerLoggingMessage(
+										"Found previously used controller ", controller));
+								setSelectedController(controller);
+							}, () -> {
+								log.log(Level.INFO, "Previously used controller is not present");
+								setSelectedController(presentControllers.getFirst());
+							});
+				}
 			}
-		}
+		});
 
 		newProfile(false);
 
 		updateTheme();
 
-		if (presentControllers != null) {
-			onControllersChanged(presentControllers, true);
-		}
+		optionalPresentControllers.ifPresent(presentControllers -> onControllersChanged(presentControllers, true));
 
-		// noinspection resource
 		taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
 			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
 			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
-				if (disconnected && presentControllers != null
-						&& presentControllers.stream().anyMatch(controller -> controller.jid == jid)) {
+				if (disconnected && optionalPresentControllers.isPresent()
+						&& optionalPresentControllers.get().stream().anyMatch(controller -> controller.jid == jid)) {
 					log.log(Level.INFO,
 							assembleControllerLoggingMessage("Disconnected controller ", new ControllerInfo(jid)));
 
@@ -1056,8 +1057,8 @@ public final class Main {
 			}
 		}));
 
-		final var noControllerConnected = Boolean.TRUE.equals(glfwInitialized)
-				&& (presentControllers == null || presentControllers.isEmpty());
+		final var noControllerConnected = glfwInitialized
+				&& (optionalPresentControllers.isEmpty() || optionalPresentControllers.get().isEmpty());
 
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (isWindows || isLinux) {
@@ -1466,6 +1467,14 @@ public final class Main {
 		}
 	}
 
+	private void executeWhileVisible(final Runnable runnable) {
+		executeWhileVisible(() -> {
+			runnable.run();
+
+			return null;
+		});
+	}
+
 	public void exportVisualization(final File file) {
 		if (templateSvgDocument == null) {
 			return;
@@ -1814,7 +1823,7 @@ public final class Main {
 		}
 
 		try {
-			openVrOverlay = OpenVrOverlay.start(this);
+			openVrOverlay = OpenVrOverlay.start(this).orElse(null);
 		} catch (final Throwable t) {
 			log.log(Level.WARNING, t.getMessage(), t);
 
@@ -2806,7 +2815,7 @@ public final class Main {
 
 			final var content = sb.toString().getBytes(defaultCharset);
 			final var byteBuffer = ByteBuffer.allocateDirect(content.length).put(content).flip();
-			mappingsUpdated = Boolean.TRUE.equals(taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer)));
+			mappingsUpdated = taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer)).orElse(false);
 		} catch (final IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -3717,7 +3726,7 @@ public final class Main {
 		}
 
 		@SuppressWarnings("unchecked")
-		private <V> V run(final Callable<V> callable) {
+		private <V> Optional<V> run(final Callable<V> callable) {
 			waitForTask();
 
 			task = callable;
@@ -3733,12 +3742,12 @@ public final class Main {
 					throw new RuntimeException(throwable);
 				}
 
-				return (V) result;
+				return Optional.ofNullable((V) result);
 			} catch (final InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 
-			return null;
+			return Optional.empty();
 		}
 
 		private void run(final Runnable runnable) {
@@ -4027,8 +4036,6 @@ public final class Main {
 				if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					loadProfile(profileFileChooser.getSelectedFile(), false, true);
 				}
-
-				return null;
 			});
 		}
 	}
@@ -4382,8 +4389,6 @@ public final class Main {
 						showConnectDialog();
 					}
 				}
-
-				return null;
 			});
 		}
 	}
@@ -4425,8 +4430,6 @@ public final class Main {
 					connectionSettingsPanel.saveSettings();
 					startServer();
 				}
-
-				return null;
 			});
 		}
 	}

@@ -284,7 +284,7 @@ public final class Input {
 		final var presentControllers = Main.getPresentControllers();
 
 		if (controller != null) {
-			driver = Driver.getIfAvailable(this, presentControllers, controller);
+			driver = Driver.getIfAvailable(this, presentControllers, controller).orElse(null);
 		}
 
 		if (presentControllers.size() > 1) {
@@ -300,10 +300,8 @@ public final class Input {
 						continue;
 					}
 
-					final var driver = Driver.getIfAvailable(this, presentControllers, controller);
-					if (driver != null) {
-						jidToDriverMap.put(controller.jid(), driver);
-					}
+					Driver.getIfAvailable(this, presentControllers, controller)
+							.ifPresent(driver -> jidToDriverMap.put(controller.jid(), driver));
 				}
 			}
 		}

@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input.driver;
 import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.util.List;
+import java.util.Optional;
 
 public interface IDriverBuilder extends Comparable<IDriverBuilder> {
 
@@ -27,7 +28,7 @@ public interface IDriverBuilder extends Comparable<IDriverBuilder> {
 		return Integer.compare(getOrder(), o.getOrder());
 	}
 
-	Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+	Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController);
 
 	default int getOrder() {

@@ -21,6 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import io.github.classgraph.ClassGraph;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Driver {
 
@@ -50,17 +51,17 @@ public abstract class Driver {
 		this.controller = controller;
 	}
 
-	public static Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+	public static Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController) {
 
 		for (final var driverBuilder : driverBuilders) {
-			final var driver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
-			if (driver != null) {
-				return driver;
+			final var optionalDriver = driverBuilder.getIfAvailable(input, presentControllers, selectedController);
+			if (optionalDriver.isPresent()) {
+				return optionalDriver;
 			}
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	public void deInit(final boolean disconnected) {

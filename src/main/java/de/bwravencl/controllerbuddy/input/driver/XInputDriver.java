@@ -30,6 +30,7 @@ import java.awt.EventQueue;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -231,7 +232,7 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 	public static class XInputDriverBuilder implements IDriverBuilder {
 
 		@Override
-		public Driver getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
+		public Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
 			if (Platform.isIntel() && Main.isWindows && isXInputController(selectedController)
 					&& XInputDevice.isAvailable()) {
@@ -239,17 +240,17 @@ public class XInputDriver extends Driver implements IGamepadStateProvider {
 						.filter(XInputDriver::isXInputController).toList();
 				if (presentXInputControllers.size() > 1) {
 					log.log(Level.WARNING, "Found more than one XInput controller - XInput driver disabled");
-					return null;
+					return Optional.empty();
 				}
 
 				try {
-					return new XInputDriver(input, selectedController);
+					return Optional.of(new XInputDriver(input, selectedController));
 				} catch (final XInputNotLoadedException e) {
 					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 
-			return null;
+			return Optional.empty();
 		}
 	}
 }

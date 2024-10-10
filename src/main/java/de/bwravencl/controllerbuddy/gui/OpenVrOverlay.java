@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -297,12 +298,12 @@ class OpenVrOverlay {
 		mat.m(10, res22);
 	}
 
-	static synchronized OpenVrOverlay start(final Main main) {
+	static synchronized Optional<OpenVrOverlay> start(final Main main) {
 		if (!VR.VR_IsRuntimeInstalled() || !VR.VR_IsHmdPresent()) {
-			return null;
+			return Optional.empty();
 		}
 
-		return new OpenVrOverlay(main);
+		return Optional.of(new OpenVrOverlay(main));
 	}
 
 	private static void translate(final HmdMatrix34 mat, final float x, final float y, final float z) {

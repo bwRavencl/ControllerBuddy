@@ -27,6 +27,7 @@ import java.nio.ByteOrder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -325,7 +326,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 		});
 	}
 
-	static HidDevice getHidDevice(final List<ControllerInfo> presentControllers,
+	static Optional<HidDevice> getHidDevice(final List<ControllerInfo> presentControllers,
 			final ControllerInfo selectedController, final short productId, final String humanReadableName,
 			final Logger log) {
 		final var hidServicesSpecification = new HidServicesSpecification();
@@ -344,7 +345,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 			final var count = devices.size();
 			if (count < 1) {
-				return null;
+				return Optional.empty();
 			}
 
 			var deviceIndex = 0;
@@ -358,7 +359,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				}
 
 				if (deviceIndex < 0) {
-					return null;
+					return Optional.empty();
 				}
 			}
 
@@ -368,7 +369,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 				log.log(Level.WARNING,
 						Main.assembleControllerLoggingMessage("Could not open HID device " + humanReadableName
 								+ " with path " + hidDevice.getPath() + " to use as controller ", selectedController));
-				return null;
+				return Optional.empty();
 			}
 
 			log.log(Level.INFO, Main.assembleControllerLoggingMessage(
@@ -376,11 +377,11 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 					selectedController));
 
 			hidServices = null;
-			return hidDevice;
+			return Optional.of(hidDevice);
 		} catch (final Throwable t) {
 			log.log(Level.SEVERE, t.getMessage(), t);
 
-			return null;
+			return Optional.empty();
 		} finally {
 			if (hidServices != null) {
 				hidServices.shutdown();
@@ -437,7 +438,7 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 
 	abstract int getButtonsOffset();
 
-	abstract byte[] getDefaultHidReport();
+	abstract Optional<byte[]> getDefaultHidReport();
 
 	abstract byte getDefaultHidReportId();
 
@@ -515,11 +516,12 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	abstract void handleNewConnection(int reportLength);
 
 	boolean reset() {
-		final var defaultHidReport = getDefaultHidReport();
-		if (defaultHidReport == null) {
+		final var optionalDefaultHidReport = getDefaultHidReport();
+		if (optionalDefaultHidReport.isEmpty()) {
 			return false;
 		}
 
+		final var defaultHidReport = optionalDefaultHidReport.get();
 		hidReport = Arrays.copyOf(defaultHidReport, defaultHidReport.length);
 
 		return sendHidReport();
