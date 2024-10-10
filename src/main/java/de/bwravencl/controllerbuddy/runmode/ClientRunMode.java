@@ -26,6 +26,7 @@ import de.bwravencl.controllerbuddy.runmode.ServerRunMode.MessageType;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 
-public final class ClientRunMode extends OutputRunMode {
+public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
 	private static final int N_CONNECTION_RETRIES = 10;
@@ -71,6 +72,7 @@ public final class ClientRunMode extends OutputRunMode {
 		timeout = main.getTimeout();
 	}
 
+	@Override
 	public void close() {
 		if (clientSocket != null) {
 			clientSocket.close();

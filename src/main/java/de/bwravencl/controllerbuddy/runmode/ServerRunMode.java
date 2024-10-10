@@ -24,6 +24,7 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import org.lwjgl.glfw.GLFW;
 
-public final class ServerRunMode extends RunMode {
+public final class ServerRunMode extends RunMode implements Closeable {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 100;
@@ -62,6 +63,7 @@ public final class ServerRunMode extends RunMode {
 		timeout = main.getTimeout();
 	}
 
+	@Override
 	public void close() {
 		if (serverSocket != null) {
 			serverSocket.close();
