@@ -232,7 +232,7 @@ spotless {
 	java {
 		target 'src/main/java/de/bwravencl/**/*.java'
 		targetExclude moduleInfoFile, constantsFile
-		eclipse('4.27').configFile 'spotless.eclipseformat.xml'
+		eclipse('4.33').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
 		//noinspection GroovyAccessibility
 		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
