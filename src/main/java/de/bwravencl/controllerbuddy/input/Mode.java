@@ -32,7 +32,7 @@ import org.lwjgl.glfw.GLFW;
 
 public final class Mode implements Cloneable {
 
-	private UUID uuid;
+	private final UUID uuid;
 	private String description;
 	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
 	private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
@@ -65,8 +65,6 @@ public final class Mode implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var mode = (Mode) super.clone();
-		mode.uuid = uuid;
-		mode.setDescription(description);
 
 		mode.axisToActionsMap = cloneActionMap(axisToActionsMap);
 		mode.buttonToActionsMap = cloneActionMap(buttonToActionsMap);

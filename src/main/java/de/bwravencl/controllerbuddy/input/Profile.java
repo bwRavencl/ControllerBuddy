@@ -59,11 +59,6 @@ public final class Profile implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		final var profile = (Profile) super.clone();
 
-		profile.setVersion(version);
-		profile.setShowOverlay(showOverlay);
-		profile.setShowVrOverlay(showVrOverlay);
-		profile.setKeyRepeatInterval(keyRepeatInterval);
-
 		final var clonedButtonToModeActionsMap = new HashMap<Integer, List<ButtonToModeAction>>();
 		for (final var entry : buttonToModeActionsMap.entrySet()) {
 			final var buttonToModeActions = new ArrayList<ButtonToModeAction>();
