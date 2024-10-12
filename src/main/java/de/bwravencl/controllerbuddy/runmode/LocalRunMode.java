@@ -28,6 +28,9 @@ public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger log = Logger.getLogger(LocalRunMode.class.getName());
 
+	private final HashSet<ScanCode> sourceModifiersCodes = new HashSet<>();
+	private final HashSet<ScanCode> sourceKeyCodes = new HashSet<>();
+
 	public LocalRunMode(final Main main, final Input input) {
 		super(main, input);
 	}
@@ -93,8 +96,8 @@ public final class LocalRunMode extends OutputRunMode {
 		downUpMouseButtons.addAll(inputDownUpMouseButtons);
 		inputDownUpMouseButtons.clear();
 
-		final var sourceModifiersCodes = new HashSet<ScanCode>();
-		final var sourceKeyCodes = new HashSet<ScanCode>();
+		sourceModifiersCodes.clear();
+		sourceKeyCodes.clear();
 		input.getDownKeyStrokes().forEach(keyStroke -> {
 			sourceModifiersCodes.addAll(Arrays.asList(keyStroke.getModifierCodes()));
 			sourceKeyCodes.addAll(Arrays.asList(keyStroke.getKeyCodes()));
