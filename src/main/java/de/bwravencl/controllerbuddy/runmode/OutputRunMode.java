@@ -197,50 +197,32 @@ public abstract class OutputRunMode extends RunMode {
 
 	static <T> void updateOutputSets(final Set<T> sourceSet, final Set<T> oldDownSet, final Set<T> newUpSet,
 			final Set<T> newDownSet, final boolean keepStillDown) {
-		final var stillDownSet = new HashSet<T>();
-
 		newUpSet.clear();
-
-		for (final var oldCode : oldDownSet) {
-			var stillDown = false;
-
-			for (final var newCode : sourceSet) {
-				if (newCode.equals(oldCode)) {
-					stillDown = true;
-					break;
-				}
-			}
-
-			if (stillDown) {
-				stillDownSet.add(oldCode);
-			} else {
-				newUpSet.add(oldCode);
-			}
-		}
-
 		newDownSet.clear();
 
-		if (keepStillDown) {
-			newDownSet.addAll(stillDownSet);
+		final var oldDownSetIterator = oldDownSet.iterator();
+		while (oldDownSetIterator.hasNext()) {
+			final var oldDownElement = oldDownSetIterator.next();
+			final var stillDown = sourceSet.stream().anyMatch(sourceElement -> sourceElement.equals(oldDownElement));
+
+			if (stillDown) {
+				if (keepStillDown) {
+					newDownSet.add(oldDownElement);
+				}
+			} else {
+				newUpSet.add(oldDownElement);
+				oldDownSetIterator.remove();
+			}
 		}
 
-		for (final var newCode : sourceSet) {
-			var alreadyDown = false;
-
-			for (final var oldCode : oldDownSet) {
-				if (oldCode.equals(newCode)) {
-					alreadyDown = true;
-					break;
-				}
-			}
+		for (final var sourceElement : sourceSet) {
+			final var alreadyDown = oldDownSet.stream().anyMatch(oldElement -> oldElement.equals(sourceElement));
 
 			if (!alreadyDown) {
-				newDownSet.add(newCode);
+				newDownSet.add(sourceElement);
 			}
 		}
 
-		oldDownSet.clear();
-		oldDownSet.addAll(stillDownSet);
 		oldDownSet.addAll(newDownSet);
 	}
 
