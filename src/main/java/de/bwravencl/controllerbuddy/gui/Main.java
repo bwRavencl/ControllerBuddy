@@ -1233,6 +1233,20 @@ public final class Main {
 					GuiUtils.showMessageDialog(main, main.frame, panel, strings.getString("ERROR_DIALOG_TITLE"),
 							JOptionPane.ERROR_MESSAGE);
 
+					if (main.unsavedChanges) {
+						try {
+							final var filename = main.currentFile != null ? main.currentFile.getName()
+									: "unnamed_profile";
+							final var file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
+
+							if (!file.exists()) {
+								main.saveProfile(file, false);
+							}
+						} catch (final Throwable t) {
+							log.log(Level.SEVERE, t.getMessage(), t);
+						}
+					}
+
 					terminate(1);
 				});
 			} else {
