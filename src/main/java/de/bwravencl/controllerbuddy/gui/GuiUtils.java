@@ -193,6 +193,7 @@ public final class GuiUtils {
 			main.show();
 		}
 
+		// noinspection MagicConstant
 		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
 	}
 
