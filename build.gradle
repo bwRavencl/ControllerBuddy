@@ -106,7 +106,6 @@ dependencies {
 		lwjglOs = 'macos'
 	else if (os.linux) {
 		lwjglOs = 'linux'
-		openVrSupport = true
 	} else
 		throw new GradleException("Unsupported operating system $os.displayName")
 

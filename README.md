@@ -71,7 +71,7 @@ it automates all the steps below and much more!
     - Displays current mode
     - Can show current position of virtual axes
     - On-Screen-Keyboard that can be controlled by gamepad
-    - VR support (OpenVR)
+    - VR support (OpenVR on Windows)
     - Customizable position and colors
 - Two modes of operation:
     - Local
