@@ -96,7 +96,7 @@ dependencies {
 
 	def dbusJavaVersion = '5.1.0'
 	def jnaVersion = '5.15.0'
-	def lwjglVersion = '3.3.4'
+	def lwjglVersion = '3.3.5'
 
 	def lwjglOs
 	if (os.windows) {
