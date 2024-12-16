@@ -167,22 +167,23 @@ class OpenVrOverlay {
 
 				hdc = Checks.check(User32.GetDC(hwnd));
 
-				final var pfd = PIXELFORMATDESCRIPTOR.calloc(stack).nSize((short) PIXELFORMATDESCRIPTOR.SIZEOF)
-						.nVersion((short) 1).dwFlags(GDI32.PFD_SUPPORT_OPENGL);
-				final var pixelFormat = GDI32.ChoosePixelFormat(getLastErrorIntBuffer, hdc, pfd);
+				final var pixelFormatDescriptor = PIXELFORMATDESCRIPTOR.calloc(stack)
+						.nSize((short) PIXELFORMATDESCRIPTOR.SIZEOF).nVersion((short) 1)
+						.dwFlags(GDI32.PFD_SUPPORT_OPENGL);
+				final var pixelFormat = GDI32.ChoosePixelFormat(getLastErrorIntBuffer, hdc, pixelFormatDescriptor);
 				if (pixelFormat == 0) {
 					WindowsUtil.windowsThrowException(
 							getClass().getName() + ": failed to choose an OpenGL-compatible pixel format",
 							getLastErrorIntBuffer);
 				}
 
-				if (GDI32.DescribePixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pfd) == 0) {
+				if (GDI32.DescribePixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pixelFormatDescriptor) == 0) {
 					WindowsUtil.windowsThrowException(
 							getClass().getName() + ": failed to obtain pixel format information",
 							getLastErrorIntBuffer);
 				}
 
-				if (!GDI32.SetPixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pfd)) {
+				if (!GDI32.SetPixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pixelFormatDescriptor)) {
 					WindowsUtil.windowsThrowException(getClass().getName() + ": failed to set the pixel format",
 							getLastErrorIntBuffer);
 				}
