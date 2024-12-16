@@ -152,12 +152,16 @@ class OpenVrOverlay {
 
 				MemoryUtil.memPutAddress(wc.address() + WNDCLASSEX.LPFNWNDPROC, User32.Functions.DefWindowProc);
 
-				classAtom = User32.RegisterClassEx(wc);
+				final var getLastErrorIntBuffer = stack.mallocInt(1);
+
+				classAtom = User32.RegisterClassEx(getLastErrorIntBuffer, wc);
 				if (classAtom == 0) {
-					throw new IllegalStateException("Failed to register WGL window class");
+					WindowsUtil.windowsThrowException(getClass().getName() + ": failed to register WGL window class",
+							getLastErrorIntBuffer);
 				}
 
-				hwnd = Checks.check(User32.nCreateWindowEx(0, classAtom & 0xFFFF, MemoryUtil.NULL,
+				hwnd = Checks.check(User32.nCreateWindowEx(MemoryUtil.memAddress(getLastErrorIntBuffer), 0,
+						classAtom & 0xFFFF, MemoryUtil.NULL,
 						User32.WS_OVERLAPPEDWINDOW | User32.WS_CLIPCHILDREN | User32.WS_CLIPSIBLINGS, 0, 0, 1, 1,
 						MemoryUtil.NULL, MemoryUtil.NULL, MemoryUtil.NULL, MemoryUtil.NULL));
 
@@ -165,22 +169,25 @@ class OpenVrOverlay {
 
 				final var pfd = PIXELFORMATDESCRIPTOR.calloc(stack).nSize((short) PIXELFORMATDESCRIPTOR.SIZEOF)
 						.nVersion((short) 1).dwFlags(GDI32.PFD_SUPPORT_OPENGL);
-				final var pixelFormat = GDI32.ChoosePixelFormat(hdc, pfd);
+				final var pixelFormat = GDI32.ChoosePixelFormat(getLastErrorIntBuffer, hdc, pfd);
 				if (pixelFormat == 0) {
 					WindowsUtil.windowsThrowException(
-							getClass().getName() + ": failed to choose an OpenGL-compatible pixel format");
+							getClass().getName() + ": failed to choose an OpenGL-compatible pixel format",
+							getLastErrorIntBuffer);
 				}
 
-				if (GDI32.DescribePixelFormat(hdc, pixelFormat, pfd) == 0) {
+				if (GDI32.DescribePixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pfd) == 0) {
 					WindowsUtil.windowsThrowException(
-							getClass().getName() + ": failed to obtain pixel format information");
+							getClass().getName() + ": failed to obtain pixel format information",
+							getLastErrorIntBuffer);
 				}
 
-				if (!GDI32.SetPixelFormat(hdc, pixelFormat, pfd)) {
-					WindowsUtil.windowsThrowException("Failed to set the pixel format");
+				if (!GDI32.SetPixelFormat(getLastErrorIntBuffer, hdc, pixelFormat, pfd)) {
+					WindowsUtil.windowsThrowException(getClass().getName() + ": failed to set the pixel format",
+							getLastErrorIntBuffer);
 				}
 
-				hglrc = Checks.check(WGL.wglCreateContext(hdc));
+				hglrc = Checks.check(WGL.wglCreateContext(null, hdc));
 
 				renderingMemoryStack = MemoryStack.create(2_048_000);
 
@@ -322,11 +329,11 @@ class OpenVrOverlay {
 		VR.VR_ShutdownInternal();
 
 		if (hwnd != MemoryUtil.NULL) {
-			User32.DestroyWindow(hwnd);
+			User32.DestroyWindow(null, hwnd);
 		}
 
 		if (classAtom != 0) {
-			User32.nUnregisterClass(classAtom & 0xFFFF, WindowsLibrary.HINSTANCE);
+			User32.nUnregisterClass(MemoryUtil.NULL, classAtom & 0xFFFF, WindowsLibrary.HINSTANCE);
 		}
 	}
 
@@ -347,8 +354,9 @@ class OpenVrOverlay {
 
 			updateOverlay(onScreenKeyboardOverlayHandle, onScreenKeyboard);
 		} finally {
-			if (WGL.wglGetCurrentContext() == hglrc) {
-				WGL.wglMakeCurrent(MemoryUtil.NULL, MemoryUtil.NULL);
+			if (WGL.wglGetCurrentContext(null) == hglrc) {
+				WGL.wglMakeCurrent(null, MemoryUtil.NULL, MemoryUtil.NULL);
+				WGL.wglDeleteContext(null, hglrc);
 			}
 
 			renderingMemoryStack.pop();
@@ -389,10 +397,14 @@ class OpenVrOverlay {
 					frame.paint(textureData.graphics);
 					final var byteBuffer = bufferedImageToByteBuffer(textureData.image, renderingMemoryStack);
 
-					if (WGL.wglGetCurrentContext() != hglrc) {
-						if (!WGL.wglMakeCurrent(hdc, hglrc)) {
-							throw new RuntimeException("Could not acquire OpenGL context");
+					if (WGL.wglGetCurrentContext(null) != hglrc) {
+						final var getLastErrorIntBuffer = renderingMemoryStack.mallocInt(1);
+
+						if (!WGL.wglMakeCurrent(getLastErrorIntBuffer, hdc, hglrc)) {
+							WindowsUtil.windowsThrowException(getClass().getName() + ": failed to make context current",
+									getLastErrorIntBuffer);
 						}
+
 						createGLCapabilitiesIfRequired();
 					}
 
