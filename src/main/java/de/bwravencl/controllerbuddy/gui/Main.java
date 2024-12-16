@@ -579,7 +579,6 @@ public final class Main {
 		fileJMenu.add(quitAction);
 
 		menuBar.add(fileJMenu);
-		menuBar.add(deviceJMenu);
 
 		if (isWindows || isLinux) {
 			startLocalJMenuItem = runJMenu.add(startLocalAction);
@@ -954,7 +953,16 @@ public final class Main {
 
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
-		if (isMac) {
+		if (isLinux) {
+			X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
+				final var buffer = new byte[1024];
+				X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
+
+				log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
+
+				return 0;
+			});
+		} else if (isMac) {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 
@@ -972,17 +980,11 @@ public final class Main {
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
-		}
 
-		if (isLinux) {
-			X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
-				final var buffer = new byte[1024];
-				X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
+			initGui();
+			initProfile(cmdProfilePath, true);
 
-				log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
-
-				return 0;
-			});
+			return;
 		}
 
 		var mappingsUpdated = updateGameControllerMappings(
@@ -1028,13 +1030,12 @@ public final class Main {
 			}
 		});
 
-		newProfile(false);
-
-		updateTheme();
+		initGui();
 
 		optionalPresentControllers.ifPresent(presentControllers -> onControllersChanged(presentControllers, true));
 
-		taskRunner.run(() -> GLFW.glfwSetJoystickCallback((jid, event) -> {
+		// noinspection resource
+		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
 			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
 			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
 				if (disconnected && optionalPresentControllers.isPresent()
@@ -1057,8 +1058,8 @@ public final class Main {
 			}
 		}));
 
-		final var noControllerConnected = glfwInitialized
-				&& (optionalPresentControllers.isEmpty() || optionalPresentControllers.get().isEmpty());
+		final var noControllerConnected = optionalPresentControllers.isEmpty()
+				|| optionalPresentControllers.get().isEmpty();
 
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (isWindows || isLinux) {
@@ -1072,15 +1073,7 @@ public final class Main {
 			}
 		}
 
-		final var profilePath = cmdProfilePath != null ? cmdProfilePath
-				: preferences.get(PREFERENCES_LAST_PROFILE, null);
-		if (profilePath != null) {
-			loadProfile(new File(profilePath), noControllerConnected, false);
-			if (loadedProfile == null && cmdProfilePath == null) {
-				log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
-				preferences.remove(PREFERENCES_LAST_PROFILE);
-			}
-		}
+		initProfile(cmdProfilePath, noControllerConnected);
 	}
 
 	private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
@@ -1247,10 +1240,10 @@ public final class Main {
 						}
 					}
 
-					terminate(1);
+					terminate(1, main);
 				});
 			} else {
-				terminate(1);
+				terminate(1, main);
 			}
 		});
 
@@ -1331,7 +1324,7 @@ public final class Main {
 					taskRunner.enterLoop();
 				} else {
 					log.log(Level.INFO, "Another " + Constants.APPLICATION_NAME + " instance is already running");
-					terminate(0);
+					terminate(0, null);
 				}
 				return;
 			}
@@ -1379,7 +1372,11 @@ public final class Main {
 		}
 	}
 
-	private static void terminate(final int status) {
+	private static void terminate(final int status, final Main main) {
+		if (main != null && main.taskRunner != null) {
+			main.taskRunner.shutdown();
+		}
+
 		log.log(Level.INFO, "Terminated (" + status + ")");
 
 		terminated = true;
@@ -1828,6 +1825,11 @@ public final class Main {
 		};
 	}
 
+	private void initGui() {
+		newProfile(false);
+		updateTheme();
+	}
+
 	private void initOpenVrOverlay() {
 		final var profile = input.getProfile();
 
@@ -1970,6 +1972,18 @@ public final class Main {
 		updateOverlayAlignment(prevTotalDisplayBounds);
 
 		overlayFrame.setVisible(true);
+	}
+
+	private void initProfile(final String cmdProfilePath, final boolean noControllerConnected) {
+		final var profilePath = cmdProfilePath != null ? cmdProfilePath
+				: preferences.get(PREFERENCES_LAST_PROFILE, null);
+		if (profilePath != null) {
+			loadProfile(new File(profilePath), noControllerConnected, false);
+			if (loadedProfile == null && cmdProfilePath == null) {
+				log.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+				preferences.remove(PREFERENCES_LAST_PROFILE);
+			}
+		}
 	}
 
 	public boolean isAutoRestartOutput() {
@@ -2435,11 +2449,7 @@ public final class Main {
 
 		stopAll(true, false, false);
 
-		taskRunner.shutdown();
-
-		taskRunner.run(GLFW::glfwTerminate);
-
-		terminate(0);
+		terminate(0, this);
 	}
 
 	private void repaintOnScreenKeyboardAndOverlay() {
@@ -3415,7 +3425,7 @@ public final class Main {
 	}
 
 	void updateVisualizationPanel() {
-		if (visualizationPanel == null) {
+		if (visualizationPanel == null || input == null) {
 			return;
 		}
 
@@ -3723,6 +3733,17 @@ public final class Main {
 						// noinspection BusyWait
 						Thread.sleep(10L);
 					} catch (final InterruptedException _) {
+						try {
+							final var previousJoystickCallback = GLFW.glfwSetJoystickCallback(null);
+							if (previousJoystickCallback != null) {
+								previousJoystickCallback.close();
+							}
+
+							GLFW.glfwTerminate();
+						} catch (final Throwable t) {
+							log.log(Level.SEVERE, t.getMessage(), t);
+						}
+
 						log.log(Level.INFO, "Exiting main loop");
 
 						return;
