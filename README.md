@@ -199,16 +199,16 @@ Server-Client mode:
 
 | Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
 |---------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| -autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
-| -export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
-| -help               |                         | prints the help and exits                                                                                   |           no            |
-| -profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
-| -gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
-| -quit               |                         | quits the application                                                                                       |           yes           |
-| -save               | file destination        | save the current profile to the specified path                                                              |           yes           |
-| -skipMessageDialogs |                         | skips all message dialogs                                                                                   |           no            |
-| -tray               |                         | launches the application in the system tray                                                                 |           yes           |
-| -version            |                         | prints the version information and exits                                                                    |           no            |
+| ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
+| ‑export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
+| ‑help               |                         | prints the help and exits                                                                                   |           no            |
+| ‑profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
+| ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
+| ‑quit               |                         | quits the application                                                                                       |           yes           |
+| ‑save               | file destination        | save the current profile to the specified path                                                              |           yes           |
+| ‑skipMessageDialogs |                         | skips all message dialogs                                                                                   |           no            |
+| ‑tray               |                         | launches the application in the system tray                                                                 |           yes           |
+| ‑version            |                         | prints the version information and exits                                                                    |           no            |
 
 If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and shut down the second instance immediately.
 
