@@ -93,7 +93,12 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	}
 
 	private void doActionAndAdvanceIndex(final Input input, final int component) {
-		actions.get(index).doAction(input, component, Byte.MAX_VALUE);
+		final var action = actions.get(index);
+
+		action.doAction(input, component, Byte.MAX_VALUE);
+		if (action instanceof final ButtonToLockKeyAction buttonToLockKeyAction) {
+			buttonToLockKeyAction.resetWasUp();
+		}
 
 		if (index == actions.size() - 1) {
 			index = 0;

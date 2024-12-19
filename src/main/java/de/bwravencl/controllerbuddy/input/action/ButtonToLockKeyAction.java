@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
 
-@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON, order = 116)
+@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Byte>
 		implements IButtonToAction, IInitializationAction<Byte> {
 
@@ -73,7 +73,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte>
 
 	@Override
 	public void init(final Input input) {
-		wasUp = true;
+		resetWasUp();
 	}
 
 	@Override
@@ -83,6 +83,10 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte>
 
 	public boolean isOn() {
 		return on;
+	}
+
+	void resetWasUp() {
+		wasUp = true;
 	}
 
 	public void setLockKey(final LockKey lockKey) {
