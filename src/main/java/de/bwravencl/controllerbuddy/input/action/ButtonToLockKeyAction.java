@@ -27,7 +27,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
 
 @Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON, order = 116)
-public final class ButtonToLockKeyAction extends DescribableAction<Byte> implements IButtonToAction {
+public final class ButtonToLockKeyAction extends DescribableAction<Byte>
+		implements IButtonToAction, IInitializationAction<Byte> {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
@@ -68,6 +69,11 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte> impleme
 
 	public LockKey getLockKey() {
 		return virtualKeyCode;
+	}
+
+	@Override
+	public void init(final Input input) {
+		wasUp = true;
 	}
 
 	@Override
