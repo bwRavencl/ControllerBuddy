@@ -62,9 +62,10 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 			final var runMode = input.getRunMode();
 			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
-					runMode.getMaxAxisValue(), minValue, maxValue);
+					runMode.getMaxAxisValue(), -1f, 1f);
 
-			input.setAxis(virtualAxis, oldValue + (invert ? -d : d), hapticFeedback, detentValue);
+			final var newValue = Math.min(Math.max(oldValue + (invert ? -d : d), minValue), maxValue);
+			input.setAxis(virtualAxis, newValue, hapticFeedback, detentValue);
 		}
 	}
 
