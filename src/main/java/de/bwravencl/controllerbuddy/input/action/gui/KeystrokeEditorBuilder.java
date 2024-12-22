@@ -17,13 +17,13 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,7 +42,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
@@ -52,6 +51,10 @@ import javax.swing.event.ListSelectionListener;
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+
+	private static final int KEY_LIST_SCROLL_PANE_WIDTH = 105;
+	private static final int KEY_LIST_SCROLL_PANE_HEIGHT = 200;
+
 	private final JTextArea keyStrokeTextArea = new JTextArea();
 	private CheckboxJList<?> modifierList;
 	private CheckboxJList<?> keyList;
@@ -110,9 +113,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			}
 		});
 
-		final var modifiersScrollPane = new JScrollPane(modifierList);
-		modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
-		modifiersPanel.add(modifiersScrollPane);
+		modifiersPanel.add(GuiUtils.wrapComponentInScrollPane(modifierList, KEY_LIST_SCROLL_PANE_WIDTH,
+				KEY_LIST_SCROLL_PANE_HEIGHT));
 		keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
 
 		final var keysPanel = new JPanel();
@@ -135,9 +137,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			}
 		});
 
-		final var keysScrollPane = new JScrollPane(keyList);
-		keysScrollPane.setPreferredSize(new Dimension(130, 200));
-		keysPanel.add(keysScrollPane);
+		keysPanel.add(
+				GuiUtils.wrapComponentInScrollPane(keyList, KEY_LIST_SCROLL_PANE_WIDTH, KEY_LIST_SCROLL_PANE_HEIGHT));
 		keystrokePanel.add(keysPanel, BorderLayout.EAST);
 
 		keyStrokeTextArea.setLineWrap(true);
