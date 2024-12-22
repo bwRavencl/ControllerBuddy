@@ -25,6 +25,7 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -46,6 +47,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 @SuppressWarnings({ "exports", "missing-explicit-ctor" })
 public final class GuiUtils {
@@ -195,6 +197,21 @@ public final class GuiUtils {
 
 		// noinspection MagicConstant
 		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
+	}
+
+	static JScrollPane wrapComponentInScrollPane(final java.awt.Component component) {
+		return wrapComponentInScrollPane(component, null);
+	}
+
+	public static JScrollPane wrapComponentInScrollPane(final java.awt.Component component,
+			final Dimension preferredSize) {
+		final var scrollPane = new JScrollPane(component);
+
+		if (preferredSize != null) {
+			scrollPane.setPreferredSize(preferredSize);
+		}
+
+		return scrollPane;
 	}
 
 	static class FrameDragListener extends MouseAdapter {
