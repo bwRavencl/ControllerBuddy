@@ -232,7 +232,7 @@ public final class Main {
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 	static final int BUTTON_DIMENSION_HEIGHT = 25;
 	@SuppressWarnings("exports")
-	public static final Dimension BUTTON_DIMENSION = new Dimension(120, BUTTON_DIMENSION_HEIGHT);
+	public static final Dimension BUTTON_DIMENSION = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
 	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
 	public static final Dimension SQUARE_BUTTON_DIMENSION = new Dimension(BUTTON_DIMENSION_HEIGHT,
 			BUTTON_DIMENSION_HEIGHT);

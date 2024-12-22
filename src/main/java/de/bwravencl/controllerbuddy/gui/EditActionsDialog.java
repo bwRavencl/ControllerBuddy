@@ -79,9 +79,11 @@ public final class EditActionsDialog extends JDialog {
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
 
-	private static final int DIALOG_BOUNDS_WIDTH = 1000;
-	private static final int DIALOG_BOUNDS_HEIGHT = 600;
+	private static final int DIALOG_BOUNDS_WIDTH = 1015;
+	private static final int DIALOG_BOUNDS_HEIGHT = 665;
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
+
+	private static final double ACTIONS_LIST_WEIGHT_X = .245d;
 
 	private static final List<Class<?>> axisActionClasses;
 	private static final List<Class<?>> buttonActionClasses;
@@ -434,8 +436,10 @@ public final class EditActionsDialog extends JDialog {
 			addButton.setEnabled(selectedAvailableAction != null);
 		});
 		updateAvailableActions();
-		actionsPanel.add(new JScrollPane(availableActionsList), new GridBagConstraints(0, 1, 1, 5, .1d, 1d,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
+		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(availableActionsList),
+				new GridBagConstraints(0, 1, 1, 5, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		actionsPanel.add(new JLabel(Main.strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1,
 				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
@@ -447,7 +451,7 @@ public final class EditActionsDialog extends JDialog {
 
 		final var propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
-		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, .8d, 1d, GridBagConstraints.CENTER,
+		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 1d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -462,14 +466,14 @@ public final class EditActionsDialog extends JDialog {
 			if (selectedAssignedAction != null) {
 				final var actionClass = selectedAssignedAction.action.getClass();
 				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
-				final var sortedEntires = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
+				final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
 					final var action1 = entry1.getValue();
 					final var action2 = entry2.getValue();
 
 					return action1.order() - action2.order();
 				}).toList();
 
-				for (final var entry : sortedEntires) {
+				for (final var entry : sortedEntries) {
 					final var field = entry.getKey();
 					final var annotation = entry.getValue();
 
@@ -484,7 +488,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(5, 5, 5, 5), 0, 10));
 
 					final var propertyNameLabel = new JLabel(Main.strings.getString(annotation.label()));
-					propertyNameLabel.setPreferredSize(new Dimension(175, 15));
+					propertyNameLabel.setPreferredSize(new Dimension(155, 15));
 					propertyPanel.add(propertyNameLabel);
 
 					try {
@@ -522,9 +526,11 @@ public final class EditActionsDialog extends JDialog {
 			}
 			propertiesLabel.setVisible(anyPropertiesFound);
 			propertiesScrollPane.setVisible(anyPropertiesFound);
+			revalidate();
 		});
-		actionsPanel.add(new JScrollPane(assignedActionsList), new GridBagConstraints(2, 1, 1, 5, .1d, 1d,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
+				new GridBagConstraints(2, 1, 1, 5, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var okCancelButtonPanel = new JPanel();
 		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));

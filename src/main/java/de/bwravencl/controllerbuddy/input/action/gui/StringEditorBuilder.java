@@ -44,7 +44,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		final var textField = new JTextField(23);
+		final var textField = new JTextField(17);
 		textField.setText((String) initialValue);
 		textField.setCaretPosition(0);
 

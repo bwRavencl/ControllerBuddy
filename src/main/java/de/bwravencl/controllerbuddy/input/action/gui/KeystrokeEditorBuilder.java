@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.ScanCode;
@@ -24,12 +25,15 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Insets;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,17 +46,25 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
-	private final JTextArea keyStrokeTextArea = new JTextArea();
+
+	private static final Dimension KEY_LIST_SCROLL_PANE_DIMENSION = new Dimension(110, 200);
+
+	private final KeyStrokeTextPane modifiersTextArea = new KeyStrokeTextPane();
+	private final KeyStrokeTextPane keysTextArea = new KeyStrokeTextPane();
+	private final JLabel plusLabel = new JLabel("+");
 	private CheckboxJList<?> modifierList;
 	private CheckboxJList<?> keyList;
 
@@ -93,58 +105,69 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		final var modifiersPanel = new JPanel();
 		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.PAGE_AXIS));
 		final var modifiersLabel = new JLabel(Main.strings.getString("MODIFIERS_LABEL"));
-		modifiersLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+		modifiersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		modifiersPanel.add(modifiersLabel);
 		modifiersPanel.add(Box.createVerticalStrut(5));
 		modifierList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
 		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
 
-		final var addedModifiers = new ArrayList<String>();
-		for (final var modifierCode : keyStroke.getModifierCodes()) {
-			addedModifiers.add(modifierCode.name());
-		}
-		addedModifiers.forEach(s1 -> {
-			final var index1 = getListModelIndex(modifierList.getModel(), s1);
-			if (index1 >= 0) {
-				modifierList.addSelectionInterval(index1, index1);
-			}
-		});
+		modifiersPanel.add(GuiUtils.wrapComponentInScrollPane(modifierList, KEY_LIST_SCROLL_PANE_DIMENSION));
 
-		final var modifiersScrollPane = new JScrollPane(modifierList);
-		modifiersScrollPane.setPreferredSize(new Dimension(130, 200));
-		modifiersPanel.add(modifiersScrollPane);
+		modifiersPanel.add(Box.createVerticalStrut(5));
+		modifiersPanel.add(modifiersTextArea);
+
 		keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
 
 		final var keysPanel = new JPanel();
 		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.PAGE_AXIS));
 		final var keysLabel = new JLabel(Main.strings.getString("KEYS_LABEL"));
-		keysLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+		keysLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		keysPanel.add(keysLabel);
 		keysPanel.add(Box.createVerticalStrut(5));
 		keyList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
 		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
 
-		final var addedKeys = new ArrayList<String>();
-		for (final var keyCode : keyStroke.getKeyCodes()) {
-			addedKeys.add(keyCode.name());
-		}
-		addedKeys.forEach(s2 -> {
-			final var index2 = getListModelIndex(keyList.getModel(), s2);
-			if (index2 >= 0) {
-				keyList.addSelectionInterval(index2, index2);
-			}
-		});
+		keysPanel.add(GuiUtils.wrapComponentInScrollPane(keyList, KEY_LIST_SCROLL_PANE_DIMENSION));
 
-		final var keysScrollPane = new JScrollPane(keyList);
-		keysScrollPane.setPreferredSize(new Dimension(130, 200));
-		keysPanel.add(keysScrollPane);
+		keysPanel.add(Box.createVerticalStrut(5));
+		keysPanel.add(keysTextArea);
+
 		keystrokePanel.add(keysPanel, BorderLayout.EAST);
 
-		keyStrokeTextArea.setLineWrap(true);
-		keyStrokeTextArea.setWrapStyleWord(true);
-		keyStrokeTextArea.setEditable(false);
-		keyStrokeTextArea.setFocusable(false);
-		keystrokePanel.add(keyStrokeTextArea, BorderLayout.SOUTH);
+		final var plusPanel = new JPanel();
+		plusPanel.setLayout(new BoxLayout(plusPanel, BoxLayout.PAGE_AXIS));
+		plusPanel.setPreferredSize(new Dimension(10, plusPanel.getPreferredSize().height));
+		plusPanel.add(Box.createVerticalStrut(
+				modifiersPanel.getPreferredSize().height - modifiersTextArea.getPreferredSize().height));
+		plusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		plusLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+		plusPanel.add(plusLabel);
+		keystrokePanel.add(plusPanel, BorderLayout.CENTER);
+
+		initListSelection(modifierList, keyStroke.getModifierCodes());
+		initListSelection(keyList, keyStroke.getKeyCodes());
+
+		updateUpdateKeyStrokeVisualization();
+	}
+
+	private void initListSelection(final JList<?> list, final ScanCode[] scanCodes) {
+		Arrays.stream(scanCodes).map(ScanCode::name).forEach(scanCodeName -> {
+			final var index = getListModelIndex(list.getModel(), scanCodeName);
+			if (index >= 0) {
+				list.addSelectionInterval(index, index);
+			}
+		});
+	}
+
+	private void updateUpdateKeyStrokeVisualization() {
+		final var selectedModifiersList = modifierList != null ? modifierList.getSelectedValuesList()
+				: Collections.emptyList();
+		modifiersTextArea.setScanCodes(selectedModifiersList);
+
+		final var selectedKeysList = keyList != null ? keyList.getSelectedValuesList() : Collections.emptyList();
+		keysTextArea.setScanCodes(selectedKeysList);
+
+		plusLabel.setVisible(!selectedModifiersList.isEmpty() && !selectedKeysList.isEmpty());
 	}
 
 	private static final class CheckboxJList<E> extends JList<E> {
@@ -176,6 +199,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 						addSelectionInterval(index0, index1);
 					}
 				}
+
+				@Override
+				public void setValueIsAdjusting(final boolean isAdjusting) {
+				}
 			});
 		}
 
@@ -200,6 +227,55 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				return this;
 			}
+		}
+	}
+
+	private static final class KeyStrokeTextPane extends JTextPane {
+
+		@Serial
+		private static final long serialVersionUID = 4814218567890032503L;
+
+		private KeyStrokeTextPane() {
+			setEditable(false);
+			setFocusable(false);
+			setMargin(new Insets(0, 5, 0, 5));
+			setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+			final var styledDocument = getStyledDocument();
+			final var attributeSet = new SimpleAttributeSet();
+			StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_CENTER);
+			styledDocument.setParagraphAttributes(0, styledDocument.getLength(), attributeSet, false);
+
+			getDocument().addDocumentListener(new DocumentListener() {
+
+				@Override
+				public void changedUpdate(final DocumentEvent e) {
+					updateSize();
+				}
+
+				@Override
+				public void insertUpdate(final DocumentEvent e) {
+					updateSize();
+				}
+
+				@Override
+				public void removeUpdate(final DocumentEvent e) {
+					updateSize();
+				}
+
+				private void updateSize() {
+					repaint();
+					EventQueue.invokeLater(() -> {
+						setPreferredSize(new Dimension(getMinimumSize().width, getMinimumSize().height));
+						revalidate();
+					});
+				}
+			});
+		}
+
+		private void setScanCodes(final List<?> scanCodes) {
+			setText(scanCodes.stream().map(scanCode -> scanCode.toString().replaceAll(" ", "\u00A0"))
+					.collect(Collectors.joining(" + ")));
 		}
 	}
 
@@ -235,16 +311,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				setterMethod.invoke(action, keyStroke);
 
-				final Set<Object> keyStrokeSet = new LinkedHashSet<>();
-				if (modifierList != null) {
-					keyStrokeSet.addAll(modifierList.getSelectedValuesList());
-				}
-				if (keyList != null) {
-					keyStrokeSet.addAll(keyList.getSelectedValuesList());
-				}
-
-				keyStrokeTextArea
-						.setText(keyStrokeSet.stream().map(Object::toString).collect(Collectors.joining(" + ")));
+				updateUpdateKeyStrokeVisualization();
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				log.log(Level.SEVERE, e1.getMessage(), e1);
 			}
