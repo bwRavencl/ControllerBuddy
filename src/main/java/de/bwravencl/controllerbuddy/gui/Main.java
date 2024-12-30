@@ -3762,9 +3762,7 @@ public final class Main {
 
 		@SuppressWarnings("unchecked")
 		private <V> Optional<V> run(final Callable<V> callable) {
-			waitForTask();
-
-			task = callable;
+			setTask(callable);
 
 			try {
 				synchronized (this) {
@@ -3786,8 +3784,13 @@ public final class Main {
 		}
 
 		private void run(final Runnable runnable) {
+			setTask(runnable);
+		}
+
+		private void setTask(final Object task) {
 			waitForTask();
-			task = runnable;
+
+			this.task = task;
 		}
 
 		private void shutdown() {
