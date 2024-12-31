@@ -52,21 +52,21 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 		var d = Input.normalize(Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent), -inMax,
 				inMax, -maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
-
 		d += remainingD;
 
 		if (Math.abs(d) < input.getPlanckLength()) {
 			remainingD = d;
-		} else {
-			remainingD = 0f;
-
-			final var runMode = input.getRunMode();
-			final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
-					runMode.getMaxAxisValue(), -1f, 1f);
-
-			final var newValue = Math.min(Math.max(oldValue + (invert ? -d : d), minValue), maxValue);
-			input.setAxis(virtualAxis, newValue, hapticFeedback, detentValue);
+			return;
 		}
+
+		final var runMode = input.getRunMode();
+		final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
+				runMode.getMaxAxisValue(), -1f, 1f);
+
+		final var newValue = Math.min(Math.max(oldValue + (invert ? -d : d), minValue), maxValue);
+		input.setAxis(virtualAxis, newValue, hapticFeedback, detentValue);
+
+		remainingD = 0f;
 	}
 
 	public Float getDetentValue() {

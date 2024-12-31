@@ -54,22 +54,21 @@ public abstract class ToCursorAction<V extends Number> extends InvertableAction<
 
 	void moveCursor(final Input input, float d) {
 		d = invert ? -d : d;
-
 		d += remainingD;
 
-		if (d >= -1f && d <= 1f) {
+		final var roundedD = Math.round(d);
+		if (roundedD == 0) {
 			remainingD = d;
-		} else {
-			remainingD = 0f;
-
-			final var intD = Math.round(d);
-
-			if (axis == MouseAxis.X) {
-				input.setCursorDeltaX(input.getCursorDeltaX() + intD);
-			} else {
-				input.setCursorDeltaY(input.getCursorDeltaY() + intD);
-			}
+			return;
 		}
+
+		if (axis == MouseAxis.X) {
+			input.setCursorDeltaX(input.getCursorDeltaX() + roundedD);
+		} else {
+			input.setCursorDeltaY(input.getCursorDeltaY() + roundedD);
+		}
+
+		remainingD = d - roundedD;
 	}
 
 	public void setAxis(final MouseAxis axis) {

@@ -48,16 +48,16 @@ abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
 
 	void scroll(final Input input, float d) {
 		d = invert ? -d : d;
-
 		d += remainingD;
 
-		if (d >= -1f && d <= 1f) {
+		final var roundedD = Math.round(d);
+		if (roundedD == 0) {
 			remainingD = d;
-		} else {
-			remainingD = 0f;
-
-			input.setScrollClicks(Math.round(d));
+			return;
 		}
+
+		input.setScrollClicks(roundedD);
+		remainingD = d - roundedD;
 	}
 
 	public void setClicks(final int clicks) {
