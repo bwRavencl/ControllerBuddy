@@ -54,7 +54,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -332,12 +331,10 @@ public final class EditActionsDialog extends JDialog {
 					.flatMapToInt(mode -> Stream
 							.concat(mode.getAxisToActionsMap().values().stream(),
 									mode.getButtonToActionsMap().values().stream())
-							.flatMapToInt(actions -> actions.stream().flatMapToInt(action1 -> {
+							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
 								if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
-									return IntStream.of(toButtonAction1.getButtonId());
+									downstream.accept(toButtonAction1.getButtonId());
 								}
-
-								return IntStream.empty();
 							})))
 					.max().orElse(-1);
 
