@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 import uk.co.bithatch.linuxio.CLib;
 import uk.co.bithatch.linuxio.EventCode;
 import uk.co.bithatch.linuxio.Input.Macros;
@@ -196,76 +195,89 @@ public class EvdevDriver extends Driver {
 		@Override
 		public Optional<Driver> getIfAvailable(final Input input, final List<ControllerInfo> presentControllers,
 				final ControllerInfo selectedController) {
-			if (Main.isLinux && input.isHapticFeedback()) {
-				final var inputDir = new File("/dev/input/");
-				final var allEventFiles = inputDir
-						.listFiles((final var _, final var name) -> name.matches("event(\\d+)"));
+			if (!Main.isLinux || !input.isHapticFeedback()) {
+				return Optional.empty();
+			}
 
-				if (allEventFiles == null) {
-					return Optional.empty();
+			final var inputDir = new File("/dev/input/");
+			final var allEventFiles = inputDir.listFiles((final var _, final var name) -> name.matches("event(\\d+)"));
+
+			if (allEventFiles == null) {
+				return Optional.empty();
+			}
+
+			final var evdevInfos = Arrays.stream(allEventFiles).<EvdevInfo>mapMulti((eventFile, downstream) -> {
+				final var fd = CLib.INSTANCE.open(eventFile.getAbsolutePath(), CLib.O_RDWR | CLib.O_NONBLOCK);
+				if (fd == -1) {
+					return;
 				}
 
-				final var evdevInfos = Arrays.stream(allEventFiles).flatMap(eventFile -> {
-					final var fd = CLib.INSTANCE.open(eventFile.getAbsolutePath(), CLib.O_RDWR | CLib.O_NONBLOCK);
-					try {
-						if (fd != -1) {
-							final var inputId = new input_id();
-							if (CLib.INSTANCE.ioctl(fd, EVIOCGID, inputId) == 0) {
-								final var bustypeUnsigned = Short.toUnsignedInt(inputId.bustype);
-								final var vendorUnsigned = Short.toUnsignedInt(inputId.vendor);
-								final var productUnsigned = Short.toUnsignedInt(inputId.product);
-								final var versionUnsigned = Short.toUnsignedInt(inputId.version);
+				var closeFileDescriptor = true;
+				try {
+					final var inputId = new input_id();
+					if (CLib.INSTANCE.ioctl(fd, EVIOCGID, inputId) == 0) {
+						final var bustypeUnsigned = Short.toUnsignedInt(inputId.bustype);
+						final var vendorUnsigned = Short.toUnsignedInt(inputId.vendor);
+						final var productUnsigned = Short.toUnsignedInt(inputId.product);
+						final var versionUnsigned = Short.toUnsignedInt(inputId.version);
 
-								String guid = null;
-								if (vendorUnsigned != 0 && productUnsigned != 0 && versionUnsigned != 0) {
-									guid = "%02x%02x0000%02x%02x0000%02x%02x0000%02x%02x0000".formatted(
-											bustypeUnsigned & 0xff, bustypeUnsigned >> 8, vendorUnsigned & 0xff,
-											vendorUnsigned >> 8, productUnsigned & 0xff, productUnsigned >> 8,
-											versionUnsigned & 0xff, versionUnsigned >> 8);
-								} else {
-									final var nameBytes = new byte[256];
-									if (CLib.INSTANCE.ioctl(fd,
-											uk.co.bithatch.linuxio.Input.Macros.EVIOCGNAME(nameBytes.length),
-											nameBytes) != 0) {
-										guid = "%02x%02x0000%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x00".formatted(
-												bustypeUnsigned & 0xff, bustypeUnsigned >> 8, nameBytes[0],
-												nameBytes[1], nameBytes[2], nameBytes[3], nameBytes[4], nameBytes[5],
-												nameBytes[6], nameBytes[7], nameBytes[8], nameBytes[9], nameBytes[10]);
-									}
-								}
+						String guid = null;
+						if (vendorUnsigned != 0 && productUnsigned != 0 && versionUnsigned != 0) {
+							guid = "%02x%02x0000%02x%02x0000%02x%02x0000%02x%02x0000".formatted(bustypeUnsigned & 0xff,
+									bustypeUnsigned >> 8, vendorUnsigned & 0xff, vendorUnsigned >> 8,
+									productUnsigned & 0xff, productUnsigned >> 8, versionUnsigned & 0xff,
+									versionUnsigned >> 8);
+						} else {
+							final var nameBytes = new byte[256];
+							if (CLib.INSTANCE.ioctl(fd,
+									uk.co.bithatch.linuxio.Input.Macros.EVIOCGNAME(nameBytes.length), nameBytes) != 0) {
+								guid = "%02x%02x0000%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x00".formatted(
+										bustypeUnsigned & 0xff, bustypeUnsigned >> 8, nameBytes[0], nameBytes[1],
+										nameBytes[2], nameBytes[3], nameBytes[4], nameBytes[5], nameBytes[6],
+										nameBytes[7], nameBytes[8], nameBytes[9], nameBytes[10]);
+							}
+						}
 
-								if (selectedController.guid().equals(guid)) {
-									final var ffFeatures = new NativeLong[FF_MAX];
-									if (CLib.INSTANCE.ioctl(fd, Macros.EVIOCGBIT(EventCode.Type.EV_FF.code(),
-											ffFeatures.length * Character.BYTES), ffFeatures) != -1) {
-										if (testBit(FF_RUMBLE, ffFeatures)) {
-											return Stream.of(new EvdevInfo(fd, testBit(FF_GAIN, ffFeatures)));
-										}
-									}
+						if (selectedController.guid().equals(guid)) {
+							final var ffFeatures = new NativeLong[FF_MAX];
+							if (CLib.INSTANCE.ioctl(fd,
+									Macros.EVIOCGBIT(EventCode.Type.EV_FF.code(), ffFeatures.length * Character.BYTES),
+									ffFeatures) != -1) {
+								if (testBit(FF_RUMBLE, ffFeatures)) {
+									downstream.accept(new EvdevInfo(fd, testBit(FF_GAIN, ffFeatures)));
+									closeFileDescriptor = false;
 								}
 							}
 						}
-					} catch (final Throwable t) {
-						log.log(Level.WARNING, t.getMessage(), t);
+					}
+				} catch (final Throwable t) {
+					log.log(Level.WARNING, t.getMessage(), t);
+				} finally {
+					if (closeFileDescriptor) {
+						closeFileDescriptor(fd);
+					}
+				}
+			}).toList();
+
+			if (!evdevInfos.isEmpty()) {
+				var closeFileDescriptors = true;
+				try {
+					if (evdevInfos.size() > 1) {
+						log.log(Level.WARNING, "Found more than one controller with GUID '" + selectedController.guid()
+								+ "' - evdev driver disabled");
+						return Optional.empty();
 					}
 
-					closeFileDescriptor(fd);
-					return Stream.empty();
-				}).toList();
-
-				if (evdevInfos.isEmpty()) {
-					return Optional.empty();
-				}
-
-				if (evdevInfos.size() > 1) {
-					log.log(Level.WARNING, "Found more than one controller with GUID '" + selectedController.guid()
-							+ "' - evdev driver disabled");
-				}
-
-				try {
-					return Optional.of(new EvdevDriver(input, selectedController, evdevInfos.getFirst()));
-				} catch (final IOException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					final Optional<Driver> optionalEvdevDriver = Optional
+							.of(new EvdevDriver(input, selectedController, evdevInfos.getFirst()));
+					closeFileDescriptors = false;
+					return optionalEvdevDriver;
+				} catch (final Throwable t) {
+					log.log(Level.SEVERE, t.getMessage(), t);
+				} finally {
+					if (closeFileDescriptors) {
+						evdevInfos.forEach(evdevInfo -> closeFileDescriptor(evdevInfo.fd));
+					}
 				}
 			}
 
