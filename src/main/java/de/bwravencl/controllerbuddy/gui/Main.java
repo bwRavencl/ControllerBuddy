@@ -117,6 +117,7 @@ import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -981,7 +982,7 @@ public final class Main {
 				quit();
 			}
 
-			initGui();
+			initGui(Collections.emptyList());
 			initProfile(cmdProfilePath, true);
 
 			return;
@@ -1030,9 +1031,7 @@ public final class Main {
 			}
 		});
 
-		initGui();
-
-		optionalPresentControllers.ifPresent(presentControllers -> onControllersChanged(presentControllers, true));
+		initGui(optionalPresentControllers.orElse(Collections.emptyList()));
 
 		// noinspection resource
 		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
@@ -1825,9 +1824,10 @@ public final class Main {
 		};
 	}
 
-	private void initGui() {
+	private void initGui(final List<ControllerInfo> presentControllers) {
 		newProfile(false);
 		updateTheme();
+		onControllersChanged(presentControllers, true);
 	}
 
 	private void initOpenVrOverlay() {
