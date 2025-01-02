@@ -5,7 +5,7 @@
     <option name="MAIN_CLASS_NAME" value="de.bwravencl.controllerbuddy.gui.Main" />
     <module name="ControllerBuddy.main" />
     <option name="PROGRAM_PARAMETERS" value="-autostart local" />
-    <option name="VM_PARAMETERS" value="-Xms128m --add-opens=java.desktop/sun.awt.X11=de.bwravencl.controllerbuddy -Duser.country=DE -Duser.language=de" />
+    <option name="VM_PARAMETERS" value="-Xms128m --add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED -Duser.country=DE -Duser.language=de" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
