@@ -965,6 +965,8 @@ public final class Main {
 
 				return 0;
 			});
+
+			GLFW.glfwInitHint(GLFW.GLFW_PLATFORM, GLFW.GLFW_PLATFORM_X11);
 		} else if (isMac) {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
