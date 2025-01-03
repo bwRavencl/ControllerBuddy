@@ -967,6 +967,9 @@ public final class Main {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 
+		newProfile(false);
+		updateTheme();
+
 		final var glfwInitialized = (boolean) taskRunner.run(GLFW::glfwInit).orElse(false);
 		if (!glfwInitialized) {
 			log.log(Level.SEVERE, "Could not initialize GLFW");
@@ -982,7 +985,7 @@ public final class Main {
 				quit();
 			}
 
-			initGui(Collections.emptyList());
+			onControllersChanged(Collections.emptyList(), true);
 			initProfile(cmdProfilePath, true);
 
 			return;
@@ -1031,7 +1034,7 @@ public final class Main {
 			}
 		});
 
-		initGui(optionalPresentControllers.orElse(Collections.emptyList()));
+		onControllersChanged(optionalPresentControllers.orElse(Collections.emptyList()), true);
 
 		// noinspection resource
 		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
@@ -1822,12 +1825,6 @@ public final class Main {
 		case JOptionPane.NO_OPTION -> true;
 		default -> false;
 		};
-	}
-
-	private void initGui(final List<ControllerInfo> presentControllers) {
-		newProfile(false);
-		updateTheme();
-		onControllersChanged(presentControllers, true);
 	}
 
 	private void initOpenVrOverlay() {
