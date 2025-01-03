@@ -215,6 +215,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
@@ -972,15 +974,34 @@ public final class Main {
 
 		final var glfwInitialized = (boolean) taskRunner.run(GLFW::glfwInit).orElse(false);
 		if (!glfwInitialized) {
-			log.log(Level.SEVERE, "Could not initialize GLFW");
+			String errorDetails = null;
+			try (final var stack = MemoryStack.stackPush()) {
+				final var descriptionPointerBuffer = stack.mallocPointer(1);
+				if (GLFW.glfwGetError(descriptionPointerBuffer) != 0) {
+					final var descriptionPointer = descriptionPointerBuffer.get();
+					if (descriptionPointer != 0L) {
+						errorDetails = MemoryUtil.memUTF8(descriptionPointer);
+					}
+				}
+			} catch (final Throwable t) {
+				log.log(Level.WARNING, t.getMessage(), t);
+			}
+
+			log.log(Level.SEVERE, "Could not initialize GLFW" + (errorDetails != null ? ": " + errorDetails : ""));
+
+			if (errorDetails == null) {
+				errorDetails = strings.getString("NO_ERROR_DETAILS");
+			}
 
 			if (isWindows || isLinux) {
 				GuiUtils.showMessageDialog(this, frame,
 						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
-								Constants.APPLICATION_NAME),
+								Constants.APPLICATION_NAME, errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(this, frame, strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"),
+				GuiUtils.showMessageDialog(
+						this, frame, MessageFormat
+								.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"), errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
