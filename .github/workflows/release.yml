@@ -77,7 +77,6 @@ jobs:
           submodules: true
       - name: Download Zulu (without CRaC)
         id: download_zulu
-        shell: bash
         run: |
           cd $RUNNER_TEMP
           jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET 'https://api.azul.com/metadata/v1/zulu/packages/?os=linux&arch=x64&archive_type=tar.gz&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck' --data-urlencode "java_version=$JAVA_VERSION" -H  'accept: application/json' | jq -r '.[0].download_url')")
@@ -92,7 +91,6 @@ jobs:
         run: ./gradlew distTar --info
       - name: Extract Release Variables
         id: extract_release_variables
-        shell: bash
         run: |
           echo "tag_name=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed s/-linux-x86-64//)" >> $GITHUB_OUTPUT
           echo "archive_path=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
@@ -103,7 +101,6 @@ jobs:
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
       - name: Sign Archive
         id: sign_archive
-        shell: bash
         run: |
           signature_path="${{ steps.extract_release_variables.outputs.archive_path }}.sig"
           gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.extract_release_variables.outputs.archive_path }}
