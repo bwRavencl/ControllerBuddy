@@ -53,15 +53,19 @@ import org.lwjgl.system.windows.WindowsUtil;
 class OpenVrOverlay {
 
 	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
+
 	private static final long OVERLAY_FPS = 25L;
+
 	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
 	private static final float STATUS_OVERLAY_POSITION_X = 0.2f;
 	private static final float STATUS_OVERLAY_POSITION_Y = -0.1f;
 	private static final float STATUS_OVERLAY_POSITION_Z = -0.4f;
+
 	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
 	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z = -0.4f;
+
 	private final Main main;
 	private final OnScreenKeyboard onScreenKeyboard;
 	private final long onScreenKeyboardOverlayHandle;
