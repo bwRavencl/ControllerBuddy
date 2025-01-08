@@ -346,6 +346,8 @@ public final class Input {
 	}
 
 	public boolean poll() {
+		Objects.requireNonNull(controller, "Field controller must not be null");
+
 		final var currentTime = System.currentTimeMillis();
 
 		axisToEndSuspensionTimestampMap.values().removeIf(timestamp -> timestamp < currentTime);

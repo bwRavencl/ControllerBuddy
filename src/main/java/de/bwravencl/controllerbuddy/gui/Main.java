@@ -1057,7 +1057,7 @@ public final class Main {
 			}
 		});
 
-		onControllersChanged(optionalPresentControllers.orElse(Collections.emptyList()), true);
+		onControllersChanged(optionalPresentControllers.orElseGet(Collections::emptyList), true);
 
 		// noinspection resource
 		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
@@ -2364,14 +2364,23 @@ public final class Main {
 		if (!controllerConnected) {
 			selectedController = null;
 			setSelectedControllerAndUpdateInput(null, null);
-		} else if (selectedController == null) {
-			setSelectedControllerAndUpdateInput(presentControllers.getFirst(), null);
+		} else {
+			final ControllerInfo controller;
+			if (selectedController != null && presentControllers.contains(selectedController)) {
+				controller = selectedController;
+			} else {
+				controller = presentControllers.getFirst();
+			}
 
-			if (isAutoRestartOutput()) {
-				restartOutput = switch (lastRunModeType) {
-				case NONE, CLIENT -> false;
-				case LOCAL, SERVER -> true;
-				};
+			if (selectedController == null || (input != null && !Objects.equals(input.getController(), controller))) {
+				setSelectedControllerAndUpdateInput(controller, null);
+
+				if (isAutoRestartOutput()) {
+					restartOutput = switch (lastRunModeType) {
+					case NONE, CLIENT -> false;
+					case LOCAL, SERVER -> true;
+					};
+				}
 			}
 		}
 
@@ -2596,6 +2605,10 @@ public final class Main {
 	}
 
 	private void setSelectedController(final ControllerInfo controller) {
+		if (Objects.equals(selectedController, controller)) {
+			return;
+		}
+
 		selectedController = controller;
 
 		if (controller != null) {
@@ -2688,7 +2701,7 @@ public final class Main {
 	private void startLocal() {
 		lastRunModeType = RunModeType.LOCAL;
 
-		if (selectedController == null || isRunning()) {
+		if (selectedController == null || input.getController() == null || isRunning()) {
 			return;
 		}
 
@@ -2715,7 +2728,7 @@ public final class Main {
 	private void startServer() {
 		lastRunModeType = RunModeType.SERVER;
 
-		if (selectedController == null || isRunning()) {
+		if (selectedController == null || input.getController() == null || isRunning()) {
 			return;
 		}
 
