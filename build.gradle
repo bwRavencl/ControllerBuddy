@@ -41,10 +41,10 @@ ext {
 
 	os = DefaultNativePlatform.currentOperatingSystem
 
-	moduleInfoFile = 'src/main/java/module-info.java'
-	constantsFile = 'src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java'
+	moduleInfoFile = "$projectDir/src/main/java/module-info.java"
+	constantsFile = "$projectDir/src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java"
 
-	resourcesDir = 'src/main/resources'
+	resourcesDir = "$projectDir/src/main/resources"
 	tmpDir = layout.buildDirectory.dir 'tmp'
 	runtimeDir = tmpDir.map { it.dir 'runtime' }
 
@@ -229,7 +229,7 @@ tasks.withType(SpotBugsTask).configureEach {
 spotless {
 	encoding 'UTF-8'
 	java {
-		target 'src/main/java/de/bwravencl/**/*.java'
+		target "$projectDir/src/main/java/de/bwravencl/**/*.java"
 		targetExclude moduleInfoFile, constantsFile
 		eclipse('4.33').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
