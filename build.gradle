@@ -19,7 +19,7 @@ plugins {
 	id 'org.gradlex.extra-java-module-info' version '1.9'
 }
 
-def dotGitFile = new File("$projectDir/.git")
+def dotGitFile = file "$projectDir/.git"
 def gitDir
 if (dotGitFile.isFile()) {
 	def gitDirConfigValue = dotGitFile.readLines().stream().mapMulti { line, downstream ->
@@ -181,7 +181,7 @@ extraJavaModuleInfo {
 tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
-		new File(moduleInfoFile).write """\
+		file(moduleInfoFile).write """\
 			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
@@ -335,7 +335,7 @@ tasks.register('generateConstants') {
 		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</table>'), '<tr><td>SDL_GameControllerDB</td><td>gamecontrollerdb.txt</td><td>zlib License</td><td><a href=\'https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE\'>Show license agreement</a></td></tr>')
 		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</body>'), '</center>')
 
-		def file = new File(constantsFile)
+		def file = file constantsFile
 		file.getParentFile().mkdirs()
 		file.write("""\
 			package de.bwravencl.controllerbuddy.constants;\n
