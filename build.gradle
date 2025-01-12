@@ -19,22 +19,7 @@ plugins {
 	id 'org.gradlex.extra-java-module-info' version '1.9'
 }
 
-def dotGitFile = file "$projectDir/.git"
-def gitDir
-if (dotGitFile.isFile()) {
-	def gitDirConfigValue = dotGitFile.readLines().stream().mapMulti { line, downstream ->
-		def match = line =~ /^gitdir: (\S*)/
-		def value = match[0][1];
-		if (value) {
-			downstream.accept value
-		}
-	}.findFirst().orElseThrow({ new GradleException('gitdir not set') })
-	gitDir = "$projectDir/$gitDirConfigValue"
-} else {
-	gitDir = projectDir
-}
-
-def git = Grgit.open dir: gitDir
+def git = Grgit.open dir: projectDir
 version = "${git.describe(longDescr: true).replaceFirst('-', '.').replaceFirst('-g', '-')}${((!git.status().isClean()) ? '.dirty' : '')}"
 
 base {
