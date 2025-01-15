@@ -113,6 +113,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -128,6 +129,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.Set;
@@ -166,6 +168,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JRootPane;
@@ -188,7 +191,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
+import javax.swing.text.PlainDocument;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -226,6 +232,8 @@ public final class Main {
 	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
 	public static final boolean isLinux = Platform.getOSType() == Platform.LINUX;
 	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
+	public static final int PASSWORD_MIN_LENGTH = 6;
+	public static final int PASSWORD_MAX_LENGTH = 24;
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	public static final int DEFAULT_HGAP = 10;
 	public static final int DEFAULT_VGAP = 10;
@@ -287,6 +295,7 @@ public final class Main {
 	private static final String OPTION_HOST = "host";
 	private static final String OPTION_PORT = "port";
 	private static final String OPTION_TIMEOUT = "timeout";
+	private static final String OPTION_PASSWORD = "password";
 	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
 	private static final String OPTION_TRAY = "tray";
 	private static final String OPTION_SAVE = "save";
@@ -315,6 +324,7 @@ public final class Main {
 	private static final String PREFERENCES_HOST = "host";
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
+	private static final String PREFERENCES_PASSWORD = "password";
 	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
 	private static final String PREFERENCES_DARK_THEME = "dark_theme";
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
@@ -351,6 +361,7 @@ public final class Main {
 		options.addOption(OPTION_HOST, true, strings.getString("HOST_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_PORT, true, strings.getString("PORT_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TIMEOUT, true, strings.getString("TIMEOUT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_PASSWORD, true, strings.getString("PASSWORD_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_GAME_CONTROLLER_DB, true, strings.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_SAVE, true, strings.getString("SAVE_OPTION_DESCRIPTION"));
@@ -374,6 +385,7 @@ public final class Main {
 		}
 	}
 
+	private final Random random;
 	private final TaskRunner taskRunner;
 	private final Preferences preferences;
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
@@ -449,11 +461,17 @@ public final class Main {
 
 		this.taskRunner = taskRunner;
 
+		try {
+			random = SecureRandom.getInstanceStrong();
+		} catch (final NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+
 		Thread.startVirtualThread(() -> {
 			try (final var singleInstanceServerSocket = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
 				SINGLE_INSTANCE_LOCK_FILE.deleteOnExit();
 
-				final var randomNumber = new SecureRandom().nextInt();
+				final var randomNumber = random.nextInt();
 
 				try {
 					Files.writeString(SINGLE_INSTANCE_LOCK_FILE.toPath(),
@@ -1236,6 +1254,15 @@ public final class Main {
 		return host != null && !host.isBlank();
 	}
 
+	private static boolean isValidPassword(final String password) {
+		if (password == null) {
+			return false;
+		}
+
+		final var length = password.length();
+		return !password.isBlank() && length >= 6 && length <= 24;
+	}
+
 	public static void main(final String[] args) {
 		log.log(Level.INFO, "Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
 		log.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
@@ -1733,6 +1760,10 @@ public final class Main {
 		return preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
 	}
 
+	public String getPassword() {
+		return preferences.get(PREFERENCES_PASSWORD, "");
+	}
+
 	public int getPollInterval() {
 		return preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
 	}
@@ -1744,6 +1775,10 @@ public final class Main {
 	@SuppressWarnings("exports")
 	public Preferences getPreferences() {
 		return preferences;
+	}
+
+	public Random getRandom() {
+		return random;
 	}
 
 	public int getSelectedHotSwappingButtonId() {
@@ -1816,6 +1851,19 @@ public final class Main {
 								OPTION_TIMEOUT, timeout),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
+		}
+
+		final var password = commandLine.getOptionValue(OPTION_PASSWORD);
+		if (password != null) {
+			if (!isValidPassword(password)) {
+				valid = false;
+				GuiUtils.showMessageDialog(this, frame,
+						MessageFormat.format(
+								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_PASSWORD_DIALOG_TEXT"),
+								OPTION_PASSWORD, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+			preferences.put(PREFERENCES_PASSWORD, password);
 		}
 
 		return valid;
@@ -3744,6 +3792,29 @@ public final class Main {
 		}
 	}
 
+	private static final class LimitedLengthPlainDocument extends PlainDocument {
+
+		@Serial
+		private static final long serialVersionUID = 6672096787814740118L;
+
+		private final int limit;
+
+		private LimitedLengthPlainDocument(final int limit) {
+			this.limit = limit;
+		}
+
+		@Override
+		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
+			if (str == null) {
+				return;
+			}
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offs, str, a);
+			}
+		}
+	}
+
 	private static final class ProfileFileChooser extends AbstractProfileFileChooser {
 
 		@Serial
@@ -3970,13 +4041,55 @@ public final class Main {
 		}
 	}
 
+	private abstract class ConnectAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = 3506732842101613495L;
+
+		private final boolean withHost;
+
+		private ConnectAction(final boolean withHost) {
+			this.withHost = withHost;
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			showConnectDialog();
+		}
+
+		abstract void proceed();
+
+		private void showConnectDialog() {
+			final var connectionSettingsPanel = new ConnectionSettingsPanel(withHost);
+
+			executeWhileVisible(() -> {
+				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
+						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+					final var errorMessage = connectionSettingsPanel.saveSettings();
+
+					if (errorMessage == null) {
+						proceed();
+					} else {
+						GuiUtils.showMessageDialog(main, frame, errorMessage, strings.getString("ERROR_DIALOG_TITLE"),
+								JOptionPane.ERROR_MESSAGE);
+						showConnectDialog();
+					}
+				}
+			});
+		}
+	}
+
 	private class ConnectionSettingsPanel extends JPanel {
 
 		@Serial
 		private static final long serialVersionUID = 2959405425250777631L;
 
+		private static final int TEXT_FIELD_COLUMNS = 15;
+
 		private final JSpinner portSpinner;
 		private final JSpinner timeoutSpinner;
+		private final JPasswordField passwordPasswordField;
 		private JTextField hostTextField;
 
 		private ConnectionSettingsPanel(final boolean withHost) {
@@ -3991,7 +4104,7 @@ public final class Main {
 				hostPanel.add(hostLabel);
 
 				final var host = getHost();
-				hostTextField = new JTextField(host, 15);
+				hostTextField = new JTextField(new LimitedLengthPlainDocument(64), host, TEXT_FIELD_COLUMNS);
 				hostTextField.setCaretPosition(0);
 				hostPanel.add(hostTextField);
 
@@ -4026,13 +4139,26 @@ public final class Main {
 			((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			timeoutSpinner.setEditor(timeoutSpinnerEditor);
 			timeoutPanel.add(timeoutSpinner);
+
+			final var passwordPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			add(passwordPanel);
+
+			final var passwordLabel = new JLabel(strings.getString("PASSWORD_LABEL"));
+			passwordLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			passwordPanel.add(passwordLabel);
+
+			final var password = getPassword();
+			passwordPasswordField = new JPasswordField(new LimitedLengthPlainDocument(PASSWORD_MAX_LENGTH), password,
+					TEXT_FIELD_COLUMNS);
+			passwordPasswordField.setCaretPosition(0);
+			passwordPanel.add(passwordPasswordField);
 		}
 
-		private boolean saveSettings() {
+		private String saveSettings() {
 			if (hostTextField != null) {
 				final var host = hostTextField.getText().strip();
 				if (!isValidHost(host)) {
-					return false;
+					return strings.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT");
 				}
 				preferences.put(PREFERENCES_HOST, host);
 			}
@@ -4040,7 +4166,14 @@ public final class Main {
 			preferences.putInt(PREFERENCES_PORT, (int) portSpinner.getValue());
 			preferences.putInt(PREFERENCES_TIMEOUT, (int) timeoutSpinner.getValue());
 
-			return true;
+			final var password = new String(passwordPasswordField.getPassword());
+			if (!isValidPassword(password)) {
+				return MessageFormat.format(strings.getString("INVALID_PASSWORD_ERROR_DIALOG_TEXT"),
+						PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
+			}
+			preferences.put(PREFERENCES_PASSWORD, password);
+
+			return null;
 		}
 	}
 
@@ -4492,37 +4625,21 @@ public final class Main {
 		}
 	}
 
-	private final class StartClientAction extends AbstractAction {
+	private final class StartClientAction extends ConnectAction {
 
 		@Serial
 		private static final long serialVersionUID = 3975574941559749481L;
 
 		private StartClientAction() {
+			super(true);
+
 			putValue(NAME, strings.getString("START_CLIENT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, strings.getString("START_CLIENT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
-			showConnectDialog();
-		}
-
-		private void showConnectDialog() {
-			final var connectionSettingsPanel = new ConnectionSettingsPanel(true);
-
-			executeWhileVisible(() -> {
-				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
-						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					if (connectionSettingsPanel.saveSettings()) {
-						startClient();
-					} else {
-						GuiUtils.showMessageDialog(main, frame, strings.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT"),
-								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-						showConnectDialog();
-					}
-				}
-			});
+		void proceed() {
+			startClient();
 		}
 	}
 
@@ -4542,28 +4659,21 @@ public final class Main {
 		}
 	}
 
-	private final class StartServerAction extends AbstractAction {
+	private final class StartServerAction extends ConnectAction {
 
 		@Serial
 		private static final long serialVersionUID = 1758447420975631146L;
 
 		private StartServerAction() {
+			super(false);
+
 			putValue(NAME, strings.getString("START_SERVER_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, strings.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final var connectionSettingsPanel = new ConnectionSettingsPanel(false);
-
-			executeWhileVisible(() -> {
-				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
-						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-					connectionSettingsPanel.saveSettings();
-					startServer();
-				}
-			});
+		void proceed() {
+			startServer();
 		}
 	}
 

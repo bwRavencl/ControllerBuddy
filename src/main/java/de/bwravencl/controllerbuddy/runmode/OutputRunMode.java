@@ -386,10 +386,10 @@ public abstract class OutputRunMode extends RunMode {
 		return true;
 	}
 
-	final void handleIOException(final IOException ioException) {
+	final void handleIOException(final IOException e) {
 		forceStop = true;
 
-		log.log(Level.SEVERE, ioException.getMessage(), ioException);
+		log.log(Level.SEVERE, e.getMessage(), e);
 		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 				Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 				Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));

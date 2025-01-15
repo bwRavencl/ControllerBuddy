@@ -75,7 +75,7 @@ it automates all the steps below and much more!
     - Customizable position and colors
 - Two modes of operation:
     - Local
-    - Server to client (experimental! use only in trusted networks!)
+    - Client-Server (experimental! use only in trusted networks!)
 - Supported gamepads:
     - Xbox 360 Controller
     - Xbox One Controller
@@ -204,6 +204,7 @@ Server-Client mode:
 | ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
 | ‑help               |                         | prints the help and exits                                                                                   |           no            |
 | -host               | hostname / IP address   | sets the host address for outgoing network connections                                                      |           yes           |
+| -password           | password                | sets the password for all network connections                                                               |           yes           |
 | -port               | port number             | sets the server port for all network connections                                                            |           yes           |
 | ‑profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
 | ‑quit               |                         | quits the application                                                                                       |           yes           |

@@ -40,6 +40,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.text.MessageFormat;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -48,17 +51,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
 
 public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
+
 	private static final int N_CONNECTION_RETRIES = 10;
 	private static final int N_RECEIVE_PACKET_RETRIES = 10;
+
 	private final byte[] receiveBuf = new byte[1024];
+	private final byte[] iv = new byte[ServerRunMode.IV_LENGTH];
+	private final byte[] salt = new byte[ServerRunMode.SALT_LENGTH];
+	private final Cipher cipher;
 	private final String host;
 	private final int port;
 	private final int timeout;
+	private final Key key;
 	private ClientState clientState = ClientState.Connecting;
 	private InetAddress hostAddress;
 	private DatagramSocket clientSocket;
@@ -70,6 +81,15 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 		host = main.getHost();
 		port = main.getPort();
 		timeout = main.getTimeout();
+
+		try {
+			cipher = Cipher.getInstance(ServerRunMode.CIPHER_TRANSFORMATION);
+		} catch (final GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		}
+
+		main.getRandom().nextBytes(salt);
+		key = ServerRunMode.deriveKey(main, salt);
 	}
 
 	@Override
@@ -80,9 +100,32 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 		}
 	}
 
+	private byte[] decrypt(final DatagramPacket packet) throws GeneralSecurityException {
+		final var packetByteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+
+		packetByteBuffer.get(iv);
+		cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(ServerRunMode.TAG_LENGTH, iv));
+
+		final var encryptedBytes = new byte[packetByteBuffer.remaining()];
+		packetByteBuffer.get(encryptedBytes);
+
+		return cipher.doFinal(encryptedBytes);
+	}
+
 	@Override
 	Logger getLogger() {
 		return log;
+	}
+
+	private void handleGeneralSecurityException(final GeneralSecurityException e) {
+		log.log(Level.WARNING, e.getMessage(), e);
+
+		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+				Main.strings.getString("DECRYPTION_ERROR_DIALOG_TEXT"), Main.strings.getString("ERROR_DIALOG_TITLE"),
+				JOptionPane.ERROR_MESSAGE));
+
+		forceStop = true;
+		Thread.currentThread().interrupt();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,6 +144,9 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 					final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 				dataOutputStream.writeInt(MessageType.ClientHello.getId());
+
+				dataOutputStream.write(salt, 0, ServerRunMode.SALT_LENGTH);
+
 				dataOutputStream.writeInt(minAxisValue);
 				dataOutputStream.writeInt(maxAxisValue);
 				dataOutputStream.writeInt(nButtons);
@@ -117,7 +163,8 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					try {
 						clientSocket.receive(receivePacket);
 
-						try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+						final var plaintextBuf = decrypt(receivePacket);
+						try (final var byteArrayInputStream = new ByteArrayInputStream(plaintextBuf);
 								final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 							final var messageType = dataInputStream.readInt();
 							if (messageType == MessageType.ServerHello.getId()) {
@@ -143,6 +190,8 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 												N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES)));
 							}
 						}
+					} catch (final GeneralSecurityException e) {
+						handleGeneralSecurityException(e);
 					} catch (final SocketTimeoutException e) {
 						log.log(Level.INFO, e.getMessage(), e);
 						retry--;
@@ -171,6 +220,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					Thread.currentThread().interrupt();
 				}
 			}
+
 		}
 		case Connected -> {
 			try {
@@ -190,7 +240,8 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					throw socketTimeoutException;
 				}
 
-				try (final var byteArrayInputStream = new ByteArrayInputStream(receivePacket.getData());
+				final var plaintextBuf = decrypt(receivePacket);
+				try (final var byteArrayInputStream = new ByteArrayInputStream(plaintextBuf);
 						final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 					final var messageType = MessageType.values()[dataInputStream.readInt()];
 
@@ -278,6 +329,8 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 				} catch (final ClassNotFoundException e) {
 					throw new RuntimeException(e);
 				}
+			} catch (final GeneralSecurityException e) {
+				handleGeneralSecurityException(e);
 			} catch (final SocketTimeoutException e) {
 				log.log(Level.FINE, e.getMessage(), e);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),

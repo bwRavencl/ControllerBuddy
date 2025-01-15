@@ -35,11 +35,21 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 import org.lwjgl.glfw.GLFW;
 
@@ -47,20 +57,50 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 	public static final int DEFAULT_PORT = 28789;
 	public static final int DEFAULT_TIMEOUT = 100;
-	static final byte PROTOCOL_VERSION = 2;
+	static final byte PROTOCOL_VERSION = 3;
+	static final String CIPHER_TRANSFORMATION = "AES/GCM/NoPadding";
+	static final int IV_LENGTH = 12;
+	static final int TAG_LENGTH = 128;
+	static final int SALT_LENGTH = 100;
+
 	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
+
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 	private static final int N_REQUEST_ALIVE_RETRIES = 10;
+
+	private final byte[] iv = new byte[IV_LENGTH];
 	private final int port;
 	private final int timeout;
+	private final Random random;
+	private final Cipher cipher;
 	private DatagramSocket serverSocket;
 	private InetAddress clientAddress;
+	private Key key;
 
 	public ServerRunMode(final Main main, final Input input) {
 		super(main, input);
 
 		port = main.getPort();
 		timeout = main.getTimeout();
+		random = main.getRandom();
+
+		try {
+			cipher = Cipher.getInstance(CIPHER_TRANSFORMATION);
+		} catch (final GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	static Key deriveKey(final Main main, final byte[] saltBytes) {
+		final var pbeKeySpec = new PBEKeySpec(main.getPassword().toCharArray(), saltBytes, 1000, 256);
+		try {
+			final var secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			final var secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
+
+			return new SecretKeySpec(secretKey.getEncoded(), "AES");
+		} catch (final GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -109,6 +149,9 @@ public final class ServerRunMode extends RunMode implements Closeable {
 						final var messageType = dataInputStream.readInt();
 
 						if (messageType == MessageType.ClientHello.getId()) {
+							final var salt = dataInputStream.readNBytes(SALT_LENGTH);
+							key = deriveKey(main, salt);
+
 							minAxisValue = dataInputStream.readInt();
 							maxAxisValue = dataInputStream.readInt();
 							setnButtons(dataInputStream.readInt());
@@ -119,10 +162,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 								dataOutputStream.writeByte(PROTOCOL_VERSION);
 								dataOutputStream.writeLong(pollInterval);
 
-								final var sendBuf = byteArrayOutputStream.toByteArray();
-								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
-										clientPort);
-								serverSocket.send(sendPacket);
+								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
 
 							serverState = ServerState.Connected;
@@ -174,10 +214,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							input.getOnLockKeys().clear();
 							input.getOffLockKeys().clear();
 
-							final var sendBuf = byteArrayOutputStream.toByteArray();
-							final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
-									clientPort);
-							serverSocket.send(sendPacket);
+							sendEncrypted(byteArrayOutputStream, clientPort);
 							counter++;
 						}
 					}
@@ -189,10 +226,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 								dataOutputStream.writeInt(MessageType.RequestAlive.getId());
 
-								final var sendBuf = byteArrayOutputStream.toByteArray();
-								final var sendPacket = new DatagramPacket(sendBuf, sendBuf.length, clientAddress,
-										clientPort);
-								serverSocket.send(sendPacket);
+								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
 
 							receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
@@ -259,6 +293,28 @@ public final class ServerRunMode extends RunMode implements Closeable {
 		}
 
 		logStop();
+	}
+
+	private void sendEncrypted(final ByteArrayOutputStream byteArrayOutputStream, final int clientPort)
+			throws IOException {
+		Objects.requireNonNull(cipher, "Field cipher must not be null");
+
+		final var messageBytes = byteArrayOutputStream.toByteArray();
+		try {
+			random.nextBytes(iv);
+			cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH, iv));
+
+			final var encryptedBytes = cipher.doFinal(messageBytes);
+			final var packetByteBuffer = ByteBuffer.allocate(iv.length + encryptedBytes.length);
+			packetByteBuffer.put(iv);
+			packetByteBuffer.put(encryptedBytes);
+			final var packetBytes = packetByteBuffer.array();
+
+			final var datagramPacket = new DatagramPacket(packetBytes, packetBytes.length, clientAddress, clientPort);
+			serverSocket.send(datagramPacket);
+		} catch (final GeneralSecurityException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	enum MessageType {
