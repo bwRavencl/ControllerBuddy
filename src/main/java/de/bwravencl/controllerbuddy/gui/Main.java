@@ -284,6 +284,9 @@ public final class Main {
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 	private static final String OPTION_AUTOSTART = "autostart";
 	private static final String OPTION_PROFILE = "profile";
+	private static final String OPTION_HOST = "host";
+	private static final String OPTION_PORT = "port";
+	private static final String OPTION_TIMEOUT = "timeout";
 	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
 	private static final String OPTION_TRAY = "tray";
 	private static final String OPTION_SAVE = "save";
@@ -345,6 +348,9 @@ public final class Main {
 						isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
 								: strings.getString("SERVER")));
 		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_HOST, true, strings.getString("HOST_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_PORT, true, strings.getString("PORT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_TIMEOUT, true, strings.getString("TIMEOUT_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_GAME_CONTROLLER_DB, true, strings.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
 		options.addOption(OPTION_SAVE, true, strings.getString("SAVE_OPTION_DESCRIPTION"));
@@ -432,7 +438,7 @@ public final class Main {
 	private volatile Rectangle totalDisplayBounds;
 	private IAction<?> clipboardAction;
 
-	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String gameControllerDbPath) {
+	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String cmdGameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
 				log.log(Level.INFO, "Forcing immediate halt");
@@ -1020,8 +1026,8 @@ public final class Main {
 				(mappingsUpdated ? "Successfully updated" : "Failed to update")
 						+ " game controller mappings from internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
 
-		if (gameControllerDbPath != null) {
-			mappingsUpdated &= updateGameControllerMappingsFromFile(gameControllerDbPath);
+		if (cmdGameControllerDbPath != null) {
+			mappingsUpdated &= updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
 		}
 
 		if (!mappingsUpdated) {
@@ -1226,6 +1232,10 @@ public final class Main {
 		return false;
 	}
 
+	private static boolean isValidHost(final String host) {
+		return host != null && !host.isBlank();
+	}
+
 	public static void main(final String[] args) {
 		log.log(Level.INFO, "Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
 		log.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
@@ -1338,8 +1348,9 @@ public final class Main {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-						final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
-						main = new Main(taskRunner, cmdProfilePath, gameControllerDbPath);
+						final var cmdGameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+
+						main = new Main(taskRunner, cmdProfilePath, cmdGameControllerDbPath);
 
 						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
 
@@ -1351,6 +1362,7 @@ public final class Main {
 					log.log(Level.INFO, "Another " + Constants.APPLICATION_NAME + " instance is already running");
 					terminate(0, null);
 				}
+
 				return;
 			}
 		} catch (final ParseException _) {
@@ -1761,6 +1773,54 @@ public final class Main {
 		return preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultVJoyPath());
 	}
 
+	private boolean handleNetworkCommandLineOptions(final CommandLine commandLine) {
+		var valid = true;
+
+		var host = commandLine.getOptionValue(OPTION_HOST);
+		if (host != null) {
+			host = host.strip();
+			if (!isValidHost(host)) {
+				valid = false;
+				GuiUtils.showMessageDialog(this, frame,
+						MessageFormat.format(
+								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_HOST_DIALOG_TEXT"),
+								OPTION_HOST, host),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+			preferences.put(PREFERENCES_HOST, host);
+		}
+
+		final var port = commandLine.getOptionValue(OPTION_PORT);
+		if (port != null) {
+			try {
+				preferences.putInt(PREFERENCES_PORT, Integer.parseInt(port));
+			} catch (final NumberFormatException _) {
+				valid = false;
+				GuiUtils.showMessageDialog(this, frame,
+						MessageFormat.format(
+								strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
+								OPTION_PORT, port),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		final var timeout = commandLine.getOptionValue(OPTION_TIMEOUT);
+		if (timeout != null) {
+			try {
+				preferences.putInt(PREFERENCES_TIMEOUT, Integer.parseInt(timeout));
+			} catch (final NumberFormatException _) {
+				valid = false;
+				GuiUtils.showMessageDialog(this, frame,
+						MessageFormat.format(
+								strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
+								OPTION_TIMEOUT, timeout),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		return valid;
+	}
+
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
@@ -1795,22 +1855,24 @@ public final class Main {
 			}
 		}
 
-		final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
-		if (autostartOptionValue != null) {
-			if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
-				startLocal();
-			} else if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
-				startClient();
-			} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
-				startServer();
-			} else {
-				GuiUtils.showMessageDialog(this, frame,
-						MessageFormat.format(
-								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
-								OPTION_AUTOSTART, autostartOptionValue,
-								isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-										: strings.getString("SERVER")),
-						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+		if (handleNetworkCommandLineOptions(commandLine)) {
+			final var autostartOptionValue = commandLine.getOptionValue(OPTION_AUTOSTART);
+			if (autostartOptionValue != null) {
+				if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_LOCAL.equals(autostartOptionValue)) {
+					startLocal();
+				} else if ((isWindows || isLinux) && OPTION_AUTOSTART_VALUE_CLIENT.equals(autostartOptionValue)) {
+					startClient();
+				} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
+					startServer();
+				} else {
+					GuiUtils.showMessageDialog(this, frame,
+							MessageFormat.format(
+									strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
+									OPTION_AUTOSTART, autostartOptionValue,
+									isWindows || isLinux ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+											: strings.getString("SERVER")),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 
@@ -3968,8 +4030,8 @@ public final class Main {
 
 		private boolean saveSettings() {
 			if (hostTextField != null) {
-				final var host = hostTextField.getText();
-				if (host == null || host.isBlank()) {
+				final var host = hostTextField.getText().strip();
+				if (!isValidHost(host)) {
 					return false;
 				}
 				preferences.put(PREFERENCES_HOST, host);

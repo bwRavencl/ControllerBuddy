@@ -202,11 +202,14 @@ Server-Client mode:
 | ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
 | ‑export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
 | ‑help               |                         | prints the help and exits                                                                                   |           no            |
+| -host               | hostname / IP address   | sets the host address for outgoing network connections                                                      |           yes           |
+| -port               | port number             | sets the server port for all network connections                                                            |           yes           |
 | ‑profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
 | ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
 | ‑quit               |                         | quits the application                                                                                       |           yes           |
 | ‑save               | file destination        | save the current profile to the specified path                                                              |           yes           |
 | ‑skipMessageDialogs |                         | skips all message dialogs                                                                                   |           no            |
+| -timeout            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                                |           yes           |
 | ‑tray               |                         | launches the application in the system tray                                                                 |           yes           |
 | ‑version            |                         | prints the version information and exits                                                                    |           no            |
 
