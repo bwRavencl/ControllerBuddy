@@ -76,6 +76,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 	public void close() {
 		if (clientSocket != null) {
 			clientSocket.close();
+			forceStop = true;
 		}
 	}
 
@@ -339,13 +340,23 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
-			log.log(Level.FINE, e.getMessage(), e);
+			if (forceStop) {
+				return;
+			}
+
+			forceStop = true;
+
+			log.log(Level.INFO, e.getMessage(), e);
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+					MessageFormat.format(Main.strings.getString("SOCKET_ERROR_DIALOG_TEXT"), host),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final IOException e) {
 			handleIOException(e);
 		} finally {
 			if (clientSocket != null) {
 				clientSocket.close();
 			}
+
 			deInit();
 		}
 
