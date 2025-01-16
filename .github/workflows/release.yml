@@ -36,7 +36,7 @@ jobs:
         id: extract_release_variables
         shell: bash
         run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0 | xargs -0 -I filename basename -s .zip filename | sed s/-windows-x86-64//)" >> $GITHUB_OUTPUT
+          echo "tag_name=$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0 | xargs -0 -I filename basename -s .zip filename | sed 's/^ControllerBuddy-//;s/windows-x86-64-//')" >> $GITHUB_OUTPUT
           echo "archive_path=$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
       - name: Tag Commit
         uses: tvdias/github-tagger@v0.0.2
@@ -59,6 +59,7 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v2
         with:
+          name: ControllerBuddy-${{ steps.extract_release_variables.outputs.tag_name }}
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
@@ -92,7 +93,7 @@ jobs:
       - name: Extract Release Variables
         id: extract_release_variables
         run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed s/-linux-x86-64//)" >> $GITHUB_OUTPUT
+          echo "tag_name=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed 's/^ControllerBuddy-//;s/linux-x86-64-//')" >> $GITHUB_OUTPUT
           echo "archive_path=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
@@ -109,6 +110,7 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v2
         with:
+          name: ControllerBuddy-${{ steps.extract_release_variables.outputs.tag_name }}
           tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
