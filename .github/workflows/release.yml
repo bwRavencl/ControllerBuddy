@@ -8,9 +8,46 @@ env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  release:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [windows-latest, ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup Platform Variables
+        id: platform_variables
+        shell: bash
+        run: |
+          case ${{ matrix.os }} in
+            windows-latest)
+                echo jdk_os=windows >> $GITHUB_OUTPUT
+                echo jdk_arch=x64 >> $GITHUB_OUTPUT
+                echo jdk_archive_type=zip >> $GITHUB_OUTPUT
+                echo dist_os=windows >> $GITHUB_OUTPUT
+                echo dist_arch=x86-64 >> $GITHUB_OUTPUT
+                echo dist_archive_extension=zip >> $GITHUB_OUTPUT
+                ;;
+            ubuntu-latest)
+                echo jdk_os=linux-glibc >> $GITHUB_OUTPUT
+                echo jdk_arch=x64 >> $GITHUB_OUTPUT
+                echo jdk_archive_type=tar.gz >> $GITHUB_OUTPUT
+                echo dist_os=linux >> $GITHUB_OUTPUT
+                echo dist_arch=x86-64 >> $GITHUB_OUTPUT
+                echo dist_archive_extension=tgz >> $GITHUB_OUTPUT
+                ;;
+            ubuntu-24.04-arm)
+                echo jdk_os=linux-glibc >> $GITHUB_OUTPUT
+                echo jdk_arch=aarch64 >> $GITHUB_OUTPUT
+                echo jdk_archive_type=tar.gz >> $GITHUB_OUTPUT
+                echo dist_os=linux >> $GITHUB_OUTPUT
+                echo dist_arch=aarch64 >> $GITHUB_OUTPUT
+                echo dist_archive_extension=tgz >> $GITHUB_OUTPUT
+                ;;
+            *)
+                exit 1
+                ;;
+          esac
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -22,7 +59,7 @@ jobs:
         shell: bash
         run: |
           cd $RUNNER_TEMP
-          jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET 'https://api.azul.com/metadata/v1/zulu/packages/?os=windows&arch=x64&archive_type=zip&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck' --data-urlencode "java_version=$JAVA_VERSION" -H  'accept: application/json' | jq -r '.[0].download_url')")
+          jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" --data-urlencode "java_version=$JAVA_VERSION" -H  'accept: application/json' | jq -r '.[0].download_url')")
           echo "jdk_archive_filename=$jdk_archive_filename" >> $GITHUB_OUTPUT
       - name: Install JDK
         uses: actions/setup-java@v4
@@ -30,19 +67,29 @@ jobs:
           distribution: jdkfile
           jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Build
+      - name: Build ZIP
+        if: runner.os == 'Windows'
         run: ./gradlew distZip --info
+      - name: Build TGZ
+        if: runner.os == 'Linux'
+        run: ./gradlew distTar --info
       - name: Extract Release Variables
-        id: extract_release_variables
+        id: release_variables
         shell: bash
         run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0 | xargs -0 -I filename basename -s .zip filename | sed 's/^ControllerBuddy-//;s/windows-x86-64-//')" >> $GITHUB_OUTPUT
-          echo "archive_path=$(find build/distributions/ControllerBuddy-*.zip -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
+          echo "tag_name=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0 | xargs -0 -I filename basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} filename | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> $GITHUB_OUTPUT
+          echo "archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
+      - name: Check Tag
+        uses: action-pack/tag-exists@v1
+        id: check_tag
+        with:
+          tag: ${{ steps.release_variables.outputs.tag_name }}
       - name: Tag Commit
+        if: steps.check_tag.outputs.exists == 'false'
         uses: tvdias/github-tagger@v0.0.2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.extract_release_variables.outputs.tag_name }}
+          tag: ${{ steps.release_variables.outputs.tag_name }}
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
@@ -52,69 +99,17 @@ jobs:
         id: sign_archive
         shell: bash
         run: |
-          signature_path="${{ steps.extract_release_variables.outputs.archive_path }}.sig"
-          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.extract_release_variables.outputs.archive_path }}
+          signature_path="${{ steps.release_variables.outputs.archive_path }}.sig"
+          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release_variables.outputs.archive_path }}
           echo "signature_path=$signature_path" >> $GITHUB_OUTPUT
       - name: Release
         id: release
         uses: softprops/action-gh-release@v2
         with:
-          name: ControllerBuddy-${{ steps.extract_release_variables.outputs.tag_name }}
-          tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
+          name: ControllerBuddy-${{ steps.release_variables.outputs.tag_name }}
+          tag_name: ${{ steps.release_variables.outputs.tag_name }}
           draft: false
           prerelease: false
           files: |
-            ${{ steps.extract_release_variables.outputs.archive_path }}
-            ${{ steps.sign_archive.outputs.signature_path }}
-  linux:
-    needs: windows
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: true
-      - name: Download Zulu (without CRaC)
-        id: download_zulu
-        run: |
-          cd $RUNNER_TEMP
-          jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET 'https://api.azul.com/metadata/v1/zulu/packages/?os=linux&arch=x64&archive_type=tar.gz&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck' --data-urlencode "java_version=$JAVA_VERSION" -H  'accept: application/json' | jq -r '.[0].download_url')")
-          echo "jdk_archive_filename=$jdk_archive_filename" >> $GITHUB_OUTPUT
-      - name: Install JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: jdkfile
-          jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
-          java-version: ${{ env.JAVA_VERSION }}
-      - name: Build
-        run: ./gradlew distTar --info
-      - name: Extract Release Variables
-        id: extract_release_variables
-        run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0 | xargs -0 -I filename basename -s .tgz filename | sed 's/^ControllerBuddy-//;s/linux-x86-64-//')" >> $GITHUB_OUTPUT
-          echo "archive_path=$(find build/distributions/ControllerBuddy-*.tgz -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
-      - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-      - name: Sign Archive
-        id: sign_archive
-        run: |
-          signature_path="${{ steps.extract_release_variables.outputs.archive_path }}.sig"
-          gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.extract_release_variables.outputs.archive_path }}
-          echo "signature_path=$signature_path" >> $GITHUB_OUTPUT
-      - name: Release
-        id: release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: ControllerBuddy-${{ steps.extract_release_variables.outputs.tag_name }}
-          tag_name: ${{ steps.extract_release_variables.outputs.tag_name }}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          files: |
-            ${{ steps.extract_release_variables.outputs.archive_path }}
+            ${{ steps.release_variables.outputs.archive_path }}
             ${{ steps.sign_archive.outputs.signature_path }}

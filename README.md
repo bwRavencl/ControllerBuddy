@@ -28,7 +28,7 @@ it automates all the steps below and much more!
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
-### Linux x86-64
+### Linux x86-64 / aarch64
 
 1. First, make sure you have libsdl2 installed on your system:
     - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
