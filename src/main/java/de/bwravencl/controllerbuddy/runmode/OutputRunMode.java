@@ -583,8 +583,8 @@ public abstract class OutputRunMode extends RunMode {
 									screenSaverType.objectpath, screenSaverType.clazz);
 							screenSaverCookie = screenSaver.Inhibit(Constants.APPLICATION_NAME, "Feeder running");
 							break;
-						} catch (final DBusException | DBusExecutionException _) {
-							// ignore errors caused by D-Bus
+						} catch (final DBusException | DBusExecutionException e) {
+							log.log(Level.WARNING, e.getMessage(), e);
 						}
 					}
 				}
