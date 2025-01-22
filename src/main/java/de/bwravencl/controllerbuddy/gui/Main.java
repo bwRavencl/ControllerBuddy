@@ -406,7 +406,7 @@ public final class Main {
 	private final JPanel sonyCursorSensitivityPanel;
 	private final JPanel sonyScrollSensitivityPanel;
 	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
-	private final JFileChooser profileFileChooser = new ProfileFileChooser();
+	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
 	private final OnScreenKeyboard onScreenKeyboard;
 	private final JScrollPane modesScrollPane;
@@ -2274,7 +2274,7 @@ public final class Main {
 			}
 
 			if (!profileLoaded) {
-				log.log(Level.SEVERE, "Could load profile");
+				log.log(Level.SEVERE, "Could not load profile");
 
 				if (!skipMessageDialogs) {
 					GuiUtils.showMessageDialog(main, frame,
@@ -2319,6 +2319,7 @@ public final class Main {
 	private void newProfile(final boolean performGarbageCollection) {
 		stopAll(true, false, performGarbageCollection);
 
+		profileFileChooser.resetSelectedFile();
 		currentFile = null;
 
 		if (input != null) {
@@ -2335,7 +2336,6 @@ public final class Main {
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
 		setStatusBarText(strings.getString("STATUS_READY"));
-		profileFileChooser.setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 	}
 
 	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
@@ -2629,6 +2629,7 @@ public final class Main {
 	private void saveProfile(File file, final boolean saveAsLastProfile) {
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX)) {
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
+			profileFileChooser.setSelectedFile(file);
 		}
 
 		log.log(Level.INFO, "Saving profile: " + file.getAbsolutePath());
@@ -2656,7 +2657,9 @@ public final class Main {
 	}
 
 	private void saveProfileAs() {
-		profileFileChooser.setSelectedFile(currentFile != null ? currentFile : new File("*." + PROFILE_FILE_EXTENSION));
+		profileFileChooser.setSelectedFile(
+				currentFile != null ? currentFile : new File(strings.getString("UNTITLED") + PROFILE_FILE_SUFFIX));
+
 		if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			saveProfile(profileFileChooser.getSelectedFile(), true);
 		}
@@ -3693,7 +3696,7 @@ public final class Main {
 				filename = profileFile.getName();
 				filename = filename.substring(0, filename.lastIndexOf('.'));
 			} else {
-				filename = "*";
+				filename = strings.getString("UNTITLED");
 			}
 
 			setSelectedFile(new File(filename + ".html"));
@@ -3812,20 +3815,6 @@ public final class Main {
 			if ((getLength() + str.length()) <= limit) {
 				super.insertString(offs, str, a);
 			}
-		}
-	}
-
-	private static final class ProfileFileChooser extends AbstractProfileFileChooser {
-
-		@Serial
-		private static final long serialVersionUID = -4669170626378955605L;
-
-		private ProfileFileChooser() {
-			super(new FileNameExtensionFilter(
-					MessageFormat.format(strings.getString("PROFILE_FILE_DESCRIPTION"), Constants.APPLICATION_NAME),
-					PROFILE_FILE_EXTENSION));
-
-			setSelectedFile(new File(PROFILE_FILE_SUFFIX));
 		}
 	}
 
@@ -4303,6 +4292,43 @@ public final class Main {
 					loadProfile(profileFileChooser.getSelectedFile(), false, true);
 				}
 			});
+		}
+	}
+
+	private final class ProfileFileChooser extends AbstractProfileFileChooser {
+
+		@Serial
+		private static final long serialVersionUID = -4669170626378955605L;
+
+		private ProfileFileChooser() {
+			super(new FileNameExtensionFilter(
+					MessageFormat.format(strings.getString("PROFILE_FILE_DESCRIPTION"), Constants.APPLICATION_NAME),
+					PROFILE_FILE_EXTENSION));
+
+			resetSelectedFile();
+		}
+
+		private void resetSelectedFile() {
+			String profileDirectoryPath = null;
+
+			if (currentFile != null && currentFile.getParentFile().isDirectory()) {
+				profileDirectoryPath = currentFile.getAbsolutePath();
+			} else {
+				final var controllerBuddyProfilesDir = System.getenv("CONTROLLER_BUDDY_PROFILES_DIR");
+
+				if (controllerBuddyProfilesDir != null && !controllerBuddyProfilesDir.isBlank()) {
+					final var file = new File(controllerBuddyProfilesDir);
+					if (file.isDirectory()) {
+						profileDirectoryPath = file.getAbsolutePath();
+					}
+				}
+			}
+
+			if (profileDirectoryPath != null && !profileDirectoryPath.endsWith(File.separator)) {
+				profileDirectoryPath += File.separator;
+			}
+
+			setSelectedFile(new File(profileDirectoryPath + "*" + PROFILE_FILE_SUFFIX));
 		}
 	}
 
