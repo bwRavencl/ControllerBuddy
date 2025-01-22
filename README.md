@@ -35,16 +35,16 @@ it automates all the steps below and much more!
     - Red-Hat-based: `sudo yum install SDL2`
     - Arch Linux: `sudo pacman -S sdl2`
     - SUSE Linux: `sudo zypper install SDL2`
-2. Configure uinput and hidraw:
-    1. Create an uinput group: `sudo groupadd -f uinput`
-    2. Add yourself to the group: `sudo gpasswd -a "$USER" uinput`
-    3. As root, create a file `/etc/udev/rules.d/99-input.rules` with the following content:
+2. Configure udev and uinput:
+    1. Create a controllerbuddy group: `sudo groupadd -f controllerbuddy`
+    2. Add yourself to the group: `sudo gpasswd -a "$USER" controllerbuddy`
+    3. As root, create a file `/etc/udev/rules.d/99-controllerbuddy.rules` with the following content:
        ```
-       KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="uinput"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="05c4", MODE="0666"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="09cc", MODE="0666"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ba0", MODE="0666"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0666"
+       KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy"
+       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="05c4", MODE="0660", GROUP="controllerbuddy"
+       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="09cc", MODE="0660", GROUP="controllerbuddy"
+       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ba0", MODE="0660", GROUP="controllerbuddy"
+       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0660", GROUP="controllerbuddy"
        ```
     4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
        `uinput`
