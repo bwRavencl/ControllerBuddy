@@ -11,7 +11,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [windows-latest, ubuntu-latest, ubuntu-24.04-arm]
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup Platform Variables
