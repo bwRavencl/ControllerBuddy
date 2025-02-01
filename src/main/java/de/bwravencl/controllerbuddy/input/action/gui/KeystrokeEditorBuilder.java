@@ -25,7 +25,10 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -37,10 +40,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -52,11 +58,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.border.MatteBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -113,9 +121,14 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private CheckboxJList<String> buildCheckboxList(final String labelKey, final KeyStroke keyStroke,
 			final JPanel keystrokePanel, final String constraints, final Consumer<ScanCode[]> scanCodeConsumer) {
-		final var checkboxList = new CheckboxJList<>(ScanCode.nameToScanCodeMap.keySet().toArray(String[]::new));
+		final var listData = ScanCode.nameToScanCodeMap.keySet().toArray(String[]::new);
+
+		final var checkboxList = new CheckboxJList<>(listData);
 		checkboxList.addListSelectionListener(
 				new JListSetPropertyListSelectionListener(setterMethod, keyStroke, scanCodeConsumer));
+
+		final var checkboxListCellRenderer = new CheckboxListCellRenderer<>(checkboxList);
+		checkboxList.setCellRenderer(checkboxListCellRenderer);
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
 
@@ -126,21 +139,41 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var label = new JLabel(Main.strings.getString(labelKey));
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 		listPanel.add(label);
 
 		listPanel.add(Box.createVerticalStrut(5));
 
-		final var deselectAllPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+		final var utilityPanel = new JPanel();
+		final var boxLayout = new BoxLayout(utilityPanel, BoxLayout.X_AXIS);
+		utilityPanel.setLayout(boxLayout);
+		utilityPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
+
 		final var deselectAllButton = new JButton(new DeselectAllAction(checkboxList.getSelectionModel()));
-		deselectAllButton.setFont(deselectAllButton.getFont().deriveFont(11f));
-		deselectAllButton.setPreferredSize(new Dimension(15, 15));
-		deselectAllPanel.add(deselectAllButton);
-		listPanel.add(deselectAllPanel);
+		deselectAllButton.setFont(deselectAllButton.getFont().deriveFont(9f));
+		final var deselectButtonSize = new Dimension(14, 14);
+		deselectAllButton.setPreferredSize(deselectButtonSize);
+		deselectAllButton.setMaximumSize(deselectButtonSize);
+		utilityPanel.add(deselectAllButton);
+
+		utilityPanel.add(Box.createHorizontalStrut(6));
+
+		final var filterTextField = new FilterTextField(checkboxListCellRenderer);
+		utilityPanel.add(filterTextField);
+
+		final var clearFilterButton = new JButton();
+		final var clearFilterAction = new ClearFilterAction(clearFilterButton, filterTextField);
+		clearFilterButton.setAction(clearFilterAction);
+		clearFilterButton.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(1, 0, 1, 1, borderColor), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+		utilityPanel.add(clearFilterButton);
+
+		listPanel.add(utilityPanel);
 
 		listPanel.add(Box.createVerticalStrut(5));
 
 		final var scrollPane = GuiUtils.wrapComponentInScrollPane(checkboxList, KEY_LIST_SCROLL_PANE_DIMENSION);
-		scrollPane.setBorder(new MatteBorder(1, 0, 0, 0, borderColor));
+		scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, borderColor));
 		listPanel.add(scrollPane);
 
 		keystrokePanel.add(listPanel, constraints);
@@ -220,8 +253,6 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		private CheckboxJList(final E[] listData) {
 			super(listData);
 
-			setCellRenderer(new CheckboxListCellRenderer<>());
-
 			for (final var mouseMotionListener : getMouseMotionListeners()) {
 				if (mouseMotionListener instanceof ListSelectionListener) {
 					removeMouseMotionListener(mouseMotionListener);
@@ -247,28 +278,114 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				}
 			});
 		}
+	}
 
-		private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
+	private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
 
-			@Serial
-			private static final long serialVersionUID = -7958791166718006570L;
+		@Serial
+		private static final long serialVersionUID = -7958791166718006570L;
 
-			@Override
-			public Component getListCellRendererComponent(final JList<? extends E> list, final E value, final int index,
-					final boolean isSelected, final boolean cellHasFocus) {
-				setComponentOrientation(list.getComponentOrientation());
+		private static final Pattern wildcardFilterPattern = Pattern.compile("^\\*(.+)");
 
-				setFont(list.getFont());
-				setText(String.valueOf(value));
+		private final JList<? extends E> list;
+		private String filter;
 
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
+		private CheckboxListCellRenderer(final JList<? extends E> list) {
+			this.list = list;
+		}
 
-				setSelected(isSelected);
-				setEnabled(list.isEnabled());
+		@Override
+		public Component getListCellRendererComponent(final JList<? extends E> list, final E value, final int index,
+				final boolean isSelected, final boolean cellHasFocus) {
+			if (filter != null && !filter.isEmpty()) {
+				final var valueString = value.toString().toLowerCase(Locale.ROOT);
 
-				return this;
+				var match = false;
+
+				final var wildcardMatcher = wildcardFilterPattern.matcher(filter);
+				if (wildcardMatcher.matches()) {
+					match = valueString.contains(wildcardMatcher.group(1));
+				} else {
+					match = valueString.startsWith(filter);
+				}
+
+				if (!match) {
+					return Box.createVerticalGlue();
+				}
 			}
+
+			setComponentOrientation(list.getComponentOrientation());
+
+			setFont(list.getFont());
+			setText(String.valueOf(value));
+
+			setBackground(list.getBackground());
+			setForeground(list.getForeground());
+
+			setSelected(isSelected);
+			setEnabled(list.isEnabled());
+
+			return this;
+		}
+
+		public void setFilter(String text) {
+			if (text != null) {
+				text = text.toLowerCase(Locale.ROOT);
+			}
+
+			if (Objects.equals(filter, text)) {
+				return;
+			}
+
+			filter = text;
+			list.firePropertyChange("fixedCellHeight", 0, -1);
+		}
+	}
+
+	private static final class ClearFilterAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -1551195858919523623L;
+
+		private final JButton clearFilterButton;
+		private final FilterTextField filterTextField;
+
+		private ClearFilterAction(final JButton clearFilterButton, final FilterTextField filterTextField) {
+			this.clearFilterButton = clearFilterButton;
+			this.filterTextField = filterTextField;
+
+			putValue(NAME, "⨯");
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("CLEAR_FILTER_ACTION_DESCRIPTION"));
+
+			filterTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+				@Override
+				public void changedUpdate(final DocumentEvent e) {
+					updateState();
+				}
+
+				@Override
+				public void insertUpdate(final DocumentEvent e) {
+					updateState();
+				}
+
+				@Override
+				public void removeUpdate(final DocumentEvent e) {
+					updateState();
+				}
+			});
+
+			updateState();
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			filterTextField.setText(null);
+			filterTextField.grabFocus();
+		}
+
+		private void updateState() {
+			clearFilterButton.setVisible(filterTextField.isFilterActive());
 		}
 	}
 
@@ -307,6 +424,59 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(DeselectAllAction.class.getName());
+		}
+	}
+
+	private static class FilterTextField extends JTextField {
+
+		@Serial
+		private static final long serialVersionUID = -7998118986240546988L;
+
+		private FilterTextField(final CheckboxListCellRenderer<?> checkboxListCellRenderer) {
+			super(1);
+
+			getDocument().addDocumentListener(new DocumentListener() {
+
+				@Override
+				public void changedUpdate(final DocumentEvent e) {
+					filter();
+				}
+
+				private void filter() {
+					checkboxListCellRenderer.setFilter(getText());
+				}
+
+				@Override
+				public void insertUpdate(final DocumentEvent e) {
+					filter();
+				}
+
+				@Override
+				public void removeUpdate(final DocumentEvent e) {
+					filter();
+				}
+			});
+		}
+
+		private boolean isFilterActive() {
+			final var text = getText();
+
+			return text != null && !text.isEmpty();
+		}
+
+		@Override
+		protected void paintComponent(final Graphics g) {
+			super.paintComponent(g);
+
+			if (isFilterActive()) {
+				return;
+			}
+
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setColor(getDisabledTextColor());
+			g.setFont(g.getFont().deriveFont(Font.ITALIC));
+			g.drawString(Main.strings.getString("FILTER_PLACEHOLDER"), getInsets().left,
+					g.getFontMetrics().getMaxAscent() + getInsets().top);
 		}
 	}
 
