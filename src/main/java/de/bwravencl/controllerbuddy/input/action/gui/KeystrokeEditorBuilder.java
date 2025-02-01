@@ -25,6 +25,11 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,18 +38,25 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -99,40 +111,52 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		return -1;
 	}
 
+	private CheckboxJList<String> buildCheckboxList(final String labelKey, final KeyStroke keyStroke,
+			final JPanel keystrokePanel, final String constraints, final Consumer<ScanCode[]> scanCodeConsumer) {
+		final var checkboxList = new CheckboxJList<>(ScanCode.nameToScanCodeMap.keySet().toArray(String[]::new));
+		checkboxList.addListSelectionListener(
+				new JListSetPropertyListSelectionListener(setterMethod, keyStroke, scanCodeConsumer));
+
+		final var borderColor = UIManager.getColor("Component.borderColor");
+
+		final var listPanel = new JPanel();
+		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(borderColor),
+				BorderFactory.createEmptyBorder(2, 0, 0, 0)));
+
+		final var label = new JLabel(Main.strings.getString(labelKey));
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		listPanel.add(label);
+
+		listPanel.add(Box.createVerticalStrut(5));
+
+		final var deselectAllPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+		final var deselectAllButton = new JButton(new DeselectAllAction(checkboxList.getSelectionModel()));
+		deselectAllButton.setFont(deselectAllButton.getFont().deriveFont(11f));
+		deselectAllButton.setPreferredSize(new Dimension(15, 15));
+		deselectAllPanel.add(deselectAllButton);
+		listPanel.add(deselectAllPanel);
+
+		listPanel.add(Box.createVerticalStrut(5));
+
+		final var scrollPane = GuiUtils.wrapComponentInScrollPane(checkboxList, KEY_LIST_SCROLL_PANE_DIMENSION);
+		scrollPane.setBorder(new MatteBorder(1, 0, 0, 0, borderColor));
+		listPanel.add(scrollPane);
+
+		keystrokePanel.add(listPanel, constraints);
+
+		return checkboxList;
+	}
+
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
 		parentPanel.add(keystrokePanel);
 
 		final var keyStroke = (KeyStroke) initialValue;
-
-		final var availableScanCodes = ScanCode.nameToScanCodeMap.keySet();
-
-		final var modifiersPanel = new JPanel();
-		modifiersPanel.setLayout(new BoxLayout(modifiersPanel, BoxLayout.Y_AXIS));
-		final var modifiersLabel = new JLabel(Main.strings.getString("MODIFIERS_LABEL"));
-		modifiersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		modifiersPanel.add(modifiersLabel);
-		modifiersPanel.add(Box.createVerticalStrut(5));
-		modifierList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
-		modifierList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, true));
-
-		modifiersPanel.add(GuiUtils.wrapComponentInScrollPane(modifierList, KEY_LIST_SCROLL_PANE_DIMENSION));
-
-		keystrokePanel.add(modifiersPanel, BorderLayout.WEST);
-
-		final var keysPanel = new JPanel();
-		keysPanel.setLayout(new BoxLayout(keysPanel, BoxLayout.Y_AXIS));
-		final var keysLabel = new JLabel(Main.strings.getString("KEYS_LABEL"));
-		keysLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		keysPanel.add(keysLabel);
-		keysPanel.add(Box.createVerticalStrut(5));
-		keyList = new CheckboxJList<>(availableScanCodes.toArray(String[]::new));
-		keyList.addListSelectionListener(new JListSetPropertyListSelectionListener(setterMethod, keyStroke, false));
-
-		keysPanel.add(GuiUtils.wrapComponentInScrollPane(keyList, KEY_LIST_SCROLL_PANE_DIMENSION));
-
-		keystrokePanel.add(keysPanel, BorderLayout.EAST);
+		modifierList = buildCheckboxList("MODIFIERS_LABEL", keyStroke, keystrokePanel, BorderLayout.WEST,
+				keyStroke::setModifierCodes);
+		keyList = buildCheckboxList("KEYS_LABEL", keyStroke, keystrokePanel, BorderLayout.EAST, keyStroke::setKeyCodes);
 
 		plusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		plusLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -248,17 +272,55 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		}
 	}
 
+	private static final class DeselectAllAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -5034928593330512532L;
+
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		private final ListSelectionModel listSelectionModel;
+
+		private DeselectAllAction(final ListSelectionModel listSelectionModel) {
+			this.listSelectionModel = listSelectionModel;
+
+			putValue(NAME, "⛶");
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("DESELECT_ALL_ACTION_DESCRIPTION"));
+
+			listSelectionModel.addListSelectionListener((_) -> updateState());
+			updateState();
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			listSelectionModel.clearSelection();
+		}
+
+		@Serial
+		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(DeselectAllAction.class.getName());
+		}
+
+		private void updateState() {
+			setEnabled(!listSelectionModel.isSelectionEmpty());
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(DeselectAllAction.class.getName());
+		}
+	}
+
 	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
 		private final Method setterMethod;
 		private final KeyStroke keyStroke;
-		private final boolean modifiers;
+		private final Consumer<ScanCode[]> scanCodeConsumer;
 
 		private JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
-				final boolean modifiers) {
+				final Consumer<ScanCode[]> scanCodeConsumer) {
 			this.setterMethod = setterMethod;
 			this.keyStroke = keyStroke;
-			this.modifiers = modifiers;
+			this.scanCodeConsumer = scanCodeConsumer;
 		}
 
 		@Override
@@ -270,13 +332,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				((JList<?>) e.getSource()).getSelectedValuesList()
 						.forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
 
-				final var scanCodesArray = scanCodes.toArray(ScanCode[]::new);
-
-				if (modifiers) {
-					keyStroke.setModifierCodes(scanCodesArray);
-				} else {
-					keyStroke.setKeyCodes(scanCodesArray);
-				}
+				scanCodeConsumer.accept(scanCodes.toArray(ScanCode[]::new));
 
 				setterMethod.invoke(action, keyStroke);
 
