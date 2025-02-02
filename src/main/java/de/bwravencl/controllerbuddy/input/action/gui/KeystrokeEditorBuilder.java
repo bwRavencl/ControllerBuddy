@@ -210,6 +210,11 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				list.addSelectionInterval(index, index);
 			}
 		});
+
+		final var minSelectionIndex = list.getMinSelectionIndex();
+		if (minSelectionIndex >= 0) {
+			list.ensureIndexIsVisible(minSelectionIndex);
+		}
 	}
 
 	private void updateUpdateKeyStrokeVisualization() {
