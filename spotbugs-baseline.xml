@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<BugCollection version="4.8.6" sequence="0" timestamp="1737936336422" analysisTimestamp="1737936336422" release="">
+<BugCollection version="4.8.6" sequence="0" timestamp="1738454562886" analysisTimestamp="1738454562886" release="">
   <Project projectName="ControllerBuddy (spotbugsMain)">
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\constants\Constants.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\gui\AssignmentsComponent$1.class</Jar>
@@ -134,8 +134,13 @@
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ExponentEditorBuilder$PowerFunctionPlotter.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\ExponentEditorBuilder.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList$1.class</Jar>
-    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList$CheckboxListCellRenderer.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxJList.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$CheckboxListCellRenderer.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$ClearFilterAction$1.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$ClearFilterAction.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$DeselectAllAction.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$FilterTextField$1.class</Jar>
+    <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$FilterTextField.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder$JListSetPropertyListSelectionListener.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.class</Jar>
     <Jar>C:\Users\matteo\Projekte\ControllerBuddy\ControllerBuddy\build\classes\java\main\de\bwravencl\controllerbuddy\input\action\gui\LockKeyEditorBuilder.class</Jar>
@@ -243,7 +248,7 @@
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.github.hypfvieh\dbus-java-core\5.1.0\8ad3e27128cf0144127202a07106277eeca42664\dbus-java-core-5.1.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\8.12.1\transforms\6352222b63b46a0c40cf4131cb03359b\transformed\hid4java-0.8.0-module.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\8.12.1\transforms\5cc785c9de95b5f5425148bb5c1fcb84\transformed\JXInput-1.0.1-module.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.11.0\527175ca6d81050b53bdd4c457a6d6e017626b0e\gson-2.11.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.12.1\4e773a317740b83b43cfc3d652962856041697cb\gson-2.12.1.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\io.github.classgraph\classgraph\4.8.179\f159dd8bbbf381c4006c1f675ec4e648c8317f32\classgraph-4.8.179.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-platform-jpms\5.16.0\af1425dfa5e0d28f0f620d6989d0984dc4fa008b\jna-platform-jpms-5.16.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\net.java.dev.jna\jna-jpms\5.16.0\d55b54177da272efbe5707e9b4399ce74baa745\jna-jpms-5.16.0.jar</AuxClasspathEntry>
@@ -258,7 +263,7 @@
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.3.6\9a29b6a22fc5184604b8cb434ee5d5ecc4bfcbee\lwjgl-3.3.6-natives-windows.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-jdk14\2.0.16\d88389c7a3c0afdb7c3d299c60f4e6afacaf5362\slf4j-jdk14-2.0.16.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\uk.co.bithatch\linuxio4j\2.1\f7d312bfd93646a3e9a9ad66319d94a5ae9ef10e\linuxio4j-2.1.jar</AuxClasspathEntry>
-    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.errorprone\error_prone_annotations\2.27.0\91b2c29d8a6148b5e2e4930f070d4840e2e48e34\error_prone_annotations-2.27.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\com.google.errorprone\error_prone_annotations\2.36.0\227d4d4957ccc3dc5761bd897e3a0ee587e750a7\error_prone_annotations-2.36.0.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-bridge\1.18\ad14bf6d21013c8b165581511c8b2fbaaff32c1a\batik-bridge-1.18.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-script\1.18\34479b161e0bce23d5e44403c5bda738c08ebf80\batik-script-1.18.jar</AuxClasspathEntry>
     <AuxClasspathEntry>C:\Users\matteo\.gradle\caches\modules-2\files-2.1\org.apache.xmlgraphics\batik-anim\1.18\fb3be1a0c47bfb4c7a03e24527349b42af0f3067\batik-anim-1.18.jar</AuxClasspathEntry>
@@ -1583,6 +1588,26 @@
     </String>
     <SourceLine classname="de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder$PropertySetterAction" primary="true" start="94" end="94" startBytecode="6" endBytecode="6" sourcefile="EditorBuilder.java" sourcepath="de/bwravencl/controllerbuddy/input/action/gui/EditorBuilder.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\EditorBuilder.java">
       <Message>At EditorBuilder.java:[line 94]</Message>
+    </SourceLine>
+  </BugInstance>
+  <BugInstance type="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="MC" category="MALICIOUS_CODE" instanceHash="b3a3d665d07e975285e3f00c85a89868" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <ShortMessage>An overridable method is called from a constructor</ShortMessage>
+    <LongMessage>Overridable method getDocument is called from constructor new de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField(KeystrokeEditorBuilder$CheckboxListCellRenderer).</LongMessage>
+    <Class classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField" start="441" end="485" sourcefile="KeystrokeEditorBuilder.java" sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java">
+        <Message>At KeystrokeEditorBuilder.java:[lines 441-485]</Message>
+      </SourceLine>
+      <Message>In class de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField</Message>
+    </Class>
+    <Method classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField" name="&lt;init&gt;" signature="(Lde/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder$CheckboxListCellRenderer;)V" isStatic="false" primary="true">
+      <SourceLine classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField" start="441" end="464" startBytecode="0" endBytecode="101" sourcefile="KeystrokeEditorBuilder.java" sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java"/>
+      <Message>In method new de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField(KeystrokeEditorBuilder$CheckboxListCellRenderer)</Message>
+    </Method>
+    <String value="getDocument">
+      <Message>Value getDocument</Message>
+    </String>
+    <SourceLine classname="de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder$FilterTextField" primary="true" start="443" end="443" startBytecode="6" endBytecode="6" sourcefile="KeystrokeEditorBuilder.java" sourcepath="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java" relSourcepath="java\de\bwravencl\controllerbuddy\input\action\gui\KeystrokeEditorBuilder.java">
+      <Message>At KeystrokeEditorBuilder.java:[line 443]</Message>
     </SourceLine>
   </BugInstance>
   <BugInstance type="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" priority="3" rank="20" abbrev="UwF" category="STYLE" instanceHash="fd52c5d4a8567e4d1cc296163bb2eec" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
@@ -3481,7 +3506,7 @@ defined in an interface references a mutable
       <StackTrace>edu.umd.cs.findbugs.FindBugs2.main(FindBugs2.java:1221)</StackTrace>
     </Error>
   </Errors>
-  <FindBugsSummary timestamp="Mon, 27 Jan 2025 01:05:36 +0100" total_classes="0" referenced_classes="0" total_bugs="137" total_size="0" num_packages="7" java_version="23.0.2" vm_version="23.0.2+7" cpu_seconds="10.45" clock_seconds="12.16" peak_mbytes="636.65" alloc_mbytes="8180.00" gc_seconds="0.12" priority_3="40" priority_2="96" priority_1="1">
+  <FindBugsSummary timestamp="Sun, 2 Feb 2025 01:02:42 +0100" total_classes="0" referenced_classes="0" total_bugs="138" total_size="0" num_packages="7" java_version="23.0.2" vm_version="23.0.2+7" cpu_seconds="11.33" clock_seconds="12.65" peak_mbytes="694.35" alloc_mbytes="8180.00" gc_seconds="0.17" priority_3="41" priority_2="96" priority_1="1">
     <FileStats path="de/bwravencl/controllerbuddy/gui/AssignmentsComponent.java" bugCount="2" size="0" bugHash="4c058e48997dc4e8df8a2ac03b5e0b18"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/EditActionsDialog.java" bugCount="2" size="0" bugHash="413a6c130d0008520b04576823aaeb5b"/>
     <FileStats path="de/bwravencl/controllerbuddy/gui/Main.java" bugCount="9" size="0" bugHash="41c12e865f25014947d0cc80027cef26"/>
@@ -3498,6 +3523,7 @@ defined in an interface references a mutable
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/ActivationEditorBuilder.java" bugCount="1" size="0" bugHash="b3a3244d8848f136a82900e66a9daefb"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/ButtonEditorBuilder.java" bugCount="1" size="0" bugHash="da71d8837ded61e1afd71c197463972a"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/EditorBuilder.java" bugCount="2" size="0" bugHash="46770206c1e5f04a96f9f761b6addaf4"/>
+    <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/KeystrokeEditorBuilder.java" bugCount="1" size="0" bugHash="f3a779a61c7001203bb8a59408d12ca7"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/action/gui/LongPressEditorBuilder.java" bugCount="1" size="0" bugHash="1efc0fc4996d82a39e02719b69d3b2fa"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/driver/EvdevDriver.java" bugCount="46" size="0" bugHash="e977a7ca114c88a9113a68ce72ef75d3"/>
     <FileStats path="de/bwravencl/controllerbuddy/input/driver/XInputDriver.java" bugCount="1" size="0" bugHash="e5a9637cfa34dad69e39e0ead23b5faa"/>
