@@ -449,7 +449,7 @@ tasks.replace('distTar', Tar).configure {
 	from tmpDir
 	include "$project.name${os.macOsX ? '.app' : ''}/**"
 	archiveAppendix = distAppendix
-	compression Compression.GZIP
+	compression = Compression.GZIP
 }
 
 tasks.replace('distZip', Zip).configure {
