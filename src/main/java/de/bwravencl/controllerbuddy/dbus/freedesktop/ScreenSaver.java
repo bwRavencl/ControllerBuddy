@@ -1,4 +1,4 @@
-/* Copyright (C) 2024  Matteo Hausner
+/* Copyright (C) 2025  Matteo Hausner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.runmode.dbus;
+package de.bwravencl.controllerbuddy.dbus.freedesktop;
 
-import org.freedesktop.dbus.annotations.DBusInterfaceName;
+import org.freedesktop.dbus.interfaces.DBusInterface;
+import org.freedesktop.dbus.types.UInt32;
 
-@DBusInterfaceName("org.freedesktop.PowerManagement.Inhibit")
-public interface PowerManagement extends ScreenSaver {
+public interface ScreenSaver extends DBusInterface {
+
+	UInt32 Inhibit(String applicationName, String reasonForInhibit);
+
+	void UnInhibit(UInt32 cookie);
 }

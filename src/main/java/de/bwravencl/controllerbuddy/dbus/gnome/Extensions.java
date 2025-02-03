@@ -1,4 +1,4 @@
-/* Copyright (C) 2024  Matteo Hausner
+/* Copyright (C) 2025  Matteo Hausner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.runmode.dbus;
+package de.bwravencl.controllerbuddy.dbus.gnome;
 
+import java.util.Map;
+import org.freedesktop.dbus.annotations.DBusBoundProperty;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
+import org.freedesktop.dbus.annotations.DBusProperty.Access;
 import org.freedesktop.dbus.interfaces.DBusInterface;
-import org.freedesktop.dbus.types.UInt32;
+import org.freedesktop.dbus.types.Variant;
 
-@DBusInterfaceName("org.freedesktop.ScreenSaver")
-public interface ScreenSaver extends DBusInterface {
+@DBusInterfaceName("org.gnome.Shell.Extensions")
+public interface Extensions extends DBusInterface {
 
-	UInt32 Inhibit(String applicationName, String reason);
+	String BUSNAME = "org.gnome.Shell.Extensions";
+	String OBJECTPATH = "/org/gnome/Shell/Extensions";
 
-	void UnInhibit(UInt32 cookie);
+	Map<String, Map<String, Variant<?>>> ListExtensions();
+
+	@DBusBoundProperty(access = Access.READ, name = "ShellVersion")
+	String getShellVersion();
 }

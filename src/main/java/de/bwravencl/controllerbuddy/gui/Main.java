@@ -25,6 +25,7 @@ import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
 import de.bwravencl.controllerbuddy.constants.Constants;
+import de.bwravencl.controllerbuddy.dbus.gnome.Extensions;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -117,7 +118,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -131,7 +131,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -219,6 +218,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
@@ -345,9 +345,9 @@ public final class Main {
 	private static final String SINGLE_INSTANCE_INIT = "INIT";
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
-	private static final String[] GNOME_SYSTEM_TRAY_EXTENSIONS = { "appindicatorsupport@rgcjonas.gmail.com",
+	private static final Set<String> GNOME_SYSTEM_TRAY_EXTENSIONS = Set.of("appindicatorsupport@rgcjonas.gmail.com",
 			"ubuntu-appindicators@ubuntu.com", "topIcons@adel.gadllah@gmail.com", "topiconsfix@aleskva@devnullmail.com",
-			"TopIcons@phocean.net", "topicons-redux@pop-planet.info" };
+			"TopIcons@phocean.net", "topicons-redux@pop-planet.info");
 	static volatile Main main;
 	static boolean skipMessageDialogs;
 	private static volatile boolean terminated;
@@ -1167,18 +1167,6 @@ public final class Main {
 			log.log(Level.WARNING,
 					"Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 		}
-	}
-
-	private static String execCommandForOutput(final String[] cmdarray) {
-		String output = null;
-		try (final var inputStream = Runtime.getRuntime().exec(cmdarray).getInputStream();
-				final var scanner = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A")) {
-			output = scanner.hasNext() ? scanner.next() : null;
-		} catch (final IOException e) {
-			log.log(Level.WARNING, e.getMessage(), e);
-		}
-
-		return output;
 	}
 
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
@@ -2366,24 +2354,34 @@ public final class Main {
 		if (systemTraySupported && isLinux) {
 			switch (System.getenv("XDG_SESSION_DESKTOP")) {
 			case "gnome" -> {
-				final var gnomeExtensions = execCommandForOutput(
-						new String[] { "/usr/bin/gnome-extensions", "list", "--enabled" });
-				if (gnomeExtensions == null
-						|| Arrays.stream(GNOME_SYSTEM_TRAY_EXTENSIONS).noneMatch(gnomeExtensions::contains)) {
+				try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+					final var extensions = dBusConnection.getRemoteObject(Extensions.BUSNAME, Extensions.OBJECTPATH,
+							Extensions.class);
+					if (extensions.ListExtensions().entrySet().stream().noneMatch(e -> {
+						if (!GNOME_SYSTEM_TRAY_EXTENSIONS.contains(e.getKey())) {
+							return false;
+						}
+
+						return Boolean.TRUE.equals(e.getValue().get("enabled").getValue());
+					})) {
+						systemTraySupported = false;
+
+						final var gnomeShellVersion = extensions.getShellVersion();
+						if (gnomeShellVersion == null) {
+							break;
+						}
+
+						final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
+						if (matcher.matches()) {
+							final var majorVersion = Integer.parseInt(matcher.group(1));
+							final var minorVersion = Integer.parseInt(matcher.group(2));
+
+							systemTraySupported = majorVersion < 3 || (majorVersion == 3 && minorVersion < 26);
+						}
+					}
+				} catch (final Throwable t) {
+					log.log(Level.WARNING, t.getMessage(), t);
 					systemTraySupported = false;
-
-					final var gnomeVersion = execCommandForOutput(new String[] { "/usr/bin/gnome-shell", "--version" });
-					if (gnomeVersion == null) {
-						break;
-					}
-
-					final var matcher = Pattern.compile("^GNOME Shell (\\d+)\\.(\\d+).*").matcher(gnomeVersion);
-					if (matcher.matches()) {
-						final var majorVersion = Integer.parseInt(matcher.group(1));
-						final var minorVersion = Integer.parseInt(matcher.group(2));
-
-						systemTraySupported = majorVersion < 3 || (majorVersion == 3 && minorVersion < 26);
-					}
 				}
 			}
 			case "KDE" -> {

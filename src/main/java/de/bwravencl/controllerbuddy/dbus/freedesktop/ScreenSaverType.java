@@ -14,14 +14,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.bwravencl.controllerbuddy.runmode.dbus;
+package de.bwravencl.controllerbuddy.dbus.freedesktop;
 
 public enum ScreenSaverType {
 
-	ScreenSaver(de.bwravencl.controllerbuddy.runmode.dbus.ScreenSaver.class, "org.freedesktop.ScreenSaver",
+	ScreenSaver(de.bwravencl.controllerbuddy.dbus.freedesktop.ScreenSaver.class, "org.freedesktop.ScreenSaver",
 			"/ScreenSaver"),
-	PowerManagement(de.bwravencl.controllerbuddy.runmode.dbus.PowerManagement.class, "org.freedesktop.PowerManagement",
-			"/org/freedesktop/PowerManagement/Inhibit");
+	PowerManagement(Inhibit.class, "org.freedesktop.PowerManagement", "/org/freedesktop/PowerManagement/Inhibit");
 
 	public final Class<? extends ScreenSaver> clazz;
 
