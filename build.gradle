@@ -50,9 +50,9 @@ ext {
 
 	xmsJvmArg = '-Xms128m'
 
-	linuxAddOpensValue = "java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	linuxJvmArgs = [
-		"--add-opens=$linuxAddOpensValue"
+		"--add-opens=java.desktop/sun.awt=${project.application.mainModule.get()}",
+		"--add-opens=java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	]
 
 	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"

@@ -345,9 +345,6 @@ public final class Main {
 	private static final String SINGLE_INSTANCE_INIT = "INIT";
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
-	private static final Set<String> GNOME_SYSTEM_TRAY_EXTENSIONS = Set.of("appindicatorsupport@rgcjonas.gmail.com",
-			"ubuntu-appindicators@ubuntu.com", "topIcons@adel.gadllah@gmail.com", "topiconsfix@aleskva@devnullmail.com",
-			"TopIcons@phocean.net", "topicons-redux@pop-planet.info");
 	static volatile Main main;
 	static boolean skipMessageDialogs;
 	private static volatile boolean terminated;
@@ -981,14 +978,85 @@ public final class Main {
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
 		if (isLinux) {
-			X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
-				final var buffer = new byte[1024];
-				X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
+			final var toolkit = Toolkit.getDefaultToolkit();
+			if (isXToolkit(toolkit)) {
+				X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
+					final var buffer = new byte[1024];
+					X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
 
-				log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
+					log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
 
-				return 0;
-			});
+					return 0;
+				});
+
+				try {
+					Boolean shouldDisableSystemTray = null;
+
+					// noinspection Java9ReflectionClassVisibility
+					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
+					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
+					final var desktop = getDesktopMethod.invoke(toolkit);
+
+					if ("gnome".equals(desktop)) {
+						final var getGnomeShellMajorVersionMethod = unixToolkitClass
+								.getDeclaredMethod("getGnomeShellMajorVersion");
+						getGnomeShellMajorVersionMethod.setAccessible(true);
+						final var gnomeShellMajorVersion = getGnomeShellMajorVersionMethod.invoke(toolkit);
+						if (gnomeShellMajorVersion == null) {
+							shouldDisableSystemTray = false;
+						}
+
+						if (Boolean.FALSE.equals(shouldDisableSystemTray)) {
+							try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+								final var extensions = dBusConnection.getRemoteObject(Extensions.BUSNAME,
+										Extensions.OBJECTPATH, Extensions.class);
+
+								final var gnomeShellVersion = extensions.getShellVersion();
+								if (gnomeShellVersion != null) {
+									final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
+									if (matcher.matches()) {
+										final var majorVersion = Integer.parseInt(matcher.group(1));
+										final var minorVersion = Integer.parseInt(matcher.group(2));
+
+										if ((majorVersion == 3 && minorVersion > 25)
+												|| (majorVersion > 3 && majorVersion < 45)) {
+											shouldDisableSystemTray = true;
+										} else {
+											final var gnomeSystemTrayExtensions = Set.of(
+													"appindicatorsupport@rgcjonas.gmail.com",
+													"status-icons@gnome-shell-extensions.gcampax.github.com",
+													"ubuntu-appindicators@ubuntu.com",
+													"topIcons@adel.gadllah@gmail.com",
+													"topiconsfix@aleskva@devnullmail.com", "TopIcons@phocean.net",
+													"topicons-redux@pop-planet.info");
+
+											if (extensions.ListExtensions().entrySet().stream().noneMatch(
+													e -> gnomeSystemTrayExtensions.contains(e.getKey()) && Boolean.TRUE
+															.equals(e.getValue().get("enabled").getValue()))) {
+												shouldDisableSystemTray = true;
+											}
+										}
+									}
+								}
+							}
+						}
+					} else {
+						final var kdeSessionVersion = System.getenv("KDE_SESSION_VERSION");
+						if ("6".equals(kdeSessionVersion)) {
+							shouldDisableSystemTray = true;
+						}
+					}
+
+					if (shouldDisableSystemTray != null) {
+						final var shouldDisableSystemTrayField = unixToolkitClass
+								.getDeclaredField("shouldDisableSystemTray");
+						shouldDisableSystemTrayField.setAccessible(true);
+						shouldDisableSystemTrayField.set(null, shouldDisableSystemTray);
+					}
+				} catch (final Throwable t) {
+					log.log(Level.SEVERE, t.getMessage(), t);
+				}
+			}
 
 			GLFW.glfwInitHint(GLFW.GLFW_PLATFORM, GLFW.GLFW_PLATFORM_X11);
 		} else if (isMac) {
@@ -1249,6 +1317,10 @@ public final class Main {
 
 		final var length = password.length();
 		return !password.isBlank() && length >= 6 && length <= 24;
+	}
+
+	private static boolean isXToolkit(final Toolkit toolkit) {
+		return "sun.awt.X11.XToolkit".equals(toolkit.getClass().getName());
 	}
 
 	public static void main(final String[] args) {
@@ -2350,50 +2422,7 @@ public final class Main {
 			runPopupMenu.remove(startServerMenuItem);
 		}
 
-		var systemTraySupported = SystemTray.isSupported();
-		if (systemTraySupported && isLinux) {
-			switch (System.getenv("XDG_SESSION_DESKTOP")) {
-			case "gnome" -> {
-				try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-					final var extensions = dBusConnection.getRemoteObject(Extensions.BUSNAME, Extensions.OBJECTPATH,
-							Extensions.class);
-					if (extensions.ListExtensions().entrySet().stream().noneMatch(e -> {
-						if (!GNOME_SYSTEM_TRAY_EXTENSIONS.contains(e.getKey())) {
-							return false;
-						}
-
-						return Boolean.TRUE.equals(e.getValue().get("enabled").getValue());
-					})) {
-						systemTraySupported = false;
-
-						final var gnomeShellVersion = extensions.getShellVersion();
-						if (gnomeShellVersion == null) {
-							break;
-						}
-
-						final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
-						if (matcher.matches()) {
-							final var majorVersion = Integer.parseInt(matcher.group(1));
-							final var minorVersion = Integer.parseInt(matcher.group(2));
-
-							systemTraySupported = majorVersion < 3 || (majorVersion == 3 && minorVersion < 26);
-						}
-					}
-				} catch (final Throwable t) {
-					log.log(Level.WARNING, t.getMessage(), t);
-					systemTraySupported = false;
-				}
-			}
-			case "KDE" -> {
-				final var kdeSessionVersion = System.getenv("KDE_SESSION_VERSION");
-				systemTraySupported = !"6".equals(kdeSessionVersion);
-			}
-			default -> {
-			}
-			}
-		}
-
-		if (systemTraySupported) {
+		if (SystemTray.isSupported()) {
 			final var systemTray = SystemTray.getSystemTray();
 
 			if (trayIcon != null) {
@@ -3541,8 +3570,8 @@ public final class Main {
 		frame.setTitle(title);
 		if (isLinux) {
 			final var toolkit = Toolkit.getDefaultToolkit();
-			final var toolkitClass = toolkit.getClass();
-			if ("sun.awt.X11.XToolkit".equals(toolkitClass.getName())) {
+			if (isXToolkit(toolkit)) {
+				final var toolkitClass = toolkit.getClass();
 				try {
 					final var awtAppClassName = toolkitClass.getDeclaredField("awtAppClassName");
 					awtAppClassName.setAccessible(true);
