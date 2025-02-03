@@ -576,6 +576,7 @@ public abstract class OutputRunMode extends RunMode {
 						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
 
 				if (main.preventPowerSaveMode()) {
+					final var exceptions = new ArrayList<Exception>();
 					for (final var screenSaverType : ScreenSaverType.values()) {
 						try {
 							dBusConnection = DBusConnectionBuilder.forSessionBus().build();
@@ -584,8 +585,11 @@ public abstract class OutputRunMode extends RunMode {
 							screenSaverCookie = screenSaver.Inhibit(Constants.APPLICATION_NAME, "Feeder running");
 							break;
 						} catch (final DBusException | DBusExecutionException e) {
-							log.log(Level.WARNING, e.getMessage(), e);
+							exceptions.add(e);
 						}
+					}
+					if (dBusConnection == null || screenSaver == null || screenSaverCookie == null) {
+						exceptions.forEach(e -> log.log(Level.WARNING, e.getMessage(), e));
 					}
 				}
 			} catch (final Throwable t) {
