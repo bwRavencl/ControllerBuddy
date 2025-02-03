@@ -258,11 +258,13 @@ spotless {
 			 */
 
 			'''.stripIndent()
+		endWithNewline()
 	}
 	groovyGradle {
 		target '*.gradle'
 		greclipse()
 		importOrder()
+		endWithNewline()
 	}
 	format 'xml', {
 		target '*.svg'
