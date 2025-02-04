@@ -170,6 +170,7 @@ tasks.register('generateModuleInfo') {
 			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
+			    exports de.bwravencl.controllerbuddy.dbus.freedesktop to org.freedesktop.dbus;
 
 			    opens de.bwravencl.controllerbuddy.input to com.google.gson;
 			    opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
