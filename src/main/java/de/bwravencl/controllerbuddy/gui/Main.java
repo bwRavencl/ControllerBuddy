@@ -25,6 +25,8 @@ import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
 import de.bwravencl.controllerbuddy.constants.Constants;
+import de.bwravencl.controllerbuddy.dbus.freedesktop.OpenURI;
+import de.bwravencl.controllerbuddy.dbus.freedesktop.Request;
 import de.bwravencl.controllerbuddy.dbus.gnome.Extensions;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -135,6 +137,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -218,6 +221,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.freedesktop.dbus.DBusMatchRule;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Configuration;
@@ -1467,16 +1471,46 @@ public final class Main {
 	}
 
 	private static void openBrowser(final Component parentComponent, final URI uri) {
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-			try {
-				Desktop.getDesktop().browse(uri);
-			} catch (final IOException e) {
-				throw new RuntimeException(e);
+		if (Desktop.isDesktopSupported()) {
+			final var desktop = Desktop.getDesktop();
+
+			if (desktop.isSupported(Desktop.Action.BROWSE)) {
+				try {
+					desktop.browse(uri);
+					return;
+				} catch (final Throwable t) {
+					log.log(Level.WARNING, t.getMessage(), t);
+				}
 			}
+		}
+
+		if (isLinux) {
+			new Thread(() -> {
+				var success = false;
+
+				try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+					final var openUriInterface = dBusConnection.getRemoteObject("org.freedesktop.portal.Desktop",
+							"/org/freedesktop/portal/desktop", OpenURI.class);
+
+					final var responseCompletableFuture = new CompletableFuture<Request.Response>();
+
+					try (final var _ = dBusConnection.addSigHandler(new DBusMatchRule(Request.Response.class),
+							responseCompletableFuture::complete)) {
+						final var requestPath = openUriInterface.OpenURI("", uri.toString(), Collections.emptyMap())
+								.getPath();
+						final var response = responseCompletableFuture.get(3, TimeUnit.SECONDS);
+						success = response.getPath().equals(requestPath) && response.getResponse().intValue() == 0;
+					}
+				} catch (final Throwable t) {
+					log.log(Level.WARNING, t.getMessage(), t);
+				}
+
+				if (!success) {
+					EventQueue.invokeLater(() -> showPleaseVisitDialog(parentComponent, uri));
+				}
+			}).start();
 		} else {
-			JOptionPane.showMessageDialog(parentComponent,
-					MessageFormat.format(strings.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
-					strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+			showPleaseVisitDialog(parentComponent, uri);
 		}
 	}
 
@@ -1494,6 +1528,12 @@ public final class Main {
 						JOptionPane.INFORMATION_MESSAGE, imageIcon);
 			});
 		}
+	}
+
+	private static void showPleaseVisitDialog(final Component parentComponent, final URI uri) {
+		JOptionPane.showMessageDialog(parentComponent,
+				MessageFormat.format(strings.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
+				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private static void terminate(final int status, final Main main) {
