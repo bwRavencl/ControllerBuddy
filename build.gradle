@@ -171,12 +171,9 @@ tasks.register('generateModuleInfo') {
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
 
-			    opens de.bwravencl.controllerbuddy.input to
-				        com.google.gson;
-			    opens de.bwravencl.controllerbuddy.input.action to
-				        com.google.gson;
-			    opens de.bwravencl.controllerbuddy.input.driver to
-				        com.sun.jna;
+			    opens de.bwravencl.controllerbuddy.input to com.google.gson;
+			    opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+			    opens de.bwravencl.controllerbuddy.input.driver to com.sun.jna;
 
 			    requires com.google.gson;
 			    requires com.formdev.flatlaf;
