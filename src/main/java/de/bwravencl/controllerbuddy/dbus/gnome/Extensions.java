@@ -26,9 +26,6 @@ import org.freedesktop.dbus.types.Variant;
 @DBusInterfaceName("org.gnome.Shell.Extensions")
 public interface Extensions extends DBusInterface {
 
-	String BUSNAME = "org.gnome.Shell.Extensions";
-	String OBJECTPATH = "/org/gnome/Shell/Extensions";
-
 	Map<String, Map<String, Variant<?>>> ListExtensions();
 
 	@DBusBoundProperty(access = Access.READ, name = "ShellVersion")

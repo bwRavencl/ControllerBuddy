@@ -1008,8 +1008,8 @@ public final class Main {
 
 						if (Boolean.FALSE.equals(shouldDisableSystemTray)) {
 							try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-								final var extensions = dBusConnection.getRemoteObject(Extensions.BUSNAME,
-										Extensions.OBJECTPATH, Extensions.class);
+								final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
+										"/org/gnome/Shell/Extensions", Extensions.class);
 
 								final var gnomeShellVersion = extensions.getShellVersion();
 								if (gnomeShellVersion != null) {
