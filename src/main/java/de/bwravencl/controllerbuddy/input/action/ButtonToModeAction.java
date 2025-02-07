@@ -31,10 +31,10 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLGamepad;
 
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
-public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Byte> {
+public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Boolean> {
 
 	@SuppressWarnings("JdkObsolete")
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
@@ -76,7 +76,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		final var profile = input.getProfile();
 
 		Integer myButton = null;
-		buttonLoop: for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
+		buttonLoop: for (var button = 0; button < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; button++) {
 			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 			if (buttonToModeActions != null) {
 				for (final var action : buttonToModeActions) {
@@ -150,12 +150,12 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
 
 		final var profile = input.getProfile();
 
-		if (value == 0) {
+		if (!value) {
 			if (toggle) {
 				up = true;
 			} else if (buttonToModeActionStack.contains(this)) {

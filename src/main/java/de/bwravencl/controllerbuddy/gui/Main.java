@@ -41,7 +41,6 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
-import de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
@@ -90,12 +89,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -110,12 +106,11 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
@@ -223,10 +218,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.freedesktop.dbus.DBusMatchRule;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.Configuration;
+import org.lwjgl.sdl.SDLError;
+import org.lwjgl.sdl.SDLEvents;
+import org.lwjgl.sdl.SDLGUID;
+import org.lwjgl.sdl.SDLGamepad;
+import org.lwjgl.sdl.SDLHints;
+import org.lwjgl.sdl.SDLInit;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.sdl.SDL_GUID;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
@@ -322,9 +322,9 @@ public final class Main {
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
 	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
-	private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
-	private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
-	private static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
+	private static final String PREFERENCES_TOUCHPAD_ENABLED = "touchpad_enabled";
+	private static final String PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY = "touchpad_cursor_sensitivity";
+	private static final String PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY = "touchpad_scroll_sensitivity";
 	private static final String PREFERENCES_HOST = "host";
 	private static final String PREFERENCES_PORT = "port";
 	private static final String PREFERENCES_TIMEOUT = "timeout";
@@ -343,6 +343,7 @@ public final class Main {
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
+	private static final String VJOY_DEVICE_NAME = "vJoy Device";
 	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
 	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 	private static final File SINGLE_INSTANCE_LOCK_FILE;
@@ -389,6 +390,7 @@ public final class Main {
 	private final Random random;
 	private final TaskRunner taskRunner;
 	private final Preferences preferences;
+	private final Set<Controller> controllers = Collections.synchronizedSet(new HashSet<>());
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 	private final JFrame frame;
 	private final OpenAction openAction = new OpenAction();
@@ -404,8 +406,8 @@ public final class Main {
 	private final JMenuItem stopJMenuItem;
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 	private final JPanel globalSettingsPanel;
-	private final JPanel sonyCursorSensitivityPanel;
-	private final JPanel sonyScrollSensitivityPanel;
+	private final JPanel touchpadCursorSensitivityPanel;
+	private final JPanel touchpadScrollSensitivityPanel;
 	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
 	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
 	private final Timer timer = new Timer();
@@ -421,7 +423,7 @@ public final class Main {
 	private final JSVGCanvas svgCanvas;
 	private final SVGDocument templateSvgDocument;
 	private volatile RunMode runMode;
-	private volatile ControllerInfo selectedController;
+	private volatile Controller selectedController;
 	private Input input;
 	private RunModeType lastRunModeType = RunModeType.NONE;
 	private JMenuItem startLocalJMenuItem;
@@ -432,7 +434,6 @@ public final class Main {
 	private MenuItem startClientMenuItem;
 	private MenuItem startServerMenuItem;
 	private MenuItem stopMenuItem;
-	private JCheckBox showVrOverlayCheckBox;
 	private ScheduledExecutorService overlayExecutorService;
 	private JLabel vJoyDirectoryLabel;
 	private TrayIcon trayIcon;
@@ -441,7 +442,6 @@ public final class Main {
 	private File currentFile;
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 	private JLabel currentModeLabel;
-	private volatile OpenVrOverlay openVrOverlay;
 	private FrameDragListener overlayFrameDragListener;
 	private JPanel indicatorPanel;
 	private Rectangle prevTotalDisplayBounds;
@@ -534,8 +534,9 @@ public final class Main {
 		});
 
 		final var mainClassPackageName = Main.class.getPackageName();
-		preferences = Preferences.userRoot()
-				.node("/" + mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.')).replace('.', '/'));
+		final var applicationId = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+
+		preferences = Preferences.userRoot().node("/" + applicationId.replace('.', '/'));
 
 		frame = new JFrame();
 
@@ -912,66 +913,66 @@ public final class Main {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
-		final var sonyControllersSettingsPanel = new JPanel();
-		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.Y_AXIS));
-		sonyControllersSettingsPanel.setBorder(
-				BorderFactory.createTitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
-		globalSettingsPanel.add(sonyControllersSettingsPanel, constraints);
+		final var touchpadSettingsPanel = new JPanel();
+		touchpadSettingsPanel.setLayout(new BoxLayout(touchpadSettingsPanel, BoxLayout.Y_AXIS));
+		touchpadSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("TOUCHPAD_SETTINGS_BORDER_TITLE")));
+		globalSettingsPanel.add(touchpadSettingsPanel, constraints);
 
-		final var sonyTouchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyTouchpadPanel);
+		final var touchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadPanel);
 
-		final var sonyEnableTouchpadLabel = new JLabel(strings.getString("SONY_TOUCHPAD_LABEL"));
-		sonyEnableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyTouchpadPanel.add(sonyEnableTouchpadLabel);
+		final var enableTouchpadLabel = new JLabel(strings.getString("TOUCHPAD_LABEL"));
+		enableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadPanel.add(enableTouchpadLabel);
 
-		sonyCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyCursorSensitivityPanel);
+		touchpadCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadCursorSensitivityPanel);
 
-		final var sonyCursorSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_CURSOR_SENSITIVITY"));
-		sonyCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyCursorSensitivityPanel.add(sonyCursorSensitivityLabel);
+		final var touchpadCursorSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_CURSOR_SENSITIVITY"));
+		touchpadCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getSonyCursorSensitivity(), .1, 5d, .05));
+				new SpinnerNumberModel(getTouchpadCursorSensitivity(), .1, 5d, .05));
 		final var cursorSensitivitySpinnerEditor = new JSpinner.NumberEditor(cursorSensitivitySpinner);
 		((DefaultFormatter) cursorSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		cursorSensitivitySpinner.setEditor(cursorSensitivitySpinnerEditor);
 		cursorSensitivitySpinner
-				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
+				.addChangeListener(event -> preferences.putFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY,
 						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
-		sonyCursorSensitivityPanel.add(cursorSensitivitySpinner);
+		touchpadCursorSensitivityPanel.add(cursorSensitivitySpinner);
 
-		sonyScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyScrollSensitivityPanel);
+		touchpadScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadScrollSensitivityPanel);
 
-		final var sonyScrollSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_SCROLL_SENSITIVITY"));
-		sonyScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyScrollSensitivityPanel.add(sonyScrollSensitivityLabel);
+		final var touchpadScrollSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_SCROLL_SENSITIVITY"));
+		touchpadScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
 
-		final var sonyScrollSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getSonyScrollSensitivity(), .1, 1d, .05));
-		final var scrollSensitivitySpinnerEditor = new JSpinner.NumberEditor(sonyScrollSensitivitySpinner);
+		final var touchpadScrollSensitivitySpinner = new JSpinner(
+				new SpinnerNumberModel(getTouchpadScrollSensitivity(), .1, 1d, .05));
+		final var scrollSensitivitySpinnerEditor = new JSpinner.NumberEditor(touchpadScrollSensitivitySpinner);
 		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		sonyScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
-		sonyScrollSensitivitySpinner
-				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
+		touchpadScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
+		touchpadScrollSensitivitySpinner
+				.addChangeListener(event -> preferences.putFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY,
 						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
-		sonyScrollSensitivityPanel.add(sonyScrollSensitivitySpinner);
+		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivitySpinner);
 
-		final var sonyTouchpadEnabledCheckBox = new JCheckBox(strings.getString("SONY_TOUCHPAD_ENABLED_CHECK_BOX"));
-		sonyTouchpadEnabledCheckBox.setSelected(isSonyTouchpadEnabled());
-		sonyTouchpadEnabledCheckBox.addActionListener(event -> {
+		final var touchpadEnabledCheckBox = new JCheckBox(strings.getString("TOUCHPAD_ENABLED_CHECK_BOX"));
+		touchpadEnabledCheckBox.setSelected(isTouchpadEnabled());
+		touchpadEnabledCheckBox.addActionListener(event -> {
 			final var enableTouchpad = ((JCheckBox) event.getSource()).isSelected();
-			preferences.putBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, enableTouchpad);
+			preferences.putBoolean(PREFERENCES_TOUCHPAD_ENABLED, enableTouchpad);
 
-			updateSonyTouchpadSettings();
+			updateTouchpadSettings();
 		});
-		sonyTouchpadPanel.add(sonyTouchpadEnabledCheckBox);
+		touchpadPanel.add(touchpadEnabledCheckBox);
 
 		addGlueToSettingsPanel(globalSettingsPanel);
 
-		updateSonyTouchpadSettings();
+		updateTouchpadSettings();
 		updateTitleAndTooltip();
 
 		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
@@ -1061,31 +1062,25 @@ public final class Main {
 					log.log(Level.SEVERE, t.getMessage(), t);
 				}
 			}
-
-			GLFW.glfwInitHint(GLFW.GLFW_PLATFORM, GLFW.GLFW_PLATFORM_X11);
-		} else if (isMac) {
-			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 
 		newProfile(false);
 		updateTheme();
 
-		final var glfwInitialized = (boolean) taskRunner.run(GLFW::glfwInit).orElse(false);
-		if (!glfwInitialized) {
-			String errorDetails = null;
-			try (final var stack = MemoryStack.stackPush()) {
-				final var descriptionPointerBuffer = stack.mallocPointer(1);
-				if (GLFW.glfwGetError(descriptionPointerBuffer) != 0) {
-					final var descriptionPointer = descriptionPointerBuffer.get();
-					if (descriptionPointer != 0L) {
-						errorDetails = MemoryUtil.memUTF8(descriptionPointer);
-					}
-				}
-			} catch (final Throwable t) {
-				log.log(Level.WARNING, t.getMessage(), t);
-			}
+		taskRunner.run(() -> {
+			SDLInit.SDL_SetAppMetadata(Constants.APPLICATION_NAME, Constants.VERSION, applicationId);
 
-			log.log(Level.SEVERE, "Could not initialize GLFW" + (errorDetails != null ? ": " + errorDetails : ""));
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_RAWINPUT, "0");
+//			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_RAWINPUT_CORRELATE_XINPUT, "0");
+		});
+
+		final var sdlInitialized = (boolean) taskRunner.run(() -> SDLInit.SDL_Init(SDLInit.SDL_INIT_GAMEPAD))
+				.orElse(false);
+		if (!sdlInitialized) {
+			var errorDetails = SDLError.SDL_GetError();
+
+			log.log(Level.SEVERE, "Could not initialize SDL" + (errorDetails != null ? ": " + errorDetails : ""));
 
 			if (errorDetails == null) {
 				errorDetails = strings.getString("NO_ERROR_DETAILS");
@@ -1093,94 +1088,89 @@ public final class Main {
 
 			if (isWindows || isLinux) {
 				GuiUtils.showMessageDialog(this, frame,
-						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME, errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(
-						this, frame, MessageFormat
-								.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"), errorDetails),
+				GuiUtils.showMessageDialog(this, frame, MessageFormat
+						.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT_MAC"), errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
 
-			onControllersChanged(Collections.emptyList(), true);
+			onControllersChanged(true);
 			initProfile(cmdProfilePath, true);
 
 			return;
 		}
 
-		var mappingsUpdated = updateGameControllerMappings(
-				ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME));
-		log.log(mappingsUpdated ? Level.INFO : Level.WARNING,
-				(mappingsUpdated ? "Successfully updated" : "Failed to update")
-						+ " game controller mappings from internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
-
-		if (cmdGameControllerDbPath != null) {
-			mappingsUpdated &= updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
+		String errorDetails;
+		try {
+			final var inputStream = ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME);
+			if (inputStream == null) {
+				throw new IllegalStateException("Could not open resource " + GAME_CONTROLLER_DATABASE_FILENAME);
+			}
+			final var tempFilePath = Files.createTempFile(GAME_CONTROLLER_DATABASE_FILENAME, null);
+			try {
+				Files.copy(inputStream, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+				errorDetails = updateGameControllerMappings(tempFilePath.toString(),
+						"internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
+			} finally {
+				Files.delete(tempFilePath);
+			}
+		} catch (final Throwable t) {
+			log.log(Level.SEVERE, t.getMessage(), t);
+			errorDetails = strings.getString("NO_ERROR_DETAILS");
 		}
 
-		if (!mappingsUpdated) {
-			log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
-
+		if (errorDetails != null) {
 			GuiUtils.showMessageDialog(this, frame,
-					MessageFormat.format(strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME),
+					MessageFormat.format(
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_INTERNAL_FILE_DIALOG_TEXT"),
+							Constants.APPLICATION_NAME, errorDetails),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
-		final var optionalPresentControllers = taskRunner.run(Main::getPresentControllers);
+		if (cmdGameControllerDbPath != null) {
+			updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
+		}
 
-		optionalPresentControllers.ifPresent(presentControllers -> {
-			if (!presentControllers.isEmpty()) {
-				log.log(Level.INFO,
-						"Present controllers:" + presentControllers.stream()
-								.map(controllerInfo -> assembleControllerLoggingMessage("\n\t", controllerInfo))
-								.collect(Collectors.joining()));
+		controllers.clear();
+		taskRunner.run(() -> {
+			final var instanceIdBuffer = SDLGamepad.SDL_GetGamepads();
+			if (instanceIdBuffer == null) {
+				return;
+			}
 
-				final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-				if (lastControllerGuid != null) {
-					presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid))
-							.findFirst().ifPresentOrElse(controller -> {
-								log.log(Level.INFO, assembleControllerLoggingMessage(
-										"Found previously used controller ", controller));
-								setSelectedController(controller);
-							}, () -> {
-								log.log(Level.INFO, "Previously used controller is not present");
-								setSelectedController(presentControllers.getFirst());
-							});
-				}
+			while (instanceIdBuffer.hasRemaining()) {
+				addController(new Controller(instanceIdBuffer.get()));
 			}
 		});
+		taskRunner.waitForTask();
 
-		onControllersChanged(optionalPresentControllers.orElseGet(Collections::emptyList), true);
+		if (!controllers.isEmpty()) {
+			log.log(Level.INFO,
+					"Present controllers:" + controllers.stream()
+							.map(controller -> assembleControllerLoggingMessage("\n\t", controller))
+							.collect(Collectors.joining()));
 
-		// noinspection resource
-		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
-			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
-			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
-				if (disconnected && optionalPresentControllers.isPresent()
-						&& optionalPresentControllers.get().stream().anyMatch(controller -> controller.jid == jid)) {
-					log.log(Level.INFO,
-							assembleControllerLoggingMessage("Disconnected controller ", new ControllerInfo(jid)));
-
-					if (selectedController != null && selectedController.jid == jid) {
-						if (!isMac) {
-							selectedController = null;
-						}
-						input.deInit(true);
-					}
-				} else if (event == GLFW.GLFW_CONNECTED) {
-					log.log(Level.INFO,
-							assembleControllerLoggingMessage("Connected controller ", new ControllerInfo(jid)));
-				}
-
-				EventQueue.invokeLater(() -> onControllersChanged(getPresentControllers(), false));
+			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
+			if (lastControllerGuid != null) {
+				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
+						.ifPresentOrElse(controller -> {
+							log.log(Level.INFO,
+									assembleControllerLoggingMessage("Found previously used controller ", controller));
+							setSelectedController(controller);
+						}, () -> {
+							log.log(Level.INFO, "Previously used controller is not present");
+							setSelectedController(controllers.stream().findFirst().orElse(null));
+						});
 			}
-		}));
+		}
 
-		final var noControllerConnected = optionalPresentControllers.isEmpty()
-				|| optionalPresentControllers.get().isEmpty();
+		onControllersChanged(true);
+
+		final var noControllerConnected = controllers.isEmpty();
 
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (isWindows || isLinux) {
@@ -1207,7 +1197,7 @@ public final class Main {
 		settingsPanel.add(Box.createGlue(), constraints);
 	}
 
-	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
+	public static String assembleControllerLoggingMessage(final String prefix, final Controller controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix);
 
@@ -1217,7 +1207,7 @@ public final class Main {
 			sb.append(controller.name).append(" (");
 		}
 
-		sb.append(controller.jid);
+		sb.append(controller.instanceId);
 
 		if (appendGamepadName) {
 			sb.append(")");
@@ -1274,18 +1264,6 @@ public final class Main {
 		case final StopAction _ -> KeyEvent.VK_T;
 		default -> KeyEvent.VK_UNDEFINED;
 		};
-	}
-
-	public static List<ControllerInfo> getPresentControllers() {
-		final var presentControllers = new ArrayList<ControllerInfo>();
-		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++) {
-			if (isMac || (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
-					&& !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))) {
-				presentControllers.add(new ControllerInfo(jid));
-			}
-		}
-
-		return presentControllers;
 	}
 
 	private static URL getResourceLocation(final String resourcePath) {
@@ -1445,7 +1423,7 @@ public final class Main {
 
 						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
 
-						taskRunner.pollGLFWEvents = true;
+						taskRunner.pollSdlEvents = true;
 					});
 
 					taskRunner.enterLoop();
@@ -1548,6 +1526,14 @@ public final class Main {
 		System.exit(status);
 	}
 
+	private boolean addController(final Controller controller) {
+		if (VJOY_GUID.equals(controller.guid) || VJOY_DEVICE_NAME.equals(controller.name)) {
+			return false;
+		}
+
+		return controllers.add(controller);
+	}
+
 	private void addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode) {
 		addTSpanElement(actions.stream().map(action -> {
 			var description = action.getDescription(input);
@@ -1574,11 +1560,6 @@ public final class Main {
 	}
 
 	private void deInitOverlay() {
-		if (openVrOverlay != null) {
-			openVrOverlay.stop();
-			openVrOverlay = null;
-		}
-
 		if (overlayFrame != null) {
 			for (var i = 0; i < 10; i++) {
 				overlayFrame.dispose();
@@ -1754,25 +1735,25 @@ public final class Main {
 
 		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
 
-		for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
+		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
 			var swapped = false;
 
 			final var idPrefix = switch (axis) {
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_X : SVG_ID_LEFT_X;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_Y : SVG_ID_LEFT_Y;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_X : SVG_ID_RIGHT_X;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
 			}
@@ -1783,35 +1764,35 @@ public final class Main {
 			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
 		}
 
-		for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
+		for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
 			var swapped = false;
 
 			final var idPrefix = switch (button) {
-			case GLFW.GLFW_GAMEPAD_BUTTON_A -> SVG_ID_A;
-			case GLFW.GLFW_GAMEPAD_BUTTON_B -> SVG_ID_B;
-			case GLFW.GLFW_GAMEPAD_BUTTON_BACK -> SVG_ID_BACK;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN -> SVG_ID_DPAD_DOWN;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT -> SVG_ID_DPAD_LEFT;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT -> SVG_ID_DPAD_RIGHT;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
-			case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SVG_ID_LEFT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> {
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH -> SVG_ID_A;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_EAST -> SVG_ID_B;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_BACK -> SVG_ID_BACK;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN -> SVG_ID_DPAD_DOWN;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT -> SVG_ID_DPAD_LEFT;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT -> SVG_ID_DPAD_RIGHT;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER -> SVG_ID_LEFT_SHOULDER;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_STICK : SVG_ID_LEFT_STICK;
 			}
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> SVG_ID_RIGHT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> {
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER -> SVG_ID_RIGHT_SHOULDER;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_STICK : SVG_ID_RIGHT_STICK;
 			}
-			case GLFW.GLFW_GAMEPAD_BUTTON_START -> SVG_ID_START;
-			case GLFW.GLFW_GAMEPAD_BUTTON_X -> SVG_ID_X;
-			case GLFW.GLFW_GAMEPAD_BUTTON_Y -> SVG_ID_Y;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_START -> SVG_ID_START;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_WEST -> SVG_ID_X;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH -> SVG_ID_Y;
 			default -> null;
 			};
 
-			final var combinedActions = new ArrayList<IAction<Byte>>();
+			final var combinedActions = new ArrayList<IAction<Boolean>>();
 
 			final var normalActions = mode.getButtonToActionsMap().get(button);
 			if (normalActions != null) {
@@ -1833,6 +1814,10 @@ public final class Main {
 
 	IAction<?> getClipboardAction() {
 		return clipboardAction;
+	}
+
+	public Set<Controller> getControllers() {
+		return controllers;
 	}
 
 	@SuppressWarnings("exports")
@@ -1883,21 +1868,19 @@ public final class Main {
 
 	public int getSelectedHotSwappingButtonId() {
 		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
-				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
-	}
-
-	public float getSonyCursorSensitivity() {
-		return preferences.getFloat(PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
-				SonyDriver.DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY);
-	}
-
-	public float getSonyScrollSensitivity() {
-		return preferences.getFloat(PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
-				SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+				HotSwappingButton.None.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
 	public int getTimeout() {
 		return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
+	}
+
+	public float getTouchpadCursorSensitivity() {
+		return preferences.getFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, 1.25f);
+	}
+
+	public float getTouchpadScrollSensitivity() {
+		return preferences.getFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, .25f);
 	}
 
 	public int getVJoyDevice() {
@@ -1974,7 +1957,7 @@ public final class Main {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
 				for (final var buttonToModeAction : buttonToModeActions) {
 					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-						buttonToModeAction.doAction(input, -1, Byte.MAX_VALUE);
+						buttonToModeAction.doAction(input, -1, true);
 						break;
 					}
 				}
@@ -2058,25 +2041,6 @@ public final class Main {
 		case JOptionPane.NO_OPTION -> true;
 		default -> false;
 		};
-	}
-
-	private void initOpenVrOverlay() {
-		final var profile = input.getProfile();
-
-		if (!(Platform.isIntel() || (Platform.isARM() && Platform.is64Bit())) || !isWindows || !profile.isShowOverlay()
-				|| !profile.isShowVrOverlay()) {
-			return;
-		}
-
-		try {
-			openVrOverlay = OpenVrOverlay.start(this).orElse(null);
-		} catch (final Throwable t) {
-			log.log(Level.WARNING, t.getMessage(), t);
-
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
-					strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE));
-		}
 	}
 
 	private void initOverlay() {
@@ -2244,10 +2208,6 @@ public final class Main {
 		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
-	public boolean isOpenVrOverlayActive() {
-		return openVrOverlay != null;
-	}
-
 	boolean isOverlayInLeftHalf(final Rectangle totalDisplayBounds) {
 		return overlayFrame.getX() + overlayFrame.getWidth() / 2 < totalDisplayBounds.width / 2;
 	}
@@ -2272,12 +2232,12 @@ public final class Main {
 		return preferences.getBoolean(PREFERENCES_SKIP_CONTROLLER_DIALOGS, false);
 	}
 
-	public boolean isSonyTouchpadEnabled() {
-		return preferences.getBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
-	}
-
 	public boolean isSwapLeftAndRightSticks() {
 		return preferences.getBoolean(PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS, false);
+	}
+
+	public boolean isTouchpadEnabled() {
+		return preferences.getBoolean(PREFERENCES_TOUCHPAD_ENABLED, true);
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs,
@@ -2438,8 +2398,8 @@ public final class Main {
 		setStatusBarText(strings.getString("STATUS_READY"));
 	}
 
-	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
-		final var controllerConnected = !presentControllers.isEmpty();
+	private void onControllersChanged(final boolean selectFirstTab) {
+		final var controllerConnected = !controllers.isEmpty();
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
 		deviceJMenu.removeAll();
@@ -2542,14 +2502,15 @@ public final class Main {
 			selectedController = null;
 			setSelectedControllerAndUpdateInput(null, null);
 		} else {
-			final ControllerInfo controller;
-			if (selectedController != null && presentControllers.contains(selectedController)) {
+			final Controller controller;
+			if (selectedController != null && controllers.contains(selectedController)) {
 				controller = selectedController;
 			} else {
-				controller = presentControllers.getFirst();
+				controller = controllers.stream().findFirst().orElse(null);
 			}
 
-			if (selectedController == null || (input != null && !Objects.equals(input.getController(), controller))) {
+			if (selectedController == null
+					|| (input != null && !Objects.equals(input.getSelectedController(), controller))) {
 				setSelectedControllerAndUpdateInput(controller, null);
 
 				if (isAutoRestartOutput()) {
@@ -2563,7 +2524,7 @@ public final class Main {
 
 		if (controllerConnected) {
 			final var devicesButtonGroup = new ButtonGroup();
-			presentControllers.forEach(controller -> {
+			controllers.forEach(controller -> {
 				final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
 				devicesButtonGroup.add(deviceRadioButtonMenuItem);
 				deviceJMenu.add(deviceRadioButtonMenuItem);
@@ -2784,7 +2745,7 @@ public final class Main {
 		});
 	}
 
-	private void setSelectedController(final ControllerInfo controller) {
+	private void setSelectedController(final Controller controller) {
 		if (Objects.equals(selectedController, controller)) {
 			return;
 		}
@@ -2800,7 +2761,7 @@ public final class Main {
 		}
 	}
 
-	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
+	public void setSelectedControllerAndUpdateInput(final Controller controller,
 			@SuppressWarnings("exports") final EnumMap<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
 
@@ -2881,7 +2842,7 @@ public final class Main {
 	private void startLocal() {
 		lastRunModeType = RunModeType.LOCAL;
 
-		if (selectedController == null || input.getController() == null || isRunning()) {
+		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
@@ -2892,7 +2853,6 @@ public final class Main {
 		onRunModeChanged();
 
 		initOverlay();
-		initOpenVrOverlay();
 		startOverlayTimerTask();
 	}
 
@@ -2908,7 +2868,7 @@ public final class Main {
 	private void startServer() {
 		lastRunModeType = RunModeType.SERVER;
 
-		if (selectedController == null || input.getController() == null || isRunning()) {
+		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
@@ -3020,81 +2980,56 @@ public final class Main {
 		for (var i = 0; i < deviceJMenu.getItemCount(); i++) {
 			final var menuItem = deviceJMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
-			if (selectedController.jid == action.controller.jid) {
+			if (selectedController.instanceId == action.controller.instanceId) {
 				menuItem.setSelected(true);
 				break;
 			}
 		}
 	}
 
-	private boolean updateGameControllerMappings(final InputStream is) {
-		if (is == null) {
-			return false;
-		}
+	private String updateGameControllerMappings(final String path, final String sourceName) {
+		return taskRunner.run(() -> {
+			final var numMappingsAdded = SDLGamepad.SDL_AddGamepadMappingsFromFile(path);
 
-		var mappingsUpdated = false;
+			if (numMappingsAdded == -1) {
+				final var errorDetails = SDLError.SDL_GetError();
+				log.log(Level.WARNING, "Failed to update game controller mappings from " + sourceName
+						+ (errorDetails != null ? ": " + errorDetails : ""));
 
-		final var defaultCharset = Charset.defaultCharset();
-		try (final var bufferedReader = new BufferedReader(new InputStreamReader(is, defaultCharset))) {
-			final var sb = new StringBuilder();
-
-			while (bufferedReader.ready()) {
-				final var line = bufferedReader.readLine();
-				if (line != null) {
-					sb.append(line);
-					sb.append("\n");
-				}
+				return errorDetails;
 			}
 
-			if (sb.charAt(sb.length() - 1) != 0) {
-				sb.append((char) 0);
-			}
+			log.log(Level.INFO, "Added " + numMappingsAdded + " game controller mappings from " + sourceName);
 
-			final var content = sb.toString().getBytes(defaultCharset);
-			final var byteBuffer = ByteBuffer.allocateDirect(content.length).put(content).flip();
-			mappingsUpdated = taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer)).orElse(false);
-		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-
-		return mappingsUpdated;
+			return null;
+		}).orElse(null);
 	}
 
-	private boolean updateGameControllerMappingsFromFile(final String path) {
+	private void updateGameControllerMappingsFromFile(final String path) {
 		if (isLocalRunning()) {
 			stopLocal(true, false);
 		} else if (isServerRunning()) {
 			stopServer(true, false);
 		}
 
-		var mappingsUpdated = false;
-
-		try (final var fileInputStream = new FileInputStream(path)) {
-			mappingsUpdated = updateGameControllerMappings(fileInputStream);
-
-			log.log(mappingsUpdated ? Level.INFO : Level.WARNING,
-					(mappingsUpdated ? "Successfully updated" : "Failed to update")
-							+ " game controller mappings from external file: " + path);
-		} catch (final FileNotFoundException e) {
+		String errorDetails = null;
+		try {
+			errorDetails = updateGameControllerMappings(path, "external file: " + path);
+		} catch (final Throwable t) {
 			log.log(Level.WARNING, "Could not read external game controller mappings file: " + path);
 
 			GuiUtils.showMessageDialog(main, frame, MessageFormat
 					.format(strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} catch (final IOException e) {
-			log.log(Level.WARNING, e.getMessage(), e);
 		}
 
-		if (!mappingsUpdated) {
-			log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
-
+		if (errorDetails != null) {
 			GuiUtils.showMessageDialog(main, frame,
-					MessageFormat.format(strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME),
+					MessageFormat.format(
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
+							errorDetails),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
-
-		return mappingsUpdated;
 	}
 
 	private void updateMenuShortcuts() {
@@ -3379,7 +3314,6 @@ public final class Main {
 		}
 
 		profileSettingsPanel.removeAll();
-		showVrOverlayCheckBox = null;
 
 		if (input == null) {
 			return;
@@ -3433,42 +3367,12 @@ public final class Main {
 		final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
 		showOverlayCheckBox.setSelected(profile.isShowOverlay());
 		showOverlayCheckBox.addActionListener(event -> {
-			final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
-			profile.setShowOverlay(showOverlay);
-			if (!showOverlay) {
-				profile.setShowVrOverlay(false);
-			}
-
-			if (showVrOverlayCheckBox != null) {
-				showVrOverlayCheckBox.setEnabled(showOverlay);
-				if (!showOverlay) {
-					showVrOverlayCheckBox.setSelected(false);
-				}
-			}
+			profile.setShowOverlay(((JCheckBox) event.getSource()).isSelected());
 
 			updatePanelAccess();
 			setUnsavedChanges(true);
 		});
 		overlaySettingsPanel.add(showOverlayCheckBox);
-
-		final var showOverlay = profile.isShowOverlay();
-
-		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		appearanceSettingsPanel.add(vrOverlaySettingsPanel, constraints);
-
-		final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
-		vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		vrOverlaySettingsPanel.add(vrOverlayLabel);
-
-		showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
-		showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
-		showVrOverlayCheckBox.setEnabled(showOverlay);
-		showVrOverlayCheckBox.addActionListener(event -> {
-			final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
-			profile.setShowVrOverlay(showVrOverlay);
-			setUnsavedChanges(true);
-		});
-		vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
 
 		addGlueToSettingsPanel(profileSettingsPanel);
 	}
@@ -3481,16 +3385,12 @@ public final class Main {
 		showMenuItem.setEnabled(!frame.isVisible());
 	}
 
-	private void updateSonyTouchpadSettings() {
-		final var enableTouchpad = isSonyTouchpadEnabled();
-
-		GuiUtils.setEnabledRecursive(sonyCursorSensitivityPanel, enableTouchpad);
-		GuiUtils.setEnabledRecursive(sonyScrollSensitivityPanel, enableTouchpad);
-	}
-
 	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,
 			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped) {
 		final var groupElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Group");
+		if (groupElement == null) {
+			throw new IllegalArgumentException("Parameter idPrefix has invalid value: " + idPrefix);
+		}
 
 		final var hide = actions == null || actions.isEmpty();
 		groupElement.getStyle().setProperty(CSSConstants.CSS_DISPLAY_PROPERTY,
@@ -3624,17 +3524,15 @@ public final class Main {
 		}
 
 		if (trayIcon != null) {
-			var toolTip = title;
-
-			if (input != null) {
-				final var driver = input.getDriver();
-				if (driver != null) {
-					toolTip = driver.getTooltip(title);
-				}
-			}
-
-			trayIcon.setToolTip(toolTip);
+			trayIcon.setToolTip(title);
 		}
+	}
+
+	private void updateTouchpadSettings() {
+		final var enableTouchpad = isTouchpadEnabled();
+
+		GuiUtils.setEnabledRecursive(touchpadCursorSensitivityPanel, enableTouchpad);
+		GuiUtils.setEnabledRecursive(touchpadScrollSensitivityPanel, enableTouchpad);
 	}
 
 	void updateVisualizationPanel() {
@@ -3671,18 +3569,20 @@ public final class Main {
 
 	public enum HotSwappingButton {
 
-		None(-1, "NONE"), A(GLFW.GLFW_GAMEPAD_BUTTON_A, "A_BUTTON"), B(GLFW.GLFW_GAMEPAD_BUTTON_B, "B_BUTTON"),
-		X(GLFW.GLFW_GAMEPAD_BUTTON_X, "X_BUTTON"), Y(GLFW.GLFW_GAMEPAD_BUTTON_Y, "Y_BUTTON"),
-		LEFT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "LEFT_BUMPER"),
-		RIGHT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "RIGHT_BUMPER"),
-		BACK(GLFW.GLFW_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"), START(GLFW.GLFW_GAMEPAD_BUTTON_START, "START_BUTTON"),
-		GUIDE(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
-		LEFT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "LEFT_THUMB"),
-		RIGHT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "RIGHT_THUMB"),
-		DPAD_UP(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
-		DPAD_RIGHT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
-		DPAD_DOWN(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
-		DPAD_LEFT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
+		None(-1, "NONE"), A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
+		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"), X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
+		Y(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, "Y_BUTTON"),
+		LEFT_BUMPER(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, "LEFT_BUMPER"),
+		RIGHT_BUMPER(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, "RIGHT_BUMPER"),
+		BACK(SDLGamepad.SDL_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"),
+		START(SDLGamepad.SDL_GAMEPAD_BUTTON_START, "START_BUTTON"),
+		GUIDE(SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
+		LEFT_THUMB(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, "LEFT_THUMB"),
+		RIGHT_THUMB(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, "RIGHT_THUMB"),
+		DPAD_UP(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
+		DPAD_RIGHT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
+		DPAD_DOWN(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
+		DPAD_LEFT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
 
 		public final int id;
 		private final String label;
@@ -3742,11 +3642,24 @@ public final class Main {
 		}
 	}
 
-	public record ControllerInfo(int jid, String name, String guid) {
+	public record Controller(int instanceId, String name, String guid) {
 
-		private ControllerInfo(final int jid) {
-			this(jid, isMac ? MessageFormat.format(strings.getString("DEVICE_NO"), jid + 1)
-					: GLFW.glfwGetGamepadName(jid), isMac ? null : GLFW.glfwGetJoystickGUID(jid));
+		private Controller(final int instanceId) {
+			String guid;
+			try (final var stack = MemoryStack.stackPush()) {
+				final var sdlGuid = SDL_GUID.calloc(stack);
+				SDLGamepad.SDL_GetGamepadGUIDForID(instanceId, sdlGuid);
+				final var guidByteBuffer = stack.calloc(33);
+				SDLGUID.SDL_GUIDToString(sdlGuid, guidByteBuffer);
+				guid = StandardCharsets.UTF_8.decode(guidByteBuffer).toString();
+				final var nullPos = guid.indexOf('\u0000');
+				if (nullPos != -1) {
+					guid = guid.substring(0, nullPos);
+				}
+			}
+
+			this(instanceId, isMac ? MessageFormat.format(strings.getString("DEVICE_NO"), instanceId + 1)
+					: SDLGamepad.SDL_GetGamepadNameForID(instanceId), isMac ? null : guid);
 		}
 	}
 
@@ -3910,7 +3823,7 @@ public final class Main {
 
 		private final Thread thread = Thread.currentThread();
 
-		private volatile boolean pollGLFWEvents = false;
+		private volatile boolean pollSdlEvents = false;
 
 		private volatile Object result;
 
@@ -3918,57 +3831,89 @@ public final class Main {
 
 		private void enterLoop() {
 			log.log(Level.INFO, "Entering main loop");
+			try (final var stack = MemoryStack.stackPush()) {
+				final var sdlEvent = SDL_Event.calloc(stack);
 
-			for (;;) {
-				if (task != null) {
-					result = null;
-					var notify = false;
+				for (;;) {
+					if (task != null) {
+						result = null;
+						var notify = false;
 
-					try {
-						if (task instanceof final Callable<?> callable) {
-							notify = true;
-							result = callable.call();
-						} else if (task instanceof final Runnable runnable) {
-							runnable.run();
-						}
-					} catch (final Throwable t) {
-						if (task instanceof Callable) {
-							result = t;
-						} else if (task instanceof Runnable) {
-							throw new RuntimeException(t);
-						}
-					} finally {
-						task = null;
-
-						if (notify) {
-							synchronized (this) {
-								notifyAll();
-							}
-						}
-					}
-				} else {
-					if (pollGLFWEvents) {
-						GLFW.glfwPollEvents();
-					}
-
-					try {
-						// noinspection BusyWait
-						Thread.sleep(10L);
-					} catch (final InterruptedException _) {
 						try {
-							final var previousJoystickCallback = GLFW.glfwSetJoystickCallback(null);
-							if (previousJoystickCallback != null) {
-								previousJoystickCallback.close();
+							if (task instanceof final Callable<?> callable) {
+								notify = true;
+								result = callable.call();
+							} else if (task instanceof final Runnable runnable) {
+								runnable.run();
 							}
-
-							GLFW.glfwTerminate();
 						} catch (final Throwable t) {
-							log.log(Level.SEVERE, t.getMessage(), t);
+							if (task instanceof Callable) {
+								result = t;
+							} else if (task instanceof Runnable) {
+								throw new RuntimeException(t);
+							}
+						} finally {
+							task = null;
+
+							if (notify) {
+								synchronized (this) {
+									notifyAll();
+								}
+							}
+						}
+					} else {
+						if (pollSdlEvents) {
+							while (SDLEvents.SDL_PollEvent(sdlEvent)) {
+								switch (sdlEvent.type()) {
+								case SDLEvents.SDL_EVENT_GAMEPAD_ADDED -> {
+									final var instanceId = sdlEvent.gdevice().which();
+
+									final var controller = new Controller(instanceId);
+									if (main.addController(controller)) {
+										log.log(Level.INFO,
+												assembleControllerLoggingMessage("Connected controller ", controller));
+									}
+
+									EventQueue.invokeLater(() -> main.onControllersChanged(false));
+								}
+								case SDLEvents.SDL_EVENT_GAMEPAD_REMOVED -> {
+									final var instanceId = sdlEvent.gdevice().which();
+
+									main.controllers.stream().filter(controller -> controller.instanceId == instanceId)
+											.findFirst().ifPresent(controller -> {
+												main.controllers.remove(controller);
+												log.log(Level.INFO, assembleControllerLoggingMessage(
+														"Disconnected controller ", controller));
+
+												if (main.selectedController != null
+														&& main.selectedController.instanceId == instanceId) {
+													if (!isMac) {
+														main.selectedController = null;
+													}
+													main.input.deInit(true);
+												}
+
+												EventQueue.invokeLater(() -> main.onControllersChanged(false));
+											});
+								}
+								}
+							}
 						}
 
-						log.log(Level.INFO, "Exiting main loop");
+						try {
+							// noinspection BusyWait
+							Thread.sleep(10L);
+						} catch (final InterruptedException _) {
+							try {
+								SDLInit.SDL_Quit();
+							} catch (final Throwable t) {
+								log.log(Level.SEVERE, t.getMessage(), t);
+							}
 
-						return;
+							log.log(Level.INFO, "Exiting main loop");
+
+							return;
+						}
 					}
 				}
 			}
@@ -4016,7 +3961,7 @@ public final class Main {
 		}
 
 		private void shutdown() {
-			pollGLFWEvents = false;
+			pollSdlEvents = false;
 
 			thread.interrupt();
 
@@ -4489,9 +4434,9 @@ public final class Main {
 		private static final long serialVersionUID = -2043467156713598592L;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final ControllerInfo controller;
+		private final Controller controller;
 
-		private SelectControllerAction(final ControllerInfo controller) {
+		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
 			putValue(NAME, controller.name);
@@ -4501,7 +4446,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedController != null && selectedController.jid == controller.jid) {
+			if (selectedController != null && selectedController.instanceId == controller.instanceId) {
 				return;
 			}
 

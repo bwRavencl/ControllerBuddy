@@ -21,9 +21,10 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.CursorSensitivityEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
+import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
-public abstract class ToCursorAction<V extends Number> extends InvertableAction<V> {
+public abstract class ToCursorAction<V extends Constable> extends InvertableAction<V> {
 
 	private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
 

@@ -51,7 +51,9 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLEvents;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.system.MemoryStack;
 
 public final class ServerRunMode extends RunMode implements Closeable {
 
@@ -124,16 +126,17 @@ public final class ServerRunMode extends RunMode implements Closeable {
 		DatagramPacket receivePacket;
 		var counter = 0L;
 
-		try {
+		try (final var stack = MemoryStack.stackPush()) {
 			serverSocket = new DatagramSocket(port);
 			final var receiveBuf = new byte[1024];
 
 			EventQueue.invokeLater(() -> main
 					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
+			final var sdlEvent = SDL_Event.calloc(stack);
 			for (;;) {
 				if (!Platform.isMac()) {
-					GLFW.glfwPollEvents();
+					SDLEvents.SDL_PollEvent(sdlEvent);
 				}
 
 				switch (serverState) {
@@ -166,7 +169,10 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							}
 
 							serverState = ServerState.Connected;
-							input.init();
+							if (!input.init()) {
+								controllerDisconnected();
+								return;
+							}
 							EventQueue.invokeLater(() -> main.setStatusBarText(
 									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
 											clientAddress.getCanonicalHostName(), clientPort, pollInterval)));

@@ -133,7 +133,7 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final List<IAction<Byte>> cycleActions = new ArrayList<>();
+	private final List<IAction<Boolean>> cycleActions = new ArrayList<>();
 
 	private final JList<AvailableAction> availableActionsList = new JList<>();
 	private final JList<AssignedAction> assignedActionsList = new JList<>();
@@ -174,7 +174,7 @@ public final class EditActionsDialog extends JDialog {
 
 		try {
 			for (final var action : cycleAction.getActions()) {
-				cycleActions.add((IAction<Byte>) action.clone());
+				cycleActions.add((IAction<Boolean>) action.clone());
 			}
 		} catch (final CloneNotSupportedException e) {
 			throw new RuntimeException(e);
@@ -280,7 +280,7 @@ public final class EditActionsDialog extends JDialog {
 
 				buttonToModeActionsMap.get(component.getIndex()).add(buttonToModeAction);
 			} else if (isCycleEditor()) {
-				cycleActions.add((IAction<Byte>) action);
+				cycleActions.add((IAction<Boolean>) action);
 			} else {
 				final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
 						.getComponentToActionsMap(component.getType());

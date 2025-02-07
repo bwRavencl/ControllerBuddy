@@ -68,7 +68,8 @@ import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.types.UInt32;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLEvents;
+import org.lwjgl.sdl.SDL_Event;
 import uk.co.bithatch.linuxio.EventCode;
 import uk.co.bithatch.linuxio.InputDevice;
 import uk.co.bithatch.linuxio.InputDevice.Event;
@@ -633,7 +634,10 @@ public abstract class OutputRunMode extends RunMode {
 			throw buildNotImplementedException();
 		}
 
-		input.init();
+		if (!input.init()) {
+			controllerDisconnected();
+			return false;
+		}
 
 		axisX = new AxisValue();
 		axisY = new AxisValue();
@@ -649,9 +653,9 @@ public abstract class OutputRunMode extends RunMode {
 		return true;
 	}
 
-	boolean readInput() throws IOException {
+	boolean readInput(final SDL_Event sdlEvent) throws IOException {
 		if (!Platform.isMac()) {
-			GLFW.glfwPollEvents();
+			SDLEvents.SDL_PollEvent(sdlEvent);
 		}
 
 		return true;

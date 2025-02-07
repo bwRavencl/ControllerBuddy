@@ -21,11 +21,11 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
 @Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
-public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Byte> implements IButtonToAction {
+public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean> implements IButtonToAction {
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
-		handleAction(value != 0, input);
+		handleAction(value, input);
 	}
 }

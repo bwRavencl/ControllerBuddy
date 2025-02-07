@@ -54,6 +54,8 @@ import java.util.stream.Stream;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.system.MemoryStack;
 
 public final class ClientRunMode extends OutputRunMode implements Closeable {
 
@@ -130,8 +132,8 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	boolean readInput() throws IOException {
-		super.readInput();
+	boolean readInput(final SDL_Event sdlEvent) throws IOException {
+		super.readInput(sdlEvent);
 
 		var retVal = false;
 
@@ -377,9 +379,12 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 				clientSocket.setSoTimeout(timeout);
 
-				while (!Thread.interrupted()) {
-					if (readInput()) {
-						writeOutput();
+				try (final var stack = MemoryStack.stackPush()) {
+					final var sdlEvent = SDL_Event.calloc(stack);
+					while (!Thread.interrupted()) {
+						if (readInput(sdlEvent)) {
+							writeOutput();
+						}
 					}
 				}
 			} else {

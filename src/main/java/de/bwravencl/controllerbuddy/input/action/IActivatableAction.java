@@ -18,8 +18,9 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
+import java.lang.constant.Constable;
 
-public interface IActivatableAction<V extends Number> extends IInitializationAction<V> {
+public interface IActivatableAction<V extends Constable> extends IInitializationAction<V> {
 
 	Activatable getActivatable();
 

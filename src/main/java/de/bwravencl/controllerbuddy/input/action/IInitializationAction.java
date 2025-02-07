@@ -17,8 +17,9 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import java.lang.constant.Constable;
 
-public interface IInitializationAction<V extends Number> extends IAction<V> {
+public interface IInitializationAction<V extends Constable> extends IAction<V> {
 
 	void init(final Input input);
 }

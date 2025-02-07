@@ -19,8 +19,9 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder;
+import java.lang.constant.Constable;
 
-public abstract class DescribableAction<V extends Number> implements IAction<V> {
+public abstract class DescribableAction<V extends Constable> implements IAction<V> {
 
 	@ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
 	private String description;

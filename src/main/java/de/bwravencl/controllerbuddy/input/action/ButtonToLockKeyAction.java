@@ -27,8 +27,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
 
 @Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
-public final class ButtonToLockKeyAction extends DescribableAction<Byte>
-		implements IButtonToAction, IInitializationAction<Byte> {
+public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
+		implements IButtonToAction, IInitializationAction<Boolean> {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
@@ -41,10 +41,10 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte>
 	private transient boolean wasUp = true;
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
 
-		if (value != 0) {
+		if (value) {
 			if (wasUp) {
 				wasUp = false;
 				if (on) {

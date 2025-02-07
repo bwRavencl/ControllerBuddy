@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import java.lang.constant.Constable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLGamepad;
 
 public final class Mode implements Cloneable {
 
 	private final UUID uuid;
 	private String description;
 	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
-	private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
+	private Map<Integer, List<IAction<Boolean>>> buttonToActionsMap = new HashMap<>();
 
 	public Mode() {
 		uuid = UUID.randomUUID();
@@ -47,7 +48,7 @@ public final class Mode implements Cloneable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <V extends Number> Map<Integer, List<IAction<V>>> cloneActionMap(
+	private static <V extends Constable> Map<Integer, List<IAction<V>>> cloneActionMap(
 			final Map<Integer, List<IAction<V>>> actionMap) throws CloneNotSupportedException {
 		final var clonedActionMap = new HashMap<Integer, List<IAction<V>>>();
 		for (final var entry : actionMap.entrySet()) {
@@ -86,7 +87,7 @@ public final class Mode implements Cloneable {
 		return axisToActionsMap;
 	}
 
-	public Map<Integer, List<IAction<Byte>>> getButtonToActionsMap() {
+	public Map<Integer, List<IAction<Boolean>>> getButtonToActionsMap() {
 		return buttonToActionsMap;
 	}
 
@@ -135,15 +136,15 @@ public final class Mode implements Cloneable {
 			if (main.isSwapLeftAndRightSticks()) {
 				return switch (type) {
 				case AXIS -> switch (index) {
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
-				case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-				case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX;
+				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY;
+				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX;
+				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY;
 				default -> index;
 				};
 				case BUTTON -> switch (index) {
-				case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-				case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+				case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK;
+				case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK;
 				default -> index;
 				};
 				};

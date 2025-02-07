@@ -23,16 +23,16 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "TO_CURSOR_ACTION", category = ActionCategory.BUTTON, order = 125)
-public final class ButtonToCursorAction extends ToCursorAction<Byte> implements IButtonToAction {
+public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToAction {
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
 
-		if (value == 0) {
+		if (!value) {
 			remainingD = 0f;
 
 			return;

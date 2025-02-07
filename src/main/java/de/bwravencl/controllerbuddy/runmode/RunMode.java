@@ -51,7 +51,7 @@ public abstract class RunMode implements Runnable {
 
 		Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
 
-		final var controller = input.getController();
+		final var controller = input.getSelectedController();
 		if (controller != null) {
 			log.log(Level.WARNING,
 					Main.assembleControllerLoggingMessage("Could not read from controller ", controller));

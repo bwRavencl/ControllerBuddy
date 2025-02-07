@@ -18,8 +18,9 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
+import java.lang.constant.Constable;
 
-abstract class InvertableAction<V extends Number> extends DescribableAction<V> {
+abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
 
 	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class, order = 500)
 	boolean invert = false;

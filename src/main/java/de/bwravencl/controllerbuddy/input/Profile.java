@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLGamepad;
 
 public final class Profile implements Cloneable {
 
@@ -44,7 +44,6 @@ public final class Profile implements Cloneable {
 
 	private String version;
 	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
-	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
 	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
 	private List<Mode> modes = new ArrayList<>();
@@ -116,10 +115,6 @@ public final class Profile implements Cloneable {
 		return showOverlay;
 	}
 
-	public boolean isShowVrOverlay() {
-		return showVrOverlay;
-	}
-
 	public void removeMode(final Input input, final Mode mode) {
 		buttonToModeActionsMap.entrySet().removeIf(entry -> {
 			for (final var action : entry.getValue()) {
@@ -147,8 +142,8 @@ public final class Profile implements Cloneable {
 						currentAxisToActionsMap.get(axis).forEach(action -> {
 							if (action instanceof final AxisToAxisAction axisToAxisAction
 									&& !(action instanceof AxisToRelativeAxisAction)) {
-								final var value = axis == GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
-										|| axis == GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
+								final var value = axis == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
+										|| axis == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
 								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
 							}
 						});
@@ -179,10 +174,6 @@ public final class Profile implements Cloneable {
 
 	public void setShowOverlay(final boolean showOverlay) {
 		this.showOverlay = showOverlay;
-	}
-
-	public void setShowVrOverlay(final boolean showVrOverlay) {
-		this.showVrOverlay = showVrOverlay;
 	}
 
 	public void setVersion(final String version) {

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.system.MemoryStack;
 
 public final class LocalRunMode extends OutputRunMode {
 
@@ -41,8 +43,8 @@ public final class LocalRunMode extends OutputRunMode {
 	}
 
 	@Override
-	boolean readInput() throws IOException {
-		super.readInput();
+	boolean readInput(final SDL_Event sdlEvent) throws IOException {
+		super.readInput(sdlEvent);
 
 		if (!input.poll()) {
 			controllerDisconnected();
@@ -133,12 +135,15 @@ public final class LocalRunMode extends OutputRunMode {
 
 		try {
 			if (init()) {
-				while (!Thread.currentThread().isInterrupted()) {
-					if (readInput()) {
-						writeOutput();
+				try (final var stack = MemoryStack.stackPush()) {
+					final var sdlEvent = SDL_Event.calloc(stack);
+					while (!Thread.currentThread().isInterrupted()) {
+						if (readInput(sdlEvent)) {
+							writeOutput();
+						}
+						// noinspection BusyWait
+						Thread.sleep(pollInterval);
 					}
-					// noinspection BusyWait
-					Thread.sleep(pollInterval);
 				}
 			} else {
 				forceStop = true;
