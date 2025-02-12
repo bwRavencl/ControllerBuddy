@@ -996,7 +996,7 @@ public final class Main {
 				try {
 					Boolean shouldDisableSystemTray = null;
 
-					// noinspection Java9ReflectionClassVisibility
+					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
 					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
 					final var desktop = getDesktopMethod.invoke(toolkit);
