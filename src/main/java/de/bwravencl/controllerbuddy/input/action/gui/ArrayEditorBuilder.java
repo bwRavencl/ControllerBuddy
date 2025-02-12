@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
+
 	JComboBox<T> comboBox;
 
 	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,

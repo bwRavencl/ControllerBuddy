@@ -26,6 +26,7 @@ import java.util.Map;
 public interface IButtonToAction extends ILongPressAction<Byte> {
 
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {

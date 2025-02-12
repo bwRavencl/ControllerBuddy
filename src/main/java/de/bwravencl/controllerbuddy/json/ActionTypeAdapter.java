@@ -33,10 +33,12 @@ import java.util.logging.Logger;
 
 public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
-	private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
+	private static final String PROPERTY_DATA = "data";
 
 	private static final String PROPERTY_TYPE = "type";
-	private static final String PROPERTY_DATA = "data";
+
+	private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
+
 	private final Set<String> unknownActionClasses = new HashSet<>();
 
 	private static JsonElement get(final JsonObject wrapper, final String memberName) {

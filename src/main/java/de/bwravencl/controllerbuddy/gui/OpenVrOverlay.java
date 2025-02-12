@@ -52,31 +52,47 @@ import org.lwjgl.system.windows.WindowsUtil;
 @SuppressWarnings("UnusedAssignment")
 class OpenVrOverlay {
 
-	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0f;
+
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
+
+	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z = -0.4f;
+
+	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
 
 	private static final long OVERLAY_FPS = 25L;
 
-	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
+	private static final String OVERLAY_KEY_PREFIX = OpenVrOverlay.class.getPackageName() + ".";
+
 	private static final float STATUS_OVERLAY_POSITION_X = 0.2f;
+
 	private static final float STATUS_OVERLAY_POSITION_Y = -0.1f;
+
 	private static final float STATUS_OVERLAY_POSITION_Z = -0.4f;
 
-	private static final float ON_SCREEN_KEYBOARD_WIDTH = 0.4f;
-	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_X = 0f;
-	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Y = -0.3f;
-	private static final float ON_SCREEN_KEYBOARD_OVERLAY_POSITION_Z = -0.4f;
+	private static final float STATUS_OVERLAY_WIDTH = 0.08f;
+
+	private final ScheduledExecutorService executorService;
 
 	private final Main main;
+
 	private final OnScreenKeyboard onScreenKeyboard;
+
 	private final long onScreenKeyboardOverlayHandle;
-	private final Map<Long, TextureData> textureDataCache = new HashMap<>();
+
 	private final MemoryStack renderingMemoryStack;
-	private final ScheduledExecutorService executorService;
-	private long statusOverlayHandle;
-	private long hdc = MemoryUtil.NULL;
-	private long hglrc = MemoryUtil.NULL;
+
+	private final Map<Long, TextureData> textureDataCache = new HashMap<>();
+
 	private short classAtom = 0;
+
+	private long hdc = MemoryUtil.NULL;
+
+	private long hglrc = MemoryUtil.NULL;
+
 	private long hwnd = MemoryUtil.NULL;
+
+	private long statusOverlayHandle;
 
 	@SuppressWarnings("FutureReturnValueIgnored")
 	private OpenVrOverlay(final Main main) {
@@ -439,8 +455,10 @@ class OpenVrOverlay {
 
 	private static final class TextureData {
 
-		private BufferedImage image;
-		private int textureObject;
 		private Graphics graphics;
+
+		private BufferedImage image;
+
+		private int textureObject;
 	}
 }

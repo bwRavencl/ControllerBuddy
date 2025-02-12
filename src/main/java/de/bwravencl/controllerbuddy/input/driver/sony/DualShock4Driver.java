@@ -29,12 +29,17 @@ import org.lwjgl.glfw.GLFW;
 
 public final class DualShock4Driver extends SonyDriver {
 
-	private static final Logger log = Logger.getLogger(DualShock4Driver.class.getName());
-	private static final byte USB_INPUT_REPORT_ID = 0x1;
 	private static final byte BLUETOOTH_INPUT_REPORT_ID = 0x11;
-	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
-	private static final Connection DongleConnection = new Connection(0, USB_INPUT_REPORT_ID);
+
 	private static final Connection BluetoothConnection = new Connection(2, BLUETOOTH_INPUT_REPORT_ID);
+
+	private static final byte USB_INPUT_REPORT_ID = 0x1;
+
+	private static final Connection DongleConnection = new Connection(0, USB_INPUT_REPORT_ID);
+
+	private static final Connection UsbConnection = new Connection(0, USB_INPUT_REPORT_ID);
+
+	private static final Logger log = Logger.getLogger(DualShock4Driver.class.getName());
 
 	private DualShock4Driver(final Input input, final ControllerInfo controller, final HidDevice hidDevice,
 			final Connection connection) {

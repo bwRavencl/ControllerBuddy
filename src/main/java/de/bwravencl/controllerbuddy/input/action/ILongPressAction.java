@@ -18,9 +18,9 @@ package de.bwravencl.controllerbuddy.input.action;
 
 public interface ILongPressAction<V extends Number> extends IAction<V> {
 
-	long MIN_LONG_PRESS_TIME = 1000L;
-
 	boolean DEFAULT_LONG_PRESS = false;
+
+	long MIN_LONG_PRESS_TIME = 1000L;
 
 	boolean isLongPress();
 

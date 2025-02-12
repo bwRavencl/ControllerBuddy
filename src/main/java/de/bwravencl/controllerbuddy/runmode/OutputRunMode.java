@@ -76,21 +76,32 @@ import uk.co.bithatch.linuxio.InputDevice.Event;
 public abstract class OutputRunMode extends RunMode {
 
 	public static final int VJOY_DEFAULT_DEVICE = 1;
+
 	public static final String VJOY_LIBRARY_FILENAME = VjoyInterface.VJOY_LIBRARY_NAME + ".dll";
-	private static final Logger log = Logger.getLogger(OutputRunMode.class.getName());
-	private static final String VJOY_UNINSTALL_REGISTRY_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{8E31F76F-74C3-47F1-9550-E041EEDC5FBB}_is1";
-	private static final String VJOY_INSTALL_LOCATION_REGISTRY_VALUE = "InstallLocation";
-	private static final long MOUSEEVENTF_MOVE = 0x0001L;
+
 	private static final long MOUSEEVENTF_LEFTDOWN = 0x0002L;
+
 	private static final long MOUSEEVENTF_LEFTUP = 0x0004L;
-	private static final long MOUSEEVENTF_RIGHTDOWN = 0x0008L;
-	private static final long MOUSEEVENTF_RIGHTUP = 0x0010L;
+
 	private static final long MOUSEEVENTF_MIDDLEDOWN = 0x0020L;
+
 	private static final long MOUSEEVENTF_MIDDLEUP = 0x0040L;
+
+	private static final long MOUSEEVENTF_MOVE = 0x0001L;
+
+	private static final long MOUSEEVENTF_RIGHTDOWN = 0x0008L;
+
+	private static final long MOUSEEVENTF_RIGHTUP = 0x0010L;
+
 	private static final long MOUSEEVENTF_WHEEL = 0x0800L;
-	private static final long WHEEL_DELTA = 120L;
-	private static final int UINPUT_VENDOR_CODE = 0x1234;
-	private static final int UINPUT_PRODUCT_CODE = 0x5678;
+
+	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
+
+	private static final String SYSFS_INPUT_DIR_REGEX_PREFIX = "input\\d+::";
+
+	private static final String SYSFS_LEDS_DIR = File.separator + "sys" + File.separator + "class" + File.separator
+			+ "leds";
+
 	private static final EventCode[] UINPUT_JOYSTICK_BUTTON_EVENT_CODES = { EventCode.BTN_TRIGGER, EventCode.BTN_THUMB,
 			EventCode.BTN_THUMB2, EventCode.BTN_TOP, EventCode.BTN_TOP2, EventCode.BTN_PINKIE, EventCode.BTN_BASE,
 			EventCode.BTN_BASE2, EventCode.BTN_BASE3, EventCode.BTN_BASE4, EventCode.BTN_BASE5, EventCode.BTN_BASE6,
@@ -108,46 +119,90 @@ public abstract class OutputRunMode extends RunMode {
 			EventCode.BTN_TRIGGER_HAPPY33, EventCode.BTN_TRIGGER_HAPPY34, EventCode.BTN_TRIGGER_HAPPY35,
 			EventCode.BTN_TRIGGER_HAPPY36, EventCode.BTN_TRIGGER_HAPPY37, EventCode.BTN_TRIGGER_HAPPY38,
 			EventCode.BTN_TRIGGER_HAPPY39, EventCode.BTN_TRIGGER_HAPPY40 };
-	private static final String SYSFS_LEDS_DIR = File.separator + "sys" + File.separator + "class" + File.separator
-			+ "leds";
-	private static final String SYSFS_INPUT_DIR_REGEX_PREFIX = "input\\d+::";
-	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
-	final Set<Integer> oldDownMouseButtons = new HashSet<>();
-	final Set<Integer> newUpMouseButtons = new HashSet<>();
-	final Set<Integer> newDownMouseButtons = new HashSet<>();
-	final Set<Integer> downUpMouseButtons = new HashSet<>();
-	final Set<ScanCode> oldDownModifiers = new HashSet<>();
-	final Set<ScanCode> newUpModifiers = new HashSet<>();
-	final Set<ScanCode> newDownModifiers = new HashSet<>();
-	final Set<ScanCode> oldDownNormalKeys = new HashSet<>();
-	final Set<ScanCode> newUpNormalKeys = new HashSet<>();
-	final Set<ScanCode> newDownNormalKeys = new HashSet<>();
-	final Set<LockKey> onLockKeys = new HashSet<>();
-	final Set<LockKey> offLockKeys = new HashSet<>();
+
+	private static final int UINPUT_PRODUCT_CODE = 0x5678;
+
+	private static final int UINPUT_VENDOR_CODE = 0x1234;
+
+	private static final String VJOY_INSTALL_LOCATION_REGISTRY_VALUE = "InstallLocation";
+
+	private static final String VJOY_UNINSTALL_REGISTRY_KEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{8E31F76F-74C3-47F1-9550-E041EEDC5FBB}_is1";
+
+	private static final long WHEEL_DELTA = 120L;
+
+	private static final Logger log = Logger.getLogger(OutputRunMode.class.getName());
+
 	final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
-	boolean forceStop;
-	AxisValue axisX;
-	AxisValue axisY;
-	AxisValue axisZ;
+
+	final Set<Integer> downUpMouseButtons = new HashSet<>();
+
+	final Set<ScanCode> newDownModifiers = new HashSet<>();
+
+	final Set<Integer> newDownMouseButtons = new HashSet<>();
+
+	final Set<ScanCode> newDownNormalKeys = new HashSet<>();
+
+	final Set<ScanCode> newUpModifiers = new HashSet<>();
+
+	final Set<Integer> newUpMouseButtons = new HashSet<>();
+
+	final Set<ScanCode> newUpNormalKeys = new HashSet<>();
+
+	final Set<LockKey> offLockKeys = new HashSet<>();
+
+	final Set<ScanCode> oldDownModifiers = new HashSet<>();
+
+	final Set<Integer> oldDownMouseButtons = new HashSet<>();
+
+	final Set<ScanCode> oldDownNormalKeys = new HashSet<>();
+
+	final Set<LockKey> onLockKeys = new HashSet<>();
+
 	AxisValue axisRX;
+
 	AxisValue axisRY;
+
 	AxisValue axisRZ;
+
 	AxisValue axisS0;
+
 	AxisValue axisS1;
+
+	AxisValue axisX;
+
+	AxisValue axisY;
+
+	AxisValue axisZ;
+
 	ButtonValue[] buttons;
+
 	int cursorDeltaX;
+
 	int cursorDeltaY;
+
+	boolean forceStop;
+
 	int scrollClicks;
-	private boolean restart;
-	private long prevKeyInputTime;
-	private UINT vJoyDevice;
-	private InputDevice joystickInputDevice;
-	private InputDevice mouseInputDevice;
-	private InputDevice keyboardInputDevice;
+
 	private DBusConnection dBusConnection;
-	private ScreenSaver screenSaver;
-	private UInt32 screenSaverCookie;
+
+	private InputDevice joystickInputDevice;
+
+	private InputDevice keyboardInputDevice;
+
 	private Map<LockKey, File> lockKeyToBrightnessFileMap;
+
+	private InputDevice mouseInputDevice;
+
+	private long prevKeyInputTime;
+
+	private boolean restart;
+
+	private ScreenSaver screenSaver;
+
+	private UInt32 screenSaverCookie;
+
+	private UINT vJoyDevice;
 
 	OutputRunMode(final Main main, final Input input) {
 		super(main, input);
@@ -329,8 +384,8 @@ public abstract class OutputRunMode extends RunMode {
 			switch (button) {
 			case 1 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_LEFTDOWN) : new DWORD(MOUSEEVENTF_LEFTUP);
 			case 2 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_RIGHTDOWN) : new DWORD(MOUSEEVENTF_RIGHTUP);
-			case 3 ->
-				input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN) : new DWORD(MOUSEEVENTF_MIDDLEUP);
+			case 3 -> input.input.mi.dwFlags = down ? new DWORD(MOUSEEVENTF_MIDDLEDOWN)
+					: new DWORD(MOUSEEVENTF_MIDDLEUP);
 			default -> throw buildInvalidMouseButtonException(button);
 			}
 
@@ -970,9 +1025,11 @@ public abstract class OutputRunMode extends RunMode {
 
 	private abstract static class DeviceValue<T extends IntegerType> {
 
-		private T vJoyValue;
-		private int uinputValue;
 		private boolean changed;
+
+		private int uinputValue;
+
+		private T vJoyValue;
 
 		private DeviceValue(final Class<T> windowsClass) {
 			if (Main.isWindows) {

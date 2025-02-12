@@ -22,9 +22,9 @@ public enum ScreenSaverType {
 			"/ScreenSaver"),
 	PowerManagement(Inhibit.class, "org.freedesktop.PowerManagement", "/org/freedesktop/PowerManagement/Inhibit");
 
-	public final Class<? extends ScreenSaver> clazz;
-
 	public final String busname;
+
+	public final Class<? extends ScreenSaver> clazz;
 
 	public final String objectpath;
 

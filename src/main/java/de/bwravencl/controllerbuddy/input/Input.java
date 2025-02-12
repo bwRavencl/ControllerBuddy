@@ -47,48 +47,88 @@ import org.lwjgl.system.MemoryStack;
 public final class Input {
 
 	public static final int MAX_N_BUTTONS = 128;
-	private static final Logger log = Logger.getLogger(Input.class.getName());
-	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
-	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
+
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
-	private static final long SUSPENSION_TIME = 500L;
-	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
+
+	private static final float AXIS_MOVEMENT_MAX_DELTA_FACTOR = 4f;
+
+	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
+
 	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL = 2000L;
 
-	private final Main main;
-	private final ControllerInfo controller;
+	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
+
+	private static final long SUSPENSION_TIME = 500L;
+
+	private static final Logger log = Logger.getLogger(Input.class.getName());
+
 	private final EnumMap<VirtualAxis, Integer> axes;
-	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
-	private final Set<Integer> downUpMouseButtons = new HashSet<>();
-	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
-	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
-	private final Set<LockKey> onLockKeys = new HashSet<>();
-	private final Set<LockKey> offLockKeys = new HashSet<>();
-	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
+
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
-	private final Map<Integer, Driver> jidToDriverMap = new HashMap<>();
+
+	private final ControllerInfo controller;
+
+	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
+
+	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
+
+	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
+
+	private final Set<Integer> downUpMouseButtons = new HashSet<>();
+
 	private final Set<Integer> hotSwappingButtonDownJids = new HashSet<>();
-	private Profile profile;
-	private RunMode runMode;
+
+	private final Map<Integer, Driver> jidToDriverMap = new HashMap<>();
+
+	private final Main main;
+
+	private final Set<LockKey> offLockKeys = new HashSet<>();
+
+	private final Set<LockKey> onLockKeys = new HashSet<>();
+
+	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
+
 	private boolean[] buttons;
-	private volatile int cursorDeltaX;
-	private volatile int cursorDeltaY;
-	private volatile int scrollClicks;
+
 	private boolean clearOnNextPoll;
-	private boolean repeatModeActionWalk;
-	private long lastPollTime;
-	private long lastHotSwapPollTime;
-	private float rateMultiplier;
+
+	private volatile int cursorDeltaX;
+
+	private volatile int cursorDeltaY;
+
 	private Driver driver;
-	private float planckLength;
-	private int hotSwappingButtonId = HotSwappingButton.None.id;
-	private boolean skipAxisInitialization;
-	private boolean initialized;
-	private boolean swapLeftAndRightSticks;
-	private boolean mapCircularAxesToSquareAxes;
+
 	private boolean hapticFeedback;
+
+	private int hotSwappingButtonId = HotSwappingButton.None.id;
+
+	private boolean initialized;
+
+	private long lastHotSwapPollTime;
+
+	private long lastPollTime;
+
 	private boolean lightRumbleScheduled;
+
+	private boolean mapCircularAxesToSquareAxes;
+
+	private float planckLength;
+
+	private Profile profile;
+
+	private float rateMultiplier;
+
+	private boolean repeatModeActionWalk;
+
+	private RunMode runMode;
+
+	private volatile int scrollClicks;
+
+	private boolean skipAxisInitialization;
+
 	private boolean strongRumbleScheduled;
+
+	private boolean swapLeftAndRightSticks;
 
 	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;

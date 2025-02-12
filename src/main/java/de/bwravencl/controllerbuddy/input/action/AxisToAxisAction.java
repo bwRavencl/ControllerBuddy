@@ -29,26 +29,30 @@ import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
 @Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
-	private static final float DEFAULT_INITIAL_VALUE = 0f;
-	private static final float DEFAULT_MIN_VALUE = -1f;
-	private static final float DEFAULT_MAX_VALUE = 1f;
 	private static final float DEFAULT_DEAD_ZONE = 0f;
+
 	private static final float DEFAULT_EXPONENT = 1f;
+
+	private static final float DEFAULT_INITIAL_VALUE = 0f;
+
+	private static final float DEFAULT_MAX_VALUE = 1f;
+
+	private static final float DEFAULT_MIN_VALUE = -1f;
 
 	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
-
-	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
-	float minValue = DEFAULT_MIN_VALUE;
-
-	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
-	float maxValue = DEFAULT_MAX_VALUE;
 
 	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 103)
 	float exponent = DEFAULT_EXPONENT;
 
 	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 202)
 	float initialValue = DEFAULT_INITIAL_VALUE;
+
+	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
+	float maxValue = DEFAULT_MAX_VALUE;
+
+	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
+	float minValue = DEFAULT_MIN_VALUE;
 
 	@Override
 	public void doAction(final Input input, final int component, Float value) {

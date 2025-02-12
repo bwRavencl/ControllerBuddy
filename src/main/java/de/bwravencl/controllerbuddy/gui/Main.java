@@ -233,124 +233,235 @@ import org.w3c.dom.svg.SVGDocument;
 
 public final class Main {
 
-	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
-	public static final boolean isLinux = Platform.getOSType() == Platform.LINUX;
-	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
-	public static final int PASSWORD_MIN_LENGTH = 6;
-	public static final int PASSWORD_MAX_LENGTH = 24;
-	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 	public static final int DEFAULT_HGAP = 10;
+
 	public static final int DEFAULT_VGAP = 10;
+
+	public static final int PASSWORD_MAX_LENGTH = 24;
+
+	public static final int PASSWORD_MIN_LENGTH = 6;
+
+	public static final String SWAPPED_SYMBOL = "⇆";
+
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
-	public static final String SWAPPED_SYMBOL = "⇆";
-	static final int DEFAULT_OVERLAY_SCALING = 1;
+
+	public static final boolean isLinux = Platform.getOSType() == Platform.LINUX;
+
+	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
+
+	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
+
+	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
+
 	static final int BUTTON_DIMENSION_HEIGHT = 25;
+
 	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
+
 	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
 	public static final Dimension SQUARE_BUTTON_DIMENSION = new Dimension(BUTTON_DIMENSION_HEIGHT,
 			BUTTON_DIMENSION_HEIGHT);
-	private static final Options options = new Options();
-	private static final Logger log = Logger.getLogger(Main.class.getName());
-	private static final String PROFILE_FILE_EXTENSION = "json";
-	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
-	private static final int DIALOG_BOUNDS_X = 100;
-	private static final int DIALOG_BOUNDS_Y = 100;
-	private static final int DIALOG_BOUNDS_WIDTH = 985;
-	private static final int DIALOG_BOUNDS_HEIGHT = 710;
-	private static final int SVG_VIEWBOX_MARGIN = 20;
-	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
-	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
-	private static final String SVG_ID_LEFT_TRIGGER = "lefttrigger";
-	private static final String SVG_ID_LEFT_X = "leftx";
-	private static final String SVG_ID_LEFT_Y = "lefty";
-	private static final String SVG_ID_RIGHT_TRIGGER = "righttrigger";
-	private static final String SVG_ID_RIGHT_X = "rightx";
-	private static final String SVG_ID_RIGHT_Y = "righty";
-	private static final String SVG_ID_A = "a";
-	private static final String SVG_ID_B = "b";
-	private static final String SVG_ID_BACK = "back";
-	private static final String SVG_ID_DPAD_DOWN = "dpdown";
-	private static final String SVG_ID_DPAD_LEFT = "dpleft";
-	private static final String SVG_ID_DPAD_RIGHT = "dpright";
-	private static final String SVG_ID_DPAD_UP = "dpup";
-	private static final String SVG_ID_GUIDE = "guide";
-	private static final String SVG_ID_LEFT_SHOULDER = "leftshoulder";
-	private static final String SVG_ID_LEFT_STICK = "leftstick";
-	private static final String SVG_ID_RIGHT_SHOULDER = "rightshoulder";
-	private static final String SVG_ID_RIGHT_STICK = "rightstick";
-	private static final String SVG_ID_START = "start";
-	private static final String SVG_ID_X = "x";
-	private static final String SVG_ID_Y = "y";
-	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
-	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
-	private static final Dimension OVERLAY_SETTINGS_LABEL_DIMENSION = new Dimension(100,
-			SETTINGS_LABEL_DIMENSION_HEIGHT);
-	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
-			SETTINGS_LABEL_DIMENSION_HEIGHT);
+
+	static final int DEFAULT_OVERLAY_SCALING = 1;
+
+	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
+
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
-	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
+
+	private static final int DIALOG_BOUNDS_HEIGHT = 710;
+
+	private static final int DIALOG_BOUNDS_WIDTH = 985;
+
+	private static final int DIALOG_BOUNDS_X = 100;
+
+	private static final int DIALOG_BOUNDS_Y = 100;
+
+	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
+
 	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
-	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
-	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
-	private static final String OPTION_AUTOSTART = "autostart";
-	private static final String OPTION_PROFILE = "profile";
-	private static final String OPTION_HOST = "host";
-	private static final String OPTION_PORT = "port";
-	private static final String OPTION_TIMEOUT = "timeout";
-	private static final String OPTION_PASSWORD = "password";
-	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
-	private static final String OPTION_TRAY = "tray";
-	private static final String OPTION_SAVE = "save";
-	private static final String OPTION_EXPORT = "export";
-	private static final String OPTION_SKIP_MESSAGE_DIALOGS = "skipMessageDialogs";
-	private static final String OPTION_QUIT = "quit";
-	private static final String OPTION_VERSION = "version";
-	private static final String OPTION_HELP = "help";
-	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
-	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
-	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
-	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
-	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
-	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
-	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
-	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
-	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
-	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
-	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
-	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
-	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
-	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
-	private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
-	private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
-	private static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
-	private static final String PREFERENCES_HOST = "host";
-	private static final String PREFERENCES_PORT = "port";
-	private static final String PREFERENCES_TIMEOUT = "timeout";
-	private static final String PREFERENCES_PASSWORD = "password";
-	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
-	private static final String PREFERENCES_DARK_THEME = "dark_theme";
-	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
-	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
-	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1L;
-	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10L;
-	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
-	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH = 20;
-	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
+
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
-	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
-	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
-	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
-	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
-	private static final String WEBSITE_URL = "https://controllerbuddy.org";
-	private static final File SINGLE_INSTANCE_LOCK_FILE;
-	private static final String SINGLE_INSTANCE_INIT = "INIT";
+
+	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
+
+	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
+
+	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
+
+	private static final String OPTION_AUTOSTART = "autostart";
+
+	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
+
+	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
+
+	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
+
+	private static final String OPTION_EXPORT = "export";
+
+	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
+
+	private static final String OPTION_HELP = "help";
+
+	private static final String OPTION_HOST = "host";
+
+	private static final String OPTION_PASSWORD = "password";
+
+	private static final String OPTION_PORT = "port";
+
+	private static final String OPTION_PROFILE = "profile";
+
+	private static final String OPTION_QUIT = "quit";
+
+	private static final String OPTION_SAVE = "save";
+
+	private static final String OPTION_SKIP_MESSAGE_DIALOGS = "skipMessageDialogs";
+
+	private static final String OPTION_TIMEOUT = "timeout";
+
+	private static final String OPTION_TRAY = "tray";
+
+	private static final String OPTION_VERSION = "version";
+
+	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
+
+	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH = 20;
+
+	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
+
+	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1L;
+
+	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10L;
+
+	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
+
+	private static final String PREFERENCES_DARK_THEME = "dark_theme";
+
+	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
+
+	private static final String PREFERENCES_HOST = "host";
+
+	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
+
+	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
+
+	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
+
+	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
+
+	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
+
+	private static final String PREFERENCES_PASSWORD = "password";
+
+	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+
+	private static final String PREFERENCES_PORT = "port";
+
+	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
+
+	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
+
+	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
+
+	private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
+
+	private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
+
+	private static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
+
+	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
+
+	private static final String PREFERENCES_TIMEOUT = "timeout";
+
+	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
+
+	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
+
+	private static final String PROFILE_FILE_EXTENSION = "json";
+
+	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
+
+	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
+
+	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
+
+	private static final Dimension OVERLAY_SETTINGS_LABEL_DIMENSION = new Dimension(100,
+			SETTINGS_LABEL_DIMENSION_HEIGHT);
+
+	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
+			SETTINGS_LABEL_DIMENSION_HEIGHT);
+
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
+
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
+
+	private static final String SINGLE_INSTANCE_INIT = "INIT";
+
+	private static final File SINGLE_INSTANCE_LOCK_FILE;
+
+	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
+
+	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
+
+	private static final String SVG_ID_A = "a";
+
+	private static final String SVG_ID_B = "b";
+
+	private static final String SVG_ID_BACK = "back";
+
+	private static final String SVG_ID_DPAD_DOWN = "dpdown";
+
+	private static final String SVG_ID_DPAD_LEFT = "dpleft";
+
+	private static final String SVG_ID_DPAD_RIGHT = "dpright";
+
+	private static final String SVG_ID_DPAD_UP = "dpup";
+
+	private static final String SVG_ID_GUIDE = "guide";
+
+	private static final String SVG_ID_LEFT_SHOULDER = "leftshoulder";
+
+	private static final String SVG_ID_LEFT_STICK = "leftstick";
+
+	private static final String SVG_ID_LEFT_TRIGGER = "lefttrigger";
+
+	private static final String SVG_ID_LEFT_X = "leftx";
+
+	private static final String SVG_ID_LEFT_Y = "lefty";
+
+	private static final String SVG_ID_RIGHT_SHOULDER = "rightshoulder";
+
+	private static final String SVG_ID_RIGHT_STICK = "rightstick";
+
+	private static final String SVG_ID_RIGHT_TRIGGER = "righttrigger";
+
+	private static final String SVG_ID_RIGHT_X = "rightx";
+
+	private static final String SVG_ID_RIGHT_Y = "righty";
+
+	private static final String SVG_ID_START = "start";
+
+	private static final String SVG_ID_X = "x";
+
+	private static final String SVG_ID_Y = "y";
+
+	private static final int SVG_VIEWBOX_MARGIN = 20;
+
+	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
+
+	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
+
+	private static final String WEBSITE_URL = "https://controllerbuddy.org";
+
+	private static final Logger log = Logger.getLogger(Main.class.getName());
+
+	private static final Options options = new Options();
+
 	static volatile Main main;
+
 	static boolean skipMessageDialogs;
+
 	private static volatile boolean terminated;
 
 	static {
@@ -386,70 +497,133 @@ public final class Main {
 		}
 	}
 
-	private final Random random;
-	private final TaskRunner taskRunner;
-	private final Preferences preferences;
-	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
-	private final JFrame frame;
-	private final OpenAction openAction = new OpenAction();
-	private final QuitAction quitAction = new QuitAction();
-	private final StartLocalAction startLocalAction = new StartLocalAction();
-	private final StartClientAction startClientAction = new StartClientAction();
-	private final StartServerAction startServerAction = new StartServerAction();
-	private final StopAction stopAction = new StopAction();
-	private final JMenuBar menuBar = new JMenuBar();
-	private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
-	private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
-	private final JMenuItem startServerJMenuItem;
-	private final JMenuItem stopJMenuItem;
-	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-	private final JPanel globalSettingsPanel;
-	private final JPanel sonyCursorSensitivityPanel;
-	private final JPanel sonyScrollSensitivityPanel;
-	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
-	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
-	private final Timer timer = new Timer();
-	private final OnScreenKeyboard onScreenKeyboard;
-	private final JScrollPane modesScrollPane;
-	private final JPanel modesListPanel;
-	private final JPanel newModePanel;
 	private final AssignmentsComponent assignmentsComponent;
-	private final JPanel profileSettingsPanel;
-	private final JScrollPane indicatorsScrollPane;
+
+	private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
+
+	private final JFrame frame;
+
+	private final JPanel globalSettingsPanel;
+
 	private final JPanel indicatorsListPanel;
-	private final JPanel visualizationPanel;
+
+	private final JScrollPane indicatorsScrollPane;
+
+	private final JMenuBar menuBar = new JMenuBar();
+
+	private final JPanel modesListPanel;
+
+	private final JScrollPane modesScrollPane;
+
+	private final JPanel newModePanel;
+
+	private final OnScreenKeyboard onScreenKeyboard;
+
+	private final OpenAction openAction = new OpenAction();
+
+	private final Preferences preferences;
+
+	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
+
+	private final JPanel profileSettingsPanel;
+
+	private final QuitAction quitAction = new QuitAction();
+
+	private final Random random;
+
+	private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
+
+	private final JPanel sonyCursorSensitivityPanel;
+
+	private final JPanel sonyScrollSensitivityPanel;
+
+	private final StartClientAction startClientAction = new StartClientAction();
+
+	private final StartLocalAction startLocalAction = new StartLocalAction();
+
+	private final StartServerAction startServerAction = new StartServerAction();
+
+	private final JMenuItem startServerJMenuItem;
+
+	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
+
+	private final StopAction stopAction = new StopAction();
+
+	private final JMenuItem stopJMenuItem;
+
 	private final JSVGCanvas svgCanvas;
+
+	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
+
+	private final TaskRunner taskRunner;
+
 	private final SVGDocument templateSvgDocument;
-	private volatile RunMode runMode;
-	private volatile ControllerInfo selectedController;
-	private Input input;
-	private RunModeType lastRunModeType = RunModeType.NONE;
-	private JMenuItem startLocalJMenuItem;
-	private JMenuItem startClientJMenuItem;
-	private PopupMenu runPopupMenu;
-	private MenuItem showMenuItem;
-	private MenuItem startLocalMenuItem;
-	private MenuItem startClientMenuItem;
-	private MenuItem startServerMenuItem;
-	private MenuItem stopMenuItem;
-	private JCheckBox showVrOverlayCheckBox;
-	private ScheduledExecutorService overlayExecutorService;
-	private JLabel vJoyDirectoryLabel;
-	private TrayIcon trayIcon;
-	private boolean unsavedChanges = false;
-	private String loadedProfile = null;
-	private File currentFile;
-	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
-	private JLabel currentModeLabel;
-	private volatile OpenVrOverlay openVrOverlay;
-	private FrameDragListener overlayFrameDragListener;
-	private JPanel indicatorPanel;
-	private Rectangle prevTotalDisplayBounds;
-	private volatile JFrame overlayFrame;
-	private JComboBox<Mode> modeComboBox;
-	private FlatLaf lookAndFeel;
-	private volatile Rectangle totalDisplayBounds;
+
+	private final Timer timer = new Timer();
+
+	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
+
+	private final JPanel visualizationPanel;
+
 	private IAction<?> clipboardAction;
+
+	private File currentFile;
+
+	private JLabel currentModeLabel;
+
+	private JPanel indicatorPanel;
+
+	private Input input;
+
+	private RunModeType lastRunModeType = RunModeType.NONE;
+
+	private String loadedProfile = null;
+
+	private FlatLaf lookAndFeel;
+
+	private JComboBox<Mode> modeComboBox;
+
+	private volatile OpenVrOverlay openVrOverlay;
+
+	private ScheduledExecutorService overlayExecutorService;
+
+	private volatile JFrame overlayFrame;
+
+	private FrameDragListener overlayFrameDragListener;
+
+	private Rectangle prevTotalDisplayBounds;
+
+	private volatile RunMode runMode;
+
+	private PopupMenu runPopupMenu;
+
+	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
+
+	private volatile ControllerInfo selectedController;
+
+	private MenuItem showMenuItem;
+
+	private JCheckBox showVrOverlayCheckBox;
+
+	private JMenuItem startClientJMenuItem;
+
+	private MenuItem startClientMenuItem;
+
+	private JMenuItem startLocalJMenuItem;
+
+	private MenuItem startLocalMenuItem;
+
+	private MenuItem startServerMenuItem;
+
+	private MenuItem stopMenuItem;
+
+	private volatile Rectangle totalDisplayBounds;
+
+	private TrayIcon trayIcon;
+
+	private boolean unsavedChanges = false;
+
+	private JLabel vJoyDirectoryLabel;
 
 	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String cmdGameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -2736,6 +2910,7 @@ public final class Main {
 		class StatusBarTextTimerTask extends TimerTask {
 
 			private final String newText;
+
 			private final String originalText;
 
 			private StatusBarTextTimerTask(final String newText) {
@@ -3685,6 +3860,7 @@ public final class Main {
 		DPAD_LEFT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
 
 		public final int id;
+
 		private final String label;
 
 		HotSwappingButton(final int id, final String labelKey) {
@@ -4138,14 +4314,17 @@ public final class Main {
 
 	private class ConnectionSettingsPanel extends JPanel {
 
+		private static final int TEXT_FIELD_COLUMNS = 15;
+
 		@Serial
 		private static final long serialVersionUID = 2959405425250777631L;
 
-		private static final int TEXT_FIELD_COLUMNS = 15;
+		private final JPasswordField passwordPasswordField;
 
 		private final JSpinner portSpinner;
+
 		private final JSpinner timeoutSpinner;
-		private final JPasswordField passwordPasswordField;
+
 		private JTextField hostTextField;
 
 		private ConnectionSettingsPanel(final boolean withHost) {

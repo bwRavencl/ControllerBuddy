@@ -46,12 +46,19 @@ import org.lwjgl.glfw.GLFWGamepadState;
 public abstract class SonyDriver extends Driver implements IGamepadStateProvider {
 
 	public static final float DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY = 1.25f;
+
 	public static final float DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY = 0.25f;
-	static final int USB_REPORT_LENGTH = 64;
+
 	static final int BLUETOOTH_REPORT_LENGTH = 78;
-	private static final int LOW_BATTERY_WARNING = 20;
+
+	static final int USB_REPORT_LENGTH = 64;
+
 	private static final int HID_READ_TIMEOUT = 100;
+
 	private static final long INPUT_REPORT_TIMEOUT = 5000L;
+
+	private static final int LOW_BATTERY_WARNING = 20;
+
 	private static final int TOUCHPAD_MAX_DELTA = 150;
 
 	static {
@@ -59,42 +66,79 @@ public abstract class SonyDriver extends Driver implements IGamepadStateProvider
 	}
 
 	private final Lock hidDeviceLock = new ReentrantLock();
+
 	private final Thread readerThread;
-	private final boolean touchpadEnabled;
+
 	private final float touchpadCursorSensitivity;
+
+	private final boolean touchpadEnabled;
+
 	private final float touchpadScrollSensitivity;
-	volatile HidDevice hidDevice;
-	byte[] hidReport;
-	Connection connection;
-	volatile Boolean charging;
+
 	volatile Integer batteryCapacity;
-	volatile byte lx = Byte.MAX_VALUE;
-	volatile byte ly = Byte.MAX_VALUE;
-	volatile byte rx = Byte.MAX_VALUE;
-	volatile byte ry = Byte.MAX_VALUE;
-	volatile byte l2 = Byte.MAX_VALUE;
-	volatile byte r2 = Byte.MAX_VALUE;
-	volatile boolean triangle;
+
+	volatile Boolean charging;
+
 	volatile boolean circle;
+
+	Connection connection;
+
 	volatile boolean cross;
-	volatile boolean square;
-	volatile boolean dpadUp;
-	volatile boolean dpadDown;
-	volatile boolean dpadLeft;
-	volatile boolean dpadRight;
-	volatile boolean r3;
-	volatile boolean l3;
-	volatile boolean options;
-	volatile boolean share;
-	volatile boolean r1;
-	volatile boolean l1;
-	volatile boolean ps;
+
 	volatile boolean disconnected;
+
+	volatile boolean dpadDown;
+
+	volatile boolean dpadLeft;
+
+	volatile boolean dpadRight;
+
+	volatile boolean dpadUp;
+
+	volatile HidDevice hidDevice;
+
+	byte[] hidReport;
+
+	volatile boolean l1;
+
+	volatile byte l2 = Byte.MAX_VALUE;
+
+	volatile boolean l3;
+
 	volatile long lastInputReportTime = Long.MAX_VALUE;
-	private boolean prevTouchpadButtonDown;
+
+	volatile byte lx = Byte.MAX_VALUE;
+
+	volatile byte ly = Byte.MAX_VALUE;
+
+	volatile boolean options;
+
+	volatile boolean ps;
+
+	volatile boolean r1;
+
+	volatile byte r2 = Byte.MAX_VALUE;
+
+	volatile boolean r3;
+
+	volatile byte rx = Byte.MAX_VALUE;
+
+	volatile byte ry = Byte.MAX_VALUE;
+
+	volatile boolean share;
+
+	volatile boolean square;
+
+	volatile boolean triangle;
+
 	private boolean prevDown1;
+
 	private boolean prevDown2;
+
+	private boolean prevTouchpadButtonDown;
+
 	private int prevX1;
+
 	private int prevY1;
 
 	SonyDriver(final Input input, final ControllerInfo controller, final HidDevice hidDevice) {

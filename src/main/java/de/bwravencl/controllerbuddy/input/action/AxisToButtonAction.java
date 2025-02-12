@@ -26,17 +26,18 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 @Action(label = "TO_BUTTON_ACTION", category = ActionCategory.AXIS, order = 20)
 public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToLongPressAction {
 
-	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
+
+	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
-	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
-
 	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 101)
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
+
+	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
 	@Override
 	public void doAction(final Input input, final int component, Float value) {

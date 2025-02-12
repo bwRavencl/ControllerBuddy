@@ -56,26 +56,40 @@ import org.lwjgl.glfw.GLFW;
 public final class ServerRunMode extends RunMode implements Closeable {
 
 	public static final int DEFAULT_PORT = 28789;
+
 	public static final int DEFAULT_TIMEOUT = 100;
-	static final byte PROTOCOL_VERSION = 3;
+
 	static final String CIPHER_TRANSFORMATION = "AES/GCM/NoPadding";
+
 	static final int IV_LENGTH = 12;
-	static final int TAG_LENGTH = 128;
+
+	static final byte PROTOCOL_VERSION = 3;
+
 	static final int SALT_LENGTH = 100;
+
+	static final int TAG_LENGTH = 128;
+
+	private static final int N_REQUEST_ALIVE_RETRIES = 10;
+
+	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
 	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
 
-	private static final int REQUEST_ALIVE_INTERVAL = 100;
-	private static final int N_REQUEST_ALIVE_RETRIES = 10;
+	private final Cipher cipher;
 
 	private final byte[] iv = new byte[IV_LENGTH];
+
 	private final int port;
-	private final int timeout;
+
 	private final Random random;
-	private final Cipher cipher;
-	private DatagramSocket serverSocket;
+
+	private final int timeout;
+
 	private InetAddress clientAddress;
+
 	private Key key;
+
+	private DatagramSocket serverSocket;
 
 	public ServerRunMode(final Main main, final Input input) {
 		super(main, input);

@@ -73,21 +73,26 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
-	@Serial
-	private static final long serialVersionUID = 5007388251349678609L;
+	private static final double ACTIONS_LIST_WEIGHT_X = .245d;
+
+	private static final int DIALOG_BOUNDS_HEIGHT = 685;
+
+	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
+
+	private static final int DIALOG_BOUNDS_WIDTH = 1015;
+
+	private static final List<Class<?>> axisActionClasses;
+
+	private static final List<Class<?>> buttonActionClasses;
+
+	private static final List<Class<?>> cycleActionClasses;
 
 	private static final Logger log = Logger.getLogger(EditActionsDialog.class.getName());
 
-	private static final int DIALOG_BOUNDS_WIDTH = 1015;
-	private static final int DIALOG_BOUNDS_HEIGHT = 685;
-	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
-
-	private static final double ACTIONS_LIST_WEIGHT_X = .245d;
-
-	private static final List<Class<?>> axisActionClasses;
-	private static final List<Class<?>> buttonActionClasses;
-	private static final List<Class<?>> cycleActionClasses;
 	private static final List<Class<?>> onScreenKeyboardActionClasses;
+
+	@Serial
+	private static final long serialVersionUID = 5007388251349678609L;
 
 	static {
 		final List<Class<?>> mutableAxisActionClasses = new ArrayList<>();
@@ -132,37 +137,38 @@ public final class EditActionsDialog extends JDialog {
 		onScreenKeyboardActionClasses = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
 	}
 
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final List<IAction<Byte>> cycleActions = new ArrayList<>();
-
-	private final JList<AvailableAction> availableActionsList = new JList<>();
 	private final JList<AssignedAction> assignedActionsList = new JList<>();
 
+	private final JList<AvailableAction> availableActionsList = new JList<>();
+
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Profile unsavedProfile;
+	private final List<IAction<Byte>> cycleActions = new ArrayList<>();
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Component component;
+	private final Profile unsavedProfile;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Input input;
+	private Component component;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private ButtonToCycleAction cycleAction;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Mode selectedMode;
+	private Input input;
+
+	private JButton pasteButton;
+
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private AssignedAction selectedAssignedAction;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private AvailableAction selectedAvailableAction;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private AssignedAction selectedAssignedAction;
-
-	private JButton pasteButton;
+	private Mode selectedMode;
 
 	@SuppressWarnings("unchecked")
 	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,

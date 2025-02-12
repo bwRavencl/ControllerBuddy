@@ -70,15 +70,19 @@ import javax.swing.event.ListSelectionListener;
 
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
-	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
-
 	private static final int KEY_LIST_SCROLL_PANE_WIDTH = 110;
+
 	private static final Dimension KEY_LIST_SCROLL_PANE_DIMENSION = new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, 200);
 
-	private final JPanel visualizationPanel = new JPanel();
+	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+
 	private final JLabel plusLabel = new JLabel("+");
-	private CheckboxJList<?> modifierList;
+
+	private final JPanel visualizationPanel = new JPanel();
+
 	private CheckboxJList<?> keyList;
+
+	private CheckboxJList<?> modifierList;
 
 	public KeystrokeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
@@ -293,6 +297,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		private static final Pattern wildcardFilterPattern = Pattern.compile("^\\*(.+)");
 
 		private final JList<? extends E> list;
+
 		private String filter;
 
 		private CheckboxListCellRenderer(final JList<? extends E> list) {
@@ -353,6 +358,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		private static final long serialVersionUID = -1551195858919523623L;
 
 		private final JButton clearFilterButton;
+
 		private final FilterTextField filterTextField;
 
 		private ClearFilterAction(final JButton clearFilterButton, final FilterTextField filterTextField) {
@@ -487,9 +493,11 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
-		private final Method setterMethod;
 		private final KeyStroke keyStroke;
+
 		private final Consumer<ScanCode[]> scanCodeConsumer;
+
+		private final Method setterMethod;
 
 		private JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
 				final Consumer<ScanCode[]> scanCodeConsumer) {

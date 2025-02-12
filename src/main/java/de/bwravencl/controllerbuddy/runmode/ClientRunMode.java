@@ -57,23 +57,35 @@ import javax.swing.JOptionPane;
 
 public final class ClientRunMode extends OutputRunMode implements Closeable {
 
-	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
-
 	private static final int N_CONNECTION_RETRIES = 10;
+
 	private static final int N_RECEIVE_PACKET_RETRIES = 10;
 
-	private final byte[] receiveBuf = new byte[1024];
-	private final byte[] iv = new byte[ServerRunMode.IV_LENGTH];
-	private final byte[] salt = new byte[ServerRunMode.SALT_LENGTH];
+	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
+
 	private final Cipher cipher;
+
 	private final String host;
-	private final int port;
-	private final int timeout;
+
+	private final byte[] iv = new byte[ServerRunMode.IV_LENGTH];
+
 	private final Key key;
-	private ClientState clientState = ClientState.Connecting;
-	private InetAddress hostAddress;
+
+	private final int port;
+
+	private final byte[] receiveBuf = new byte[1024];
+
+	private final byte[] salt = new byte[ServerRunMode.SALT_LENGTH];
+
+	private final int timeout;
+
 	private DatagramSocket clientSocket;
+
+	private ClientState clientState = ClientState.Connecting;
+
 	private long counter = -1;
+
+	private InetAddress hostAddress;
 
 	public ClientRunMode(final Main main, final Input input) {
 		super(main, input);

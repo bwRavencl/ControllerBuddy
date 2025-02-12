@@ -33,9 +33,12 @@ import org.lwjgl.glfw.GLFW;
 public final class Mode implements Cloneable {
 
 	private final UUID uuid;
-	private String description;
+
 	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
+
 	private Map<Integer, List<IAction<Byte>>> buttonToActionsMap = new HashMap<>();
+
+	private String description;
 
 	public Mode() {
 		uuid = UUID.randomUUID();
@@ -121,9 +124,11 @@ public final class Mode implements Cloneable {
 
 	public static final class Component {
 
-		private final Main main;
-		private final ComponentType type;
 		private final int index;
+
+		private final Main main;
+
+		private final ComponentType type;
 
 		public Component(final Main main, final ComponentType type, final int index) {
 			this.main = main;

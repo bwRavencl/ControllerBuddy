@@ -31,9 +31,12 @@ import javax.swing.JPanel;
 
 public abstract class EditorBuilder {
 
-	protected final EditActionsDialog editActionsDialog;
 	protected final IAction<?> action;
+
+	protected final EditActionsDialog editActionsDialog;
+
 	protected final Method setterMethod;
+
 	protected Object initialValue;
 
 	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
@@ -65,6 +68,7 @@ public abstract class EditorBuilder {
 	abstract static class PropertySetter {
 
 		final IAction<?> action;
+
 		final Method setterMethod;
 
 		PropertySetter(final IAction<?> action, final Method setterMethod) {

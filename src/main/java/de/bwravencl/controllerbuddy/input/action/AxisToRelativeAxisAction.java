@@ -27,18 +27,20 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuild
 @Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
-	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
+
+	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
+
 	transient float remainingD;
 
-	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
-	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
+	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
+	private Float detentValue = null;
 
 	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
-	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
-	private Float detentValue = null;
+	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
+	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
 	@Override
 	public void doAction(final Input input, final int component, final Float value) {

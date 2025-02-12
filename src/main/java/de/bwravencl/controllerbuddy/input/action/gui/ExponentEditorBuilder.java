@@ -76,7 +76,9 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		private static final long serialVersionUID = 5075932419255249325L;
 
 		private final Color defaultBackground;
+
 		private final Color defaultForeground;
+
 		private float power;
 
 		private PowerFunctionPlotter(final float power) {

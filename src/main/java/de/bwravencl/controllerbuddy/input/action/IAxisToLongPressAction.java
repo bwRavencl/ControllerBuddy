@@ -26,6 +26,7 @@ import java.util.Map;
 public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<Float> {
 
 	Map<IAxisToLongPressAction, Long> actionToDownSinceMap = new HashMap<>();
+
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {

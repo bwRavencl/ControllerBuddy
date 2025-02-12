@@ -33,15 +33,14 @@ import java.text.MessageFormat;
 public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 		implements IButtonToAction, IActivatableAction<Byte> {
 
-	private static final float DEFAULT_RESET_VALUE = 0f;
-
 	private static final boolean DEFAULT_FLUID = false;
 
-	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
-	private VirtualAxis virtualAxis = VirtualAxis.X;
+	private static final float DEFAULT_RESET_VALUE = 0f;
 
-	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
-	private float resetValue = DEFAULT_RESET_VALUE;
+	private transient Activatable activatable;
+
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
 	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
@@ -49,10 +48,11 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 50)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
-	private Activation activation = Activation.SINGLE_IMMEDIATELY;
+	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
+	private float resetValue = DEFAULT_RESET_VALUE;
 
-	private transient Activatable activatable;
+	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	private VirtualAxis virtualAxis = VirtualAxis.X;
 
 	@Override
 	public void doAction(final Input input, final int component, final Byte value) {

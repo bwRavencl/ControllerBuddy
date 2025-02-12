@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 public class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
+
 	JCheckBox checkBox;
 
 	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,

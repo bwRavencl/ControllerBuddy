@@ -30,20 +30,24 @@ import java.util.Locale;
 @Action(label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
 public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction<Byte> {
 
-	private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
-	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
 	private static final long ACCELERATION_TIME = 300L;
+
+	private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
+
+	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
+
 	private static final float peakElapseTimeReduction = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
 			/ (float) ACCELERATION_TIME;
-
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
 	private Direction direction = Direction.UP;
 
 	private transient long initialPressTime;
+
 	private transient long lastPressTime;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

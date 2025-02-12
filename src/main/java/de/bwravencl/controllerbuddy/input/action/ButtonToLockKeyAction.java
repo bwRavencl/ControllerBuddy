@@ -32,11 +32,11 @@ public final class ButtonToLockKeyAction extends DescribableAction<Byte>
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
-	private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
-
 	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
+
+	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
+	private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
 
 	private transient boolean wasUp = true;
 

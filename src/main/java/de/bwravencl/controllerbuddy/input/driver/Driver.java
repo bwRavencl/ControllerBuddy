@@ -42,8 +42,10 @@ public abstract class Driver {
 		}
 	}
 
-	protected final Input input;
 	protected final ControllerInfo controller;
+
+	protected final Input input;
+
 	protected volatile boolean ready;
 
 	protected Driver(final Input input, final ControllerInfo controller) {

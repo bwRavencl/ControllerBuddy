@@ -43,13 +43,19 @@ import org.lwjgl.glfw.GLFWGamepadState;
 
 public class XInputDriver extends Driver implements IGamepadStateProvider {
 
-	private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
 	private static final long BATTERY_LEVEL_POLL_INTERVAL = 60L;
+
 	private static final int MAX_MOTOR_SPEED = 65_535;
+
+	private static final Logger log = Logger.getLogger(XInputDriver.class.getName());
+
 	private final Lock xinputDeviceLock = new ReentrantLock();
-	private volatile XInputDevice xinputDevice;
-	private ScheduledExecutorService executorService;
+
 	private volatile String batteryLevelString;
+
+	private ScheduledExecutorService executorService;
+
+	private volatile XInputDevice xinputDevice;
 
 	@SuppressWarnings("FutureReturnValueIgnored")
 	private XInputDriver(final Input input, final ControllerInfo controller) throws XInputNotLoadedException {

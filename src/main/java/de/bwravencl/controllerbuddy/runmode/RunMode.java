@@ -27,13 +27,21 @@ import javax.swing.JOptionPane;
 public abstract class RunMode implements Runnable {
 
 	public static final int DEFAULT_POLL_INTERVAL = 1;
+
 	private static final Logger log = Logger.getLogger(RunMode.class.getName());
-	final Main main;
+
 	final Input input;
-	long pollInterval;
-	int minAxisValue;
+
+	final Main main;
+
 	int maxAxisValue;
+
+	int minAxisValue;
+
 	int nButtons;
+
+	long pollInterval;
+
 	private boolean stopping;
 
 	RunMode(final Main main, final Input input) {

@@ -36,8 +36,11 @@ import javax.swing.text.DefaultFormatter;
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final int FLOAT_ROUNDING_DECIMALS = 3;
+
 	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+
 	JSpinner spinner;
+
 	JFormattedTextField textField;
 
 	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,

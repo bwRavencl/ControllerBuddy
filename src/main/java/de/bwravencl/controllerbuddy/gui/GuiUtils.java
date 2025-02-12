@@ -216,8 +216,10 @@ public final class GuiUtils {
 
 	static class FrameDragListener extends MouseAdapter {
 
-		private final Main main;
 		private final JFrame frame;
+
+		private final Main main;
+
 		private Point mouseDownLocation = null;
 
 		FrameDragListener(final Main main, final JFrame frame) {

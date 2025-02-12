@@ -33,18 +33,18 @@ import java.util.stream.Collectors;
 public final class ButtonToCycleAction extends DescribableAction<Byte>
 		implements IActivatableAction<Byte>, IButtonToAction, IResetableAction<Byte> {
 
+	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
+	private List<IAction<Byte>> actions = new ArrayList<>();
+
 	private transient Activatable activatable = Activatable.YES;
+
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
 	private transient int index = 0;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
-
-	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
-	private List<IAction<Byte>> actions = new ArrayList<>();
-
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
 	@SuppressWarnings("unchecked")
 	@Override

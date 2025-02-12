@@ -28,16 +28,16 @@ import java.text.MessageFormat;
 abstract class ToKeyAction<V extends Number> extends ActivationIntervalAction<V>
 		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
 
+	private transient Activatable activatable;
+
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.REPEAT;
-
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
 
-	private transient Activatable activatable;
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	private transient boolean wasDown;
 

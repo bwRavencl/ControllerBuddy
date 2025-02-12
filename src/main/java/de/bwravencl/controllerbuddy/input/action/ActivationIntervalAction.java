@@ -23,17 +23,17 @@ import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBui
 abstract class ActivationIntervalAction<V extends Number> extends DescribableAction<V>
 		implements IInitializationAction<V> {
 
-	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
-	private int minActivationInterval = 0;
-
 	@ActionProperty(label = "MAX_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval = 0;
 
-	private transient boolean wasUp = true;
+	private transient long maxActivationTime = Integer.MAX_VALUE;
+
+	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
+	private int minActivationInterval = 0;
 
 	private transient long minActivationTime = 0L;
 
-	private transient long maxActivationTime = Integer.MAX_VALUE;
+	private transient boolean wasUp = true;
 
 	public int getMaxActivationInterval() {
 		return maxActivationInterval;

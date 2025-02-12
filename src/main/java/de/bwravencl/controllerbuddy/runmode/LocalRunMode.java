@@ -28,8 +28,9 @@ public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger log = Logger.getLogger(LocalRunMode.class.getName());
 
-	private final HashSet<ScanCode> sourceModifiersCodes = new HashSet<>();
 	private final HashSet<ScanCode> sourceKeyCodes = new HashSet<>();
+
+	private final HashSet<ScanCode> sourceModifiersCodes = new HashSet<>();
 
 	public LocalRunMode(final Main main, final Input input) {
 		super(main, input);

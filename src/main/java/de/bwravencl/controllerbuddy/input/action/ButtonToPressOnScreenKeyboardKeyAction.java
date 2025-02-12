@@ -33,9 +33,9 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	private transient boolean wasUp = true;
-
 	private transient boolean wasDown = false;
+
+	private transient boolean wasUp = true;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {

@@ -27,6 +27,8 @@ import org.lwjgl.openvr.VRChaperone;
 
 public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActivatableAction<V>, ILongPressAction<V> {
 
+	private transient Activatable activatable;
+
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.REPEAT;
 
@@ -35,8 +37,6 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
 
 	@ActionProperty(label = "VR_COORDINATE_SYSTEM", editorBuilder = VrCoordinateSystemEditorBuilder.class, order = 10)
 	private VrCoordinateSystem vrCoordinateSystem = VrCoordinateSystem.SEATED;
-
-	private transient Activatable activatable;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -132,9 +132,9 @@ public abstract class ToVrResetZeroPoseAction<V extends Number> implements IActi
 		RAW_AND_UNCALIBRATED(VR.ETrackingUniverseOrigin_TrackingUniverseRawAndUncalibrated,
 				"VR_COORDINATE_SYSTEM_RAW_AND_UNCALIBRATED");
 
-		private final int value;
-
 		private final String label;
+
+		private final int value;
 
 		VrCoordinateSystem(final int value, final String labelKey) {
 			this.value = value;

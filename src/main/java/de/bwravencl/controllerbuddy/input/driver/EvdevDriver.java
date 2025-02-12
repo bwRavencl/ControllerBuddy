@@ -39,20 +39,34 @@ import uk.co.bithatch.linuxio.Ioctl;
 
 public class EvdevDriver extends Driver {
 
-	private static final Logger log = Logger.getLogger(EvdevDriver.class.getName());
-	private static final int FF_MAX = 0x7F;
-	private static final short FF_RUMBLE = (short) 0x50;
-	private static final short FF_PERIODIC = (short) 0x51;
 	private static final short FF_CONSTANT = (short) 0x52;
-	private static final short FF_SPRING = (short) 0x53;
-	private static final short FF_FRICTION = (short) 0x54;
+
 	private static final short FF_DAMPER = (short) 0x55;
-	private static final short FF_INERTIA = (short) 0x56;
-	private static final short FF_RAMP = (short) 0x57;
+
+	private static final short FF_FRICTION = (short) 0x54;
+
 	private static final short FF_GAIN = (short) 0x60;
+
+	private static final short FF_INERTIA = (short) 0x56;
+
+	private static final int FF_MAX = 0x7F;
+
+	private static final short FF_PERIODIC = (short) 0x51;
+
+	private static final short FF_RAMP = (short) 0x57;
+
+	private static final short FF_RUMBLE = (short) 0x50;
+
+	private static final short FF_SPRING = (short) 0x53;
+
+	private static final Logger log = Logger.getLogger(EvdevDriver.class.getName());
+
 	private final int EVIOCSFF = Ioctl.INSTANCE.IOW("E", 0x80, new ff_effect());
-	private final short strongRumbleEffectId;
+
 	private final short lightRumbleEffectId;
+
+	private final short strongRumbleEffectId;
+
 	private volatile EvdevInfo evdevInfo;
 
 	private EvdevDriver(final Input input, final ControllerInfo controller, final EvdevInfo evdevInfo)
@@ -298,31 +312,42 @@ public class EvdevDriver extends Driver {
 	@FieldOrder({ "right_saturation", "left_saturation", "right_coeff", "left_coeff", "deadband", "center" })
 	public static class ff_condition_effect extends Structure {
 
-		public short right_saturation;
-		public short left_saturation;
-		public short right_coeff;
-		public short left_coeff;
-		public short deadband;
 		public short center;
+
+		public short deadband;
+
+		public short left_coeff;
+
+		public short left_saturation;
+
+		public short right_coeff;
+
+		public short right_saturation;
 	}
 
 	@SuppressWarnings("unused")
 	@FieldOrder({ "level", "envelope" })
 	public static class ff_constant_effect extends Structure {
 
-		public short level;
 		public ff_envelope envelope;
+
+		public short level;
 	}
 
 	@SuppressWarnings("unused")
 	@FieldOrder({ "type", "id", "direction", "trigger", "replay", "u" })
 	public static class ff_effect extends Structure {
 
-		public short type;
-		public short id;
 		public short direction;
-		public ff_trigger trigger;
+
+		public short id;
+
 		public ff_replay replay;
+
+		public ff_trigger trigger;
+
+		public short type;
+
 		public U u;
 
 		@Override
@@ -344,9 +369,13 @@ public class EvdevDriver extends Driver {
 		public static class U extends Union {
 
 			public final ff_condition_effect[] condition = new ff_condition_effect[2];
+
 			public ff_constant_effect constant;
-			public ff_ramp_effect ramp;
+
 			public ff_periodic_effect periodic;
+
+			public ff_ramp_effect ramp;
+
 			public ff_rumble_effect rumble;
 
 			public U() {
@@ -359,8 +388,11 @@ public class EvdevDriver extends Driver {
 	public static class ff_envelope extends Structure {
 
 		public short attack_length;
+
 		public short attack_level;
+
 		public short fade_length;
+
 		public short fade_level;
 	}
 
@@ -368,31 +400,41 @@ public class EvdevDriver extends Driver {
 	@FieldOrder({ "waveform", "period", "magnitude", "offset", "phase", "envelope", "custom_len", "custom_data" })
 	public static class ff_periodic_effect extends Structure {
 
-		public short waveform;
-		public short period;
-		public short magnitude;
-		public short offset;
-		public short phase;
-		public ff_envelope envelope;
-		public int custom_len;
 		public ShortByReference custom_data;
+
+		public int custom_len;
+
+		public ff_envelope envelope;
+
+		public short magnitude;
+
+		public short offset;
+
+		public short period;
+
+		public short phase;
+
+		public short waveform;
 	}
 
 	@SuppressWarnings("unused")
 	@FieldOrder({ "start_level", "end_level", "envelope" })
 	public static class ff_ramp_effect extends Structure {
 
-		public short start_level;
 		public short end_level;
+
 		public ff_envelope envelope;
+
+		public short start_level;
 	}
 
 	@SuppressWarnings("unused")
 	@FieldOrder({ "length", "delay" })
 	public static class ff_replay extends Structure {
 
-		public short length;
 		public short delay;
+
+		public short length;
 	}
 
 	@SuppressWarnings("unused")
@@ -400,6 +442,7 @@ public class EvdevDriver extends Driver {
 	public static class ff_rumble_effect extends Structure {
 
 		public short strong_magnitude;
+
 		public short weak_magnitude;
 	}
 
@@ -408,6 +451,7 @@ public class EvdevDriver extends Driver {
 	public static class ff_trigger extends Structure {
 
 		public short button;
+
 		public short interval;
 	}
 }

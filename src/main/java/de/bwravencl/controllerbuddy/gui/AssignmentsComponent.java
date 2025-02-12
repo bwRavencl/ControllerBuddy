@@ -54,10 +54,11 @@ import org.lwjgl.glfw.GLFW;
 
 final class AssignmentsComponent extends JScrollPane {
 
+	private static final int BUTTON_HEIGHT = 50;
+
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
 
-	private static final int BUTTON_HEIGHT = 50;
 	private final JPanel assignmentsPanel = new JPanel();
 
 	AssignmentsComponent(final Main main) {
@@ -265,18 +266,20 @@ final class AssignmentsComponent extends JScrollPane {
 		private static final long serialVersionUID = 5560396295119690740L;
 
 		private final CompoundButtonLocation buttonLocation;
-		private final Dimension preferredSize;
 
-		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private Shape shape;
+		private final Dimension preferredSize;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private Shape base;
 
-		private String text;
 		private CompoundButton peer;
 
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		private Shape shape;
+
 		private boolean swapTextPossible;
+
+		private String text;
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
 			this(main, parentPanel, component, CompoundButtonLocation.Center, null);
@@ -494,23 +497,40 @@ final class AssignmentsComponent extends JScrollPane {
 		private static final long serialVersionUID = 5458020346838696827L;
 
 		protected boolean defaultBoldText;
-		Color disabledText;
+
 		boolean contentAreaFilled = true;
-		private Color defaultForeground;
-		private Color defaultBackground;
-		private Color focusedBackground;
-		private Color hoverBackground;
-		private Color pressedBackground;
-		private Color defaultFocusedBackground;
-		private Color defaultHoverBackground;
-		private Color defaultPressedBackground;
+
+		Color disabledText;
+
 		private Color borderColor;
-		private Color disabledBorderColor;
-		private Color focusedBorderColor;
-		private Color hoverBorderColor;
+
+		private Color defaultBackground;
+
 		private Color defaultBorderColor;
-		private Color defaultHoverBorderColor;
+
+		private Color defaultFocusedBackground;
+
 		private Color defaultFocusedBorderColor;
+
+		private Color defaultForeground;
+
+		private Color defaultHoverBackground;
+
+		private Color defaultHoverBorderColor;
+
+		private Color defaultPressedBackground;
+
+		private Color disabledBorderColor;
+
+		private Color focusedBackground;
+
+		private Color focusedBorderColor;
+
+		private Color hoverBackground;
+
+		private Color hoverBorderColor;
+
+		private Color pressedBackground;
 
 		private CustomButton() {
 			updateTheme();
@@ -608,12 +628,12 @@ final class AssignmentsComponent extends JScrollPane {
 		private static final long serialVersionUID = -2879419156880580931L;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		private final Component component;
+
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Main main;
 
 		private final String name;
-
-		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final Component component;
 
 		private EditComponentAction(final Main main, final String name, final Component component) {
 			this.main = main;

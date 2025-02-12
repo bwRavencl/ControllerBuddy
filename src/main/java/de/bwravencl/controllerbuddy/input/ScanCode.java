@@ -28,114 +28,223 @@ import uk.co.bithatch.linuxio.EventCode;
 public record ScanCode(String name, int keyCode, EventCode eventCode) {
 
 	public static final String DIK_0 = "0";
+
 	public static final String DIK_1 = "1";
+
 	public static final String DIK_2 = "2";
+
 	public static final String DIK_3 = "3";
+
 	public static final String DIK_4 = "4";
+
 	public static final String DIK_5 = "5";
+
 	public static final String DIK_6 = "6";
+
 	public static final String DIK_7 = "7";
+
 	public static final String DIK_8 = "8";
+
 	public static final String DIK_9 = "9";
+
 	public static final String DIK_A = "A";
+
 	public static final String DIK_ADD = "Num+";
+
 	public static final String DIK_APOSTROPHE = "'";
+
 	public static final String DIK_B = "B";
+
 	public static final String DIK_BACK = "Back";
+
 	public static final String DIK_BACKSLASH = "\\";
+
 	public static final String DIK_C = "C";
+
 	public static final String DIK_COMMA = ",";
+
 	public static final String DIK_D = "D";
+
 	public static final String DIK_DECIMAL = "Num.";
+
 	public static final String DIK_DELETE = "Del";
+
 	public static final String DIK_DIVIDE = "Num/";
+
 	public static final String DIK_DOWN = "Down Arrow";
+
 	public static final String DIK_E = "E";
+
 	public static final String DIK_END = "End";
+
 	public static final String DIK_EQUALS = "=";
+
 	public static final String DIK_ESCAPE = "Esc";
+
 	public static final String DIK_F = "F";
+
 	public static final String DIK_F1 = "F1";
+
 	public static final String DIK_F10 = "F10";
+
 	public static final String DIK_F11 = "F11";
+
 	public static final String DIK_F12 = "F12";
+
 	public static final String DIK_F2 = "F2";
+
 	public static final String DIK_F3 = "F3";
+
 	public static final String DIK_F4 = "F4";
+
 	public static final String DIK_F5 = "F5";
+
 	public static final String DIK_F6 = "F6";
+
 	public static final String DIK_F7 = "F7";
+
 	public static final String DIK_F8 = "F8";
+
 	public static final String DIK_F9 = "F9";
+
 	public static final String DIK_G = "G";
+
 	public static final String DIK_GRAVE = "`";
+
 	public static final String DIK_H = "H";
+
 	public static final String DIK_HOME = "Home";
+
 	public static final String DIK_I = "I";
+
 	public static final String DIK_INSERT = "Ins";
+
 	public static final String DIK_J = "J";
+
 	public static final String DIK_K = "K";
+
 	public static final String DIK_L = "L";
+
 	public static final String DIK_LBRACKET = "[";
+
 	public static final String DIK_LCONTROL = "L Ctrl";
+
 	public static final String DIK_LEFT = "Left Arrow";
+
 	public static final String DIK_LMENU = "L Alt";
+
 	public static final String DIK_LSHIFT = "L Shift";
+
 	public static final String DIK_LWIN = "L Win";
+
 	public static final String DIK_M = "M";
+
 	public static final String DIK_MINUS = "-";
+
 	public static final String DIK_MULTIPLY = "Num*";
+
 	public static final String DIK_N = "N";
+
 	public static final String DIK_NEXT = "PgDn";
+
 	public static final String DIK_NUMPAD0 = "Num0";
+
 	public static final String DIK_NUMPAD1 = "Num1";
+
 	public static final String DIK_NUMPAD2 = "Num2";
+
 	public static final String DIK_NUMPAD3 = "Num3";
+
 	public static final String DIK_NUMPAD4 = "Num4";
+
 	public static final String DIK_NUMPAD5 = "Num5";
+
 	public static final String DIK_NUMPAD6 = "Num6";
+
 	public static final String DIK_NUMPAD7 = "Num7";
+
 	public static final String DIK_NUMPAD8 = "Num8";
+
 	public static final String DIK_NUMPAD9 = "Num9";
+
 	public static final String DIK_NUMPADENTER = "NumEnter";
+
 	public static final String DIK_O = "O";
+
 	public static final String DIK_P = "P";
+
 	public static final String DIK_PAUSE = "Pause";
+
 	public static final String DIK_PERIOD = ".";
+
 	public static final String DIK_PRIOR = "PgUp";
+
 	public static final String DIK_Q = "Q";
+
 	public static final String DIK_R = "R";
+
 	public static final String DIK_RBRACKET = "]";
+
 	public static final String DIK_RCONTROL = "R Ctrl";
+
 	public static final String DIK_RETURN = "Return";
+
 	public static final String DIK_RIGHT = "Right Arrow";
+
 	public static final String DIK_RMENU = "R Alt";
+
 	public static final String DIK_RSHIFT = "R Shift";
+
 	public static final String DIK_RWIN = "R Win";
+
 	public static final String DIK_S = "S";
+
 	public static final String DIK_SEMICOLON = ";";
+
 	public static final String DIK_SLASH = "/";
+
 	public static final String DIK_SPACE = "Space";
+
 	public static final String DIK_SUBTRACT = "Num-";
+
 	public static final String DIK_SYSRQ = "SysRq";
+
 	public static final String DIK_T = "T";
+
 	public static final String DIK_TAB = "Tab";
+
 	public static final String DIK_U = "U";
+
 	public static final String DIK_UP = "Up Arrow";
+
 	public static final String DIK_V = "V";
+
 	public static final String DIK_W = "W";
+
 	public static final String DIK_X = "X";
+
 	public static final String DIK_Y = "Y";
+
 	public static final String DIK_Z = "Z";
-	public static final Map<String, ScanCode> nameToScanCodeMap;
-	public static final Map<Integer, ScanCode> keyCodeToScanCodeMap;
+
 	public static final Set<Integer> extendedKeyScanCodesSet;
+
+	public static final Map<Integer, ScanCode> keyCodeToScanCodeMap;
+
+	public static final Map<String, ScanCode> nameToScanCodeMap;
+
 	private static final String DIK_CAPITAL = "CapsLock";
+
 	private static final String DIK_NEXTTRACK = "Next";
+
 	private static final String DIK_NUMLOCK = "NumLock";
+
 	private static final String DIK_NUMPADEQUALS = "Num=";
+
 	private static final String DIK_OEM_102 = "OEM_102";
+
 	private static final String DIK_SCROLL = "ScrollLock";
+
 	private static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1, EventCode.KEY_ESC),
 			new ScanCode(DIK_1, 0x2, EventCode.KEY_1), new ScanCode(DIK_2, 0x3, EventCode.KEY_2),
 			new ScanCode(DIK_3, 0x4, EventCode.KEY_3), new ScanCode(DIK_4, 0x5, EventCode.KEY_4),

@@ -32,23 +32,34 @@ import org.lwjgl.glfw.GLFW;
 public final class Profile implements Cloneable {
 
 	public static final Mode defaultMode;
-	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
-	private static final boolean DEFAULT_SHOW_OVERLAY = true;
-	private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
+
 	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
+
+	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
+
+	private static final boolean DEFAULT_SHOW_OVERLAY = true;
+
+	private static final boolean DEFAULT_SHOW_VR_OVERLAY = true;
 
 	static {
 		defaultMode = new Mode(DEFAULT_MODE_UUID);
 		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
-	private String version;
-	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
-	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
-	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
-	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
-	private List<Mode> modes = new ArrayList<>();
 	private transient int activeModeIndex = 0;
+
+	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
+
+	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
+
+	private List<Mode> modes = new ArrayList<>();
+
+	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
+
+	private boolean showVrOverlay = DEFAULT_SHOW_VR_OVERLAY;
+
+	private String version;
+
 	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
 
 	Profile() {

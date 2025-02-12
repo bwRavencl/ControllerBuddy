@@ -59,34 +59,43 @@ public final class OnScreenKeyboard extends JFrame {
 
 	public static final Mode onScreenKeyboardMode;
 
-	@Serial
-	private static final long serialVersionUID = -5061347351151925461L;
+	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
 
 	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
-	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
-	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
-	private static final int ROW_BORDER_WIDTH = 15;
+
 	private static final Color ROW_BACKGROUND = new Color(128, 128, 128, 64);
+
+	private static final int ROW_BORDER_WIDTH = 15;
+
+	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
+
+	@Serial
+	private static final long serialVersionUID = -5061347351151925461L;
 
 	static {
 		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
 		onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Main main;
-
 	private final CapsLockKeyButton capsLockKeyButton;
-	private final ShiftKeyboardButton leftShiftKeyboardButton;
-	private final ShiftKeyboardButton rightShiftKeyboardButton;
-	private final AbstractKeyboardButton[][] keyboardButtons;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final FrameDragListener frameDragListener;
 
+	private final AbstractKeyboardButton[][] keyboardButtons;
+
+	private final ShiftKeyboardButton leftShiftKeyboardButton;
+
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private final Main main;
+
+	private final ShiftKeyboardButton rightShiftKeyboardButton;
+
 	private volatile boolean anyChanges;
-	private int selectedRow;
+
 	private int selectedColumn;
+
+	private int selectedRow;
 
 	OnScreenKeyboard(final Main main) {
 		this.main = main;
@@ -474,19 +483,23 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private abstract class AbstractKeyboardButton extends JButton {
 
+		private static final int BASE_BUTTON_SIZE = 55;
+
+		private static final int BUTTON_FONT_SIZE = 15;
+
+		private static final int FOCUSED_BUTTON_BORDER_THICKNESS = 2;
+
 		@Serial
 		private static final long serialVersionUID = 4567858619453576258L;
 
-		private static final int BASE_BUTTON_SIZE = 55;
-		private static final int BUTTON_FONT_SIZE = 15;
-		private static final int FOCUSED_BUTTON_BORDER_THICKNESS = 2;
-
 		volatile boolean changed;
+
 		Color defaultBackground;
-		Color defaultForeground;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		Border defaultButtonBorder;
+
+		Color defaultForeground;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		Border focusedButtonBorder;
@@ -588,15 +601,20 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private class DefaultKeyboardButton extends AbstractKeyboardButton {
 
+		private static final long MIN_REPEAT_PRESS_TIME = 150L;
+
 		@Serial
 		private static final long serialVersionUID = -1739002089027358633L;
 
-		private static final long MIN_REPEAT_PRESS_TIME = 150L;
 		final String directInputKeyCodeName;
+
 		private final KeyStroke keyStroke;
-		private volatile boolean mouseDown;
-		private volatile boolean doDownUp;
+
 		private volatile long beginPressTime;
+
+		private volatile boolean doDownUp;
+
+		private volatile boolean mouseDown;
 
 		private DefaultKeyboardButton(final String directInputKeyCodeName) {
 			super(getDefaultKeyDisplayName(directInputKeyCodeName));
@@ -757,8 +775,9 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -722664487208124876L;
 
-		String defaultKeyName;
 		String alternativeKeyName;
+
+		String defaultKeyName;
 
 		private DualPurposeKeyboardButton(final String directInputKeyCodeName, final String shiftedKeyName) {
 			super(directInputKeyCodeName);

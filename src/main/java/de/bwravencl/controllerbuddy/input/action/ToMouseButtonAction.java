@@ -29,18 +29,18 @@ abstract class ToMouseButtonAction<V extends Number> extends ActivationIntervalA
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
+	private transient Activatable activatable;
+
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.REPEAT;
+
+	private transient boolean initiator = false;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	private int mouseButton = DEFAULT_MOUSE_BUTTON;
-
-	private transient boolean initiator = false;
-
-	private transient Activatable activatable;
 
 	@Override
 	public Activatable getActivatable() {

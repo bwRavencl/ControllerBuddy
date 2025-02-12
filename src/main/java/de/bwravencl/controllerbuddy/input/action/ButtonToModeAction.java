@@ -39,14 +39,14 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	@SuppressWarnings("JdkObsolete")
 	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
 
-	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
-	private boolean toggle = false;
-
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
+
+	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	private boolean toggle = false;
 
 	private transient boolean up = true;
 

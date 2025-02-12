@@ -25,14 +25,15 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 @Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.AXIS, order = 30)
 public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements IAxisToLongPressAction {
 
-	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
-	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
-	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
+	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 
 	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 101)
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
+
+	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
 	@Override
 	public void doAction(final Input input, final int component, Float value) {
