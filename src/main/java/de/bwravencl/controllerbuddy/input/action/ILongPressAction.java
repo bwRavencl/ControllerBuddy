@@ -16,7 +16,9 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public interface ILongPressAction<V extends Number> extends IAction<V> {
+import java.lang.constant.Constable;
+
+public interface ILongPressAction<V extends Constable> extends IAction<V> {
 
 	boolean DEFAULT_LONG_PRESS = false;
 

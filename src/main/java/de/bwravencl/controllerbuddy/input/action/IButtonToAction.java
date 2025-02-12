@@ -23,7 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface IButtonToAction extends ILongPressAction<Byte> {
+public interface IButtonToAction extends ILongPressAction<Boolean> {
 
 	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
 
@@ -55,14 +55,14 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
 		actionToMustDenyActivationMap.clear();
 	}
 
-	default byte handleLongPress(final Input input, final int component, final byte value) {
+	default boolean handleLongPress(final Input input, final int component, final boolean value) {
 		if (!isLongPress()) {
 			return value;
 		}
 
 		final var currentTime = System.currentTimeMillis();
 
-		if (value != 0) {
+		if (value) {
 			if (!actionToDownSinceMap.containsKey(this)) {
 				actionToDownSinceMap.put(this, currentTime);
 			} else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
@@ -106,12 +106,12 @@ public interface IButtonToAction extends ILongPressAction<Byte> {
 					}
 				}
 
-				return value;
+				return false;
 			}
 		} else {
 			actionToDownSinceMap.remove(this);
 		}
 
-		return 0;
+		return false;
 	}
 }

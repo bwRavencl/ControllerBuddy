@@ -21,11 +21,11 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
 @Action(label = "TO_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
-public final class ButtonToKeyAction extends ToKeyAction<Byte> implements IButtonToAction {
+public final class ButtonToKeyAction extends ToKeyAction<Boolean> implements IButtonToAction {
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
-		handleAction(value != 0, input);
+		handleAction(value, input);
 	}
 }

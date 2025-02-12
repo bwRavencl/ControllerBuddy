@@ -28,7 +28,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 @Action(label = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
-public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction<Byte> {
+public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction<Boolean> {
 
 	private static final long ACCELERATION_TIME = 300L;
 
@@ -55,10 +55,10 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
 
-		if (value != 0) {
+		if (value) {
 			final var currentTime = System.currentTimeMillis();
 			if (initialPressTime == 0) {
 				initialPressTime = currentTime;

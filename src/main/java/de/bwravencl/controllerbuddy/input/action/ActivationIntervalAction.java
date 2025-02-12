@@ -19,8 +19,9 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBuilder;
+import java.lang.constant.Constable;
 
-abstract class ActivationIntervalAction<V extends Number> extends DescribableAction<V>
+abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
 		implements IInitializationAction<V> {
 
 	@ActionProperty(label = "MAX_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)

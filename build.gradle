@@ -49,7 +49,6 @@ ext {
 	runtimeDir = tmpDir.map { it.dir 'runtime' }
 
 	xmsJvmArg = '-Xms128m'
-
 	linuxJvmArgs = [
 		"--add-opens=java.desktop/sun.awt=${project.application.mainModule.get()}",
 		"--add-opens=java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
@@ -59,8 +58,6 @@ ext {
 
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
-
-	openVrSupport = false
 }
 
 java {
@@ -72,6 +69,7 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 tasks.register('cleanModuleInfo') {
@@ -96,12 +94,11 @@ dependencies {
 
 	def dbusJavaVersion = '5.1.0'
 	def jnaVersion = '5.16.0'
-	def lwjglVersion = '3.3.6'
+	def lwjglVersion = '3.4.0-SNAPSHOT'
 
 	def lwjglOs
 	if (os.windows) {
 		lwjglOs = "windows"
-		openVrSupport = true
 	} else if (os.macOsX)
 		lwjglOs = 'macos'
 	else if (os.linux) {
@@ -119,7 +116,6 @@ dependencies {
 			break
 		case { Architectures.ARM_V7.isAlias(it) && os.linux }:
 			lwjglArch = 'arm32'
-			openVrSupport = false
 			break
 		case { Architectures.AARCH64.isAlias(it) }:
 			lwjglArch = 'arm64'
@@ -134,27 +130,19 @@ dependencies {
 	implementation 'com.formdev:flatlaf:3.5.4'
 	implementation("com.github.hypfvieh:dbus-java-core:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
-	implementation('org.hid4java:hid4java:0.8.0') { exclude module: 'jna' }
-	implementation 'com.xenoamess:JXInput:1.0.1'
 	implementation 'com.google.code.gson:gson:2.12.1'
 	implementation 'io.github.classgraph:classgraph:4.8.179'
 	implementation "net.java.dev.jna:jna-jpms:$jnaVersion"
 	implementation "net.java.dev.jna:jna-platform-jpms:$jnaVersion"
 	implementation('org.apache.xmlgraphics:batik-swing:1.18') { exclude group: 'xml-apis', module: 'xml-apis' }
 	implementation "org.lwjgl:lwjgl:$lwjglVersion"
-	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
-	implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion:natives-$lwjglPlatform"
-	implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
-	implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
+	implementation "org.lwjgl:lwjgl-sdl:$lwjglVersion"
+	implementation "org.lwjgl:lwjgl-sdl:$lwjglVersion:natives-$lwjglPlatform"
 	implementation 'org.slf4j:slf4j-jdk14:2.0.16'
 	implementation('uk.co.bithatch:linuxio4j:2.1') {
 		exclude module: 'jna'
 		exclude module: 'jna-platform'
-	}
-	if (openVrSupport) {
-		implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion:natives-$lwjglPlatform"
-		implementation "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-$lwjglPlatform"
 	}
 }
 
@@ -166,26 +154,23 @@ extraJavaModuleInfo {
 tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
-		file(moduleInfoFile).write """\
+		file(moduleInfoFile).write '''\
 			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
-			    exports de.bwravencl.controllerbuddy.dbus.freedesktop to org.freedesktop.dbus;
 
 			    opens de.bwravencl.controllerbuddy.input to com.google.gson;
 			    opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
-			    opens de.bwravencl.controllerbuddy.input.driver to com.sun.jna;
 
 			    requires com.google.gson;
 			    requires com.formdev.flatlaf;
 			    requires com.sun.jna;
 			    requires com.sun.jna.platform;
-			    requires hid4java;
 			    requires io.github.classgraph;
+			    requires transitive java.desktop;
 			    requires java.logging;
 			    requires java.prefs;
 			    requires jdk.xml.dom;
-			    requires JXInput;
 			    requires org.apache.commons.cli;
 			    requires org.apache.xmlgraphics.batik.anim;
 			    requires org.apache.xmlgraphics.batik.brdige;
@@ -196,16 +181,12 @@ tasks.register('generateModuleInfo') {
 			    requires org.freedesktop.dbus;
 			    requires org.lwjgl;
 			    requires org.lwjgl.natives;
-			    requires org.lwjgl.glfw;
-			    requires org.lwjgl.glfw.natives;
-			    requires org.lwjgl.opengl;
-			${openVrSupport ? '    requires org.lwjgl.opengl.natives;' : ''}
-			    requires org.lwjgl.openvr;
-			${openVrSupport ? '    requires org.lwjgl.openvr.natives;' : ''}
+			    requires org.lwjgl.sdl;
+			    requires org.lwjgl.sdl.natives;
 			    requires uk.co.bithatch.linuxio;
 			    requires xml.apis.ext;
 			}
-			""".stripIndent()
+			'''.stripIndent()
 	}
 }
 
@@ -357,10 +338,12 @@ tasks.withType(JavaCompile).configureEach {
 	source generateConstants.outputs.files, sourceSets.main.java
 	options.encoding = 'UTF-8'
 	gradle.taskGraph.whenReady {
-		if (!it.hasTask(run)) {
-			options.compilerArgs << '-Xlint:all' << '-Werror'
+		if (it.hasTask(jpackage)) {
+			options.compilerArgs << '-Xlint:all' << '-Xlint:-preview' << '-Werror'
 			options.deprecation = true
 			options.errorprone.error 'MissingBraces'
+		} else {
+			options.errorprone.enabled = false
 		}
 	}
 }

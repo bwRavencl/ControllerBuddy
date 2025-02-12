@@ -30,8 +30,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.text.MessageFormat;
 
 @Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
-public final class ButtonToAxisResetAction extends DescribableAction<Byte>
-		implements IButtonToAction, IActivatableAction<Byte> {
+public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
+		implements IButtonToAction, IActivatableAction<Boolean> {
 
 	private static final boolean DEFAULT_FLUID = false;
 
@@ -55,17 +55,17 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 	private VirtualAxis virtualAxis = VirtualAxis.X;
 
 	@Override
-	public void doAction(final Input input, final int component, final Byte value) {
-		final var hot = handleLongPress(input, component, value) != 0;
+	public void doAction(final Input input, final int component, Boolean value) {
+		value = handleLongPress(input, component, value);
 
 		switch (activation) {
 		case REPEAT -> {
-			if (hot) {
+			if (value) {
 				resetAxis(input);
 			}
 		}
 		case SINGLE_IMMEDIATELY -> {
-			if (!hot) {
+			if (!value) {
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
@@ -73,7 +73,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Byte>
 			}
 		}
 		case SINGLE_ON_RELEASE -> {
-			if (hot) {
+			if (value) {
 				if (activatable == Activatable.NO) {
 					activatable = Activatable.YES;
 				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {

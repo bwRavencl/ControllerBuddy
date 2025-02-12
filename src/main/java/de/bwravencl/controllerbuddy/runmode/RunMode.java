@@ -38,7 +38,7 @@ public abstract class RunMode implements Runnable {
 
 	int minAxisValue;
 
-	int nButtons;
+	int numButtons;
 
 	long pollInterval;
 
@@ -59,7 +59,7 @@ public abstract class RunMode implements Runnable {
 
 		Thread.startVirtualThread(() -> main.stopAll(true, !main.isAutoRestartOutput(), true));
 
-		final var controller = input.getController();
+		final var controller = input.getSelectedController();
 		if (controller != null) {
 			log.log(Level.WARNING,
 					Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
@@ -84,12 +84,12 @@ public abstract class RunMode implements Runnable {
 		return minAxisValue;
 	}
 
-	public final long getPollInterval() {
-		return pollInterval;
+	public final int getNumButtons() {
+		return numButtons;
 	}
 
-	public final int getnButtons() {
-		return nButtons;
+	public final long getPollInterval() {
+		return pollInterval;
 	}
 
 	final void logStart() {
@@ -100,8 +100,13 @@ public abstract class RunMode implements Runnable {
 		getLogger().log(Level.INFO, "Stopped output");
 	}
 
-	void setnButtons(final int nButtons) {
-		this.nButtons = nButtons;
+	final void process() {
+		main.pollSdlEvents();
+		main.getMainLoop().yield();
+	}
+
+	void setNumButtons(final int numButtons) {
+		this.numButtons = numButtons;
 		input.initButtons();
 	}
 }

@@ -78,7 +78,7 @@ public final class LocalRunMode extends OutputRunMode {
 		axisS1.setValue(inputAxisS1);
 
 		final var inputButtons = input.getButtons();
-		for (var i = 0; i < nButtons; i++) {
+		for (var i = 0; i < numButtons; i++) {
 			buttons[i].setValue(inputButtons[i] ? 1 : 0);
 		}
 
@@ -87,10 +87,8 @@ public final class LocalRunMode extends OutputRunMode {
 		cursorDeltaY = input.getCursorDeltaY();
 		input.setCursorDeltaY(0);
 
-		final var inputDownMouseButtons = input.getDownMouseButtons();
-		synchronized (inputDownMouseButtons) {
-			updateOutputSets(inputDownMouseButtons, oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons, false);
-		}
+		updateOutputSets(input.getDownMouseButtons(), oldDownMouseButtons, newUpMouseButtons, newDownMouseButtons,
+				false);
 
 		downUpMouseButtons.clear();
 		final var inputDownUpMouseButtons = input.getDownUpMouseButtons();

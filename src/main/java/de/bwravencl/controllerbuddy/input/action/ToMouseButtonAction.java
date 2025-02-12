@@ -22,9 +22,10 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
+import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
-abstract class ToMouseButtonAction<V extends Number> extends ActivationIntervalAction<V>
+abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IActivatableAction<V>, ILongPressAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;

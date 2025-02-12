@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 140)
-public final class ButtonToCycleAction extends DescribableAction<Byte>
-		implements IActivatableAction<Byte>, IButtonToAction, IResetableAction<Byte> {
+public final class ButtonToCycleAction extends DescribableAction<Boolean>
+		implements IActivatableAction<Boolean>, IButtonToAction, IResetableAction<Boolean> {
 
 	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
-	private List<IAction<Byte>> actions = new ArrayList<>();
+	private List<IAction<Boolean>> actions = new ArrayList<>();
 
 	private transient Activatable activatable = Activatable.YES;
 
@@ -51,9 +51,9 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	public Object clone() throws CloneNotSupportedException {
 		final var cycleAction = (ButtonToCycleAction) super.clone();
 
-		final var clonedActions = new ArrayList<IAction<Byte>>();
+		final var clonedActions = new ArrayList<IAction<Boolean>>();
 		for (final var action : actions) {
-			clonedActions.add((IAction<Byte>) action.clone());
+			clonedActions.add((IAction<Boolean>) action.clone());
 		}
 		cycleAction.setActions(clonedActions);
 
@@ -61,16 +61,14 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
-
-		final var hot = value != 0;
 
 		switch (activation) {
 		case REPEAT -> throw new IllegalStateException(
 				ButtonToCycleAction.class.getSimpleName() + " must not have activation value: " + Activation.REPEAT);
 		case SINGLE_IMMEDIATELY -> {
-			if (!hot) {
+			if (!value) {
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
 				activatable = Activatable.NO;
@@ -78,7 +76,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 			}
 		}
 		case SINGLE_ON_RELEASE -> {
-			if (hot) {
+			if (value) {
 				if (activatable == Activatable.NO) {
 					activatable = Activatable.YES;
 				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
@@ -95,7 +93,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 	private void doActionAndAdvanceIndex(final Input input, final int component) {
 		final var action = actions.get(index);
 
-		action.doAction(input, component, Byte.MAX_VALUE);
+		action.doAction(input, component, true);
 		if (action instanceof final ButtonToLockKeyAction buttonToLockKeyAction) {
 			buttonToLockKeyAction.resetWasUp();
 		}
@@ -107,7 +105,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		}
 	}
 
-	public List<IAction<Byte>> getActions() {
+	public List<IAction<Boolean>> getActions() {
 		return actions;
 	}
 
@@ -156,7 +154,7 @@ public final class ButtonToCycleAction extends DescribableAction<Byte>
 		index = 0;
 	}
 
-	public void setActions(final List<IAction<Byte>> actions) {
+	public void setActions(final List<IAction<Boolean>> actions) {
 		this.actions = actions;
 	}
 

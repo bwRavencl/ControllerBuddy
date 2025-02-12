@@ -73,7 +73,6 @@ If you are running Linux, you additionally have the option of using the [Control
     - Displays current mode
     - Can show current position of virtual axes
     - On-Screen-Keyboard that can be controlled by gamepad
-    - VR support (OpenVR on Windows)
     - Customizable position and colors
 - Two modes of operation:
     - Local
@@ -195,8 +194,6 @@ Server-Client mode:
 
 ![Overlay](screenshot_7.png)
 
-![VR Overlay](screenshot_8.png)
-
 ## Command Line Parameters
 
 | Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
@@ -233,9 +230,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [Error Prone](https://errorprone.info/)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
-- [hid4java](https://github.com/gary-rowe/hid4java)
 - [Java Native Access (JNA)](https://github.com/java-native-access/jna)
-- [JXInput](https://github.com/StrikerX3/JXInput)
 - [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)

@@ -25,9 +25,6 @@ import com.google.gson.JsonParseException;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.unix.X11;
 import de.bwravencl.controllerbuddy.constants.Constants;
-import de.bwravencl.controllerbuddy.dbus.freedesktop.OpenURI;
-import de.bwravencl.controllerbuddy.dbus.freedesktop.Request;
-import de.bwravencl.controllerbuddy.dbus.gnome.Extensions;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -40,12 +37,12 @@ import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
-import de.bwravencl.controllerbuddy.input.driver.sony.SonyDriver;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
-import de.bwravencl.controllerbuddy.json.ModeAwareTypeAdapterFactory;
+import de.bwravencl.controllerbuddy.json.ProfileTypeAdapterFactory;
 import de.bwravencl.controllerbuddy.json.ScanCodeAdapter;
 import de.bwravencl.controllerbuddy.runmode.ClientRunMode;
 import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
@@ -55,7 +52,6 @@ import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.runmode.VjoyInterface;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -72,14 +68,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.MenuItem;
 import java.awt.Point;
-import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
@@ -88,14 +80,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -111,16 +101,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -136,9 +125,12 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -176,6 +168,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -190,7 +183,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.AttributeSet;
@@ -221,12 +214,25 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.freedesktop.dbus.DBusMatchRule;
+import org.freedesktop.dbus.annotations.DBusBoundProperty;
+import org.freedesktop.dbus.annotations.DBusInterfaceName;
+import org.freedesktop.dbus.annotations.DBusProperty.Access;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.Configuration;
+import org.freedesktop.dbus.interfaces.DBusInterface;
+import org.freedesktop.dbus.types.Variant;
+import org.lwjgl.sdl.SDLError;
+import org.lwjgl.sdl.SDLEvents;
+import org.lwjgl.sdl.SDLGUID;
+import org.lwjgl.sdl.SDLGamepad;
+import org.lwjgl.sdl.SDLHints;
+import org.lwjgl.sdl.SDLInit;
+import org.lwjgl.sdl.SDLMisc;
+import org.lwjgl.sdl.SDLPixels;
+import org.lwjgl.sdl.SDLSurface;
+import org.lwjgl.sdl.SDLTray;
+import org.lwjgl.sdl.SDL_Event;
+import org.lwjgl.sdl.SDL_GUID;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
@@ -348,6 +354,8 @@ public final class Main {
 
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
 
+	private static final String PREFERENCES_LED_COLOR = "led_color";
+
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 
 	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
@@ -364,15 +372,15 @@ public final class Main {
 
 	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
 
-	private static final String PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY = "sony_touchpad_cursor_sensitivity";
-
-	private static final String PREFERENCES_SONY_TOUCHPAD_ENABLED = "sony_touchpad_enabled";
-
-	private static final String PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY = "sony_touchpad_scroll_sensitivity";
-
 	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
 
 	private static final String PREFERENCES_TIMEOUT = "timeout";
+
+	private static final String PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY = "touchpad_cursor_sensitivity";
+
+	private static final String PREFERENCES_TOUCHPAD_ENABLED = "touchpad_enabled";
+
+	private static final String PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY = "touchpad_scroll_sensitivity";
 
 	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
 
@@ -450,7 +458,7 @@ public final class Main {
 
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 
-	private static final String VJOY_GUID = "0300000034120000adbe000000000000";
+	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
 
 	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 
@@ -499,7 +507,9 @@ public final class Main {
 
 	private final AssignmentsComponent assignmentsComponent;
 
-	private final JMenu deviceJMenu = new JMenu(strings.getString("DEVICE_MENU"));
+	private final Set<Controller> controllers = new HashSet<>();
+
+	private final JMenu deviceMenu = new JMenu(strings.getString("DEVICE_MENU"));
 
 	private final JFrame frame;
 
@@ -508,6 +518,10 @@ public final class Main {
 	private final JPanel indicatorsListPanel;
 
 	private final JScrollPane indicatorsScrollPane;
+
+	private final JLabel ledPreviewLabel;
+
+	private final MainLoop mainLoop;
 
 	private final JMenuBar menuBar = new JMenuBar();
 
@@ -531,11 +545,7 @@ public final class Main {
 
 	private final Random random;
 
-	private final JMenu runJMenu = new JMenu(strings.getString("RUN_MENU"));
-
-	private final JPanel sonyCursorSensitivityPanel;
-
-	private final JPanel sonyScrollSensitivityPanel;
+	private final JMenu runMenu = new JMenu(strings.getString("RUN_MENU"));
 
 	private final StartClientAction startClientAction = new StartClientAction();
 
@@ -543,33 +553,41 @@ public final class Main {
 
 	private final StartServerAction startServerAction = new StartServerAction();
 
-	private final JMenuItem startServerJMenuItem;
+	private final JMenuItem startServerMenuItem;
 
 	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
 
 	private final StopAction stopAction = new StopAction();
 
-	private final JMenuItem stopJMenuItem;
+	private final JMenuItem stopMenuItem;
 
 	private final JSVGCanvas svgCanvas;
 
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
-	private final TaskRunner taskRunner;
-
 	private final SVGDocument templateSvgDocument;
 
 	private final Timer timer = new Timer();
 
+	private final JPanel touchpadCursorSensitivityPanel;
+
+	private final JPanel touchpadScrollSensitivityPanel;
+
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
 
 	private final JPanel visualizationPanel;
+
+	private Float cachedTouchpadCursorSensitivity;
+
+	private Float cachedTouchpadScrollSensitivity;
 
 	private IAction<?> clipboardAction;
 
 	private File currentFile;
 
 	private JLabel currentModeLabel;
+
+	private boolean hasSystemTray = SystemTray.isSupported();
 
 	private JPanel indicatorPanel;
 
@@ -583,49 +601,51 @@ public final class Main {
 
 	private JComboBox<Mode> modeComboBox;
 
-	private volatile OpenVrOverlay openVrOverlay;
-
 	private ScheduledExecutorService overlayExecutorService;
 
 	private volatile JFrame overlayFrame;
 
 	private FrameDragListener overlayFrameDragListener;
 
+	private Float prevFinger0X;
+
+	private Float prevFinger0Y;
+
+	private Float prevFinger1Y;
+
 	private Rectangle prevTotalDisplayBounds;
 
 	private volatile RunMode runMode;
 
-	private PopupMenu runPopupMenu;
-
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 
-	private volatile ControllerInfo selectedController;
+	private volatile Controller selectedController;
 
-	private MenuItem showMenuItem;
+	private long showTrayEntry;
 
-	private JCheckBox showVrOverlayCheckBox;
+	private JMenuItem startClientMenuItem;
 
-	private JMenuItem startClientJMenuItem;
+	private long startClientTrayEntry;
 
-	private MenuItem startClientMenuItem;
+	private JMenuItem startLocalMenuItem;
 
-	private JMenuItem startLocalJMenuItem;
+	private long startLocalTrayEntry;
 
-	private MenuItem startLocalMenuItem;
+	private long startServerTrayEntry;
 
-	private MenuItem startServerMenuItem;
-
-	private MenuItem stopMenuItem;
+	private long stopTrayEntry;
 
 	private volatile Rectangle totalDisplayBounds;
 
-	private TrayIcon trayIcon;
+	private long tray;
+
+	private long trayMenu;
 
 	private boolean unsavedChanges = false;
 
 	private JLabel vJoyDirectoryLabel;
 
-	private Main(final TaskRunner taskRunner, final String cmdProfilePath, final String cmdGameControllerDbPath) {
+	private Main(final MainLoop mainLoop, final String cmdProfilePath, final String cmdGameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
 				log.log(Level.INFO, "Forcing immediate halt");
@@ -634,7 +654,7 @@ public final class Main {
 			}
 		}));
 
-		this.taskRunner = taskRunner;
+		this.mainLoop = mainLoop;
 
 		try {
 			random = SecureRandom.getInstanceStrong();
@@ -708,8 +728,9 @@ public final class Main {
 		});
 
 		final var mainClassPackageName = Main.class.getPackageName();
-		preferences = Preferences.userRoot()
-				.node("/" + mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.')).replace('.', '/'));
+		final var applicationId = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
+
+		preferences = Preferences.userRoot().node("/" + applicationId.replace('.', '/'));
 
 		frame = new JFrame();
 
@@ -719,15 +740,12 @@ public final class Main {
 			public void windowClosing(final WindowEvent e) {
 				super.windowClosing(e);
 
-				if (trayIcon == null) {
+				if (tray == 0L) {
 					quit();
 					return;
 				}
 
-				if (showMenuItem != null) {
-					showMenuItem.setEnabled(true);
-				}
-
+				updateShowTrayEntry();
 				EventQueue.invokeLater(() -> showTrayIconHint());
 			}
 
@@ -735,28 +753,21 @@ public final class Main {
 			public void windowDeiconified(final WindowEvent e) {
 				super.windowDeiconified(e);
 
-				if (showMenuItem != null) {
-					showMenuItem.setEnabled(false);
-				}
+				updateShowTrayEntry();
 			}
 
 			@Override
 			public void windowIconified(final WindowEvent e) {
 				super.windowIconified(e);
 
-				if (showMenuItem != null) {
-					showMenuItem.setEnabled(true);
-				}
+				updateShowTrayEntry();
 			}
 
 			@Override
 			public void windowOpened(final WindowEvent e) {
 				super.windowOpened(e);
 
-				if (showMenuItem != null) {
-					showMenuItem.setEnabled(false);
-				}
-
+				updateShowTrayEntry();
 				updateVisualizationPanel();
 			}
 		});
@@ -772,26 +783,26 @@ public final class Main {
 
 		frame.setJMenuBar(menuBar);
 
-		final JMenu fileJMenu = new JMenu(strings.getString("FILE_MENU"));
-		fileJMenu.add(new NewAction());
-		fileJMenu.add(openAction);
-		fileJMenu.add(new SaveAction());
-		fileJMenu.add(new SaveAsAction());
-		fileJMenu.insertSeparator(4);
-		fileJMenu.add(quitAction);
+		final JMenu fileMenu = new JMenu(strings.getString("FILE_MENU"));
+		fileMenu.add(new NewAction());
+		fileMenu.add(openAction);
+		fileMenu.add(new SaveAction());
+		fileMenu.add(new SaveAsAction());
+		fileMenu.insertSeparator(4);
+		fileMenu.add(quitAction);
 
-		menuBar.add(fileJMenu);
+		menuBar.add(fileMenu);
 
 		if (isWindows || isLinux) {
-			startLocalJMenuItem = runJMenu.add(startLocalAction);
-			startClientJMenuItem = runJMenu.add(startClientAction);
+			startLocalMenuItem = runMenu.add(startLocalAction);
+			startClientMenuItem = runMenu.add(startClientAction);
 		}
 
-		startServerJMenuItem = runJMenu.add(startServerAction);
-		runJMenu.addSeparator();
-		stopJMenuItem = runJMenu.add(stopAction);
+		startServerMenuItem = runMenu.add(startServerAction);
+		runMenu.addSeparator();
+		stopMenuItem = runMenu.add(stopAction);
 
-		menuBar.add(runJMenu);
+		menuBar.add(runMenu);
 
 		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
@@ -884,7 +895,7 @@ public final class Main {
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(getPollInterval(), 1, 100, 1));
-		final var pollIntervalSpinnerEditor = new JSpinner.NumberEditor(pollIntervalSpinner,
+		final var pollIntervalSpinnerEditor = new NumberEditor(pollIntervalSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
@@ -977,22 +988,20 @@ public final class Main {
 		});
 		noControllerDialogsPanel.add(noControllerDialogsCheckBox);
 
-		if (!isMac) {
-			final var autoRestartOutputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-			inputSettingsPanel.add(autoRestartOutputPanel, constraints);
+		final var autoRestartOutputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		inputSettingsPanel.add(autoRestartOutputPanel, constraints);
 
-			final var autoRestartOutputLabel = new JLabel(strings.getString("AUTO_RESTART_OUTPUT_LABEL"));
-			autoRestartOutputLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-			autoRestartOutputPanel.add(autoRestartOutputLabel);
+		final var autoRestartOutputLabel = new JLabel(strings.getString("AUTO_RESTART_OUTPUT_LABEL"));
+		autoRestartOutputLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		autoRestartOutputPanel.add(autoRestartOutputLabel);
 
-			final var autoRestartOutputCheckBox = new JCheckBox(strings.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
-			autoRestartOutputCheckBox.setSelected(isAutoRestartOutput());
-			autoRestartOutputCheckBox.addActionListener(event -> {
-				final var autoRestartOutput = ((JCheckBox) event.getSource()).isSelected();
-				preferences.putBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, autoRestartOutput);
-			});
-			autoRestartOutputPanel.add(autoRestartOutputCheckBox);
-		}
+		final var autoRestartOutputCheckBox = new JCheckBox(strings.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
+		autoRestartOutputCheckBox.setSelected(isAutoRestartOutput());
+		autoRestartOutputCheckBox.addActionListener(event -> {
+			final var autoRestartOutput = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, autoRestartOutput);
+		});
+		autoRestartOutputPanel.add(autoRestartOutputCheckBox);
 
 		if (isWindows) {
 			final var vJoySettingsPanel = new JPanel();
@@ -1022,7 +1031,7 @@ public final class Main {
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(getVJoyDevice(), 1, 16, 1));
-			final var vJoyDeviceSpinnerEditor = new JSpinner.NumberEditor(vJoyDeviceSpinner, "#");
+			final var vJoyDeviceSpinnerEditor = new NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
 			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
@@ -1061,7 +1070,7 @@ public final class Main {
 		overlayScalingPanel.add(overlayScalingLabel);
 
 		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), .5, 6d, .25));
-		final var overlayScalingSpinnerEditor = new JSpinner.NumberEditor(overlayScalingSpinner, "#.## x");
+		final var overlayScalingSpinnerEditor = new NumberEditor(overlayScalingSpinner, "#.## x");
 		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
 		overlayScalingSpinner.addChangeListener(event -> preferences.putFloat(PREFERENCES_OVERLAY_SCALING,
@@ -1086,67 +1095,88 @@ public final class Main {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
-		final var sonyControllersSettingsPanel = new JPanel();
-		sonyControllersSettingsPanel.setLayout(new BoxLayout(sonyControllersSettingsPanel, BoxLayout.Y_AXIS));
-		sonyControllersSettingsPanel.setBorder(
-				BorderFactory.createTitledBorder(strings.getString("SONY_CONTROLLER_SETTINGS_BORDER_TITLE")));
-		globalSettingsPanel.add(sonyControllersSettingsPanel, constraints);
+		final var ledColorPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		appearanceSettingsPanel.add(ledColorPanel);
 
-		final var sonyTouchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyTouchpadPanel);
+		final var ledColorLabel = new JLabel(strings.getString("LED_COLOR_LABEL"));
+		ledColorLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		ledColorPanel.add(ledColorLabel);
 
-		final var sonyEnableTouchpadLabel = new JLabel(strings.getString("SONY_TOUCHPAD_LABEL"));
-		sonyEnableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyTouchpadPanel.add(sonyEnableTouchpadLabel);
+		final var ledColorButton = new JButton(new SelectLedColorAction());
+		ledColorButton.setPreferredSize(SQUARE_BUTTON_DIMENSION);
 
-		sonyCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyCursorSensitivityPanel);
+		ledPreviewLabel = new JLabel();
+		final var ledColorButtonHeight = ledColorButton.getPreferredSize().height;
+		ledPreviewLabel.setPreferredSize(new Dimension(ledColorButtonHeight * 3, ledColorButtonHeight));
+		ledPreviewLabel.setBorder(BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor")));
+		ledPreviewLabel.setOpaque(true);
+		ledPreviewLabel.setBackground(getLedColor());
+		ledColorPanel.add(ledPreviewLabel);
+		ledColorPanel.add(ledColorButton);
 
-		final var sonyCursorSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_CURSOR_SENSITIVITY"));
-		sonyCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyCursorSensitivityPanel.add(sonyCursorSensitivityLabel);
+		final var touchpadSettingsPanel = new JPanel();
+		touchpadSettingsPanel.setLayout(new BoxLayout(touchpadSettingsPanel, BoxLayout.Y_AXIS));
+		touchpadSettingsPanel
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("TOUCHPAD_SETTINGS_BORDER_TITLE")));
+		globalSettingsPanel.add(touchpadSettingsPanel, constraints);
+
+		final var touchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadPanel);
+
+		final var enableTouchpadLabel = new JLabel(strings.getString("TOUCHPAD_LABEL"));
+		enableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadPanel.add(enableTouchpadLabel);
+
+		touchpadCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadCursorSensitivityPanel);
+
+		final var touchpadCursorSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_CURSOR_SENSITIVITY"));
+		touchpadCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getSonyCursorSensitivity(), .1, 5d, .05));
-		final var cursorSensitivitySpinnerEditor = new JSpinner.NumberEditor(cursorSensitivitySpinner);
+				new SpinnerNumberModel(getTouchpadCursorSensitivity(), .1, 5d, .05));
+		final var cursorSensitivitySpinnerEditor = new NumberEditor(cursorSensitivitySpinner);
 		((DefaultFormatter) cursorSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		cursorSensitivitySpinner.setEditor(cursorSensitivitySpinnerEditor);
-		cursorSensitivitySpinner
-				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
-						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
-		sonyCursorSensitivityPanel.add(cursorSensitivitySpinner);
-
-		sonyScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		sonyControllersSettingsPanel.add(sonyScrollSensitivityPanel);
-
-		final var sonyScrollSensitivityLabel = new JLabel(strings.getString("SONY_TOUCHPAD_SCROLL_SENSITIVITY"));
-		sonyScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		sonyScrollSensitivityPanel.add(sonyScrollSensitivityLabel);
-
-		final var sonyScrollSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getSonyScrollSensitivity(), .1, 1d, .05));
-		final var scrollSensitivitySpinnerEditor = new JSpinner.NumberEditor(sonyScrollSensitivitySpinner);
-		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		sonyScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
-		sonyScrollSensitivitySpinner
-				.addChangeListener(event -> preferences.putFloat(PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
-						((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
-		sonyScrollSensitivityPanel.add(sonyScrollSensitivitySpinner);
-
-		final var sonyTouchpadEnabledCheckBox = new JCheckBox(strings.getString("SONY_TOUCHPAD_ENABLED_CHECK_BOX"));
-		sonyTouchpadEnabledCheckBox.setSelected(isSonyTouchpadEnabled());
-		sonyTouchpadEnabledCheckBox.addActionListener(event -> {
-			final var enableTouchpad = ((JCheckBox) event.getSource()).isSelected();
-			preferences.putBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, enableTouchpad);
-
-			updateSonyTouchpadSettings();
+		cursorSensitivitySpinner.addChangeListener(event -> {
+			cachedTouchpadCursorSensitivity = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
+			preferences.putFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, cachedTouchpadCursorSensitivity);
 		});
-		sonyTouchpadPanel.add(sonyTouchpadEnabledCheckBox);
+		touchpadCursorSensitivityPanel.add(cursorSensitivitySpinner);
+
+		touchpadScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadSettingsPanel.add(touchpadScrollSensitivityPanel);
+
+		final var touchpadScrollSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_SCROLL_SENSITIVITY"));
+		touchpadScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
+
+		final var touchpadScrollSensitivitySpinner = new JSpinner(
+				new SpinnerNumberModel(getTouchpadScrollSensitivity(), .1, 1d, .05));
+		final var scrollSensitivitySpinnerEditor = new NumberEditor(touchpadScrollSensitivitySpinner);
+		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+		touchpadScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
+		touchpadScrollSensitivitySpinner.addChangeListener(event -> {
+			cachedTouchpadScrollSensitivity = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
+			preferences.putFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, cachedTouchpadScrollSensitivity);
+		});
+		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivitySpinner);
+
+		final var touchpadEnabledCheckBox = new JCheckBox(strings.getString("TOUCHPAD_ENABLED_CHECK_BOX"));
+		touchpadEnabledCheckBox.setSelected(isTouchpadEnabled());
+		touchpadEnabledCheckBox.addActionListener(event -> {
+			final var enableTouchpad = ((JCheckBox) event.getSource()).isSelected();
+			preferences.putBoolean(PREFERENCES_TOUCHPAD_ENABLED, enableTouchpad);
+
+			updateTouchpadSettings();
+		});
+		touchpadPanel.add(touchpadEnabledCheckBox);
 
 		addGlueToSettingsPanel(globalSettingsPanel);
 
-		updateSonyTouchpadSettings();
-		updateTitleAndTooltip();
+		updateTouchpadSettings();
+		updateTitle();
 
 		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
@@ -1168,193 +1198,167 @@ public final class Main {
 				});
 
 				try {
-					Boolean shouldDisableSystemTray = null;
-
 					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
 					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
 					final var desktop = getDesktopMethod.invoke(toolkit);
 
 					if ("gnome".equals(desktop)) {
-						final var getGnomeShellMajorVersionMethod = unixToolkitClass
-								.getDeclaredMethod("getGnomeShellMajorVersion");
-						getGnomeShellMajorVersionMethod.setAccessible(true);
-						final var gnomeShellMajorVersion = getGnomeShellMajorVersionMethod.invoke(toolkit);
-						if (gnomeShellMajorVersion == null) {
-							shouldDisableSystemTray = false;
-						}
+						hasSystemTray = false;
+						try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+							final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
+									"/org/gnome/Shell/Extensions", Extensions.class);
 
-						if (Boolean.FALSE.equals(shouldDisableSystemTray)) {
-							try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-								final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
-										"/org/gnome/Shell/Extensions", Extensions.class);
+							final var gnomeShellVersion = extensions.getShellVersion();
+							if (gnomeShellVersion != null) {
+								final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
+								if (matcher.matches()) {
+									final var majorVersion = Integer.parseInt(matcher.group(1));
+									final var minorVersion = Integer.parseInt(matcher.group(2));
 
-								final var gnomeShellVersion = extensions.getShellVersion();
-								if (gnomeShellVersion != null) {
-									final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
-									if (matcher.matches()) {
-										final var majorVersion = Integer.parseInt(matcher.group(1));
-										final var minorVersion = Integer.parseInt(matcher.group(2));
+									if ((majorVersion == 3 && minorVersion <= 25)) {
+										hasSystemTray = true;
+									} else if (majorVersion >= 45) {
+										final var gnomeSystemTrayExtensions = Set.of(
+												"appindicatorsupport@rgcjonas.gmail.com",
+												"status-icons@gnome-shell-extensions.gcampax.github.com",
+												"ubuntu-appindicators@ubuntu.com", "topIcons@adel.gadllah@gmail.com",
+												"topiconsfix@aleskva@devnullmail.com", "TopIcons@phocean.net",
+												"topicons-redux@pop-planet.info");
 
-										if ((majorVersion == 3 && minorVersion > 25)
-												|| (majorVersion > 3 && majorVersion < 45)) {
-											shouldDisableSystemTray = true;
-										} else {
-											final var gnomeSystemTrayExtensions = Set.of(
-													"appindicatorsupport@rgcjonas.gmail.com",
-													"status-icons@gnome-shell-extensions.gcampax.github.com",
-													"ubuntu-appindicators@ubuntu.com",
-													"topIcons@adel.gadllah@gmail.com",
-													"topiconsfix@aleskva@devnullmail.com", "TopIcons@phocean.net",
-													"topicons-redux@pop-planet.info");
-
-											if (extensions.ListExtensions().entrySet().stream().noneMatch(
-													e -> gnomeSystemTrayExtensions.contains(e.getKey()) && Boolean.TRUE
-															.equals(e.getValue().get("enabled").getValue()))) {
-												shouldDisableSystemTray = true;
-											}
-										}
+										hasSystemTray = extensions.ListExtensions().entrySet().stream()
+												.anyMatch(e -> gnomeSystemTrayExtensions.contains(e.getKey())
+														&& Boolean.TRUE.equals(e.getValue().get("enabled").getValue()));
 									}
 								}
 							}
 						}
-					} else {
-						final var kdeSessionVersion = System.getenv("KDE_SESSION_VERSION");
-						if ("6".equals(kdeSessionVersion)) {
-							shouldDisableSystemTray = true;
-						}
-					}
-
-					if (shouldDisableSystemTray != null) {
-						final var shouldDisableSystemTrayField = unixToolkitClass
-								.getDeclaredField("shouldDisableSystemTray");
-						shouldDisableSystemTrayField.setAccessible(true);
-						shouldDisableSystemTrayField.set(null, shouldDisableSystemTray);
 					}
 				} catch (final Throwable t) {
 					log.log(Level.SEVERE, t.getMessage(), t);
 				}
 			}
-
-			GLFW.glfwInitHint(GLFW.GLFW_PLATFORM, GLFW.GLFW_PLATFORM_X11);
-		} else if (isMac) {
-			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 
 		newProfile(false);
 		updateTheme();
 
-		final var glfwInitialized = (boolean) taskRunner.run(GLFW::glfwInit).orElse(false);
-		if (!glfwInitialized) {
-			String errorDetails = null;
-			try (final var stack = MemoryStack.stackPush()) {
-				final var descriptionPointerBuffer = stack.mallocPointer(1);
-				if (GLFW.glfwGetError(descriptionPointerBuffer) != 0) {
-					final var descriptionPointer = descriptionPointerBuffer.get();
-					if (descriptionPointer != 0L) {
-						errorDetails = MemoryUtil.memUTF8(descriptionPointer);
-					}
-				}
-			} catch (final Throwable t) {
-				log.log(Level.WARNING, t.getMessage(), t);
+		final var sdlInitialized = mainLoop.runSync(() -> {
+			SDLInit.SDL_SetAppMetadata(Constants.APPLICATION_NAME, Constants.VERSION, applicationId);
+
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_RAWINPUT, "0");
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES, VJOY_DEVICE_VID_PID);
+
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
+			if (isLinux) {
+				SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_DRIVER, "x11");
 			}
 
-			log.log(Level.SEVERE, "Could not initialize GLFW" + (errorDetails != null ? ": " + errorDetails : ""));
+			var flags = SDLInit.SDL_INIT_GAMEPAD;
+			if (!isMac) {
+				flags |= SDLInit.SDL_INIT_VIDEO;
+			}
+			return SDLInit.SDL_Init(flags);
+		}).orElse(false);
 
-			if (errorDetails == null) {
+		final var sdlVideoInitialized = SDLInit.SDL_WasInit(SDLInit.SDL_INIT_VIDEO) != 0;
+		hasSystemTray &= sdlVideoInitialized;
+
+		if (!sdlInitialized) {
+			var errorDetails = SDLError.SDL_GetError();
+
+			final var hasErrorDetails = errorDetails != null && !errorDetails.isBlank();
+			log.log(Level.SEVERE, "Could not initialize SDL" + (hasErrorDetails ? ": " + errorDetails : ""));
+
+			if (!hasErrorDetails) {
 				errorDetails = strings.getString("NO_ERROR_DETAILS");
 			}
 
 			if (isWindows || isLinux) {
 				GuiUtils.showMessageDialog(this, frame,
-						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME, errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(
-						this, frame, MessageFormat
-								.format(strings.getString("COULD_NOT_INITIALIZE_GLFW_DIALOG_TEXT_MAC"), errorDetails),
+				GuiUtils.showMessageDialog(this, frame, MessageFormat
+						.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT_MAC"), errorDetails),
 						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
 
-			onControllersChanged(Collections.emptyList(), true);
+			onControllersChanged(true);
 			initProfile(cmdProfilePath, true);
 
 			return;
 		}
 
-		var mappingsUpdated = updateGameControllerMappings(
-				ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME));
-		log.log(mappingsUpdated ? Level.INFO : Level.WARNING,
-				(mappingsUpdated ? "Successfully updated" : "Failed to update")
-						+ " game controller mappings from internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
-
-		if (cmdGameControllerDbPath != null) {
-			mappingsUpdated &= updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
+		String errorDetails;
+		try {
+			final var inputStream = ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME);
+			if (inputStream == null) {
+				throw new IllegalStateException("Could not open resource " + GAME_CONTROLLER_DATABASE_FILENAME);
+			}
+			final var tempFilePath = Files.createTempFile(GAME_CONTROLLER_DATABASE_FILENAME, null);
+			try {
+				Files.copy(inputStream, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+				errorDetails = updateGameControllerMappings(tempFilePath.toString(),
+						"internal file " + GAME_CONTROLLER_DATABASE_FILENAME);
+			} finally {
+				Files.delete(tempFilePath);
+			}
+		} catch (final Throwable t) {
+			log.log(Level.SEVERE, t.getMessage(), t);
+			errorDetails = strings.getString("NO_ERROR_DETAILS");
 		}
 
-		if (!mappingsUpdated) {
-			log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
-
+		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(this, frame,
-					MessageFormat.format(strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME),
+					MessageFormat.format(
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_INTERNAL_FILE_DIALOG_TEXT"),
+							Constants.APPLICATION_NAME, errorDetails),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
-		final var optionalPresentControllers = taskRunner.run(Main::getPresentControllers);
+		if (cmdGameControllerDbPath != null) {
+			updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
+		}
 
-		optionalPresentControllers.ifPresent(presentControllers -> {
-			if (!presentControllers.isEmpty()) {
-				log.log(Level.INFO,
-						"Present controllers:" + presentControllers.stream()
-								.map(controllerInfo -> assembleControllerLoggingMessage("\n\t", controllerInfo))
-								.collect(Collectors.joining()));
+		controllers.clear();
+		mainLoop.runSync(() -> {
+			final var instanceIdBuffer = SDLGamepad.SDL_GetGamepads();
+			if (instanceIdBuffer == null) {
+				return;
+			}
 
-				final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
-				if (lastControllerGuid != null) {
-					presentControllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid))
-							.findFirst().ifPresentOrElse(controller -> {
-								log.log(Level.INFO, assembleControllerLoggingMessage(
-										"Found previously used controller ", controller));
-								setSelectedController(controller);
-							}, () -> {
-								log.log(Level.INFO, "Previously used controller is not present");
-								setSelectedController(presentControllers.getFirst());
-							});
-				}
+			while (instanceIdBuffer.hasRemaining()) {
+				controllers.add(new Controller(instanceIdBuffer.get()));
 			}
 		});
 
-		onControllersChanged(optionalPresentControllers.orElseGet(Collections::emptyList), true);
+		if (!controllers.isEmpty()) {
+			log.log(Level.INFO,
+					"Present controllers:" + controllers.stream()
+							.map(controller -> assembleControllerLoggingMessage("\n\t", controller))
+							.collect(Collectors.joining()));
 
-		// noinspection resource
-		taskRunner.run((Runnable) () -> GLFW.glfwSetJoystickCallback((jid, event) -> {
-			final var disconnected = event == GLFW.GLFW_DISCONNECTED;
-			if (disconnected || GLFW.glfwJoystickIsGamepad(jid)) {
-				if (disconnected && optionalPresentControllers.isPresent()
-						&& optionalPresentControllers.get().stream().anyMatch(controller -> controller.jid == jid)) {
-					log.log(Level.INFO,
-							assembleControllerLoggingMessage("Disconnected controller ", new ControllerInfo(jid)));
-
-					if (selectedController != null && selectedController.jid == jid) {
-						if (!isMac) {
-							selectedController = null;
-						}
-						input.deInit(true);
-					}
-				} else if (event == GLFW.GLFW_CONNECTED) {
-					log.log(Level.INFO,
-							assembleControllerLoggingMessage("Connected controller ", new ControllerInfo(jid)));
-				}
-
-				EventQueue.invokeLater(() -> onControllersChanged(getPresentControllers(), false));
+			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
+			if (lastControllerGuid != null) {
+				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
+						.ifPresentOrElse(controller -> {
+							log.log(Level.INFO,
+									assembleControllerLoggingMessage("Found previously used controller ", controller));
+							setSelectedController(controller);
+						}, () -> {
+							log.log(Level.INFO, "Previously used controller is not present");
+							setSelectedController(controllers.stream().findFirst().orElse(null));
+						});
 			}
-		}));
+		}
 
-		final var noControllerConnected = optionalPresentControllers.isEmpty()
-				|| optionalPresentControllers.get().isEmpty();
+		onControllersChanged(true);
+
+		final var noControllerConnected = controllers.isEmpty();
 
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (isWindows || isLinux) {
@@ -1381,7 +1385,7 @@ public final class Main {
 		settingsPanel.add(Box.createGlue(), constraints);
 	}
 
-	public static String assembleControllerLoggingMessage(final String prefix, final ControllerInfo controller) {
+	public static String assembleControllerLoggingMessage(final String prefix, final Controller controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix);
 
@@ -1391,7 +1395,7 @@ public final class Main {
 			sb.append(controller.name).append(" (");
 		}
 
-		sb.append(controller.jid);
+		sb.append(controller.instanceId);
 
 		if (appendGamepadName) {
 			sb.append(")");
@@ -1402,6 +1406,12 @@ public final class Main {
 		}
 
 		return sb.toString();
+	}
+
+	private static void checkMainThread() {
+		if (!SDLInit.SDL_IsMainThread()) {
+			throw new RuntimeException();
+		}
 	}
 
 	private static LineBorder createOverlayBorder() {
@@ -1450,18 +1460,6 @@ public final class Main {
 		};
 	}
 
-	public static List<ControllerInfo> getPresentControllers() {
-		final var presentControllers = new ArrayList<ControllerInfo>();
-		for (var jid = GLFW.GLFW_JOYSTICK_1; jid <= GLFW.GLFW_JOYSTICK_LAST; jid++) {
-			if (isMac || (GLFW.glfwJoystickPresent(jid) && GLFW.glfwJoystickIsGamepad(jid)
-					&& !VJOY_GUID.equals(GLFW.glfwGetJoystickGUID(jid)))) {
-				presentControllers.add(new ControllerInfo(jid));
-			}
-		}
-
-		return presentControllers;
-	}
-
 	private static URL getResourceLocation(final String resourcePath) {
 		final var resourceLocation = Main.class.getResource(resourcePath);
 		if (resourceLocation == null) {
@@ -1469,6 +1467,20 @@ public final class Main {
 		}
 
 		return resourceLocation;
+	}
+
+	private static long insertTrayEntryFromAction(final long menu, final Action action) {
+		checkMainThread();
+
+		final var label = (String) action.getValue(Action.NAME);
+		final var trayEntry = SDLTray.SDL_InsertTrayEntryAt(menu, -1, label, SDLTray.SDL_TRAYENTRY_BUTTON);
+
+		SDLTray.SDL_SetTrayEntryCallback(trayEntry,
+				(_, _) -> EventQueue.invokeLater(
+						() -> action.actionPerformed(new ActionEvent(trayEntry, ActionEvent.ACTION_PERFORMED, label))),
+				0L);
+
+		return trayEntry;
 	}
 
 	private static boolean isModalDialogShowing() {
@@ -1499,6 +1511,13 @@ public final class Main {
 
 	private static boolean isXToolkit(final Toolkit toolkit) {
 		return "sun.awt.X11.XToolkit".equals(toolkit.getClass().getName());
+	}
+
+	public static String logSdlError(final String message) {
+		final var errorDetails = SDLError.SDL_GetError();
+		log.log(Level.WARNING, message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
+
+		return errorDetails;
 	}
 
 	public static void main(final String[] args) {
@@ -1607,7 +1626,7 @@ public final class Main {
 				}
 
 				if (continueLaunch) {
-					final var taskRunner = new TaskRunner();
+					final var taskRunner = new MainLoop();
 
 					EventQueue.invokeLater(() -> {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
@@ -1619,7 +1638,7 @@ public final class Main {
 
 						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
 
-						taskRunner.pollGLFWEvents = true;
+						taskRunner.startSdlEventPolling();
 					});
 
 					taskRunner.enterLoop();
@@ -1658,34 +1677,11 @@ public final class Main {
 			}
 		}
 
-		if (isLinux) {
-			new Thread(() -> {
-				var success = false;
-
-				try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-					final var openUriInterface = dBusConnection.getRemoteObject("org.freedesktop.portal.Desktop",
-							"/org/freedesktop/portal/desktop", OpenURI.class);
-
-					final var responseCompletableFuture = new CompletableFuture<Request.Response>();
-
-					try (final var _ = dBusConnection.addSigHandler(new DBusMatchRule(Request.Response.class),
-							responseCompletableFuture::complete)) {
-						final var requestPath = openUriInterface.OpenURI("", uri.toString(), Collections.emptyMap())
-								.getPath();
-						final var response = responseCompletableFuture.get(3, TimeUnit.SECONDS);
-						success = response.getPath().equals(requestPath) && response.getResponse().intValue() == 0;
-					}
-				} catch (final Throwable t) {
-					log.log(Level.WARNING, t.getMessage(), t);
-				}
-
-				if (!success) {
-					EventQueue.invokeLater(() -> showPleaseVisitDialog(parentComponent, uri));
-				}
-			}).start();
-		} else {
-			showPleaseVisitDialog(parentComponent, uri);
+		if (SDLMisc.SDL_OpenURL(uri.toString())) {
+			return;
 		}
+
+		showPleaseVisitDialog(parentComponent, uri);
 	}
 
 	private static void printCommandLineMessage(final String message) {
@@ -1711,8 +1707,14 @@ public final class Main {
 	}
 
 	private static void terminate(final int status, final Main main) {
-		if (main != null && main.taskRunner != null) {
-			main.taskRunner.shutdown();
+		if (main != null) {
+			if (main.mainLoop != null) {
+				if (main.trayMenu != 0L) {
+					main.mainLoop.runSync(() -> SDLTray.SDL_DestroyTray(main.tray));
+				}
+
+				main.mainLoop.shutdown();
+			}
 		}
 
 		log.log(Level.INFO, "Terminated (" + status + ")");
@@ -1748,11 +1750,6 @@ public final class Main {
 	}
 
 	private void deInitOverlay() {
-		if (openVrOverlay != null) {
-			openVrOverlay.stop();
-			openVrOverlay = null;
-		}
-
 		if (overlayFrame != null) {
 			for (var i = 0; i < 10; i++) {
 				overlayFrame.dispose();
@@ -1780,25 +1777,6 @@ public final class Main {
 		onScreenKeyboard.setVisible(false);
 	}
 
-	public void displayChargingStateInfo(final boolean charging, final Integer batteryCapacity) {
-		if (trayIcon != null && input != null && batteryCapacity != null) {
-			trayIcon.displayMessage(strings.getString("CHARGING_STATE_CAPTION"),
-					MessageFormat.format(
-							strings.getString(charging ? "CHARGING_STATE_CHARGING" : "CHARGING_STATE_DISCHARGING"),
-							batteryCapacity / 100f),
-					MessageType.INFO);
-		}
-	}
-
-	public void displayLowBatteryWarning(final String batteryLevelString) {
-		EventQueue.invokeLater(() -> {
-			if (trayIcon != null) {
-				trayIcon.displayMessage(strings.getString("LOW_BATTERY_CAPTION"), batteryLevelString,
-						MessageType.WARNING);
-			}
-		});
-	}
-
 	public <T> T executeWhileVisible(final Callable<T> callable) {
 		final var wasInvisible = show();
 
@@ -1807,7 +1785,7 @@ public final class Main {
 
 			if (wasInvisible) {
 				frame.setVisible(false);
-				updateShowMenuItem();
+				updateShowTrayEntry();
 			}
 
 			return result;
@@ -1928,25 +1906,25 @@ public final class Main {
 
 		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
 
-		for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
+		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
 			var swapped = false;
 
 			final var idPrefix = switch (axis) {
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER -> SVG_ID_LEFT_TRIGGER;
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_X : SVG_ID_LEFT_X;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_Y : SVG_ID_LEFT_Y;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER -> SVG_ID_RIGHT_TRIGGER;
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_X : SVG_ID_RIGHT_X;
 			}
-			case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y -> {
+			case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
 			}
@@ -1957,35 +1935,35 @@ public final class Main {
 			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
 		}
 
-		for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
+		for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
 			var swapped = false;
 
 			final var idPrefix = switch (button) {
-			case GLFW.GLFW_GAMEPAD_BUTTON_A -> SVG_ID_A;
-			case GLFW.GLFW_GAMEPAD_BUTTON_B -> SVG_ID_B;
-			case GLFW.GLFW_GAMEPAD_BUTTON_BACK -> SVG_ID_BACK;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN -> SVG_ID_DPAD_DOWN;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT -> SVG_ID_DPAD_LEFT;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT -> SVG_ID_DPAD_RIGHT;
-			case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
-			case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SVG_ID_LEFT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB -> {
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH -> SVG_ID_A;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_EAST -> SVG_ID_B;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_BACK -> SVG_ID_BACK;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN -> SVG_ID_DPAD_DOWN;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT -> SVG_ID_DPAD_LEFT;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT -> SVG_ID_DPAD_RIGHT;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP -> SVG_ID_DPAD_UP;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE -> SVG_ID_GUIDE;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER -> SVG_ID_LEFT_SHOULDER;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_RIGHT_STICK : SVG_ID_LEFT_STICK;
 			}
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER -> SVG_ID_RIGHT_SHOULDER;
-			case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB -> {
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER -> SVG_ID_RIGHT_SHOULDER;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_STICK : SVG_ID_RIGHT_STICK;
 			}
-			case GLFW.GLFW_GAMEPAD_BUTTON_START -> SVG_ID_START;
-			case GLFW.GLFW_GAMEPAD_BUTTON_X -> SVG_ID_X;
-			case GLFW.GLFW_GAMEPAD_BUTTON_Y -> SVG_ID_Y;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_START -> SVG_ID_START;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_WEST -> SVG_ID_X;
+			case SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH -> SVG_ID_Y;
 			default -> null;
 			};
 
-			final var combinedActions = new ArrayList<IAction<Byte>>();
+			final var combinedActions = new ArrayList<IAction<Boolean>>();
 
 			final var normalActions = mode.getButtonToActionsMap().get(button);
 			if (normalActions != null) {
@@ -2009,6 +1987,10 @@ public final class Main {
 		return clipboardAction;
 	}
 
+	public Set<Controller> getControllers() {
+		return controllers;
+	}
+
 	@SuppressWarnings("exports")
 	public JFrame getFrame() {
 		return frame;
@@ -2022,12 +2004,16 @@ public final class Main {
 		return input;
 	}
 
-	public OnScreenKeyboard getOnScreenKeyboard() {
-		return onScreenKeyboard;
+	public Color getLedColor() {
+		return new Color(preferences.getInt(PREFERENCES_LED_COLOR, 0x448ADE));
 	}
 
-	JFrame getOverlayFrame() {
-		return overlayFrame;
+	public MainLoop getMainLoop() {
+		return mainLoop;
+	}
+
+	public OnScreenKeyboard getOnScreenKeyboard() {
+		return onScreenKeyboard;
 	}
 
 	float getOverlayScaling() {
@@ -2057,21 +2043,27 @@ public final class Main {
 
 	public int getSelectedHotSwappingButtonId() {
 		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
-				HotSwappingButton.None.id), GLFW.GLFW_GAMEPAD_BUTTON_LAST);
-	}
-
-	public float getSonyCursorSensitivity() {
-		return preferences.getFloat(PREFERENCES_SONY_TOUCHPAD_CURSOR_SENSITIVITY,
-				SonyDriver.DEFAULT_TOUCHPAD_CURSOR_SENSITIVITY);
-	}
-
-	public float getSonyScrollSensitivity() {
-		return preferences.getFloat(PREFERENCES_SONY_TOUCHPAD_SCROLL_SENSITIVITY,
-				SonyDriver.DEFAULT_TOUCHPAD_SCROLL_SENSITIVITY);
+				HotSwappingButton.None.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
 	public int getTimeout() {
 		return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
+	}
+
+	public float getTouchpadCursorSensitivity() {
+		if (cachedTouchpadCursorSensitivity == null) {
+			cachedTouchpadCursorSensitivity = preferences.getFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, 1f);
+		}
+
+		return cachedTouchpadCursorSensitivity;
+	}
+
+	public float getTouchpadScrollSensitivity() {
+		if (cachedTouchpadScrollSensitivity == null) {
+			cachedTouchpadScrollSensitivity = preferences.getFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, 1f);
+		}
+
+		return cachedTouchpadScrollSensitivity;
 	}
 
 	public int getVJoyDevice() {
@@ -2148,7 +2140,7 @@ public final class Main {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
 				for (final var buttonToModeAction : buttonToModeActions) {
 					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-						buttonToModeAction.doAction(input, -1, Byte.MAX_VALUE);
+						buttonToModeAction.doAction(input, -1, true);
 						break;
 					}
 				}
@@ -2163,14 +2155,14 @@ public final class Main {
 			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
 
 			var visible = !hasTrayOption || isModalDialogShowing();
-			if (trayIcon == null && hasTrayOption) {
+			if (tray == 0L && hasTrayOption) {
 				log.log(Level.WARNING,
 						"System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
 				visible = true;
 			}
 
 			frame.setVisible(visible);
-			updateShowMenuItem();
+			updateShowTrayEntry();
 
 			if (!visible) {
 				showTrayIconHint();
@@ -2234,25 +2226,6 @@ public final class Main {
 		};
 	}
 
-	private void initOpenVrOverlay() {
-		final var profile = input.getProfile();
-
-		if (!(Platform.isIntel() || (Platform.isARM() && Platform.is64Bit())) || !isWindows || !profile.isShowOverlay()
-				|| !profile.isShowVrOverlay()) {
-			return;
-		}
-
-		try {
-			openVrOverlay = OpenVrOverlay.start(this).orElse(null);
-		} catch (final Throwable t) {
-			log.log(Level.WARNING, t.getMessage(), t);
-
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					strings.getString("OPENVR_OVERLAY_INITIALIZATION_ERROR_DIALOG_TEXT"),
-					strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE));
-		}
-	}
-
 	private void initOverlay() {
 		if (!input.getProfile().isShowOverlay()) {
 			return;
@@ -2270,7 +2243,7 @@ public final class Main {
 		overlayFrameRootPane.setWindowDecorationStyle(JRootPane.NONE);
 		overlayFrameRootPane.setBackground(TRANSPARENT);
 		overlayFrame.setUndecorated(true);
-		overlayFrame.setType(JFrame.Type.POPUP);
+		overlayFrame.setType(Window.Type.POPUP);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setBackground(TRANSPARENT);
@@ -2391,15 +2364,11 @@ public final class Main {
 	}
 
 	public boolean isAutoRestartOutput() {
-		if (isMac) {
-			return false;
-		}
-
 		return preferences.getBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, false);
 	}
 
 	private boolean isClientRunning() {
-		return taskRunner.isTaskOfTypeRunning(ClientRunMode.class);
+		return mainLoop.isTaskOfTypeRunning(ClientRunMode.class);
 	}
 
 	private boolean isDarkTheme() {
@@ -2411,26 +2380,18 @@ public final class Main {
 	}
 
 	public boolean isLocalRunning() {
-		return taskRunner.isTaskOfTypeRunning(LocalRunMode.class);
+		return mainLoop.isTaskOfTypeRunning(LocalRunMode.class);
 	}
 
 	public boolean isMapCircularAxesToSquareAxes() {
 		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
-	public boolean isOpenVrOverlayActive() {
-		return openVrOverlay != null;
-	}
-
-	boolean isOverlayInLeftHalf(final Rectangle totalDisplayBounds) {
-		return overlayFrame.getX() + overlayFrame.getWidth() / 2 < totalDisplayBounds.width / 2;
-	}
-
 	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
 		return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
 	}
 
-	private boolean isPreventPowerSaveMode() {
+	public boolean isPreventPowerSaveMode() {
 		return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
@@ -2438,20 +2399,24 @@ public final class Main {
 		return isLocalRunning() || isClientRunning() || isServerRunning();
 	}
 
+	private boolean isSelectedController(final int instanceId) {
+		return selectedController != null && selectedController.instanceId == instanceId;
+	}
+
 	public boolean isServerRunning() {
-		return taskRunner.isTaskOfTypeRunning(ServerRunMode.class);
+		return mainLoop.isTaskOfTypeRunning(ServerRunMode.class);
 	}
 
 	public boolean isSkipControllerDialogs() {
 		return preferences.getBoolean(PREFERENCES_SKIP_CONTROLLER_DIALOGS, false);
 	}
 
-	public boolean isSonyTouchpadEnabled() {
-		return preferences.getBoolean(PREFERENCES_SONY_TOUCHPAD_ENABLED, true);
-	}
-
 	public boolean isSwapLeftAndRightSticks() {
 		return preferences.getBoolean(PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS, false);
+	}
+
+	public boolean isTouchpadEnabled() {
+		return preferences.getBoolean(PREFERENCES_TOUCHPAD_ENABLED, true);
 	}
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs,
@@ -2571,14 +2536,14 @@ public final class Main {
 
 				EventQueue.invokeLater(() -> {
 					if (cmdProfilePath != null && handleUnsavedChanges()) {
-						main.loadProfile(new File(cmdProfilePath), false, true);
+						loadProfile(new File(cmdProfilePath), false, true);
 					}
 
 					if (gameControllerDbPath != null) {
-						main.updateGameControllerMappingsFromFile(gameControllerDbPath);
+						updateGameControllerMappingsFromFile(gameControllerDbPath);
 					}
 
-					EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
+					EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine));
 				});
 			} catch (final ParseException e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
@@ -2597,7 +2562,7 @@ public final class Main {
 		currentFile = null;
 
 		if (input != null) {
-			input.deInit(false);
+			input.deInit();
 		}
 
 		input = new Input(this, selectedController, null);
@@ -2612,103 +2577,145 @@ public final class Main {
 		setStatusBarText(strings.getString("STATUS_READY"));
 	}
 
-	private void onControllersChanged(final List<ControllerInfo> presentControllers, final boolean selectFirstTab) {
-		final var controllerConnected = !presentControllers.isEmpty();
+	private void onControllersChanged(final boolean selectFirstTab) {
+		final var controllerConnected = !controllers.isEmpty();
 
 		final var previousSelectedTabIndex = tabbedPane.getSelectedIndex();
-		deviceJMenu.removeAll();
-		menuBar.remove(deviceJMenu);
+		deviceMenu.removeAll();
+		menuBar.remove(deviceMenu);
 
-		final var runMenuVisible = startClientJMenuItem != null || controllerConnected;
+		final var runMenuVisible = startClientMenuItem != null || controllerConnected;
 
-		runJMenu.setVisible(runMenuVisible);
-		if (startLocalJMenuItem != null) {
-			startLocalJMenuItem.setVisible(controllerConnected);
-		}
-		if (startServerJMenuItem != null) {
-			startServerJMenuItem.setVisible(controllerConnected);
-		}
-
+		runMenu.setVisible(runMenuVisible);
 		if (startLocalMenuItem != null) {
-			runPopupMenu.remove(startLocalMenuItem);
+			startLocalMenuItem.setVisible(controllerConnected);
 		}
 		if (startServerMenuItem != null) {
-			runPopupMenu.remove(startServerMenuItem);
+			startServerMenuItem.setVisible(controllerConnected);
 		}
 
-		if (SystemTray.isSupported()) {
-			final var systemTray = SystemTray.getSystemTray();
+		if (hasSystemTray) {
+			final var trayCreated = mainLoop.runSync(() -> {
+				try (final var stack = MemoryStack.stackPush()) {
+					if (tray == 0L) {
+						final var iconImage = frame.getIconImages().stream()
+								.max(Comparator.comparingInt(o -> o.getWidth(null)))
+								.orElseThrow(() -> new RuntimeException("No icon set for frame"));
+						final var width = iconImage.getWidth(null);
+						final var height = iconImage.getHeight(null);
 
-			if (trayIcon != null) {
-				systemTray.remove(trayIcon);
-			}
+						final var bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-			final var popupMenu = new PopupMenu();
+						final var graphics2D = bufferedImage.createGraphics();
+						graphics2D.drawImage(iconImage, 0, 0, null);
+						graphics2D.dispose();
 
-			final var showAction = new ShowAction();
-			showMenuItem = new MenuItem((String) showAction.getValue(Action.NAME));
-			updateShowMenuItem();
-			showMenuItem.addActionListener(showAction);
-			popupMenu.add(showMenuItem);
+						final var pixels = new int[width * height];
+						bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
 
-			popupMenu.addSeparator();
+						try (final var surface = SDLSurface.SDL_CreateSurface(width, height,
+								SDLPixels.SDL_PIXELFORMAT_BGRA8888)) {
+							if (surface == null) {
+								logSdlError("Failed to create surface");
+								return false;
+							}
 
-			final var openMenuItem = new MenuItem((String) openAction.getValue(Action.NAME));
-			openMenuItem.addActionListener(openAction);
-			popupMenu.add(openMenuItem);
+							final var pixelsByteBuffer = surface.pixels();
+							if (pixelsByteBuffer == null) {
+								return false;
+							}
 
-			if (runMenuVisible) {
-				runPopupMenu = new PopupMenu(strings.getString("RUN_MENU"));
+							for (var y = 0; y < height; y++) {
+								for (var x = 0; x < width; x++) {
+									final var pixel = pixels[y * width + x];
+									pixelsByteBuffer.put((byte) ((pixel >> 24) & 0xFF));
+									pixelsByteBuffer.put((byte) ((pixel >> 16) & 0xFF));
+									pixelsByteBuffer.put((byte) ((pixel >> 8) & 0xFF));
+									pixelsByteBuffer.put((byte) (pixel & 0xFF));
+								}
+							}
 
-				if (isWindows || isLinux) {
-					if (controllerConnected) {
-						startLocalMenuItem = new MenuItem((String) startLocalAction.getValue(Action.NAME));
-						startLocalMenuItem.addActionListener(startLocalAction);
-						runPopupMenu.add(startLocalMenuItem);
+							stack.nUTF8Safe(Constants.APPLICATION_NAME, true);
+							final var tooltipEncoded = stack.getPointerAddress();
+
+							tray = SDLTray.nSDL_CreateTray(surface.address(), tooltipEncoded);
+						}
+
+						if (tray == 0L) {
+							logSdlError("Failed to create tray");
+							return false;
+						}
+					}
+				}
+
+				if (trayMenu == 0L) {
+					trayMenu = SDLTray.SDL_CreateTrayMenu(tray);
+				} else {
+					for (;;) {
+						final var trayEntriesPointerBuffer = SDLTray.SDL_GetTrayEntries(trayMenu);
+						if (trayEntriesPointerBuffer == null || !trayEntriesPointerBuffer.hasRemaining()) {
+							break;
+						}
+						final var trayEntry = trayEntriesPointerBuffer.get();
+						SDLTray.SDL_RemoveTrayEntry(trayEntry);
 					}
 
-					startClientMenuItem = new MenuItem((String) startClientAction.getValue(Action.NAME));
-					startClientMenuItem.addActionListener(startClientAction);
-					runPopupMenu.add(startClientMenuItem);
+					showTrayEntry = 0L;
+					startLocalTrayEntry = 0L;
+					startClientTrayEntry = 0L;
+					startServerTrayEntry = 0L;
+					stopTrayEntry = 0L;
 				}
 
-				if (controllerConnected) {
-					startServerMenuItem = new MenuItem((String) startServerAction.getValue(Action.NAME));
-					startServerMenuItem.addActionListener(startServerAction);
-					runPopupMenu.add(startServerMenuItem);
+				showTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, strings.getString("SHOW_TRAY_ENTRY_LABEL"),
+						SDLTray.SDL_TRAYENTRY_BUTTON);
+				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, frame.isVisible());
+				SDLTray.SDL_SetTrayEntryCallback(showTrayEntry, (_, _) -> EventQueue.invokeLater(() -> {
+					final var openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
+					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
+					frame.setVisible(true);
+					frame.setExtendedState(Frame.NORMAL);
+				}), 0x0);
+
+				SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, (ByteBuffer) null, 0x0);
+
+				insertTrayEntryFromAction(trayMenu, openAction);
+
+				if (runMenuVisible) {
+					final var runMenuTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1,
+							strings.getString("RUN_MENU"), SDLTray.SDL_TRAYENTRY_SUBMENU);
+
+					final var runSubMenu = SDLTray.SDL_CreateTraySubmenu(runMenuTrayEntry);
+
+					if (isWindows || isLinux) {
+						if (controllerConnected) {
+							startLocalTrayEntry = insertTrayEntryFromAction(runSubMenu, startLocalAction);
+						}
+
+						startClientTrayEntry = insertTrayEntryFromAction(runSubMenu, startClientAction);
+					}
+
+					if (controllerConnected) {
+						startServerTrayEntry = insertTrayEntryFromAction(runSubMenu, startServerAction);
+					}
+
+					SDLTray.SDL_InsertTrayEntryAt(runSubMenu, -1, (ByteBuffer) null, 0x0);
+
+					stopTrayEntry = insertTrayEntryFromAction(runSubMenu, stopAction);
 				}
 
-				runPopupMenu.addSeparator();
+				SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, (ByteBuffer) null, 0x0);
 
-				stopMenuItem = new MenuItem((String) stopAction.getValue(Action.NAME));
-				stopMenuItem.addActionListener(stopAction);
-				runPopupMenu.add(stopMenuItem);
+				insertTrayEntryFromAction(trayMenu, quitAction);
 
-				popupMenu.add(runPopupMenu);
+				return true;
+			}).orElse(false);
+
+			if (trayCreated) {
+				updateTrayEntriesEnabled();
+				updateTitleAndTooltip();
+				frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 			}
-
-			popupMenu.addSeparator();
-
-			final var quitMenuItem = new MenuItem((String) quitAction.getValue(Action.NAME));
-			quitMenuItem.addActionListener(quitAction);
-			popupMenu.add(quitMenuItem);
-
-			final var trayIconImage = frame.getIconImages().stream()
-					.max(Comparator.comparingInt(iconImage -> iconImage.getWidth(null) * iconImage.getHeight(null)))
-					.orElseThrow();
-
-			trayIcon = new TrayIcon(trayIconImage);
-			trayIcon.setImageAutoSize(true);
-			trayIcon.addActionListener(showAction);
-			trayIcon.setPopupMenu(popupMenu);
-			try {
-				systemTray.add(trayIcon);
-			} catch (final AWTException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-			updateTitleAndTooltip();
-
-			frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		}
 
 		var restartOutput = false;
@@ -2716,14 +2723,15 @@ public final class Main {
 			selectedController = null;
 			setSelectedControllerAndUpdateInput(null, null);
 		} else {
-			final ControllerInfo controller;
-			if (selectedController != null && presentControllers.contains(selectedController)) {
+			final Controller controller;
+			if (selectedController != null && controllers.contains(selectedController)) {
 				controller = selectedController;
 			} else {
-				controller = presentControllers.getFirst();
+				controller = controllers.stream().findFirst().orElse(null);
 			}
 
-			if (selectedController == null || (input != null && !Objects.equals(input.getController(), controller))) {
+			if (selectedController == null
+					|| (input != null && !Objects.equals(input.getSelectedController(), controller))) {
 				setSelectedControllerAndUpdateInput(controller, null);
 
 				if (isAutoRestartOutput()) {
@@ -2737,21 +2745,12 @@ public final class Main {
 
 		if (controllerConnected) {
 			final var devicesButtonGroup = new ButtonGroup();
-			presentControllers.forEach(controller -> {
+			controllers.forEach(controller -> {
 				final var deviceRadioButtonMenuItem = new JRadioButtonMenuItem(new SelectControllerAction(controller));
 				devicesButtonGroup.add(deviceRadioButtonMenuItem);
-				deviceJMenu.add(deviceRadioButtonMenuItem);
+				deviceMenu.add(deviceRadioButtonMenuItem);
 			});
-			menuBar.add(deviceJMenu, 1);
-
-			if (runPopupMenu != null) {
-				if (startLocalMenuItem != null) {
-					runPopupMenu.insert(startLocalMenuItem, 0);
-				}
-				if (startServerMenuItem != null) {
-					runPopupMenu.insert(startServerMenuItem, isWindows || isLinux ? 2 : 0);
-				}
-			}
+			menuBar.add(deviceMenu, 1);
 		} else {
 			log.log(Level.INFO, "No controllers connected");
 		}
@@ -2779,52 +2778,159 @@ public final class Main {
 		}
 	}
 
-	private void onRunModeChanged() {
-		final var running = isRunning();
-
-		if (startLocalJMenuItem != null) {
-			startLocalJMenuItem.setEnabled(!running);
-		}
-
-		if (startClientJMenuItem != null) {
-			startClientJMenuItem.setEnabled(!running);
-		}
-
-		if (startServerJMenuItem != null) {
-			startServerJMenuItem.setEnabled(!running);
-		}
-
-		if (stopJMenuItem != null) {
-			stopJMenuItem.setEnabled(running);
-		}
-
+	private void onRunModeChanged(final boolean running) {
 		if (startLocalMenuItem != null) {
 			startLocalMenuItem.setEnabled(!running);
 		}
-
 		if (startClientMenuItem != null) {
 			startClientMenuItem.setEnabled(!running);
 		}
-
 		if (startServerMenuItem != null) {
 			startServerMenuItem.setEnabled(!running);
 		}
-
 		if (stopMenuItem != null) {
 			stopMenuItem.setEnabled(running);
 		}
 
+		mainLoop.runSync(this::updateTrayEntriesEnabled);
+
 		updateMenuShortcuts();
-		updatePanelAccess();
+		updatePanelAccess(running);
 	}
 
-	public boolean preventPowerSaveMode() {
-		return isPreventPowerSaveMode();
+	public void pollSdlEvents() {
+		try (final var stack = MemoryStack.stackPush()) {
+			final var sdlEvent = SDL_Event.malloc(stack);
+
+			while (SDLEvents.SDL_PollEvent(sdlEvent)) {
+				switch (sdlEvent.type()) {
+				case SDLEvents.SDL_EVENT_GAMEPAD_ADDED -> {
+					final var instanceId = sdlEvent.gdevice().which();
+
+					final var controller = new Controller(instanceId);
+					if (controllers.add(controller)) {
+						log.log(Level.INFO, assembleControllerLoggingMessage("Connected controller ", controller));
+
+						if (input.isInitialized()) {
+							input.openController(controller);
+						}
+
+						EventQueue.invokeLater(() -> onControllersChanged(false));
+					}
+				}
+				case SDLEvents.SDL_EVENT_GAMEPAD_REMOVED -> {
+					final var instanceId = sdlEvent.gdevice().which();
+
+					controllers.stream().filter(controller -> controller.instanceId == instanceId).findFirst()
+							.ifPresent(controller -> {
+								controllers.remove(controller);
+								log.log(Level.INFO,
+										assembleControllerLoggingMessage("Disconnected controller ", controller));
+
+								if (selectedController != null && selectedController.instanceId == instanceId) {
+									selectedController = null;
+									input.deInit();
+								}
+
+								EventQueue.invokeLater(() -> onControllersChanged(false));
+							});
+				}
+				case SDLEvents.SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION -> {
+					if (!isTouchpadEnabled()) {
+						break;
+					}
+
+					final var gamepadTouchpadEvent = sdlEvent.gtouchpad();
+					if (input == null || !isSelectedController(gamepadTouchpadEvent.which())) {
+						break;
+					}
+
+					switch (gamepadTouchpadEvent.finger()) {
+					case 0 -> {
+						final var x = gamepadTouchpadEvent.x();
+						final var y = gamepadTouchpadEvent.y();
+
+						if (prevFinger0X != null && prevFinger0Y != null) {
+							final var deltaX = x - prevFinger0X;
+							input.setCursorDeltaX((int) (deltaX * 1000f * getTouchpadCursorSensitivity()));
+
+							final var deltaY = y - prevFinger0Y;
+							input.setCursorDeltaY((int) (deltaY * 1000f * getTouchpadCursorSensitivity()));
+						}
+
+						prevFinger0X = x;
+						prevFinger0Y = y;
+					}
+					case 1 -> {
+						final var y = gamepadTouchpadEvent.y();
+
+						if (prevFinger1Y != null) {
+							final var deltaY = y - prevFinger1Y;
+							input.setScrollClicks((int) (-deltaY * 100f * getTouchpadScrollSensitivity()));
+						}
+
+						prevFinger1Y = y;
+					}
+					default -> {
+					}
+					}
+				}
+				case SDLEvents.SDL_EVENT_GAMEPAD_TOUCHPAD_UP -> {
+					if (!isTouchpadEnabled()) {
+						break;
+					}
+
+					final var gamepadTouchpadEvent = sdlEvent.gtouchpad();
+					if (input == null || !isSelectedController(gamepadTouchpadEvent.which())) {
+						break;
+					}
+
+					switch (gamepadTouchpadEvent.finger()) {
+					case 0 -> {
+						prevFinger0X = null;
+						prevFinger0Y = null;
+					}
+					case 1 -> prevFinger1Y = null;
+					default -> {
+					}
+					}
+				}
+				case SDLEvents.SDL_EVENT_GAMEPAD_BUTTON_DOWN, SDLEvents.SDL_EVENT_GAMEPAD_BUTTON_UP -> {
+					if (!isTouchpadEnabled()) {
+						break;
+					}
+
+					final var gamepadButtonEvent = sdlEvent.gbutton();
+					if (input == null || !isSelectedController(gamepadButtonEvent.which())
+							|| gamepadButtonEvent.button() != SDLGamepad.SDL_GAMEPAD_BUTTON_TOUCHPAD) {
+						break;
+					}
+
+					final var downMouseButtons = input.getDownMouseButtons();
+					if (gamepadButtonEvent.down()) {
+						downMouseButtons.add(prevFinger1Y != null ? 2 : 1);
+					} else {
+						downMouseButtons.clear();
+					}
+				}
+				case SDLEvents.SDL_EVENT_JOYSTICK_BATTERY_UPDATED -> {
+					final var joyBatteryEvent = sdlEvent.jbattery();
+					if (!isSelectedController(joyBatteryEvent.which())) {
+						break;
+					}
+
+					updateTrayIconToolTip(joyBatteryEvent.percent());
+				}
+				default -> {
+				}
+				}
+			}
+		}
 	}
 
 	private void quit() {
 		if (input != null) {
-			input.deInit(false);
+			input.deInit();
 		}
 
 		stopAll(true, false, false);
@@ -2946,20 +3052,14 @@ public final class Main {
 	}
 
 	public void setOverlayText(final String text) {
-		if (currentModeLabel == null) {
-			return;
-		}
-
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			if (currentModeLabel == null) {
-				return;
+			if (currentModeLabel != null) {
+				currentModeLabel.setText(text);
 			}
-
-			currentModeLabel.setText(text);
 		});
 	}
 
-	private void setSelectedController(final ControllerInfo controller) {
+	private void setSelectedController(final Controller controller) {
 		if (Objects.equals(selectedController, controller)) {
 			return;
 		}
@@ -2975,7 +3075,7 @@ public final class Main {
 		}
 	}
 
-	public void setSelectedControllerAndUpdateInput(final ControllerInfo controller,
+	public void setSelectedControllerAndUpdateInput(final Controller controller,
 			@SuppressWarnings("exports") final EnumMap<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
 
@@ -2983,7 +3083,7 @@ public final class Main {
 
 		Profile previousProfile = null;
 		if (input != null) {
-			input.deInit(false);
+			input.deInit();
 			previousProfile = input.getProfile();
 		}
 
@@ -3013,7 +3113,7 @@ public final class Main {
 		}
 
 		frame.setVisible(true);
-		updateShowMenuItem();
+		updateShowTrayEntry();
 
 		return true;
 	}
@@ -3048,26 +3148,25 @@ public final class Main {
 
 		final var clientRunMode = new ClientRunMode(this, input);
 		runMode = clientRunMode;
-		taskRunner.run(clientRunMode);
+		mainLoop.runAsync(clientRunMode);
 
-		onRunModeChanged();
+		onRunModeChanged(true);
 	}
 
 	private void startLocal() {
 		lastRunModeType = RunModeType.LOCAL;
 
-		if (selectedController == null || input.getController() == null || isRunning()) {
+		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
 		final var localRunMode = new LocalRunMode(this, input);
 		runMode = localRunMode;
-		taskRunner.run(localRunMode);
+		mainLoop.runAsync(localRunMode);
 
-		onRunModeChanged();
+		onRunModeChanged(true);
 
 		initOverlay();
-		initOpenVrOverlay();
 		startOverlayTimerTask();
 	}
 
@@ -3083,15 +3182,15 @@ public final class Main {
 	private void startServer() {
 		lastRunModeType = RunModeType.SERVER;
 
-		if (selectedController == null || input.getController() == null || isRunning()) {
+		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
 		final var serverThread = new ServerRunMode(this, input);
 		runMode = serverThread;
-		taskRunner.run(serverThread);
+		mainLoop.runAsync(serverThread);
 
-		onRunModeChanged();
+		onRunModeChanged(true);
 
 		initOverlay();
 		startOverlayTimerTask();
@@ -3118,25 +3217,25 @@ public final class Main {
 		}
 
 		if (running) {
-			taskRunner.waitForTask();
+			mainLoop.waitForTask();
 		}
 
 		if (resetLastRunModeType) {
 			lastRunModeType = RunModeType.NONE;
 		}
 
-		GuiUtils.invokeOnEventDispatchThreadIfRequired(this::onRunModeChanged);
+		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> onRunModeChanged(isRunning()));
 	}
 
 	private void stopLocal(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = isLocalRunning();
 
 		if (initiateStop && running) {
-			taskRunner.stopTask();
+			mainLoop.stopTask();
 		}
 
 		if (running) {
-			taskRunner.waitForTask();
+			mainLoop.waitForTask();
 		}
 
 		if (resetLastRunModeType) {
@@ -3144,9 +3243,14 @@ public final class Main {
 		}
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			stopOverlayTimerTask();
-			deInitOverlayAndHideOnScreenKeyboard();
-			onRunModeChanged();
+			final var isRunningAgain = isRunning();
+
+			if (!isRunningAgain) {
+				stopOverlayTimerTask();
+				deInitOverlayAndHideOnScreenKeyboard();
+			}
+
+			onRunModeChanged(isRunningAgain);
 		});
 	}
 
@@ -3173,7 +3277,7 @@ public final class Main {
 		}
 
 		if (running) {
-			taskRunner.waitForTask();
+			mainLoop.waitForTask();
 		}
 
 		if (resetLastRunModeType) {
@@ -3181,9 +3285,14 @@ public final class Main {
 		}
 
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			stopOverlayTimerTask();
-			deInitOverlayAndHideOnScreenKeyboard();
-			onRunModeChanged();
+			final var isRunningAgain = isRunning();
+
+			if (!isRunningAgain) {
+				stopOverlayTimerTask();
+				deInitOverlayAndHideOnScreenKeyboard();
+			}
+
+			onRunModeChanged(isRunningAgain);
 		});
 	}
 
@@ -3192,84 +3301,55 @@ public final class Main {
 			return;
 		}
 
-		for (var i = 0; i < deviceJMenu.getItemCount(); i++) {
-			final var menuItem = deviceJMenu.getItem(i);
+		for (var i = 0; i < deviceMenu.getItemCount(); i++) {
+			final var menuItem = deviceMenu.getItem(i);
 			final var action = (SelectControllerAction) menuItem.getAction();
-			if (selectedController.jid == action.controller.jid) {
+			if (selectedController.instanceId == action.controller.instanceId) {
 				menuItem.setSelected(true);
 				break;
 			}
 		}
 	}
 
-	private boolean updateGameControllerMappings(final InputStream is) {
-		if (is == null) {
-			return false;
-		}
+	private String updateGameControllerMappings(final String path, final String sourceName) {
+		return mainLoop.runSync(() -> {
+			final var numMappingsAdded = SDLGamepad.SDL_AddGamepadMappingsFromFile(path);
 
-		var mappingsUpdated = false;
-
-		final var defaultCharset = Charset.defaultCharset();
-		try (final var bufferedReader = new BufferedReader(new InputStreamReader(is, defaultCharset))) {
-			final var sb = new StringBuilder();
-
-			while (bufferedReader.ready()) {
-				final var line = bufferedReader.readLine();
-				if (line != null) {
-					sb.append(line);
-					sb.append("\n");
-				}
+			if (numMappingsAdded == -1) {
+				return logSdlError("Failed to update game controller mappings from " + sourceName);
 			}
 
-			if (sb.charAt(sb.length() - 1) != 0) {
-				sb.append((char) 0);
-			}
+			log.log(Level.INFO, "Added " + numMappingsAdded + " game controller mappings from " + sourceName);
 
-			final var content = sb.toString().getBytes(defaultCharset);
-			final var byteBuffer = ByteBuffer.allocateDirect(content.length).put(content).flip();
-			mappingsUpdated = taskRunner.run(() -> GLFW.glfwUpdateGamepadMappings(byteBuffer)).orElse(false);
-		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
-		}
-
-		return mappingsUpdated;
+			return null;
+		}).orElse(null);
 	}
 
-	private boolean updateGameControllerMappingsFromFile(final String path) {
+	private void updateGameControllerMappingsFromFile(final String path) {
 		if (isLocalRunning()) {
 			stopLocal(true, false);
 		} else if (isServerRunning()) {
 			stopServer(true, false);
 		}
 
-		var mappingsUpdated = false;
-
-		try (final var fileInputStream = new FileInputStream(path)) {
-			mappingsUpdated = updateGameControllerMappings(fileInputStream);
-
-			log.log(mappingsUpdated ? Level.INFO : Level.WARNING,
-					(mappingsUpdated ? "Successfully updated" : "Failed to update")
-							+ " game controller mappings from external file: " + path);
-		} catch (final FileNotFoundException e) {
+		String errorDetails = null;
+		try {
+			errorDetails = updateGameControllerMappings(path, "external file: " + path);
+		} catch (final Throwable t) {
 			log.log(Level.WARNING, "Could not read external game controller mappings file: " + path);
 
 			GuiUtils.showMessageDialog(main, frame, MessageFormat
 					.format(strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-		} catch (final IOException e) {
-			log.log(Level.WARNING, e.getMessage(), e);
 		}
 
-		if (!mappingsUpdated) {
-			log.log(Level.WARNING, "An error occurred while updating the SDL game controller mappings");
-
+		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(main, frame,
-					MessageFormat.format(strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME),
+					MessageFormat.format(
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
+							errorDetails),
 					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
-
-		return mappingsUpdated;
 	}
 
 	private void updateMenuShortcuts() {
@@ -3526,26 +3606,28 @@ public final class Main {
 	}
 
 	private void updatePanelAccess() {
-		final var panelsEnabled = !isRunning();
+		updatePanelAccess(isRunning());
+	}
 
-		GuiUtils.setEnabledRecursive(modesListPanel, panelsEnabled);
-		GuiUtils.setEnabledRecursive(newModePanel, panelsEnabled);
+	private void updatePanelAccess(final boolean running) {
+		GuiUtils.setEnabledRecursive(modesListPanel, !running);
+		GuiUtils.setEnabledRecursive(newModePanel, !running);
 
 		if (assignmentsComponent != null) {
-			assignmentsComponent.setEnabled(panelsEnabled);
+			assignmentsComponent.setEnabled(!running);
 		}
 
-		if (!panelsEnabled || (input != null && !input.getProfile().isShowOverlay())) {
+		if (running || (input != null && !input.getProfile().isShowOverlay())) {
 			GuiUtils.setEnabledRecursive(indicatorsListPanel, false);
 		} else {
 			updateOverlayPanel();
 		}
 
-		GuiUtils.setEnabledRecursive(profileSettingsPanel, panelsEnabled);
-		if (panelsEnabled) {
+		GuiUtils.setEnabledRecursive(profileSettingsPanel, !running);
+		if (!running) {
 			updateProfileSettingsPanel();
 		}
-		GuiUtils.setEnabledRecursive(globalSettingsPanel, panelsEnabled);
+		GuiUtils.setEnabledRecursive(globalSettingsPanel, !running);
 	}
 
 	private void updateProfileSettingsPanel() {
@@ -3554,7 +3636,6 @@ public final class Main {
 		}
 
 		profileSettingsPanel.removeAll();
-		showVrOverlayCheckBox = null;
 
 		if (input == null) {
 			return;
@@ -3580,7 +3661,7 @@ public final class Main {
 
 		final var keyRepeatIntervalSpinner = new JSpinner(
 				new SpinnerNumberModel((int) profile.getKeyRepeatInterval(), 0, 1000, 1));
-		final var keyRepeatIntervalEditor = new JSpinner.NumberEditor(keyRepeatIntervalSpinner,
+		final var keyRepeatIntervalEditor = new NumberEditor(keyRepeatIntervalSpinner,
 				"# " + strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) keyRepeatIntervalEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		keyRepeatIntervalSpinner.setEditor(keyRepeatIntervalEditor);
@@ -3608,64 +3689,31 @@ public final class Main {
 		final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
 		showOverlayCheckBox.setSelected(profile.isShowOverlay());
 		showOverlayCheckBox.addActionListener(event -> {
-			final var showOverlay = ((JCheckBox) event.getSource()).isSelected();
-			profile.setShowOverlay(showOverlay);
-			if (!showOverlay) {
-				profile.setShowVrOverlay(false);
-			}
-
-			if (showVrOverlayCheckBox != null) {
-				showVrOverlayCheckBox.setEnabled(showOverlay);
-				if (!showOverlay) {
-					showVrOverlayCheckBox.setSelected(false);
-				}
-			}
+			profile.setShowOverlay(((JCheckBox) event.getSource()).isSelected());
 
 			updatePanelAccess();
 			setUnsavedChanges(true);
 		});
 		overlaySettingsPanel.add(showOverlayCheckBox);
 
-		final var showOverlay = profile.isShowOverlay();
-
-		final var vrOverlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		appearanceSettingsPanel.add(vrOverlaySettingsPanel, constraints);
-
-		final var vrOverlayLabel = new JLabel(strings.getString("VR_OVERLAY_LABEL"));
-		vrOverlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		vrOverlaySettingsPanel.add(vrOverlayLabel);
-
-		showVrOverlayCheckBox = new JCheckBox(strings.getString("SHOW_VR_OVERLAY_CHECK_BOX"));
-		showVrOverlayCheckBox.setSelected(profile.isShowVrOverlay());
-		showVrOverlayCheckBox.setEnabled(showOverlay);
-		showVrOverlayCheckBox.addActionListener(event -> {
-			final var showVrOverlay = ((JCheckBox) event.getSource()).isSelected();
-			profile.setShowVrOverlay(showVrOverlay);
-			setUnsavedChanges(true);
-		});
-		vrOverlaySettingsPanel.add(showVrOverlayCheckBox);
-
 		addGlueToSettingsPanel(profileSettingsPanel);
 	}
 
-	private void updateShowMenuItem() {
-		if (showMenuItem == null) {
+	private void updateShowTrayEntry() {
+		if (showTrayEntry == 0L) {
 			return;
 		}
 
-		showMenuItem.setEnabled(!frame.isVisible());
-	}
-
-	private void updateSonyTouchpadSettings() {
-		final var enableTouchpad = isSonyTouchpadEnabled();
-
-		GuiUtils.setEnabledRecursive(sonyCursorSensitivityPanel, enableTouchpad);
-		GuiUtils.setEnabledRecursive(sonyScrollSensitivityPanel, enableTouchpad);
+		final var enabled = !frame.isVisible();
+		mainLoop.runSync(() -> SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, enabled));
 	}
 
 	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,
 			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped) {
 		final var groupElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Group");
+		if (groupElement == null) {
+			throw new IllegalArgumentException("Parameter idPrefix has invalid value: " + idPrefix);
+		}
 
 		final var hide = actions == null || actions.isEmpty();
 		groupElement.getStyle().setProperty(CSSConstants.CSS_DISPLAY_PROPERTY,
@@ -3687,7 +3735,7 @@ public final class Main {
 				addToOtherActions = false;
 			}
 			if (action instanceof final IActivatableAction<?> activatableAction
-					&& activatableAction.getActivation() == IActivatableAction.Activation.SINGLE_ON_RELEASE) {
+					&& activatableAction.getActivation() == Activation.SINGLE_ON_RELEASE) {
 				onReleaseActions.add(activatableAction);
 				addToOtherActions = false;
 			}
@@ -3775,9 +3823,8 @@ public final class Main {
 		updateVisualizationPanel();
 	}
 
-	public void updateTitleAndTooltip() {
+	public void updateTitle() {
 		final String title;
-
 		final var profileTitle = (unsavedChanges ? "*" : "")
 				+ (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
 		title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle, Constants.APPLICATION_NAME);
@@ -3797,19 +3844,53 @@ public final class Main {
 				}
 			}
 		}
+	}
 
-		if (trayIcon != null) {
-			var toolTip = title;
+	public void updateTitleAndTooltip() {
+		updateTitle();
 
-			if (input != null) {
-				final var driver = input.getDriver();
-				if (driver != null) {
-					toolTip = driver.getTooltip(title);
-				}
-			}
-
-			trayIcon.setToolTip(toolTip);
+		if (tray != 0L) {
+			mainLoop.runSync(() -> updateTrayIconToolTip(-1));
 		}
+	}
+
+	private void updateTouchpadSettings() {
+		final var enableTouchpad = isTouchpadEnabled();
+
+		GuiUtils.setEnabledRecursive(touchpadCursorSensitivityPanel, enableTouchpad);
+		GuiUtils.setEnabledRecursive(touchpadScrollSensitivityPanel, enableTouchpad);
+	}
+
+	private void updateTrayEntriesEnabled() {
+		final var running = isRunning();
+
+		if (startLocalTrayEntry != 0L) {
+			SDLTray.SDL_SetTrayEntryEnabled(startLocalTrayEntry, !running);
+		}
+		if (startClientTrayEntry != 0L) {
+			SDLTray.SDL_SetTrayEntryEnabled(startClientTrayEntry, !running);
+		}
+		if (startServerTrayEntry != 0L) {
+			SDLTray.SDL_SetTrayEntryEnabled(startServerTrayEntry, !running);
+		}
+		if (stopTrayEntry != 0L) {
+			SDLTray.SDL_SetTrayEntryEnabled(stopTrayEntry, running);
+		}
+	}
+
+	public void updateTrayIconToolTip(final int batteryPercent) {
+		checkMainThread();
+
+		if (tray == 0L) {
+			return;
+		}
+
+		var tooltip = frame.getTitle();
+		if (batteryPercent >= 0 && batteryPercent <= 100) {
+			tooltip = MessageFormat.format(strings.getString("BATTERY_TOOLTIP_PERCENT"), tooltip, batteryPercent);
+		}
+
+		SDLTray.SDL_SetTrayTooltip(tray, tooltip);
 	}
 
 	void updateVisualizationPanel() {
@@ -3846,18 +3927,20 @@ public final class Main {
 
 	public enum HotSwappingButton {
 
-		None(-1, "NONE"), A(GLFW.GLFW_GAMEPAD_BUTTON_A, "A_BUTTON"), B(GLFW.GLFW_GAMEPAD_BUTTON_B, "B_BUTTON"),
-		X(GLFW.GLFW_GAMEPAD_BUTTON_X, "X_BUTTON"), Y(GLFW.GLFW_GAMEPAD_BUTTON_Y, "Y_BUTTON"),
-		LEFT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER, "LEFT_BUMPER"),
-		RIGHT_BUMPER(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER, "RIGHT_BUMPER"),
-		BACK(GLFW.GLFW_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"), START(GLFW.GLFW_GAMEPAD_BUTTON_START, "START_BUTTON"),
-		GUIDE(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
-		LEFT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, "LEFT_THUMB"),
-		RIGHT_THUMB(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, "RIGHT_THUMB"),
-		DPAD_UP(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
-		DPAD_RIGHT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
-		DPAD_DOWN(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
-		DPAD_LEFT(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
+		None(-1, "NONE"), A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
+		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"), X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
+		Y(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, "Y_BUTTON"),
+		LEFT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, "LEFT_SHOULDER"),
+		RIGHT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, "RIGHT_SHOULDER"),
+		BACK(SDLGamepad.SDL_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"),
+		START(SDLGamepad.SDL_GAMEPAD_BUTTON_START, "START_BUTTON"),
+		GUIDE(SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
+		LEFT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, "LEFT_STICK"),
+		RIGHT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, "RIGHT_STICK"),
+		DPAD_UP(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
+		DPAD_RIGHT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
+		DPAD_DOWN(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
+		DPAD_LEFT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
 
 		public final int id;
 
@@ -3886,6 +3969,15 @@ public final class Main {
 
 	private enum RunModeType {
 		NONE, LOCAL, CLIENT, SERVER
+	}
+
+	@DBusInterfaceName("org.gnome.Shell.Extensions")
+	private interface Extensions extends DBusInterface {
+
+		Map<String, Map<String, Variant<?>>> ListExtensions();
+
+		@DBusBoundProperty(access = Access.READ, name = "ShellVersion")
+		String getShellVersion();
 	}
 
 	private abstract static class AbstractProfileFileChooser extends JFileChooser {
@@ -3918,11 +4010,27 @@ public final class Main {
 		}
 	}
 
-	public record ControllerInfo(int jid, String name, String guid) {
+	public record Controller(int instanceId, String name, String guid) {
 
-		private ControllerInfo(final int jid) {
-			this(jid, isMac ? MessageFormat.format(strings.getString("DEVICE_NO"), jid + 1)
-					: GLFW.glfwGetGamepadName(jid), isMac ? null : GLFW.glfwGetJoystickGUID(jid));
+		private Controller(final int instanceId) {
+			this(instanceId, SDLGamepad.SDL_GetGamepadNameForID(instanceId), prepareGuid(instanceId));
+		}
+
+		private static String prepareGuid(final int instanceId) {
+			String guid;
+			try (final var stack = MemoryStack.stackPush()) {
+				final var sdlGuid = SDL_GUID.malloc(stack);
+				SDLGamepad.SDL_GetGamepadGUIDForID(instanceId, sdlGuid);
+				final var guidByteBuffer = stack.calloc(33);
+				SDLGUID.SDL_GUIDToString(sdlGuid, guidByteBuffer);
+				guid = StandardCharsets.UTF_8.decode(guidByteBuffer).toString();
+				final var nullPos = guid.indexOf('\u0000');
+				if (nullPos != -1) {
+					guid = guid.substring(0, nullPos);
+				}
+			}
+
+			return guid;
 		}
 	}
 
@@ -4028,7 +4136,7 @@ public final class Main {
 
 		private static JsonContext create() {
 			final var actionAdapter = new ActionTypeAdapter();
-			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ModeAwareTypeAdapterFactory())
+			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ProfileTypeAdapterFactory())
 					.registerTypeAdapter(Color.class, new ColorTypeAdapter())
 					.registerTypeAdapter(IAction.class, actionAdapter)
 					.registerTypeAdapter(LockKey.class, new LockKeyAdapter())
@@ -4061,6 +4169,188 @@ public final class Main {
 		}
 	}
 
+	public static final class MainLoop {
+
+		private final BlockingQueue<TaskQueueEntry> taskQueue = new LinkedBlockingDeque<>();
+
+		private final Thread thread = Thread.currentThread();
+
+		private volatile TaskQueueEntry currentTaskQueueEntry;
+
+		private volatile boolean pollSdlEvents;
+
+		private MainLoop() {
+		}
+
+		private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
+			synchronized (this) {
+				taskQueue.add(taskQueueEntry);
+				notifyAll();
+			}
+		}
+
+		private void enterLoop() {
+			log.log(Level.INFO, "Entering main loop");
+			try {
+				while (!Thread.interrupted()) {
+					currentTaskQueueEntry = taskQueue.poll();
+					if (currentTaskQueueEntry != null) {
+						try {
+							executeTaskQueueEntry(currentTaskQueueEntry);
+						} finally {
+							currentTaskQueueEntry = null;
+						}
+					} else if (pollSdlEvents) {
+						main.pollSdlEvents();
+
+						try {
+							// noinspection BusyWait
+							Thread.sleep(10L);
+						} catch (final InterruptedException _) {
+							return;
+						}
+					} else {
+						try {
+							synchronized (this) {
+								if ( taskQueue.isEmpty() && !pollSdlEvents) {
+									wait();
+								}
+							}
+						} catch (final InterruptedException _) {
+							return;
+						}
+					}
+				}
+			} finally {
+				try {
+					SDLInit.SDL_Quit();
+				} catch (final Throwable t) {
+					log.log(Level.SEVERE, t.getMessage(), t);
+				}
+
+				log.log(Level.INFO, "Exiting main loop");
+			}
+		}
+
+		private void executeTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
+			try {
+				if (taskQueueEntry.task instanceof final Callable<?> callable) {
+					final var result = callable.call();
+					taskQueueEntry.futureResult.complete(result);
+				} else if (taskQueueEntry.task instanceof final Runnable runnable) {
+					runnable.run();
+					if (taskQueueEntry.futureResult != null) {
+						taskQueueEntry.futureResult.complete(null);
+					}
+				}
+			} catch (final Throwable t) {
+				if (taskQueueEntry.futureResult != null) {
+					taskQueueEntry.futureResult.completeExceptionally(t);
+				} else {
+					throw new RuntimeException(t);
+				}
+			}
+		}
+
+		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
+			if (currentTaskQueueEntry == null) {
+				return false;
+			}
+
+			return clazz.isAssignableFrom(currentTaskQueueEntry.task.getClass());
+		}
+
+		private void runAsync(final Runnable runnable) {
+			addTaskQueueEntry(new TaskQueueEntry(runnable, null));
+		}
+
+		private void runSync(final Runnable runnable) {
+			final var futureResult = new CompletableFuture<>();
+			addTaskQueueEntry(new TaskQueueEntry(runnable, futureResult));
+
+			try {
+				futureResult.get();
+			} catch (final ExecutionException e) {
+				throw new RuntimeException(e);
+			} catch (final InterruptedException _) {
+				Thread.currentThread().interrupt();
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		private <V> Optional<V> runSync(final Callable<V> callable) {
+			final var futureResult = new CompletableFuture<>();
+			addTaskQueueEntry(new TaskQueueEntry(callable, futureResult));
+
+			try {
+				return Optional.ofNullable((V) futureResult.get());
+			} catch (final ExecutionException e) {
+				throw new RuntimeException(e);
+			} catch (final InterruptedException _) {
+				Thread.currentThread().interrupt();
+			}
+
+			return Optional.empty();
+		}
+
+		private void shutdown() {
+			pollSdlEvents = false;
+
+			thread.interrupt();
+
+			while (thread.isAlive()) {
+				try {
+					// noinspection BusyWait
+					Thread.sleep(10L);
+				} catch (final InterruptedException _) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+
+		private void startSdlEventPolling() {
+			synchronized (this) {
+				pollSdlEvents = true;
+				notifyAll();
+			}
+		}
+
+		private void stopTask() {
+			thread.interrupt();
+
+			waitForTask();
+		}
+
+		private void waitForTask() {
+			while (currentTaskQueueEntry != null || !taskQueue.isEmpty()) {
+				try {
+					// noinspection BusyWait
+					Thread.sleep(10L);
+				} catch (final InterruptedException _) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+
+		@SuppressWarnings("NamedLikeContextualKeyword")
+		public void yield() {
+			if (Thread.currentThread() != thread) {
+				throw new RuntimeException("yield() can only be called on " + thread.getName());
+			}
+
+			for (;;) {
+				final var taskQueueEntry = taskQueue.poll();
+				if (taskQueueEntry == null) {
+					break;
+				}
+				executeTaskQueueEntry(taskQueueEntry);
+			}
+		}
+
+		private record TaskQueueEntry(Object task, CompletableFuture<Object> futureResult) {
+		}
+	}
+
 	private static final class ShowWebsiteAction extends AbstractAction {
 
 		@Serial
@@ -4078,148 +4368,6 @@ public final class Main {
 				openBrowser(main.frame, new URI(WEBSITE_URL));
 			} catch (final URISyntaxException e1) {
 				throw new RuntimeException(e1);
-			}
-		}
-	}
-
-	private static final class TaskRunner {
-
-		private final Thread thread = Thread.currentThread();
-
-		private volatile boolean pollGLFWEvents = false;
-
-		private volatile Object result;
-
-		private volatile Object task;
-
-		private void enterLoop() {
-			log.log(Level.INFO, "Entering main loop");
-
-			for (;;) {
-				if (task != null) {
-					result = null;
-					var notify = false;
-
-					try {
-						if (task instanceof final Callable<?> callable) {
-							notify = true;
-							result = callable.call();
-						} else if (task instanceof final Runnable runnable) {
-							runnable.run();
-						}
-					} catch (final Throwable t) {
-						if (task instanceof Callable) {
-							result = t;
-						} else if (task instanceof Runnable) {
-							throw new RuntimeException(t);
-						}
-					} finally {
-						task = null;
-
-						if (notify) {
-							synchronized (this) {
-								notifyAll();
-							}
-						}
-					}
-				} else {
-					if (pollGLFWEvents) {
-						GLFW.glfwPollEvents();
-					}
-
-					try {
-						// noinspection BusyWait
-						Thread.sleep(10L);
-					} catch (final InterruptedException _) {
-						try {
-							final var previousJoystickCallback = GLFW.glfwSetJoystickCallback(null);
-							if (previousJoystickCallback != null) {
-								previousJoystickCallback.close();
-							}
-
-							GLFW.glfwTerminate();
-						} catch (final Throwable t) {
-							log.log(Level.SEVERE, t.getMessage(), t);
-						}
-
-						log.log(Level.INFO, "Exiting main loop");
-
-						return;
-					}
-				}
-			}
-		}
-
-		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
-			if (task == null) {
-				return false;
-			}
-
-			return clazz.isAssignableFrom(task.getClass());
-		}
-
-		@SuppressWarnings("unchecked")
-		private <V> Optional<V> run(final Callable<V> callable) {
-			setTask(callable);
-
-			try {
-				synchronized (this) {
-					while (task != null) {
-						wait();
-					}
-				}
-
-				if (result instanceof final Throwable throwable) {
-					throw new RuntimeException(throwable);
-				}
-
-				return Optional.ofNullable((V) result);
-			} catch (final InterruptedException _) {
-				Thread.currentThread().interrupt();
-			}
-
-			return Optional.empty();
-		}
-
-		private void run(final Runnable runnable) {
-			setTask(runnable);
-		}
-
-		private void setTask(final Object task) {
-			waitForTask();
-
-			this.task = task;
-		}
-
-		private void shutdown() {
-			pollGLFWEvents = false;
-
-			thread.interrupt();
-
-			while (thread.isAlive()) {
-				try {
-					// noinspection BusyWait
-					Thread.sleep(10L);
-				} catch (final InterruptedException _) {
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-
-		private void stopTask() {
-			thread.interrupt();
-
-			waitForTask();
-		}
-
-		private void waitForTask() {
-			while (task != null) {
-				try {
-					// noinspection BusyWait
-					Thread.sleep(10L);
-				} catch (final InterruptedException _) {
-					Thread.currentThread().interrupt();
-				}
 			}
 		}
 	}
@@ -4356,7 +4504,7 @@ public final class Main {
 			portPanel.add(portLabel);
 
 			portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
-			final var portSpinnerEditor = new JSpinner.NumberEditor(portSpinner, "#");
+			final var portSpinnerEditor = new NumberEditor(portSpinner, "#");
 			((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			portSpinner.setEditor(portSpinnerEditor);
 			portPanel.add(portSpinner);
@@ -4369,7 +4517,7 @@ public final class Main {
 			timeoutPanel.add(timeoutLabel);
 
 			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
-			final var timeoutSpinnerEditor = new JSpinner.NumberEditor(timeoutSpinner,
+			final var timeoutSpinnerEditor = new NumberEditor(timeoutSpinner,
 					"# " + strings.getString("MILLISECOND_SYMBOL"));
 			((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			timeoutSpinner.setEditor(timeoutSpinnerEditor);
@@ -4668,9 +4816,9 @@ public final class Main {
 		private static final long serialVersionUID = -2043467156713598592L;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final ControllerInfo controller;
+		private final Controller controller;
 
-		private SelectControllerAction(final ControllerInfo controller) {
+		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
 			putValue(NAME, controller.name);
@@ -4680,7 +4828,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedController != null && selectedController.jid == controller.jid) {
+			if (selectedController != null && selectedController.instanceId == controller.instanceId) {
 				return;
 			}
 
@@ -4721,14 +4869,37 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
 
-			final var newColor = JColorChooser.showDialog(frame, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
+			final var color = JColorChooser.showDialog(frame, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
 					overlayAxis.color);
-			if (newColor != null) {
-				overlayAxis.color = newColor;
+			if (color != null) {
+				overlayAxis.color = color;
 			}
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
+		}
+	}
+
+	private final class SelectLedColorAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = 3316770144012465987L;
+
+		private SelectLedColorAction() {
+			putValue(NAME, "🎨");
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_LED_COLOR_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var color = JColorChooser.showDialog(frame, strings.getString("LED_COLOR_CHOOSER_TITLE"),
+					getLedColor());
+			if (color == null) {
+				return;
+			}
+
+			preferences.putInt(PREFERENCES_LED_COLOR, color.getRGB());
+			ledPreviewLabel.setBackground(color);
 		}
 	}
 
@@ -4833,25 +5004,6 @@ public final class Main {
 		}
 	}
 
-	private final class ShowAction extends AbstractAction {
-
-		@Serial
-		private static final long serialVersionUID = 8578159622754054457L;
-
-		private ShowAction() {
-			putValue(NAME, strings.getString("SHOW_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final var openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
-			frame.setVisible(true);
-			frame.setExtendedState(Frame.NORMAL);
-		}
-	}
-
 	private final class ShowLicensesAction extends AbstractAction {
 
 		@Serial
@@ -4873,7 +5025,7 @@ public final class Main {
 			scrollPane.setPreferredSize(new Dimension(1015, 400));
 
 			editorPane.addHyperlinkListener(hyperlinkEvent -> {
-				if (hyperlinkEvent.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+				if (hyperlinkEvent.getEventType() != EventType.ACTIVATED) {
 					return;
 				}
 

@@ -35,10 +35,10 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 	}
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
 
-		if (value != 0) {
+		if (value) {
 			input.getMain().getOnScreenKeyboard().releaseAllButtons();
 		}
 	}

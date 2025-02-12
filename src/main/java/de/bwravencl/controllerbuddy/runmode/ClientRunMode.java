@@ -57,9 +57,9 @@ import javax.swing.JOptionPane;
 
 public final class ClientRunMode extends OutputRunMode implements Closeable {
 
-	private static final int N_CONNECTION_RETRIES = 10;
+	private static final int NUM_CONNECTION_RETRIES = 10;
 
-	private static final int N_RECEIVE_PACKET_RETRIES = 10;
+	private static final int NUM_RECEIVE_PACKET_RETRIES = 10;
 
 	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
 
@@ -161,13 +161,13 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 				dataOutputStream.writeInt(minAxisValue);
 				dataOutputStream.writeInt(maxAxisValue);
-				dataOutputStream.writeInt(nButtons);
+				dataOutputStream.writeInt(numButtons);
 
 				final var helloBuf = byteArrayOutputStream.toByteArray();
 				final var helloPacket = new DatagramPacket(helloBuf, helloBuf.length, hostAddress, port);
 
 				var success = false;
-				var retry = N_CONNECTION_RETRIES;
+				var retry = NUM_CONNECTION_RETRIES;
 				do {
 					clientSocket.send(helloPacket);
 
@@ -199,7 +199,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 								final var finalRetry = retry;
 								EventQueue.invokeLater(() -> main.setStatusBarText(
 										MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
-												N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES)));
+												NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 							}
 						}
 					} catch (final GeneralSecurityException e) {
@@ -210,21 +210,21 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 						final var finalRetry = retry;
 						EventQueue.invokeLater(() -> main.setStatusBarText(
 								MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
-										N_CONNECTION_RETRIES - finalRetry, N_CONNECTION_RETRIES)));
+										NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 					}
 				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
 				if (success) {
 					clientState = ClientState.Connected;
 					log.log(Level.INFO, "Successfully connected");
-					EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat
-							.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port, pollInterval)));
+					EventQueue.invokeLater(() -> main.setStatusBarText(
+							MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
 					if (retry != -1 && !Thread.currentThread().isInterrupted()) {
-						log.log(Level.INFO, "Could not connect after " + N_CONNECTION_RETRIES + " retries");
+						log.log(Level.INFO, "Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
 						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
-										N_CONNECTION_RETRIES),
+										NUM_CONNECTION_RETRIES),
 								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 					}
 
@@ -238,7 +238,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				SocketTimeoutException socketTimeoutException = null;
-				for (int i = 0; i < N_RECEIVE_PACKET_RETRIES; i++) {
+				for (int i = 0; i < NUM_RECEIVE_PACKET_RETRIES; i++) {
 					try {
 						clientSocket.receive(receivePacket);
 						socketTimeoutException = null;
@@ -282,7 +282,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 								axisS1.setValue(inputAxes.get(VirtualAxis.S1));
 
 								final var inputButtons = (boolean[]) objectInputStream.readObject();
-								for (var i = 0; i < nButtons; i++) {
+								for (var i = 0; i < numButtons; i++) {
 									buttons[i].setValue(inputButtons[i] ? 1 : 0);
 								}
 

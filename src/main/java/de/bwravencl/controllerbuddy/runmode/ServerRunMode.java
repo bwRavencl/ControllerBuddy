@@ -16,7 +16,6 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
-import com.sun.jna.Platform;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -51,7 +50,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
-import org.lwjgl.glfw.GLFW;
 
 public final class ServerRunMode extends RunMode implements Closeable {
 
@@ -69,7 +67,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 	static final int TAG_LENGTH = 128;
 
-	private static final int N_REQUEST_ALIVE_RETRIES = 10;
+	private static final int NUM_REQUEST_ALIVE_RETRIES = 10;
 
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
 
@@ -146,9 +144,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
 			for (;;) {
-				if (!Platform.isMac()) {
-					GLFW.glfwPollEvents();
-				}
+				process();
 
 				switch (serverState) {
 				case Listening -> {
@@ -168,7 +164,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 							minAxisValue = dataInputStream.readInt();
 							maxAxisValue = dataInputStream.readInt();
-							setnButtons(dataInputStream.readInt());
+							setNumButtons(dataInputStream.readInt());
 
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
@@ -180,10 +176,13 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							}
 
 							serverState = ServerState.Connected;
-							input.init();
+							if (!input.init()) {
+								controllerDisconnected();
+								return;
+							}
 							EventQueue.invokeLater(() -> main.setStatusBarText(
 									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-											clientAddress.getCanonicalHostName(), clientPort, pollInterval)));
+											clientAddress.getCanonicalHostName(), clientPort)));
 						}
 					}
 				}
@@ -235,7 +234,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
 						var gotClientAlive = false;
-						for (int i = 0; i < N_REQUEST_ALIVE_RETRIES; i++) {
+						for (int i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 								dataOutputStream.writeInt(MessageType.RequestAlive.getId());
@@ -267,7 +266,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 						if (! gotClientAlive) {
 							input.reset();
-							input.deInit(false);
+							input.deInit();
 
 							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
 							main.scheduleStatusBarText(

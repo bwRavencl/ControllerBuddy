@@ -54,7 +54,7 @@ public final class VersionUtils {
 		return versionWithoutSuffix.substring(0, versionWithoutSuffix.lastIndexOf('.'));
 	}
 
-	private static int[] getVersionIntegerParts(final String version) {
+	public static int[] getVersionIntegerParts(final String version) {
 		final var versionWithoutSuffix = stripHashSuffix(version);
 		return Arrays.stream(versionWithoutSuffix.split("\\.")).mapToInt(Integer::parseInt).toArray();
 	}

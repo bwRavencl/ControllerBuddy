@@ -35,8 +35,6 @@ import com.sun.jna.platform.win32.WinUser.INPUT;
 import com.sun.jna.platform.win32.WinUser.KEYBDINPUT;
 import com.sun.jna.platform.win32.WinUser.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.constants.Constants;
-import de.bwravencl.controllerbuddy.dbus.freedesktop.ScreenSaver;
-import de.bwravencl.controllerbuddy.dbus.freedesktop.ScreenSaverType;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
@@ -63,12 +61,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
-import org.freedesktop.dbus.connections.impl.DBusConnection;
-import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.exceptions.DBusExecutionException;
-import org.freedesktop.dbus.types.UInt32;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLVideo;
 import uk.co.bithatch.linuxio.EventCode;
 import uk.co.bithatch.linuxio.InputDevice;
 import uk.co.bithatch.linuxio.InputDevice.Event;
@@ -184,8 +177,6 @@ public abstract class OutputRunMode extends RunMode {
 
 	int scrollClicks;
 
-	private DBusConnection dBusConnection;
-
 	private InputDevice joystickInputDevice;
 
 	private InputDevice keyboardInputDevice;
@@ -197,10 +188,6 @@ public abstract class OutputRunMode extends RunMode {
 	private long prevKeyInputTime;
 
 	private boolean restart;
-
-	private ScreenSaver screenSaver;
-
-	private UInt32 screenSaverCookie;
 
 	private UINT vJoyDevice;
 
@@ -283,29 +270,11 @@ public abstract class OutputRunMode extends RunMode {
 
 	final void deInit() {
 		input.reset();
-		input.deInit(false);
+		input.deInit();
 
-		if (main.preventPowerSaveMode()) {
-			if (Main.isWindows) {
-				Kernel32.INSTANCE.SetThreadExecutionState(WinBase.ES_CONTINUOUS);
-			} else if (Main.isLinux && dBusConnection != null) {
-				try {
-					if (screenSaver != null && screenSaverCookie != null) {
-						screenSaver.UnInhibit(screenSaverCookie);
-					}
-				} catch (final Throwable t) {
-					log.log(Level.SEVERE, t.getMessage(), t);
-				} finally {
-					try {
-						dBusConnection.close();
-					} catch (final IOException e) {
-						log.log(Level.SEVERE, e.getMessage(), e);
-					} finally {
-						dBusConnection = null;
-						screenSaver = null;
-						screenSaverCookie = null;
-					}
-				}
+		if (main.isPreventPowerSaveMode()) {
+			if (!SDLVideo.SDL_EnableScreenSaver()) {
+				Main.logSdlError("Failed to enable screensaver");
 			}
 		}
 
@@ -344,11 +313,12 @@ public abstract class OutputRunMode extends RunMode {
 		}
 
 		EventQueue.invokeLater(() -> {
-			main.updateTitleAndTooltip();
-
 			if (forceStop || restart) {
 				main.stopAll(false, !restart, true);
 			}
+
+			main.updateTitleAndTooltip();
+
 			if (restart) {
 				main.restartLast();
 			}
@@ -404,7 +374,7 @@ public abstract class OutputRunMode extends RunMode {
 		}
 	}
 
-	private boolean enoughButtons(final int nButtons) {
+	private boolean enoughButtons(final int numButtons) {
 		var maxButtonId = -1;
 		for (final var mode : input.getProfile().getModes()) {
 			for (final var action : mode.getAllActions()) {
@@ -418,17 +388,17 @@ public abstract class OutputRunMode extends RunMode {
 		}
 		final var requiredButtons = maxButtonId + 1;
 
-		if (nButtons < requiredButtons) {
+		if (numButtons < requiredButtons) {
 			if (Main.isWindows) {
 				log.log(Level.WARNING, "vJoy device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						MessageFormat.format(Main.strings.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"),
-								vJoyDevice.intValue(), nButtons, requiredButtons),
+								vJoyDevice.intValue(), numButtons, requiredButtons),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else if (Main.isLinux) {
 				log.log(Level.WARNING, "uinput device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-						MessageFormat.format(Main.strings.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), nButtons,
+						MessageFormat.format(Main.strings.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
 								requiredButtons),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else {
@@ -451,7 +421,7 @@ public abstract class OutputRunMode extends RunMode {
 	}
 
 	final boolean init() {
-		final int nButtons;
+		final int numButtons;
 		if (Main.isWindows) {
 			try {
 				final var vJoyPath = main.getVJoyDirectory();
@@ -572,15 +542,15 @@ public abstract class OutputRunMode extends RunMode {
 				VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, Max);
 				maxAxisValue = Max.getValue().intValue();
 
-				nButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
-				if (!enoughButtons(nButtons)) {
+				numButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
+				if (!enoughButtons(numButtons)) {
 					return false;
 				}
 
 				EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat
 						.format(Main.strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue())));
 
-				if (main.preventPowerSaveMode()) {
+				if (main.isPreventPowerSaveMode()) {
 					Kernel32.INSTANCE.SetThreadExecutionState(
 							WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_DISPLAY_REQUIRED);
 				}
@@ -593,8 +563,8 @@ public abstract class OutputRunMode extends RunMode {
 				return false;
 			}
 		} else if (Main.isLinux) {
-			nButtons = UINPUT_JOYSTICK_BUTTON_EVENT_CODES.length;
-			if (!enoughButtons(nButtons)) {
+			numButtons = UINPUT_JOYSTICK_BUTTON_EVENT_CODES.length;
+			if (!enoughButtons(numButtons)) {
 				return false;
 			}
 
@@ -630,22 +600,8 @@ public abstract class OutputRunMode extends RunMode {
 				EventQueue.invokeLater(
 						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
 
-				if (main.preventPowerSaveMode()) {
-					final var exceptions = new ArrayList<Exception>();
-					for (final var screenSaverType : ScreenSaverType.values()) {
-						try {
-							dBusConnection = DBusConnectionBuilder.forSessionBus().build();
-							screenSaver = dBusConnection.getRemoteObject(screenSaverType.busname,
-									screenSaverType.objectpath, screenSaverType.clazz);
-							screenSaverCookie = screenSaver.Inhibit(Constants.APPLICATION_NAME, "Feeder running");
-							break;
-						} catch (final DBusException | DBusExecutionException e) {
-							exceptions.add(e);
-						}
-					}
-					if (dBusConnection == null || screenSaver == null || screenSaverCookie == null) {
-						exceptions.forEach(e -> log.log(Level.WARNING, e.getMessage(), e));
-					}
+				if (main.isPreventPowerSaveMode() && !SDLVideo.SDL_DisableScreenSaver()) {
+					Main.logSdlError("Failed to disable screensaver");
 				}
 			} catch (final Throwable t) {
 				log.log(Level.WARNING, t.getMessage(), t);
@@ -664,7 +620,9 @@ public abstract class OutputRunMode extends RunMode {
 									final var fileName = p.getFileName();
 									return fileName != null && fileName.toString()
 											.matches(SYSFS_INPUT_DIR_REGEX_PREFIX + lockKey.sysfsLedName());
-								}).findFirst().orElseThrow(() -> new RuntimeException(lockKey.sysfsLedName()))
+								}).findFirst()
+										.orElseThrow(() -> new RuntimeException(
+												"No brightness file for " + lockKey.sysfsLedName() + " LED"))
 										.resolve(SYSFS_BRIGHTNESS_FILENAME).toFile();
 
 								if (!brightnessFile.isFile() || !brightnessFile.canRead()) {
@@ -688,7 +646,10 @@ public abstract class OutputRunMode extends RunMode {
 			throw buildNotImplementedException();
 		}
 
-		input.init();
+		if (!input.init()) {
+			controllerDisconnected();
+			return false;
+		}
 
 		axisX = new AxisValue();
 		axisY = new AxisValue();
@@ -699,15 +660,13 @@ public abstract class OutputRunMode extends RunMode {
 		axisS0 = new AxisValue();
 		axisS1 = new AxisValue();
 
-		setnButtons(nButtons);
+		setNumButtons(numButtons);
 
 		return true;
 	}
 
 	boolean readInput() throws IOException {
-		if (!Platform.isMac()) {
-			GLFW.glfwPollEvents();
-		}
+		process();
 
 		return true;
 	}
@@ -740,11 +699,11 @@ public abstract class OutputRunMode extends RunMode {
 	}
 
 	@Override
-	void setnButtons(final int nButtons) {
-		super.setnButtons(nButtons);
+	void setNumButtons(final int numButtons) {
+		super.setNumButtons(numButtons);
 
-		if (buttons == null || buttons.length != nButtons) {
-			buttons = new ButtonValue[nButtons];
+		if (buttons == null || buttons.length != numButtons) {
+			buttons = new ButtonValue[numButtons];
 			for (var i = 0; i < buttons.length; i++) {
 				buttons[i] = new ButtonValue();
 			}

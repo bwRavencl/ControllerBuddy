@@ -23,9 +23,10 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
-abstract class ToKeyAction<V extends Number> extends ActivationIntervalAction<V>
+abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
 
 	private transient Activatable activatable;

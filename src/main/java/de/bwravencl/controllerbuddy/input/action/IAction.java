@@ -19,8 +19,9 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
+import java.lang.constant.Constable;
 
-public interface IAction<V extends Number> extends Cloneable {
+public interface IAction<V extends Constable> extends Cloneable {
 
 	static String getDefaultDescription(final IAction<?> action) {
 		return getLabel(action.getClass());

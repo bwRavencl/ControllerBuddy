@@ -17,7 +17,7 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.gui.Main.ControllerInfo;
+import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -25,8 +25,6 @@ import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
-import de.bwravencl.controllerbuddy.input.driver.Driver;
-import de.bwravencl.controllerbuddy.input.driver.IGamepadStateProvider;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.awt.EventQueue;
 import java.util.Arrays;
@@ -37,12 +35,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.sdl.SDLGamepad;
+import org.lwjgl.sdl.SDLProperties;
 
 public final class Input {
 
@@ -66,25 +62,25 @@ public final class Input {
 
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
 
-	private final ControllerInfo controller;
-
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
 
-	private final Set<Integer> downMouseButtons = ConcurrentHashMap.newKeySet();
+	private final Set<Integer> downMouseButtons = new HashSet<>();
 
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
 
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
 
-	private final Set<Integer> hotSwappingButtonDownJids = new HashSet<>();
-
-	private final Map<Integer, Driver> jidToDriverMap = new HashMap<>();
+	private final Set<Integer> hotSwappingButtonDownInstanceIds = new HashSet<>();
 
 	private final Main main;
 
 	private final Set<LockKey> offLockKeys = new HashSet<>();
 
 	private final Set<LockKey> onLockKeys = new HashSet<>();
+
+	private final Map<Long, GamepadState> sdlGamepadToGamepadStateMap = new HashMap<>();
+
+	private final Controller selectedController;
 
 	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
 
@@ -96,8 +92,6 @@ public final class Input {
 
 	private volatile int cursorDeltaY;
 
-	private Driver driver;
-
 	private boolean hapticFeedback;
 
 	private int hotSwappingButtonId = HotSwappingButton.None.id;
@@ -107,8 +101,6 @@ public final class Input {
 	private long lastHotSwapPollTime;
 
 	private long lastPollTime;
-
-	private boolean lightRumbleScheduled;
 
 	private boolean mapCircularAxesToSquareAxes;
 
@@ -122,17 +114,19 @@ public final class Input {
 
 	private RunMode runMode;
 
+	private RumbleEffect scheduledRumbleEffect;
+
 	private volatile int scrollClicks;
+
+	private long selectedSdlGamepad;
 
 	private boolean skipAxisInitialization;
 
-	private boolean strongRumbleScheduled;
-
 	private boolean swapLeftAndRightSticks;
 
-	public Input(final Main main, final ControllerInfo controller, final EnumMap<VirtualAxis, Integer> axes) {
+	public Input(final Main main, final Controller selectedController, final EnumMap<VirtualAxis, Integer> axes) {
 		this.main = main;
-		this.controller = controller;
+		this.selectedController = selectedController;
 
 		skipAxisInitialization = axes != null;
 
@@ -160,37 +154,7 @@ public final class Input {
 	}
 
 	private static boolean isValidButton(final int button) {
-		return button >= 0 && button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST;
-	}
-
-	private static void mapCircularAxesToSquareAxes(final GLFWGamepadState state, final int xAxisIndex,
-			final int yAxisIndex) {
-		final var u = clamp(state.axes(xAxisIndex));
-		final var v = clamp(state.axes(yAxisIndex));
-
-		final var u2 = u * u;
-		final var v2 = v * v;
-
-		final var subtermX = 2d + u2 - v2;
-		final var subtermY = 2d - u2 + v2;
-
-		final var twoSqrt2 = 2d * Math.sqrt(2d);
-
-		var termX1 = subtermX + u * twoSqrt2;
-		var termX2 = subtermX - u * twoSqrt2;
-		var termY1 = subtermY + v * twoSqrt2;
-		var termY2 = subtermY - v * twoSqrt2;
-
-		termX1 = correctNumericalImprecision(termX1);
-		termY1 = correctNumericalImprecision(termY1);
-		termX2 = correctNumericalImprecision(termX2);
-		termY2 = correctNumericalImprecision(termY2);
-
-		final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
-		final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
-
-		state.axes(xAxisIndex, clamp((float) x));
-		state.axes(yAxisIndex, clamp((float) y));
+		return button > SDLGamepad.SDL_GAMEPAD_BUTTON_INVALID && button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT;
 	}
 
 	public static float normalize(final float value, final float inMin, final float inMax, final float outMin,
@@ -205,10 +169,20 @@ public final class Input {
 		return (value - inMin) * newRange / oldRange + outMin;
 	}
 
-	public void deInit(final boolean deviceDisconnected) {
-		if (driver != null) {
-			driver.deInit(deviceDisconnected);
-			driver = null;
+	public void deInit() {
+		if (selectedSdlGamepad != 0) {
+			final var gamepadProperties = SDLGamepad.SDL_GetGamepadProperties(selectedSdlGamepad);
+			if (SDLProperties.SDL_GetBooleanProperty(gamepadProperties,
+					SDLGamepad.SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN, false)) {
+				SDLGamepad.SDL_SetGamepadPlayerIndex(selectedSdlGamepad, -1);
+			}
+		}
+
+		final var sdlGamepadsIterator = sdlGamepadToGamepadStateMap.keySet().iterator();
+		while (sdlGamepadsIterator.hasNext()) {
+			final var sdlGamepad = sdlGamepadsIterator.next();
+			SDLGamepad.SDL_CloseGamepad(sdlGamepad);
+			sdlGamepadsIterator.remove();
 		}
 	}
 
@@ -228,10 +202,6 @@ public final class Input {
 
 	public boolean[] getButtons() {
 		return buttons;
-	}
-
-	public ControllerInfo getController() {
-		return controller;
 	}
 
 	public int getCursorDeltaX() {
@@ -256,10 +226,6 @@ public final class Input {
 
 	public Set<Integer> getDownUpMouseButtons() {
 		return downUpMouseButtons;
-	}
-
-	public Driver getDriver() {
-		return driver;
 	}
 
 	public Main getMain() {
@@ -294,55 +260,24 @@ public final class Input {
 		return scrollClicks;
 	}
 
-	private void handleStickSwap(final GLFWGamepadState gamepadState) {
-		if (!swapLeftAndRightSticks) {
-			return;
-		}
-
-		final var tempLeftXAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
-		final var tempLeftYAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-		final var tempRightXAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
-		final var tempRightYAxis = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
-
-		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, tempRightXAxis);
-		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, tempRightYAxis);
-		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X, tempLeftXAxis);
-		gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y, tempLeftYAxis);
-
-		final var tempLeftThumb = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB);
-		final var tempRightThumb = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB);
-
-		gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB, tempRightThumb);
-		gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB, tempLeftThumb);
+	public Controller getSelectedController() {
+		return selectedController;
 	}
 
-	public void init() {
-		swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
-		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
-		hapticFeedback = main.isHapticFeedback();
-
-		final var presentControllers = Main.getPresentControllers();
-
-		if (controller != null) {
-			driver = Driver.getIfAvailable(this, presentControllers, controller).orElse(null);
+	public boolean init() {
+		if (initialized) {
+			throw new IllegalStateException("Already initialized");
 		}
 
-		if (presentControllers.size() > 1) {
-			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
+		swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
+		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
 
-			if (hotSwappingButtonId != HotSwappingButton.None.id && controller != null) {
-				if (driver != null) {
-					jidToDriverMap.put(controller.jid(), driver);
-				}
+		sdlGamepadToGamepadStateMap.clear();
+		for (final var controller : main.getControllers()) {
+			if (!openController(controller) && controller.equals(selectedController)) {
+				Main.logSdlError("Could not open gamepad");
 
-				for (final var controller : presentControllers) {
-					if (controller.jid() == this.controller.jid()) {
-						continue;
-					}
-
-					Driver.getIfAvailable(this, presentControllers, controller)
-							.ifPresent(driver -> jidToDriverMap.put(controller.jid(), driver));
-				}
+				return false;
 			}
 		}
 
@@ -355,18 +290,16 @@ public final class Input {
 		}));
 
 		initialized = true;
+
+		return true;
 	}
 
 	public void initButtons() {
-		buttons = new boolean[Math.min(runMode.getnButtons(), MAX_N_BUTTONS)];
+		buttons = new boolean[Math.min(runMode.getNumButtons(), MAX_N_BUTTONS)];
 	}
 
 	public boolean isAxisSuspended(final int axis) {
 		return axisToEndSuspensionTimestampMap.containsKey(axis);
-	}
-
-	public boolean isHapticFeedback() {
-		return hapticFeedback;
 	}
 
 	public boolean isInitialized() {
@@ -385,8 +318,45 @@ public final class Input {
 		}
 	}
 
+	public boolean openController(final Controller controller) {
+		final var isSelectedController = controller.equals(selectedController);
+
+		final var sdlGamepad = SDLGamepad.SDL_OpenGamepad(controller.instanceId());
+		if (sdlGamepad == 0L) {
+			return false;
+		}
+
+		sdlGamepadToGamepadStateMap.put(sdlGamepad, new GamepadState(sdlGamepad));
+		updateHotSwappingButtonId();
+
+		final var gamepadProperties = SDLGamepad.SDL_GetGamepadProperties(sdlGamepad);
+
+		if (isSelectedController) {
+			selectedSdlGamepad = sdlGamepad;
+
+			if (main.isHapticFeedback()) {
+				hapticFeedback = SDLProperties.SDL_GetBooleanProperty(gamepadProperties,
+						SDLGamepad.SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN, false);
+			}
+		}
+
+		if (SDLProperties.SDL_GetBooleanProperty(gamepadProperties, SDLGamepad.SDL_PROP_GAMEPAD_CAP_RGB_LED_BOOLEAN,
+				false)) {
+			final var ledColor = main.getLedColor();
+			SDLGamepad.SDL_SetGamepadLED(sdlGamepad, Integer.valueOf(ledColor.getRed()).byteValue(),
+					Integer.valueOf(ledColor.getGreen()).byteValue(), Integer.valueOf(ledColor.getBlue()).byteValue());
+		}
+
+		if (SDLProperties.SDL_GetBooleanProperty(gamepadProperties, SDLGamepad.SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN,
+				false)) {
+			SDLGamepad.SDL_SetGamepadPlayerIndex(sdlGamepad, isSelectedController ? 0 : -1);
+		}
+
+		return true;
+	}
+
 	public boolean poll() {
-		Objects.requireNonNull(controller, "Field controller must not be null");
+		Objects.requireNonNull(selectedController, "Field selectedController must not be null");
 
 		final var currentTime = System.currentTimeMillis();
 
@@ -399,30 +369,32 @@ public final class Input {
 		lastPollTime = currentTime;
 		rateMultiplier = (float) elapsedTime / 1000L;
 
-		try (final var stack = MemoryStack.stackPush()) {
-			final var gamepadState = GLFWGamepadState.calloc(stack);
+		if (hotSwappingButtonId != HotSwappingButton.None.id
+				&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
 
-			if (hotSwappingButtonId != HotSwappingButton.None.id
-					&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
-				for (final var controller : Main.getPresentControllers()) {
-					if (controller.jid() == this.controller.jid()) {
-						continue;
-					}
+			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
+			while (sdlGamepadToGamepadStateMapIterator.hasNext()) {
+				final var entry = sdlGamepadToGamepadStateMapIterator.next();
+				final var sdlGamepad = entry.getKey();
 
-					final boolean gotState;
-					final var driver = jidToDriverMap.get(controller.jid());
-					if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
-						gotState = gamepadStateProvider.getGamepadState(gamepadState);
-					} else {
-						gotState = GLFW.glfwGetGamepadState(controller.jid(), gamepadState);
-					}
+				if (sdlGamepad == selectedSdlGamepad) {
+					continue;
+				}
 
-					if (gotState) {
-						handleStickSwap(gamepadState);
+				final var gamepadState = entry.getValue();
 
-						if (gamepadState.buttons(hotSwappingButtonId) != 0) {
-							hotSwappingButtonDownJids.add(controller.jid());
-						} else if (hotSwappingButtonDownJids.contains(controller.jid())) {
+				if (gamepadState.update()) {
+					final var instanceId = SDLGamepad.SDL_GetGamepadID(sdlGamepad);
+
+					if (gamepadState.buttons[hotSwappingButtonId]) {
+						hotSwappingButtonDownInstanceIds.add(instanceId);
+					} else if (hotSwappingButtonDownInstanceIds.contains(instanceId)) {
+						final var optionalController = main.getControllers().stream()
+								.filter(controller -> controller.instanceId() == instanceId).findFirst();
+
+						if (optionalController.isPresent()) {
+							final var controller = optionalController.get();
+
 							log.log(Level.INFO, Main.assembleControllerLoggingMessage(
 									"Initiating hot swap to controller ", controller));
 
@@ -436,163 +408,144 @@ public final class Input {
 							break;
 						}
 					}
+				} else {
+					sdlGamepadToGamepadStateMapIterator.remove();
+					updateHotSwappingButtonId();
 				}
-
-				lastHotSwapPollTime = currentTime;
 			}
 
-			final boolean gotState;
-			if (driver instanceof final IGamepadStateProvider gamepadStateProvider) {
-				if (!driver.isReady()) {
-					return true;
+			lastHotSwapPollTime = currentTime;
+		}
+
+		final var gamepadState = sdlGamepadToGamepadStateMap.get(selectedSdlGamepad);
+		if (gamepadState == null || !gamepadState.update()) {
+			return false;
+		}
+
+		final var onScreenKeyboard = main.getOnScreenKeyboard();
+
+		if (clearOnNextPoll) {
+			Arrays.fill(buttons, false);
+
+			downKeyStrokes.clear();
+			downMouseButtons.clear();
+
+			onScreenKeyboard.forceRepoll();
+
+			clearOnNextPoll = false;
+		}
+
+		onScreenKeyboard.poll(this);
+
+		virtualAxisToTargetValueMap.entrySet().removeIf(entry -> {
+			final var virtualAxis = entry.getKey();
+			final var targetValue = entry.getValue();
+
+			final var currentValue = axes.get(virtualAxis);
+			final var delta = targetValue - currentValue;
+			if (delta != 0) {
+				final var axisRange = runMode.getMaxAxisValue() - runMode.getMinAxisValue();
+
+				final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
+						AXIS_MOVEMENT_MAX_DELTA_FACTOR);
+
+				final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
+
+				var newValue = currentValue + d;
+				if (delta > 0) {
+					newValue = Math.min(newValue, targetValue);
+				} else {
+					newValue = Math.max(newValue, targetValue);
 				}
 
-				gotState = gamepadStateProvider.getGamepadState(gamepadState);
-			} else {
-				gotState = GLFW.glfwGetGamepadState(controller.jid(), gamepadState);
+				setAxis(virtualAxis, newValue, false, (Integer) null);
+
+				return newValue == targetValue;
 			}
 
-			if (!gotState) {
-				return false;
+			return true;
+		});
+
+		final var modes = profile.getModes();
+		final var activeMode = profile.getActiveMode();
+		final var axisToActionMap = activeMode.getAxisToActionsMap();
+		final var buttonToActionMap = activeMode.getButtonToActionsMap();
+
+		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
+			final var axisValue = gamepadState.axes[axis];
+
+			if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
+				axisToEndSuspensionTimestampMap.remove(axis);
 			}
 
-			handleStickSwap(gamepadState);
+			var actions = axisToActionMap.get(axis);
+			if (actions == null) {
+				final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
+				for (var i = 1; i < buttonToModeActionStack.size(); i++) {
+					actions = buttonToModeActionStack.get(i).getMode(this).getAxisToActionsMap().get(axis);
 
-			final var onScreenKeyboard = main.getOnScreenKeyboard();
-
-			if (clearOnNextPoll) {
-				Arrays.fill(buttons, false);
-
-				downKeyStrokes.clear();
-				downMouseButtons.clear();
-
-				onScreenKeyboard.forceRepoll();
-
-				clearOnNextPoll = false;
-			}
-
-			onScreenKeyboard.poll(this);
-
-			virtualAxisToTargetValueMap.entrySet().removeIf(entry -> {
-				final var virtualAxis = entry.getKey();
-				final var targetValue = entry.getValue();
-
-				final var currentValue = axes.get(virtualAxis);
-				final var delta = targetValue - currentValue;
-				if (delta != 0) {
-					final var axisRange = runMode.getMaxAxisValue() - runMode.getMinAxisValue();
-
-					final var deltaFactor = normalize(Math.abs(delta), 0, axisRange, AXIS_MOVEMENT_MIN_DELTA_FACTOR,
-							AXIS_MOVEMENT_MAX_DELTA_FACTOR);
-
-					final var d = Integer.signum(delta) * (int) (axisRange * deltaFactor * rateMultiplier);
-
-					var newValue = currentValue + d;
-					if (delta > 0) {
-						newValue = Math.min(newValue, targetValue);
-					} else {
-						newValue = Math.max(newValue, targetValue);
-					}
-
-					setAxis(virtualAxis, newValue, false, (Integer) null);
-
-					return newValue == targetValue;
-				}
-
-				return true;
-			});
-
-			final var modes = profile.getModes();
-			final var activeMode = profile.getActiveMode();
-			final var axisToActionMap = activeMode.getAxisToActionsMap();
-			final var buttonToActionMap = activeMode.getButtonToActionsMap();
-
-			if (mapCircularAxesToSquareAxes) {
-				mapCircularAxesToSquareAxes(gamepadState, GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-				mapCircularAxesToSquareAxes(gamepadState, GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X,
-						GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
-			}
-
-			for (var axis = 0; axis <= GLFW.GLFW_GAMEPAD_AXIS_LAST; axis++) {
-				final var axisValue = gamepadState.axes(axis);
-
-				if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-					axisToEndSuspensionTimestampMap.remove(axis);
-				}
-
-				var actions = axisToActionMap.get(axis);
-				if (actions == null) {
-					final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
-					for (var i = 1; i < buttonToModeActionStack.size(); i++) {
-						actions = buttonToModeActionStack.get(i).getMode(this).getAxisToActionsMap().get(axis);
-
-						if (actions != null) {
-							break;
-						}
-					}
-				}
-
-				if (actions == null) {
-					actions = modes.getFirst().getAxisToActionsMap().get(axis);
-				}
-
-				if (actions != null) {
-					for (final var action : actions) {
-						action.doAction(this, axis, axisValue);
+					if (actions != null) {
+						break;
 					}
 				}
 			}
 
-			for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
-				var actions = buttonToActionMap.get(button);
-				if (actions == null) {
-					final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
-					for (var i = 1; i < buttonToModeActionStack.size(); i++) {
-						actions = buttonToModeActionStack.get(i).getMode(this).getButtonToActionsMap().get(button);
-
-						if (actions != null) {
-							break;
-						}
-					}
-				}
-
-				if (actions == null) {
-					actions = modes.getFirst().getButtonToActionsMap().get(button);
-				}
-
-				if (actions != null) {
-					for (final var action : actions) {
-						action.doAction(this, button, gamepadState.buttons(button));
-					}
-				}
+			if (actions == null) {
+				actions = modes.getFirst().getAxisToActionsMap().get(axis);
 			}
 
-			for (;;) {
-				for (var button = 0; button <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; button++) {
-					final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
-					if (buttonToModeActions != null) {
-						for (final var action : buttonToModeActions) {
-							action.doAction(this, button, gamepadState.buttons(button));
-						}
-					}
+			if (actions != null) {
+				for (final var action : actions) {
+					action.doAction(this, axis, axisValue);
 				}
-
-				if (!repeatModeActionWalk) {
-					break;
-				}
-				repeatModeActionWalk = false;
 			}
 		}
 
-		if (hapticFeedback && driver != null) {
-			if (strongRumbleScheduled) {
-				driver.rumbleStrong();
-			} else if (lightRumbleScheduled) {
-				driver.rumbleLight();
+		for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
+			var actions = buttonToActionMap.get(button);
+			if (actions == null) {
+				final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
+				for (var i = 1; i < buttonToModeActionStack.size(); i++) {
+					actions = buttonToModeActionStack.get(i).getMode(this).getButtonToActionsMap().get(button);
+
+					if (actions != null) {
+						break;
+					}
+				}
+			}
+
+			if (actions == null) {
+				actions = modes.getFirst().getButtonToActionsMap().get(button);
+			}
+
+			if (actions != null) {
+				for (final var action : actions) {
+					action.doAction(this, button, gamepadState.buttons[button]);
+				}
 			}
 		}
-		strongRumbleScheduled = false;
-		lightRumbleScheduled = false;
+
+		for (;;) {
+			for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
+				final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
+				if (buttonToModeActions != null) {
+					for (final var action : buttonToModeActions) {
+						action.doAction(this, button, gamepadState.buttons[button]);
+					}
+				}
+			}
+
+			if (!repeatModeActionWalk) {
+				break;
+			}
+			repeatModeActionWalk = false;
+		}
+
+		if (hapticFeedback && scheduledRumbleEffect != null) {
+			SDLGamepad.SDL_RumbleGamepad(selectedSdlGamepad, scheduledRumbleEffect.lowFrequencyRumble,
+					scheduledRumbleEffect.highFrequencyRumble, scheduledRumbleEffect.duration);
+			scheduledRumbleEffect = null;
+		}
 
 		EventQueue.invokeLater(() -> main.updateOverlayAxisIndicators(false));
 		main.handleOnScreenKeyboardModeChange();
@@ -609,15 +562,14 @@ public final class Input {
 		repeatModeActionWalk = false;
 		skipAxisInitialization = false;
 		initialized = false;
-		strongRumbleScheduled = false;
-		lightRumbleScheduled = false;
+		scheduledRumbleEffect = null;
 		lastPollTime = 0;
 		rateMultiplier = 0f;
 		buttons = null;
+		sdlGamepadToGamepadStateMap.clear();
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
-		jidToDriverMap.clear();
-		hotSwappingButtonDownJids.clear();
+		hotSwappingButtonDownInstanceIds.clear();
 		hotSwappingButtonId = HotSwappingButton.None.id;
 
 		resetLastHotSwapPollTime();
@@ -663,10 +615,10 @@ public final class Input {
 
 		if (hapticFeedback && prevValue != null && prevValue != value) {
 			if (value == minAxisValue || value == maxAxisValue) {
-				strongRumbleScheduled = true;
+				scheduledRumbleEffect = RumbleEffect.Strong;
 			} else if (detentValue != null && ((prevValue > detentValue && value <= detentValue)
 					|| (prevValue < detentValue && value >= detentValue))) {
-				lightRumbleScheduled = true;
+				scheduledRumbleEffect = RumbleEffect.Light;
 			}
 		}
 	}
@@ -733,7 +685,7 @@ public final class Input {
 
 		for (final var mode : modes) {
 			for (final var axis : mode.getAxisToActionsMap().keySet()) {
-				if (axis < 0 || axis > GLFW.GLFW_GAMEPAD_AXIS_LAST) {
+				if (axis < 0 || axis >= SDLGamepad.SDL_GAMEPAD_AXIS_COUNT) {
 					return false;
 				}
 			}
@@ -780,7 +732,154 @@ public final class Input {
 		axisToEndSuspensionTimestampMap.put(axis, System.currentTimeMillis() + SUSPENSION_TIME);
 	}
 
+	private void updateHotSwappingButtonId() {
+		final var hotSwappingPossible = sdlGamepadToGamepadStateMap.size() > 1;
+
+		if (hotSwappingPossible && hotSwappingButtonId == HotSwappingButton.None.id) {
+			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
+		} else if (!hotSwappingPossible && hotSwappingButtonId != HotSwappingButton.None.id) {
+			hotSwappingButtonId = HotSwappingButton.None.id;
+		}
+	}
+
+	private enum RumbleEffect {
+
+		Light((short) 0, Short.MAX_VALUE, 70), Strong(Short.MAX_VALUE, Short.MAX_VALUE, 90);
+
+		private final int duration;
+
+		private final short highFrequencyRumble;
+
+		private final short lowFrequencyRumble;
+
+		@SuppressWarnings("SameParameterValue")
+		RumbleEffect(final short lowFrequencyRumble, final short highFrequencyRumble, final int duration) {
+			this.lowFrequencyRumble = lowFrequencyRumble;
+			this.highFrequencyRumble = highFrequencyRumble;
+			this.duration = duration;
+		}
+	}
+
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
+	}
+
+	private class GamepadState {
+
+		private final float[] axes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_COUNT];
+
+		private final boolean[] buttons = new boolean[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT + 1];
+
+		private final long sdlGamepad;
+
+		private GamepadState(final long sdlGamepad) {
+			this.sdlGamepad = sdlGamepad;
+		}
+
+		private void mapCircularAxesToSquareAxes(final int xAxisIndex, final int yAxisIndex) {
+			final var u = clamp(axes[xAxisIndex]);
+			final var v = clamp(axes[yAxisIndex]);
+
+			final var u2 = u * u;
+			final var v2 = v * v;
+
+			final var subtermX = 2d + u2 - v2;
+			final var subtermY = 2d - u2 + v2;
+
+			final var twoSqrt2 = 2d * Math.sqrt(2d);
+
+			var termX1 = subtermX + u * twoSqrt2;
+			var termX2 = subtermX - u * twoSqrt2;
+			var termY1 = subtermY + v * twoSqrt2;
+			var termY2 = subtermY - v * twoSqrt2;
+
+			termX1 = correctNumericalImprecision(termX1);
+			termY1 = correctNumericalImprecision(termY1);
+			termX2 = correctNumericalImprecision(termX2);
+			termY2 = correctNumericalImprecision(termY2);
+
+			final var x = 0.5 * Math.sqrt(termX1) - 0.5 * Math.sqrt(termX2);
+			final var y = 0.5 * Math.sqrt(termY1) - 0.5 * Math.sqrt(termY2);
+
+			axes[xAxisIndex] = clamp((float) x);
+			axes[yAxisIndex] = clamp((float) y);
+		}
+
+		private boolean update() {
+			if (!SDLGamepad.SDL_GamepadConnected(sdlGamepad)) {
+				return false;
+			}
+
+			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX
+					: SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = normalize(
+							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
+							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
+			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY
+					: SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = normalize(
+							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY),
+							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
+			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX
+					: SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = normalize(
+							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX),
+							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
+			axes[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY
+					: SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = normalize(
+							SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY),
+							Short.MIN_VALUE, Short.MAX_VALUE, -1f, 1f);
+
+			if (mapCircularAxesToSquareAxes) {
+				mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY);
+				mapCircularAxesToSquareAxes(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
+			}
+
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = normalize(
+					SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER), 0,
+					Short.MAX_VALUE, -1f, 1f);
+
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER] = normalize(
+					SDLGamepad.SDL_GetGamepadAxis(sdlGamepad, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER), 0,
+					Short.MAX_VALUE, -1f, 1f);
+
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_EAST);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_WEST);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_BACK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_BACK);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_START);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK);
+
+			buttons[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK
+					: SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+							SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK);
+			buttons[swapLeftAndRightSticks ? SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK
+					: SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+							SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK);
+
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT);
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT] = SDLGamepad.SDL_GetGamepadButton(sdlGamepad,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
+
+			return true;
+		}
 	}
 }

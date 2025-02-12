@@ -23,22 +23,21 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(label = "TO_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
-public final class ButtonToButtonAction extends ToButtonAction<Byte> implements IButtonToAction {
+public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToAction {
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
-	public void doAction(final Input input, final int component, Byte value) {
+	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleLongPress(input, component, value);
+		value = handleActivationInterval(value);
 
-		final var hot = handleActivationInterval(value != 0);
-
-		if (hot && isAlreadyPressed(input)) {
+		if (value && isAlreadyPressed(input)) {
 			return;
 		}
 
-		input.setButton(buttonId, hot);
+		input.setButton(buttonId, value);
 	}
 
 	@Override

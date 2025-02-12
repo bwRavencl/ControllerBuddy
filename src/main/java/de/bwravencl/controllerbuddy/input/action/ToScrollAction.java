@@ -20,10 +20,11 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
+import java.lang.constant.Constable;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-abstract class ToScrollAction<V extends Number> extends InvertableAction<V> {
+abstract class ToScrollAction<V extends Constable> extends InvertableAction<V> {
 
 	private static final int DEFAULT_CLICKS = 10;
 
