@@ -97,10 +97,10 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 								profile.getButtonToModeActionsMap().entrySet().stream().collect(Collectors
 										.toMap((entry) -> convertGlfwToSdlButton(entry.getKey()), Entry::getValue)));
 
+						profile.getModes().forEach(mode -> mode.setButtonToActionsMap(
+								mode.getButtonToActionsMap().entrySet().stream().collect(Collectors
+										.toMap((entry) -> convertGlfwToSdlButton(entry.getKey()), Entry::getValue))));
 					}
-					profile.getModes().forEach(mode -> mode
-							.setButtonToActionsMap(mode.getButtonToActionsMap().entrySet().stream().collect(Collectors
-									.toMap((entry) -> convertGlfwToSdlButton(entry.getKey()), Entry::getValue))));
 				}
 				case final Mode mode -> {
 					if (Profile.defaultMode.equals(mode)) {
