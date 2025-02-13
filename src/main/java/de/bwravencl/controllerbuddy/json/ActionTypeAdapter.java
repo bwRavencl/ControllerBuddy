@@ -25,6 +25,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,7 +53,7 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 	}
 
 	@Override
-	public IAction<?> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+	public IAction<?> deserialize(final JsonElement json, Type typeOfT, final JsonDeserializationContext context)
 			throws JsonParseException {
 		final var wrapper = json.getAsJsonObject();
 		final var typeName = get(wrapper, PROPERTY_TYPE);
@@ -63,6 +64,10 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 			final var actualType = Class.forName(typeNameString);
 			return context.deserialize(data, actualType);
 		} catch (final ClassNotFoundException e) {
+			if (typeOfT instanceof final ParameterizedType parameterizedType) {
+				typeOfT = parameterizedType.getRawType();
+			}
+
 			if (typeOfT == IAction.class) {
 				log.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
 						+ NullAction.class.getSimpleName() + "'");
