@@ -46,7 +46,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	private UUID modeUuid;
 
 	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
-	private boolean toggle = false;
+	private boolean toggle;
 
 	private transient boolean up = true;
 

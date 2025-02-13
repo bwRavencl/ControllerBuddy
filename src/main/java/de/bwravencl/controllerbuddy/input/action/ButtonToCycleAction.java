@@ -41,7 +41,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.SINGLE_IMMEDIATELY;
 
-	private transient int index = 0;
+	private transient int index;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;

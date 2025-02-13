@@ -23,7 +23,7 @@ import java.lang.constant.Constable;
 abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
 
 	@ActionProperty(label = "INVERT", editorBuilder = BooleanEditorBuilder.class, order = 500)
-	boolean invert = false;
+	boolean invert;
 
 	public boolean isInvert() {
 		return invert;

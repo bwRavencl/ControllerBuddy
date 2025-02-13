@@ -26,7 +26,7 @@ import java.text.MessageFormat;
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V> {
 
 	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
-	int buttonId = 0;
+	int buttonId;
 
 	public int getButtonId() {
 		return buttonId;

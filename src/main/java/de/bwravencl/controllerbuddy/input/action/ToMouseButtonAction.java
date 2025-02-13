@@ -35,7 +35,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.REPEAT;
 
-	private transient boolean initiator = false;
+	private transient boolean initiator;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;

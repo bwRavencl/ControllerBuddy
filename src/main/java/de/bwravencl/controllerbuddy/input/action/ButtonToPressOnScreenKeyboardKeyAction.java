@@ -28,12 +28,12 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction, IInitializationAction<Boolean> {
 
 	@ActionProperty(label = "LOCK_KEY", editorBuilder = BooleanEditorBuilder.class, order = 10)
-	private boolean lockKey = false;
+	private boolean lockKey;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	private transient boolean wasDown = false;
+	private transient boolean wasDown;
 
 	private transient boolean wasUp = true;
 
