@@ -1222,9 +1222,7 @@ public final class Main {
 										final var gnomeSystemTrayExtensions = Set.of(
 												"appindicatorsupport@rgcjonas.gmail.com",
 												"status-icons@gnome-shell-extensions.gcampax.github.com",
-												"ubuntu-appindicators@ubuntu.com", "topIcons@adel.gadllah@gmail.com",
-												"topiconsfix@aleskva@devnullmail.com", "TopIcons@phocean.net",
-												"topicons-redux@pop-planet.info");
+												"ubuntu-appindicators@ubuntu.com");
 
 										hasSystemTray = extensions.ListExtensions().entrySet().stream()
 												.anyMatch(e -> gnomeSystemTrayExtensions.contains(e.getKey())
