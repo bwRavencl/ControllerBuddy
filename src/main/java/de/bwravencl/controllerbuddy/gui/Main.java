@@ -746,30 +746,34 @@ public final class Main {
 					return;
 				}
 
-				updateShowTrayEntry();
-				EventQueue.invokeLater(() -> showTrayIconHint());
+				EventQueue.invokeLater(() -> {
+					updateShowTrayEntry();
+					showTrayIconHint();
+				});
 			}
 
 			@Override
 			public void windowDeiconified(final WindowEvent e) {
 				super.windowDeiconified(e);
 
-				updateShowTrayEntry();
+				EventQueue.invokeLater(() -> updateShowTrayEntry());
 			}
 
 			@Override
 			public void windowIconified(final WindowEvent e) {
 				super.windowIconified(e);
 
-				updateShowTrayEntry();
+				EventQueue.invokeLater(() -> updateShowTrayEntry());
 			}
 
 			@Override
 			public void windowOpened(final WindowEvent e) {
 				super.windowOpened(e);
 
-				updateShowTrayEntry();
-				updateVisualizationPanel();
+				EventQueue.invokeLater(() -> {
+					updateShowTrayEntry();
+					updateVisualizationPanel();
+				});
 			}
 		});
 
@@ -2667,7 +2671,7 @@ public final class Main {
 
 				showTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, strings.getString("SHOW_TRAY_ENTRY_LABEL"),
 						SDLTray.SDL_TRAYENTRY_BUTTON);
-				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, frame.isVisible());
+				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, !frame.isVisible());
 				SDLTray.SDL_SetTrayEntryCallback(showTrayEntry, (_, _) -> EventQueue.invokeLater(() -> {
 					final var openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
 					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
