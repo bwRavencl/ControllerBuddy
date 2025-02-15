@@ -76,7 +76,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		final var profile = input.getProfile();
 
 		Integer myButton = null;
-		buttonLoop: for (var button = 0; button < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; button++) {
+		buttonLoop: for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
 			final var buttonToModeActions = profile.getButtonToModeActionsMap().get(button);
 			if (buttonToModeActions != null) {
 				for (final var action : buttonToModeActions) {
