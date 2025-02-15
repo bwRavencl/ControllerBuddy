@@ -232,6 +232,7 @@ import org.lwjgl.sdl.SDLSurface;
 import org.lwjgl.sdl.SDLTray;
 import org.lwjgl.sdl.SDL_Event;
 import org.lwjgl.sdl.SDL_GUID;
+import org.lwjgl.sdl.SDL_Surface;
 import org.lwjgl.system.MemoryStack;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
@@ -2594,55 +2595,54 @@ public final class Main {
 
 		if (hasSystemTray) {
 			final var trayCreated = mainLoop.runSync(() -> {
-				try (final var stack = MemoryStack.stackPush()) {
-					if (tray == 0L) {
-						final var iconImage = frame.getIconImages().stream()
-								.max(Comparator.comparingInt(o -> o.getWidth(null)))
-								.orElseThrow(() -> new RuntimeException("No icon set for frame"));
-						final var width = iconImage.getWidth(null);
-						final var height = iconImage.getHeight(null);
+				if (tray == 0L) {
+					final var iconImage = frame.getIconImages().stream()
+							.max(Comparator.comparingInt(o -> o.getWidth(null)))
+							.orElseThrow(() -> new RuntimeException("No icon set for frame"));
+					final var width = iconImage.getWidth(null);
+					final var height = iconImage.getHeight(null);
 
-						final var bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+					final var bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-						final var graphics2D = bufferedImage.createGraphics();
-						graphics2D.drawImage(iconImage, 0, 0, null);
-						graphics2D.dispose();
+					final var graphics2D = bufferedImage.createGraphics();
+					graphics2D.drawImage(iconImage, 0, 0, null);
+					graphics2D.dispose();
 
-						final var pixels = new int[width * height];
-						bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
+					final var pixels = new int[width * height];
+					bufferedImage.getRGB(0, 0, width, height, pixels, 0, width);
 
-						try (final var surface = SDLSurface.SDL_CreateSurface(width, height,
-								SDLPixels.SDL_PIXELFORMAT_BGRA8888)) {
-							if (surface == null) {
-								logSdlError("Failed to create surface");
-								return false;
-							}
-
-							final var pixelsByteBuffer = surface.pixels();
-							if (pixelsByteBuffer == null) {
-								return false;
-							}
-
-							for (var y = 0; y < height; y++) {
-								for (var x = 0; x < width; x++) {
-									final var pixel = pixels[y * width + x];
-									pixelsByteBuffer.put((byte) ((pixel >> 24) & 0xFF));
-									pixelsByteBuffer.put((byte) ((pixel >> 16) & 0xFF));
-									pixelsByteBuffer.put((byte) ((pixel >> 8) & 0xFF));
-									pixelsByteBuffer.put((byte) (pixel & 0xFF));
-								}
-							}
-
-							stack.nUTF8Safe(Constants.APPLICATION_NAME, true);
-							final var tooltipEncoded = stack.getPointerAddress();
-
-							tray = SDLTray.nSDL_CreateTray(surface.address(), tooltipEncoded);
-						}
-
-						if (tray == 0L) {
-							logSdlError("Failed to create tray");
+					try (final var surface = SDLSurface.SDL_CreateSurface(width, height,
+							SDLPixels.SDL_PIXELFORMAT_BGRA8888)) {
+						if (surface == null) {
+							logSdlError("Failed to create surface");
 							return false;
 						}
+
+						final var pixelsByteBuffer = surface.pixels();
+						if (pixelsByteBuffer == null) {
+							return false;
+						}
+
+						for (var y = 0; y < height; y++) {
+							for (var x = 0; x < width; x++) {
+								final var pixel = pixels[y * width + x];
+								pixelsByteBuffer.put((byte) ((pixel >> 24) & 0xFF));
+								pixelsByteBuffer.put((byte) ((pixel >> 16) & 0xFF));
+								pixelsByteBuffer.put((byte) ((pixel >> 8) & 0xFF));
+								pixelsByteBuffer.put((byte) (pixel & 0xFF));
+							}
+						}
+
+						final var surfaceBuffer = SDL_Surface.createSafe(surface.address(), surface.sizeof());
+						if (surfaceBuffer == null) {
+							return false;
+						}
+						tray = SDLTray.SDL_CreateTray(surfaceBuffer, Constants.APPLICATION_NAME);
+					}
+
+					if (tray == 0L) {
+						logSdlError("Failed to create tray");
+						return false;
 					}
 				}
 
