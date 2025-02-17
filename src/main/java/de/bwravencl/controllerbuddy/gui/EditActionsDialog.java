@@ -73,13 +73,13 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
-	private static final double ACTIONS_LIST_WEIGHT_X = .245d;
+	private static final double ACTIONS_LIST_WEIGHT_X = .15d;
 
-	private static final int DIALOG_BOUNDS_HEIGHT = 685;
+	private static final int DIALOG_BOUNDS_HEIGHT = 690;
 
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
 
-	private static final int DIALOG_BOUNDS_WIDTH = 1015;
+	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
 	private static final List<Class<?>> axisActionClasses;
 

@@ -70,7 +70,7 @@ import javax.swing.event.ListSelectionListener;
 
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
-	private static final int KEY_LIST_SCROLL_PANE_WIDTH = 110;
+	private static final int KEY_LIST_SCROLL_PANE_WIDTH = 120;
 
 	private static final Dimension KEY_LIST_SCROLL_PANE_DIMENSION = new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, 200);
 
