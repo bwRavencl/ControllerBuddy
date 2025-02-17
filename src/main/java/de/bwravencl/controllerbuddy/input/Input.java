@@ -744,7 +744,7 @@ public final class Input {
 
 	private enum RumbleEffect {
 
-		Light((short) 0, Short.MAX_VALUE, 70), Strong(Short.MAX_VALUE, Short.MAX_VALUE, 90);
+		Light((short) 0, Short.MAX_VALUE, 64), Strong(Short.MAX_VALUE, Short.MAX_VALUE, 72);
 
 		private final int duration;
 
