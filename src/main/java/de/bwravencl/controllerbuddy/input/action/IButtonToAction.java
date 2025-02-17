@@ -106,7 +106,7 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 					}
 				}
 
-				return false;
+				return true;
 			}
 		} else {
 			actionToDownSinceMap.remove(this);
