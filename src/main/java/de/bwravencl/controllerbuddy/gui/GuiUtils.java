@@ -34,20 +34,28 @@ import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.text.Document;
+import javax.swing.undo.UndoManager;
 
 @SuppressWarnings({ "exports", "missing-explicit-ctor" })
 public final class GuiUtils {
@@ -64,6 +72,113 @@ public final class GuiUtils {
 		modePanel.add(modeComboBox);
 
 		return modeComboBox;
+	}
+
+	public static JTextField createTextFieldWithMenu(final String text, final int columns) {
+		return createTextFieldWithMenu(null, text, columns);
+	}
+
+	public static JTextField createTextFieldWithMenu(final Document doc, final String text, final int columns) {
+		final var textField = new JTextField(doc, text, columns);
+
+		final var undoManager = new UndoManager();
+		textField.getDocument().addUndoableEditListener(undoManager);
+
+		final var undoAction = new AbstractAction(Main.strings.getString("UNDO_ACTION_NAME")) {
+
+			@Serial
+			private static final long serialVersionUID = 283480113359047860L;
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				if (!undoManager.canUndo()) {
+					return;
+				}
+
+				undoManager.undo();
+				setEnabled(undoManager.canUndo());
+
+			}
+		};
+
+		final var cutAction = new AbstractAction(Main.strings.getString("CUT_ACTION_NAME")) {
+
+			@Serial
+			private static final long serialVersionUID = 166873451012920651L;
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				textField.cut();
+			}
+		};
+
+		final var copyAction = new AbstractAction(Main.strings.getString("COPY_ACTION_NAME")) {
+
+			@Serial
+			private static final long serialVersionUID = 4845008543826860777L;
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				textField.copy();
+			}
+		};
+
+		final var pasteAction = new AbstractAction(Main.strings.getString("PASTE_ACTION_NAME")) {
+
+			@Serial
+			private static final long serialVersionUID = -669017641654371170L;
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				textField.paste();
+			}
+		};
+
+		final var selectAllAction = new AbstractAction(Main.strings.getString("SELECT_ALL_ACTION_NAME")) {
+
+			@Serial
+			private static final long serialVersionUID = -6215392890571518146L;
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				textField.selectAll();
+			}
+		};
+
+		cutAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control X"));
+		copyAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control C"));
+		pasteAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control V"));
+		selectAllAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control A"));
+
+		final var popup = new JPopupMenu() {
+
+			@Serial
+			private static final long serialVersionUID = -7112090718851303887L;
+
+			@Override
+			public void show(final Component invoker, final int x, final int y) {
+				undoAction.setEnabled(undoManager.canUndo());
+
+				final var selectedText = textField.getSelectedText();
+				final var canCopyOrCut = selectedText != null && !selectedText.isEmpty();
+				copyAction.setEnabled(canCopyOrCut);
+				cutAction.setEnabled(canCopyOrCut);
+
+				super.show(invoker, x, y);
+			}
+		};
+
+		popup.add(undoAction);
+		popup.addSeparator();
+		popup.add(cutAction);
+		popup.add(copyAction);
+		popup.add(pasteAction);
+		popup.addSeparator();
+		popup.add(selectAllAction);
+
+		textField.setComponentPopupMenu(popup);
+
+		return textField;
 	}
 
 	static Rectangle getAndStoreTotalDisplayBounds(final Main main) {

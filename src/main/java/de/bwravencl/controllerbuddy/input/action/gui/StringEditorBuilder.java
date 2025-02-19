@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -44,8 +45,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		final var textField = new JTextField(17);
-		textField.setText((String) initialValue);
+		final var textField = GuiUtils.createTextFieldWithMenu((String) initialValue, 17);
 		textField.setCaretPosition(0);
 
 		final var textFieldPropertySetter = new TextFieldPropertySetter(textField, action, setterMethod);

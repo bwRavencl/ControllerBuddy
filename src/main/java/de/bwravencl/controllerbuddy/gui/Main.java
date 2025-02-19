@@ -3414,7 +3414,7 @@ public final class Main {
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
-			final var descriptionTextField = new JTextField(mode.getDescription(), 35);
+			final var descriptionTextField = GuiUtils.createTextFieldWithMenu(mode.getDescription(), 35);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 			if (newModeAdded && i == numModes - 1) {
@@ -4489,7 +4489,8 @@ public final class Main {
 				hostPanel.add(hostLabel);
 
 				final var host = getHost();
-				hostTextField = new JTextField(new LimitedLengthPlainDocument(64), host, TEXT_FIELD_COLUMNS);
+				hostTextField = GuiUtils.createTextFieldWithMenu(new LimitedLengthPlainDocument(64), host,
+						TEXT_FIELD_COLUMNS);
 				hostTextField.setCaretPosition(0);
 				hostPanel.add(hostTextField);
 
