@@ -32,28 +32,26 @@ If you are running Linux, you additionally have the option of using the [Control
 
 ### Linux x86-64 / aarch64
 
-1. First, make sure you have libsdl2 installed on your system:
-    - Debian / Ubuntu: `sudo apt-get install libsdl2-2.0`
-    - Red-Hat-based: `sudo yum install SDL2`
-    - Arch Linux: `sudo pacman -S sdl2`
-    - SUSE Linux: `sudo zypper install SDL2`
-2. Configure udev and uinput:
-    1. Create a controllerbuddy group: `sudo groupadd -f controllerbuddy`
-    2. Add yourself to the group: `sudo gpasswd -a "$USER" controllerbuddy`
-    3. As root, create a file `/etc/udev/rules.d/99-controllerbuddy.rules` with the following content:
-       ```
-       KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="05c4", MODE="0660", GROUP="controllerbuddy"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="09cc", MODE="0660", GROUP="controllerbuddy"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ba0", MODE="0660", GROUP="controllerbuddy"
-       KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0660", GROUP="controllerbuddy"
-       ```
-    4. As root, create a file `/etc/modules-load.d/uinput.conf` with the following content:  
-       `uinput`
-3. Reboot
-4. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
-5. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
-6. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
+1. Create a controllerbuddy group:
+    ```
+    sudo groupadd -f controllerbuddy
+    ```
+2. Add yourself to the group:
+    ```
+    sudo gpasswd -a "$USER" controllerbuddy
+    ```
+3. Allow the group to access uinput:
+    ```
+    echo KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy" | sudo tee /etc/udev/rules.d/99-controllerbuddy.rules
+    ```
+4. Load the uinput kernel module at boot:
+    ```
+    echo uinput" | sudo tee -a /etc/modules-load.d/uinput.conf
+    ```
+5. Reboot
+6. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
+7. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
+8. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
 
 ## Features
 
