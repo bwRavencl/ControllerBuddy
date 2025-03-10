@@ -953,6 +953,15 @@ public abstract class OutputRunMode extends RunMode {
 			});
 			EventQueue.invokeLater(confirmDialogTask);
 			try {
+				for (;;) {
+					process();
+					if (confirmDialogTask.isDone() || confirmDialogTask.isCancelled()) {
+						break;
+					}
+					// noinspection BusyWait
+					Thread.sleep(10L);
+				}
+
 				if (confirmDialogTask.get() == JOptionPane.YES_OPTION) {
 					restart = true;
 				} else {
