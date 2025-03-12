@@ -19,9 +19,7 @@ package de.bwravencl.controllerbuddy.runmode;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Platform;
 import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -549,11 +547,6 @@ public abstract class OutputRunMode extends RunMode {
 
 				EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat
 						.format(Main.strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice.intValue())));
-
-				if (main.isPreventPowerSaveMode()) {
-					Kernel32.INSTANCE.SetThreadExecutionState(
-							WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_DISPLAY_REQUIRED);
-				}
 			} catch (final UnsatisfiedLinkError e) {
 				log.log(Level.SEVERE, e.getMessage(), e);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
@@ -599,10 +592,6 @@ public abstract class OutputRunMode extends RunMode {
 
 				EventQueue.invokeLater(
 						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
-
-				if (main.isPreventPowerSaveMode() && !SDLVideo.SDL_DisableScreenSaver()) {
-					Main.logSdlError("Failed to disable screensaver");
-				}
 			} catch (final Throwable t) {
 				log.log(Level.WARNING, t.getMessage(), t);
 
@@ -661,6 +650,10 @@ public abstract class OutputRunMode extends RunMode {
 		axisS1 = new AxisValue();
 
 		setNumButtons(numButtons);
+
+		if (main.isPreventPowerSaveMode() && !SDLVideo.SDL_DisableScreenSaver()) {
+			Main.logSdlError("Failed to disable screensaver");
+		}
 
 		return true;
 	}
