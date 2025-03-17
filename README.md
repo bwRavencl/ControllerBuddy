@@ -228,8 +228,6 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [Error Prone](https://errorprone.info/)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
-- [Java Native Access (JNA)](https://github.com/java-native-access/jna)
-- [linuxio4j](https://github.com/bithatch/linuxio4j)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org/)

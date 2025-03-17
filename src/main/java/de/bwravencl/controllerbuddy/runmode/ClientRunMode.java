@@ -275,18 +275,18 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 							if (newCounter > counter) {
 								final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream.readObject();
-								axisX.setValue(inputAxes.get(VirtualAxis.X));
-								axisY.setValue(inputAxes.get(VirtualAxis.Y));
-								axisZ.setValue(inputAxes.get(VirtualAxis.Z));
-								axisRX.setValue(inputAxes.get(VirtualAxis.RX));
-								axisRY.setValue(inputAxes.get(VirtualAxis.RY));
-								axisRZ.setValue(inputAxes.get(VirtualAxis.RZ));
-								axisS0.setValue(inputAxes.get(VirtualAxis.S0));
-								axisS1.setValue(inputAxes.get(VirtualAxis.S1));
+								axisX.set(inputAxes.get(VirtualAxis.X));
+								axisY.set(inputAxes.get(VirtualAxis.Y));
+								axisZ.set(inputAxes.get(VirtualAxis.Z));
+								axisRX.set(inputAxes.get(VirtualAxis.RX));
+								axisRY.set(inputAxes.get(VirtualAxis.RY));
+								axisRZ.set(inputAxes.get(VirtualAxis.RZ));
+								axisS0.set(inputAxes.get(VirtualAxis.S0));
+								axisS1.set(inputAxes.get(VirtualAxis.S1));
 
 								final var inputButtons = (boolean[]) objectInputStream.readObject();
 								for (var i = 0; i < numButtons; i++) {
-									buttons[i].setValue(inputButtons[i] ? 1 : 0);
+									buttons[i].set(inputButtons[i] ? 1 : 0);
 								}
 
 								cursorDeltaX = objectInputStream.readInt();
