@@ -22,9 +22,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import com.sun.jna.Platform;
-import com.sun.jna.platform.unix.X11;
 import de.bwravencl.controllerbuddy.constants.Constants;
+import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
@@ -49,7 +48,6 @@ import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
-import de.bwravencl.controllerbuddy.runmode.VjoyInterface;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.awt.BorderLayout;
@@ -253,11 +251,15 @@ public final class Main {
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
-	public static final boolean isLinux = Platform.getOSType() == Platform.LINUX;
+	public static final String osArch = System.getProperty("os.arch");
 
-	public static final boolean isMac = Platform.getOSType() == Platform.MAC;
+	public static final String osName = System.getProperty("os.name");
 
-	public static final boolean isWindows = Platform.getOSType() == Platform.WINDOWS;
+	public static final boolean isLinux = osName.startsWith("Linux");
+
+	public static final boolean isMac = osName.startsWith("Mac") || osName.startsWith("Darwin");
+
+	public static final boolean isWindows = osName.startsWith("Windows");
 
 	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
 
@@ -1193,15 +1195,6 @@ public final class Main {
 		if (isLinux) {
 			final var toolkit = Toolkit.getDefaultToolkit();
 			if (isXToolkit(toolkit)) {
-				X11.INSTANCE.XSetErrorHandler((display, errorEvent) -> {
-					final var buffer = new byte[1024];
-					X11.INSTANCE.XGetErrorText(display, errorEvent.error_code, buffer, buffer.length);
-
-					log.log(Level.WARNING, "X error: " + new String(buffer, StandardCharsets.UTF_8).trim());
-
-					return 0;
-				});
-
 				try {
 					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
@@ -1526,7 +1519,7 @@ public final class Main {
 	public static void main(final String[] args) {
 		log.log(Level.INFO, "Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
 		log.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
-				+ System.getProperty("os.version") + " " + System.getProperty("os.arch"));
+				+ System.getProperty("os.version") + " " + osArch);
 
 		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -1710,14 +1703,16 @@ public final class Main {
 	}
 
 	private static void terminate(final int status, final Main main) {
-		if (main != null) {
-			if (main.mainLoop != null) {
-				if (main.trayMenu != 0L) {
+		if (main != null && main.mainLoop != null) {
+			if (main.trayMenu != 0L && main.mainLoop.isAvailable()) {
+				try {
 					main.mainLoop.runSync(() -> SDLTray.SDL_DestroyTray(main.tray));
+				} catch (final IllegalStateException _) {
+					// ignore main loop is no longer able to process tasks
 				}
-
-				main.mainLoop.shutdown();
 			}
+
+			main.mainLoop.shutdown();
 		}
 
 		log.log(Level.INFO, "Terminated (" + status + ")");
@@ -3851,8 +3846,12 @@ public final class Main {
 	public void updateTitleAndTooltip() {
 		updateTitle();
 
-		if (tray != 0L) {
-			mainLoop.runSync(() -> updateTrayIconToolTip(-1));
+		if (tray != 0L && mainLoop.isAvailable()) {
+			try {
+				mainLoop.runSync(() -> updateTrayIconToolTip(-1));
+			} catch (final IllegalStateException _) {
+				// ignore main loop is no longer able to process tasks
+			}
 		}
 	}
 
@@ -4181,10 +4180,20 @@ public final class Main {
 
 		private volatile boolean pollSdlEvents;
 
+		private volatile boolean shuttingDown;
+
 		private MainLoop() {
 		}
 
 		private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
+			if (!thread.isAlive()) {
+				throw new IllegalStateException("Main loop thread is not alive");
+			}
+
+			if (shuttingDown) {
+				throw new IllegalStateException("Main loop is shutting down");
+			}
+
 			synchronized (this) {
 				taskQueue.add(taskQueueEntry);
 				notifyAll();
@@ -4223,7 +4232,21 @@ public final class Main {
 						}
 					}
 				}
+			} catch (final Throwable t) {
+				synchronized (this) {
+					while (!taskQueue.isEmpty()) {
+						final var taskQueueEntry = taskQueue.poll();
+						if (taskQueueEntry.futureResult != null) {
+							taskQueueEntry.futureResult.completeExceptionally(
+									new Exception("Task aborted due to uncaught exception in previous task", t));
+						}
+					}
+				}
+
+				throw t;
 			} finally {
+				shuttingDown = true;
+
 				try {
 					SDLInit.SDL_Quit();
 				} catch (final Throwable t) {
@@ -4249,9 +4272,14 @@ public final class Main {
 				if (taskQueueEntry.futureResult != null) {
 					taskQueueEntry.futureResult.completeExceptionally(t);
 				} else {
+					shuttingDown = true;
 					throw new RuntimeException(t);
 				}
 			}
+		}
+
+		private boolean isAvailable() {
+			return thread.isAlive() && !shuttingDown;
 		}
 
 		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
@@ -4395,7 +4423,7 @@ public final class Main {
 
 			final var vjoyDirectory = vJoyDirectoryFileChooser.getSelectedFile();
 			final var dllFile = new File(vjoyDirectory,
-					OutputRunMode.getVJoyArchFolderName() + File.separator + OutputRunMode.VJOY_LIBRARY_FILENAME);
+					VjoyInterface.GetVJoyArchFolderName() + File.separator + VjoyInterface.VJOY_LIBRARY_FILENAME);
 			if (!dllFile.exists()) {
 				GuiUtils.showMessageDialog(main, frame,
 						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
@@ -4414,7 +4442,7 @@ public final class Main {
 			preferences.put(PREFERENCES_VJOY_DIRECTORY, newVjoyPath);
 			vJoyDirectoryLabel.setText(newVjoyPath);
 
-			if (VjoyInterface.isRegistered() && JOptionPane.showConfirmDialog(frame,
+			if (VjoyInterface.isInitialized() && JOptionPane.showConfirmDialog(frame,
 					MessageFormat.format(strings.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
 					strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
 					&& handleUnsavedChanges()) {

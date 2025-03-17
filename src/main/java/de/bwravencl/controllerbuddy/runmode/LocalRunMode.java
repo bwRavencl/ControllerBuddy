@@ -54,32 +54,32 @@ public final class LocalRunMode extends OutputRunMode {
 		final var inputAxes = input.getAxes();
 
 		final var inputAxisX = inputAxes.get(Input.VirtualAxis.X);
-		axisX.setValue(inputAxisX);
+		axisX.set(inputAxisX);
 
 		final var inputAxisY = inputAxes.get(Input.VirtualAxis.Y);
-		axisY.setValue(inputAxisY);
+		axisY.set(inputAxisY);
 
 		final var inputAxisZ = inputAxes.get(Input.VirtualAxis.Z);
-		axisZ.setValue(inputAxisZ);
+		axisZ.set(inputAxisZ);
 
 		final var inputAxisRX = inputAxes.get(Input.VirtualAxis.RX);
-		axisRX.setValue(inputAxisRX);
+		axisRX.set(inputAxisRX);
 
 		final var inputAxisRY = inputAxes.get(Input.VirtualAxis.RY);
-		axisRY.setValue(inputAxisRY);
+		axisRY.set(inputAxisRY);
 
 		final var inputAxisRZ = inputAxes.get(Input.VirtualAxis.RZ);
-		axisRZ.setValue(inputAxisRZ);
+		axisRZ.set(inputAxisRZ);
 
 		final var inputAxisS0 = inputAxes.get(Input.VirtualAxis.S0);
-		axisS0.setValue(inputAxisS0);
+		axisS0.set(inputAxisS0);
 
 		final var inputAxisS1 = inputAxes.get(Input.VirtualAxis.S1);
-		axisS1.setValue(inputAxisS1);
+		axisS1.set(inputAxisS1);
 
 		final var inputButtons = input.getButtons();
 		for (var i = 0; i < numButtons; i++) {
-			buttons[i].setValue(inputButtons[i] ? 1 : 0);
+			buttons[i].set(inputButtons[i] ? 1 : 0);
 		}
 
 		cursorDeltaX = input.getCursorDeltaX();

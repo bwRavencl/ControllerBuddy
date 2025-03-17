@@ -16,11 +16,8 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
+import de.bwravencl.controllerbuddy.ffi.Kernel32;
+import de.bwravencl.controllerbuddy.ffi.User32;
 import de.bwravencl.controllerbuddy.input.Mode;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -38,8 +35,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
+import java.lang.foreign.MemorySegment;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
@@ -57,8 +58,36 @@ import javax.swing.KeyStroke;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
-@SuppressWarnings({ "exports", "missing-explicit-ctor" })
+@SuppressWarnings({ "exports" })
 public final class GuiUtils {
+
+	private static final Field hwndField;
+
+	private static final Logger log = Logger.getLogger(GuiUtils.class.getName());
+
+	private static final Field peerField;
+
+	static {
+		if (Main.isWindows) {
+			try {
+				peerField = Component.class.getDeclaredField("peer");
+				peerField.setAccessible(true);
+
+				@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
+				final var wComponentPeerClass = Class.forName("sun.awt.windows.WComponentPeer");
+				hwndField = wComponentPeerClass.getDeclaredField("hwnd");
+				hwndField.setAccessible(true);
+			} catch (final ClassNotFoundException | NoSuchFieldException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			peerField = null;
+			hwndField = null;
+		}
+	}
+
+	private GuiUtils() {
+	}
 
 	static JComboBox<Mode> addModePanel(final Container container, final List<Mode> modes,
 			final AbstractAction actionListener) {
@@ -263,13 +292,23 @@ public final class GuiUtils {
 
 	static void makeWindowTopmost(final Window window) {
 		if (Main.isWindows) {
-			final var windowHwnd = new HWND(Native.getWindowPointer(window));
-			User32.INSTANCE.SetWindowPos(windowHwnd, new HWND(new Pointer(-1L)), 0, 0, 0, 0,
-					WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE);
-		} else {
-			window.setAlwaysOnTop(false);
-			window.setAlwaysOnTop(true);
+			try {
+				final var windowPeer = peerField.get(window);
+				final var windowHwnd = (long) hwndField.get(windowPeer);
+				final var hWnd = MemorySegment.ofAddress(windowHwnd);
+
+				if (User32.SetWindowPos(hWnd, User32.HWND_TOPMOST, 0, 0, 0, 0,
+						User32.SWP_NOMOVE | User32.SWP_NOSIZE) != 0) {
+					return;
+				}
+				log.log(Level.SEVERE, "SetWindowPos failed: " + Kernel32.GetLastError());
+			} catch (final IllegalAccessException e) {
+				log.log(Level.SEVERE, e.getMessage(), e);
+			}
 		}
+
+		window.setAlwaysOnTop(false);
+		window.setAlwaysOnTop(true);
 	}
 
 	static void setEnabledRecursive(final Component component, final boolean enabled) {
@@ -314,12 +353,11 @@ public final class GuiUtils {
 		JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
 	}
 
-	static JScrollPane wrapComponentInScrollPane(final java.awt.Component component) {
+	static JScrollPane wrapComponentInScrollPane(final Component component) {
 		return wrapComponentInScrollPane(component, null);
 	}
 
-	public static JScrollPane wrapComponentInScrollPane(final java.awt.Component component,
-			final Dimension preferredSize) {
+	public static JScrollPane wrapComponentInScrollPane(final Component component, final Dimension preferredSize) {
 		final var scrollPane = new JScrollPane(component);
 
 		if (preferredSize != null) {
