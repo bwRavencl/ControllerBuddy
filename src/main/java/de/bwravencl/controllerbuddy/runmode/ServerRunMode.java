@@ -153,8 +153,17 @@ public final class ServerRunMode extends RunMode implements Closeable {
 				case Listening -> {
 					counter = 0;
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-					serverSocket.setSoTimeout(0);
-					serverSocket.receive(receivePacket);
+					serverSocket.setSoTimeout(100);
+					for (;;) {
+						try {
+							serverSocket.receive(receivePacket);
+							break;
+						} catch (final SocketTimeoutException _) {
+							// expected when waiting for a client
+						}
+
+						process();
+					}
 					clientAddress = receivePacket.getAddress();
 
 					try (final var dataInputStream = new DataInputStream(
