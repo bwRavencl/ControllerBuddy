@@ -255,7 +255,10 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 				final var plaintextBuf = decrypt(receivePacket);
 				try (final var byteArrayInputStream = new ByteArrayInputStream(plaintextBuf);
 						final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
-					final var messageType = MessageType.values()[dataInputStream.readInt()];
+					final var messageType = MessageType.fromId(dataInputStream.readInt());
+					if (messageType == null) {
+						throw new IOException("Invalid message type");
+					}
 
 					switch (messageType) {
 					case Update -> {

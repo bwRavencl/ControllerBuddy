@@ -38,9 +38,12 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -334,10 +337,17 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 		ClientHello(0), ServerHello(1), Update(2), RequestAlive(3), ClientAlive(4);
 
+		private static final Map<Integer, MessageType> idToMessageTypeMap = Arrays.stream(values())
+				.collect(Collectors.toUnmodifiableMap(MessageType::getId, Function.identity()));
+
 		private final int id;
 
 		MessageType(final int id) {
 			this.id = id;
+		}
+
+		static MessageType fromId(final int id) {
+			return idToMessageTypeMap.get(id);
 		}
 
 		int getId() {
