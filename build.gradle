@@ -156,7 +156,7 @@ extraJavaModuleInfo {
 tasks.register('generateModuleInfo') {
 	description = "Generates the \'$moduleInfoFile\' source file"
 	doLast {
-		file(moduleInfoFile).write '''\
+		file(moduleInfoFile).write('''\
 			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
 			module de.bwravencl.controllerbuddy {
 			    exports de.bwravencl.controllerbuddy.gui;
@@ -185,7 +185,7 @@ tasks.register('generateModuleInfo') {
 			    requires org.lwjgl.sdl.natives;
 			    requires xml.apis.ext;
 			}
-			'''.stripIndent()
+			'''.stripIndent(), 'UTF-8')
 	}
 }
 
@@ -316,7 +316,7 @@ tasks.register('generateConstants') {
 					LICENSES_HTML = "${licensesHtmlStringBuilder.toString()}";
 				}
 			}
-			""".stripIndent())
+			""".stripIndent(), 'UTF-8')
 	}
 }
 
