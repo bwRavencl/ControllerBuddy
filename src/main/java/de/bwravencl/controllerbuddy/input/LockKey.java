@@ -29,24 +29,24 @@ public record LockKey(String name, int virtualKeyCode, Event event, String sysfs
 
 	public static final String CAPS_LOCK = "Caps" + LOCK_SUFFIX;
 
-	public static final LockKey CapsLockLockKey = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK, Event.KEY_CAPSLOCK,
+	public static final LockKey CAPS_LOCK_LOCK_KEY = new LockKey(CAPS_LOCK, KeyEvent.VK_CAPS_LOCK, Event.KEY_CAPSLOCK,
 			"capslock");
+
+	public static final Map<String, LockKey> NAME_TO_LOCK_KEY_MAP;
 
 	public static final String NUM_LOCK = "Num" + LOCK_SUFFIX;
 
-	public static final LockKey NumLockLockKey = new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK, Event.KEY_NUMLOCK,
+	public static final LockKey NUM_LOCK_LOCK_KEY = new LockKey(NUM_LOCK, KeyEvent.VK_NUM_LOCK, Event.KEY_NUMLOCK,
 			"numlock");
 
-	public static final Map<String, LockKey> nameToLockKeyMap;
-
-	public static final Map<Integer, LockKey> virtualKeyCodeToLockKeyMap;
+	public static final Map<Integer, LockKey> VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP;
 
 	private static final String SCROLL_LOCK = "Scroll" + LOCK_SUFFIX;
 
-	public static final LockKey ScrollLockLockKey = new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK,
+	public static final LockKey SCROLL_LOCK_LOCK_KEY = new LockKey(SCROLL_LOCK, KeyEvent.VK_SCROLL_LOCK,
 			Event.KEY_SCROLLLOCK, "scrolllock");
 
-	public static final List<LockKey> LOCK_KEYS = List.of(CapsLockLockKey, NumLockLockKey, ScrollLockLockKey);
+	public static final List<LockKey> LOCK_KEYS = List.of(CAPS_LOCK_LOCK_KEY, NUM_LOCK_LOCK_KEY, SCROLL_LOCK_LOCK_KEY);
 
 	static {
 		final var modifiableNameToLockKeyMap = new HashMap<String, LockKey>();
@@ -57,8 +57,8 @@ public record LockKey(String name, int virtualKeyCode, Event event, String sysfs
 			modifiableVirtualKeyCodeToLockKeyMap.put(lockKey.virtualKeyCode, lockKey);
 		}
 
-		nameToLockKeyMap = Collections.unmodifiableMap(modifiableNameToLockKeyMap);
-		virtualKeyCodeToLockKeyMap = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
+		NAME_TO_LOCK_KEY_MAP = Collections.unmodifiableMap(modifiableNameToLockKeyMap);
+		VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP = Collections.unmodifiableMap(modifiableVirtualKeyCodeToLockKeyMap);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
+		return MessageFormat.format(Main.STRINGS.getString("MOUSE_AXIS_DIR"), axis.toString());
 	}
 
 	void moveCursor(final Input input, float d) {
@@ -87,7 +87,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 		private final String label;
 
 		MouseAxis(final String labelKey) {
-			label = Main.strings.getString(labelKey);
+			label = Main.STRINGS.getString(labelKey);
 		}
 
 		@Override

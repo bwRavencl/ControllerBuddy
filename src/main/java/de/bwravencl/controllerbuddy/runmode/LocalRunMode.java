@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 public final class LocalRunMode extends OutputRunMode {
 
-	private static final Logger log = Logger.getLogger(LocalRunMode.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(LocalRunMode.class.getName());
 
 	private final HashSet<ScanCode> sourceKeyCodes = new HashSet<>();
 
@@ -38,7 +38,7 @@ public final class LocalRunMode extends OutputRunMode {
 
 	@Override
 	Logger getLogger() {
-		return log;
+		return LOGGER;
 	}
 
 	@Override

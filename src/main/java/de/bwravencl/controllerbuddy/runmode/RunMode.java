@@ -28,7 +28,7 @@ public abstract class RunMode implements Runnable {
 
 	public static final int DEFAULT_POLL_INTERVAL = 1;
 
-	private static final Logger log = Logger.getLogger(RunMode.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RunMode.class.getName());
 
 	final Input input;
 
@@ -61,14 +61,14 @@ public abstract class RunMode implements Runnable {
 
 		final var controller = input.getSelectedController();
 		if (controller != null) {
-			log.log(Level.WARNING,
+			LOGGER.log(Level.WARNING,
 					Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
 		}
 
 		if (!main.isSkipControllerDialogs()) {
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.STRINGS.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
+					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		}
 
 		stopping = true;

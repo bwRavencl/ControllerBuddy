@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 
 public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
-	private static final Logger log = Logger.getLogger(DetentValueEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
 	public DetentValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
@@ -71,7 +71,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 				try {
 					setterMethod.invoke(action, value);
 				} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-					log.log(Level.SEVERE, e1.getMessage(), e1);
+					LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 
 				spinner.setEnabled(selected);

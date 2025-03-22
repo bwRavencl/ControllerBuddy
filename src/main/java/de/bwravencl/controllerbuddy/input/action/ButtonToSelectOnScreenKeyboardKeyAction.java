@@ -36,7 +36,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
 
-	private static final float peakElapseTimeReduction = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
+	private static final float PEAK_ELAPSE_TIME_REDUCTION = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
 			/ (float) ACCELERATION_TIME;
 
 	@ActionProperty(label = "DIRECTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
@@ -65,7 +65,8 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 			}
 
 			final var accelerationFactor = Math.min(currentTime - initialPressTime, ACCELERATION_TIME);
-			final var minElapseTime = INITIAL_MIN_ELAPSE_TIME - (long) (accelerationFactor * peakElapseTimeReduction);
+			final var minElapseTime = INITIAL_MIN_ELAPSE_TIME
+					- (long) (accelerationFactor * PEAK_ELAPSE_TIME_REDUCTION);
 
 			if (currentTime - lastPressTime >= minElapseTime) {
 				input.getMain().getOnScreenKeyboard().moveSelector(direction);
@@ -78,7 +79,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToA
 
 	@Override
 	public String getDescription(final Input input) {
-		return MessageFormat.format(Main.strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+		return MessageFormat.format(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
 				direction.toString().toLowerCase(Locale.ROOT));
 	}
 

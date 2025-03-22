@@ -38,7 +38,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("VJOY_BUTTON_NO"), buttonId + 1);
+		return MessageFormat.format(Main.STRINGS.getString("VJOY_BUTTON_NO"), buttonId + 1);
 	}
 
 	final boolean isAlreadyPressed(final Input input) {

@@ -20,7 +20,6 @@ import de.bwravencl.controllerbuddy.ffi.Linux;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_event;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_id;
 import de.bwravencl.controllerbuddy.ffi.Linux.uinput_setup;
-import de.bwravencl.controllerbuddy.input.ScanCode;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.foreign.AddressLayout;
@@ -28,6 +27,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.Linker;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -39,6 +39,8 @@ public final class UinputDevice implements Closeable {
 
 	private static final short BUS_USB = 0x3;
 
+	private static final Path DEVICE_PATH = Paths.get("/dev", "uinput");
+
 	private static final short EV_ABS = 3;
 
 	private static final short EV_KEY = 1;
@@ -47,32 +49,28 @@ public final class UinputDevice implements Closeable {
 
 	private static final short EV_SYN = 0;
 
+	private static final Logger LOGGER = Logger.getLogger(UinputDevice.class.getName());
+
 	private static final short PRODUCT_CODE = 0x5678;
 
 	private static final short VENDOR_CODE = 0x1234;
-
-	private static final Path devicePath = Paths.get("/dev", "uinput");
-
-	private static final Logger log = Logger.getLogger(UinputDevice.class.getName());
 
 	private final int fd;
 
 	private final String name;
 
-	UinputDevice(final String name, final Event[] supportedEvents) throws IOException {
-		if (name.getBytes().length > Linux.UINPUT_MAX_NAME_SIZE) {
+	private UinputDevice(final DeviceType deviceType) throws IOException {
+		if (deviceType.name.getBytes(StandardCharsets.UTF_8).length > Linux.UINPUT_MAX_NAME_SIZE) {
 			throw new IllegalArgumentException("Parameter name has more than " + Linux.UINPUT_MAX_NAME_SIZE + " bytes");
 		}
 
-		this.name = name;
+		name = deviceType.name;
 
 		try (final var arena = Arena.ofConfined()) {
-			fd = Linux.open(arena.allocateFrom(devicePath.toString()), Linux.O_WRONLY | Linux.O_NONBLOCK);
+			fd = Linux.open(arena.allocateFrom(DEVICE_PATH.toString()), Linux.O_WRONLY | Linux.O_NONBLOCK);
 			if (fd == -1) {
-				throw new IOException("Could not open: " + devicePath);
+				throw new IOException("Could not open: " + DEVICE_PATH);
 			}
-
-			log.log(Level.INFO, name + " opened :" + devicePath);
 
 			final var driverVersion = arena.allocate(ValueLayout.JAVA_INT);
 			ioctlChecked(fd, Linux.UI_GET_VERSION, driverVersion);
@@ -81,7 +79,7 @@ public final class UinputDevice implements Closeable {
 				throw new UnsupportedOperationException("Unsupported uinput version: " + driverVersionValue);
 			}
 
-			for (final var eventCode : supportedEvents) {
+			for (final var eventCode : deviceType.supportedEvents) {
 				final var type = eventCode.type;
 
 				ioctlChecked(fd, Linux.UI_SET_EVBIT, MemorySegment.ofAddress(type));
@@ -110,14 +108,21 @@ public final class UinputDevice implements Closeable {
 		ioctlChecked(fd, Linux.UI_DEV_CREATE, MemorySegment.NULL);
 	}
 
+	static UinputDevice openUinputDevice(final DeviceType deviceType) throws IOException {
+		final var device = new UinputDevice(deviceType);
+		LOGGER.log(Level.INFO, "Opened uinput device: " + device);
+		return device;
+	}
+
 	@Override
 	public void close() throws IOException {
 		ioctlChecked(fd, Linux.UI_DEV_DESTROY, MemorySegment.NULL);
 
 		if (Linux.close(fd) == -1) {
-			throw new IOException("Could not close: " + devicePath);
+			throw new IOException("Could not close: " + DEVICE_PATH);
 		}
-		log.log(Level.INFO, name + " closed :" + devicePath);
+
+		LOGGER.log(Level.INFO, "Closed uinput device: " + this);
 	}
 
 	void emit(final Event event, final int value, final boolean syn) throws IOException {
@@ -150,6 +155,25 @@ public final class UinputDevice implements Closeable {
 
 	void syn() throws IOException {
 		emit(Event.SYN_REPORT, 0, false);
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+	enum DeviceType {
+
+		Joystick(Event.JOYSTICK_EVENTS), Keyboard(Event.KEYBOARD_EVENTS), Mouse(Event.MOUSE_EVENTS);
+
+		private final String name;
+
+		private final Event[] supportedEvents;
+
+		DeviceType(final Event[] supportedEvents) {
+			name = "Constants.APPLICATION_NAME " + name();
+			this.supportedEvents = supportedEvents;
+		}
 	}
 
 	public enum Event {
@@ -233,7 +257,7 @@ public final class UinputDevice implements Closeable {
 						Stream.of(ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ, ABS_THROTTLE, ABS_RUDDER))
 				.toArray(Event[]::new);
 
-		static final Event[] KEYBOARD_EVENTS = Arrays.stream(ScanCode.KEY_CODES).map(ScanCode::event)
+		static final Event[] KEYBOARD_EVENTS = Arrays.stream(values()).filter(event -> event.name().startsWith("KEY_"))
 				.toArray(Event[]::new);
 
 		static final Event[] MOUSE_EVENTS = { BTN_LEFT, BTN_RIGHT, BTN_MIDDLE, REL_X, REL_Y, REL_WHEEL };

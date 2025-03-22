@@ -31,7 +31,7 @@ import org.lwjgl.sdl.SDLGamepad;
 
 public final class Profile implements Cloneable {
 
-	public static final Mode defaultMode;
+	public static final Mode DEFAULT_MODE;
 
 	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
 
@@ -40,8 +40,8 @@ public final class Profile implements Cloneable {
 	private static final boolean DEFAULT_SHOW_OVERLAY = true;
 
 	static {
-		defaultMode = new Mode(DEFAULT_MODE_UUID);
-		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+		DEFAULT_MODE = new Mode(DEFAULT_MODE_UUID);
+		DEFAULT_MODE.setDescription(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	private transient int activeModeIndex = 0;
@@ -59,7 +59,7 @@ public final class Profile implements Cloneable {
 	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
 
 	Profile() {
-		modes.add(defaultMode);
+		modes.add(DEFAULT_MODE);
 	}
 
 	@Override

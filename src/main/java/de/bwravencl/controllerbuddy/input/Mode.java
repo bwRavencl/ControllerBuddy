@@ -43,7 +43,7 @@ public final class Mode implements Cloneable {
 
 	public Mode() {
 		uuid = UUID.randomUUID();
-		description = Main.strings.getString("NEW_MODE_DESCRIPTION");
+		description = Main.STRINGS.getString("NEW_MODE_DESCRIPTION");
 	}
 
 	public Mode(final UUID uuid) {

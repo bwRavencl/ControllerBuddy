@@ -57,11 +57,11 @@ import javax.swing.JOptionPane;
 
 public final class ClientRunMode extends OutputRunMode implements Closeable {
 
+	private static final Logger LOGGER = Logger.getLogger(ClientRunMode.class.getName());
+
 	private static final int NUM_CONNECTION_RETRIES = 10;
 
 	private static final int NUM_RECEIVE_PACKET_RETRIES = 10;
-
-	private static final Logger log = Logger.getLogger(ClientRunMode.class.getName());
 
 	private final Cipher cipher;
 
@@ -126,14 +126,14 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 	@Override
 	Logger getLogger() {
-		return log;
+		return LOGGER;
 	}
 
 	private void handleGeneralSecurityException(final GeneralSecurityException e) {
-		log.log(Level.WARNING, e.getMessage(), e);
+		LOGGER.log(Level.WARNING, e.getMessage(), e);
 
 		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-				Main.strings.getString("DECRYPTION_ERROR_DIALOG_TEXT"), Main.strings.getString("ERROR_DIALOG_TITLE"),
+				Main.STRINGS.getString("DECRYPTION_ERROR_DIALOG_TEXT"), Main.STRINGS.getString("ERROR_DIALOG_TITLE"),
 				JOptionPane.ERROR_MESSAGE));
 
 		forceStop = true;
@@ -149,9 +149,9 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 		switch (clientState) {
 		case Connecting -> {
-			log.log(Level.INFO, "Connecting to " + host + ":" + port);
+			LOGGER.log(Level.INFO, "Connecting to " + host + ":" + port);
 			EventQueue.invokeLater(() -> main.setStatusBarText(
-					MessageFormat.format(Main.strings.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
+					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 					final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
@@ -182,13 +182,13 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 							if (messageType == MessageType.ServerHello.getId()) {
 								final var serverProtocolVersion = dataInputStream.readByte();
 								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
-									log.log(Level.WARNING, "Protocol version mismatch: client "
+									LOGGER.log(Level.WARNING, "Protocol version mismatch: client "
 											+ ServerRunMode.PROTOCOL_VERSION + " vs server " + serverProtocolVersion);
 									EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 											MessageFormat.format(
-													Main.strings.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
+													Main.STRINGS.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
 													ServerRunMode.PROTOCOL_VERSION, serverProtocolVersion),
-											Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+											Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 									retry = -1;
 								} else {
 									pollInterval = dataInputStream.readLong();
@@ -198,34 +198,34 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 								retry--;
 								final var finalRetry = retry;
 								EventQueue.invokeLater(() -> main.setStatusBarText(
-										MessageFormat.format(Main.strings.getString("STATUS_INVALID_MESSAGE_RETRYING"),
+										MessageFormat.format(Main.STRINGS.getString("STATUS_INVALID_MESSAGE_RETRYING"),
 												NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 							}
 						}
 					} catch (final GeneralSecurityException e) {
 						handleGeneralSecurityException(e);
 					} catch (final SocketTimeoutException e) {
-						log.log(Level.INFO, e.getMessage(), e);
+						LOGGER.log(Level.INFO, e.getMessage(), e);
 						retry--;
 						final var finalRetry = retry;
 						EventQueue.invokeLater(() -> main.setStatusBarText(
-								MessageFormat.format(Main.strings.getString("STATUS_TIMEOUT_RETRYING"),
+								MessageFormat.format(Main.STRINGS.getString("STATUS_TIMEOUT_RETRYING"),
 										NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 					}
 				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
 				if (success) {
 					clientState = ClientState.Connected;
-					log.log(Level.INFO, "Successfully connected");
+					LOGGER.log(Level.INFO, "Successfully connected");
 					EventQueue.invokeLater(() -> main.setStatusBarText(
-							MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"), host, port)));
+							MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
 					if (retry != -1 && !Thread.currentThread().isInterrupted()) {
-						log.log(Level.INFO, "Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
+						LOGGER.log(Level.INFO, "Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
 						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-								MessageFormat.format(Main.strings.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
+								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
 										NUM_CONNECTION_RETRIES),
-								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 					}
 
 					forceStop = true;
@@ -316,11 +316,13 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 								onLockKeys.clear();
 								((Set<Integer>) objectInputStream.readObject()).stream()
-										.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(onLockKeys::add);
+										.map(LockKey.VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP::get)
+										.forEachOrdered(onLockKeys::add);
 
 								offLockKeys.clear();
 								((Set<Integer>) objectInputStream.readObject()).stream()
-										.map(LockKey.virtualKeyCodeToLockKeyMap::get).forEachOrdered(offLockKeys::add);
+										.map(LockKey.VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP::get)
+										.forEachOrdered(offLockKeys::add);
 
 								counter = newCounter;
 								retVal = true;
@@ -347,10 +349,10 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 			} catch (final GeneralSecurityException e) {
 				handleGeneralSecurityException(e);
 			} catch (final SocketTimeoutException e) {
-				log.log(Level.FINE, e.getMessage(), e);
+				LOGGER.log(Level.FINE, e.getMessage(), e);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-						Main.strings.getString("CONNECTION_LOST_DIALOG_TEXT"),
-						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.STRINGS.getString("CONNECTION_LOST_DIALOG_TEXT"),
+						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				forceStop = true;
 				Thread.currentThread().interrupt();
@@ -403,10 +405,10 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 		} catch (final UnknownHostException e) {
 			forceStop = true;
 
-			log.log(Level.INFO, "Could not resolve host: " + host);
+			LOGGER.log(Level.INFO, "Could not resolve host: " + host);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					MessageFormat.format(Main.strings.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					MessageFormat.format(Main.STRINGS.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
+					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
 			if (forceStop) {
 				return;
@@ -414,10 +416,10 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 			forceStop = true;
 
-			log.log(Level.INFO, e.getMessage(), e);
+			LOGGER.log(Level.INFO, e.getMessage(), e);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					MessageFormat.format(Main.strings.getString("SOCKET_ERROR_DIALOG_TEXT"), host),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					MessageFormat.format(Main.STRINGS.getString("SOCKET_ERROR_DIALOG_TEXT"), host),
+					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final IOException e) {
 			handleIOException(e);
 		} finally {
