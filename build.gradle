@@ -54,7 +54,8 @@ ext {
 		"--add-opens=java.desktop/sun.awt.X11=${project.application.mainModule.get()}"
 	]
 
-	gamecontrollerdbFile = "$resourcesDir/gamecontrollerdb.txt"
+	gamecontrollerdbGitFile = "$projectDir/SDL_GameControllerDB/gamecontrollerdb.txt"
+	gamecontrollerdbResFile = "$resourcesDir/gamecontrollerdb.txt"
 
 	arch = DefaultNativePlatform.currentArchitecture
 	distAppendix = "${os.toFamilyName()}-$arch.name"
@@ -84,7 +85,7 @@ tasks.register('cleanConstants') {
 
 tasks.register('cleanGameControllerDB') {
 	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
-	doLast { delete gamecontrollerdbFile }
+	doLast { delete gamecontrollerdbResFile }
 }
 
 clean.dependsOn cleanModuleInfo, cleanConstants, cleanGameControllerDB
@@ -256,7 +257,7 @@ spotless {
 	}
 	format 'onlyNewline', {
 		target 'LICENSE', '*.gitignore', '*.md', '*.txt', "$resourcesDir/**/*.txt".toString()
-		targetExclude gamecontrollerdbFile
+		targetExclude gamecontrollerdbResFile
 		endWithNewline()
 	}
 }
@@ -321,9 +322,19 @@ tasks.register('generateConstants') {
 	}
 }
 
+tasks.register('checkGameControllerDBSubmodule') {
+	description = "Checks that the SDL_GameControllerDB submodule is checked out"
+	doLast {
+		if (!file(gamecontrollerdbGitFile).exists()) {
+			throw new GradleException("SDL_GameControllerDB submodule not checked out")
+		}
+	}
+}
+
 tasks.register('copyGameControllerDB', Copy) {
-	description = "Places a copy of the \'gamecontrollerdb.txt\' file from the SDL_GameControllerDB Git Submodule folder into the \'$resourcesDir' directory."
-	from 'SDL_GameControllerDB/gamecontrollerdb.txt'
+	description = "Places a copy of \'${gamecontrollerdbGitFile}\' into the \'$resourcesDir' directory."
+	dependsOn checkGameControllerDBSubmodule
+	from gamecontrollerdbGitFile
 	into resourcesDir
 }
 
