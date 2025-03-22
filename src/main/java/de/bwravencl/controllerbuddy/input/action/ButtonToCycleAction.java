@@ -125,7 +125,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("CYCLE"),
+		return MessageFormat.format(Main.STRINGS.getString("CYCLE"),
 				actions.stream().map(action -> action.getDescription(input)).collect(Collectors.joining(" → ")));
 	}
 

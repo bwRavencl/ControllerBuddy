@@ -70,11 +70,11 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 	static final int TAG_LENGTH = 128;
 
+	private static final Logger LOGGER = Logger.getLogger(ServerRunMode.class.getName());
+
 	private static final int NUM_REQUEST_ALIVE_RETRIES = 10;
 
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
-
-	private static final Logger log = Logger.getLogger(ServerRunMode.class.getName());
 
 	private final Cipher cipher;
 
@@ -127,7 +127,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 	@Override
 	Logger getLogger() {
-		return log;
+		return LOGGER;
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 			final var receiveBuf = new byte[1024];
 
 			EventQueue.invokeLater(() -> main
-					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
+					.setStatusBarText(MessageFormat.format(Main.STRINGS.getString("STATUS_LISTENING"), port)));
 
 			for (;;) {
 				process();
@@ -193,7 +193,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 								return;
 							}
 							EventQueue.invokeLater(() -> main.setStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
+									MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"),
 											clientAddress.getCanonicalHostName(), clientPort)));
 						}
 					}
@@ -280,9 +280,9 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							input.reset();
 							input.deInit();
 
-							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
+							main.setStatusBarText(Main.STRINGS.getString("STATUS_TIMEOUT"));
 							main.scheduleStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
+									MessageFormat.format(Main.STRINGS.getString("STATUS_LISTENING"), port));
 
 							serverState = ServerState.Listening;
 						}
@@ -291,17 +291,17 @@ public final class ServerRunMode extends RunMode implements Closeable {
 				}
 			}
 		} catch (final BindException e) {
-			log.log(Level.WARNING, "Could not bind socket on port " + port);
+			LOGGER.log(Level.WARNING, "Could not bind socket on port " + port);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
-			log.log(Level.FINE, e.getMessage(), e);
+			LOGGER.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
-			log.log(Level.SEVERE, e.getMessage(), e);
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.STRINGS.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final InterruptedException _) {
 			// expected whenever the run mode gets stopped
 		} finally {
@@ -312,7 +312,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 			}
 
 			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
+				main.setStatusBarText(Main.STRINGS.getString("STATUS_SOCKET_CLOSED"));
 				main.stopAll(false, false, true);
 			});
 		}
@@ -346,7 +346,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 		ClientHello(0), ServerHello(1), Update(2), RequestAlive(3), ClientAlive(4);
 
-		private static final Map<Integer, MessageType> idToMessageTypeMap = Arrays.stream(values())
+		private static final Map<Integer, MessageType> ID_TO_MESSAGE_TYPE_MAP = Arrays.stream(values())
 				.collect(Collectors.toUnmodifiableMap(MessageType::getId, Function.identity()));
 
 		private final int id;
@@ -356,7 +356,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 		}
 
 		static MessageType fromId(final int id) {
-			return idToMessageTypeMap.get(id);
+			return ID_TO_MESSAGE_TYPE_MAP.get(id);
 		}
 
 		int getId() {

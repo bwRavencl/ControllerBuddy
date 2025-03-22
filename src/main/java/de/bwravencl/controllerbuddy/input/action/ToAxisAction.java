@@ -35,7 +35,7 @@ abstract class ToAxisAction<V extends Constable> extends InvertableAction<V> {
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("VJOY_AXIS_NAME"), virtualAxis);
+		return MessageFormat.format(Main.STRINGS.getString("VJOY_AXIS_NAME"), virtualAxis);
 	}
 
 	public VirtualAxis getVirtualAxis() {

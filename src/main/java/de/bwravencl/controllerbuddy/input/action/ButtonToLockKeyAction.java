@@ -36,7 +36,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 	private boolean on = true;
 
 	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
-	private LockKey virtualKeyCode = LockKey.CapsLockLockKey;
+	private LockKey virtualKeyCode = LockKey.CAPS_LOCK_LOCK_KEY;
 
 	private transient boolean wasUp = true;
 
@@ -64,7 +64,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
+		return MessageFormat.format(Main.STRINGS.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
 	}
 
 	public LockKey getLockKey() {

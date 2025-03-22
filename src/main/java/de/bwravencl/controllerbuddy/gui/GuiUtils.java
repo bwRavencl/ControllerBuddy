@@ -61,28 +61,28 @@ import javax.swing.undo.UndoManager;
 @SuppressWarnings({ "exports" })
 public final class GuiUtils {
 
-	private static final Field hwndField;
+	private static final Field HWND_FIELD;
 
-	private static final Logger log = Logger.getLogger(GuiUtils.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(GuiUtils.class.getName());
 
-	private static final Field peerField;
+	private static final Field PEER_FIELD;
 
 	static {
-		if (Main.isWindows) {
+		if (Main.IS_WINDOWS) {
 			try {
-				peerField = Component.class.getDeclaredField("peer");
-				peerField.setAccessible(true);
+				PEER_FIELD = Component.class.getDeclaredField("peer");
+				PEER_FIELD.setAccessible(true);
 
 				@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 				final var wComponentPeerClass = Class.forName("sun.awt.windows.WComponentPeer");
-				hwndField = wComponentPeerClass.getDeclaredField("hwnd");
-				hwndField.setAccessible(true);
+				HWND_FIELD = wComponentPeerClass.getDeclaredField("hwnd");
+				HWND_FIELD.setAccessible(true);
 			} catch (final ClassNotFoundException | NoSuchFieldException e) {
 				throw new RuntimeException(e);
 			}
 		} else {
-			peerField = null;
-			hwndField = null;
+			PEER_FIELD = null;
+			HWND_FIELD = null;
 		}
 	}
 
@@ -94,7 +94,7 @@ public final class GuiUtils {
 		final var modePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, Main.DEFAULT_HGAP, Main.DEFAULT_VGAP));
 		container.add(modePanel, BorderLayout.NORTH);
 
-		modePanel.add(new JLabel(Main.strings.getString("MODE_LABEL")));
+		modePanel.add(new JLabel(Main.STRINGS.getString("MODE_LABEL")));
 
 		final var modeComboBox = new JComboBox<>(modes.toArray(Mode[]::new));
 		modeComboBox.addActionListener(actionListener);
@@ -113,7 +113,7 @@ public final class GuiUtils {
 		final var undoManager = new UndoManager();
 		textField.getDocument().addUndoableEditListener(undoManager);
 
-		final var undoAction = new AbstractAction(Main.strings.getString("UNDO_ACTION_NAME")) {
+		final var undoAction = new AbstractAction(Main.STRINGS.getString("UNDO_ACTION_NAME")) {
 
 			@Serial
 			private static final long serialVersionUID = 283480113359047860L;
@@ -130,7 +130,7 @@ public final class GuiUtils {
 			}
 		};
 
-		final var cutAction = new AbstractAction(Main.strings.getString("CUT_ACTION_NAME")) {
+		final var cutAction = new AbstractAction(Main.STRINGS.getString("CUT_ACTION_NAME")) {
 
 			@Serial
 			private static final long serialVersionUID = 166873451012920651L;
@@ -141,7 +141,7 @@ public final class GuiUtils {
 			}
 		};
 
-		final var copyAction = new AbstractAction(Main.strings.getString("COPY_ACTION_NAME")) {
+		final var copyAction = new AbstractAction(Main.STRINGS.getString("COPY_ACTION_NAME")) {
 
 			@Serial
 			private static final long serialVersionUID = 4845008543826860777L;
@@ -152,7 +152,7 @@ public final class GuiUtils {
 			}
 		};
 
-		final var pasteAction = new AbstractAction(Main.strings.getString("PASTE_ACTION_NAME")) {
+		final var pasteAction = new AbstractAction(Main.STRINGS.getString("PASTE_ACTION_NAME")) {
 
 			@Serial
 			private static final long serialVersionUID = -669017641654371170L;
@@ -163,7 +163,7 @@ public final class GuiUtils {
 			}
 		};
 
-		final var selectAllAction = new AbstractAction(Main.strings.getString("SELECT_ALL_ACTION_NAME")) {
+		final var selectAllAction = new AbstractAction(Main.STRINGS.getString("SELECT_ALL_ACTION_NAME")) {
 
 			@Serial
 			private static final long serialVersionUID = -6215392890571518146L;
@@ -291,19 +291,19 @@ public final class GuiUtils {
 	}
 
 	static void makeWindowTopmost(final Window window) {
-		if (Main.isWindows) {
+		if (Main.IS_WINDOWS) {
 			try {
-				final var windowPeer = peerField.get(window);
-				final var windowHwnd = (long) hwndField.get(windowPeer);
+				final var windowPeer = PEER_FIELD.get(window);
+				final var windowHwnd = (long) HWND_FIELD.get(windowPeer);
 				final var hWnd = MemorySegment.ofAddress(windowHwnd);
 
 				if (User32.SetWindowPos(hWnd, User32.HWND_TOPMOST, 0, 0, 0, 0,
 						User32.SWP_NOMOVE | User32.SWP_NOSIZE) != 0) {
 					return;
 				}
-				log.log(Level.SEVERE, "SetWindowPos failed: " + Kernel32.GetLastError());
+				LOGGER.log(Level.SEVERE, "SetWindowPos failed: " + Kernel32.GetLastError());
 			} catch (final IllegalAccessException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 

@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
-	private static final Logger log = Logger.getLogger(ArrayEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ArrayEditorBuilder.class.getName());
 
 	JComboBox<T> comboBox;
 
@@ -71,7 +71,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

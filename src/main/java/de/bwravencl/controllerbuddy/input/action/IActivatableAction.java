@@ -47,7 +47,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 		private final String label;
 
 		Activation(final String labelKey) {
-			label = Main.strings.getString(labelKey);
+			label = Main.STRINGS.getString(labelKey);
 		}
 
 		@Override

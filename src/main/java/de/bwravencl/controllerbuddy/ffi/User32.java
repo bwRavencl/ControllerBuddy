@@ -37,21 +37,21 @@ public final class User32 {
 
 	public static final int SWP_NOSIZE = 1;
 
-	private static final Linker linker = Linker.nativeLinker();
+	private static final Linker LINKER = Linker.nativeLinker();
 
-	private static final SymbolLookup symbolLookup = SymbolLookup.libraryLookup(System.mapLibraryName("User32"),
+	private static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.libraryLookup(System.mapLibraryName("User32"),
 			Arena.global());
 
-	private static final MethodHandle GetKeyStateMethodHandle = linker.downcallHandle(
-			symbolLookup.findOrThrow("GetKeyState"),
+	private static final MethodHandle GET_KEY_STATE_METHOD_HANDLE = LINKER.downcallHandle(
+			SYMBOL_LOOKUP.findOrThrow("GetKeyState"),
 			FunctionDescriptor.of(ValueLayout.JAVA_SHORT, ValueLayout.JAVA_INT), Option.critical(false));
 
-	private static final MethodHandle SendInputMethodHandle = linker
-			.downcallHandle(symbolLookup.findOrThrow("SendInput"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
+	private static final MethodHandle SEND_INPUT_METHOD_HANDLE = LINKER
+			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("SendInput"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
 					ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT), Option.critical(false));
 
-	private static final MethodHandle SetWindowPosMethodHandle = linker
-			.downcallHandle(symbolLookup.findOrThrow("SetWindowPos"),
+	private static final MethodHandle SET_WINDOW_POS_METHOD_HANDLE = LINKER
+			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("SetWindowPos"),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS,
 							ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
 							ValueLayout.JAVA_INT));
@@ -61,7 +61,7 @@ public final class User32 {
 
 	public static short GetKeyState(final int nVirtKey) {
 		try {
-			return (short) GetKeyStateMethodHandle.invoke(nVirtKey);
+			return (short) GET_KEY_STATE_METHOD_HANDLE.invoke(nVirtKey);
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
@@ -70,7 +70,7 @@ public final class User32 {
 	public static int SendInput(@SuppressWarnings("SameParameterValue") final int cInputs, final MemorySegment pInputs,
 			final int cbSize) {
 		try {
-			return (int) SendInputMethodHandle.invoke(cInputs, pInputs, cbSize);
+			return (int) SEND_INPUT_METHOD_HANDLE.invoke(cInputs, pInputs, cbSize);
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
@@ -79,7 +79,7 @@ public final class User32 {
 	public static int SetWindowPos(final MemorySegment hWnd, final MemorySegment hWndInsertAfter, final int X,
 			final int Y, final int cx, final int cy, final int uFlags) {
 		try {
-			return (int) SetWindowPosMethodHandle.invoke(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
+			return (int) SET_WINDOW_POS_METHOD_HANDLE.invoke(hWnd, hWndInsertAfter, X, Y, cx, cy, uFlags);
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
@@ -100,7 +100,8 @@ public final class User32 {
 										INPUT.KEYBDINPUT.LAYOUT.withName("ki"), INPUT.HARDWAREINPUT.LAYOUT)
 								.withName("hi"));
 
-		private static final VarHandle TYPE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(TYPE_NAME));
+		private static final VarHandle TYPE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(TYPE_NAME));
 
 		public static MemorySegment getKi(final MemorySegment seg) {
 			return seg.asSlice(8, 24);
@@ -111,7 +112,7 @@ public final class User32 {
 		}
 
 		public static void setType(final MemorySegment seg, final int type) {
-			TYPE.set(seg, 0L, type);
+			TYPE_VAR_HANDLE.set(seg, 0L, type);
 		}
 
 		static final class HARDWAREINPUT {
@@ -137,18 +138,18 @@ public final class User32 {
 					ValueLayout.JAVA_INT.withName("time"), MemoryLayout.paddingLayout(4),
 					ValueLayout.JAVA_LONG.withName("dwExtraInfo"));
 
-			private static final VarHandle DW_FLAGS = LAYOUT
+			private static final VarHandle DW_FLAGS_VAR_HANDLE = LAYOUT
 					.varHandle(MemoryLayout.PathElement.groupElement(DW_FLAGS_NAME));
 
-			private static final VarHandle W_SCAN = LAYOUT
+			private static final VarHandle W_SCAN_VAR_HANDLE = LAYOUT
 					.varHandle(MemoryLayout.PathElement.groupElement(W_SCAN_NAME));
 
 			public static void setDwFlags(final MemorySegment seg, final int flags) {
-				DW_FLAGS.set(seg, 0L, flags);
+				DW_FLAGS_VAR_HANDLE.set(seg, 0L, flags);
 			}
 
 			public static void setWScan(final MemorySegment seg, final short wScan) {
-				W_SCAN.set(seg, 0L, wScan);
+				W_SCAN_VAR_HANDLE.set(seg, 0L, wScan);
 			}
 		}
 
@@ -183,30 +184,32 @@ public final class User32 {
 					ValueLayout.JAVA_INT.withName(DW_FLAGS_NAME), ValueLayout.JAVA_INT.withName("time"),
 					MemoryLayout.paddingLayout(4), ValueLayout.JAVA_LONG.withName("dwExtraInfo"));
 
-			private static final VarHandle DW_FLAGS = LAYOUT
+			private static final VarHandle DW_FLAGS_VAR_HANDLE = LAYOUT
 					.varHandle(MemoryLayout.PathElement.groupElement(DW_FLAGS_NAME));
 
-			private static final VarHandle DX = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(DX_NAME));
+			private static final VarHandle DX_VAR_HANDLE = LAYOUT
+					.varHandle(MemoryLayout.PathElement.groupElement(DX_NAME));
 
-			private static final VarHandle DY = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(DY_NAME));
+			private static final VarHandle DY_VAR_HANDLE = LAYOUT
+					.varHandle(MemoryLayout.PathElement.groupElement(DY_NAME));
 
-			private static final VarHandle MOUSE_DATA = LAYOUT
+			private static final VarHandle MOUSE_DATA_VAR_HANDLE = LAYOUT
 					.varHandle(MemoryLayout.PathElement.groupElement(MOUSE_DATA_NAME));
 
 			public static void setDwFlags(final MemorySegment seg, final int dwFlags) {
-				DW_FLAGS.set(seg, 0L, dwFlags);
+				DW_FLAGS_VAR_HANDLE.set(seg, 0L, dwFlags);
 			}
 
 			public static void setDx(final MemorySegment seg, final int dx) {
-				DX.set(seg, 0L, dx);
+				DX_VAR_HANDLE.set(seg, 0L, dx);
 			}
 
 			public static void setDy(final MemorySegment seg, final int dy) {
-				DY.set(seg, 0L, dy);
+				DY_VAR_HANDLE.set(seg, 0L, dy);
 			}
 
 			public static void setMouseData(final MemorySegment seg, final int mouseData) {
-				MOUSE_DATA.set(seg, 0L, mouseData);
+				MOUSE_DATA_VAR_HANDLE.set(seg, 0L, mouseData);
 			}
 		}
 	}

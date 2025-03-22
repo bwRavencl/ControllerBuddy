@@ -57,7 +57,7 @@ import javax.swing.border.Border;
 @SuppressWarnings("exports")
 public final class OnScreenKeyboard extends JFrame {
 
-	public static final Mode onScreenKeyboardMode;
+	public static final Mode ON_SCREEN_KEYBOARD_MODE;
 
 	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
 
@@ -67,20 +67,20 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private static final int ROW_BORDER_WIDTH = 15;
 
-	private static final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
-
 	@Serial
 	private static final long serialVersionUID = -5061347351151925461L;
 
 	static {
-		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+		ON_SCREEN_KEYBOARD_MODE = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
+		ON_SCREEN_KEYBOARD_MODE.setDescription(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	private final CapsLockKeyButton capsLockKeyButton;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final FrameDragListener frameDragListener;
+
+	private final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
 
 	private final AbstractKeyboardButton[][] keyboardButtons;
 
@@ -113,7 +113,7 @@ public final class OnScreenKeyboard extends JFrame {
 						new DefaultKeyboardButton(ScanCode.DIK_F8), new DefaultKeyboardButton(ScanCode.DIK_F9),
 						new DefaultKeyboardButton(ScanCode.DIK_F10), new DefaultKeyboardButton(ScanCode.DIK_F11),
 						new DefaultKeyboardButton(ScanCode.DIK_F12), new DefaultKeyboardButton(ScanCode.DIK_SYSRQ),
-						new LockKeyButton(LockKey.ScrollLockLockKey), new DefaultKeyboardButton(ScanCode.DIK_PAUSE),
+						new LockKeyButton(LockKey.SCROLL_LOCK_LOCK_KEY), new DefaultKeyboardButton(ScanCode.DIK_PAUSE),
 						new DefaultKeyboardButton(ScanCode.DIK_INSERT), new DefaultKeyboardButton(ScanCode.DIK_DELETE),
 						new DefaultKeyboardButton(ScanCode.DIK_HOME), new DefaultKeyboardButton(ScanCode.DIK_END) },
 				{ new ShiftableKeyboardButton(ScanCode.DIK_GRAVE, "~"),
@@ -472,7 +472,7 @@ public final class OnScreenKeyboard extends JFrame {
 		private final String label;
 
 		Direction(final String labelKey) {
-			label = Main.strings.getString(labelKey);
+			label = Main.STRINGS.getString(labelKey);
 		}
 
 		@Override
@@ -580,7 +580,7 @@ public final class OnScreenKeyboard extends JFrame {
 		private static final long serialVersionUID = 6891401614243607392L;
 
 		private CapsLockKeyButton() {
-			super(LockKey.CapsLockLockKey);
+			super(LockKey.CAPS_LOCK_LOCK_KEY);
 		}
 
 		@Override
@@ -624,7 +624,7 @@ public final class OnScreenKeyboard extends JFrame {
 			final ScanCode[] keyScanCodes;
 			final ScanCode[] modifierScanCodes;
 
-			final var scanCode = ScanCode.nameToScanCodeMap.get(directInputKeyCodeName);
+			final var scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(directInputKeyCodeName);
 
 			if (ScanCode.DIK_LMENU.equals(directInputKeyCodeName) || ScanCode.DIK_RMENU.equals(directInputKeyCodeName)
 					|| ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
@@ -874,7 +874,7 @@ public final class OnScreenKeyboard extends JFrame {
 		private static final long serialVersionUID = 296846375213986255L;
 
 		public NumLockKeyButton() {
-			super(LockKey.NumLockLockKey);
+			super(LockKey.NUM_LOCK_LOCK_KEY);
 		}
 
 		@Override
