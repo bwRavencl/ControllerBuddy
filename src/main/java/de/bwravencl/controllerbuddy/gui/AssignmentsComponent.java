@@ -104,7 +104,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		assignmentsPanel.add(new Stick(main, Stick.StickType.Left), constraints);
+		assignmentsPanel.add(new Stick(main, Stick.StickType.LEFT), constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
@@ -142,7 +142,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 3;
 		constraints.gridy = 3;
-		assignmentsPanel.add(new Stick(main, Stick.StickType.Right), constraints);
+		assignmentsPanel.add(new Stick(main, Stick.StickType.RIGHT), constraints);
 
 		setViewportView(assignmentsPanel);
 	}
@@ -292,7 +292,7 @@ final class AssignmentsComponent extends JScrollPane {
 		private String text;
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
-			this(main, parentPanel, component, CompoundButtonLocation.Center, null);
+			this(main, parentPanel, component, CompoundButtonLocation.CENTER, null);
 		}
 
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
@@ -388,7 +388,7 @@ final class AssignmentsComponent extends JScrollPane {
 						g2d.fill(shape);
 					}
 
-					if (buttonLocation == CompoundButtonLocation.Center) {
+					if (buttonLocation == CompoundButtonLocation.CENTER) {
 						beginForeground(g2d);
 
 						final var textRect = getTextRectangle(text, g2d, x, y, 0);
@@ -436,7 +436,7 @@ final class AssignmentsComponent extends JScrollPane {
 				final var ww = getWidth() * 0.5f;
 				final var xx = ww * 0.5f;
 				final var innerShape = new Ellipse2D.Float(xx, xx, ww, ww);
-				if (CompoundButtonLocation.Center == buttonLocation) {
+				if (CompoundButtonLocation.CENTER == buttonLocation) {
 					shape = innerShape;
 				} else {
 					final var outerShape = new Arc2D.Float(1, 1, getWidth() - 2, getHeight() - 2,
@@ -491,7 +491,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 		private enum CompoundButtonLocation {
 
-			East(-45f), Center(0f), North(45f), West(135f), South(225f);
+			EAST(-45f), CENTER(0f), NORTH(45f), WEST(135f), SOUTH(225f);
 
 			final float startDegree;
 
@@ -713,7 +713,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 			setLayout(new OverlayLayout(this));
 
-			final var left = type == StickType.Left;
+			final var left = type == StickType.LEFT;
 
 			add(new CompoundButton(main, this, new Component(main, ComponentType.BUTTON,
 					left ? SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK : SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK)));
@@ -724,18 +724,18 @@ final class AssignmentsComponent extends JScrollPane {
 					left ? SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY : SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY);
 
 			final var northernButton = new CompoundButton(main, this, yComponent,
-					CompoundButton.CompoundButtonLocation.North, null);
+					CompoundButton.CompoundButtonLocation.NORTH, null);
 			add(northernButton);
 			final var westernButton = new CompoundButton(main, this, xComponent,
-					CompoundButton.CompoundButtonLocation.West, null);
+					CompoundButton.CompoundButtonLocation.WEST, null);
 			add(westernButton);
-			add(new CompoundButton(main, this, xComponent, CompoundButton.CompoundButtonLocation.East, westernButton));
-			add(new CompoundButton(main, this, yComponent, CompoundButton.CompoundButtonLocation.South,
+			add(new CompoundButton(main, this, xComponent, CompoundButton.CompoundButtonLocation.EAST, westernButton));
+			add(new CompoundButton(main, this, yComponent, CompoundButton.CompoundButtonLocation.SOUTH,
 					northernButton));
 		}
 
 		private enum StickType {
-			Left, Right
+			LEFT, RIGHT
 		}
 	}
 }

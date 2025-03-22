@@ -94,7 +94,7 @@ public final class Input {
 
 	private boolean hapticFeedback;
 
-	private int hotSwappingButtonId = HotSwappingButton.None.id;
+	private int hotSwappingButtonId = HotSwappingButton.NONE.id;
 
 	private boolean initialized;
 
@@ -369,7 +369,7 @@ public final class Input {
 		lastPollTime = currentTime;
 		rateMultiplier = (float) elapsedTime / 1000L;
 
-		if (hotSwappingButtonId != HotSwappingButton.None.id
+		if (hotSwappingButtonId != HotSwappingButton.NONE.id
 				&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
 
 			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
@@ -398,7 +398,7 @@ public final class Input {
 							LOGGER.log(Level.INFO, Main.assembleControllerLoggingMessage(
 									"Initiating hot swap to controller ", controller));
 
-							hotSwappingButtonId = HotSwappingButton.None.id;
+							hotSwappingButtonId = HotSwappingButton.NONE.id;
 							EventQueue.invokeLater(() -> {
 								main.setSelectedControllerAndUpdateInput(controller, axes);
 								main.updateDeviceMenuSelection();
@@ -570,7 +570,7 @@ public final class Input {
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
 		hotSwappingButtonDownInstanceIds.clear();
-		hotSwappingButtonId = HotSwappingButton.None.id;
+		hotSwappingButtonId = HotSwappingButton.NONE.id;
 
 		resetLastHotSwapPollTime();
 
@@ -615,10 +615,10 @@ public final class Input {
 
 		if (hapticFeedback && prevValue != null && prevValue != value) {
 			if (value == minAxisValue || value == maxAxisValue) {
-				scheduledRumbleEffect = RumbleEffect.Strong;
+				scheduledRumbleEffect = RumbleEffect.STRONG;
 			} else if (detentValue != null && ((prevValue > detentValue && value <= detentValue)
 					|| (prevValue < detentValue && value >= detentValue))) {
-				scheduledRumbleEffect = RumbleEffect.Light;
+				scheduledRumbleEffect = RumbleEffect.LIGHT;
 			}
 		}
 	}
@@ -735,16 +735,16 @@ public final class Input {
 	private void updateHotSwappingButtonId() {
 		final var hotSwappingPossible = sdlGamepadToGamepadStateMap.size() > 1;
 
-		if (hotSwappingPossible && hotSwappingButtonId == HotSwappingButton.None.id) {
+		if (hotSwappingPossible && hotSwappingButtonId == HotSwappingButton.NONE.id) {
 			hotSwappingButtonId = main.getSelectedHotSwappingButtonId();
-		} else if (!hotSwappingPossible && hotSwappingButtonId != HotSwappingButton.None.id) {
-			hotSwappingButtonId = HotSwappingButton.None.id;
+		} else if (!hotSwappingPossible && hotSwappingButtonId != HotSwappingButton.NONE.id) {
+			hotSwappingButtonId = HotSwappingButton.NONE.id;
 		}
 	}
 
 	private enum RumbleEffect {
 
-		Light((short) 0, Short.MAX_VALUE, 64), Strong(Short.MAX_VALUE, Short.MAX_VALUE, 72);
+		LIGHT((short) 0, Short.MAX_VALUE, 64), STRONG(Short.MAX_VALUE, Short.MAX_VALUE, 72);
 
 		private final int duration;
 

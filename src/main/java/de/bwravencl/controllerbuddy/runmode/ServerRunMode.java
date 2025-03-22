@@ -135,7 +135,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 		logStart();
 
 		final var clientPort = port + 1;
-		var serverState = ServerState.Listening;
+		var serverState = ServerState.LISTENING;
 		DatagramPacket receivePacket;
 		var counter = 0L;
 
@@ -150,7 +150,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 				process();
 
 				switch (serverState) {
-				case Listening -> {
+				case LISTENING -> {
 					counter = 0;
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(100);
@@ -170,7 +170,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							new ByteArrayInputStream(receivePacket.getData()))) {
 						final var messageType = dataInputStream.readInt();
 
-						if (messageType == MessageType.ClientHello.getId()) {
+						if (messageType == MessageType.CLIENT_HELLO.getId()) {
 							final var salt = dataInputStream.readNBytes(SALT_LENGTH);
 							key = deriveKey(main, salt);
 
@@ -180,14 +180,14 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-								dataOutputStream.writeInt(MessageType.ServerHello.getId());
+								dataOutputStream.writeInt(MessageType.SERVER_HELLO.getId());
 								dataOutputStream.writeByte(PROTOCOL_VERSION);
 								dataOutputStream.writeLong(pollInterval);
 
 								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
 
-							serverState = ServerState.Connected;
+							serverState = ServerState.CONNECTED;
 							if (!input.init()) {
 								controllerDisconnected();
 								return;
@@ -198,13 +198,13 @@ public final class ServerRunMode extends RunMode implements Closeable {
 						}
 					}
 				}
-				case Connected -> {
+				case CONNECTED -> {
 					// noinspection BusyWait
 					Thread.sleep(pollInterval);
 
 					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 							final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-						dataOutputStream.writeInt(MessageType.Update.getId());
+						dataOutputStream.writeInt(MessageType.UPDATE.getId());
 						dataOutputStream.writeLong(counter);
 
 						if (!input.poll()) {
@@ -249,7 +249,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 						for (int i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-								dataOutputStream.writeInt(MessageType.RequestAlive.getId());
+								dataOutputStream.writeInt(MessageType.REQUEST_ALIVE.getId());
 
 								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
@@ -264,7 +264,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 											receivePacket.getData());
 											final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 										final var messageType = dataInputStream.readInt();
-										if (messageType == MessageType.ClientAlive.getId()) {
+										if (messageType == MessageType.CLIENT_ALIVE.getId()) {
 											counter++;
 											gotClientAlive = true;
 											break;
@@ -284,7 +284,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 							main.scheduleStatusBarText(
 									MessageFormat.format(Main.STRINGS.getString("STATUS_LISTENING"), port));
 
-							serverState = ServerState.Listening;
+							serverState = ServerState.LISTENING;
 						}
 					}
 				}
@@ -344,7 +344,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 
 	enum MessageType {
 
-		ClientHello(0), ServerHello(1), Update(2), RequestAlive(3), ClientAlive(4);
+		CLIENT_HELLO(0), SERVER_HELLO(1), UPDATE(2), REQUEST_ALIVE(3), CLIENT_ALIVE(4);
 
 		private static final Map<Integer, MessageType> ID_TO_MESSAGE_TYPE_MAP = Arrays.stream(values())
 				.collect(Collectors.toUnmodifiableMap(MessageType::getId, Function.identity()));
@@ -365,6 +365,6 @@ public final class ServerRunMode extends RunMode implements Closeable {
 	}
 
 	public enum ServerState {
-		Listening, Connected
+		LISTENING, CONNECTED
 	}
 }
