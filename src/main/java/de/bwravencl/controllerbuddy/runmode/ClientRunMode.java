@@ -81,7 +81,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 	private DatagramSocket clientSocket;
 
-	private ClientState clientState = ClientState.Connecting;
+	private ClientState clientState = ClientState.CONNECTING;
 
 	private long counter = -1;
 
@@ -148,14 +148,14 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 		var retVal = false;
 
 		switch (clientState) {
-		case Connecting -> {
+		case CONNECTING -> {
 			LOGGER.log(Level.INFO, "Connecting to " + host + ":" + port);
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
 			try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 					final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-				dataOutputStream.writeInt(MessageType.ClientHello.getId());
+				dataOutputStream.writeInt(MessageType.CLIENT_HELLO.getId());
 
 				dataOutputStream.write(salt, 0, ServerRunMode.SALT_LENGTH);
 
@@ -179,7 +179,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 						try (final var byteArrayInputStream = new ByteArrayInputStream(plaintextBuf);
 								final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 							final var messageType = dataInputStream.readInt();
-							if (messageType == MessageType.ServerHello.getId()) {
+							if (messageType == MessageType.SERVER_HELLO.getId()) {
 								final var serverProtocolVersion = dataInputStream.readByte();
 								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
 									LOGGER.log(Level.WARNING, "Protocol version mismatch: client "
@@ -215,7 +215,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
 
 				if (success) {
-					clientState = ClientState.Connected;
+					clientState = ClientState.CONNECTED;
 					LOGGER.log(Level.INFO, "Successfully connected");
 					EventQueue.invokeLater(() -> main.setStatusBarText(
 							MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"), host, port)));
@@ -234,7 +234,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 			}
 
 		}
-		case Connected -> {
+		case CONNECTED -> {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				SocketTimeoutException socketTimeoutException = null;
@@ -261,7 +261,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					}
 
 					switch (messageType) {
-					case Update -> {
+					case UPDATE -> {
 						final var newCounter = dataInputStream.readLong();
 
 						try (final var objectInputStream = new ObjectInputStream(dataInputStream)) {
@@ -329,10 +329,10 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 							}
 						}
 					}
-					case RequestAlive -> {
+					case REQUEST_ALIVE -> {
 						try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 								final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-							dataOutputStream.writeInt(MessageType.ClientAlive.getId());
+							dataOutputStream.writeInt(MessageType.CLIENT_ALIVE.getId());
 
 							final var keepAliveBuf = byteArrayOutputStream.toByteArray();
 							final var keepAlivePacket = new DatagramPacket(keepAliveBuf, keepAliveBuf.length,
@@ -434,6 +434,6 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 	}
 
 	private enum ClientState {
-		Connecting, Connected
+		CONNECTING, CONNECTED
 	}
 }

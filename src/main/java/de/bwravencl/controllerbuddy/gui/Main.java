@@ -2042,8 +2042,8 @@ public final class Main {
 	}
 
 	public int getSelectedHotSwappingButtonId() {
-		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.None.id),
-				HotSwappingButton.None.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
+		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.NONE.id),
+				HotSwappingButton.NONE.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
 	public int getTimeout() {
@@ -3930,7 +3930,7 @@ public final class Main {
 
 	public enum HotSwappingButton {
 
-		None(-1, "NONE"), A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
+		NONE(-1, "NONE"), A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
 		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"), X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
 		Y(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, "Y_BUTTON"),
 		LEFT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, "LEFT_SHOULDER"),
@@ -3961,7 +3961,7 @@ public final class Main {
 				}
 			}
 
-			return None;
+			return NONE;
 		}
 
 		@Override

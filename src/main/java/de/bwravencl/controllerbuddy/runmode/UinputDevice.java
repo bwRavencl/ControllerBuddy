@@ -164,7 +164,7 @@ public final class UinputDevice implements Closeable {
 
 	enum DeviceType {
 
-		Joystick(Event.JOYSTICK_EVENTS), Keyboard(Event.KEYBOARD_EVENTS), Mouse(Event.MOUSE_EVENTS);
+		JOYSTICK(Event.JOYSTICK_EVENTS), KEYBOARD(Event.KEYBOARD_EVENTS), MOUSE(Event.MOUSE_EVENTS);
 
 		private final String name;
 
