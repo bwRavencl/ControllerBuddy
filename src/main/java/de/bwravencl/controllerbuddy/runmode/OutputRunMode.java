@@ -507,11 +507,11 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			try {
-				joystickUinputDevice = UinputDevice.openUinputDevice(DeviceType.Joystick);
+				joystickUinputDevice = UinputDevice.openUinputDevice(DeviceType.JOYSTICK);
 				minAxisValue = Short.MIN_VALUE;
 				maxAxisValue = Short.MAX_VALUE;
-				mouseUinputDevice = UinputDevice.openUinputDevice(DeviceType.Mouse);
-				keyboardUinputDevice = UinputDevice.openUinputDevice(DeviceType.Keyboard);
+				mouseUinputDevice = UinputDevice.openUinputDevice(DeviceType.MOUSE);
+				keyboardUinputDevice = UinputDevice.openUinputDevice(DeviceType.KEYBOARD);
 
 				EventQueue.invokeLater(
 						() -> main.setStatusBarText(Main.STRINGS.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
