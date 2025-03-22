@@ -70,7 +70,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAc
 
 	@Override
 	public String getDescription(final Input input) {
-		return Main.strings
+		return Main.STRINGS
 				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
 	}
 

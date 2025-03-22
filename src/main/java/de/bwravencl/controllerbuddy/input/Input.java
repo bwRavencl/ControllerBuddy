@@ -54,9 +54,9 @@ public final class Input {
 
 	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
 
-	private static final long SUSPENSION_TIME = 500L;
+	private static final Logger LOGGER = Logger.getLogger(Input.class.getName());
 
-	private static final Logger log = Logger.getLogger(Input.class.getName());
+	private static final long SUSPENSION_TIME = 500L;
 
 	private final EnumMap<VirtualAxis, Integer> axes;
 
@@ -395,7 +395,7 @@ public final class Input {
 						if (optionalController.isPresent()) {
 							final var controller = optionalController.get();
 
-							log.log(Level.INFO, Main.assembleControllerLoggingMessage(
+							LOGGER.log(Level.INFO, Main.assembleControllerLoggingMessage(
 									"Initiating hot swap to controller ", controller));
 
 							hotSwappingButtonId = HotSwappingButton.None.id;
@@ -627,7 +627,7 @@ public final class Input {
 		if (id < buttons.length) {
 			buttons[id] = value;
 		} else {
-			log.log(Level.WARNING, "Unable to set value for non-existent button " + id);
+			LOGGER.log(Level.WARNING, "Unable to set value for non-existent button " + id);
 		}
 	}
 
@@ -650,8 +650,8 @@ public final class Input {
 
 		final var modes = profile.getModes();
 		modes.sort((o1, o2) -> {
-			final var o1IsDefaultMode = Profile.defaultMode.equals(o1);
-			final var o2IsDefaultMode = Profile.defaultMode.equals(o2);
+			final var o1IsDefaultMode = Profile.DEFAULT_MODE.equals(o1);
+			final var o2IsDefaultMode = Profile.DEFAULT_MODE.equals(o2);
 
 			if (o1IsDefaultMode && o2IsDefaultMode) {
 				return 0;
@@ -665,8 +665,8 @@ public final class Input {
 				return 1;
 			}
 
-			final var o1IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o1);
-			final var o2IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(o2);
+			final var o1IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(o1);
+			final var o2IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(o2);
 
 			if (o1IsOnScreenKeyboardMode && o2IsOnScreenKeyboardMode) {
 				return 0;

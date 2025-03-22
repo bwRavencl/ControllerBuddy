@@ -36,7 +36,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 	public void buildEditor(final JPanel parentPanel) {
 		super.buildEditor(parentPanel);
 
-		final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.strings.getString("MILLISECOND_SYMBOL"));
+		final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.STRINGS.getString("MILLISECOND_SYMBOL"));
 		spinner.setEditor(editor);
 		textField = editor.getTextField();
 		textField.setColumns(6);

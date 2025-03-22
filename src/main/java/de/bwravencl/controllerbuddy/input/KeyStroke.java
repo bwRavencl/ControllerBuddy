@@ -86,11 +86,12 @@ public final class KeyStroke implements Cloneable, Serializable {
 	private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
-		modifierCodes = modifierCodesKeyCodes.stream().map(ScanCode.keyCodeToScanCodeMap::get).toArray(ScanCode[]::new);
+		modifierCodes = modifierCodesKeyCodes.stream().map(ScanCode.KEY_CODE_TO_SCAN_CODE_MAP::get)
+				.toArray(ScanCode[]::new);
 
 		@SuppressWarnings("unchecked")
 		final var keyCodesKeyCodes = (Set<Integer>) stream.readObject();
-		keyCodes = keyCodesKeyCodes.stream().map(ScanCode.keyCodeToScanCodeMap::get).toArray(ScanCode[]::new);
+		keyCodes = keyCodesKeyCodes.stream().map(ScanCode.KEY_CODE_TO_SCAN_CODE_MAP::get).toArray(ScanCode[]::new);
 	}
 
 	public void setKeyCodes(final ScanCode[] keyCodes) {
@@ -106,7 +107,7 @@ public final class KeyStroke implements Cloneable, Serializable {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
 		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
 		if (collectedKeyCodes.isEmpty()) {
-			return Main.strings.getString("NOTHING");
+			return Main.STRINGS.getString("NOTHING");
 		}
 
 		return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));

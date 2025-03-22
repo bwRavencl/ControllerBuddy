@@ -37,7 +37,7 @@ import org.lwjgl.sdl.SDLGamepad;
 public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Boolean> {
 
 	@SuppressWarnings("JdkObsolete")
-	private static final LinkedList<ButtonToModeAction> buttonToModeActionStack = new LinkedList<>();
+	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -51,12 +51,12 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	private transient boolean up = true;
 
 	public static List<ButtonToModeAction> getButtonToModeActionStack() {
-		return buttonToModeActionStack;
+		return BUTTON_TO_MODE_ACTION_STACK;
 	}
 
 	private void activateMode(final Input input, final Profile profile) {
-		if (!buttonToModeActionStack.contains(this)) {
-			buttonToModeActionStack.push(this);
+		if (!BUTTON_TO_MODE_ACTION_STACK.contains(this)) {
+			BUTTON_TO_MODE_ACTION_STACK.push(this);
 			final var activeMode = profile.getActiveMode();
 
 			profile.getModeByUuid(modeUuid).ifPresent(newMode -> {
@@ -89,7 +89,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		}
 
 		if (myButton != null) {
-			for (final var action : buttonToModeActionStack) {
+			for (final var action : BUTTON_TO_MODE_ACTION_STACK) {
 				final var buttonToActionMap = action.getMode(input).getButtonToActionsMap();
 				if (buttonToActionMap.containsKey(myButton)) {
 					return false;
@@ -106,8 +106,8 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	}
 
 	private void deactivateMode(final Input input, final Profile profile) {
-		for (var topmostModeAction = buttonToModeActionStack
-				.peek(); topmostModeAction != this; topmostModeAction = buttonToModeActionStack.peek()) {
+		for (var topmostModeAction = BUTTON_TO_MODE_ACTION_STACK
+				.peek(); topmostModeAction != this; topmostModeAction = BUTTON_TO_MODE_ACTION_STACK.peek()) {
 			if (topmostModeAction != null) {
 				topmostModeAction.deactivateMode(input, profile);
 			}
@@ -115,10 +115,10 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 			input.repeatModeActionWalk();
 		}
 
-		buttonToModeActionStack.pop();
+		BUTTON_TO_MODE_ACTION_STACK.pop();
 
 		final Mode previousMode;
-		final var previousButtonToModeAction = buttonToModeActionStack.peek();
+		final var previousButtonToModeAction = BUTTON_TO_MODE_ACTION_STACK.peek();
 		if (previousButtonToModeAction != null) {
 			previousMode = previousButtonToModeAction.getMode(input);
 		} else {
@@ -158,20 +158,20 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		if (!value) {
 			if (toggle) {
 				up = true;
-			} else if (buttonToModeActionStack.contains(this)) {
+			} else if (BUTTON_TO_MODE_ACTION_STACK.contains(this)) {
 				deactivateMode(input, profile);
 			}
 		} else if (toggle) {
 			if (up) {
-				if (buttonToModeActionStack.peek() == this) {
+				if (BUTTON_TO_MODE_ACTION_STACK.peek() == this) {
 					deactivateMode(input, profile);
-				} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
+				} else if (Profile.DEFAULT_MODE.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 					activateMode(input, profile);
 				}
 
 				up = false;
 			}
-		} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
+		} else if (Profile.DEFAULT_MODE.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 			activateMode(input, profile);
 		}
 	}
@@ -183,7 +183,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 			return null;
 		}
 
-		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
+		return MessageFormat.format(Main.STRINGS.getString("MODE_NAME"), mode.getDescription());
 	}
 
 	public Mode getMode(final Input input) {
@@ -193,11 +193,11 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 			}
 		}
 
-		if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid)) {
-			return OnScreenKeyboard.onScreenKeyboardMode;
+		if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.getUuid().equals(modeUuid)) {
+			return OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE;
 		}
 
-		return Profile.defaultMode;
+		return Profile.DEFAULT_MODE;
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
 	@Override
 	public void reset(final Input input) {
-		buttonToModeActionStack.clear();
+		BUTTON_TO_MODE_ACTION_STACK.clear();
 
 		if (targetsOnScreenKeyboardMode()) {
 			input.getMain().setOnScreenKeyboardVisible(false);
@@ -236,6 +236,6 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	}
 
 	public boolean targetsOnScreenKeyboardMode() {
-		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
+		return OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.getUuid().equals(modeUuid);
 	}
 }

@@ -26,20 +26,20 @@ import java.lang.invoke.MethodHandle;
 @SuppressWarnings("exports")
 public final class Kernel32 {
 
-	private static final Linker linker = Linker.nativeLinker();
+	private static final Linker LINKER = Linker.nativeLinker();
 
-	private static final SymbolLookup symbolLookup = SymbolLookup.libraryLookup(System.mapLibraryName("Kernel32"),
+	private static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.libraryLookup(System.mapLibraryName("Kernel32"),
 			Arena.global());
 
-	private static final MethodHandle GetLastErrorMethodHandle = linker
-			.downcallHandle(symbolLookup.findOrThrow("GetLastError"), FunctionDescriptor.of(ValueLayout.JAVA_INT));
+	private static final MethodHandle GET_LAST_ERROR_METHOD_HANDLE = LINKER
+			.downcallHandle(SYMBOL_LOOKUP.findOrThrow("GetLastError"), FunctionDescriptor.of(ValueLayout.JAVA_INT));
 
 	private Kernel32() {
 	}
 
 	public static int GetLastError() {
 		try {
-			return (int) GetLastErrorMethodHandle.invoke();
+			return (int) GET_LAST_ERROR_METHOD_HANDLE.invoke();
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}

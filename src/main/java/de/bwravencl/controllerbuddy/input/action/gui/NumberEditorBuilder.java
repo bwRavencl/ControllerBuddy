@@ -37,7 +37,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	private static final int FLOAT_ROUNDING_DECIMALS = 3;
 
-	private static final Logger log = Logger.getLogger(NumberEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(NumberEditorBuilder.class.getName());
 
 	JSpinner spinner;
 
@@ -103,7 +103,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 					valueConsumer.accept(value);
 				}
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

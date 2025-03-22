@@ -49,8 +49,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 		private static final long serialVersionUID = -6538021954760621595L;
 
 		private EditActionsAction() {
-			putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+			putValue(NAME, Main.STRINGS.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
 					IAction.getLabel(action.getClass())));
 		}
 

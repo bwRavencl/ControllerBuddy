@@ -103,7 +103,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("RESET_VJOY_AXIS_NAME"), virtualAxis);
+		return MessageFormat.format(Main.STRINGS.getString("RESET_VJOY_AXIS_NAME"), virtualAxis);
 	}
 
 	public float getResetValue() {

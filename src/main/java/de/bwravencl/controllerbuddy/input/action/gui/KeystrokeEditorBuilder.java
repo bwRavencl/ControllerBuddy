@@ -74,7 +74,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private static final Dimension KEY_LIST_SCROLL_PANE_DIMENSION = new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, 200);
 
-	private static final Logger log = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
 
 	private final JLabel plusLabel = new JLabel("+");
 
@@ -125,7 +125,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private CheckboxJList<String> buildCheckboxList(final String labelKey, final KeyStroke keyStroke,
 			final JPanel keystrokePanel, final String constraints, final Consumer<ScanCode[]> scanCodeConsumer) {
-		final var listData = ScanCode.nameToScanCodeMap.keySet().toArray(String[]::new);
+		final var listData = ScanCode.NAME_TO_SCAN_CODE_MAP.keySet().toArray(String[]::new);
 
 		final var checkboxList = new CheckboxJList<>(listData);
 		checkboxList.addListSelectionListener(
@@ -141,7 +141,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(borderColor),
 				BorderFactory.createEmptyBorder(2, 0, 0, 0)));
 
-		final var label = new JLabel(Main.strings.getString(labelKey));
+		final var label = new JLabel(Main.STRINGS.getString(labelKey));
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		listPanel.add(label);
@@ -291,10 +291,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	private static final class CheckboxListCellRenderer<E> extends JCheckBox implements ListCellRenderer<E> {
 
+		private static final Pattern WILDCARD_FILTER_PATTERN = Pattern.compile("^\\*(.+)");
+
 		@Serial
 		private static final long serialVersionUID = -7958791166718006570L;
-
-		private static final Pattern wildcardFilterPattern = Pattern.compile("^\\*(.+)");
 
 		private final JList<? extends E> list;
 
@@ -312,7 +312,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				var match = false;
 
-				final var wildcardMatcher = wildcardFilterPattern.matcher(filter);
+				final var wildcardMatcher = WILDCARD_FILTER_PATTERN.matcher(filter);
 				if (wildcardMatcher.matches()) {
 					match = valueString.contains(wildcardMatcher.group(1));
 				} else {
@@ -366,7 +366,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			this.filterTextField = filterTextField;
 
 			putValue(NAME, "⨯");
-			putValue(SHORT_DESCRIPTION, Main.strings.getString("CLEAR_FILTER_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CLEAR_FILTER_ACTION_DESCRIPTION"));
 
 			filterTextField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -412,7 +412,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			this.listSelectionModel = listSelectionModel;
 
 			putValue(NAME, "⛶");
-			putValue(SHORT_DESCRIPTION, Main.strings.getString("DESELECT_ALL_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("DESELECT_ALL_ACTION_DESCRIPTION"));
 
 			listSelectionModel.addListSelectionListener((_) -> updateState());
 			updateState();
@@ -486,7 +486,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(getDisabledTextColor());
 			g.setFont(g.getFont().deriveFont(Font.ITALIC));
-			g.drawString(Main.strings.getString("FILTER_PLACEHOLDER"), getInsets().left,
+			g.drawString(Main.STRINGS.getString("FILTER_PLACEHOLDER"), getInsets().left,
 					g.getFontMetrics().getMaxAscent() + getInsets().top);
 		}
 	}
@@ -513,7 +513,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				// noinspection SuspiciousMethodCalls
 				((JList<?>) e.getSource()).getSelectedValuesList()
-						.forEach(object -> scanCodes.add(ScanCode.nameToScanCodeMap.get(object)));
+						.forEach(object -> scanCodes.add(ScanCode.NAME_TO_SCAN_CODE_MAP.get(object)));
 
 				scanCodeConsumer.accept(scanCodes.toArray(ScanCode[]::new));
 
@@ -521,7 +521,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 				updateUpdateKeyStrokeVisualization();
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

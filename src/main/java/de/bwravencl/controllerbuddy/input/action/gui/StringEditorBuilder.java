@@ -35,7 +35,7 @@ import javax.swing.event.DocumentListener;
 
 public final class StringEditorBuilder extends EditorBuilder {
 
-	private static final Logger log = Logger.getLogger(StringEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
 
 	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
@@ -113,7 +113,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, text);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				log.log(Level.SEVERE, e.getMessage(), e);
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 	}

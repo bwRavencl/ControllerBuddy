@@ -227,11 +227,11 @@ public record ScanCode(String name, int keyCode, Event event) {
 
 	public static final String DIK_Z = "Z";
 
-	public static final Set<Integer> extendedKeyScanCodesSet;
+	public static final Set<Integer> EXTENDED_KEY_SCAN_CODES_SET;
 
-	public static final Map<Integer, ScanCode> keyCodeToScanCodeMap;
+	public static final Map<Integer, ScanCode> KEY_CODE_TO_SCAN_CODE_MAP;
 
-	public static final Map<String, ScanCode> nameToScanCodeMap;
+	public static final Map<String, ScanCode> NAME_TO_SCAN_CODE_MAP;
 
 	private static final String DIK_CAPITAL = "CapsLock";
 
@@ -245,7 +245,7 @@ public record ScanCode(String name, int keyCode, Event event) {
 
 	private static final String DIK_SCROLL = "ScrollLock";
 
-	public static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1, Event.KEY_ESC),
+	private static final ScanCode[] KEY_CODES = { new ScanCode(DIK_ESCAPE, 0x1, Event.KEY_ESC),
 			new ScanCode(DIK_1, 0x2, Event.KEY_1), new ScanCode(DIK_2, 0x3, Event.KEY_2),
 			new ScanCode(DIK_3, 0x4, Event.KEY_3), new ScanCode(DIK_4, 0x5, Event.KEY_4),
 			new ScanCode(DIK_5, 0x6, Event.KEY_5), new ScanCode(DIK_6, 0x7, Event.KEY_6),
@@ -312,10 +312,10 @@ public record ScanCode(String name, int keyCode, Event event) {
 			modifiableKeyCodeToScanCodeMap.put(sc.keyCode, sc);
 		}
 
-		nameToScanCodeMap = Collections.unmodifiableMap(modifiableNameToScanCodeMap);
-		keyCodeToScanCodeMap = Collections.unmodifiableMap(modifiableKeyCodeToScanCodeMap);
+		NAME_TO_SCAN_CODE_MAP = Collections.unmodifiableMap(modifiableNameToScanCodeMap);
+		KEY_CODE_TO_SCAN_CODE_MAP = Collections.unmodifiableMap(modifiableKeyCodeToScanCodeMap);
 
-		extendedKeyScanCodesSet = keyCodeToScanCodeMap.entrySet().stream().filter(entry -> {
+		EXTENDED_KEY_SCAN_CODES_SET = KEY_CODE_TO_SCAN_CODE_MAP.entrySet().stream().filter(entry -> {
 			final var name = entry.getValue().name;
 			return DIK_RCONTROL.equals(name) || DIK_RMENU.equals(name) || DIK_INSERT.equals(name)
 					|| DIK_DELETE.equals(name) || DIK_HOME.equals(name) || DIK_END.equals(name)

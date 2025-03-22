@@ -66,7 +66,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("PRESS"), keystroke);
+		return MessageFormat.format(Main.STRINGS.getString("PRESS"), keystroke);
 	}
 
 	public KeyStroke getKeystroke() {

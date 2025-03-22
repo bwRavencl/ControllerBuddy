@@ -37,10 +37,34 @@ public final class Linux {
 
 	private static final String ERRNO_NAME = "errno";
 
-	public static final VarHandle errno = Linker.Option.captureStateLayout()
+	public static final VarHandle ERRNO_VAR_HANDLE = Linker.Option.captureStateLayout()
 			.varHandle(PathElement.groupElement(ERRNO_NAME));
 
+	private static final Linker.Option ERRNO_CAPTURE_CALL_STATE = Linker.Option.captureCallState(ERRNO_NAME);
+
+	private static final Linker LINKER = Linker.nativeLinker();
+
+	private static final MethodHandle IOCTL_METHOD_HANDLE = LINKER.downcallHandle(
+			LINKER.defaultLookup().findOrThrow("ioctl"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
+					ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
+			ERRNO_CAPTURE_CALL_STATE, Linker.Option.firstVariadicArg(2));
+
+	private static final MethodHandle CLOSE_METHOD_HANDLE = LINKER.downcallHandle(
+			LINKER.defaultLookup().findOrThrow("close"),
+			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), Linker.Option.critical(false));
+
+	private static final MethodHandle OPEN_METHOD_HANDLE = LINKER.downcallHandle(
+			LINKER.defaultLookup().findOrThrow("open"),
+			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
+			Linker.Option.critical(false));
+
 	private static final byte UINPUT_IOCTL_BASE = 'U';
+
+	private static final MethodHandle WRITE_METHOD_HANDLE = LINKER
+			.downcallHandle(
+					LINKER.defaultLookup().findOrThrow("write"), FunctionDescriptor.of(ValueLayout.JAVA_LONG,
+							ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG),
+					Linker.Option.critical(false));
 
 	private static final int _IOC_NONE = 0;
 
@@ -70,30 +94,6 @@ public final class Linux {
 
 	public static final int UI_DEV_SETUP = _IOW(UINPUT_IOCTL_BASE, 3, (int) uinput_setup.LAYOUT.byteSize());
 
-	private static final Linker.Option errnoCaptureCallState = Linker.Option.captureCallState(ERRNO_NAME);
-
-	private static final Linker linker = Linker.nativeLinker();
-
-	private static final MethodHandle closeMethodHandle = linker.downcallHandle(
-			linker.defaultLookup().findOrThrow("close"),
-			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT), Linker.Option.critical(false));
-
-	private static final MethodHandle ioctlMethodHandle = linker.downcallHandle(
-			linker.defaultLookup().findOrThrow("ioctl"), FunctionDescriptor.of(ValueLayout.JAVA_INT,
-					ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
-			errnoCaptureCallState, Linker.Option.firstVariadicArg(2));
-
-	private static final MethodHandle openMethodHandle = linker.downcallHandle(
-			linker.defaultLookup().findOrThrow("open"),
-			FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT),
-			Linker.Option.critical(false));
-
-	private static final MethodHandle writeMethodHandle = linker
-			.downcallHandle(
-					linker.defaultLookup().findOrThrow("write"), FunctionDescriptor.of(ValueLayout.JAVA_LONG,
-							ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG),
-					Linker.Option.critical(false));
-
 	private Linux() {
 	}
 
@@ -120,19 +120,19 @@ public final class Linux {
 
 	public static int close(final int fd) {
 		try {
-			return (int) closeMethodHandle.invokeExact(fd);
+			return (int) CLOSE_METHOD_HANDLE.invokeExact(fd);
 		} catch (final Throwable e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static int getErrno(final MemorySegment errorState) {
-		return (int) errno.get(errorState, 0);
+		return (int) ERRNO_VAR_HANDLE.get(errorState, 0);
 	}
 
 	public static int ioctl(final int fd, final long request, final MemorySegment argp, final MemorySegment errno) {
 		try {
-			return (int) ioctlMethodHandle.invoke(errno, fd, request, argp);
+			return (int) IOCTL_METHOD_HANDLE.invoke(errno, fd, request, argp);
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
@@ -140,7 +140,7 @@ public final class Linux {
 
 	public static int open(final MemorySegment pathname, final int flags) {
 		try {
-			return (int) openMethodHandle.invokeExact(pathname, flags);
+			return (int) OPEN_METHOD_HANDLE.invokeExact(pathname, flags);
 		} catch (final Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -148,7 +148,7 @@ public final class Linux {
 
 	public static long write(final int fd, final MemorySegment buf, final long count) {
 		try {
-			return (long) writeMethodHandle.invokeExact(fd, buf, count);
+			return (long) WRITE_METHOD_HANDLE.invokeExact(fd, buf, count);
 		} catch (final Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -168,22 +168,25 @@ public final class Linux {
 				ValueLayout.JAVA_SHORT.withName(TYPE_NAME), ValueLayout.JAVA_SHORT.withName(CODE_NAME),
 				ValueLayout.JAVA_INT.withName(VALUE_NAME));
 
-		private static final VarHandle CODE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(CODE_NAME));
+		private static final VarHandle CODE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(CODE_NAME));
 
-		private static final VarHandle TYPE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(TYPE_NAME));
+		private static final VarHandle TYPE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(TYPE_NAME));
 
-		private static final VarHandle VALUE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(VALUE_NAME));
+		private static final VarHandle VALUE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(VALUE_NAME));
 
 		public static void setCode(final MemorySegment seg, final short code) {
-			CODE.set(seg, 0L, code);
+			CODE_VAR_HANDLE.set(seg, 0L, code);
 		}
 
 		public static void setType(final MemorySegment seg, final short type) {
-			TYPE.set(seg, 0L, type);
+			TYPE_VAR_HANDLE.set(seg, 0L, type);
 		}
 
 		public static void setValue(final MemorySegment seg, final int value) {
-			VALUE.set(seg, 0L, value);
+			VALUE_VAR_HANDLE.set(seg, 0L, value);
 		}
 	}
 
@@ -201,22 +204,25 @@ public final class Linux {
 				ValueLayout.JAVA_SHORT.withName(BUSTYPE_NAME), ValueLayout.JAVA_SHORT.withName(VENDOR_NAME),
 				ValueLayout.JAVA_SHORT.withName(PRODUCT_NAME), ValueLayout.JAVA_SHORT.withName(VERSION_NAME));
 
-		private static final VarHandle BUSTYPE = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(BUSTYPE_NAME));
+		private static final VarHandle BUSTYPE_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(BUSTYPE_NAME));
 
-		private static final VarHandle PRODUCT = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(PRODUCT_NAME));
+		private static final VarHandle PRODUCT_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(PRODUCT_NAME));
 
-		private static final VarHandle VENDOR = LAYOUT.varHandle(MemoryLayout.PathElement.groupElement(VENDOR_NAME));
+		private static final VarHandle VENDOR_VAR_HANDLE = LAYOUT
+				.varHandle(MemoryLayout.PathElement.groupElement(VENDOR_NAME));
 
 		public static void setBustype(final MemorySegment seg, final short bustype) {
-			BUSTYPE.set(seg, 0L, bustype);
+			BUSTYPE_VAR_HANDLE.set(seg, 0L, bustype);
 		}
 
 		public static void setProduct(final MemorySegment seg, final short product) {
-			PRODUCT.set(seg, 0L, product);
+			PRODUCT_VAR_HANDLE.set(seg, 0L, product);
 		}
 
 		public static void setVendor(final MemorySegment seg, final short vendor) {
-			VENDOR.set(seg, 0L, vendor);
+			VENDOR_VAR_HANDLE.set(seg, 0L, vendor);
 		}
 	}
 

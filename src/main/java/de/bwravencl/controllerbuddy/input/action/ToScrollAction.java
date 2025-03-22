@@ -43,8 +43,8 @@ abstract class ToScrollAction<V extends Constable> extends InvertableAction<V> {
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.strings.getString("SCROLL_DIRECTION"),
-				Main.strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
+		return MessageFormat.format(Main.STRINGS.getString("SCROLL_DIRECTION"),
+				Main.STRINGS.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
 	}
 
 	void scroll(final Input input, float d) {

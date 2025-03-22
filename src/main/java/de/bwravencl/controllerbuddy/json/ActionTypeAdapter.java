@@ -34,11 +34,11 @@ import java.util.logging.Logger;
 
 public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
+	private static final Logger LOGGER = Logger.getLogger(ActionTypeAdapter.class.getName());
+
 	private static final String PROPERTY_DATA = "data";
 
 	private static final String PROPERTY_TYPE = "type";
-
-	private static final Logger log = Logger.getLogger(ActionTypeAdapter.class.getName());
 
 	private final Set<String> unknownActionClasses = new HashSet<>();
 
@@ -69,7 +69,7 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 			}
 
 			if (typeOfT == IAction.class) {
-				log.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
+				LOGGER.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
 						+ NullAction.class.getSimpleName() + "'");
 				unknownActionClasses.add(typeNameString);
 

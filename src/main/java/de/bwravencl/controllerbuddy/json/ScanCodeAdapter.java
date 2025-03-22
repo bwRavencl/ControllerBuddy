@@ -37,9 +37,9 @@ public final class ScanCodeAdapter implements JsonSerializer<ScanCode>, JsonDese
 				final var jsonPrimitive = (JsonPrimitive) json;
 
 				if (jsonPrimitive.isNumber()) {
-					scanCode = ScanCode.keyCodeToScanCodeMap.get(jsonPrimitive.getAsInt());
+					scanCode = ScanCode.KEY_CODE_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsInt());
 				} else if (jsonPrimitive.isString()) {
-					scanCode = ScanCode.nameToScanCodeMap.get(jsonPrimitive.getAsString());
+					scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsString());
 				}
 			}
 

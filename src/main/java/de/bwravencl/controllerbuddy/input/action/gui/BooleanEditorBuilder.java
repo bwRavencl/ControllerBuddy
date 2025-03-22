@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 
 public class BooleanEditorBuilder extends EditorBuilder {
 
-	private static final Logger log = Logger.getLogger(BooleanEditorBuilder.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(BooleanEditorBuilder.class.getName());
 
 	JCheckBox checkBox;
 
@@ -61,7 +61,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 				setterMethod.invoke(action, selected);
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-				log.log(Level.SEVERE, e1.getMessage(), e1);
+				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
