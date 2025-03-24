@@ -3173,7 +3173,7 @@ public final class Main {
 	private void startOverlayTimerTask() {
 		stopOverlayTimerTask();
 
-		overlayExecutorService = Executors.newSingleThreadScheduledExecutor(Thread.ofVirtual().factory());
+		overlayExecutorService = Executors.newSingleThreadScheduledExecutor();
 		overlayExecutorService.scheduleAtFixedRate(new RunnableWithDefaultExceptionHandler(this::updateOverlayPosition),
 				OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS);
 	}
