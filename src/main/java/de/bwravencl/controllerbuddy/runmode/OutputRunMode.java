@@ -159,10 +159,6 @@ public abstract class OutputRunMode extends RunMode {
 		}
 	}
 
-	public static String getDefaultVJoyPath() {
-		return System.getenv("ProgramFiles") + File.separator + "vJoy";
-	}
-
 	private static void sendInputChecked(final MemorySegment input) throws IOException {
 		if (User32.SendInput(1, MemorySegment.ofAddress(input.address()), (int) INPUT.LAYOUT.byteSize()) == 0) {
 			throw new IOException("SendInput failed: " + Kernel32.GetLastError());

@@ -1421,6 +1421,10 @@ public final class Main {
 		}
 	}
 
+	private static String getDefaultVJoyPath() {
+		return System.getenv("ProgramFiles") + File.separator + "vJoy";
+	}
+
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
 			final Set<Integer> alreadyAssignedKeyCodes) {
 		var keyCode = KeyEvent.VK_UNDEFINED;
@@ -2071,7 +2075,7 @@ public final class Main {
 	}
 
 	public String getVJoyDirectory() {
-		return preferences.get(PREFERENCES_VJOY_DIRECTORY, OutputRunMode.getDefaultVJoyPath());
+		return preferences.get(PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
 	}
 
 	private boolean handleNetworkCommandLineOptions(final CommandLine commandLine) {
@@ -4429,7 +4433,7 @@ public final class Main {
 			if (!dllFile.exists()) {
 				GuiUtils.showMessageDialog(main, frame,
 						MessageFormat.format(STRINGS.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
-								OutputRunMode.getDefaultVJoyPath()),
+								getDefaultVJoyPath()),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
