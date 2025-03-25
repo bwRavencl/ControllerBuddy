@@ -70,6 +70,50 @@ jobs:
           distribution: jdkfile
           jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
           java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Gradle Init Script
+        shell: bash
+        run: |
+          mkdir -p $HOME/.gradle
+          cat << 'EOF' > $HOME/.gradle/init.gradle
+          allprojects {
+            def user = 'github'
+            def pass = '${{ secrets.MAVEN_TOKEN_SECRET }}'
+            buildscript {
+              repositories {
+                maven {
+                  url "https://maven.bwravencl.de/releases"
+                  credentials {
+                    username user
+                    password pass
+                  }
+                }
+                maven {
+                  url "https://maven.bwravencl.de/snapshots"
+                  credentials {
+                    username user
+                    password pass
+                  }
+                }
+              }
+            }
+            repositories {
+              maven {
+                url "https://maven.bwravencl.de/releases"
+                credentials {
+                  username user
+                  password pass
+                }
+              }
+              maven {
+                url "https://maven.bwravencl.de/snapshots"
+                credentials {
+                  username user
+                  password pass
+                }
+              }
+            }
+          }
+          EOF
       - name: Build ZIP
         if: runner.os == 'Windows'
         run: ./gradlew distZip --info
