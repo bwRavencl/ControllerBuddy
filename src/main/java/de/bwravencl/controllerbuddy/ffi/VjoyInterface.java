@@ -178,7 +178,7 @@ public final class VjoyInterface {
 		}
 	}
 
-	public static boolean RetAxis(final int value, final int rID, final int axis) {
+	public static boolean SetAxis(final int value, final int rID, final int axis) {
 		try {
 			return (int) SetAxisMethodHandle.invoke(value, rID, axis) != 0;
 		} catch (final Throwable t) {
