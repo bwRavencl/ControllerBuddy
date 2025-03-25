@@ -26,7 +26,7 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 
-@SuppressWarnings({ "exports", "SameParameterValue" })
+@SuppressWarnings({ "exports", "restricted", "SameParameterValue" })
 public final class Linux {
 
 	public static final int O_NONBLOCK = 4000;

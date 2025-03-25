@@ -28,7 +28,7 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 
-@SuppressWarnings({ "exports", "UnusedReturnValue" })
+@SuppressWarnings({ "exports", "restricted", "UnusedReturnValue" })
 public final class User32 {
 
 	public static final MemorySegment HWND_TOPMOST = MemorySegment.ofAddress(-1L);

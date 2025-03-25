@@ -23,7 +23,7 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 
-@SuppressWarnings("exports")
+@SuppressWarnings({ "exports", "restricted" })
 public final class Kernel32 {
 
 	private static final Linker LINKER = Linker.nativeLinker();

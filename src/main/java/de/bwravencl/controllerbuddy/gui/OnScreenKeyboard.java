@@ -80,6 +80,7 @@ public final class OnScreenKeyboard extends JFrame {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final FrameDragListener frameDragListener;
 
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
 
 	private final AbstractKeyboardButton[][] keyboardButtons;

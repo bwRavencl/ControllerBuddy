@@ -29,7 +29,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("exports")
+@SuppressWarnings({ "exports", "restricted" })
 public final class VjoyInterface {
 
 	public static final int HID_USAGE_RX = 0x33;

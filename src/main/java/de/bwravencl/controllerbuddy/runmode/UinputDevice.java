@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -162,17 +163,18 @@ public final class UinputDevice implements Closeable {
 		return name;
 	}
 
+	@SuppressWarnings("ImmutableEnumChecker")
 	enum DeviceType {
 
 		JOYSTICK(Event.JOYSTICK_EVENTS), KEYBOARD(Event.KEYBOARD_EVENTS), MOUSE(Event.MOUSE_EVENTS);
 
 		private final String name;
 
-		private final Event[] supportedEvents;
+		private final Set<Event> supportedEvents;
 
 		DeviceType(final Event[] supportedEvents) {
 			name = "Constants.APPLICATION_NAME " + name();
-			this.supportedEvents = supportedEvents;
+			this.supportedEvents = Set.of(supportedEvents);
 		}
 	}
 
