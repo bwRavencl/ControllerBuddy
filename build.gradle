@@ -50,7 +50,9 @@ ext {
 
 	def mainModule = project.application.mainModule.get()
 	commonJvmArgs = [
-		'-Xms128m',
+		'-XX:+UseSerialGC',
+		'-Xms96m',
+		'-Xmx96m',
 		"--enable-native-access=$mainModule"
 	]
 	windowsJvmArgs = [
