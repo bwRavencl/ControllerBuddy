@@ -564,8 +564,6 @@ public final class Main {
 
 	private final JMenuItem stopMenuItem;
 
-	private final JSVGCanvas svgCanvas;
-
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
 	private final SVGDocument templateSvgDocument;
@@ -637,6 +635,8 @@ public final class Main {
 	private long startServerTrayEntry;
 
 	private long stopTrayEntry;
+
+	private JSVGCanvas svgCanvas;
 
 	private volatile Rectangle totalDisplayBounds;
 
@@ -863,9 +863,19 @@ public final class Main {
 		visualizationPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(STRINGS.getString("VISUALIZATION_TAB"), visualizationPanel);
 
-		svgCanvas = new JSVGCanvas(null, false, false);
-		svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-		visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
+		tabbedPane.addChangeListener(e -> {
+			if (e.getSource() != tabbedPane || tabbedPane.getSelectedComponent() != visualizationPanel) {
+				return;
+			}
+
+			if (svgCanvas == null) {
+				svgCanvas = new JSVGCanvas(null, false, false);
+				svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+				visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
+
+				updateVisualizationPanel();
+			}
+		});
 
 		final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
 		final var exportButton = new JButton(new ExportAction());
@@ -3901,7 +3911,7 @@ public final class Main {
 	}
 
 	void updateVisualizationPanel() {
-		if (visualizationPanel == null || input == null) {
+		if (visualizationPanel == null || svgCanvas == null || input == null) {
 			return;
 		}
 
@@ -3924,10 +3934,10 @@ public final class Main {
 					svgCanvas.setSVGDocument(workingCopySvgDocument);
 				}
 			});
-		} else {
-			modeComboBox.setModel(model);
-			modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 		}
+
+		modeComboBox.setModel(model);
+		modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 
 		svgCanvas.setBackground(UIManager.getColor("Panel.background"));
 	}
