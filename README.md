@@ -52,7 +52,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
     ```
 4. Load the uinput kernel module at boot:
     ```
-    echo uinput" | sudo tee -a /etc/modules-load.d/uinput.conf
+    echo uinput | sudo tee -a /etc/modules-load.d/uinput.conf
     ```
 5. Reboot
 6. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
