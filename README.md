@@ -8,7 +8,7 @@
 Visit the [ControllerBuddy Homepage](https://controllerbuddy.org) to get started.  
 For more support, join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp).
 
-## Description
+## 📖 Description
 
 ControllerBuddy is an advanced gamepad mapping software that supports the creation of input profiles for complex target applications such as flight simulators.
 
@@ -16,21 +16,27 @@ In addition to the simple mapping of buttons and axes of a physical game control
 
 The goal of ControllerBuddy is to allow the user to control target applications exclusively with a gamepad without ever having to reach for a keyboard or mouse.
 
-## Download and Installation
+## ⬇️ Download and Installation
 
-**Tip:**  
-Check out the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script),
-it automates all the steps below and much more!  
-If you are running Linux, you additionally have the option of using the [ControllerBuddy-Flatpak](https://github.com/bwRavencl/ControllerBuddy-Flatpak).
+### 📜 Install-Script
 
-### Windows x86-64
+For the easiest way to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
+It automates all the steps below and much more!  
+
+### 📦 Flatpak
+
+Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwRavencl/ControllerBuddy-Flatpak).
+
+### 🧑‍🔧 Manual Installation
+
+#### 🪟 Windows x86-64
 
 1. First download and install [vJoy](https://github.com/jshafer817/vJoy/releases/latest) on your system.
 2. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Windows as a ZIP archive.
 3. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 4. Run `ControllerBuddy.exe` inside the extracted `ControllerBuddy` directory.
 
-### Linux x86-64 / aarch64
+#### 🐧 Linux x86-64 / aarch64
 
 1. Create a controllerbuddy group:
     ```
@@ -53,7 +59,7 @@ If you are running Linux, you additionally have the option of using the [Control
 7. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
 8. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
 
-## Features
+## ✨ Features
 
 - Map gamepad axes and buttons to highly customizable actions:
     - vJoy axis movements (absolute and relative)
@@ -90,7 +96,7 @@ If you are running Linux, you additionally have the option of using the [Control
     - English
     - German
 
-## Profiles
+## 🗃️ Profiles
 
 Profiles are used to configure your gamepad for a specific target application.  
 The general structure of a profile is as follows:
@@ -134,29 +140,29 @@ Mode switching can be configured to work in two different ways:
 
 The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository contains a number of well-thought-out profiles for many different flight simulators.
 
-## Architecture
+## 🏛️ Architecture
 
-Local mode:
+### 🖥️ Local Mode
 
 ```
             Local:
 
      Physical Controller
-              |
-              |
-              v
+              │
+              │
+              ▼
        ControllerBuddy
               |
               |
-              v
+              ▼
     vJoy + Win32 / uinput
               |
               |
-              v
+              ▼
       Target Application
 ```
 
-Server-Client mode:
+### 🖧 Client-Server Mode
 
 ```
              Server:                                 Client:
@@ -164,19 +170,19 @@ Server-Client mode:
        Physical Controller
                 |
                 |
-                v                  UDP
-         ControllerBuddy  -------------------->  ControllerBuddy
+                ▼                  UDP
+         ControllerBuddy  ────────────────────►  ControllerBuddy
                                                         |
                                                         |
-                                                        v
+                                                        ▼
                                               vJoy + Win32 / uinput
                                                         |
                                                         |
-                                                        v
+                                                        ▼
                                                 Target Application
 ```
 
-## Screenshots
+## 🖼️ Screenshots
 
 ![Modes Tab](screenshot_1.png)
 
@@ -192,7 +198,7 @@ Server-Client mode:
 
 ![Overlay](screenshot_7.png)
 
-## Command Line Parameters
+## ⌨️ Command Line Parameters
 
 | Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
 |---------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|:-----------------------:|
@@ -216,7 +222,7 @@ If one instance of ControllerBuddy is already running, starting a second instanc
 This can be used to integrate ControllerBuddy into third party applications.  
 For more information see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), an exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
 
-## Attribution
+## 🙏 Attribution
 
 ControllerBuddy makes use of these awesome software technologies and libraries:
 
@@ -232,7 +238,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org/)
 
-## Building
+## 🛠️ Building
 
 If you want to build ControllerBuddy from source, this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
@@ -248,6 +254,6 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Create a TGZ-compressed jpackage image | gradlew distTar         |
 | Delete build and gen directories       | gradlew clean           |
 
-## License
+## ⚖️ License
 
 [GNU General Public License v3.0](LICENSE)
