@@ -88,7 +88,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
     - Dual Shock 3
     - Dual Shock 4
     - Dual Sense
-    - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB) project)
+    - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project)
 - Supported operating systems:
     - Windows / Linux (local / client / server)
     - macOS (server only - no binaries provided!)
@@ -204,7 +204,7 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 |---------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|:-----------------------:|
 | ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
 | ‑export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
-| ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/gabomdq/SDL_GameControllerDB) |           yes           |
+| ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
 | ‑help               |                         | prints the help and exits                                                                                   |           no            |
 | -host               | hostname / IP address   | sets the host address for outgoing network connections                                                      |           yes           |
 | -password           | password                | sets the password for all network connections                                                               |           yes           |
@@ -235,7 +235,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
-- [SDL_GameControllerDB](https://github.com/gabomdq/SDL_GameControllerDB)
+- [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org/)
 
 ## 🛠️ Building
