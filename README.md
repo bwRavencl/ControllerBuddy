@@ -142,7 +142,7 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 
 ## 🏛️ Architecture
 
-### 🖥️ Local Mode
+### 🏠 Local Mode
 
 ```
             Local:
@@ -162,7 +162,7 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
       Target Application
 ```
 
-### 🖧 Client-Server Mode
+### 🌐 Client-Server Mode
 
 ```
              Server:                                 Client:
