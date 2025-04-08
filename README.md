@@ -40,7 +40,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 1. Create a controllerbuddy group:
     ```
-    sudo groupadd -f controllerbuddy
+    sudo /usr/sbin/groupadd -f controllerbuddy
     ```
 2. Add yourself to the group:
     ```
