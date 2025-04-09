@@ -21,7 +21,7 @@ The goal of ControllerBuddy is to allow the user to control target applications 
 ### 📜 Install-Script
 
 For the easiest way to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
-It automates all the steps below and much more!  
+It automates all the steps below and much more!
 
 ### 📦 Flatpak
 
@@ -200,22 +200,22 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 
 ## ⌨️ Command Line Parameters
 
-| Parameter           | Arguments               | Description                                                                                                 | Available for scripting |
-|---------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                         |           yes           |
-| ‑export             | file destination        | exports a visualization of the current profile to the specified path                                        |           yes           |
+| Parameter           | Arguments               | Description                                                                                                | Available for scripting |
+|---------------------|-------------------------|------------------------------------------------------------------------------------------------------------|:-----------------------:|
+| ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                        |           yes           |
+| ‑export             | file destination        | exports a visualization of the current profile to the specified path                                       |           yes           |
 | ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
-| ‑help               |                         | prints the help and exits                                                                                   |           no            |
-| -host               | hostname / IP address   | sets the host address for outgoing network connections                                                      |           yes           |
-| -password           | password                | sets the password for all network connections                                                               |           yes           |
-| -port               | port number             | sets the server port for all network connections                                                            |           yes           |
-| ‑profile            | file source             | loads the specified profile after launch                                                                    |           yes           |
-| ‑quit               |                         | quits the application                                                                                       |           yes           |
-| ‑save               | file destination        | save the current profile to the specified path                                                              |           yes           |
-| ‑skipMessageDialogs |                         | skips all message dialogs                                                                                   |           no            |
-| -timeout            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                                |           yes           |
-| ‑tray               |                         | launches the application in the system tray                                                                 |           yes           |
-| ‑version            |                         | prints the version information and exits                                                                    |           no            |
+| ‑help               |                         | prints the help and exits                                                                                  |           no            |
+| -host               | hostname / IP address   | sets the host address for outgoing network connections                                                     |           yes           |
+| -password           | password                | sets the password for all network connections                                                              |           yes           |
+| -port               | port number             | sets the server port for all network connections                                                           |           yes           |
+| ‑profile            | file source             | loads the specified profile after launch                                                                   |           yes           |
+| ‑quit               |                         | quits the application                                                                                      |           yes           |
+| ‑save               | file destination        | save the current profile to the specified path                                                             |           yes           |
+| ‑skipMessageDialogs |                         | skips all message dialogs                                                                                  |           no            |
+| -timeout            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
+| ‑tray               |                         | launches the application in the system tray                                                                |           yes           |
+| ‑version            |                         | prints the version information and exits                                                                   |           no            |
 
 If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and shut down the second instance immediately.
 
