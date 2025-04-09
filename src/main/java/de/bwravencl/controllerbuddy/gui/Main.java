@@ -622,7 +622,7 @@ public final class Main {
 
 	private volatile Controller selectedController;
 
-	private long showTrayEntry;
+	private volatile long showTrayEntry;
 
 	private JMenuItem startClientMenuItem;
 
@@ -640,11 +640,11 @@ public final class Main {
 
 	private volatile Rectangle totalDisplayBounds;
 
-	private long tray;
+	private volatile long tray;
 
-	private long trayMenu;
+	private volatile long trayMenu;
 
-	private boolean unsavedChanges = false;
+	private volatile boolean unsavedChanges = false;
 
 	private JLabel vJoyDirectoryLabel;
 

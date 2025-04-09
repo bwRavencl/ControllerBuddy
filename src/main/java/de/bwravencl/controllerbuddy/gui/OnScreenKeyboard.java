@@ -94,9 +94,9 @@ public final class OnScreenKeyboard extends JFrame {
 
 	private volatile boolean anyChanges;
 
-	private int selectedColumn;
+	private volatile int selectedColumn;
 
-	private int selectedRow;
+	private volatile int selectedRow;
 
 	OnScreenKeyboard(final Main main) {
 		this.main = main;
@@ -300,6 +300,7 @@ public final class OnScreenKeyboard extends JFrame {
 		return leftShiftKeyboardButton.isShifting() || rightShiftKeyboardButton.isShifting();
 	}
 
+	@SuppressWarnings({ "NonAtomicOperationOnVolatileField", "NonAtomicVolatileUpdate" })
 	public void moveSelector(final Direction direction) {
 		EventQueue.invokeLater(() -> {
 			final var optionalPreviousButton = deselectButton();
@@ -802,7 +803,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final LockKey lockKey;
 
-		private boolean wasUp = true;
+		private volatile boolean wasUp = true;
 
 		private LockKeyButton(final LockKey lockKey) {
 			super(getLockKeyDisplayName(lockKey.name()));
