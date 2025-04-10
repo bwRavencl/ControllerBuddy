@@ -228,6 +228,7 @@ import org.lwjgl.sdl.SDLMisc;
 import org.lwjgl.sdl.SDLPixels;
 import org.lwjgl.sdl.SDLSurface;
 import org.lwjgl.sdl.SDLTray;
+import org.lwjgl.sdl.SDLVideo;
 import org.lwjgl.sdl.SDL_Event;
 import org.lwjgl.sdl.SDL_GUID;
 import org.lwjgl.sdl.SDL_Surface;
@@ -349,8 +350,6 @@ public final class Main {
 
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
 
-	private static final String PREFERENCES_DARK_THEME = "dark_theme";
-
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 
 	private static final String PREFERENCES_HOST = "host";
@@ -380,6 +379,8 @@ public final class Main {
 	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
 
 	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
+
+	private static final String PREFERENCES_THEME = "theme";
 
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 
@@ -549,6 +550,8 @@ public final class Main {
 	private final Random random;
 
 	private final JMenu runMenu = new JMenu(STRINGS.getString("RUN_MENU"));
+
+	private final boolean sdlVideoInitialized;
 
 	private final StartClientAction startClientAction = new StartClientAction();
 
@@ -985,7 +988,7 @@ public final class Main {
 		hotSwapPanel.add(hotSwappingButtonLabel);
 
 		final var hotSwapButtonComboBox = new JComboBox<>(HotSwappingButton.values());
-		final var selectedHotSwappingButton = HotSwappingButton.getById(getSelectedHotSwappingButtonId());
+		final var selectedHotSwappingButton = HotSwappingButton.fromId(getSelectedHotSwappingButtonId());
 		hotSwapButtonComboBox.setSelectedItem(selectedHotSwappingButton);
 		hotSwapPanel.add(hotSwapButtonComboBox);
 		hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
@@ -1063,21 +1066,17 @@ public final class Main {
 		constraints.gridx = 1;
 		globalSettingsPanel.add(appearanceSettingsPanel, constraints);
 
-		final var darkThemePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
-		appearanceSettingsPanel.add(darkThemePanel);
+		final var themePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		appearanceSettingsPanel.add(themePanel);
 
-		final var darkThemeLabel = new JLabel(STRINGS.getString("DARK_THEME_LABEL"));
-		darkThemeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
-		darkThemePanel.add(darkThemeLabel);
+		final var themeLabel = new JLabel(STRINGS.getString("THEME_LABEL"));
+		themeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		themePanel.add(themeLabel);
 
-		final var darkThemeCheckBox = new JCheckBox(STRINGS.getString("DARK_THEME_CHECK_BOX"));
-		darkThemeCheckBox.setSelected(isDarkTheme());
-		darkThemeCheckBox.addActionListener(event -> {
-			final var darkTheme = ((JCheckBox) event.getSource()).isSelected();
-			preferences.putBoolean(PREFERENCES_DARK_THEME, darkTheme);
-			updateTheme();
-		});
-		darkThemePanel.add(darkThemeCheckBox);
+		final var themeComboBox = new JComboBox<>(Theme.values());
+		themeComboBox.setSelectedItem(getSelectedTheme());
+		themePanel.add(themeComboBox);
+		themeComboBox.setAction(new SetThemeAction());
 
 		final var overlayScalingPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		appearanceSettingsPanel.add(overlayScalingPanel);
@@ -1247,7 +1246,6 @@ public final class Main {
 		}
 
 		newProfile(false);
-		updateTheme();
 
 		final var sdlInitialized = mainLoop.runSync(() -> {
 			SDLInit.SDL_SetAppMetadata(Constants.APPLICATION_NAME, Constants.VERSION, applicationId);
@@ -1268,8 +1266,10 @@ public final class Main {
 			return SDLInit.SDL_Init(flags);
 		}).orElse(false);
 
-		final var sdlVideoInitialized = SDLInit.SDL_WasInit(SDLInit.SDL_INIT_VIDEO) != 0;
+		sdlVideoInitialized = SDLInit.SDL_WasInit(SDLInit.SDL_INIT_VIDEO) != 0;
 		hasSystemTray &= sdlVideoInitialized;
+
+		updateTheme();
 
 		if (!sdlInitialized) {
 			var errorDetails = SDLError.SDL_GetError();
@@ -2060,6 +2060,10 @@ public final class Main {
 				HotSwappingButton.NONE.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
+	private Theme getSelectedTheme() {
+		return Theme.fromId(preferences.getInt(PREFERENCES_THEME, Theme.SYSTEM.id));
+	}
+
 	public int getTimeout() {
 		return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
 	}
@@ -2383,10 +2387,6 @@ public final class Main {
 
 	private boolean isClientRunning() {
 		return mainLoop.isTaskOfTypeRunning(ClientRunMode.class);
-	}
-
-	private boolean isDarkTheme() {
-		return preferences.getBoolean(PREFERENCES_DARK_THEME, false);
 	}
 
 	public boolean isHapticFeedback() {
@@ -2933,6 +2933,11 @@ public final class Main {
 					}
 
 					updateTrayIconToolTip(joyBatteryEvent.percent());
+				}
+				case SDLEvents.SDL_EVENT_SYSTEM_THEME_CHANGED -> {
+					if (getSelectedTheme() == Theme.SYSTEM) {
+						EventQueue.invokeLater(this::updateTheme);
+					}
 				}
 				default -> {
 				}
@@ -3821,7 +3826,20 @@ public final class Main {
 	}
 
 	private void updateTheme() {
-		lookAndFeel = isDarkTheme() ? new FlatDarkLaf() : new FlatLightLaf();
+		lookAndFeel = switch (getSelectedTheme()) {
+		case SYSTEM -> {
+			if (sdlVideoInitialized) {
+				final var optionalSystemTheme = mainLoop.runSync(SDLVideo::SDL_GetSystemTheme);
+				if (optionalSystemTheme.isPresent() && optionalSystemTheme.get() == SDLVideo.SDL_SYSTEM_THEME_DARK) {
+					yield new FlatDarkLaf();
+				}
+			}
+
+			yield new FlatLightLaf();
+		}
+		case LIGHT -> new FlatLightLaf();
+		case DARK -> new FlatDarkLaf();
+		};
 
 		try {
 			UIManager.setLookAndFeel(lookAndFeel);
@@ -3968,14 +3986,9 @@ public final class Main {
 			label = STRINGS.getString(labelKey);
 		}
 
-		private static HotSwappingButton getById(final int id) {
-			for (final var hotSwappingButton : EnumSet.allOf(HotSwappingButton.class)) {
-				if (hotSwappingButton.id == id) {
-					return hotSwappingButton;
-				}
-			}
-
-			return NONE;
+		private static HotSwappingButton fromId(final int id) {
+			return EnumSet.allOf(HotSwappingButton.class).stream()
+					.filter(hotSwappingButton -> hotSwappingButton.id == id).findFirst().orElse(NONE);
 		}
 
 		@Override
@@ -3986,6 +3999,29 @@ public final class Main {
 
 	private enum RunModeType {
 		NONE, LOCAL, CLIENT, SERVER
+	}
+
+	private enum Theme {
+
+		SYSTEM(0, "THEME_SYSTEM"), LIGHT(1, "THEME_LIGHT"), DARK(2, "THEME_DARK");
+
+		private final int id;
+
+		private final String label;
+
+		Theme(final int id, final String labelKey) {
+			this.id = id;
+			label = STRINGS.getString(labelKey);
+		}
+
+		private static Theme fromId(final int id) {
+			return EnumSet.allOf(Theme.class).stream().filter(theme -> theme.id == id).findFirst().orElse(SYSTEM);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
 	}
 
 	@DBusInterfaceName("org.gnome.Shell.Extensions")
@@ -5026,6 +5062,21 @@ public final class Main {
 
 				setUnsavedChanges(true);
 				updateVisualizationPanel();
+			}
+		}
+	}
+
+	private final class SetThemeAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -8033657996255756808L;
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var theme = (Theme) ((JComboBox<?>) e.getSource()).getSelectedItem();
+			if (theme != null) {
+				preferences.putInt(PREFERENCES_THEME, theme.id);
+				updateTheme();
 			}
 		}
 	}
