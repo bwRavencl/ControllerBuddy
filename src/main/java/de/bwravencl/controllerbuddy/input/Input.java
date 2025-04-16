@@ -649,38 +649,38 @@ public final class Input {
 		}
 
 		final var modes = profile.getModes();
-		modes.sort((o1, o2) -> {
-			final var o1IsDefaultMode = Profile.DEFAULT_MODE.equals(o1);
-			final var o2IsDefaultMode = Profile.DEFAULT_MODE.equals(o2);
+		modes.sort((mode1, mode2) -> {
+			final var mode1IsDefaultMode = Profile.DEFAULT_MODE.equals(mode1);
+			final var mode2IsDefaultMode = Profile.DEFAULT_MODE.equals(mode2);
 
-			if (o1IsDefaultMode && o2IsDefaultMode) {
+			if (mode1IsDefaultMode && mode2IsDefaultMode) {
 				return 0;
 			}
 
-			if (o1IsDefaultMode) {
+			if (mode1IsDefaultMode) {
 				return -1;
 			}
 
-			if (o2IsDefaultMode) {
+			if (mode2IsDefaultMode) {
 				return 1;
 			}
 
-			final var o1IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(o1);
-			final var o2IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(o2);
+			final var mode1IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode1);
+			final var mode2IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode2);
 
-			if (o1IsOnScreenKeyboardMode && o2IsOnScreenKeyboardMode) {
+			if (mode1IsOnScreenKeyboardMode && mode2IsOnScreenKeyboardMode) {
 				return 0;
 			}
 
-			if (o1IsOnScreenKeyboardMode) {
+			if (mode1IsOnScreenKeyboardMode) {
 				return -1;
 			}
 
-			if (o2IsOnScreenKeyboardMode) {
+			if (mode2IsOnScreenKeyboardMode) {
 				return 1;
 			}
 
-			return o1.getDescription().compareTo(o2.getDescription());
+			return mode1.getDescription().compareTo(mode2.getDescription());
 		});
 
 		for (final var mode : modes) {
@@ -697,16 +697,16 @@ public final class Input {
 			}
 
 			for (final var actions : mode.getButtonToActionsMap().values()) {
-				actions.sort((o1, o2) -> {
-					if (o1 instanceof final IButtonToAction buttonToAction1
-							&& o2 instanceof final IButtonToAction buttonToAction2) {
-						final var o1IsLongPress = buttonToAction1.isLongPress();
-						final var o2IsLongPress = buttonToAction2.isLongPress();
+				actions.sort((action1, action2) -> {
+					if (action1 instanceof final IButtonToAction buttonToAction1
+							&& action2 instanceof final IButtonToAction buttonToAction2) {
+						final var mode1IsLongPress = buttonToAction1.isLongPress();
+						final var mode2IsLongPress = buttonToAction2.isLongPress();
 
-						if (o1IsLongPress && !o2IsLongPress) {
+						if (mode1IsLongPress && !mode2IsLongPress) {
 							return -1;
 						}
-						if (!o1IsLongPress && o2IsLongPress) {
+						if (!mode1IsLongPress && mode2IsLongPress) {
 							return 1;
 						}
 					}

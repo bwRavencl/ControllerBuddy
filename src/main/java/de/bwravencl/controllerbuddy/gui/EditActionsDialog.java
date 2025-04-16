@@ -103,17 +103,17 @@ public final class EditActionsDialog extends JDialog {
 		try (final var scanResult = new ClassGraph().acceptPackages(IAction.class.getPackageName()).enableClassInfo()
 				.enableAnnotationInfo().scan()) {
 			final var classInfoList = scanResult.getClassesWithAnnotation(Action.class.getName());
-			classInfoList.sort((c1, c2) -> {
-				final var a1 = c1.loadClass().getAnnotation(Action.class);
-				final var a2 = c2.loadClass().getAnnotation(Action.class);
+			classInfoList.sort((classInfo1, classInfo2) -> {
+				final var actionAnnotation1 = classInfo1.loadClass().getAnnotation(Action.class);
+				final var actionAnnotation2 = classInfo2.loadClass().getAnnotation(Action.class);
 
-				return a1.order() - a2.order();
+				return actionAnnotation1.order() - actionAnnotation2.order();
 			});
 
 			classInfoList.forEach(classInfo -> {
 				final var actionClass = classInfo.loadClass();
-				final var annotation = actionClass.getAnnotation(Action.class);
-				final var category = annotation.category();
+				final var actionAnnotation = actionClass.getAnnotation(Action.class);
+				final var category = actionAnnotation.category();
 
 				if (category == ActionCategory.ALL || category == ActionCategory.AXIS) {
 					mutableAxisActionClasses.add(actionClass);
