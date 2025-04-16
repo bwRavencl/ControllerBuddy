@@ -681,7 +681,6 @@ public final class Main {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 
-				// noinspection InfiniteLoopStatement
 				for (;;) {
 					String line;
 					String[] arguments = null;

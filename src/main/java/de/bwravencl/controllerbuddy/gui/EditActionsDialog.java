@@ -107,12 +107,14 @@ public final class EditActionsDialog extends JDialog {
 				final var actionAnnotation1 = classInfo1.loadClass().getAnnotation(Action.class);
 				final var actionAnnotation2 = classInfo2.loadClass().getAnnotation(Action.class);
 
+				// noinspection DataFlowIssue
 				return actionAnnotation1.order() - actionAnnotation2.order();
 			});
 
 			classInfoList.forEach(classInfo -> {
 				final var actionClass = classInfo.loadClass();
 				final var actionAnnotation = actionClass.getAnnotation(Action.class);
+				// noinspection DataFlowIssue
 				final var category = actionAnnotation.category();
 
 				if (category == ActionCategory.ALL || category == ActionCategory.AXIS) {
