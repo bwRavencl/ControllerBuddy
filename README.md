@@ -48,7 +48,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
     ```
 3. Allow the group to access uinput:
     ```
-    echo KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy" | sudo tee /etc/udev/rules.d/99-controllerbuddy.rules
+    echo 'KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy"' | sudo tee /etc/udev/rules.d/99-controllerbuddy.rules
     ```
 4. Load the uinput kernel module at boot:
     ```
