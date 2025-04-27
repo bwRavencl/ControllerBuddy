@@ -149,16 +149,6 @@ public abstract class OutputRunMode extends RunMode {
 		return new UnsupportedOperationException("Not implemented");
 	}
 
-	private static void closeUinputDevice(final UinputDevice uinputDevice) {
-		if (uinputDevice != null) {
-			try {
-				uinputDevice.close();
-			} catch (final IOException e) {
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
-			}
-		}
-	}
-
 	private static void sendInputChecked(final MemorySegment input) throws IOException {
 		if (User32.SendInput(1, MemorySegment.ofAddress(input.address()), (int) INPUT.LAYOUT.byteSize()) == 0) {
 			throw new IOException("SendInput failed: " + Kernel32.GetLastError());
@@ -216,10 +206,6 @@ public abstract class OutputRunMode extends RunMode {
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
-			closeUinputDevice(joystickUinputDevice);
-			closeUinputDevice(mouseUinputDevice);
-			closeUinputDevice(keyboardUinputDevice);
-
 			EventQueue.invokeLater(
 					() -> main.setStatusBarText(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_UINPUT_DEVICES")));
 		}

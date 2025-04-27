@@ -16,6 +16,7 @@
 
 package de.bwravencl.controllerbuddy.runmode;
 
+import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.Linux;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_event;
 import de.bwravencl.controllerbuddy.ffi.Linux.input_id;
@@ -31,6 +32,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +43,8 @@ import java.util.stream.Stream;
 public final class UinputDevice implements Closeable {
 
 	private static final short BUS_USB = 0x3;
+
+	private static final Map<DeviceType, UinputDevice> DEVICE_MAP = new HashMap<>();
 
 	private static final Path DEVICE_PATH = Paths.get("/dev", "uinput");
 
@@ -110,9 +116,27 @@ public final class UinputDevice implements Closeable {
 	}
 
 	static UinputDevice openUinputDevice(final DeviceType deviceType) throws IOException {
-		final var device = new UinputDevice(deviceType);
-		LOGGER.log(Level.INFO, "Opened uinput device: " + device);
-		return device;
+		var uinputDevice = DEVICE_MAP.get(deviceType);
+		if (uinputDevice == null) {
+			uinputDevice = new UinputDevice(deviceType);
+			DEVICE_MAP.put(deviceType, uinputDevice);
+
+			LOGGER.log(Level.INFO, "Opened uinput device: " + uinputDevice);
+		}
+
+		return uinputDevice;
+	}
+
+	public static void shutdown() {
+		DEVICE_MAP.values().removeIf(uinputDevice -> {
+			try {
+				uinputDevice.close();
+			} catch (final IOException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+
+			return true;
+		});
 	}
 
 	@Override
@@ -173,7 +197,9 @@ public final class UinputDevice implements Closeable {
 		private final Set<Event> supportedEvents;
 
 		DeviceType(final Event[] supportedEvents) {
-			name = "Constants.APPLICATION_NAME " + name();
+			final var enumName = name();
+			name = Constants.APPLICATION_NAME + " " + enumName.charAt(0)
+					+ enumName.substring(1).toLowerCase(Locale.ROOT);
 			this.supportedEvents = Set.of(supportedEvents);
 		}
 	}

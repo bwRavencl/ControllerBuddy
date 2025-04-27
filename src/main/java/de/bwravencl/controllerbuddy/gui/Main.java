@@ -48,6 +48,7 @@ import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
+import de.bwravencl.controllerbuddy.runmode.UinputDevice;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.awt.BorderLayout;
@@ -2948,6 +2949,10 @@ public final class Main {
 	private void quit() {
 		if (input != null) {
 			input.deInit();
+		}
+
+		if (IS_LINUX) {
+			UinputDevice.shutdown();
 		}
 
 		stopAll(true, false, false);
