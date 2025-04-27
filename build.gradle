@@ -23,7 +23,7 @@ def git = Grgit.open dir: projectDir
 version = "${git.describe(longDescr: true).replaceFirst('-', '.').replaceFirst('-g', '-')}${((!git.status().isClean()) ? '.dirty' : '')}"
 
 base {
-	archivesName = application.applicationName.toLowerCase()
+	archivesName = application.applicationName.toLowerCase(Locale.ROOT)
 }
 
 application {
