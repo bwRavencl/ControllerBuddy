@@ -127,8 +127,11 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
 		final var activeMode = profile.getActiveMode();
 
-		activeMode.getAllActions().stream().filter(action -> action instanceof IActivatableAction)
-				.forEach(action -> ((IActivatableAction<?>) action).init(input));
+		activeMode.getAllActions().forEach(action -> {
+			if (action instanceof final IActivatableAction<?> activatableAction) {
+				activatableAction.init(input);
+			}
+		});
 
 		final var axes = activeMode.getAxisToActionsMap().keySet();
 		final var previousModeAxisToActionsMap = previousMode.getAxisToActionsMap();
