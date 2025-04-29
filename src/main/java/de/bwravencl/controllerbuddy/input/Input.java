@@ -371,7 +371,6 @@ public final class Input {
 
 		if (hotSwappingButtonId != HotSwappingButton.NONE.id
 				&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
-
 			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
 			while (sdlGamepadToGamepadStateMapIterator.hasNext()) {
 				final var entry = sdlGamepadToGamepadStateMapIterator.next();
