@@ -176,7 +176,7 @@ tasks.register('generateModuleInfo') {
 			    requires jdk.xml.dom;
 			    requires org.apache.commons.cli;
 			    requires org.apache.xmlgraphics.batik.anim;
-			    requires org.apache.xmlgraphics.batik.brdige;
+			    requires org.apache.xmlgraphics.batik.bridge;
 			    requires org.apache.xmlgraphics.batik.constants;
 			    requires org.apache.xmlgraphics.batik.dom;
 			    requires org.apache.xmlgraphics.batik.util;
