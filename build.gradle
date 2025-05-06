@@ -316,6 +316,7 @@ tasks.register('generateConstants') {
 				public static final String LICENSES_HTML;
 
 				static {
+					//noinspection HttpUrlsUsage
 					LICENSES_HTML = "${licensesHtmlStringBuilder.toString()}";
 				}
 			}
