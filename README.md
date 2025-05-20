@@ -135,7 +135,7 @@ When switching from one Mode to another, all the axes and buttons that are not u
 
 Mode switching can be configured to work in two different ways:
 
-- Default: works like the SHIFT key on your keyboard
+- Default: works like the Shift key on your keyboard
 - Toggle: works like the Caps Lock key
 
 The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository contains a number of well-thought-out profiles for many different flight simulators.
