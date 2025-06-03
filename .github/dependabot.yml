@@ -4,11 +4,17 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
   - package-ecosystem: "gitsubmodule"
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
