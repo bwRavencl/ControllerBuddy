@@ -39,19 +39,19 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 #### 🐧 Linux x86-64 / aarch64
 
 1. Create a controllerbuddy group:
-    ```
+    ```sh
     sudo /usr/sbin/groupadd -f controllerbuddy
     ```
 2. Add yourself to the group:
-    ```
+    ```sh
     sudo gpasswd -a "$USER" controllerbuddy
-    ```
+    ```sh
 3. Allow the group to access uinput:
-    ```
+    ```sh
     echo 'KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy"' | sudo tee /etc/udev/rules.d/99-controllerbuddy.rules
     ```
 4. Load the uinput kernel module at boot:
-    ```
+    ```sh
     echo uinput | sudo tee -a /etc/modules-load.d/uinput.conf
     ```
 5. Reboot
