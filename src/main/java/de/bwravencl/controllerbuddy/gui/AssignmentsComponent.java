@@ -463,7 +463,7 @@ final class AssignmentsComponent extends JScrollPane {
 					shape = innerShape;
 				} else {
 					final var outerShape = new Arc2D.Float(1, 1, getWidth() - 2, getHeight() - 2,
-							buttonLocation.startDegree, 90f, Arc2D.PIE);
+							buttonLocation.startAngle, 90f, Arc2D.PIE);
 					final var outerArea = new Area(outerShape);
 					outerArea.subtract(new Area(innerShape));
 					shape = outerArea;
@@ -516,10 +516,10 @@ final class AssignmentsComponent extends JScrollPane {
 
 			EAST(-45f), CENTER(0f), NORTH(45f), WEST(135f), SOUTH(225f);
 
-			final float startDegree;
+			final float startAngle;
 
-			CompoundButtonLocation(final float startDegree) {
-				this.startDegree = startDegree;
+			CompoundButtonLocation(final float startAngle) {
+				this.startAngle = startAngle;
 			}
 		}
 	}
