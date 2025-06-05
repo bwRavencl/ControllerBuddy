@@ -388,9 +388,9 @@ final class AssignmentsComponent extends JScrollPane {
 						g2d.fill(shape);
 					}
 
-					if (buttonLocation == CompoundButtonLocation.CENTER) {
-						beginForeground(g2d);
-
+					beginForeground(g2d);
+					switch (buttonLocation) {
+					case CENTER -> {
 						final var textRect = getTextRectangle(text, g2d, x, y, 0);
 						paintText(g, textRect, text);
 
@@ -398,6 +398,27 @@ final class AssignmentsComponent extends JScrollPane {
 							final var swappedTextRect = getTextRectangle(Main.SWAPPED_SYMBOL, g2d, x, y, 1);
 							paintText(g, swappedTextRect, Main.SWAPPED_SYMBOL);
 						}
+					}
+					case EAST -> {
+						final var text = "→";
+						final var textRect = getTextRectangle(text, g2d, (int) (x + getWidth() * 0.375), y, 0);
+						paintText(g, textRect, text);
+					}
+					case NORTH -> {
+						final var text = "↑";
+						final var textRect = getTextRectangle(text, g2d, x, y - (int) (x + getHeight() * 0.375), 0);
+						paintText(g, textRect, text);
+					}
+					case WEST -> {
+						final var text = "←";
+						final var textRect = getTextRectangle(text, g2d, x - (int) (x + getWidth() * 0.375), y, 0);
+						paintText(g, textRect, text);
+					}
+					case SOUTH -> {
+						final var text = "↓";
+						final var textRect = getTextRectangle(text, g2d, x, y + (int) (x + getHeight() * 0.375), 0);
+						paintText(g, textRect, text);
+					}
 					}
 				}
 			});
