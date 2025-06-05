@@ -328,7 +328,7 @@ final class AssignmentsComponent extends JScrollPane {
 				}
 				default -> throw buildInvalidComponentIndexException(componentType, componentIndex);
 				}
-			} else if (peer != null) {
+			} else {
 				switch (componentIndex) {
 				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> setAction(new EditComponentAction(main,
 						Main.STRINGS.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
