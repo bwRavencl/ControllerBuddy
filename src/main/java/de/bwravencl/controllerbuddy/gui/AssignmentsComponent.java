@@ -454,9 +454,11 @@ final class AssignmentsComponent extends JScrollPane {
 		private void initShape() {
 			if (!getBounds().equals(base)) {
 				base = getBounds();
-				final var ww = getWidth() * 0.5f;
-				final var xx = ww * 0.5f;
-				final var innerShape = new Ellipse2D.Float(xx, xx, ww, ww);
+
+				final var innerSize = getWidth() * 0.5f;
+				final var innerPos = innerSize * 0.5f;
+				final var innerShape = new Ellipse2D.Float(innerPos, innerPos, innerSize, innerSize);
+
 				if (CompoundButtonLocation.CENTER == buttonLocation) {
 					shape = innerShape;
 				} else {
