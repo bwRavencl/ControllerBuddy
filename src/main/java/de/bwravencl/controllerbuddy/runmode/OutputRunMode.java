@@ -163,7 +163,7 @@ public abstract class OutputRunMode extends RunMode {
 		final var oldDownSetIterator = oldDownSet.iterator();
 		while (oldDownSetIterator.hasNext()) {
 			final var oldDownElement = oldDownSetIterator.next();
-			final var stillDown = sourceSet.stream().anyMatch(sourceElement -> sourceElement.equals(oldDownElement));
+			final var stillDown = sourceSet.contains(oldDownElement);
 
 			if (stillDown) {
 				if (keepStillDown) {
@@ -176,7 +176,7 @@ public abstract class OutputRunMode extends RunMode {
 		}
 
 		for (final var sourceElement : sourceSet) {
-			final var alreadyDown = oldDownSet.stream().anyMatch(oldElement -> oldElement.equals(sourceElement));
+			final var alreadyDown = oldDownSet.contains(sourceElement);
 
 			if (!alreadyDown) {
 				newDownSet.add(sourceElement);
