@@ -217,10 +217,10 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 | ‑tray               |                         | launches the application in the system tray                                                                |           yes           |
 | ‑version            |                         | prints the version information and exits                                                                   |           no            |
 
-If one instance of ControllerBuddy is already running, starting a second instance with the parameters marked as "available for scripting" will trigger the corresponding action in the first instance and shut down the second instance immediately.
+If ControllerBuddy is already running, launching a second instance with any of the parameters marked as "available for scripting" will forward the specified action to the first instance and then exit immediately.
 
-This can be used to integrate ControllerBuddy into third party applications.  
-For more information see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), an exemplary integration of ControllerBuddy into [DCS World](https://www.digitalcombatsimulator.com).
+This mechanism allows seamless integration of ControllerBuddy into third-party applications.  
+For an example, see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), which demonstrates how ControllerBuddy can be integrated into [DCS World](https://www.digitalcombatsimulator.com).
 
 ## 🙏 Attribution
 
