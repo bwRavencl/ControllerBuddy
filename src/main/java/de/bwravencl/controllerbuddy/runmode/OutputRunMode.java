@@ -762,30 +762,30 @@ public abstract class OutputRunMode extends RunMode {
 				doMouseButtonInput(mouseButton, false);
 			}
 
-			for (final var code : newUpNormalKeys) {
-				doKeyboardInput(code, false);
+			for (final var scanCode : newUpNormalKeys) {
+				doKeyboardInput(scanCode, false);
 			}
 
-			for (final var code : newUpModifiers) {
-				doKeyboardInput(code, false);
+			for (final var scanCode : newUpModifiers) {
+				doKeyboardInput(scanCode, false);
 			}
 
-			for (final var code : offLockKeys) {
-				setLockKeyState(code, false);
+			for (final var scanCode : offLockKeys) {
+				setLockKeyState(scanCode, false);
 			}
 
-			for (final var code : onLockKeys) {
-				setLockKeyState(code, true);
+			for (final var scanCode : onLockKeys) {
+				setLockKeyState(scanCode, true);
 			}
 
-			for (final var code : newDownModifiers) {
-				doKeyboardInput(code, true);
+			for (final var scanCode : newDownModifiers) {
+				doKeyboardInput(scanCode, true);
 			}
 
 			final var currentTime = System.currentTimeMillis();
 			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
-				for (final var code : newDownNormalKeys) {
-					doKeyboardInput(code, true);
+				for (final var scanCode : newDownNormalKeys) {
+					doKeyboardInput(scanCode, true);
 				}
 
 				prevKeyInputTime = currentTime;
