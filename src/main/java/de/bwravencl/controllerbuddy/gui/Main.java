@@ -2783,6 +2783,8 @@ public final class Main {
 		updateProfileSettingsPanel();
 		updatePanelAccess();
 
+		menuBar.revalidate();
+
 		frame.getContentPane().invalidate();
 		frame.getContentPane().repaint();
 
