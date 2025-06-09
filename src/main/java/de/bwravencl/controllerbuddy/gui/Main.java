@@ -2785,9 +2785,6 @@ public final class Main {
 
 		menuBar.revalidate();
 
-		frame.getContentPane().invalidate();
-		frame.getContentPane().repaint();
-
 		if (restartOutput) {
 			restartLast();
 		}
