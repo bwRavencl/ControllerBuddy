@@ -2398,7 +2398,7 @@ public final class Main {
 	}
 
 	public boolean isMapCircularAxesToSquareAxes() {
-		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, false);
+		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
 	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
