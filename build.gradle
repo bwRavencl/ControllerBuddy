@@ -142,7 +142,7 @@ dependencies {
 	implementation("com.github.hypfvieh:dbus-java-core:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation 'com.google.code.gson:gson:2.13.1'
-	implementation 'io.github.classgraph:classgraph:4.8.179'
+	implementation 'io.github.classgraph:classgraph:4.8.180'
 	implementation('org.apache.xmlgraphics:batik-swing:1.19') { exclude group: 'xml-apis', module: 'xml-apis' }
 	implementation "org.lwjgl:lwjgl:$lwjglVersion"
 	implementation "org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform"
