@@ -1618,6 +1618,11 @@ public final class Main {
 
 							for (var i = 0; i < 5; i++) {
 								final var str = socketBufferedReader.readLine();
+
+								if (str == null) {
+									break;
+								}
+
 								if (SINGLE_INSTANCE_ACK.equals(str)) {
 									continueLaunch = false;
 									break;
