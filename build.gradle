@@ -138,7 +138,7 @@ dependencies {
 	def lwjglPlatform = "${lwjglOs}${lwjglArch.isEmpty() ? '' : '-'}${lwjglArch}"
 
 	implementation 'commons-cli:commons-cli:1.9.0'
-	implementation 'com.formdev:flatlaf:3.6'
+	implementation 'com.formdev:flatlaf:3.6.1'
 	implementation("com.github.hypfvieh:dbus-java-core:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") { exclude group: 'org.slf4j', module: 'slf4j-api' }
 	implementation 'com.google.code.gson:gson:2.13.1'
