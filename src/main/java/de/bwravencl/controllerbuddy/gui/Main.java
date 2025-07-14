@@ -1651,7 +1651,7 @@ public final class Main {
 
 						main = new Main(taskRunner, cmdProfilePath, cmdGameControllerDbPath);
 
-						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine));
+						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, true));
 
 						taskRunner.startSdlEventPolling();
 					});
@@ -2172,8 +2172,8 @@ public final class Main {
 		}
 	}
 
-	private void handleRemainingCommandLine(final CommandLine commandLine) {
-		if (frame != null) {
+	private void handleRemainingCommandLine(final CommandLine commandLine, final boolean initialLaunch) {
+		if (frame != null && (initialLaunch || frame.isVisible())) {
 			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
 
 			var visible = !hasTrayOption || isModalDialogShowing();
@@ -2561,7 +2561,7 @@ public final class Main {
 						updateGameControllerMappingsFromFile(gameControllerDbPath);
 					}
 
-					EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine));
+					EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
 				});
 			} catch (final ParseException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
