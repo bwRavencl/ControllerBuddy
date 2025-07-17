@@ -269,7 +269,6 @@ downloadLicenses {
 
 	includeProjectDependencies = true
 	ignoreFatalParseErrors = false
-	licenses = ['com.github.strikerx3:jxinput:1.0.0': mit]
 	// @formatter:off
 	aliases = [(license('Apache-2.0', 'https://www.apache.org/licenses/LICENSE-2.0')): [
 			'Apache-2.0',
