@@ -21,6 +21,7 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -69,6 +70,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import org.lwjgl.sdl.SDLGamepad;
 
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
@@ -362,6 +364,12 @@ public final class EditActionsDialog extends JDialog {
 		} else if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(selectedMode)) {
 			return ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 		} else if (component.getType() == ComponentType.AXIS) {
+			final var componentIndex = component.getIndex();
+			if (componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
+					|| componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) {
+				return AXIS_ACTION_CLASSES.stream().filter(clazz -> clazz != AxisToRelativeAxisAction.class).toList();
+			}
+
 			return AXIS_ACTION_CLASSES;
 		} else if (Profile.DEFAULT_MODE.equals(selectedMode)) {
 			return BUTTON_ACTION_CLASSES;
