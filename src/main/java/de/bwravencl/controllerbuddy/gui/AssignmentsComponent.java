@@ -303,6 +303,7 @@ final class AssignmentsComponent extends JScrollPane {
 			if (peer != null) {
 				peer.setPeer(this);
 				setModel(peer.getModel());
+				model.removeActionListener(actionListener);
 			}
 
 			final var componentType = component.getType();
