@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
-@Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.AXIS, order = 30)
+@Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 30)
 public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements IAxisToLongPressAction {
 
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;

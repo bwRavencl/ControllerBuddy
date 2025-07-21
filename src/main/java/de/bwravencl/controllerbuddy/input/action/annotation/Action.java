@@ -32,6 +32,6 @@ public @interface Action {
 	int order();
 
 	enum ActionCategory {
-		ALL, AXIS, BUTTON, BUTTON_AND_CYCLES, ON_SCREEN_KEYBOARD_MODE
+		ALL, AXIS, AXIS_AND_TRIGGER, BUTTON, BUTTON_AND_CYCLES, ON_SCREEN_KEYBOARD_MODE
 	}
 }

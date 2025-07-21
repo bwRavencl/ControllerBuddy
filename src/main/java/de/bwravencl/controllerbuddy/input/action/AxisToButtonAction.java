@@ -23,7 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-@Action(label = "TO_BUTTON_ACTION", category = ActionCategory.AXIS, order = 20)
+@Action(label = "TO_BUTTON_ACTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
 public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToLongPressAction {
 
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;

@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxAxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
 
-@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS, order = 10)
+@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;

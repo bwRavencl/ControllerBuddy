@@ -21,7 +21,6 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -93,11 +92,14 @@ public final class EditActionsDialog extends JDialog {
 
 	private static final List<Class<?>> ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 
+	private static final List<Class<?>> TRIGGER_ACTION_CLASSES;
+
 	@Serial
 	private static final long serialVersionUID = 5007388251349678609L;
 
 	static {
 		final List<Class<?>> mutableAxisActionClasses = new ArrayList<>();
+		final List<Class<?>> mutableTriggerActionClasses = new ArrayList<>();
 		final List<Class<?>> mutableButtonActionClasses = new ArrayList<>();
 		final List<Class<?>> mutableCycleActionClasses = new ArrayList<>();
 		final List<Class<?>> mutableOnScreenKeyboardActionClasses = new ArrayList<>();
@@ -119,8 +121,12 @@ public final class EditActionsDialog extends JDialog {
 				// noinspection DataFlowIssue
 				final var category = actionAnnotation.category();
 
-				if (category == ActionCategory.ALL || category == ActionCategory.AXIS) {
+				if (category == ActionCategory.ALL || category == ActionCategory.AXIS
+						|| category == ActionCategory.AXIS_AND_TRIGGER) {
 					mutableAxisActionClasses.add(actionClass);
+				}
+				if (category == ActionCategory.ALL || category == ActionCategory.AXIS_AND_TRIGGER) {
+					mutableTriggerActionClasses.add(actionClass);
 				}
 				if (category == ActionCategory.ALL || category == ActionCategory.BUTTON
 						|| category == ActionCategory.BUTTON_AND_CYCLES) {
@@ -136,6 +142,7 @@ public final class EditActionsDialog extends JDialog {
 		}
 
 		AXIS_ACTION_CLASSES = Collections.unmodifiableList(mutableAxisActionClasses);
+		TRIGGER_ACTION_CLASSES = Collections.unmodifiableList(mutableTriggerActionClasses);
 		BUTTON_ACTION_CLASSES = Collections.unmodifiableList(mutableButtonActionClasses);
 		CYCLE_ACTION_CLASSES = Collections.unmodifiableList(mutableCycleActionClasses);
 		ON_SCREEN_KEYBOARD_ACTION_CLASSES = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
@@ -367,9 +374,8 @@ public final class EditActionsDialog extends JDialog {
 			final var componentIndex = component.getIndex();
 			if (componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
 					|| componentIndex == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) {
-				return AXIS_ACTION_CLASSES.stream().filter(clazz -> clazz != AxisToRelativeAxisAction.class).toList();
+				return TRIGGER_ACTION_CLASSES;
 			}
-
 			return AXIS_ACTION_CLASSES;
 		} else if (Profile.DEFAULT_MODE.equals(selectedMode)) {
 			return BUTTON_ACTION_CLASSES;
