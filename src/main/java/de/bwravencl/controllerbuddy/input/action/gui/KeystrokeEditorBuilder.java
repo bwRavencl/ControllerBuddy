@@ -338,7 +338,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			return this;
 		}
 
-		public void setFilter(String text) {
+		private void setFilter(String text) {
 			if (text != null) {
 				text = text.toLowerCase(Locale.ROOT);
 			}

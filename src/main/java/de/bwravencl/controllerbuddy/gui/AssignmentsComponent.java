@@ -530,8 +530,6 @@ final class AssignmentsComponent extends JScrollPane {
 		@Serial
 		private static final long serialVersionUID = 5458020346838696827L;
 
-		protected boolean defaultBoldText;
-
 		boolean contentAreaFilled = true;
 
 		Color disabledText;
@@ -539,6 +537,8 @@ final class AssignmentsComponent extends JScrollPane {
 		private Color borderColor;
 
 		private Color defaultBackground;
+
+		private boolean defaultBoldText;
 
 		private Color defaultBorderColor;
 

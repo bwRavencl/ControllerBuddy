@@ -875,7 +875,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = 296846375213986255L;
 
-		public NumLockKeyButton() {
+		private NumLockKeyButton() {
 			super(LockKey.NUM_LOCK_LOCK_KEY);
 		}
 

@@ -5234,6 +5234,6 @@ public final class Main {
 			}
 		}
 
-		protected abstract void doAction();
+		abstract void doAction();
 	}
 }

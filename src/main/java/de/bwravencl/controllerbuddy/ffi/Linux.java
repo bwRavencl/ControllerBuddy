@@ -232,7 +232,7 @@ public final class Linux {
 
 		private static final String TV_USEC_NAME = "tv_usec";
 
-		public static final GroupLayout LAYOUT = MemoryLayout.structLayout(ValueLayout.JAVA_LONG.withName(TV_SEC_NAME),
+		private static final GroupLayout LAYOUT = MemoryLayout.structLayout(ValueLayout.JAVA_LONG.withName(TV_SEC_NAME),
 				ValueLayout.JAVA_LONG.withName(TV_USEC_NAME));
 	}
 
