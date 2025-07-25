@@ -1194,7 +1194,7 @@ public final class Main {
 		updateTouchpadSettings();
 		updateTitle();
 
-		final var outsideBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+		final var outsideBorder = new StatusBarBorder();
 		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
 		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
 		frame.add(statusLabel, BorderLayout.SOUTH);
@@ -4458,6 +4458,23 @@ public final class Main {
 			} catch (final URISyntaxException e1) {
 				throw new RuntimeException(e1);
 			}
+		}
+	}
+
+	private static final class StatusBarBorder extends EtchedBorder {
+
+		@Serial
+		private static final long serialVersionUID = 8093699906433634882L;
+
+		@Override
+		public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width,
+				final int height) {
+			g.translate(x, y);
+			g.setColor(getHighlightColor(c));
+			g.drawLine(0, 0, width - 1, 0);
+			g.setColor(getShadowColor(c));
+			g.drawLine(0, 1, width - 1, 1);
+			g.translate(-x, -y);
 		}
 	}
 
