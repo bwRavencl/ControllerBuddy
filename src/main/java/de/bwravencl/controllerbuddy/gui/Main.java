@@ -54,6 +54,7 @@ import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -76,6 +77,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -149,6 +151,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -162,6 +165,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JRootPane;
@@ -375,6 +379,8 @@ public final class Main {
 
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 
+	private static final String PREFERENCES_SHOW_DONATE_BUTTON = "show_donate_button";
+
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
 
 	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
@@ -468,8 +474,6 @@ public final class Main {
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 
 	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
-
-	private static final String WEBSITE_URL = "https://controllerbuddy.org";
 
 	static volatile Main main;
 
@@ -1194,10 +1198,67 @@ public final class Main {
 		updateTouchpadSettings();
 		updateTitle();
 
+		final var statusPanel = new JPanel(new BorderLayout(5, 0));
 		final var outsideBorder = new StatusBarBorder();
 		final var insideBorder = BorderFactory.createEmptyBorder(0, 5, 0, 5);
-		statusLabel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
-		frame.add(statusLabel, BorderLayout.SOUTH);
+		statusPanel.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
+
+		statusPanel.add(statusLabel, BorderLayout.CENTER);
+
+		final var showDonateButton = preferences.getBoolean(PREFERENCES_SHOW_DONATE_BUTTON, true);
+
+		final var donateButton = new JButton(new DonateAction());
+		donateButton.setContentAreaFilled(false);
+		donateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		donateButton.setVisible(showDonateButton);
+
+		final var toggleDonateItem = new JCheckBoxMenuItem(STRINGS.getString("SHOW_DONATE_BUTTON"), showDonateButton);
+		toggleDonateItem.addActionListener(_ -> {
+			final var showDonateButton1 = toggleDonateItem.isSelected();
+			preferences.putBoolean(PREFERENCES_SHOW_DONATE_BUTTON, showDonateButton1);
+
+			donateButton.setVisible(showDonateButton1);
+			statusPanel.revalidate();
+		});
+		final var statusPanelPopupMenu = new JPopupMenu();
+		statusPanelPopupMenu.add(toggleDonateItem);
+
+		final var statusPanelMouseAdapter = new MouseAdapter() {
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				showPopup(e);
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				showPopup(e);
+			}
+
+			private void showPopup(final MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					toggleDonateItem.setSelected(donateButton.isVisible());
+					statusPanelPopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		statusPanel.addMouseListener(statusPanelMouseAdapter);
+
+		donateButton.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				statusPanelMouseAdapter.mousePressed(e);
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				statusPanelMouseAdapter.mouseReleased(e);
+			}
+		});
+		statusPanel.add(donateButton, BorderLayout.EAST);
+
+		frame.add(statusPanel, BorderLayout.SOUTH);
 
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
@@ -1697,6 +1758,14 @@ public final class Main {
 		}
 
 		showPleaseVisitDialog(parentComponent, uri);
+	}
+
+	private static void openWebsite(final Component parentComponent, final String path) {
+		try {
+			openBrowser(parentComponent, new URI("https", "controllerbuddy.org", path, null));
+		} catch (final URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static void printCommandLineMessage(final String message) {
@@ -4094,6 +4163,24 @@ public final class Main {
 		}
 	}
 
+	private static final class DonateAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = -9029607010261185834L;
+
+		private DonateAction() {
+			putValue(NAME, "<html><span style='text-decoration:underline'>" + STRINGS.getString("DONATE_ACTION_NAME")
+					+ "</span> <span style='color:#D10000'>❤</span></html>");
+			putValue(SHORT_DESCRIPTION,
+					MessageFormat.format(STRINGS.getString("DONATE_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			openWebsite(main.frame, "/donate");
+		}
+	}
+
 	private static final class HtmlFileChooser extends AbstractProfileFileChooser {
 
 		@Serial
@@ -4453,11 +4540,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			try {
-				openBrowser(main.frame, new URI(WEBSITE_URL));
-			} catch (final URISyntaxException e1) {
-				throw new RuntimeException(e1);
-			}
+			openWebsite(main.frame, null);
 		}
 	}
 
