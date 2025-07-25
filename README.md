@@ -214,7 +214,7 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 | ‑save               | file destination        | save the current profile to the specified path                                                             |           yes           |
 | ‑skipMessageDialogs |                         | skips all message dialogs                                                                                  |           no            |
 | -timeout            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
-| ‑tray               |                         | launches the application in the system tray                                                                |           yes           |
+| ‑tray               |                         | launches the application to the system tray                                                                |           yes           |
 | ‑version            |                         | prints the version information and exits                                                                   |           no            |
 
 If ControllerBuddy is already running, launching a second instance with any of the parameters marked as "available for scripting" will forward the specified action to the first instance and then exit immediately.
