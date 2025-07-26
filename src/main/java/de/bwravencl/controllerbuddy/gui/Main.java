@@ -1212,6 +1212,8 @@ public final class Main {
 		final var showDonateButton = preferences.getBoolean(PREFERENCES_SHOW_DONATE_BUTTON, true);
 
 		final var donateButton = new JButton(new DonateAction());
+		donateButton.setPreferredSize(
+				new Dimension(donateButton.getPreferredSize().width, statusLabel.getPreferredSize().height));
 		donateButton.setContentAreaFilled(false);
 		donateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		donateButton.setVisible(showDonateButton);
