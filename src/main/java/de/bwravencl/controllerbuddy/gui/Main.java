@@ -568,6 +568,8 @@ public final class Main {
 
 	private final JLabel statusLabel = new JLabel(STRINGS.getString("STATUS_READY"));
 
+	private final JPopupMenu statusPanelPopupMenu;
+
 	private final StopAction stopAction = new StopAction();
 
 	private final JMenuItem stopMenuItem;
@@ -577,6 +579,8 @@ public final class Main {
 	private final SVGDocument templateSvgDocument;
 
 	private final Timer timer = new Timer();
+
+	private final JCheckBoxMenuItem toggleDonateCheckBoxMenuItem;
 
 	private final JPanel touchpadCursorSensitivityPanel;
 
@@ -1212,16 +1216,16 @@ public final class Main {
 		donateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		donateButton.setVisible(showDonateButton);
 
-		final var toggleDonateItem = new JCheckBoxMenuItem(STRINGS.getString("SHOW_DONATE_BUTTON"), showDonateButton);
-		toggleDonateItem.addActionListener(_ -> {
-			final var showDonateButton1 = toggleDonateItem.isSelected();
+		toggleDonateCheckBoxMenuItem = new JCheckBoxMenuItem(STRINGS.getString("SHOW_DONATE_BUTTON"), showDonateButton);
+		toggleDonateCheckBoxMenuItem.addActionListener(_ -> {
+			final var showDonateButton1 = toggleDonateCheckBoxMenuItem.isSelected();
 			preferences.putBoolean(PREFERENCES_SHOW_DONATE_BUTTON, showDonateButton1);
 
 			donateButton.setVisible(showDonateButton1);
 			statusPanel.revalidate();
 		});
-		final var statusPanelPopupMenu = new JPopupMenu();
-		statusPanelPopupMenu.add(toggleDonateItem);
+		statusPanelPopupMenu = new JPopupMenu();
+		statusPanelPopupMenu.add(toggleDonateCheckBoxMenuItem);
 
 		final var statusPanelMouseAdapter = new MouseAdapter() {
 
@@ -1237,7 +1241,7 @@ public final class Main {
 
 			private void showPopup(final MouseEvent e) {
 				if (e.isPopupTrigger()) {
-					toggleDonateItem.setSelected(donateButton.isVisible());
+					toggleDonateCheckBoxMenuItem.setSelected(donateButton.isVisible());
 					statusPanelPopupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -3926,6 +3930,8 @@ public final class Main {
 		FlatLaf.updateUI();
 
 		profileFileChooser.updateUI();
+		statusPanelPopupMenu.updateUI();
+		toggleDonateCheckBoxMenuItem.updateUI();
 
 		updateVisualizationPanel();
 	}
