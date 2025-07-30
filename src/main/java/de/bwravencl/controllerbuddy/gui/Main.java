@@ -110,6 +110,10 @@ import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -5210,9 +5214,20 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
 
-			GuiUtils.showMessageDialog(
-					main, frame, MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME, Constants.VERSION),
+			final var buildDateTime = Instant.ofEpochMilli(Constants.BUILD_TIMESTAMP).atZone(ZoneId.systemDefault());
+
+			final var buildTimeLocale = Locale.ROOT.equals(STRINGS.getLocale())
+					? (Locale.getDefault().getLanguage().equals(Locale.ENGLISH.getLanguage()) ? Locale.getDefault()
+							: Locale.US)
+					: STRINGS.getLocale();
+			final var buildTimeString = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+					.withLocale(buildTimeLocale).format(buildDateTime);
+
+			final var buildYear = String.valueOf(buildDateTime.getYear());
+
+			GuiUtils.showMessageDialog(main, frame,
+					MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
+							Constants.VERSION, buildTimeString, buildYear),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 		}
 	}
