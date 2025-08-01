@@ -1,26 +1,28 @@
+//file:noinspection GroovyAccessibility
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection GrUnresolvedAccess
+
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
-import com.github.spotbugs.snom.SpotBugsTask
-import java.util.stream.Collectors
-import org.ajoberstar.grgit.Grgit
+import groovy.transform.Canonical
+import groovy.xml.MarkupBuilder
+import groovy.xml.XmlParser
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.xml.sax.helpers.DefaultHandler
 
 plugins {
 	id 'application'
-	id 'com.benjaminsproule.license-report' version '0.16.2'
 	id 'com.diffplug.spotless' version '7.2.1'
 	id 'com.github.spotbugs' version '6.2.2'
 	id 'net.ltgt.errorprone' version '4.3.0'
-	id 'org.ajoberstar.grgit' version '5.3.2'
 	id 'org.gradlex.extra-java-module-info' version '1.13'
 }
 
-def git = Grgit.open dir: projectDir
-version = "${git.describe(longDescr: true).replaceFirst('-', '.').replaceFirst('-g', '-')}${((!git.status().isClean()) ? '.dirty' : '')}"
+version = providers.exec {
+	commandLine('git', 'describe', '--long', '--dirty=.dirty')
+}.standardOutput.asText.get().trim().replaceFirst('-', '.').replaceFirst('-g', '-')
 
 base {
 	archivesName = application.applicationName.toLowerCase(Locale.ROOT)
@@ -71,6 +73,11 @@ ext {
 	distAppendix = "${os.toFamilyName()}-$arch.name"
 }
 
+repositories {
+	mavenCentral()
+	maven { url = 'https://central.sonatype.com/repository/maven-snapshots' }
+}
+
 java {
 	toolchain {
 		languageVersion = javaLanguageVersion
@@ -78,31 +85,9 @@ java {
 	}
 }
 
-repositories {
-	mavenCentral()
-	maven { url 'https://central.sonatype.com/repository/maven-snapshots' }
-}
-
-tasks.register('cleanModuleInfo') {
-	description = "Removes the \'$moduleInfoFile\' source file"
-	doLast { delete moduleInfoFile }
-}
-
-tasks.register('cleanConstants') {
-	description = "Removes the \'$constantsFile\' source file"
-	doLast { delete constantsFile }
-}
-
-tasks.register('cleanGameControllerDB') {
-	description = "Removes the \'gamecontrollerdb.txt\' file from the \'$resourcesDir\' directory."
-	doLast { delete gamecontrollerdbResFile }
-}
-
-clean.dependsOn cleanModuleInfo, cleanConstants, cleanGameControllerDB
-
 dependencies {
-	errorprone('com.google.errorprone:error_prone_core:2.41.0')
-	spotbugs('com.github.spotbugs:spotbugs:4.9.3')
+	errorprone 'com.google.errorprone:error_prone_core:2.41.0'
+	spotbugs 'com.github.spotbugs:spotbugs:4.9.3'
 
 	def dbusJavaVersion = '5.1.1'
 	def lwjglVersion = '3.4.0-SNAPSHOT'
@@ -156,57 +141,6 @@ extraJavaModuleInfo {
 	failOnMissingModuleInfo = false
 }
 
-tasks.register('generateModuleInfo') {
-	description = "Generates the \'$moduleInfoFile\' source file"
-	doLast {
-		file(moduleInfoFile).write('''\
-			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
-			module de.bwravencl.controllerbuddy {
-			    exports de.bwravencl.controllerbuddy.gui;
-
-			    opens de.bwravencl.controllerbuddy.input to com.google.gson;
-			    opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
-
-			    requires com.google.gson;
-			    requires com.formdev.flatlaf;
-			    requires io.github.classgraph;
-			    requires transitive java.desktop;
-			    requires java.logging;
-			    requires java.prefs;
-			    requires jdk.xml.dom;
-			    requires org.apache.commons.cli;
-			    requires org.apache.xmlgraphics.batik.anim;
-			    requires org.apache.xmlgraphics.batik.bridge;
-			    requires org.apache.xmlgraphics.batik.constants;
-			    requires org.apache.xmlgraphics.batik.dom;
-			    requires org.apache.xmlgraphics.batik.util;
-			    requires org.apache.xmlgraphics.batik.swing;
-			    requires org.freedesktop.dbus;
-			    requires org.lwjgl;
-			    requires org.lwjgl.natives;
-			    requires org.lwjgl.sdl;
-			    requires org.lwjgl.sdl.natives;
-			    requires xml.apis.ext;
-			}
-			'''.stripIndent(), 'UTF-8')
-	}
-}
-
-spotbugs {
-	baselineFile = file('spotbugs-baseline.xml')
-	effort = Effort.valueOf('MAX')
-	extraArgs = ['-maxRank', '20']
-	onlyAnalyze = ['de.bwravencl.-']
-	reportLevel = Confidence.valueOf('LOW')
-}
-
-tasks.withType(SpotBugsTask).configureEach {
-	reports {
-		html { required.set true }
-		xml { required.set true }
-	}
-}
-
 spotless {
 	encoding 'UTF-8'
 	java {
@@ -215,7 +149,7 @@ spotless {
 		eclipse('4.33').configFile 'spotless.eclipseformat.xml'
 		formatAnnotations()
 		//noinspection GroovyAccessibility
-		cleanthat().sourceCompatibility(project.sourceCompatibility.toString()).addMutators([
+		cleanthat().sourceCompatibility(project.extensions.getByType(JavaPluginExtension).sourceCompatibility.toString()).addMutators([
 			'SafeButNotConsensual',
 			'SafeButControversial'
 		])
@@ -264,89 +198,264 @@ spotless {
 	}
 }
 
-downloadLicenses {
-	def mit = license('MIT', 'https://opensource.org/license/mit/')
+spotbugs {
+	baselineFile = file('spotbugs-baseline.xml')
+	effort = Effort.valueOf('MAX')
+	extraArgs = ['-maxRank', '20']
+	onlyAnalyze = ['de.bwravencl.-']
+	reportLevel = Confidence.valueOf('LOW')
+}
 
-	includeProjectDependencies = true
-	ignoreFatalParseErrors = false
-	// @formatter:off
-	aliases = [(license('Apache-2.0', 'https://www.apache.org/licenses/LICENSE-2.0')): [
+tasks.register('cleanConstants', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the '$constantsFile' source file"
+	delete constantsFile
+}
+
+tasks.register('cleanGameControllerDB', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the 'gamecontrollerdb.txt' file from the '$resourcesDir' directory."
+	delete gamecontrollerdbResFile
+}
+
+tasks.register('cleanLibsDirectory', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the '${base.libsDirectory.get()}' directory."
+	delete base.libsDirectory
+}
+
+tasks.register('cleanModuleInfo', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the '$moduleInfoFile' source file"
+	delete moduleInfoFile
+}
+
+tasks.register('cleanRuntimeDir', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the '${runtimeDir.get()}' directory."
+	delete runtimeDir
+}
+
+tasks.register('cleanTmpProjectDir', Delete) {
+	outputs.upToDateWhen { false }
+	description = "Removes the '${tmpDir.get().file(project.name)}' directory."
+	delete tmpDir.get().file(project.name)
+}
+
+tasks.named('clean') {
+	dependsOn cleanConstants, cleanGameControllerDB, cleanLibsDirectory, cleanModuleInfo, cleanRuntimeDir, cleanTmpProjectDir
+}
+
+@Canonical
+final class Coordinate implements Comparable<Coordinate> {
+
+	String group
+
+	String artifactId
+
+	String version
+
+	@Override
+	int compareTo(Coordinate other) {
+		def result = group <=> other.group
+		if (result != 0) {
+			return result
+		}
+		result = artifactId <=> other.artifactId
+		if (result != 0) {
+			return result
+		}
+		return version <=> other.version
+	}
+
+	@Override
+	String toString() {
+		[group, artifactId, version].findAll { it }.join ':'
+	}
+}
+
+@Canonical
+final class DependencyMetadata {
+
+	Coordinate coordinate
+
+	List<License> licenses = []
+}
+
+@Canonical
+final class License {
+
+	String name
+
+	String url
+}
+
+static buildNoLicenseException(String fileName) {
+	new GradleException("No license metadata found for dependency: $fileName")
+}
+
+DependencyMetadata getLicensesForDependency(Coordinate coordinate, Coordinate initialCoordinate = coordinate) {
+	def aliases = [(new License('Apache-2.0', 'https://www.apache.org/licenses/LICENSE-2.0')): [
 			'Apache-2.0',
 			'Apache License, Version 2.0',
 			'The Apache License, Version 2.0',
 			'The Apache Software License, Version 2.0'
-		], (mit): [
+		], (new License('MIT', 'https://opensource.org/license/mit/'))                           : [
 			'MIT',
 			'MIT License',
 			'The MIT License (MIT)'
 		]]
-	// @formatter:on
-	dependencyConfiguration = 'runtimeClasspath'
-
-	report {
-		reportByLicenseType = false
-		json.enabled = false
-		xml.enabled = false
+	def dependency = project.dependencies.create("$coordinate@pom")
+	def pomConfiguration = project.configurations.detachedConfiguration(dependency)
+	File pStream
+	try {
+		pStream = pomConfiguration.resolve().asList().first()
+	} catch (ResolveException ignored) {
+		throw buildNoLicenseException(coordinate)
 	}
+	def xmlParser = new XmlParser(true, false)
+	xmlParser.setErrorHandler(new DefaultHandler())
+	def node = xmlParser.parse(pStream)
+	def dependencyMetadata = new DependencyMetadata(coordinate: initialCoordinate)
+	node.licenses.license.each {
+		def license = new License(it.name.text().trim(), it.url.text().trim())
+		def alias = aliases.find { aliasEntry ->
+			aliasEntry.value.any { aliasElem ->
+				if (aliasElem instanceof String) {
+					return aliasElem == license.name
+				} else if (aliasElem instanceof License) {
+					return (License) aliasElem == license
+				}
+			}
+		}
+		if (alias) {
+			license = alias.key
+		}
+		dependencyMetadata.licenses << license
+	}
+	if (!dependencyMetadata.licenses.empty) {
+		return dependencyMetadata
+	} else if (node.parent.text()) {
+		def parentCoordinate = new Coordinate(group: node.parent.groupId.text().trim(), artifactId: node.parent.artifactId.text().trim(), version: node.parent.version.text().trim())
+		return getLicensesForDependency(parentCoordinate, initialCoordinate)
+	}
+	throw buildNoLicenseException(initialCoordinate)
 }
 
+def dependencyMetadataSet = configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.collect { resolvedArtifact ->
+	def coordinate = new Coordinate(group: resolvedArtifact.moduleVersion.id.group, artifactId: resolvedArtifact.moduleVersion.id.name, version: resolvedArtifact.moduleVersion.id.version)
+	getLicensesForDependency(coordinate)
+}.toSet()
+
+dependencyMetadataSet << new DependencyMetadata(coordinate: new Coordinate(artifactId: 'SDL_GameControllerDB'), licenses: [
+	new License('zlib License', 'https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE')
+])
+
 tasks.register('generateConstants') {
-	dependsOn 'downloadLicenses'
-	description = "Generates the \'$constantsFile\' source file"
+	description = "Generates the '$constantsFile' source file"
+	mustRunAfter cleanConstants
+	def version = project.version
+	def file = file constantsFile
+	def applicationName = application.applicationName
+	def licenseFile = layout.projectDirectory.file('LICENSE')
 	doLast {
-		def dependencyLicenseHtml = layout.buildDirectory.file('reports/license/dependency-license.html').get().getAsFile().text.replaceFirst('<head>[\\s\\S]*</head>', '').replaceFirst('<style>[\\s\\S]*</style>', '').replaceFirst('<h3>Jar</h3>', '<h3>File</h3>').replaceAll('class\\s*=\\s*\'-?[_a-zA-Z]+[_a-zA-Z0-9-]*\'', '').replaceAll('>\\s*<', '><')
-		def projectLicenseHtml = layout.projectDirectory.file('LICENSE').getAsFile().readLines().collect({ it.trim().codePoints().mapToObj({ it > 127 || '"\'<>&'.indexOf(it) != -1 ? "&#$it;" : new String(Character.toChars(it)) }).collect(Collectors.joining()) }).join '<br>'
-
-		def licensesHtmlStringBuilder = new StringBuilder(dependencyLicenseHtml)
-		def bodyTag = '<body>'
-		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.indexOf(bodyTag) + bodyTag.length(), "<center><h1>$application.applicationName License:</h1><p>$projectLicenseHtml</p><br><h1>Third-Party Licenses:</h1>")
-		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</table>'), '<tr><td>SDL_GameControllerDB</td><td>gamecontrollerdb.txt</td><td>zlib License</td><td><a href=\'https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE\'>Show license agreement</a></td></tr>')
-		licensesHtmlStringBuilder.insert(licensesHtmlStringBuilder.lastIndexOf('</body>'), '</center>')
-
-		def file = file constantsFile
+		def generateHtmlLicenseReport = {
+			def stringWriter = new StringWriter()
+			def markupBuilder = new MarkupBuilder(new IndentPrinter(stringWriter, '', false))
+			markupBuilder.html {
+				body {
+					h1 "$applicationName License:"
+					p {
+						licenseFile.getAsFile().readLines().each {
+							mkp.yield it.strip()
+							br()
+						}
+					}
+					br()
+					h1 'Third-Party Licenses:'
+					table {
+						tr {
+							th('align': 'left') { h3 'Dependency' }
+							th('align': 'left') { h3 'License' }
+							th('align': 'left') { h3 'Link' }
+						}
+						dependencyMetadataSet.sort { it.coordinate }.each { entry ->
+							entry.licenses.each { license ->
+								tr {
+									td entry.coordinate
+									td license.name
+									td {
+										if (license.url) {
+											a(href: license.url, 'Open')
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			stringWriter.toString()
+		}
 		file.getParentFile().mkdirs()
 		file.write("""\
 			package de.bwravencl.controllerbuddy.constants;\n
 			public class Constants {
 
-				public static final String APPLICATION_NAME = "$application.applicationName";
+				public static final String APPLICATION_NAME = "$applicationName";
 
 				public static final long BUILD_TIMESTAMP = ${System.currentTimeMillis()}L;
 
-				public static final String VERSION = "$project.version";
+				public static final String VERSION = "$version";
 
 				public static final String LICENSES_HTML;
 
 				static {
 					//noinspection HttpUrlsUsage
-					LICENSES_HTML = "${licensesHtmlStringBuilder.toString()}";
+					LICENSES_HTML = "${generateHtmlLicenseReport().replace('"', '\\"')}";
 				}
 			}
 			""".stripIndent(), 'UTF-8')
 	}
 }
 
-tasks.register('checkGameControllerDBSubmodule') {
-	description = "Checks that the SDL_GameControllerDB submodule is checked out"
+tasks.register('generateModuleInfo') {
+	description = "Generates the '$moduleInfoFile' source file"
+	mustRunAfter cleanModuleInfo
+	def file = file moduleInfoFile
 	doLast {
-		if (!file(gamecontrollerdbGitFile).exists()) {
-			throw new GradleException("SDL_GameControllerDB submodule not checked out")
-		}
+		file.write('''\
+			@SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
+			module de.bwravencl.controllerbuddy {
+			    exports de.bwravencl.controllerbuddy.gui;
+
+			    opens de.bwravencl.controllerbuddy.input to com.google.gson;
+			    opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+
+			    requires com.google.gson;
+			    requires com.formdev.flatlaf;
+			    requires io.github.classgraph;
+			    requires transitive java.desktop;
+			    requires java.logging;
+			    requires java.prefs;
+			    requires jdk.xml.dom;
+			    requires org.apache.commons.cli;
+			    requires org.apache.xmlgraphics.batik.anim;
+			    requires org.apache.xmlgraphics.batik.bridge;
+			    requires org.apache.xmlgraphics.batik.constants;
+			    requires org.apache.xmlgraphics.batik.dom;
+			    requires org.apache.xmlgraphics.batik.util;
+			    requires org.apache.xmlgraphics.batik.swing;
+			    requires org.freedesktop.dbus;
+			    requires org.lwjgl;
+			    requires org.lwjgl.natives;
+			    requires org.lwjgl.sdl;
+			    requires org.lwjgl.sdl.natives;
+			    requires xml.apis.ext;
+			}
+			'''.stripIndent(), 'UTF-8')
 	}
 }
-
-tasks.register('copyGameControllerDB', Copy) {
-	description = "Places a copy of \'${gamecontrollerdbGitFile}\' into the \'$resourcesDir' directory."
-	dependsOn checkGameControllerDBSubmodule
-	from gamecontrollerdbGitFile
-	into resourcesDir
-}
-
-tasks.processResources.dependsOn copyGameControllerDB
-tasks.spotlessGroovyGradleCheck.dependsOn copyGameControllerDB
-tasks.spotlessNewlineAndTrailingWhitespace.dependsOn copyGameControllerDB
-tasks.spotlessOnlyNewline.dependsOn copyGameControllerDB
-tasks.spotlessXml.dependsOn copyGameControllerDB
 
 tasks.withType(JavaCompile).configureEach {
 	dependsOn generateModuleInfo, generateConstants
@@ -363,7 +472,7 @@ tasks.withType(JavaCompile).configureEach {
 	}
 }
 
-run {
+tasks.named('run') {
 	jvmArgs += commonJvmArgs
 	if (os.windows)
 		jvmArgs += windowsJvmArgs
@@ -371,20 +480,27 @@ run {
 		jvmArgs += linuxJvmArgs
 }
 
-tasks.register('jlink', Exec) {
-	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory. Also removes any preexisting runtime in the same directory.'
-	dependsOn check
-	group
-	doFirst { delete runtimeDir }
-	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom'
+tasks.register('checkGameControllerDBSubmodule') {
+	description = "Checks that the SDL_GameControllerDB submodule is checked out"
+	def file = file gamecontrollerdbGitFile
+	doLast {
+		if (!file.exists()) {
+			throw new GradleException("SDL_GameControllerDB submodule not checked out")
+		}
+	}
 }
 
-tasks.register('cleanLibsDirectory') {
-	description = "Removes the \'${base.libsDirectory.get()}\' directory."
-	doLast { delete base.libsDirectory }
+tasks.register('copyGameControllerDB', Copy) {
+	description = "Places a copy of '${gamecontrollerdbGitFile}' into the '$resourcesDir' directory."
+	dependsOn checkGameControllerDBSubmodule
+	mustRunAfter cleanGameControllerDB
+	from gamecontrollerdbGitFile
+	into resourcesDir
 }
 
-jar.mustRunAfter cleanLibsDirectory
+tasks.named('processResources') {
+	dependsOn copyGameControllerDB
+}
 
 tasks.register('copyLibs', Copy) {
 	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
@@ -393,13 +509,52 @@ tasks.register('copyLibs', Copy) {
 	into base.libsDirectory
 }
 
+tasks.named('spotbugsMain') {
+	reports {
+		html { required.set true }
+		xml { required.set true }
+	}
+}
+
+tasks.named('spotbugsTest') {
+	enabled = false
+}
+
+tasks.named('spotlessGroovyGradleCheck') {
+	dependsOn copyGameControllerDB
+}
+
+tasks.named('spotlessNewlineAndTrailingWhitespace') {
+	dependsOn copyGameControllerDB
+}
+
+tasks.named('spotlessOnlyNewline') {
+	dependsOn copyGameControllerDB
+}
+
+tasks.named('spotlessXml') {
+	dependsOn copyGameControllerDB
+}
+
+tasks.named('test') {
+	enabled = false
+}
+
+tasks.register('jlink', Exec) {
+	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory.'
+	dependsOn check, jar, cleanRuntimeDir
+	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom'
+}
+
 tasks.register('customizeLoggingProperties') {
 	description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
 	dependsOn jlink
+	def file = runtimeDir.get().file 'conf/logging.properties'
+	def projectName = project.name
 	doLast {
-		ant.propertyfile(file: "${runtimeDir.get()}/conf/logging.properties") {
+		ant.propertyfile(file: file) {
 			entry(key: 'handlers', value: 'java.util.logging.FileHandler, java.util.logging.ConsoleHandler')
-			entry(key: 'java.util.logging.FileHandler.pattern', value: "%t/${project.name}.log")
+			entry(key: 'java.util.logging.FileHandler.pattern', value: "%t/${projectName}.log")
 			entry(key: 'java.util.logging.FileHandler.formatter', value: 'java.util.logging.SimpleFormatter')
 			entry(key: 'java.util.logging.SimpleFormatter.format', value: '[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n')
 		}
@@ -408,8 +563,7 @@ tasks.register('customizeLoggingProperties') {
 
 tasks.register('jpackage', Exec) {
 	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
-	dependsOn copyLibs, customizeLoggingProperties
-	doFirst { delete tmpDir.get().file(project.name) }
+	dependsOn copyLibs, customizeLoggingProperties, cleanTmpProjectDir
 	def commandLineParts = [
 		"${javaHome.get()}/bin/jpackage",
 		'--dest',
@@ -434,6 +588,9 @@ tasks.register('jpackage', Exec) {
 		'Matteo Hausner',
 		'--verbose'
 	]
+	doFirst {
+		println commandLineParts
+	}
 	def jvmArgs = commonJvmArgs
 	if (os.windows)
 		jvmArgs += windowsJvmArgs
@@ -443,7 +600,9 @@ tasks.register('jpackage', Exec) {
 	commandLine commandLineParts
 }
 
-startScripts.enabled = false
+tasks.named('startScripts') {
+	enabled = false
+}
 
 tasks.replace('distTar', Tar).configure {
 	dependsOn jpackage

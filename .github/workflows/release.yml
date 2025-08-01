@@ -81,34 +81,34 @@ jobs:
             buildscript {
               repositories {
                 maven {
-                  url "https://maven.bwravencl.de/releases"
+                  url 'https://maven.bwravencl.de/releases'
                   credentials {
-                    username user
-                    password pass
+                    username = user
+                    password = pass
                   }
                 }
                 maven {
-                  url "https://maven.bwravencl.de/snapshots"
+                  url = 'https://maven.bwravencl.de/snapshots'
                   credentials {
-                    username user
-                    password pass
+                    username = user
+                    password = pass
                   }
                 }
               }
             }
             repositories {
               maven {
-                url "https://maven.bwravencl.de/releases"
+                url = 'https://maven.bwravencl.de/releases'
                 credentials {
-                  username user
-                  password pass
+                  username = user
+                  password = pass
                 }
               }
               maven {
-                url "https://maven.bwravencl.de/snapshots"
+                url = 'https://maven.bwravencl.de/snapshots'
                 credentials {
-                  username user
-                  password pass
+                  username = user
+                  password = pass
                 }
               }
             }
