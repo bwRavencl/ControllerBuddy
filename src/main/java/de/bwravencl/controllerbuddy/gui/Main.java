@@ -5250,7 +5250,7 @@ public final class Main {
 			editorPane.setCaretColor(editorPane.getBackground());
 
 			final var scrollPane = new JScrollPane(editorPane);
-			scrollPane.setPreferredSize(new Dimension(1015, 400));
+			scrollPane.setPreferredSize(new Dimension(600, 400));
 
 			editorPane.addHyperlinkListener(hyperlinkEvent -> {
 				if (hyperlinkEvent.getEventType() != EventType.ACTIVATED) {
