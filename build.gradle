@@ -214,13 +214,13 @@ tasks.register('cleanConstants', Delete) {
 
 tasks.register('cleanGameControllerDB', Delete) {
 	outputs.upToDateWhen { false }
-	description = "Removes the 'gamecontrollerdb.txt' file from the '$resourcesDir' directory."
+	description = "Removes the 'gamecontrollerdb.txt' file from the '$resourcesDir' directory"
 	delete gamecontrollerdbResFile
 }
 
 tasks.register('cleanLibsDirectory', Delete) {
 	outputs.upToDateWhen { false }
-	description = "Removes the '${base.libsDirectory.get()}' directory."
+	description = "Removes the '${base.libsDirectory.get()}' directory"
 	delete base.libsDirectory
 }
 
@@ -232,13 +232,13 @@ tasks.register('cleanModuleInfo', Delete) {
 
 tasks.register('cleanRuntimeDir', Delete) {
 	outputs.upToDateWhen { false }
-	description = "Removes the '${runtimeDir.get()}' directory."
+	description = "Removes the '${runtimeDir.get()}' directory"
 	delete runtimeDir
 }
 
 tasks.register('cleanTmpProjectDir', Delete) {
 	outputs.upToDateWhen { false }
-	description = "Removes the '${tmpDir.get().file(project.name)}' directory."
+	description = "Removes the '${tmpDir.get().file(project.name)}' directory"
 	delete tmpDir.get().file(project.name)
 }
 
@@ -491,7 +491,7 @@ tasks.register('checkGameControllerDBSubmodule') {
 }
 
 tasks.register('copyGameControllerDB', Copy) {
-	description = "Places a copy of '${gamecontrollerdbGitFile}' into the '$resourcesDir' directory."
+	description = "Places a copy of '${gamecontrollerdbGitFile}' into the '$resourcesDir' directory"
 	dependsOn checkGameControllerDBSubmodule
 	mustRunAfter cleanGameControllerDB
 	from gamecontrollerdbGitFile
@@ -503,7 +503,7 @@ tasks.named('processResources') {
 }
 
 tasks.register('copyLibs', Copy) {
-	description = 'Copies all jar files into a directory called \'libs\' inside the build directory.'
+	description = 'Copies all jar files into a directory called \'libs\' inside the build directory'
 	dependsOn cleanLibsDirectory, jar
 	from configurations.runtimeClasspath
 	into base.libsDirectory
@@ -541,13 +541,13 @@ tasks.named('test') {
 }
 
 tasks.register('jlink', Exec) {
-	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory.'
+	description = 'Executes the jlink command to create a customized minimal Java runtime inside the build directory'
 	dependsOn check, jar, cleanRuntimeDir
 	commandLine "${javaHome.get()}/bin/jlink", '--output', runtimeDir.get(), '--strip-debug', '--no-header-files', '--no-man-pages', '--strip-native-commands', '--add-modules', 'java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom'
 }
 
 tasks.register('customizeLoggingProperties') {
-	description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting.'
+	description = 'Alters the default "logging.properties" configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system\'s TEMP directory using SimpleFormatter with custom formatting'
 	dependsOn jlink
 	def file = runtimeDir.get().file 'conf/logging.properties'
 	def projectName = project.name
@@ -562,7 +562,7 @@ tasks.register('customizeLoggingProperties') {
 }
 
 tasks.register('jpackage', Exec) {
-	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime.'
+	description = 'Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime'
 	dependsOn copyLibs, customizeLoggingProperties, cleanTmpProjectDir
 	def commandLineParts = [
 		"${javaHome.get()}/bin/jpackage",
