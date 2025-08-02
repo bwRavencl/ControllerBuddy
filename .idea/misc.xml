@@ -6,6 +6,9 @@
     <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" method="is*" />
     <pattern value="de.bwravencl.controllerbuddy.input.action.IAction" hierarchically="true" method="set*" />
     <pattern value="de.bwravencl.controllerbuddy.input.driver.IDriverBuilder" hierarchically="true" />
+    <pattern value="Build_gradle.Coordinate" method="Coordinate" />
+    <pattern value="Build_gradle.DependencyMetadata" method="DependencyMetadata" />
+    <pattern value="Build_gradle.License" method="License" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration" detection-enabled="false" />
