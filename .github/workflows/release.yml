@@ -74,21 +74,22 @@ jobs:
         shell: bash
         run: |
           mkdir -p $HOME/.gradle
-          cat << 'EOF' > $HOME/.gradle/init.gradle
+          cat << 'EOF' > "$HOME/.gradle/init.gradle.kts"
           allprojects {
-            def user = 'github'
-            def pass = '${{ secrets.MAVEN_TOKEN_SECRET }}'
+            val baseUrl = uri("https://maven.bwravencl.de")
+            val user = "github"
+            val pass = "${{ secrets.MAVEN_TOKEN_SECRET }}"
             buildscript {
               repositories {
                 maven {
-                  url 'https://maven.bwravencl.de/releases'
+                  url = baseUrl.resolve("releases")
                   credentials {
                     username = user
                     password = pass
                   }
                 }
                 maven {
-                  url = 'https://maven.bwravencl.de/snapshots'
+                  url = baseUrl.resolve("snapshots")
                   credentials {
                     username = user
                     password = pass
@@ -98,14 +99,14 @@ jobs:
             }
             repositories {
               maven {
-                url = 'https://maven.bwravencl.de/releases'
+                url = baseUrl.resolve("releases")
                 credentials {
                   username = user
                   password = pass
                 }
               }
               maven {
-                url = 'https://maven.bwravencl.de/snapshots'
+                url = baseUrl.resolve("snapshots")
                 credentials {
                   username = user
                   password = pass
