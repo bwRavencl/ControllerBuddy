@@ -5227,7 +5227,7 @@ public final class Main {
 
 			GuiUtils.showMessageDialog(main, frame,
 					MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
-							Constants.VERSION, buildTimeString, buildYear),
+							Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 		}
 	}
