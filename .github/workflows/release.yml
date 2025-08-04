@@ -24,28 +24,28 @@ jobs:
         run: |
           case ${{ matrix.os }} in
             windows-latest)
-                echo jdk_os=windows >> $GITHUB_OUTPUT
-                echo jdk_arch=x64 >> $GITHUB_OUTPUT
-                echo jdk_archive_type=zip >> $GITHUB_OUTPUT
-                echo dist_os=windows >> $GITHUB_OUTPUT
-                echo dist_arch=x86-64 >> $GITHUB_OUTPUT
-                echo dist_archive_extension=zip >> $GITHUB_OUTPUT
+                echo jdk_os=windows >> "$GITHUB_OUTPUT"
+                echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
+                echo jdk_archive_type=zip >> "$GITHUB_OUTPUT"
+                echo dist_os=windows >> "$GITHUB_OUTPUT"
+                echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
+                echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-latest)
-                echo jdk_os=linux-glibc >> $GITHUB_OUTPUT
-                echo jdk_arch=x64 >> $GITHUB_OUTPUT
-                echo jdk_archive_type=tar.gz >> $GITHUB_OUTPUT
-                echo dist_os=linux >> $GITHUB_OUTPUT
-                echo dist_arch=x86-64 >> $GITHUB_OUTPUT
-                echo dist_archive_extension=tgz >> $GITHUB_OUTPUT
+                echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
+                echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
+                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
+                echo dist_os=linux >> "$GITHUB_OUTPUT"
+                echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
+                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-24.04-arm)
-                echo jdk_os=linux-glibc >> $GITHUB_OUTPUT
-                echo jdk_arch=aarch64 >> $GITHUB_OUTPUT
-                echo jdk_archive_type=tar.gz >> $GITHUB_OUTPUT
-                echo dist_os=linux >> $GITHUB_OUTPUT
-                echo dist_arch=aarch64 >> $GITHUB_OUTPUT
-                echo dist_archive_extension=tgz >> $GITHUB_OUTPUT
+                echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
+                echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
+                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
+                echo dist_os=linux >> "$GITHUB_OUTPUT"
+                echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
+                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
                 ;;
             *)
                 exit 1
@@ -63,7 +63,7 @@ jobs:
         run: |
           cd $RUNNER_TEMP
           jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=$JAVA_VERSION&os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" -H  'accept: application/json' | jq -r '.[0].download_url')")
-          echo "jdk_archive_filename=$jdk_archive_filename" >> $GITHUB_OUTPUT
+          echo "jdk_archive_filename=$jdk_archive_filename" >> "$GITHUB_OUTPUT"
       - name: Install JDK
         uses: actions/setup-java@v4
         with:
@@ -125,8 +125,8 @@ jobs:
         id: release_variables
         shell: bash
         run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0 | xargs -0 -I filename basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} filename | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> $GITHUB_OUTPUT
-          echo "archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0)" >> $GITHUB_OUTPUT
+          echo "tag_name=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0 | xargs -0 -I filename basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} filename | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
+          echo "archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0)" >> "$GITHUB_OUTPUT"
       - name: Check Tag
         uses: action-pack/tag-exists@v1
         id: check_tag
@@ -149,7 +149,7 @@ jobs:
         run: |
           signature_path="${{ steps.release_variables.outputs.archive_path }}.sig"
           gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release_variables.outputs.archive_path }}
-          echo "signature_path=$signature_path" >> $GITHUB_OUTPUT
+          echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
       - name: Release
         id: release
         uses: softprops/action-gh-release@v2
