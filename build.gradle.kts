@@ -522,8 +522,6 @@ tasks.register("generateModuleInfo") {
 tasks.withType<JavaCompile>().configureEach {
   dependsOn("generateModuleInfo", "generateConstants")
   mustRunAfter("cleanLibsDirectory")
-  source(
-      "generateConstants.outputs.files", "generateModuleInfo.outputs.files", "sourceSets.main.java")
   options.encoding = "UTF-8"
   gradle.taskGraph.whenReady {
     if (hasTask("jpackage")) {
