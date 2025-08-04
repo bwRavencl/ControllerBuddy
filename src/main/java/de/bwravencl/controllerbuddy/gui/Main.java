@@ -218,9 +218,10 @@ import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
+import org.apache.commons.cli.help.TextHelpAppendable;
 import org.freedesktop.dbus.annotations.DBusBoundProperty;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.DBusProperty.Access;
@@ -1741,10 +1742,12 @@ public final class Main {
 
 		final var stringWriter = new StringWriter();
 		try (final var printWriter = new PrintWriter(stringWriter)) {
-			final var helpFormatter = new HelpFormatter();
-			helpFormatter.printHelp(printWriter, helpFormatter.getWidth(), Constants.APPLICATION_NAME, null, OPTIONS,
-					helpFormatter.getLeftPadding(), helpFormatter.getDescPadding(), null, true);
+			final var helpFormatter = HelpFormatter.builder().setHelpAppendable(new TextHelpAppendable(printWriter))
+					.setShowSince(false).get();
+			helpFormatter.printHelp(Constants.APPLICATION_NAME, null, OPTIONS, null, true);
 			printWriter.flush();
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 		printCommandLineMessage(stringWriter.toString());
 	}
