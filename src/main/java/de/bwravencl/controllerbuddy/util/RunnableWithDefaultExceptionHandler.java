@@ -16,13 +16,7 @@
 
 package de.bwravencl.controllerbuddy.util;
 
-public final class RunnableWithDefaultExceptionHandler implements Runnable {
-
-	private final Runnable runnable;
-
-	public RunnableWithDefaultExceptionHandler(final Runnable runnable) {
-		this.runnable = runnable;
-	}
+public record RunnableWithDefaultExceptionHandler(Runnable runnable) implements Runnable {
 
 	@Override
 	public void run() {

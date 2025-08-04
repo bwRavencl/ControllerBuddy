@@ -449,7 +449,7 @@ tasks.register("generateConstants") {
         }
       }
   doLast {
-    constantsFile.getParentFile().mkdirs()
+    constantsFile.parentFile.mkdirs()
     constantsFile.writeText(
         """
             package de.bwravencl.controllerbuddy.constants;

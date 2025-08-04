@@ -127,21 +127,10 @@ public final class Mode implements Cloneable {
 		return description;
 	}
 
-	public static final class Component {
+	public record Component(Main main, ComponentType type, int index) {
 
-		private final int index;
-
-		private final Main main;
-
-		private final ComponentType type;
-
-		public Component(final Main main, final ComponentType type, final int index) {
-			this.main = main;
-			this.type = type;
-			this.index = index;
-		}
-
-		public int getIndex() {
+		@Override
+		public int index() {
 			if (main.isSwapLeftAndRightSticks()) {
 				return switch (type) {
 				case AXIS -> switch (index) {
@@ -160,10 +149,6 @@ public final class Mode implements Cloneable {
 			}
 
 			return index;
-		}
-
-		public ComponentType getType() {
-			return type;
 		}
 
 		public enum ComponentType {

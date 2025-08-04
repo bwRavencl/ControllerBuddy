@@ -156,13 +156,13 @@ final class AssignmentsComponent extends JScrollPane {
 	private static JButton createComponentButton(final Main main, final String name, final Component component) {
 		final boolean round;
 		final JButton button;
-		if (component.getType() == ComponentType.BUTTON && (component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_EAST
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_WEST
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_BACK
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_START
-				|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)) {
+		if (component.type() == ComponentType.BUTTON && (component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_EAST
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_WEST
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_BACK
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_START
+				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)) {
 			round = true;
 			button = new CustomButton(new EditComponentAction(main, name, component)) {
 
@@ -251,11 +251,11 @@ final class AssignmentsComponent extends JScrollPane {
 			button = new JButton(new EditComponentAction(main, name, component));
 		}
 
-		if (component.getType() == ComponentType.BUTTON
-				&& (round || component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN
-						|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT
-						|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT
-						|| component.getIndex() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP)) {
+		if (component.type() == ComponentType.BUTTON
+				&& (round || component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN
+						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT
+						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT
+						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP)) {
 			// noinspection SuspiciousNameCombination
 			button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
 		} else {
@@ -306,8 +306,8 @@ final class AssignmentsComponent extends JScrollPane {
 				model.removeActionListener(actionListener);
 			}
 
-			final var componentType = component.getType();
-			final var componentIndex = component.getIndex();
+			final var componentType = component.type();
+			final var componentIndex = component.index();
 			final var swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
 
 			if (componentType == ComponentType.BUTTON) {
