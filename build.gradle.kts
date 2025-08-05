@@ -573,8 +573,8 @@ tasks.register<Copy>("copyLibs") {
 
 tasks.named<SpotBugsTask>("spotbugsMain") {
   reports {
-    create("html") { required = true }
-    create("xml") { required = true }
+    create("html").required = true
+    create("xml").required = true
   }
 }
 
