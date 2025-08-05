@@ -674,6 +674,8 @@ tasks.named<Tar>("distTar") {
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
   archiveAppendix = distAppendix
   compression = Compression.GZIP
+  isPreserveFileTimestamps = true
+  @Suppress("UnstableApiUsage") useFileSystemPermissions()
 }
 
 tasks.named<Zip>("distZip") {
@@ -681,6 +683,8 @@ tasks.named<Zip>("distZip") {
   from(tmpDir)
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
   archiveAppendix = distAppendix
+  isPreserveFileTimestamps = true
+  @Suppress("UnstableApiUsage") useFileSystemPermissions()
 }
 
 tasks.named<Sync>("installDist") {
