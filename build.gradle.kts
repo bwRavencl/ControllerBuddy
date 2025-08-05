@@ -77,7 +77,8 @@ val linuxJvmArgs =
         "--add-opens=java.desktop/sun.awt=$mainModule",
         "--add-opens=java.desktop/sun.awt.X11=$mainModule")
 
-val gamecontrollerdbGitFile = "$projectDir/SDL_GameControllerDB/gamecontrollerdb.txt"
+val sdlGameControllerDBDir = "$projectDir/SDL_GameControllerDB"
+val gamecontrollerdbGitFile = "$sdlGameControllerDBDir/gamecontrollerdb.txt"
 val gamecontrollerdbResFile = "$resourcesDir/gamecontrollerdb.txt"
 
 val arch: Architecture = DefaultNativePlatform.getCurrentArchitecture()
@@ -147,11 +148,12 @@ extraJavaModuleInfo {
 }
 
 spotless {
+  fun removeProjectDirPrefix(path: String): String = path.removePrefix("$projectDir/")
+
   encoding("UTF-8")
   java {
     target("src/main/java/de/bwravencl/**/*.java")
-    targetExclude(
-        moduleInfoFile.removePrefix("$projectDir/"), constantsFile.removePrefix("$projectDir/"))
+    targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
     eclipse("4.33").configFile("spotless.eclipseformat.xml")
     formatAnnotations()
     cleanthat()
@@ -190,17 +192,20 @@ spotless {
     endWithNewline()
   }
   format("xml") {
-    target("*.svg")
+    target("**/*.svg")
     eclipseWtp(EclipseWtpFormatterStep.XML)
+    endWithNewline()
   }
+  val sdlGameControllerDBExclusion = "${removeProjectDirPrefix(sdlGameControllerDBDir)}/**"
   format("newlineAndTrailingWhitespace") {
-    target(".github/**/*.yml", "$resourcesDir/**/*.properties", "$resourcesDir/**/*.svg")
+    target("**/*.properties", "**/*.yml")
+    targetExclude(sdlGameControllerDBExclusion)
     endWithNewline()
     trimTrailingWhitespace()
   }
   format("onlyNewline") {
-    target("LICENSE", "*.gitignore", "*.md", "*.txt", "$resourcesDir/**/*.txt")
-    targetExclude(gamecontrollerdbResFile)
+    target("LICENSE", "**/*.gitignore", "**/*.md", "**/*.txt")
+    targetExclude(removeProjectDirPrefix(gamecontrollerdbResFile), sdlGameControllerDBExclusion)
     endWithNewline()
   }
 }
