@@ -150,7 +150,8 @@ extraJavaModuleInfo {
 spotless {
   fun removeProjectDirPrefix(path: String): String = path.removePrefix("$projectDir/")
 
-  encoding("UTF-8")
+  encoding(StandardCharsets.UTF_8.displayName())
+
   java {
     target("src/main/java/de/bwravencl/**/*.java")
     targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
@@ -186,23 +187,28 @@ spotless {
             .trimIndent())
     endWithNewline()
   }
+
   kotlinGradle {
     target("*.gradle.kts")
     ktfmt("0.56")
     endWithNewline()
   }
+
   format("xml") {
     target("**/*.svg")
     eclipseWtp(EclipseWtpFormatterStep.XML)
     endWithNewline()
   }
+
   val sdlGameControllerDBExclusion = "${removeProjectDirPrefix(sdlGameControllerDBDir)}/**"
+
   format("newlineAndTrailingWhitespace") {
     target("**/*.properties", "**/*.yml")
     targetExclude(sdlGameControllerDBExclusion)
     endWithNewline()
     trimTrailingWhitespace()
   }
+
   format("onlyNewline") {
     target("LICENSE", "**/*.gitignore", "**/*.md", "**/*.txt")
     targetExclude(removeProjectDirPrefix(gamecontrollerdbResFile), sdlGameControllerDBExclusion)
@@ -219,33 +225,34 @@ spotbugs {
 }
 
 tasks.register<Delete>("cleanConstants") {
-  description = "Removes the '$constantsFile' source file"
+  description = "Removes the '${file(constantsFile).relativeTo(projectDir)}' source file"
   delete(constantsFile)
 }
 
 tasks.register<Delete>("cleanGameControllerDB") {
-  description = "Removes the 'gamecontrollerdb.txt' file from the '$resourcesDir' directory"
+  description =
+      "Removes the '${file(gamecontrollerdbResFile).relativeTo(projectDir)}' resource file"
   delete(gamecontrollerdbResFile)
 }
 
 tasks.register<Delete>("cleanLibsDirectory") {
-  description = "Removes the '${base.libsDirectory.get()}' directory"
+  description = "Removes the '${base.libsDirectory.get().asFile.relativeTo(projectDir)}' directory"
   delete(base.libsDirectory)
 }
 
 tasks.register<Delete>("cleanModuleInfo") {
-  description = "Removes the '$moduleInfoFile' source file"
+  description = "Removes the '${file(moduleInfoFile).relativeTo(projectDir)}' source file"
   delete(moduleInfoFile)
 }
 
 tasks.register<Delete>("cleanRuntimeDir") {
-  description = "Removes the '${runtimeDir.get()}' directory"
+  description = "Removes the '${runtimeDir.get().asFile.relativeTo(projectDir)}' directory"
   delete(runtimeDir)
 }
 
 tasks.register<Delete>("cleanTmpProjectDir") {
   val tmpProjectFile = tmpDir.get().file(project.name)
-  description = "Removes the '$tmpProjectFile}' directory"
+  description = "Removes the '${tmpProjectFile.asFile.relativeTo(projectDir)}' directory"
   delete(tmpProjectFile)
 }
 
@@ -299,6 +306,7 @@ fun getLicensesForDependency(
                   "The Apache Software License, Version 2.0"),
           License("MIT", "https://opensource.org/license/mit/") to
               listOf("MIT", "MIT License", "The MIT License (MIT)"))
+
   val dependency = project.dependencies.create("$coordinate@pom")
   val pomConfiguration = project.configurations.detachedConfiguration(dependency)
   val pomFile: File =
@@ -315,7 +323,9 @@ fun getLicensesForDependency(
           }
           .newDocumentBuilder()
   val document = docBuilder.parse(pomFile)
+
   val dependencyMetadata = DependencyMetadata(initialCoordinate, file)
+
   val licensesNodes = document.getElementsByTagName("license")
   for (i in 0 until licensesNodes.length) {
     val licenseElement = licensesNodes.item(i) as? Element ?: continue
@@ -332,14 +342,18 @@ fun getLicensesForDependency(
             }
           }
         }
+
     if (aliasEntry != null) {
       license = aliasEntry.key
     }
+
     dependencyMetadata.licenses.add(license)
   }
+
   if (dependencyMetadata.licenses.isNotEmpty()) {
     return dependencyMetadata
   }
+
   val parentNodes = document.getElementsByTagName("parent")
   if (parentNodes.length > 0) {
     val parentElement = parentNodes.item(0) as? Element
@@ -354,12 +368,14 @@ fun getLicensesForDependency(
       return getLicensesForDependency(file, parentCoordinate, initialCoordinate)
     }
   }
+
   throw buildNoLicenseException(initialCoordinate)
 }
 
 private fun Element.getChildText(tagName: String): String? {
   val nodeList: NodeList = this.getElementsByTagName(tagName)
   if (nodeList.length == 0) return null
+
   return nodeList.item(0)?.textContent
 }
 
@@ -391,15 +407,20 @@ val dependencyMetadataSet: Set<DependencyMetadata> =
             .toSet()
 
 tasks.register("generateConstants") {
-  description = "Generates the '$constantsFile' source file"
+  description = "Generates the '${file(constantsFile).relativeTo(projectDir)}' source file"
+
   mustRunAfter("cleanConstants")
+
   val licenseFile = layout.projectDirectory.file("LICENSE")
   inputs.file(licenseFile)
+
   val constantsFile = file(constantsFile)
   outputs.file(constantsFile)
+
   val licenseLines = licenseFile.asFile.readLines().map { it.trim() }
   val applicationName = application.applicationName
   val version = versionProvider.get()
+
   val licensesHtml =
       createHTML(false).html {
         body {
@@ -453,6 +474,7 @@ tasks.register("generateConstants") {
           }
         }
       }
+
   doLast {
     constantsFile.parentFile.mkdirs()
     constantsFile.writeText(
@@ -482,10 +504,13 @@ tasks.register("generateConstants") {
 }
 
 tasks.register("generateModuleInfo") {
-  description = "Generates the '$moduleInfoFile' source file"
+  description = "Generates the '${file(moduleInfoFile).relativeTo(projectDir)}' source file"
+
   mustRunAfter("cleanModuleInfo")
+
   val moduleInfoFile = file(moduleInfoFile)
   outputs.file(moduleInfoFile)
+
   doLast {
     moduleInfoFile.writeText(
         """
@@ -527,7 +552,9 @@ tasks.register("generateModuleInfo") {
 tasks.withType<JavaCompile>().configureEach {
   dependsOn("generateModuleInfo", "generateConstants")
   mustRunAfter("cleanLibsDirectory")
-  options.encoding = "UTF-8"
+
+  options.encoding = StandardCharsets.UTF_8.displayName()
+
   gradle.taskGraph.whenReady {
     if (hasTask("jpackage")) {
       options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-preview", "-Werror"))
@@ -541,6 +568,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.named<JavaExec>("run") {
   jvmArgs(commonJvmArgs)
+
   if (os.isWindows) {
     jvmArgs(windowsJvmArgs)
   } else if (os.isLinux) {
@@ -550,8 +578,10 @@ tasks.named<JavaExec>("run") {
 
 tasks.register("checkGameControllerDBSubmodule") {
   description = "Checks that the SDL_GameControllerDB submodule is checked out"
+
   val gamecontrollerdbGitFile = file(gamecontrollerdbGitFile)
   inputs.file(gamecontrollerdbGitFile)
+
   doLast {
     if (!gamecontrollerdbGitFile.exists()) {
       throw GradleException("SDL_GameControllerDB submodule not checked out")
@@ -560,9 +590,12 @@ tasks.register("checkGameControllerDBSubmodule") {
 }
 
 tasks.register<Copy>("copyGameControllerDB") {
-  description = "Places a copy of '$gamecontrollerdbGitFile' into the '$resourcesDir' directory"
+  description =
+      "Places a copy of '${file(gamecontrollerdbGitFile).relativeTo(projectDir)}' into the '${file(resourcesDir).relativeTo(projectDir)}' directory"
+
   dependsOn("checkGameControllerDBSubmodule")
   mustRunAfter("cleanGameControllerDB")
+
   from(gamecontrollerdbGitFile)
   into(resourcesDir)
 }
@@ -570,8 +603,11 @@ tasks.register<Copy>("copyGameControllerDB") {
 tasks.named("processResources") { dependsOn("copyGameControllerDB") }
 
 tasks.register<Copy>("copyLibs") {
-  description = "Copies all jar files into a directory called \'libs\' inside the build directory"
+  description =
+      "Copies all jar files into the '${base.libsDirectory.asFile.get().relativeTo(projectDir)}' directory"
+
   dependsOn("cleanLibsDirectory", "jar")
+
   from(configurations.runtimeClasspath)
   into(base.libsDirectory)
 }
@@ -594,9 +630,10 @@ tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
 tasks.named("test") { enabled = false }
 
 tasks.register<Exec>("jlink") {
-  description =
-      "Executes the jlink command to create a customized minimal Java runtime inside the build directory"
+  description = "Executes the jlink command to create a customized minimal Java runtime"
+
   dependsOn("check", "jar", "cleanRuntimeDir")
+
   commandLine(
       "${javaHome.get()}/bin/jlink",
       "--output",
@@ -610,11 +647,14 @@ tasks.register<Exec>("jlink") {
 }
 
 tasks.register("customizeLoggingProperties") {
-  description =
-      "Alters the default 'logging.properties' configuration file of the Java runtime to include a FileHandler that logs to a logfile in the system's TEMP directory using SimpleFormatter with custom formatting"
-  dependsOn("jlink")
   val loggingPropertiesFile = runtimeDir.get().file("conf/logging.properties")
+  description =
+      "Customizes the '${file(loggingPropertiesFile).relativeTo(projectDir)}' Java runtime configuration file"
+
+  dependsOn("jlink")
+
   val projectName = project.name
+
   doLast {
     ant.withGroovyBuilder {
       "propertyfile"("file" to loggingPropertiesFile) {
@@ -635,8 +675,10 @@ tasks.register("customizeLoggingProperties") {
 
 tasks.register<Exec>("jpackage") {
   description =
-      "Executes the jpackage command to create a standalone application image packaged with a custom minimal Java runtime"
+      "Executes the jpackage command to create a standalone application image packaged with the custom Java runtime"
+
   dependsOn("copyLibs", "customizeLoggingProperties", "cleanTmpProjectDir")
+
   val commandLineParts =
       mutableListOf(
           "${javaHome.get()}/bin/jpackage",
@@ -661,13 +703,16 @@ tasks.register<Exec>("jpackage") {
           "--vendor",
           "Matteo Hausner",
           "--verbose")
+
   var jvmArgs = commonJvmArgs.toMutableList()
   if (os.isWindows) {
     jvmArgs += windowsJvmArgs
   } else if (os.isLinux) {
     jvmArgs += linuxJvmArgs
   }
+
   jvmArgs.forEach { commandLineParts.addAll(listOf("--java-options", it)) }
+
   commandLine(commandLineParts)
 }
 
@@ -675,8 +720,10 @@ tasks.named("startScripts") { enabled = false }
 
 tasks.named<Tar>("distTar") {
   dependsOn("jpackage")
+
   from(tmpDir)
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
+
   archiveAppendix = distAppendix
   compression = Compression.GZIP
   isPreserveFileTimestamps = true
@@ -685,8 +732,10 @@ tasks.named<Tar>("distTar") {
 
 tasks.named<Zip>("distZip") {
   dependsOn("jpackage")
+
   from(tmpDir)
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
+
   archiveAppendix = distAppendix
   isPreserveFileTimestamps = true
   @Suppress("UnstableApiUsage") useFileSystemPermissions()
@@ -694,6 +743,7 @@ tasks.named<Zip>("distZip") {
 
 tasks.named<Sync>("installDist") {
   dependsOn("jpackage")
+
   from(tmpDir)
   into(layout.buildDirectory.dir("install"))
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
