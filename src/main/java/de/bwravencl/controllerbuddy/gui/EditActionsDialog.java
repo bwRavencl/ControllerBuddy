@@ -734,6 +734,7 @@ public final class EditActionsDialog extends JDialog {
 
 				input.setProfile(unsavedProfile);
 				main.updateModesPanel(false);
+				main.updateOverlayPanel();
 				main.updateVisualizationPanel();
 				main.setUnsavedChanges(true);
 			}

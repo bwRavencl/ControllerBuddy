@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
-abstract class ToAxisAction<V extends Constable> extends InvertableAction<V> {
+public abstract class ToAxisAction<V extends Constable> extends InvertableAction<V> {
 
 	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	VirtualAxis virtualAxis = VirtualAxis.X;

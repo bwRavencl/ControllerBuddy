@@ -38,6 +38,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
+import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
@@ -130,6 +131,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -358,6 +360,8 @@ public final class Main {
 
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10L;
 
+	private static final int OVERLAY_SETTINGS_DESCRIPTION_LABEL_MAX_WIDTH = 300;
+
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
 
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
@@ -412,13 +416,12 @@ public final class Main {
 
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 
-	private static final Dimension SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
+	private static final Dimension LONG_SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
 
-	private static final Dimension OVERLAY_SETTINGS_LABEL_DIMENSION = new Dimension(100,
+	private static final Dimension MEDIUM_SETTINGS_LABEL_DIMENSION = new Dimension(100,
 			SETTINGS_LABEL_DIMENSION_HEIGHT);
 
-	private static final Dimension CONNECTION_SETTINGS_LABEL_DIMENSION = new Dimension(80,
-			SETTINGS_LABEL_DIMENSION_HEIGHT);
+	private static final Dimension SHORT_SETTINGS_LABEL_DIMENSION = new Dimension(80, SETTINGS_LABEL_DIMENSION_HEIGHT);
 
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 
@@ -924,7 +927,7 @@ public final class Main {
 		inputSettingsPanel.add(pollIntervalPanel);
 
 		final var pollIntervalLabel = new JLabel(STRINGS.getString("POLL_INTERVAL_LABEL"));
-		pollIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		pollIntervalLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(getPollInterval(), 1, 100, 1));
@@ -944,7 +947,7 @@ public final class Main {
 		physicalAxesPanel.add(leftPhysicalAxesPanel);
 
 		final var physicalAxesPanelLabel = new JLabel(STRINGS.getString("PHYSICAL_AXES_LABEL"));
-		physicalAxesPanelLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		physicalAxesPanelLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		leftPhysicalAxesPanel.add(physicalAxesPanelLabel);
 
 		final var rightPhysicalAxesPanel = new JPanel();
@@ -979,7 +982,7 @@ public final class Main {
 		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
 
 		final var hapticFeedbackLabel = new JLabel(STRINGS.getString("HAPTIC_FEEDBACK_LABEL"));
-		hapticFeedbackLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		hapticFeedbackLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		hapticFeedbackPanel.add(hapticFeedbackLabel);
 
 		final var hapticFeedbackCheckBox = new JCheckBox(STRINGS.getString("HAPTIC_FEEDBACK_CHECK_BOX"));
@@ -994,7 +997,7 @@ public final class Main {
 		inputSettingsPanel.add(hotSwapPanel, constraints);
 
 		final var hotSwappingLabel = new JLabel(STRINGS.getString("HOT_SWAPPING_LABEL"));
-		hotSwappingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		hotSwappingLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		hotSwapPanel.add(hotSwappingLabel);
 
 		final var hotSwappingButtonLabel = new JLabel(STRINGS.getString("HOT_SWAPPING_BUTTON_LABEL"));
@@ -1010,7 +1013,7 @@ public final class Main {
 		inputSettingsPanel.add(noControllerDialogsPanel, constraints);
 
 		final var noControllerDialogsLabel = new JLabel(STRINGS.getString("SKIP_CONTROLLER_DIALOGS_LABEL"));
-		noControllerDialogsLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		noControllerDialogsLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		noControllerDialogsPanel.add(noControllerDialogsLabel);
 
 		final var noControllerDialogsCheckBox = new JCheckBox(STRINGS.getString("SKIP_CONTROLLER_DIALOGS_CHECK_BOX"));
@@ -1025,7 +1028,7 @@ public final class Main {
 		inputSettingsPanel.add(autoRestartOutputPanel, constraints);
 
 		final var autoRestartOutputLabel = new JLabel(STRINGS.getString("AUTO_RESTART_OUTPUT_LABEL"));
-		autoRestartOutputLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		autoRestartOutputLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		autoRestartOutputPanel.add(autoRestartOutputLabel);
 
 		final var autoRestartOutputCheckBox = new JCheckBox(STRINGS.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
@@ -1047,7 +1050,7 @@ public final class Main {
 			vJoySettingsPanel.add(vJoyDirectoryPanel);
 
 			final var vJoyDirectoryLabel = new JLabel(STRINGS.getString("VJOY_DIRECTORY_LABEL"));
-			vJoyDirectoryLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			vJoyDirectoryLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			this.vJoyDirectoryLabel = new JLabel(getVJoyDirectory());
@@ -1060,7 +1063,7 @@ public final class Main {
 			vJoySettingsPanel.add(vJoyDevicePanel);
 
 			final var vJoyDeviceLabel = new JLabel(STRINGS.getString("VJOY_DEVICE_LABEL"));
-			vJoyDeviceLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			vJoyDeviceLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(getVJoyDevice(), 1, 16, 1));
@@ -1083,7 +1086,7 @@ public final class Main {
 		appearanceSettingsPanel.add(themePanel);
 
 		final var themeLabel = new JLabel(STRINGS.getString("THEME_LABEL"));
-		themeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		themeLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		themePanel.add(themeLabel);
 
 		final var themeComboBox = new JComboBox<>(Theme.values());
@@ -1095,7 +1098,7 @@ public final class Main {
 		appearanceSettingsPanel.add(overlayScalingPanel);
 
 		final var overlayScalingLabel = new JLabel(STRINGS.getString("OVERLAY_SCALING_LABEL"));
-		overlayScalingLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		overlayScalingLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		overlayScalingPanel.add(overlayScalingLabel);
 
 		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), .5, 6d, .25));
@@ -1111,7 +1114,7 @@ public final class Main {
 			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel, constraints);
 
 			final var preventPowerSaveModeLabel = new JLabel(STRINGS.getString("POWER_SAVE_MODE_LABEL"));
-			preventPowerSaveModeLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+			preventPowerSaveModeLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
 
 			final var preventPowerSaveModeCheckBox = new JCheckBox(
@@ -1128,7 +1131,7 @@ public final class Main {
 		appearanceSettingsPanel.add(ledColorPanel);
 
 		final var ledColorLabel = new JLabel(STRINGS.getString("LED_COLOR_LABEL"));
-		ledColorLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		ledColorLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		ledColorPanel.add(ledColorLabel);
 
 		final var ledColorButton = new JButton(new SelectLedColorAction());
@@ -1153,14 +1156,14 @@ public final class Main {
 		touchpadSettingsPanel.add(touchpadPanel);
 
 		final var enableTouchpadLabel = new JLabel(STRINGS.getString("TOUCHPAD_LABEL"));
-		enableTouchpadLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		enableTouchpadLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		touchpadPanel.add(enableTouchpadLabel);
 
 		touchpadCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
 		touchpadSettingsPanel.add(touchpadCursorSensitivityPanel);
 
 		final var touchpadCursorSensitivityLabel = new JLabel(STRINGS.getString("TOUCHPAD_CURSOR_SENSITIVITY"));
-		touchpadCursorSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadCursorSensitivityLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
@@ -1178,7 +1181,7 @@ public final class Main {
 		touchpadSettingsPanel.add(touchpadScrollSensitivityPanel);
 
 		final var touchpadScrollSensitivityLabel = new JLabel(STRINGS.getString("TOUCHPAD_SCROLL_SENSITIVITY"));
-		touchpadScrollSensitivityLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		touchpadScrollSensitivityLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
 
 		final var touchpadScrollSensitivitySpinner = new JSpinner(
@@ -3512,7 +3515,7 @@ public final class Main {
 					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
 
 			final var modeNoLabel = new JLabel(MessageFormat.format(STRINGS.getString("MODE_LABEL_NO"), i + 1));
-			modeNoLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
+			modeNoLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
@@ -3610,7 +3613,7 @@ public final class Main {
 				});
 	}
 
-	private void updateOverlayPanel() {
+	void updateOverlayPanel() {
 		if (indicatorsListPanel == null) {
 			return;
 		}
@@ -3623,6 +3626,29 @@ public final class Main {
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
 
+		final var virtualAxisToDescriptionsMap = new HashMap<VirtualAxis, Set<String>>();
+		input.getProfile().getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
+			if (!(action instanceof final ToAxisAction<?> toAxisAction)) {
+				return;
+			}
+
+			final var descriptions = virtualAxisToDescriptionsMap.computeIfAbsent(toAxisAction.getVirtualAxis(),
+					_ -> new TreeSet<>());
+			descriptions.add(toAxisAction.getDescription(input));
+		}));
+
+		final var virtualAxisToDescriptionMap = virtualAxisToDescriptionsMap.entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, e -> String.join(", ", e.getValue())));
+
+		final var longestDescription = virtualAxisToDescriptionMap.values().stream()
+				.max(Comparator.comparingInt(String::length)).orElse("");
+
+		final var fakeLabel = new JLabel();
+		final var labelFontMetrics = fakeLabel.getFontMetrics(fakeLabel.getFont());
+		final var descriptionLabelMaxWidth = Math.min(labelFontMetrics.stringWidth(longestDescription),
+				OVERLAY_SETTINGS_DESCRIPTION_LABEL_MAX_WIDTH);
+		final var descriptionLabelDimension = new Dimension(descriptionLabelMaxWidth, SETTINGS_LABEL_DIMENSION_HEIGHT);
+
 		EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
@@ -3631,13 +3657,26 @@ public final class Main {
 
 			final var virtualAxisLabel = new JLabel(
 					MessageFormat.format(STRINGS.getString("AXIS_LABEL"), virtualAxis.toString()));
-			virtualAxisLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
+			virtualAxisLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+
+			final var descriptionText = virtualAxisToDescriptionMap.computeIfAbsent(virtualAxis, _ -> "");
+			final var descriptionLabel = new JLabel(descriptionText);
+			if (labelFontMetrics.stringWidth(descriptionText) > OVERLAY_SETTINGS_DESCRIPTION_LABEL_MAX_WIDTH) {
+				descriptionLabel.setToolTipText(descriptionText);
+			}
+			descriptionLabel.setPreferredSize(descriptionLabelDimension);
+			indicatorPanel.add(descriptionLabel, new GridBagConstraints(1, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
 			final var enabled = overlayAxis != null;
+
+			final var colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, 0));
+			indicatorPanel.add(colorPanel, new GridBagConstraints(2, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorLabel = new JLabel();
 			if (enabled) {
@@ -3647,27 +3686,25 @@ public final class Main {
 				colorLabel.setText(STRINGS.getString("INDICATOR_DISABLED_LABEL"));
 			}
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			colorPanel.add(colorLabel);
 
-			colorLabel.setPreferredSize(OVERLAY_SETTINGS_LABEL_DIMENSION);
+			colorLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
-			indicatorPanel.add(colorLabel, new GridBagConstraints(1, 0, 1, 1, 0.2d, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
 			colorButton.setPreferredSize(SQUARE_BUTTON_DIMENSION);
 			colorButton.setEnabled(enabled);
-			indicatorPanel.add(colorButton, new GridBagConstraints(2, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+			colorPanel.add(colorButton);
+
+			final var invertCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
+			invertCheckBox.setSelected(enabled && overlayAxis.inverted);
+			invertCheckBox.setEnabled(enabled);
+			indicatorPanel.add(invertCheckBox, new GridBagConstraints(3, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
-			final var invertedCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
-			invertedCheckBox.setSelected(enabled && overlayAxis.inverted);
-			invertedCheckBox.setEnabled(enabled);
-			indicatorPanel.add(invertedCheckBox, new GridBagConstraints(3, 0, 1, 1, 1d, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
-
-			final var displayCheckBox = new JCheckBox(new DisplayIndicatorAction(virtualAxis));
-			displayCheckBox.setSelected(enabled);
-			indicatorPanel.add(displayCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+			final var showCheckBox = new JCheckBox(new ShowIndicatorAction(virtualAxis));
+			showCheckBox.setSelected(enabled);
+			indicatorPanel.add(showCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 		});
 
@@ -3761,7 +3798,7 @@ public final class Main {
 		inputSettingsPanel.add(keyRepeatIntervalPanel, constraints);
 
 		final var keyRepeatIntervalLabel = new JLabel(STRINGS.getString("KEY_REPEAT_INTERVAL_LABEL"));
-		keyRepeatIntervalLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		keyRepeatIntervalLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		keyRepeatIntervalPanel.add(keyRepeatIntervalLabel);
 
 		final var profile = input.getProfile();
@@ -3790,7 +3827,7 @@ public final class Main {
 		appearanceSettingsPanel.add(overlaySettingsPanel, constraints);
 
 		final var overlayLabel = new JLabel(STRINGS.getString("OVERLAY_LABEL"));
-		overlayLabel.setPreferredSize(SETTINGS_LABEL_DIMENSION);
+		overlayLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		overlaySettingsPanel.add(overlayLabel);
 
 		final var showOverlayCheckBox = new JCheckBox(STRINGS.getString("SHOW_OVERLAY_CHECK_BOX"));
@@ -4687,7 +4724,7 @@ public final class Main {
 				add(hostPanel);
 
 				final var hostLabel = new JLabel(STRINGS.getString("HOST_LABEL"));
-				hostLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+				hostLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
 				hostPanel.add(hostLabel);
 
 				final var host = getHost();
@@ -4705,7 +4742,7 @@ public final class Main {
 			add(portPanel);
 
 			final var portLabel = new JLabel(STRINGS.getString("PORT_LABEL"));
-			portLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			portLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
 			portPanel.add(portLabel);
 
 			portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
@@ -4718,7 +4755,7 @@ public final class Main {
 			add(timeoutPanel);
 
 			final var timeoutLabel = new JLabel(STRINGS.getString("TIMEOUT_LABEL"));
-			timeoutLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			timeoutLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
 			timeoutPanel.add(timeoutLabel);
 
 			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
@@ -4732,7 +4769,7 @@ public final class Main {
 			add(passwordPanel);
 
 			final var passwordLabel = new JLabel(STRINGS.getString("PASSWORD_LABEL"));
-			passwordLabel.setPreferredSize(CONNECTION_SETTINGS_LABEL_DIMENSION);
+			passwordLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
 			passwordPanel.add(passwordLabel);
 
 			final var password = getPassword();
@@ -4762,33 +4799,6 @@ public final class Main {
 			preferences.put(PREFERENCES_PASSWORD, password);
 
 			return null;
-		}
-	}
-
-	private final class DisplayIndicatorAction extends AbstractAction {
-
-		@Serial
-		private static final long serialVersionUID = 3316770144012465987L;
-
-		private final VirtualAxis virtualAxis;
-
-		private DisplayIndicatorAction(final VirtualAxis virtualAxis) {
-			this.virtualAxis = virtualAxis;
-
-			putValue(NAME, STRINGS.getString("DISPLAY_INDICATOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("DISPLAY_INDICATOR_ACTION_DESCRIPTION"));
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			if (((JCheckBox) e.getSource()).isSelected()) {
-				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis());
-			} else {
-				input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
-			}
-
-			setUnsavedChanges(true);
-			updateOverlayPanel();
 		}
 	}
 
@@ -5232,6 +5242,33 @@ public final class Main {
 					MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
 							Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
 					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
+		}
+	}
+
+	private final class ShowIndicatorAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = 3316770144012465987L;
+
+		private final VirtualAxis virtualAxis;
+
+		private ShowIndicatorAction(final VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+
+			putValue(NAME, STRINGS.getString("SHOW_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_INDICATOR_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			if (((JCheckBox) e.getSource()).isSelected()) {
+				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis());
+			} else {
+				input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
+			}
+
+			setUnsavedChanges(true);
+			updateOverlayPanel();
 		}
 	}
 
