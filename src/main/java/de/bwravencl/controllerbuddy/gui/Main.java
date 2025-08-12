@@ -1101,7 +1101,7 @@ public final class Main {
 		overlayScalingLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		overlayScalingPanel.add(overlayScalingLabel);
 
-		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), .5, 6d, .25));
+		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), 0.5, 6d, 0.25));
 		final var overlayScalingSpinnerEditor = new NumberEditor(overlayScalingSpinner, "#.## x");
 		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
@@ -1167,7 +1167,7 @@ public final class Main {
 		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getTouchpadCursorSensitivity(), .1, 5d, .05));
+				new SpinnerNumberModel(getTouchpadCursorSensitivity(), 0.1, 5d, 0.05));
 		final var cursorSensitivitySpinnerEditor = new NumberEditor(cursorSensitivitySpinner);
 		((DefaultFormatter) cursorSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		cursorSensitivitySpinner.setEditor(cursorSensitivitySpinnerEditor);
@@ -1185,7 +1185,7 @@ public final class Main {
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
 
 		final var touchpadScrollSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getTouchpadScrollSensitivity(), .1, 1d, .05));
+				new SpinnerNumberModel(getTouchpadScrollSensitivity(), 0.1, 1d, 0.05));
 		final var scrollSensitivitySpinnerEditor = new NumberEditor(touchpadScrollSensitivitySpinner);
 		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		touchpadScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
@@ -3667,7 +3667,7 @@ public final class Main {
 				descriptionLabel.setToolTipText(descriptionText);
 			}
 			descriptionLabel.setPreferredSize(descriptionLabelDimension);
-			indicatorPanel.add(descriptionLabel, new GridBagConstraints(1, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(descriptionLabel, new GridBagConstraints(1, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
@@ -3675,7 +3675,7 @@ public final class Main {
 			final var enabled = overlayAxis != null;
 
 			final var colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, 0));
-			indicatorPanel.add(colorPanel, new GridBagConstraints(2, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(colorPanel, new GridBagConstraints(2, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var colorLabel = new JLabel();
@@ -3699,7 +3699,7 @@ public final class Main {
 			final var invertCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
 			invertCheckBox.setSelected(enabled && overlayAxis.inverted);
 			invertCheckBox.setEnabled(enabled);
-			indicatorPanel.add(invertCheckBox, new GridBagConstraints(3, 0, 1, 1, .2, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(invertCheckBox, new GridBagConstraints(3, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var showCheckBox = new JCheckBox(new ShowIndicatorAction(virtualAxis));
