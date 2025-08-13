@@ -556,12 +556,12 @@ tasks.withType<JavaCompile>().configureEach {
   options.encoding = StandardCharsets.UTF_8.displayName()
 
   gradle.taskGraph.whenReady {
-    if (hasTask("jpackage")) {
+    if (allTasks.any { it.name == "jpackage" }) {
       options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-preview", "-Werror"))
       options.isDeprecation = true
       options.errorprone.error("MissingBraces")
     } else {
-      options.errorprone.isEnabled = false
+      options.errorprone.isEnabled = true
     }
   }
 }
