@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.input.Input;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
@@ -24,6 +25,7 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -325,6 +327,7 @@ public final class EditActionsDialog extends JDialog {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
+	@SuppressWarnings("EnumOrdinal")
 	private IAction<?> getActionClassInstance(final Class<?> actionClass)
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
@@ -340,6 +343,19 @@ public final class EditActionsDialog extends JDialog {
 			final var modes = input.getProfile().getModes();
 			final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE;
 			buttonToModeAction.setMode(defaultMode);
+		}
+		case final ToAxisAction<?> toAxisAction -> {
+			final var maxVirtualAxisIndex = unsavedProfile.getModes().stream()
+					.flatMapToInt(mode -> mode.getAxisToActionsMap().values().stream()
+							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
+								if (action1 instanceof final ToAxisAction<?> toAxisAction1) {
+									downstream.accept(toAxisAction1.getVirtualAxis().ordinal());
+								}
+							})))
+					.max().orElse(-1);
+
+			final var virtualAxisIndex = Math.min(maxVirtualAxisIndex + 1, VirtualAxis.values().length - 1);
+			toAxisAction.setVirtualAxis(VirtualAxis.values()[virtualAxisIndex]);
 		}
 		case final ToButtonAction<?> toButtonAction -> {
 			final var maxButtonId = unsavedProfile.getModes().stream()
