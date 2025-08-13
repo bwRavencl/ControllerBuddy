@@ -344,7 +344,7 @@ public final class EditActionsDialog extends JDialog {
 		case final ToButtonAction<?> toButtonAction -> {
 			final var maxButtonId = unsavedProfile.getModes().stream()
 					.flatMapToInt(mode -> Stream
-							.concat(mode.getAxisToActionsMap().values().stream(),
+							.<List<? extends IAction<?>>>concat(mode.getAxisToActionsMap().values().stream(),
 									mode.getButtonToActionsMap().values().stream())
 							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
 								if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
