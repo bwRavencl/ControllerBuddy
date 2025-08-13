@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -262,6 +263,30 @@ public final class EditActionsDialog extends JDialog {
 		parentPanel.add(component);
 	}
 
+	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
+		final var it = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
+
+		if (!it.hasNext()) {
+			return 0;
+		}
+
+		int expected = it.nextInt();
+		if (expected > maxValue) {
+			return maxValue;
+		}
+
+		while (it.hasNext()) {
+			final var current = it.nextInt();
+			if (current != expected + 1) {
+				final var candidate = expected + 1;
+				return Math.min(candidate, maxValue);
+			}
+			expected = current;
+		}
+
+		return Math.min(expected + 1, maxValue);
+	}
+
 	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
@@ -345,20 +370,19 @@ public final class EditActionsDialog extends JDialog {
 			buttonToModeAction.setMode(defaultMode);
 		}
 		case final ToAxisAction<?> toAxisAction -> {
-			final var maxVirtualAxisIndex = unsavedProfile.getModes().stream()
-					.flatMapToInt(mode -> mode.getAxisToActionsMap().values().stream()
+			final var virtualAxisIndex = findFirstMissingOrNext(
+					unsavedProfile.getModes().stream().flatMapToInt(mode -> mode.getAxisToActionsMap().values().stream()
 							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
 								if (action1 instanceof final ToAxisAction<?> toAxisAction1) {
 									downstream.accept(toAxisAction1.getVirtualAxis().ordinal());
 								}
-							})))
-					.max().orElse(-1);
+							}))),
+					VirtualAxis.values().length - 1);
 
-			final var virtualAxisIndex = Math.min(maxVirtualAxisIndex + 1, VirtualAxis.values().length - 1);
 			toAxisAction.setVirtualAxis(VirtualAxis.values()[virtualAxisIndex]);
 		}
 		case final ToButtonAction<?> toButtonAction -> {
-			final var maxButtonId = unsavedProfile.getModes().stream()
+			final var buttonId = findFirstMissingOrNext(unsavedProfile.getModes().stream()
 					.flatMapToInt(mode -> Stream
 							.<List<? extends IAction<?>>>concat(mode.getAxisToActionsMap().values().stream(),
 									mode.getButtonToActionsMap().values().stream())
@@ -366,10 +390,9 @@ public final class EditActionsDialog extends JDialog {
 								if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
 									downstream.accept(toButtonAction1.getButtonId());
 								}
-							})))
-					.max().orElse(-1);
+							}))),
+					Input.MAX_N_BUTTONS - 1);
 
-			final var buttonId = Math.min(maxButtonId + 1, Input.MAX_N_BUTTONS - 1);
 			toButtonAction.setButtonId(buttonId);
 		}
 		default -> {
