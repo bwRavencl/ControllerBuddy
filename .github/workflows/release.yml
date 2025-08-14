@@ -8,7 +8,7 @@ env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
-  release:
+  build:
     strategy:
       fail-fast: true
       matrix:
@@ -17,6 +17,8 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
+    outputs:
+      tag_name: ${{ steps.release_variables.outputs.tag_name }}
     steps:
       - name: Setup Platform Variables
         id: platform_variables
@@ -121,23 +123,20 @@ jobs:
       - name: Build TGZ
         if: runner.os == 'Linux'
         run: ./gradlew distTar --info
-      - name: Extract Release Variables
+      - name: Setup Release Variables
         id: release_variables
         shell: bash
         run: |
-          echo "tag_name=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0 | xargs -0 -I filename basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} filename | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
-          echo "archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -print0)" >> "$GITHUB_OUTPUT"
-      - name: Check Tag
-        uses: action-pack/tag-exists@v1
-        id: check_tag
+          archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -type f -print0)
+          echo "archive_path=$archive_path" >> "$GITHUB_OUTPUT"
+          echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$(basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
+      - name: Upload archive artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag: ${{ steps.release_variables.outputs.tag_name }}
-      - name: Tag Commit
-        if: steps.check_tag.outputs.exists == 'false'
-        uses: tvdias/github-tagger@v0.0.2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.release_variables.outputs.tag_name }}
+          name: ${{ steps.release_variables.outputs.archive_filename }}
+          path: ${{ steps.release_variables.outputs.archive_path }}
+          if-no-files-found: error
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
@@ -150,14 +149,50 @@ jobs:
           signature_path="${{ steps.release_variables.outputs.archive_path }}.sig"
           gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release_variables.outputs.archive_path }}
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
+          echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
+      - name: Upload signature artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.sign_archive.outputs.signature_filename }}
+          path: ${{ steps.sign_archive.outputs.signature_path }}
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+      - name: Collect artifact files
+        id: collect_files
+        shell: bash
+        run: |
+          files=$(find . -iname 'ControllerBuddy-*' -mindepth 2 -maxdepth 2 -type f)
+          if [ -z "$files" ]
+          then
+              echo "Error: No artifact files found."
+              exit 1
+          fi
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          while IFS= read -r line
+          do
+              echo "$line" >> "$GITHUB_OUTPUT"
+          done <<< "$files"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+      - name: Check Tag
+        uses: action-pack/tag-exists@v1
+        id: check_tag
+        with:
+          tag: ${{ needs.build.outputs.tag_name }}
+      - name: Tag Commit
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: tvdias/github-tagger@v0.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.build.outputs.tag_name }}
       - name: Release
-        id: release
         uses: softprops/action-gh-release@v2
         with:
-          name: ControllerBuddy-${{ steps.release_variables.outputs.tag_name }}
-          tag_name: ${{ steps.release_variables.outputs.tag_name }}
+          name: ControllerBuddy-${{ needs.build.outputs.tag_name }}
+          tag_name: ${{ needs.build.outputs.tag_name }}
           draft: false
           prerelease: false
-          files: |
-            ${{ steps.release_variables.outputs.archive_path }}
-            ${{ steps.sign_archive.outputs.signature_path }}
+          files: ${{ steps.collect_files.outputs.files }}
