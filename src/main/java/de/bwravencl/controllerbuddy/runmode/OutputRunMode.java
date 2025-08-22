@@ -345,143 +345,143 @@ public abstract class OutputRunMode extends RunMode {
 		if (Main.IS_WINDOWS) {
 			try {
 				VjoyInterface.init(main);
-
-				if (!VjoyInterface.vJoyEnabled()) {
-					LOGGER.log(Level.WARNING, "vJoy driver is not enabled");
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-							Main.STRINGS.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					return false;
-				}
-
-				try (final var arena = Arena.ofConfined()) {
-					final var dllVersion = arena.allocate(Short.BYTES);
-					final var drvVersion = arena.allocate(Short.BYTES);
-					if (!VjoyInterface.DriverMatch(dllVersion, drvVersion)) {
-						LOGGER.log(Level.WARNING,
-								"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
-						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-								MessageFormat.format(Main.STRINGS.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
-										dllVersion.get(ValueLayout.JAVA_SHORT, 0L),
-										drvVersion.get(ValueLayout.JAVA_SHORT, 0L)),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-						return false;
-					}
-				}
-
-				LOGGER.log(Level.INFO, "Using vJoy device: " + vJoyDevice);
-
-				if (VjoyInterface.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
-					LOGGER.log(Level.WARNING, "vJoy device is not available");
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-							MessageFormat.format(Main.STRINGS.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
-									vJoyDevice),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					return false;
-				}
-
-				final var hasAxisX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_X);
-				final var hasAxisY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Y);
-				final var hasAxisZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Z);
-				final var hasAxisRX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RX);
-				final var hasAxisRY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RY);
-				final var hasAxisRZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RZ);
-				final var hasAxisSL0 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL0);
-				final var hasAxisSL1 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL1);
-				if (!hasAxisX || !hasAxisY || !hasAxisZ || !hasAxisRX || !hasAxisRY || !hasAxisRZ || !hasAxisSL0
-						|| !hasAxisSL1) {
-					final var missingAxes = new ArrayList<String>();
-					if (!hasAxisX) {
-						missingAxes.add("X");
-					}
-					if (!hasAxisY) {
-						missingAxes.add("Y");
-					}
-					if (!hasAxisZ) {
-						missingAxes.add("Z");
-					}
-					if (!hasAxisRX) {
-						missingAxes.add("Rx");
-					}
-					if (!hasAxisRY) {
-						missingAxes.add("Ry");
-					}
-					if (!hasAxisRZ) {
-						missingAxes.add("Rz");
-					}
-					if (!hasAxisSL0) {
-						missingAxes.add("Slider");
-					}
-					if (!hasAxisSL1) {
-						missingAxes.add("Dial/Slider2");
-					}
-
-					final var missingAxesString = String.join(", ", missingAxes);
-					LOGGER.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-							MessageFormat.format(Main.STRINGS.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice,
-									missingAxesString),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					return false;
-				}
-
-				if (!VjoyInterface.AcquireVJD(vJoyDevice)) {
-					LOGGER.log(Level.WARNING, "Could not acquire vJoy device");
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"),
-									vJoyDevice),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					return false;
-				}
-
-				if (!VjoyInterface.ResetVJD(vJoyDevice)) {
-					LOGGER.log(Level.WARNING, "Could not reset vJoy device");
-					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
-									vJoyDevice),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					return false;
-				}
-
-				try (final var arena = Arena.ofConfined()) {
-					final var min = arena.allocate(Integer.SIZE);
-					if (!VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, min)) {
-						LOGGER.log(Level.WARNING, "Could not determine minimum axis value of vJoy device");
-						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-								MessageFormat.format(
-										Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
-										vJoyDevice),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					}
-					minAxisValue = min.get(ValueLayout.JAVA_INT, 0L);
-
-					final var max = arena.allocate(Integer.SIZE);
-					if (!VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, max)) {
-						LOGGER.log(Level.WARNING, "Could not determine maximum axis value of vJoy device");
-						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
-								MessageFormat.format(
-										Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
-										vJoyDevice),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
-					}
-					maxAxisValue = max.get(ValueLayout.JAVA_INT, 0L);
-				}
-
-				numButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
-				if (!enoughButtons(numButtons)) {
-					return false;
-				}
-
-				EventQueue.invokeLater(() -> main.setStatusBarText(
-						MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
-			} catch (final UnsatisfiedLinkError e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (final Throwable t) {
+				LOGGER.log(Level.SEVERE, t.getMessage(), t);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						Main.STRINGS.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				return false;
 			}
+
+			if (!VjoyInterface.vJoyEnabled()) {
+				LOGGER.log(Level.WARNING, "vJoy driver is not enabled");
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+						Main.STRINGS.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
+
+			try (final var arena = Arena.ofConfined()) {
+				final var dllVersion = arena.allocate(Short.BYTES);
+				final var drvVersion = arena.allocate(Short.BYTES);
+				if (!VjoyInterface.DriverMatch(dllVersion, drvVersion)) {
+					LOGGER.log(Level.WARNING,
+							"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
+					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+							MessageFormat.format(Main.STRINGS.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
+									dllVersion.get(ValueLayout.JAVA_SHORT, 0L),
+									drvVersion.get(ValueLayout.JAVA_SHORT, 0L)),
+							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					return false;
+				}
+			}
+
+			LOGGER.log(Level.INFO, "Using vJoy device: " + vJoyDevice);
+
+			if (VjoyInterface.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
+				LOGGER.log(Level.WARNING, "vJoy device is not available");
+				EventQueue
+						.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+								MessageFormat.format(Main.STRINGS.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
+										vJoyDevice),
+								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
+
+			final var hasAxisX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_X);
+			final var hasAxisY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Y);
+			final var hasAxisZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_Z);
+			final var hasAxisRX = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RX);
+			final var hasAxisRY = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RY);
+			final var hasAxisRZ = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_RZ);
+			final var hasAxisSL0 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL0);
+			final var hasAxisSL1 = VjoyInterface.GetVJDAxisExist(vJoyDevice, VjoyInterface.HID_USAGE_SL1);
+			if (!hasAxisX || !hasAxisY || !hasAxisZ || !hasAxisRX || !hasAxisRY || !hasAxisRZ || !hasAxisSL0
+					|| !hasAxisSL1) {
+				final var missingAxes = new ArrayList<String>();
+				if (!hasAxisX) {
+					missingAxes.add("X");
+				}
+				if (!hasAxisY) {
+					missingAxes.add("Y");
+				}
+				if (!hasAxisZ) {
+					missingAxes.add("Z");
+				}
+				if (!hasAxisRX) {
+					missingAxes.add("Rx");
+				}
+				if (!hasAxisRY) {
+					missingAxes.add("Ry");
+				}
+				if (!hasAxisRZ) {
+					missingAxes.add("Rz");
+				}
+				if (!hasAxisSL0) {
+					missingAxes.add("Slider");
+				}
+				if (!hasAxisSL1) {
+					missingAxes.add("Dial/Slider2");
+				}
+
+				final var missingAxesString = String.join(", ", missingAxes);
+				LOGGER.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+						MessageFormat.format(Main.STRINGS.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice,
+								missingAxesString),
+						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
+
+			if (!VjoyInterface.AcquireVJD(vJoyDevice)) {
+				LOGGER.log(Level.WARNING, "Could not acquire vJoy device");
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(), MessageFormat
+						.format(Main.STRINGS.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice),
+						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
+
+			if (!VjoyInterface.ResetVJD(vJoyDevice)) {
+				LOGGER.log(Level.WARNING, "Could not reset vJoy device");
+				EventQueue
+						.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
+										vJoyDevice),
+								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				return false;
+			}
+
+			try (final var arena = Arena.ofConfined()) {
+				final var min = arena.allocate(Integer.SIZE);
+				if (!VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, min)) {
+					LOGGER.log(Level.WARNING, "Could not determine minimum axis value of vJoy device");
+					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
+									vJoyDevice),
+							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				}
+				minAxisValue = min.get(ValueLayout.JAVA_INT, 0L);
+
+				final var max = arena.allocate(Integer.SIZE);
+				if (!VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, max)) {
+					LOGGER.log(Level.WARNING, "Could not determine maximum axis value of vJoy device");
+					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
+									vJoyDevice),
+							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				}
+				maxAxisValue = max.get(ValueLayout.JAVA_INT, 0L);
+			}
+
+			numButtons = VjoyInterface.GetVJDButtonNumber(vJoyDevice);
+			if (!enoughButtons(numButtons)) {
+				return false;
+			}
+
+			EventQueue.invokeLater(() -> main.setStatusBarText(
+					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
+
 		} else if (Main.IS_LINUX) {
 			numButtons = Event.JOYSTICK_BUTTON_EVENTS.length;
 			if (!enoughButtons(numButtons)) {
