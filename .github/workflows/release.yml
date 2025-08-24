@@ -155,6 +155,7 @@ jobs:
         with:
           name: ${{ steps.sign_archive.outputs.signature_filename }}
           path: ${{ steps.sign_archive.outputs.signature_path }}
+
   release:
     runs-on: ubuntu-latest
     needs: build
