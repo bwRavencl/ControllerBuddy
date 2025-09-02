@@ -883,16 +883,22 @@ public final class Main {
 		tabbedPane.addTab(STRINGS.getString("VISUALIZATION_TAB"), visualizationPanel);
 
 		tabbedPane.addChangeListener(e -> {
-			if (e.getSource() != tabbedPane || tabbedPane.getSelectedComponent() != visualizationPanel) {
+			if (e.getSource() != tabbedPane) {
 				return;
 			}
 
-			if (svgCanvas == null) {
-				svgCanvas = new JSVGCanvas(null, false, false);
-				svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-				visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
+			if (tabbedPane.getSelectedComponent() == visualizationPanel) {
+				if (svgCanvas == null) {
+					svgCanvas = new JSVGCanvas(null, false, false);
+					svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+					visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
 
-				updateVisualizationPanel();
+					updateVisualizationPanel();
+				}
+			} else if (svgCanvas != null) {
+				visualizationPanel.remove(svgCanvas);
+				svgCanvas.dispose();
+				svgCanvas = null;
 			}
 		});
 
