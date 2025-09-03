@@ -584,8 +584,6 @@ public final class Main {
 
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
-	private final SVGDocument templateSvgDocument;
-
 	private final Timer timer = new Timer();
 
 	private final JCheckBoxMenuItem toggleDonateCheckBoxMenuItem;
@@ -657,6 +655,8 @@ public final class Main {
 	private long stopTrayEntry;
 
 	private JSVGCanvas svgCanvas;
+
+	private SVGDocument templateSvgDocument;
 
 	private volatile Rectangle totalDisplayBounds;
 
@@ -865,19 +865,6 @@ public final class Main {
 
 		indicatorsScrollPane = new JScrollPane();
 		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
-
-		final var controllerSvgInputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
-		if (controllerSvgInputStream == null) {
-			throw new RuntimeException("Resource not found " + CONTROLLER_SVG_FILENAME);
-		}
-
-		try (final var bufferedReader = new BufferedReader(
-				new InputStreamReader(controllerSvgInputStream, StandardCharsets.UTF_8))) {
-			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
-			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
 
 		visualizationPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(STRINGS.getString("VISUALIZATION_TAB"), visualizationPanel);
@@ -1911,9 +1898,8 @@ public final class Main {
 	}
 
 	public void exportVisualization(final File file) {
-		if (templateSvgDocument == null) {
-			return;
-		}
+		initSvgDocument();
+		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
 		try {
 			final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
@@ -2002,6 +1988,7 @@ public final class Main {
 	}
 
 	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
+		initSvgDocument();
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
 		final var workingCopySvgDocument = (SVGDocument) DOMUtilities.deepCloneDocument(templateSvgDocument,
@@ -2473,6 +2460,25 @@ public final class Main {
 				LOGGER.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
+		}
+	}
+
+	private void initSvgDocument() {
+		if (templateSvgDocument != null) {
+			return;
+		}
+
+		final var controllerSvgInputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
+		if (controllerSvgInputStream == null) {
+			throw new RuntimeException("Resource not found " + CONTROLLER_SVG_FILENAME);
+		}
+
+		try (final var bufferedReader = new BufferedReader(
+				new InputStreamReader(controllerSvgInputStream, StandardCharsets.UTF_8))) {
+			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
+			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
