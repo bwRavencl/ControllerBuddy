@@ -118,11 +118,20 @@ jobs:
           }
           EOF
       - name: Build ZIP
+        id: build_zip
         if: runner.os == 'Windows'
         run: ./gradlew distZip --info
       - name: Build TGZ
+        id: build_tgz
         if: runner.os == 'Linux'
         run: ./gradlew distTar --info
+      - name: Upload Spotbugs-Reports Artifact
+        if: ${{ (steps.build_zip.outcome == 'failure') || (steps.build_tgz.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-reports
+          path: build/reports/spotbugs
+          if-no-files-found: ignore
       - name: Setup Release Variables
         id: release_variables
         shell: bash
