@@ -98,7 +98,7 @@ java {
 
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.41.0")
-  spotbugs("com.github.spotbugs:spotbugs:4.9.4")
+  spotbugs("com.github.spotbugs:spotbugs:4.9.5")
 
   val dbusJavaVersion = "5.1.1"
   val lwjglVersion = "3.4.0-SNAPSHOT"
