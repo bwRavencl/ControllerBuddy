@@ -50,7 +50,7 @@ application {
   mainClass = "de.bwravencl.controllerbuddy.gui.Main"
 }
 
-val javaLanguageVersion = JavaLanguageVersion.of(24)
+val javaLanguageVersion = JavaLanguageVersion.of(25)
 
 val launcher = javaToolchains.launcherFor { languageVersion = javaLanguageVersion }
 val javaHome = launcher.map { it.metadata.installationPath }
