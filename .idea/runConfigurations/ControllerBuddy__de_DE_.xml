@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ControllerBuddy (de-DE)" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="25" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="zulu-25" />
     <option name="MAIN_CLASS_NAME" value="de.bwravencl.controllerbuddy.gui.Main" />
     <module name="ControllerBuddy.main" />
     <option name="VM_PARAMETERS" value="-XX:+UseSerialGC -Xms96m -Xmx96m --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.awt.windows=ALL-UNNAMED --add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED --enable-native-access=ALL-UNNAMED -Duser.country=DE -Duser.language=de" />
