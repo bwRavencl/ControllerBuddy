@@ -21,6 +21,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JPanel;
@@ -67,12 +68,16 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 		private static final long serialVersionUID = -7229427356426148291L;
 
 		@Override
-		public Object stringToValue(final String text) {
+		public Object stringToValue(final String text) throws ParseException {
 			if (text == null || text.isBlank()) {
 				return null;
 			}
 
-			return Integer.parseInt(text) - 1;
+			try {
+				return Integer.parseInt(text) - 1;
+			} catch (final NumberFormatException e) {
+				throw new ParseException(text, 0);
+			}
 		}
 
 		@Override
