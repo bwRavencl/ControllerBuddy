@@ -1598,7 +1598,7 @@ public final class Main {
 		return errorDetails;
 	}
 
-	public static void main(final String[] args) {
+	static void main(final String[] args) {
 		LOGGER.log(Level.INFO, "Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
 		LOGGER.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
 				+ System.getProperty("os.version") + " " + OS_ARCH);
