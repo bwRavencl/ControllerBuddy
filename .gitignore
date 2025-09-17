@@ -2,6 +2,9 @@ src/main/java/module-info.java
 src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java
 src/main/resources/gamecontrollerdb.txt
 
+.idea/copilot.data.migration.agent.xml
+.idea/copilot.data.migration.edit.xml
+
 # Created by https://www.toptal.com/developers/gitignore/api/gradle,java,jetbrains,windows,linux,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=gradle,java,jetbrains,windows,linux,macos
 
