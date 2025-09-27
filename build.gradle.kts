@@ -190,7 +190,7 @@ spotless {
 
   kotlinGradle {
     target("*.gradle.kts")
-    ktfmt("0.56")
+    ktfmt("0.58")
     endWithNewline()
   }
 
