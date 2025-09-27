@@ -71,11 +71,13 @@ val commonJvmArgs =
 val windowsJvmArgs =
     listOf(
         "--add-opens=java.desktop/java.awt=$mainModule",
-        "--add-opens=java.desktop/sun.awt.windows=$mainModule")
+        "--add-opens=java.desktop/sun.awt.windows=$mainModule",
+    )
 val linuxJvmArgs =
     listOf(
         "--add-opens=java.desktop/sun.awt=$mainModule",
-        "--add-opens=java.desktop/sun.awt.X11=$mainModule")
+        "--add-opens=java.desktop/sun.awt.X11=$mainModule",
+    )
 
 val sdlGameControllerDBDir = "$projectDir/SDL_GameControllerDB"
 val gamecontrollerdbGitFile = "$sdlGameControllerDBDir/gamecontrollerdb.txt"
@@ -159,32 +161,34 @@ spotless {
     formatAnnotations()
     cleanthat()
         .sourceCompatibility(
-            project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString())
+            project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString()
+        )
         .addMutators(listOf("SafeButNotConsensual", "SafeButControversial"))
     importOrderFile("spotless.importorder")
     removeUnusedImports()
     forbidWildcardImports()
     licenseHeader(
         $$"""
-			/* Copyright (C) $YEAR  Matteo Hausner
-			 *
-			 * This program is free software: you can redistribute it and/or modify
-			 * it under the terms of the GNU General Public License as published by
-			 * the Free Software Foundation, either version 3 of the License, or
-			 * (at your option) any later version.
-			 *
-			 * This program is distributed in the hope that it will be useful,
-			 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-			 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-			 * GNU General Public License for more details.
-			 *
-			 * You should have received a copy of the GNU General Public License
-			 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-			 */
+        /* Copyright (C) $YEAR  Matteo Hausner
+         *
+         * This program is free software: you can redistribute it and/or modify
+         * it under the terms of the GNU General Public License as published by
+         * the Free Software Foundation, either version 3 of the License, or
+         * (at your option) any later version.
+         *
+         * This program is distributed in the hope that it will be useful,
+         * but WITHOUT ANY WARRANTY; without even the implied warranty of
+         * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+         * GNU General Public License for more details.
+         *
+         * You should have received a copy of the GNU General Public License
+         * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+         */
 
 
-            """
-            .trimIndent())
+                 """
+            .trimIndent()
+    )
     endWithNewline()
   }
 
@@ -263,13 +267,14 @@ tasks.named("clean") {
       "cleanLibsDirectory",
       "cleanModuleInfo",
       "cleanRuntimeDir",
-      "cleanTmpProjectDir")
+      "cleanTmpProjectDir",
+  )
 }
 
 data class Coordinate(
     val group: String? = null,
     val artifactId: String? = null,
-    val version: String? = null
+    val version: String? = null,
 ) : Comparable<Coordinate> {
   override fun compareTo(other: Coordinate): Int {
     group?.compareTo(other.group ?: "")?.let { if (it != 0) return it }
@@ -283,7 +288,7 @@ data class Coordinate(
 data class DependencyMetadata(
     val coordinate: Coordinate,
     val file: File,
-    val licenses: MutableList<License> = mutableListOf()
+    val licenses: MutableList<License> = mutableListOf(),
 )
 
 data class License(val name: String, val url: String)
@@ -294,7 +299,7 @@ fun buildNoLicenseException(coordinate: Coordinate): GradleException =
 fun getLicensesForDependency(
     file: File,
     coordinate: Coordinate,
-    initialCoordinate: Coordinate = coordinate
+    initialCoordinate: Coordinate = coordinate,
 ): DependencyMetadata {
   val aliases: Map<License, List<Any>> =
       mapOf(
@@ -303,9 +308,11 @@ fun getLicensesForDependency(
                   "Apache-2.0",
                   "Apache License, Version 2.0",
                   "The Apache License, Version 2.0",
-                  "The Apache Software License, Version 2.0"),
+                  "The Apache Software License, Version 2.0",
+              ),
           License("MIT", "https://opensource.org/license/mit/") to
-              listOf("MIT", "MIT License", "The MIT License (MIT)"))
+              listOf("MIT", "MIT License", "The MIT License (MIT)"),
+      )
 
   val dependency = project.dependencies.create("$coordinate@pom")
   val pomConfiguration = project.configurations.detachedConfiguration(dependency)
@@ -361,9 +368,11 @@ fun getLicensesForDependency(
     val parentArtifactId = parentElement?.getChildText("artifactId")?.trim()
     val parentVersion = parentElement?.getChildText("version")?.trim()
 
-    if (!parentGroupId.isNullOrEmpty() &&
-        !parentArtifactId.isNullOrEmpty() &&
-        !parentVersion.isNullOrEmpty()) {
+    if (
+        !parentGroupId.isNullOrEmpty() &&
+            !parentArtifactId.isNullOrEmpty() &&
+            !parentVersion.isNullOrEmpty()
+    ) {
       val parentCoordinate = Coordinate(parentGroupId, parentArtifactId, parentVersion)
       return getLicensesForDependency(file, parentCoordinate, initialCoordinate)
     }
@@ -387,8 +396,12 @@ val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
             listOf(
                     License(
                         "zlib License",
-                        "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE"))
-                .toMutableList()))
+                        "https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/master/LICENSE",
+                    )
+                )
+                .toMutableList(),
+        )
+    )
 
 val dependencyMetadataSet: Set<DependencyMetadata> =
     hardcodedDependencyMetadataSet +
@@ -401,7 +414,8 @@ val dependencyMetadataSet: Set<DependencyMetadata> =
                   Coordinate(
                       group = resolvedArtifact.moduleVersion.id.group,
                       artifactId = resolvedArtifact.moduleVersion.id.name,
-                      version = resolvedArtifact.moduleVersion.id.version)
+                      version = resolvedArtifact.moduleVersion.id.version,
+                  )
               getLicensesForDependency(resolvedArtifact.file, coordinate)
             }
             .toSet()
@@ -499,7 +513,8 @@ tasks.register("generateConstants") {
 
             """
             .trimIndent(),
-        StandardCharsets.UTF_8)
+        StandardCharsets.UTF_8,
+    )
   }
 }
 
@@ -514,38 +529,39 @@ tasks.register("generateModuleInfo") {
   doLast {
     moduleInfoFile.writeText(
         """
-            @SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
-            module de.bwravencl.controllerbuddy {
-                exports de.bwravencl.controllerbuddy.gui;
+        @SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
+        module de.bwravencl.controllerbuddy {
+            exports de.bwravencl.controllerbuddy.gui;
 
-                opens de.bwravencl.controllerbuddy.input to com.google.gson;
-                opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+            opens de.bwravencl.controllerbuddy.input to com.google.gson;
+            opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
 
-                requires com.google.gson;
-                requires com.formdev.flatlaf;
-                requires io.github.classgraph;
-                requires transitive java.desktop;
-                requires java.logging;
-                requires java.prefs;
-                requires jdk.xml.dom;
-                requires org.apache.commons.cli;
-                requires org.apache.xmlgraphics.batik.anim;
-                requires org.apache.xmlgraphics.batik.bridge;
-                requires org.apache.xmlgraphics.batik.constants;
-                requires org.apache.xmlgraphics.batik.dom;
-                requires org.apache.xmlgraphics.batik.util;
-                requires org.apache.xmlgraphics.batik.swing;
-                requires org.freedesktop.dbus;
-                requires org.lwjgl;
-                requires org.lwjgl.natives;
-                requires org.lwjgl.sdl;
-                requires org.lwjgl.sdl.natives;
-                requires xml.apis.ext;
-            }
+            requires com.google.gson;
+            requires com.formdev.flatlaf;
+            requires io.github.classgraph;
+            requires transitive java.desktop;
+            requires java.logging;
+            requires java.prefs;
+            requires jdk.xml.dom;
+            requires org.apache.commons.cli;
+            requires org.apache.xmlgraphics.batik.anim;
+            requires org.apache.xmlgraphics.batik.bridge;
+            requires org.apache.xmlgraphics.batik.constants;
+            requires org.apache.xmlgraphics.batik.dom;
+            requires org.apache.xmlgraphics.batik.util;
+            requires org.apache.xmlgraphics.batik.swing;
+            requires org.freedesktop.dbus;
+            requires org.lwjgl;
+            requires org.lwjgl.natives;
+            requires org.lwjgl.sdl;
+            requires org.lwjgl.sdl.natives;
+            requires xml.apis.ext;
+        }
 
-            """
+        """
             .trimIndent(),
-        StandardCharsets.UTF_8)
+        StandardCharsets.UTF_8,
+    )
   }
 }
 
@@ -643,7 +659,8 @@ tasks.register<Exec>("jlink") {
       "--no-man-pages",
       "--strip-native-commands",
       "--add-modules",
-      "java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom")
+      "java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom",
+  )
 }
 
 tasks.register("customizeLoggingProperties") {
@@ -660,14 +677,17 @@ tasks.register("customizeLoggingProperties") {
       "propertyfile"("file" to loggingPropertiesFile) {
         "entry"(
             "key" to "handlers",
-            "value" to "java.util.logging.FileHandler, java.util.logging.ConsoleHandler")
+            "value" to "java.util.logging.FileHandler, java.util.logging.ConsoleHandler",
+        )
         "entry"("key" to "java.util.logging.FileHandler.pattern", "value" to "%t/$projectName.log")
         "entry"(
             "key" to "java.util.logging.FileHandler.formatter",
-            "value" to "java.util.logging.SimpleFormatter")
+            "value" to "java.util.logging.SimpleFormatter",
+        )
         "entry"(
             "key" to "java.util.logging.SimpleFormatter.format",
-            "value" to $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n")
+            "value" to $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n",
+        )
       }
     }
   }
@@ -702,7 +722,8 @@ tasks.register<Exec>("jpackage") {
           "Copyright ${SimpleDateFormat("yyyy").format(Date())} Matteo Hausner",
           "--vendor",
           "Matteo Hausner",
-          "--verbose")
+          "--verbose",
+      )
 
   var jvmArgs = commonJvmArgs.toMutableList()
   if (os.isWindows) {
