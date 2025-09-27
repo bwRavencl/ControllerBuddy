@@ -163,7 +163,7 @@ spotless {
         .addMutators(listOf("SafeButNotConsensual", "SafeButControversial"))
     importOrderFile("spotless.importorder")
     removeUnusedImports()
-    removeWildcardImports()
+    forbidWildcardImports()
     licenseHeader(
         $$"""
 			/* Copyright (C) $YEAR  Matteo Hausner
