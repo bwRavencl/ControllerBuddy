@@ -133,7 +133,7 @@ dependencies {
     exclude(group = "org.slf4j", module = "slf4j-api")
   }
   implementation("com.google.code.gson:gson:2.13.2")
-  implementation("io.github.classgraph:classgraph:4.8.180")
+  implementation("io.github.classgraph:classgraph:4.8.184")
   implementation("org.apache.xmlgraphics:batik-swing:1.19") {
     exclude(group = "xml-apis", module = "xml-apis")
   }
