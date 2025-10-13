@@ -119,7 +119,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -592,7 +591,7 @@ public final class Main {
 
 	private final JPanel touchpadScrollSensitivityPanel;
 
-	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new HashMap<>();
+	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new EnumMap<>(VirtualAxis.class);
 
 	private final JPanel visualizationPanel;
 
@@ -3198,7 +3197,7 @@ public final class Main {
 	}
 
 	public void setSelectedControllerAndUpdateInput(final Controller controller,
-			@SuppressWarnings("exports") final EnumMap<VirtualAxis, Integer> axes) {
+			@SuppressWarnings("exports") final Map<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
 
 		setSelectedController(controller);
@@ -3638,7 +3637,7 @@ public final class Main {
 
 		final var borderColor = UIManager.getColor("Component.borderColor");
 
-		final var virtualAxisToDescriptionsMap = new HashMap<VirtualAxis, Set<String>>();
+		final var virtualAxisToDescriptionsMap = new EnumMap<VirtualAxis, Set<String>>(VirtualAxis.class);
 		input.getProfile().getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
 			if (!(action instanceof final ToAxisAction<?> toAxisAction)) {
 				return;

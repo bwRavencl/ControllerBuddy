@@ -58,7 +58,7 @@ public final class Input {
 
 	private static final long SUSPENSION_TIME = 500L;
 
-	private final EnumMap<VirtualAxis, Integer> axes;
+	private final Map<VirtualAxis, Integer> axes;
 
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
 
@@ -82,7 +82,7 @@ public final class Input {
 
 	private final Controller selectedController;
 
-	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new HashMap<>();
+	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new EnumMap<>(VirtualAxis.class);
 
 	private boolean[] buttons;
 
@@ -124,7 +124,7 @@ public final class Input {
 
 	private boolean swapLeftAndRightSticks;
 
-	public Input(final Main main, final Controller selectedController, final EnumMap<VirtualAxis, Integer> axes) {
+	public Input(final Main main, final Controller selectedController, final Map<VirtualAxis, Integer> axes) {
 		this.main = main;
 		this.selectedController = selectedController;
 
@@ -196,7 +196,7 @@ public final class Input {
 		return (int) normalize(value, -1f, 1f, minAxisValue, maxAxisValue);
 	}
 
-	public EnumMap<VirtualAxis, Integer> getAxes() {
+	public Map<VirtualAxis, Integer> getAxes() {
 		return axes;
 	}
 

@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public final class Profile implements Cloneable {
 
 	private String version;
 
-	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new HashMap<>();
+	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new EnumMap<>(VirtualAxis.class);
 
 	Profile() {
 		modes.add(DEFAULT_MODE);
@@ -82,7 +83,7 @@ public final class Profile implements Cloneable {
 		}
 		profile.setModes(clonedModes);
 
-		final var clonedVirtualAxisToOverlayAxisMap = new HashMap<VirtualAxis, OverlayAxis>();
+		final var clonedVirtualAxisToOverlayAxisMap = new EnumMap<VirtualAxis, OverlayAxis>(VirtualAxis.class);
 		for (final var entry : virtualAxisToOverlayAxisMap.entrySet()) {
 			clonedVirtualAxisToOverlayAxisMap.put(entry.getKey(), (OverlayAxis) entry.getValue().clone());
 		}

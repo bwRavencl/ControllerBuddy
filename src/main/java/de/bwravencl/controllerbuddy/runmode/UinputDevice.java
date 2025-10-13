@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +44,7 @@ public final class UinputDevice implements Closeable {
 
 	private static final short BUS_USB = 0x3;
 
-	private static final Map<DeviceType, UinputDevice> DEVICE_MAP = new HashMap<>();
+	private static final Map<DeviceType, UinputDevice> DEVICE_MAP = new EnumMap<>(DeviceType.class);
 
 	private static final Path DEVICE_PATH = Paths.get("/dev", "uinput");
 
