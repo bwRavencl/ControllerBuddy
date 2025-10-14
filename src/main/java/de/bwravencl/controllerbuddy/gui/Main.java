@@ -605,7 +605,7 @@ public final class Main {
 
 	private JLabel currentModeLabel;
 
-	private boolean hasSystemTray = SystemTray.isSupported();
+	private boolean hasSystemTray;
 
 	private JPanel indicatorPanel;
 
@@ -667,7 +667,8 @@ public final class Main {
 
 	private JLabel vJoyDirectoryLabel;
 
-	private Main(final MainLoop mainLoop, final String cmdProfilePath, final String cmdGameControllerDbPath) {
+	private Main(final MainLoop mainLoop, final boolean hasSystemTray, final String cmdProfilePath,
+			final String cmdGameControllerDbPath) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
 				LOGGER.log(Level.INFO, "Forcing immediate halt");
@@ -677,6 +678,7 @@ public final class Main {
 		}));
 
 		this.mainLoop = mainLoop;
+		this.hasSystemTray = hasSystemTray;
 
 		try {
 			random = SecureRandom.getInstanceStrong();
@@ -1268,50 +1270,6 @@ public final class Main {
 
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
-		if (IS_LINUX) {
-			final var toolkit = Toolkit.getDefaultToolkit();
-			if (isXToolkit(toolkit)) {
-				try {
-					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
-					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
-					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
-					final var desktop = getDesktopMethod.invoke(toolkit);
-
-					if ("gnome".equals(desktop)) {
-						hasSystemTray = false;
-						try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
-							final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
-									"/org/gnome/Shell/Extensions", Extensions.class);
-
-							final var gnomeShellVersion = extensions.getShellVersion();
-							if (gnomeShellVersion != null) {
-								final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
-								if (matcher.matches()) {
-									final var majorVersion = Integer.parseInt(matcher.group(1));
-									final var minorVersion = Integer.parseInt(matcher.group(2));
-
-									if ((majorVersion == 3 && minorVersion <= 25)) {
-										hasSystemTray = true;
-									} else if (majorVersion >= 45) {
-										final var gnomeSystemTrayExtensions = Set.of(
-												"appindicatorsupport@rgcjonas.gmail.com",
-												"status-icons@gnome-shell-extensions.gcampax.github.com",
-												"ubuntu-appindicators@ubuntu.com");
-
-										hasSystemTray = extensions.ListExtensions().entrySet().stream()
-												.anyMatch(e -> gnomeSystemTrayExtensions.contains(e.getKey())
-														&& Boolean.TRUE.equals(e.getValue().get("enabled").getValue()));
-									}
-								}
-							}
-						}
-					}
-				} catch (final Throwable t) {
-					LOGGER.log(Level.SEVERE, t.getMessage(), t);
-				}
-			}
-		}
-
 		newProfile(false);
 
 		final var sdlInitialized = mainLoop.runSync(() -> {
@@ -1333,7 +1291,7 @@ public final class Main {
 		}).orElse(false);
 
 		sdlVideoInitialized = SDLInit.SDL_WasInit(SDLInit.SDL_INIT_VIDEO) != 0;
-		hasSystemTray &= sdlVideoInitialized;
+		this.hasSystemTray &= sdlVideoInitialized;
 
 		updateTheme();
 
@@ -1707,16 +1665,95 @@ public final class Main {
 					}
 				}
 
+				var hasSystemTray = SystemTray.isSupported();
 				if (continueLaunch) {
 					final var taskRunner = new MainLoop();
 
+					if (IS_LINUX) {
+						final var toolkit = Toolkit.getDefaultToolkit();
+						if (isXToolkit(toolkit)) {
+							try {
+								@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
+								final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
+								final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
+								final var desktop = getDesktopMethod.invoke(toolkit);
+
+								if ("gnome".equals(desktop)) {
+									hasSystemTray = false;
+									try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+										final var extensions = dBusConnection.getRemoteObject(
+												"org.gnome.Shell.Extensions", "/org/gnome/Shell/Extensions",
+												Extensions.class);
+
+										final var gnomeShellVersion = extensions.getShellVersion();
+										if (gnomeShellVersion != null) {
+											final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*")
+													.matcher(gnomeShellVersion);
+											if (matcher.matches()) {
+												final var majorVersion = Integer.parseInt(matcher.group(1));
+												final var minorVersion = Integer.parseInt(matcher.group(2));
+
+												if ((majorVersion == 3 && minorVersion <= 25)) {
+													hasSystemTray = true;
+												} else if (majorVersion >= 45) {
+													final var gnomeSystemTrayExtensions = Set.of(
+															"appindicatorsupport@rgcjonas.gmail.com",
+															"status-icons@gnome-shell-extensions.gcampax.github.com",
+															"ubuntu-appindicators@ubuntu.com");
+
+													hasSystemTray = extensions.ListExtensions().entrySet().stream()
+															.anyMatch(e -> gnomeSystemTrayExtensions
+																	.contains(e.getKey())
+																	&& Boolean.TRUE.equals(
+																			e.getValue().get("enabled").getValue()));
+												}
+											}
+										}
+									}
+								} else if ("KDE".equals(System.getenv("XDG_CURRENT_DESKTOP"))) {
+									try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
+										final var kWin = dBusConnection.getRemoteObject("org.kde.KWin", "/KWin",
+												KWin.class);
+
+										final var supportInformation = kWin.supportInformation();
+										if (supportInformation != null) {
+											final var matcher = Pattern.compile(
+													"(?ms)^KWin version: (\\d+)\\.(\\d+)\\.\\d+\\b(?=.*^Operation Mode: Wayland$)")
+													.matcher(supportInformation);
+											if (matcher.find()) {
+												final var majorVersion = Integer.parseInt(matcher.group(1));
+												final var minorVersion = Integer.parseInt(matcher.group(2));
+
+												if ((majorVersion >= 6 && minorVersion >= 5)) {
+													LOGGER.log(Level.INFO,
+															"KWin/Wayland 6.5 or newer detected: setting sun.awt.X11.XWM.awtWMNonReparenting=1");
+
+													@SuppressWarnings({ "Java9ReflectionClassVisibility",
+															"RedundantSuppression" })
+													final var xwmClass = Class.forName("sun.awt.X11.XWM");
+													final var awtWMNonReparentingField = xwmClass
+															.getDeclaredField("awtWMNonReparenting");
+													awtWMNonReparentingField.setAccessible(true);
+													awtWMNonReparentingField.setInt(null, 1);
+												}
+											}
+										}
+									}
+								}
+							} catch (final Throwable t) {
+								LOGGER.log(Level.SEVERE, t.getMessage(), t);
+							}
+						}
+					}
+
+					final boolean finalHasSystemTray = hasSystemTray;
 					EventQueue.invokeLater(() -> {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
 						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 						final var cmdGameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
-						main = new Main(taskRunner, cmdProfilePath, cmdGameControllerDbPath);
+						main = new Main(taskRunner, finalHasSystemTray, cmdProfilePath, cmdGameControllerDbPath);
 
 						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, true));
 
@@ -4170,6 +4207,12 @@ public final class Main {
 
 		@DBusBoundProperty(access = Access.READ, name = "ShellVersion")
 		String getShellVersion();
+	}
+
+	@DBusInterfaceName("org.kde.KWin")
+	private interface KWin extends DBusInterface {
+
+		String supportInformation();
 	}
 
 	private abstract static class AbstractProfileFileChooser extends JFileChooser {
