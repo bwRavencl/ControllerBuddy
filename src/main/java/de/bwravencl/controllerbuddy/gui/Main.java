@@ -4929,7 +4929,7 @@ public final class Main {
 		}
 
 		private void resetSelectedFile() {
-			String profileDirectoryPath = null;
+			var profileDirectoryPath = "";
 
 			if (currentFile != null && currentFile.getParentFile().isDirectory()) {
 				profileDirectoryPath = currentFile.getAbsolutePath();
@@ -4944,7 +4944,7 @@ public final class Main {
 				}
 			}
 
-			if (profileDirectoryPath != null && !profileDirectoryPath.endsWith(File.separator)) {
+			if (!profileDirectoryPath.isBlank() && !profileDirectoryPath.endsWith(File.separator)) {
 				profileDirectoryPath += File.separator;
 			}
 
