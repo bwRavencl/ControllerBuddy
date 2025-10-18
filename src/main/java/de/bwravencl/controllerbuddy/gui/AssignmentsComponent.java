@@ -621,7 +621,45 @@ final class AssignmentsComponent extends JScrollPane {
 				}
 			}
 
-			FlatButtonUI.paintText(g, this, textRect, text, isEnabled() ? getForeground() : disabledText);
+			final var foreground = isEnabled() ? getForeground() : disabledText;
+
+			if (text.length() > 1) {
+				final var center = text.length() / 2;
+				var centermostSpaceIndex = -1;
+				var minDistance = Integer.MAX_VALUE;
+
+				for (var i = 0; i < text.length(); i++) {
+					if (text.charAt(i) == ' ') {
+						final var distance = Math.abs(i - center);
+						if (distance < minDistance) {
+							minDistance = distance;
+							centermostSpaceIndex = i;
+						}
+					}
+				}
+
+				if (centermostSpaceIndex != -1) {
+					final var firstLine = text.substring(0, centermostSpaceIndex);
+					final var secondLine = text.substring(centermostSpaceIndex + 1);
+
+					final var metrics = getFontMetrics(g.getFont());
+					final var firstLineWidth = metrics.stringWidth(firstLine);
+					final var secondLineWidth = metrics.stringWidth(secondLine);
+					final var textHeight = metrics.getHeight();
+
+					final var firstLineRect = new Rectangle(textRect.x + (textRect.width - firstLineWidth) / 2,
+							textRect.y + (textRect.height - 2 * textHeight) / 2, firstLineWidth, textHeight);
+					final var secondLineRect = new Rectangle(textRect.x + (textRect.width - secondLineWidth) / 2,
+							textRect.y + (textRect.height - 2 * textHeight) / 2 + textHeight, secondLineWidth,
+							textHeight);
+
+					FlatButtonUI.paintText(g, this, firstLineRect, firstLine, foreground);
+					FlatButtonUI.paintText(g, this, secondLineRect, secondLine, foreground);
+					return;
+				}
+			}
+
+			FlatButtonUI.paintText(g, this, textRect, text, foreground);
 		}
 
 		@Override
