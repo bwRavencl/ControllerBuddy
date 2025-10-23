@@ -4,7 +4,7 @@ on:
       - master
 
 env:
-  JAVA_VERSION: 25.0.0+36
+  JAVA_VERSION: 25.0.1+8
   GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
