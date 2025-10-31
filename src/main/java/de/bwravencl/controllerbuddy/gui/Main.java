@@ -3581,12 +3581,6 @@ public final class Main {
 		}
 
 		overlayFrame.pack();
-
-		if (IS_MAC) {
-			final var overlayFrameContentPane = overlayFrame.getContentPane();
-			overlayFrameContentPane.invalidate();
-			overlayFrameContentPane.repaint();
-		}
 	}
 
 	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
