@@ -618,8 +618,6 @@ public final class Main {
 
 	private boolean hasSystemTray = SystemTray.isSupported();
 
-	private JPanel indicatorPanel;
-
 	private Input input;
 
 	private RunModeType lastRunModeType = RunModeType.NONE;
@@ -2411,38 +2409,40 @@ public final class Main {
 			setOverlayMode(input.getProfile().getActiveMode());
 		}
 
-		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-		indicatorPanel.setBackground(TRANSPARENT);
+		if (!virtualAxisToOverlayAxisMap.isEmpty()) {
+			final var indicatorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+			indicatorPanel.setBackground(TRANSPARENT);
 
-		EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
-			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
-			if (overlayAxis != null) {
-				final var detentValues = new HashSet<Float>();
+			EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
+				final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
+				if (overlayAxis != null) {
+					final var detentValues = new HashSet<Float>();
 
-				input.getProfile().getModes().forEach(
-						mode -> mode.getAxisToActionsMap().values().forEach(actions -> actions.forEach(action -> {
-							if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
-									&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
-								final var detentValue = axisToRelativeAxisAction.getDetentValue();
+					input.getProfile().getModes().forEach(
+							mode -> mode.getAxisToActionsMap().values().forEach(actions -> actions.forEach(action -> {
+								if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
+										&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
+									final var detentValue = axisToRelativeAxisAction.getDetentValue();
 
-								if (detentValue != null) {
-									detentValues.add(detentValue);
+									if (detentValue != null) {
+										detentValues.add(detentValue);
+									}
 								}
-							}
-						})));
+							})));
 
-				final var indicatorProgressBar = new IndicatorProgressBar(detentValues, overlayAxis);
-				indicatorProgressBar.setPreferredSize(
-						new Dimension(Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH * overlayScaling),
-								Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT * overlayScaling)));
-				indicatorProgressBar.setForeground(overlayAxis.color);
+					final var indicatorProgressBar = new IndicatorProgressBar(detentValues, overlayAxis);
+					indicatorProgressBar.setPreferredSize(
+							new Dimension(Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH * overlayScaling),
+									Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT * overlayScaling)));
+					indicatorProgressBar.setForeground(overlayAxis.color);
 
-				indicatorPanel.add(indicatorProgressBar);
-				virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
-			}
-		});
+					indicatorPanel.add(indicatorProgressBar);
+					virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
+				}
+			});
 
-		overlayFrame.add(indicatorPanel, BorderLayout.CENTER);
+			overlayFrame.add(indicatorPanel, BorderLayout.CENTER);
+		}
 
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
 
