@@ -52,6 +52,7 @@ import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -64,6 +65,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -2444,6 +2446,57 @@ public final class Main {
 
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
 
+			private static final Border ALTERNATING_BORDER = new Border() {
+
+				private static final int SEGMENT_LENGTH = 1;
+
+				private static final int THICKNESS = 1;
+
+				private static final Insets INSETS = new Insets(THICKNESS, THICKNESS, THICKNESS, THICKNESS);
+
+				private static void paintSegmentedLine(final Graphics2D g2, final int x1, final int y1, final int x2,
+						final int y2, final boolean horizontal) {
+					final var length = horizontal ? x2 - x1 : y2 - y1;
+					var toggle = false;
+
+					for (var pos = 0; pos < length; pos += SEGMENT_LENGTH) {
+						g2.setColor(toggle ? Color.BLACK : Color.GREEN);
+						final var end = Math.min(pos + SEGMENT_LENGTH, length);
+
+						if (horizontal) {
+							g2.drawLine(x1 + pos, y1, x1 + end, y1);
+						} else {
+							g2.drawLine(x1, y1 + pos, x1, y1 + end);
+						}
+						toggle = !toggle;
+					}
+				}
+
+				@Override
+				public Insets getBorderInsets(final Component c) {
+					return INSETS;
+				}
+
+				@Override
+				public boolean isBorderOpaque() {
+					return true;
+				}
+
+				@Override
+				public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width,
+						final int height) {
+					final var g2 = (Graphics2D) g.create();
+					g2.setStroke(new BasicStroke(THICKNESS));
+
+					paintSegmentedLine(g2, x, y, x + width, y, true);
+					paintSegmentedLine(g2, x, y + height - THICKNESS, x + width, y + height - THICKNESS, true);
+					paintSegmentedLine(g2, x, y, x, y + height, false);
+					paintSegmentedLine(g2, x + width - THICKNESS, y, x + width - THICKNESS, y + height, false);
+
+					g2.dispose();
+				}
+			};
+
 			@Override
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
@@ -2455,8 +2508,17 @@ public final class Main {
 			}
 
 			@Override
+			public void mousePressed(final MouseEvent e) {
+				super.mousePressed(e);
+
+				overlayFrameRootPane.setBorder(ALTERNATING_BORDER);
+			}
+
+			@Override
 			public void mouseReleased(final MouseEvent e) {
 				super.mouseReleased(e);
+
+				overlayFrameRootPane.setBorder(null);
 
 				if (IS_MAC) {
 					deInitOverlay();
