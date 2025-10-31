@@ -126,7 +126,6 @@ public final class GuiUtils {
 
 				undoManager.undo();
 				setEnabled(undoManager.canUndo());
-
 			}
 		};
 
