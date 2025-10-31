@@ -2353,13 +2353,14 @@ public final class Main {
 	}
 
 	private void initOverlay() {
-		if (!input.getProfile().isShowOverlay()) {
+		final var profile = input.getProfile();
+		if (!profile.isShowOverlay()) {
 			return;
 		}
 
-		final var modes = input.getProfile().getModes();
+		final var modes = profile.getModes();
 		final var multipleModes = modes.size() > 1;
-		final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
+		final var virtualAxisToOverlayAxisMap = profile.getVirtualAxisToOverlayAxisMap();
 		if (!multipleModes && virtualAxisToOverlayAxisMap.isEmpty()) {
 			return;
 		}
@@ -2406,7 +2407,7 @@ public final class Main {
 			currentModePanel.add(currentModeLabel);
 			currentModePanel.add(Box.createHorizontalGlue());
 
-			setOverlayMode(input.getProfile().getActiveMode());
+			setOverlayMode(profile.getActiveMode());
 		}
 
 		if (!virtualAxisToOverlayAxisMap.isEmpty()) {
@@ -2418,7 +2419,7 @@ public final class Main {
 				if (overlayAxis != null) {
 					final var detentValues = new HashSet<Float>();
 
-					input.getProfile().getModes().forEach(
+					modes.forEach(
 							mode -> mode.getAxisToActionsMap().values().forEach(actions -> actions.forEach(action -> {
 								if (action instanceof final AxisToRelativeAxisAction axisToRelativeAxisAction
 										&& axisToRelativeAxisAction.getVirtualAxis() == virtualAxis) {
