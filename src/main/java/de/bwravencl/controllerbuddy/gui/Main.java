@@ -187,6 +187,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
@@ -595,6 +596,8 @@ public final class Main {
 
 	private final JPanel visualizationPanel;
 
+	private Float cachedOverlayScaling;
+
 	private Float cachedTouchpadCursorSensitivity;
 
 	private Float cachedTouchpadScrollSensitivity;
@@ -604,6 +607,12 @@ public final class Main {
 	private File currentFile;
 
 	private JLabel currentModeLabel;
+
+	private EmptyBorder currentModeLabelInnerBorder;
+
+	private LineBorder currentModeLabelOuterBorder;
+
+	private JPanel currentModePanel;
 
 	private boolean hasSystemTray = SystemTray.isSupported();
 
@@ -1097,8 +1106,11 @@ public final class Main {
 		final var overlayScalingSpinnerEditor = new NumberEditor(overlayScalingSpinner, "#.## x");
 		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
-		overlayScalingSpinner.addChangeListener(event -> preferences.putFloat(PREFERENCES_OVERLAY_SCALING,
-				((Double) ((JSpinner) event.getSource()).getValue()).floatValue()));
+		overlayScalingSpinner.addChangeListener(event -> {
+			cachedOverlayScaling = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
+			preferences.putFloat(PREFERENCES_OVERLAY_SCALING, cachedOverlayScaling);
+		});
+
 		overlayScalingPanel.add(overlayScalingSpinner);
 
 		if (!IS_MAC) {
@@ -1843,6 +1855,17 @@ public final class Main {
 		parentNode.appendChild(prefixTSpanElement);
 	}
 
+	private int calculateCurrentModeLabelWidth(final Mode mode) {
+		final var fontMetrics = currentModeLabel.getFontMetrics(currentModeLabel.getFont());
+		final var overlayScaling = getOverlayScaling();
+		final var innerBorderInsets = currentModeLabelInnerBorder.getBorderInsets();
+
+		return Math.min(
+				(fontMetrics.stringWidth(mode.getDescription()) + innerBorderInsets.left + innerBorderInsets.right
+						+ currentModeLabelOuterBorder.getThickness() * 2),
+				Math.round(OVERLAY_MODE_LABEL_MAX_WIDTH * overlayScaling));
+	}
+
 	private void deInitOverlay() {
 		if (overlayFrame != null) {
 			for (var i = 0; i < 10; i++) {
@@ -2112,7 +2135,11 @@ public final class Main {
 	}
 
 	float getOverlayScaling() {
-		return preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
+		if (cachedOverlayScaling == null) {
+			cachedOverlayScaling = preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
+		}
+
+		return cachedOverlayScaling;
 	}
 
 	public String getPassword() {
@@ -2352,32 +2379,37 @@ public final class Main {
 		final var overlayScaling = getOverlayScaling();
 
 		if (multipleModes) {
-			currentModeLabel = new JLabel(input.getProfile().getActiveMode().getDescription());
+			currentModePanel = new JPanel();
+			currentModePanel.setLayout(new BoxLayout(currentModePanel, BoxLayout.X_AXIS));
+			currentModePanel.setBackground(TRANSPARENT);
+			overlayFrame.add(currentModePanel, BorderLayout.SOUTH);
+
+			currentModeLabel = new JLabel();
 			currentModeLabel.setOpaque(true);
-			final var outerBorder = createOverlayBorder();
-			final var innerBorder = BorderFactory.createEmptyBorder(0, 1, 0, 1);
-			final var border = BorderFactory.createCompoundBorder(outerBorder, innerBorder);
+			final var innerBorderThickness = Math.round(2 * overlayScaling);
+			currentModeLabelInnerBorder = (EmptyBorder) BorderFactory.createEmptyBorder(0, innerBorderThickness, 0,
+					innerBorderThickness);
+			currentModeLabelOuterBorder = createOverlayBorder();
+			final var border = BorderFactory.createCompoundBorder(currentModeLabelOuterBorder,
+					currentModeLabelInnerBorder);
 			currentModeLabel.setBorder(border);
 			final var defaultFont = currentModeLabel.getFont();
-			final var newFont = currentModeLabel.getFont().deriveFont(Font.BOLD,
-					defaultFont.getSize2D() * overlayScaling);
+			final var newFont = defaultFont.deriveFont(Font.BOLD, defaultFont.getSize2D() * overlayScaling);
 			currentModeLabel.setFont(newFont);
-			final var fontMetrics = currentModeLabel.getFontMetrics(newFont);
-			final var longestDescription = modes.stream().map(Mode::getDescription)
-					.max(Comparator.comparingInt(String::length)).orElse("");
-			final var modeLabelWidth = Math.min(
-					fontMetrics.stringWidth(longestDescription) + outerBorder.getThickness() * 2
-							+ outerBorder.getThickness() * Math.round(2 * overlayScaling),
-					Math.round(OVERLAY_MODE_LABEL_MAX_WIDTH * overlayScaling));
-			currentModeLabel.setPreferredSize(
-					new Dimension(modeLabelWidth, fontMetrics.getHeight() + Math.round(1 * overlayScaling)));
+
+			final var maxModeLabelWidth = modes.stream().mapToInt(this::calculateCurrentModeLabelWidth).max()
+					.orElseThrow();
+			overlayFrame.setMinimumSize(new Dimension(maxModeLabelWidth, overlayFrame.getMinimumSize().height));
 
 			currentModeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			overlayFrame.add(currentModeLabel, BorderLayout.SOUTH);
+			currentModePanel.add(Box.createHorizontalGlue());
+			currentModePanel.add(currentModeLabel);
+			currentModePanel.add(Box.createHorizontalGlue());
+
+			setOverlayMode(input.getProfile().getActiveMode());
 		}
 
-		final var indicatorPanelFlowLayout = new FlowLayout(FlowLayout.CENTER, 10, 5);
-		indicatorPanel = new JPanel(indicatorPanelFlowLayout);
+		indicatorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
 		indicatorPanel.setBackground(TRANSPARENT);
 
 		EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
@@ -3172,11 +3204,23 @@ public final class Main {
 		}
 	}
 
-	public void setOverlayText(final String text) {
+	@SuppressWarnings("exports")
+	public void setOverlayMode(final Mode mode) {
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			if (currentModeLabel != null) {
-				currentModeLabel.setText(text);
+			if (currentModePanel == null || currentModeLabel == null) {
+				return;
 			}
+
+			currentModeLabel.setText(mode.getDescription());
+
+			final var modeLabelWidth = calculateCurrentModeLabelWidth(mode);
+			currentModeLabel.setMinimumSize(new Dimension(modeLabelWidth, currentModeLabel.getMinimumSize().height));
+
+			final var overlayFrameContentPane = overlayFrame.getContentPane();
+			overlayFrameContentPane.validate();
+			final var currentModePanelBounds = currentModePanel.getBounds();
+			overlayFrameContentPane.repaint(currentModePanelBounds.x, currentModePanelBounds.y,
+					currentModePanelBounds.width, currentModePanelBounds.height);
 		});
 	}
 
@@ -3574,9 +3618,9 @@ public final class Main {
 	}
 
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
-		if (currentModeLabel != null) {
-			overlayFrame.remove(currentModeLabel);
-			overlayFrame.add(currentModeLabel,
+		if (currentModePanel != null) {
+			overlayFrame.remove(currentModePanel);
+			overlayFrame.add(currentModePanel,
 					isOverlayInLowerHalf(totalDisplayBounds) ? BorderLayout.NORTH : BorderLayout.SOUTH);
 		}
 

@@ -161,7 +161,7 @@ public final class Profile implements Cloneable {
 			}
 
 			activeModeIndex = index;
-			input.getMain().setOverlayText(newMode.getDescription());
+			input.getMain().setOverlayMode(newMode);
 		}
 	}
 
