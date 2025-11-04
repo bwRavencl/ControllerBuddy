@@ -6,7 +6,7 @@
 [![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
 
 Visit the [ControllerBuddy Homepage](https://controllerbuddy.org) to get started.  
-For more support, join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp).
+Join the [ControllerBuddy Discord](https://discord.gg/2Sg9ggZrAp) for support and community discussions.
 
 ## 📖 Description
 
