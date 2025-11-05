@@ -26,7 +26,6 @@ import de.bwravencl.controllerbuddy.runmode.ServerRunMode.MessageType;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -55,7 +54,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
 
-public final class ClientRunMode extends OutputRunMode implements Closeable {
+public final class ClientRunMode extends OutputRunMode {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientRunMode.class.getName());
 
@@ -104,14 +103,6 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 		key = ServerRunMode.deriveKey(main, salt);
 	}
 
-	@Override
-	public void close() {
-		if (clientSocket != null) {
-			clientSocket.close();
-			forceStop = true;
-		}
-	}
-
 	private byte[] decrypt(final DatagramPacket packet) throws GeneralSecurityException {
 		final var packetByteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
@@ -137,7 +128,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 				JOptionPane.ERROR_MESSAGE));
 
 		forceStop = true;
-		Thread.currentThread().interrupt();
+		run = false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -212,7 +203,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 								MessageFormat.format(Main.STRINGS.getString("STATUS_TIMEOUT_RETRYING"),
 										NUM_CONNECTION_RETRIES - finalRetry, NUM_CONNECTION_RETRIES)));
 					}
-				} while (!success && retry > 0 && !Thread.currentThread().isInterrupted());
+				} while (!success && retry > 0 && run);
 
 				if (success) {
 					clientState = ClientState.CONNECTED;
@@ -220,7 +211,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					EventQueue.invokeLater(() -> main.setStatusBarText(
 							MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
-					if (retry != -1 && !Thread.currentThread().isInterrupted()) {
+					if (retry != -1 && run) {
 						LOGGER.log(Level.INFO, "Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
 						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
@@ -229,7 +220,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 					}
 
 					forceStop = true;
-					Thread.currentThread().interrupt();
+					run = false;
 				}
 			}
 
@@ -355,12 +346,22 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				forceStop = true;
-				Thread.currentThread().interrupt();
+				run = false;
 			}
 		}
 		}
 
 		return retVal;
+	}
+
+	@Override
+	public void requestStop() {
+		super.requestStop();
+
+		if (clientSocket != null) {
+			clientSocket.close();
+			forceStop = true;
+		}
 	}
 
 	@Override
@@ -394,7 +395,7 @@ public final class ClientRunMode extends OutputRunMode implements Closeable {
 
 				clientSocket.setSoTimeout(timeout);
 
-				while (!Thread.interrupted()) {
+				while (run) {
 					if (readInput()) {
 						writeOutput();
 					}

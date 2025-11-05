@@ -132,7 +132,7 @@ public final class LocalRunMode extends OutputRunMode {
 
 		try {
 			if (init()) {
-				while (!Thread.currentThread().isInterrupted()) {
+				while (run) {
 					if (readInput()) {
 						writeOutput();
 					}
@@ -145,7 +145,7 @@ public final class LocalRunMode extends OutputRunMode {
 		} catch (final IOException e) {
 			handleIOException(e);
 		} catch (final InterruptedException _) {
-			// expected whenever the run mode gets stopped
+			Thread.currentThread().interrupt();
 		} finally {
 			deInit();
 		}

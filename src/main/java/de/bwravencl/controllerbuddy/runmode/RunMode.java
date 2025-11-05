@@ -42,6 +42,8 @@ public abstract class RunMode implements Runnable {
 
 	long pollInterval;
 
+	volatile boolean run = true;
+
 	private boolean stopping;
 
 	RunMode(final Main main, final Input input) {
@@ -103,6 +105,10 @@ public abstract class RunMode implements Runnable {
 	final void process() {
 		main.pollSdlEvents();
 		main.getMainLoop().yield();
+	}
+
+	public void requestStop() {
+		run = false;
 	}
 
 	void setNumButtons(final int numButtons) {

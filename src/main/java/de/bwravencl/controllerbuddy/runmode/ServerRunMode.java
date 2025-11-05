@@ -23,7 +23,6 @@ import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -54,7 +53,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
 
-public final class ServerRunMode extends RunMode implements Closeable {
+public final class ServerRunMode extends RunMode {
 
 	public static final int DEFAULT_PORT = 28789;
 
@@ -119,15 +118,17 @@ public final class ServerRunMode extends RunMode implements Closeable {
 	}
 
 	@Override
-	public void close() {
-		if (serverSocket != null) {
-			serverSocket.close();
-		}
+	Logger getLogger() {
+		return LOGGER;
 	}
 
 	@Override
-	Logger getLogger() {
-		return LOGGER;
+	public void requestStop() {
+		super.requestStop();
+
+		if (serverSocket != null) {
+			serverSocket.close();
+		}
 	}
 
 	@Override
@@ -303,7 +304,7 @@ public final class ServerRunMode extends RunMode implements Closeable {
 					Main.STRINGS.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final InterruptedException _) {
-			// expected whenever the run mode gets stopped
+			Thread.currentThread().interrupt();
 		} finally {
 			input.reset();
 

@@ -3143,6 +3143,8 @@ public final class Main {
 	}
 
 	private void quit() {
+		stopAll(true, false, false);
+
 		if (input != null) {
 			input.deInit();
 		}
@@ -3150,8 +3152,6 @@ public final class Main {
 		if (IS_LINUX) {
 			UinputDevice.shutdown();
 		}
-
-		stopAll(true, false, false);
 
 		terminate(0, this);
 	}
@@ -3443,7 +3443,7 @@ public final class Main {
 		final var running = isClientRunning();
 
 		if (initiateStop && running) {
-			((ClientRunMode) runMode).close();
+			runMode.requestStop();
 		}
 
 		if (running) {
@@ -3461,7 +3461,7 @@ public final class Main {
 		final var running = isLocalRunning();
 
 		if (initiateStop && running) {
-			mainLoop.stopTask();
+			runMode.requestStop();
 		}
 
 		if (running) {
@@ -3503,7 +3503,7 @@ public final class Main {
 		final var running = runMode instanceof ServerRunMode;
 
 		if (initiateStop && running) {
-			((ServerRunMode) runMode).close();
+			runMode.requestStop();
 		}
 
 		if (running) {
@@ -4655,12 +4655,6 @@ public final class Main {
 				pollSdlEvents = true;
 				notifyAll();
 			}
-		}
-
-		private void stopTask() {
-			thread.interrupt();
-
-			waitForTask();
 		}
 
 		private void waitForTask() {
