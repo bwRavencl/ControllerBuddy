@@ -1619,14 +1619,14 @@ public final class Main {
 
 			if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null) {
 				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-					final var sw = new StringWriter();
-					e.printStackTrace(new PrintWriter(sw));
+					final var stringWriter = new StringWriter();
+					e.printStackTrace(new PrintWriter(stringWriter));
 
 					final var panel = new JPanel();
 					panel.setLayout(new BorderLayout(5, 5));
 					panel.add(new JLabel(MessageFormat.format(STRINGS.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
 							Constants.APPLICATION_NAME)), BorderLayout.NORTH);
-					final var textArea = new JTextArea(sw.toString());
+					final var textArea = new JTextArea(stringWriter.toString());
 					textArea.setEditable(false);
 					final var scrollPane = new JScrollPane(textArea);
 					scrollPane.setPreferredSize(new Dimension(600, 400));
