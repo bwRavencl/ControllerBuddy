@@ -96,7 +96,7 @@ public final class UinputDevice implements Closeable {
 				case EV_KEY -> ioctlChecked(fd, Linux.UI_SET_KEYBIT, code);
 				case EV_REL -> ioctlChecked(fd, Linux.UI_SET_RELBIT, code);
 				case EV_ABS -> ioctlChecked(fd, Linux.UI_SET_ABSBIT, code);
-				default -> throw new UnsupportedOperationException(String.format("Unsupported event type " + type));
+				default -> throw new UnsupportedOperationException(String.format("Unsupported event type: " + type));
 				}
 			}
 

@@ -1381,7 +1381,7 @@ public final class Main {
 		try {
 			final var inputStream = ClassLoader.getSystemResourceAsStream(GAME_CONTROLLER_DATABASE_FILENAME);
 			if (inputStream == null) {
-				throw new IllegalStateException("Could not open resource " + GAME_CONTROLLER_DATABASE_FILENAME);
+				throw new IllegalStateException("Could not open resource: " + GAME_CONTROLLER_DATABASE_FILENAME);
 			}
 			final var tempFilePath = Files.createTempFile(GAME_CONTROLLER_DATABASE_FILENAME, null);
 			try {
@@ -1551,7 +1551,7 @@ public final class Main {
 	private static URL getResourceLocation(final String resourcePath) {
 		final var resourceLocation = Main.class.getResource(resourcePath);
 		if (resourceLocation == null) {
-			throw new RuntimeException("Resource not found " + resourcePath);
+			throw new RuntimeException("Resource not found: " + resourcePath);
 		}
 
 		return resourceLocation;
@@ -2564,7 +2564,7 @@ public final class Main {
 
 		final var controllerSvgInputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
 		if (controllerSvgInputStream == null) {
-			throw new RuntimeException("Resource not found " + CONTROLLER_SVG_FILENAME);
+			throw new RuntimeException("Resource not found: " + CONTROLLER_SVG_FILENAME);
 		}
 
 		try (final var bufferedReader = new BufferedReader(
