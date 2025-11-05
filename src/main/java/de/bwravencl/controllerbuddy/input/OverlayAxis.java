@@ -16,26 +16,107 @@
 
 package de.bwravencl.controllerbuddy.input;
 
+import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public final class OverlayAxis implements Cloneable {
 
-	public Color color;
+	private Color color;
 
-	public boolean inverted;
+	private boolean inverted;
 
-	public OverlayAxis() {
-		this(Color.BLACK, false);
+	private OverlayAxisOrientation orientation;
+
+	private OverlayAxisStyle style;
+
+	public OverlayAxis(final VirtualAxis virtualAxis) {
+		this(Color.BLACK, virtualAxis.getDefaultOrientation(), virtualAxis.getDefaultStyle(), false);
 	}
 
-	private OverlayAxis(final Color color, final boolean inverted) {
+	private OverlayAxis(final Color color, final OverlayAxisOrientation orientation, final OverlayAxisStyle style,
+			final boolean inverted) {
 		this.color = color;
+		this.orientation = orientation;
+		this.style = style;
 		this.inverted = inverted;
 	}
 
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public Object clone() {
-		return new OverlayAxis(new Color(color.getRGB(), true), inverted);
+		return new OverlayAxis(new Color(color.getRGB(), true), orientation, style, inverted);
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public OverlayAxisOrientation getOrientation() {
+		return orientation;
+	}
+
+	public OverlayAxisStyle getStyle() {
+		return style;
+	}
+
+	public boolean isInverted() {
+		return inverted;
+	}
+
+	public void setColor(final Color color) {
+		this.color = color;
+	}
+
+	public void setInverted(final boolean inverted) {
+		this.inverted = inverted;
+	}
+
+	public void setOrientation(final OverlayAxisOrientation orientation) {
+		this.orientation = orientation;
+	}
+
+	public void setStyle(final OverlayAxisStyle style) {
+		this.style = style;
+	}
+
+	public enum OverlayAxisOrientation {
+
+		HORIZONTAL("OVERLAY_AXIS_ORIENTATION_HORIZONTAL"), VERTICAL("OVERLAY_AXIS_ORIENTATION_VERTICAL");
+
+		private final String label;
+
+		OverlayAxisOrientation(final String labelKey) {
+			label = Main.STRINGS.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
+
+		public int toSwingConstant() {
+			return switch (this) {
+			case HORIZONTAL -> SwingConstants.HORIZONTAL;
+			case VERTICAL -> SwingConstants.VERTICAL;
+			};
+		}
+	}
+
+	public enum OverlayAxisStyle {
+
+		SOLID("OVERLAY_AXIS_STYLE_SOLID"), LINE("OVERLAY_AXIS_STYLE_LINE");
+
+		private final String label;
+
+		OverlayAxisStyle(final String labelKey) {
+			label = Main.STRINGS.getString(labelKey);
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
 	}
 }

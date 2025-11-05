@@ -30,6 +30,8 @@ import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.OverlayAxis;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
@@ -69,6 +71,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
@@ -352,9 +355,9 @@ public final class Main {
 
 	private static final String OPTION_VERSION = "version";
 
-	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT = 150;
+	private static final int OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION = 150;
 
-	private static final int OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH = 20;
+	private static final int OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION = 20;
 
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
@@ -617,6 +620,8 @@ public final class Main {
 	private JPanel currentModePanel;
 
 	private boolean hasSystemTray = SystemTray.isSupported();
+
+	private JPanel horizontalIndicatorPanel;
 
 	private Input input;
 
@@ -1887,6 +1892,7 @@ public final class Main {
 			overlayFrame = null;
 		}
 
+		horizontalIndicatorPanel = null;
 		currentModeLabel = null;
 		virtualAxisToProgressBarMap.clear();
 	}
@@ -2379,8 +2385,6 @@ public final class Main {
 		overlayFrame.setAlwaysOnTop(true);
 		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		final var overlayScaling = getOverlayScaling();
-
 		if (multipleModes) {
 			currentModePanel = new JPanel();
 			currentModePanel.setLayout(new BoxLayout(currentModePanel, BoxLayout.X_AXIS));
@@ -2389,6 +2393,7 @@ public final class Main {
 
 			currentModeLabel = new JLabel();
 			currentModeLabel.setOpaque(true);
+			final var overlayScaling = getOverlayScaling();
 			final var innerBorderThickness = Math.round(2 * overlayScaling);
 			currentModeLabelInnerBorder = (EmptyBorder) BorderFactory.createEmptyBorder(0, innerBorderThickness, 0,
 					innerBorderThickness);
@@ -2413,8 +2418,11 @@ public final class Main {
 		}
 
 		if (!virtualAxisToOverlayAxisMap.isEmpty()) {
-			final var indicatorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-			indicatorPanel.setBackground(TRANSPARENT);
+			horizontalIndicatorPanel = new JPanel(new GridLayout(0, 1, 0, 5));
+			horizontalIndicatorPanel.setBackground(TRANSPARENT);
+
+			final var verticalIndicatorPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+			verticalIndicatorPanel.setBackground(TRANSPARENT);
 
 			EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> {
 				final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -2433,18 +2441,24 @@ public final class Main {
 								}
 							})));
 
-					final var indicatorProgressBar = new IndicatorProgressBar(detentValues, overlayAxis);
-					indicatorProgressBar.setPreferredSize(
-							new Dimension(Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_WIDTH * overlayScaling),
-									Math.round(OVERLAY_INDICATOR_PROGRESS_BAR_HEIGHT * overlayScaling)));
-					indicatorProgressBar.setForeground(overlayAxis.color);
+					final var indicatorPanel = switch (overlayAxis.getOrientation()) {
+					case HORIZONTAL -> horizontalIndicatorPanel;
+					case VERTICAL -> verticalIndicatorPanel;
+					};
 
+					final var indicatorProgressBar = new IndicatorProgressBar(overlayAxis, detentValues);
 					indicatorPanel.add(indicatorProgressBar);
 					virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
 				}
 			});
 
-			overlayFrame.add(indicatorPanel, BorderLayout.CENTER);
+			if (horizontalIndicatorPanel.getComponents().length > 0) {
+				overlayFrame.add(horizontalIndicatorPanel, BorderLayout.NORTH);
+			}
+
+			if (verticalIndicatorPanel.getComponents().length > 0) {
+				overlayFrame.add(verticalIndicatorPanel, BorderLayout.CENTER);
+			}
 		}
 
 		overlayFrameDragListener = new FrameDragListener(this, overlayFrame) {
@@ -3683,10 +3697,25 @@ public final class Main {
 	}
 
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
+		final String horizontalIndicatorPanelConstraint;
+		final String currentModePanelConstraint;
+
+		if (isOverlayInLowerHalf(totalDisplayBounds)) {
+			horizontalIndicatorPanelConstraint = BorderLayout.SOUTH;
+			currentModePanelConstraint = BorderLayout.NORTH;
+		} else {
+			horizontalIndicatorPanelConstraint = BorderLayout.NORTH;
+			currentModePanelConstraint = BorderLayout.SOUTH;
+		}
+
+		if (horizontalIndicatorPanel != null) {
+			overlayFrame.remove(horizontalIndicatorPanel);
+			overlayFrame.add(horizontalIndicatorPanel, horizontalIndicatorPanelConstraint);
+		}
+
 		if (currentModePanel != null) {
 			overlayFrame.remove(currentModePanel);
-			overlayFrame.add(currentModePanel,
-					isOverlayInLowerHalf(totalDisplayBounds) ? BorderLayout.NORTH : BorderLayout.SOUTH);
+			overlayFrame.add(currentModePanel, currentModePanelConstraint);
 		}
 
 		overlayFrame.pack();
@@ -3795,14 +3824,14 @@ public final class Main {
 			final var colorLabel = new JLabel();
 			if (enabled) {
 				colorLabel.setOpaque(true);
-				colorLabel.setBackground(overlayAxis.color);
+				colorLabel.setBackground(overlayAxis.getColor());
 			} else {
-				colorLabel.setText(STRINGS.getString("INDICATOR_DISABLED_LABEL"));
+				colorLabel.setText("∅");
 			}
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			colorPanel.add(colorLabel);
 
-			colorLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
+			colorLabel.setPreferredSize(SQUARE_BUTTON_DIMENSION);
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
@@ -3810,15 +3839,44 @@ public final class Main {
 			colorButton.setEnabled(enabled);
 			colorPanel.add(colorButton);
 
+			final var orientationPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			indicatorPanel.add(orientationPanel, new GridBagConstraints(3, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+
+			final var orientationLabel = new JLabel(STRINGS.getString("ORIENTATION_LABEL"));
+			orientationPanel.add(orientationLabel);
+
+			final var orientationComboBox = new JComboBox<>(OverlayAxisOrientation.values());
+			final OverlayAxisOrientation overlayAxisOrientation = enabled ? overlayAxis.getOrientation()
+					: virtualAxis.getDefaultOrientation();
+			orientationComboBox.setSelectedItem(overlayAxisOrientation);
+			orientationComboBox.setAction(new SetOverlayAxisOrientationAction(virtualAxis));
+			orientationComboBox.setEnabled(enabled);
+			orientationPanel.add(orientationComboBox);
+
+			final var stylePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			indicatorPanel.add(stylePanel, new GridBagConstraints(4, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
+					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+
+			final var styleLabel = new JLabel(STRINGS.getString("STYLE_LABEL"));
+			stylePanel.add(styleLabel);
+
+			final var styleComboBox = new JComboBox<>(OverlayAxisStyle.values());
+			final OverlayAxisStyle overlayAxisStyle = enabled ? overlayAxis.getStyle() : virtualAxis.getDefaultStyle();
+			styleComboBox.setSelectedItem(overlayAxisStyle);
+			styleComboBox.setAction(new SetOverlayAxisStyleAction(virtualAxis));
+			styleComboBox.setEnabled(enabled);
+			stylePanel.add(styleComboBox);
+
 			final var invertCheckBox = new JCheckBox(new InvertIndicatorAction(virtualAxis));
-			invertCheckBox.setSelected(enabled && overlayAxis.inverted);
+			invertCheckBox.setSelected(enabled && overlayAxis.isInverted());
 			invertCheckBox.setEnabled(enabled);
-			indicatorPanel.add(invertCheckBox, new GridBagConstraints(3, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
+			indicatorPanel.add(invertCheckBox, new GridBagConstraints(5, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
 					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 
 			final var showCheckBox = new JCheckBox(new ShowIndicatorAction(virtualAxis));
 			showCheckBox.setSelected(enabled);
-			indicatorPanel.add(showCheckBox, new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+			indicatorPanel.add(showCheckBox, new GridBagConstraints(6, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
 		});
 
@@ -4369,45 +4427,120 @@ public final class Main {
 
 	private static final class IndicatorProgressBar extends JProgressBar {
 
+		private static final int SUBDIVISIONS = 3;
+
 		@Serial
 		private static final long serialVersionUID = 8167193907929992395L;
 
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Set<Float> detentValues;
 
+		private final boolean inverted;
+
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final OverlayAxis overlayAxis;
 
-		private final int subdivisionHeight;
+		private final int subdivisionScale;
 
-		private IndicatorProgressBar(final Set<Float> detentValues, final OverlayAxis overlayAxis) {
-			super(VERTICAL);
+		private IndicatorProgressBar(final OverlayAxis overlayAxis, final Set<Float> detentValues) {
+			final var overlayAxisOrientation = overlayAxis.getOrientation();
+			super(overlayAxisOrientation.toSwingConstant());
+
+			this.overlayAxis = overlayAxis;
+			this.detentValues = detentValues;
+
+			final var overlayScaling = main.getOverlayScaling();
+			subdivisionScale = Math.round(overlayScaling);
 
 			setBorder(createOverlayBorder());
-			this.detentValues = detentValues;
-			this.overlayAxis = overlayAxis;
-			subdivisionHeight = Math.round(main.getOverlayScaling());
+
+			final int width;
+			final int height;
+			switch (overlayAxisOrientation) {
+			case HORIZONTAL -> {
+				width = OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION;
+				height = OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION;
+
+				inverted = !overlayAxis.isInverted();
+			}
+			case VERTICAL -> {
+				width = OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION;
+				height = OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION;
+
+				inverted = overlayAxis.isInverted();
+			}
+			default -> throw new IllegalArgumentException("Unsupported orientation: " + orientation);
+			}
+
+			setPreferredSize(new Dimension(Math.round(width * overlayScaling), Math.round(height * overlayScaling)));
+			setForeground(overlayAxis.getColor());
+		}
+
+		private void drawDivider(final Graphics g, final int pos, final int width, final int height) {
+			final var halfScale = subdivisionScale / 2;
+
+			switch (overlayAxis.getOrientation()) {
+			case HORIZONTAL -> g.fillRect(pos - halfScale, 0, subdivisionScale, height);
+			case VERTICAL -> g.fillRect(0, pos - halfScale, width, subdivisionScale);
+			}
 		}
 
 		@Override
 		protected void paintComponent(final Graphics g) {
-			super.paintComponent(g);
-
+			final var overlayAxisOrientation = overlayAxis.getOrientation();
 			final var width = getWidth();
 			final var height = getHeight();
 
-			final var subdivisions = 3;
-			for (var i = 1; i <= subdivisions; i++) {
-				g.setColor(Color.WHITE);
-				final var y = i * (height / (subdivisions + 1));
-				g.fillRect(0, y - subdivisionHeight / 2, width, subdivisionHeight);
+			final var size = switch (overlayAxisOrientation) {
+			case HORIZONTAL -> width;
+			case VERTICAL -> height;
+			};
+
+			switch (overlayAxis.getStyle()) {
+			case SOLID -> super.paintComponent(g);
+			case LINE -> {
+				final var g2 = (Graphics2D) g.create();
+
+				g2.setColor(getBackground());
+				g2.fillRect(0, 0, width, height);
+				g2.setColor(getForeground());
+
+				final var percent = (float) getPercentComplete();
+
+				switch (overlayAxisOrientation) {
+				case HORIZONTAL -> {
+					final var lineThickness = width / 10;
+					final var progressWidth = Math.round(percent * width);
+					final var x = progressWidth - lineThickness / 2 + ((progressWidth % 2 == 0) ? 0 : -1);
+					final var w = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
+
+					g2.fillRect(x, 0, w, height);
+				}
+				case VERTICAL -> {
+					final var lineThickness = height / 10;
+					final var progressHeight = Math.round(percent * height);
+					final var y = height - progressHeight - lineThickness / 2 + ((progressHeight % 2 == 0) ? 0 : -1);
+					final var h = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
+
+					g2.fillRect(0, y, width, h);
+				}
+				}
+
+				g2.dispose();
+			}
 			}
 
-			detentValues.forEach(detentValue -> {
-				g.setColor(Color.RED);
-				final var y = (int) Input.normalize(detentValue, -1f, 1f, 0, height);
-				g.fillRect(0, y - subdivisionHeight / 2, width, subdivisionHeight);
-			});
+			g.setColor(Color.WHITE);
+			for (var i = 1; i <= SUBDIVISIONS; i++) {
+				final var pos = i * (size / (SUBDIVISIONS + 1));
+				drawDivider(g, pos, width, height);
+			}
+
+			g.setColor(Color.RED);
+			for (final var detentValue : detentValues) {
+				final var pos = (int) Input.normalize(detentValue, -1f, 1f, 0, size);
+				drawDivider(g, pos, width, height);
+			}
 		}
 
 		@Serial
@@ -4417,7 +4550,7 @@ public final class Main {
 
 		@Override
 		public void setMaximum(final int n) {
-			if (overlayAxis.inverted) {
+			if (inverted) {
 				super.setMinimum(-n);
 			} else {
 				super.setMaximum(n);
@@ -4426,7 +4559,7 @@ public final class Main {
 
 		@Override
 		public void setMinimum(final int n) {
-			if (overlayAxis.inverted) {
+			if (inverted) {
 				super.setMaximum(-n);
 			} else {
 				super.setMinimum(n);
@@ -4435,7 +4568,7 @@ public final class Main {
 
 		@Override
 		public void setValue(final int n) {
-			super.setValue(overlayAxis.inverted ? -n : n);
+			super.setValue(inverted ? -n : n);
 		}
 
 		@Serial
@@ -4948,8 +5081,8 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis).inverted = ((JCheckBox) e.getSource())
-					.isSelected();
+			input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis)
+					.setInverted(((JCheckBox) e.getSource()).isSelected());
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -5193,9 +5326,9 @@ public final class Main {
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
 
 			final var color = JColorChooser.showDialog(frame, STRINGS.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
-					overlayAxis.color);
+					overlayAxis.getColor());
 			if (color != null) {
-				overlayAxis.color = color;
+				overlayAxis.setColor(color);
 			}
 
 			setUnsavedChanges(true);
@@ -5306,6 +5439,62 @@ public final class Main {
 		}
 	}
 
+	private final class SetOverlayAxisOrientationAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = 5051198612503040534L;
+
+		private final VirtualAxis virtualAxis;
+
+		private SetOverlayAxisOrientationAction(final VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var orientation = (OverlayAxisOrientation) ((JComboBox<?>) e.getSource()).getSelectedItem();
+			if (orientation == null) {
+				return;
+			}
+
+			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
+			if (overlayAxis == null) {
+				return;
+			}
+
+			overlayAxis.setOrientation(orientation);
+			setUnsavedChanges(true);
+		}
+	}
+
+	private final class SetOverlayAxisStyleAction extends AbstractAction {
+
+		@Serial
+		private static final long serialVersionUID = 6674344153838320133L;
+
+		private final VirtualAxis virtualAxis;
+
+		private SetOverlayAxisStyleAction(final VirtualAxis virtualAxis) {
+			this.virtualAxis = virtualAxis;
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			final var style = (OverlayAxisStyle) ((JComboBox<?>) e.getSource()).getSelectedItem();
+			if (style == null) {
+				return;
+			}
+
+			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
+			if (overlayAxis == null) {
+				return;
+			}
+
+			overlayAxis.setStyle(style);
+			setUnsavedChanges(true);
+		}
+	}
+
 	private final class SetThemeAction extends AbstractAction {
 
 		@Serial
@@ -5370,7 +5559,7 @@ public final class Main {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (((JCheckBox) e.getSource()).isSelected()) {
-				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis());
+				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis(virtualAxis));
 			} else {
 				input.getProfile().getVirtualAxisToOverlayAxisMap().remove(virtualAxis);
 			}

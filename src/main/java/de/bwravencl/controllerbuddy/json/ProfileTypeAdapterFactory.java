@@ -25,6 +25,9 @@ import com.google.gson.stream.JsonWriter;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
+import de.bwravencl.controllerbuddy.input.OverlayAxis;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.io.IOException;
@@ -107,6 +110,14 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 						mode.setDescription(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"));
 					} else if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode)) {
 						mode.setDescription(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+					}
+				}
+				case final OverlayAxis overlayAxis -> {
+					if (overlayAxis.getOrientation() == null) {
+						overlayAxis.setOrientation(OverlayAxisOrientation.VERTICAL);
+					}
+					if (overlayAxis.getStyle() == null) {
+						overlayAxis.setStyle(OverlayAxisStyle.SOLID);
 					}
 				}
 				default -> {

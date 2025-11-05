@@ -20,6 +20,8 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
+import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
@@ -760,7 +762,33 @@ public final class Input {
 	}
 
 	public enum VirtualAxis {
-		X, Y, Z, RX, RY, RZ, S0, S1
+
+		X(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+		Y(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+		Z(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+		RX(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+		RY(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+		RZ(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
+		S0(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
+		S1(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID);
+
+		private final OverlayAxisOrientation defaultOverlayAxisOrientation;
+
+		private final OverlayAxisStyle defaultOverlayAxisStyle;
+
+		VirtualAxis(final OverlayAxisOrientation defaultOverlayAxisOrientation,
+				final OverlayAxisStyle defaultOverlayAxisStyle) {
+			this.defaultOverlayAxisOrientation = defaultOverlayAxisOrientation;
+			this.defaultOverlayAxisStyle = defaultOverlayAxisStyle;
+		}
+
+		public OverlayAxisOrientation getDefaultOrientation() {
+			return defaultOverlayAxisOrientation;
+		}
+
+		public OverlayAxisStyle getDefaultStyle() {
+			return defaultOverlayAxisStyle;
+		}
 	}
 
 	private class GamepadState {
