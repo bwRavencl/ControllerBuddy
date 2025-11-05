@@ -1617,6 +1617,8 @@ public final class Main {
 		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
+			Thread.setDefaultUncaughtExceptionHandler(null);
+
 			if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null) {
 				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 					final var stringWriter = new StringWriter();
