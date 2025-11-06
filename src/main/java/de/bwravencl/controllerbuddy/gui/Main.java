@@ -1969,14 +1969,18 @@ public final class Main {
 			bodyElement.setAttribute("style", "text-align:center");
 			htmlDocument.getDocumentElement().appendChild(bodyElement);
 
+			final var headerDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
+			headerDivElement.setAttribute("style", "font-family:sans-serif");
+			bodyElement.appendChild(headerDivElement);
+
 			final var profileHeaderElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "h1");
 			profileHeaderElement.setTextContent(title);
-			bodyElement.appendChild(profileHeaderElement);
+			headerDivElement.appendChild(profileHeaderElement);
 
 			final var labelElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "label");
 			labelElement.setTextContent("Mode: ");
 			labelElement.setAttribute("style", "font-size:1.17em;font-weight:bold");
-			bodyElement.appendChild(labelElement);
+			headerDivElement.appendChild(labelElement);
 
 			final var selectElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "select");
 			selectElement.setAttribute("onchange",
