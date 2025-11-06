@@ -4495,6 +4495,21 @@ public final class Main {
 		}
 
 		@Override
+		public int getMaximum() {
+			return inverted ? -super.getMinimum() : super.getMaximum();
+		}
+
+		@Override
+		public int getMinimum() {
+			return inverted ? -super.getMaximum() : super.getMinimum();
+		}
+
+		@Override
+		public int getValue() {
+			return inverted ? -super.getValue() : super.getValue();
+		}
+
+		@Override
 		protected void paintComponent(final Graphics g) {
 			final var overlayAxisOrientation = overlayAxis.getOrientation();
 			final var width = getWidth();
