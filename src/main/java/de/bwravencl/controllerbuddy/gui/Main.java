@@ -1899,7 +1899,10 @@ public final class Main {
 	}
 
 	public <T> T executeWhileVisible(final Callable<T> callable) {
-		final var wasInvisible = show();
+		final var wasInvisible = !frame.isVisible();
+		final var wasIconified = frame.getState() == Frame.ICONIFIED;
+
+		show();
 
 		try {
 			final var result = callable.call();
@@ -1907,6 +1910,10 @@ public final class Main {
 			if (wasInvisible) {
 				frame.setVisible(false);
 				updateShowTrayEntry();
+			}
+
+			if (wasIconified) {
+				frame.setState(Frame.ICONIFIED);
 			}
 
 			return result;
@@ -2281,7 +2288,7 @@ public final class Main {
 	}
 
 	private void handleRemainingCommandLine(final CommandLine commandLine, final boolean initialLaunch) {
-		if (frame != null && (initialLaunch || frame.isVisible())) {
+		if (frame != null && (initialLaunch || (frame.isVisible() && frame.getExtendedState() != Frame.ICONIFIED))) {
 			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
 
 			var visible = !hasTrayOption || isModalDialogShowing();
@@ -3354,17 +3361,18 @@ public final class Main {
 		updateTitleAndTooltip();
 	}
 
-	boolean show() {
-		if (frame == null || frame.isVisible()) {
-			return false;
+	void show() {
+		if (frame == null) {
+			return;
 		}
 
 		frame.setVisible(true);
+
+		if (frame.getState() == Frame.ICONIFIED) {
+			frame.setState(Frame.NORMAL);
+		}
+
 		updateShowTrayEntry();
-
-		frame.setExtendedState(Frame.NORMAL);
-
-		return true;
 	}
 
 	private void showTrayIconHint() {
