@@ -681,7 +681,7 @@ public final class Main {
 
 	private JLabel vJoyDirectoryLabel;
 
-	private Main(final MainLoop mainLoop, final String cmdProfilePath, final String cmdGameControllerDbPath) {
+	private Main(final MainLoop mainLoop, final CommandLine commandLine) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
 				LOGGER.log(Level.INFO, "Forcing immediate halt");
@@ -1377,7 +1377,7 @@ public final class Main {
 			}
 
 			onControllersChanged(true);
-			initProfile(cmdProfilePath, true);
+			initProfile(commandLine, true);
 
 			return;
 		}
@@ -1409,6 +1409,7 @@ public final class Main {
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
+		final var cmdGameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 		if (cmdGameControllerDbPath != null) {
 			updateGameControllerMappingsFromFile(cmdGameControllerDbPath);
 		}
@@ -1461,7 +1462,7 @@ public final class Main {
 			}
 		}
 
-		initProfile(cmdProfilePath, noControllerConnected);
+		initProfile(commandLine, noControllerConnected);
 	}
 
 	private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
@@ -1732,12 +1733,7 @@ public final class Main {
 					EventQueue.invokeLater(() -> {
 						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
 
-						final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-						final var cmdGameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
-
-						main = new Main(taskRunner, cmdProfilePath, cmdGameControllerDbPath);
-
-						EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, true));
+						main = new Main(taskRunner, commandLine);
 
 						taskRunner.startSdlEventPolling();
 					});
@@ -2561,15 +2557,18 @@ public final class Main {
 		overlayFrame.setVisible(true);
 	}
 
-	private void initProfile(final String cmdProfilePath, final boolean noControllerConnected) {
+	private void initProfile(final CommandLine commandLine, final boolean noControllerConnected) {
+		final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
 				: preferences.get(PREFERENCES_LAST_PROFILE, null);
 		if (profilePath != null) {
-			loadProfile(new File(profilePath), noControllerConnected, false);
+			loadProfile(new File(profilePath), noControllerConnected, false, commandLine, true);
 			if (loadedProfile == null && cmdProfilePath == null) {
 				LOGGER.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
+		} else {
+			EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, true));
 		}
 	}
 
@@ -2644,8 +2643,8 @@ public final class Main {
 		return preferences.getBoolean(PREFERENCES_TOUCHPAD_ENABLED, true);
 	}
 
-	private void loadProfile(final File file, final boolean skipMessageDialogs,
-			final boolean performGarbageCollection) {
+	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
+			final CommandLine commandLine, final boolean initialLaunch) {
 		final var wasRunning = isRunning();
 		stopAll(true, false, performGarbageCollection);
 
@@ -2747,6 +2746,10 @@ public final class Main {
 							STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
+
+			if (commandLine != null) {
+				EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, initialLaunch));
+			}
 		});
 	}
 
@@ -2760,15 +2763,15 @@ public final class Main {
 				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
 				EventQueue.invokeLater(() -> {
-					if (cmdProfilePath != null && handleUnsavedChanges()) {
-						loadProfile(new File(cmdProfilePath), false, true);
-					}
-
 					if (gameControllerDbPath != null) {
 						updateGameControllerMappingsFromFile(gameControllerDbPath);
 					}
 
-					EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
+					if (cmdProfilePath != null && handleUnsavedChanges()) {
+						loadProfile(new File(cmdProfilePath), false, true, commandLine, false);
+					} else {
+						EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
+					}
 				});
 			} catch (final ParseException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -3358,6 +3361,8 @@ public final class Main {
 
 		frame.setVisible(true);
 		updateShowTrayEntry();
+
+		frame.setExtendedState(Frame.NORMAL);
 
 		return true;
 	}
@@ -5139,7 +5144,7 @@ public final class Main {
 		protected void doAction() {
 			executeWhileVisible(() -> {
 				if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-					loadProfile(profileFileChooser.getSelectedFile(), false, true);
+					loadProfile(profileFileChooser.getSelectedFile(), false, true, null, false);
 				}
 			});
 		}
