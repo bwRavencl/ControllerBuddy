@@ -3368,10 +3368,6 @@ public final class Main {
 
 		frame.setVisible(true);
 
-		if (frame.getState() == Frame.ICONIFIED) {
-			frame.setState(Frame.NORMAL);
-		}
-
 		updateShowTrayEntry();
 	}
 
