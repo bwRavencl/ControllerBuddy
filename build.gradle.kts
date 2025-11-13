@@ -124,7 +124,7 @@ dependencies {
 
   val lwjglPlatform = "$lwjglOs${if (lwjglArch.isEmpty()) "" else "-"}$lwjglArch"
 
-  implementation("commons-cli:commons-cli:1.10.0")
+  implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.formdev:flatlaf:3.6.2")
   implementation("com.github.hypfvieh:dbus-java-core:$dbusJavaVersion") {
     exclude(group = "org.slf4j", module = "slf4j-api")
