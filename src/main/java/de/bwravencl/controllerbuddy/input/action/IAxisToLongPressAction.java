@@ -38,7 +38,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalAxisId = activeMode.getAxisToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
-				return optionalAxisId.isPresent() && newMode.getButtonToActionsMap().containsKey(optionalAxisId.get());
+				return optionalAxisId.isPresent() && newMode.getAxisToActionsMap().containsKey(optionalAxisId.get());
 			}
 
 			return false;
