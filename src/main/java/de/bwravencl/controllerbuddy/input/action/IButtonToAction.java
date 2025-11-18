@@ -38,8 +38,9 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalButtonId = activeMode.getButtonToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
-				return optionalButtonId.isPresent()
-						&& newMode.getButtonToActionsMap().containsKey(optionalButtonId.get());
+
+				return optionalButtonId.map(buttonId -> newMode.getButtonToActionsMap().containsKey(buttonId))
+						.orElse(false);
 			}
 
 			return false;
