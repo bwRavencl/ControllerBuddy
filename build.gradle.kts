@@ -186,7 +186,7 @@ spotless {
          */
 
 
-                 """
+        """
             .trimIndent()
     )
     endWithNewline()
