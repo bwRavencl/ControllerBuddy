@@ -1792,7 +1792,7 @@ public final class Main {
 	}
 
 	private static void printCommandLineMessage(final String message) {
-		System.out.println(message);
+		IO.println(message);
 
 		if (!GraphicsEnvironment.isHeadless()) {
 			EventQueue.invokeLater(() -> {
