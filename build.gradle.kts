@@ -27,7 +27,7 @@ import org.w3c.dom.NodeList
 plugins {
   application
   id("com.diffplug.spotless") version "8.1.0"
-  id("com.github.spotbugs") version "6.4.5"
+  id("com.github.spotbugs") version "6.4.6"
   id("net.ltgt.errorprone") version "4.3.0"
   id("org.gradlex.extra-java-module-info") version "1.13.1"
 }
