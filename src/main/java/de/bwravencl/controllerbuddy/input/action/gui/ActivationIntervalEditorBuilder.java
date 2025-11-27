@@ -34,6 +34,12 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		final var cycleEditor = editActionsDialog.isCycleEditor();
+
+		if (cycleEditor) {
+			initialValue = 0;
+		}
+
 		super.buildEditor(parentPanel);
 
 		final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.STRINGS.getString("MILLISECOND_SYMBOL"));
@@ -43,6 +49,10 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 
 		final var formatter = (DefaultFormatter) textField.getFormatter();
 		formatter.setCommitsOnValidEdit(true);
+
+		if (cycleEditor) {
+			spinner.setEnabled(false);
+		}
 	}
 
 	@Override
