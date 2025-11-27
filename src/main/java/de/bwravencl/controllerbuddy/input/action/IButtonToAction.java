@@ -81,7 +81,11 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
+								if (action instanceof final ButtonToButtonAction buttonToButtonAction) {
+									if (!buttonToButtonAction.isLongPress()) {
+										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToButtonAction);
+									}
+								} else if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
 									if (!buttonToKeyAction.isLongPress()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
 									}

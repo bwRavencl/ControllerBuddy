@@ -278,6 +278,7 @@ public final class ClientRunMode extends OutputRunMode {
 								final var inputButtons = (boolean[]) objectInputStream.readObject();
 								for (var i = 0; i < numButtons; i++) {
 									buttons[i].set(inputButtons[i] ? 1 : 0);
+									inputButtons[i] = false;
 								}
 
 								cursorDeltaX = objectInputStream.readInt();

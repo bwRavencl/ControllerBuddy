@@ -84,7 +84,11 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final AxisToKeyAction axisToKeyAction) {
+								if (action instanceof final AxisToButtonAction axisToButtonAction) {
+									if (!axisToButtonAction.isLongPress()) {
+										isUndelayedOnReleaseAction = isOnReleaseAction(axisToButtonAction);
+									}
+								} else if (action instanceof final AxisToKeyAction axisToKeyAction) {
 									if (!axisToKeyAction.isLongPress()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
 									}

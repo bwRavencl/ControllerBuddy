@@ -80,6 +80,7 @@ public final class LocalRunMode extends OutputRunMode {
 		final var inputButtons = input.getButtons();
 		for (var i = 0; i < numButtons; i++) {
 			buttons[i].set(inputButtons[i] ? 1 : 0);
+			inputButtons[i] = false;
 		}
 
 		cursorDeltaX = input.getCursorDeltaX();

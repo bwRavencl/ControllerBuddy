@@ -19,14 +19,37 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
-public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V> {
+public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
+		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
 
 	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
+
+	private transient Activatable activatable;
+
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	private Activation activation = Activation.REPEAT;
+
+	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	private boolean longPress = DEFAULT_LONG_PRESS;
+
+	private transient boolean wasDown;
+
+	@Override
+	public Activatable getActivatable() {
+		return activatable;
+	}
+
+	@Override
+	public Activation getActivation() {
+		return activation;
+	}
 
 	public int getButtonId() {
 		return buttonId;
@@ -41,12 +64,81 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 		return MessageFormat.format(Main.STRINGS.getString("JOYSTICK_BUTTON_NO"), buttonId + 1);
 	}
 
-	final boolean isAlreadyPressed(final Input input) {
-		final var buttons = input.getButtons();
-		return buttonId < buttons.length && buttons[buttonId];
+	void handleAction(boolean hot, final Input input) {
+		hot = handleActivationInterval(hot);
+
+		if (activatable == Activatable.ALWAYS) {
+			input.getButtons()[buttonId] = true;
+			return;
+		}
+
+		switch (activation) {
+		case REPEAT -> {
+			if (!hot) {
+				if (wasDown) {
+					input.getButtons()[buttonId] = false;
+					wasDown = false;
+				}
+			} else {
+				input.getButtons()[buttonId] = true;
+				wasDown = true;
+			}
+		}
+		case SINGLE_IMMEDIATELY -> {
+			if (!hot) {
+				activatable = Activatable.YES;
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				input.getButtons()[buttonId] = true;
+			}
+		}
+		case SINGLE_ON_RELEASE -> {
+			if (hot) {
+				if (activatable == Activatable.NO) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+					activatable = Activatable.NO;
+				}
+			} else if (activatable == Activatable.YES) {
+				activatable = Activatable.NO;
+				input.getButtons()[buttonId] = true;
+			}
+		}
+		}
+	}
+
+	@Override
+	public void init(final Input input) {
+		super.init(input);
+		IActivatableAction.super.init(input);
+	}
+
+	@Override
+	public boolean isLongPress() {
+		return longPress;
+	}
+
+	@Override
+	public void reset(final Input input) {
+		wasDown = false;
+	}
+
+	@Override
+	public void setActivatable(final Activatable activatable) {
+		this.activatable = activatable;
+	}
+
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
 	}
 
 	public void setButtonId(final int buttonId) {
 		this.buttonId = buttonId;
+	}
+
+	@Override
+	public void setLongPress(final boolean longPress) {
+		this.longPress = longPress;
 	}
 }
