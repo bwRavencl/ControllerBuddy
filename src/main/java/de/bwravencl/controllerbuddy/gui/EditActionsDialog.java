@@ -384,13 +384,19 @@ public final class EditActionsDialog extends JDialog {
 		case final ToButtonAction<?> toButtonAction -> {
 			final var buttonId = findFirstMissingOrNext(unsavedProfile.getModes().stream()
 					.flatMapToInt(mode -> Stream
-							.<List<? extends IAction<?>>>concat(mode.getAxisToActionsMap().values().stream(),
-									mode.getButtonToActionsMap().values().stream())
-							.flatMapToInt(actions -> actions.stream().mapMultiToInt((action1, downstream) -> {
-								if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
+							.of(mode.getAxisToActionsMap().values(), mode.getButtonToActionsMap().values(),
+									List.of((List<? extends IAction<?>>) cycleActions))
+							.flatMap(Collection::stream).flatMap(List::stream).mapMultiToInt((action1, downstream) -> {
+								if (action1 instanceof final ButtonToCycleAction buttonToCycleAction) {
+									buttonToCycleAction.getActions().forEach(action2 -> {
+										if (action2 instanceof final ToButtonAction<?> toButtonAction1) {
+											downstream.accept(toButtonAction1.getButtonId());
+										}
+									});
+								} else if (action1 instanceof final ToButtonAction<?> toButtonAction1) {
 									downstream.accept(toButtonAction1.getButtonId());
 								}
-							}))),
+							})),
 					Input.MAX_N_BUTTONS - 1);
 
 			toButtonAction.setButtonId(buttonId);
