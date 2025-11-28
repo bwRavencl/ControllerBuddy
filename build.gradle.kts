@@ -427,6 +427,7 @@ tasks.register("generateConstants") {
 
   val licenseFile = layout.projectDirectory.file("LICENSE")
   inputs.file(licenseFile)
+  inputs.property("version", versionProvider)
 
   val constantsFile = file(constantsFile)
   outputs.file(constantsFile)
