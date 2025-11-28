@@ -624,14 +624,6 @@ public final class Input {
 		}
 	}
 
-	public void setButton(final int id, final boolean value) {
-		if (id < buttons.length) {
-			buttons[id] = value;
-		} else {
-			LOGGER.log(Level.WARNING, "Unable to set value for non-existent button " + id);
-		}
-	}
-
 	public void setCursorDeltaX(final int cursorDeltaX) {
 		this.cursorDeltaX = cursorDeltaX;
 	}
