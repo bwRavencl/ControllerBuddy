@@ -698,7 +698,7 @@ public final class Main {
 			throw new RuntimeException(e);
 		}
 
-		Thread.startVirtualThread(() -> {
+		new Thread(() -> {
 			try (final var singleInstanceServerSocket = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
 				SINGLE_INSTANCE_LOCK_FILE.deleteOnExit();
 
@@ -760,7 +760,7 @@ public final class Main {
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
-		});
+		}).start();
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		final var applicationId = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
