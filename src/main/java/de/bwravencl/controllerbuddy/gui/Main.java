@@ -144,6 +144,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -542,6 +544,8 @@ public final class Main {
 	private final JScrollPane indicatorsScrollPane;
 
 	private final JLabel ledPreviewLabel;
+
+	private final Lock loadProfileLock = new ReentrantLock();
 
 	private final MainLoop mainLoop;
 
@@ -2656,141 +2660,168 @@ public final class Main {
 
 	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
 			final CommandLine commandLine, final boolean initialLaunch) {
-		final var wasRunning = isRunning();
-		stopAll(true, false, performGarbageCollection);
+		loadProfileLock.lock();
+		try {
+			final var wasRunning = isRunning();
+			stopAll(true, false, performGarbageCollection);
 
-		EventQueue.invokeLater(() -> {
-			LOGGER.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
-
-			var profileLoaded = false;
-
-			try {
-				final var jsonString = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-				final var jsonContext = JsonContext.create();
-
+			EventQueue.invokeLater(() -> {
 				try {
-					final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
-					final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
-					if (versionsComparisonResult.isEmpty()) {
-						LOGGER.log(Level.WARNING, "Trying to load a profile without version information");
+					LOGGER.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
+
+					var profileLoaded = false;
+
+					try {
+						final var jsonString = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+						final var jsonContext = JsonContext.create();
+
+						try {
+							final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
+							final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
+							if (versionsComparisonResult.isEmpty()) {
+								LOGGER.log(Level.WARNING, "Trying to load a profile without version information");
+
+								if (!skipMessageDialogs) {
+									GuiUtils.showMessageDialog(main, frame, MessageFormat.format(
+											STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"), file.getName(),
+											STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
+											STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								}
+							} else {
+								final int v = versionsComparisonResult.get();
+								if (v < 0) {
+									LOGGER.log(Level.WARNING, "Trying to load a profile for an older release");
+
+									if (!skipMessageDialogs) {
+										GuiUtils.showMessageDialog(main, frame,
+												MessageFormat.format(
+														STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+														file.getName(), STRINGS.getString("AN_OLDER"),
+														Constants.APPLICATION_NAME),
+												STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+									}
+								} else if (v > 0) {
+									LOGGER.log(Level.WARNING, "Trying to load a profile for a newer release");
+
+									if (!skipMessageDialogs) {
+										GuiUtils.showMessageDialog(main, frame,
+												MessageFormat.format(
+														STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+														file.getName(), STRINGS.getString("A_NEWER"),
+														Constants.APPLICATION_NAME),
+												STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+									}
+								}
+							}
+
+							final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
+							if (!unknownActionClasses.isEmpty()) {
+								LOGGER.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
+										+ String.join(", ", unknownActionClasses));
+
+								if (!skipMessageDialogs) {
+									GuiUtils.showMessageDialog(main, frame,
+											MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+													String.join("\n", unknownActionClasses)),
+											STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								}
+							}
+
+							profileLoaded = input.setProfile(profile);
+							if (profileLoaded) {
+								saveLastProfile(file);
+								updateModesPanel(false);
+								updateVisualizationPanel();
+								updateOverlayPanel();
+								updateProfileSettingsPanel();
+								updatePanelAccess();
+								loadedProfile = file.getName();
+								setUnsavedChanges(false);
+								setStatusBarText(MessageFormat.format(STRINGS.getString("STATUS_PROFILE_LOADED"),
+										file.getAbsolutePath()));
+								scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
+								profileFileChooser.setSelectedFile(file);
+
+								if (wasRunning) {
+									restartLast();
+								}
+							}
+						} catch (final JsonParseException e) {
+							LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						}
+					} catch (final NoSuchFileException | InvalidPathException e) {
+						LOGGER.log(Level.FINE, e.getMessage(), e);
+					} catch (final IOException e) {
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					}
+
+					if (!profileLoaded) {
+						LOGGER.log(Level.SEVERE, "Could not load profile");
 
 						if (!skipMessageDialogs) {
 							GuiUtils.showMessageDialog(main, frame,
-									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-											file.getName(), STRINGS.getString("AN_UNKNOWN"),
+									MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 											Constants.APPLICATION_NAME),
-									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+									STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						}
+					}
+
+					if (commandLine != null) {
+						EventQueue.invokeLater(() -> {
+							try {
+								main.handleRemainingCommandLine(commandLine, initialLaunch);
+							} finally {
+								loadProfileLock.unlock();
+							}
+						});
 					} else {
-						final int v = versionsComparisonResult.get();
-						if (v < 0) {
-							LOGGER.log(Level.WARNING, "Trying to load a profile for an older release");
-
-							if (!skipMessageDialogs) {
-								GuiUtils.showMessageDialog(main, frame,
-										MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-												file.getName(), STRINGS.getString("AN_OLDER"),
-												Constants.APPLICATION_NAME),
-										STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-							}
-						} else if (v > 0) {
-							LOGGER.log(Level.WARNING, "Trying to load a profile for a newer release");
-
-							if (!skipMessageDialogs) {
-								GuiUtils.showMessageDialog(main, frame,
-										MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-												file.getName(), STRINGS.getString("A_NEWER"),
-												Constants.APPLICATION_NAME),
-										STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-							}
-						}
+						loadProfileLock.unlock();
 					}
-
-					final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
-					if (!unknownActionClasses.isEmpty()) {
-						LOGGER.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
-								+ String.join(", ", unknownActionClasses));
-
-						if (!skipMessageDialogs) {
-							GuiUtils.showMessageDialog(main, frame,
-									MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
-											String.join("\n", unknownActionClasses)),
-									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-						}
-					}
-
-					profileLoaded = input.setProfile(profile);
-					if (profileLoaded) {
-						saveLastProfile(file);
-						updateModesPanel(false);
-						updateVisualizationPanel();
-						updateOverlayPanel();
-						updateProfileSettingsPanel();
-						updatePanelAccess();
-						loadedProfile = file.getName();
-						setUnsavedChanges(false);
-						setStatusBarText(MessageFormat.format(STRINGS.getString("STATUS_PROFILE_LOADED"),
-								file.getAbsolutePath()));
-						scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
-						profileFileChooser.setSelectedFile(file);
-
-						if (wasRunning) {
-							restartLast();
-						}
-					}
-				} catch (final JsonParseException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				} catch (final Throwable t) {
+					loadProfileLock.unlock();
+					throw t;
 				}
-			} catch (final NoSuchFileException | InvalidPathException e) {
-				LOGGER.log(Level.FINE, e.getMessage(), e);
-			} catch (final IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			}
-
-			if (!profileLoaded) {
-				LOGGER.log(Level.SEVERE, "Could not load profile");
-
-				if (!skipMessageDialogs) {
-					GuiUtils.showMessageDialog(main, frame,
-							MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-									Constants.APPLICATION_NAME),
-							STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-			if (commandLine != null) {
-				EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, initialLaunch));
-			}
-		});
+			});
+		} catch (final Throwable t) {
+			loadProfileLock.unlock();
+			throw t;
+		}
 	}
 
 	public void newActivation(final String[] args) {
-		LOGGER.log(Level.INFO, "New activation with arguments: " + String.join(" ", args));
+		loadProfileLock.lock();
+		try {
+			LOGGER.log(Level.INFO, "New activation with arguments: " + String.join(" ", args));
 
-		if (args.length > 0) {
-			try {
-				final var commandLine = new DefaultParser().parse(OPTIONS, args);
-				final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
-				final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
+			if (args.length > 0) {
+				try {
+					final var commandLine = new DefaultParser().parse(OPTIONS, args);
+					final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
+					final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
-				EventQueue.invokeLater(() -> {
-					if (gameControllerDbPath != null) {
-						updateGameControllerMappingsFromFile(gameControllerDbPath);
-					}
+					EventQueue.invokeLater(() -> {
+						if (gameControllerDbPath != null) {
+							updateGameControllerMappingsFromFile(gameControllerDbPath);
+						}
 
-					if (cmdProfilePath != null && handleUnsavedChanges()) {
-						loadProfile(new File(cmdProfilePath), false, true, commandLine, false);
-					} else {
-						EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
-					}
-				});
-			} catch (final ParseException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						if (cmdProfilePath != null && handleUnsavedChanges()) {
+							loadProfile(new File(cmdProfilePath), false, true, commandLine, false);
+						} else {
+							EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
+						}
+					});
+
+				} catch (final ParseException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+			} else {
+				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, frame,
+						MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+								Constants.APPLICATION_NAME),
+						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			}
-		} else {
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, frame,
-					MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"), Constants.APPLICATION_NAME),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+		} finally {
+			loadProfileLock.unlock();
 		}
 	}
 
