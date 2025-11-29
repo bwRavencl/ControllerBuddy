@@ -4520,12 +4520,26 @@ public final class Main {
 			setForeground(overlayAxis.getColor());
 		}
 
+		private static int calculateLineX(final int pos, final int lineThickness) {
+			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
+		}
+
+		private static int calculateLineY(final int pos, final int lineThickness) {
+			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
+		}
+
 		private void drawDivider(final Graphics g, final int pos, final int width, final int height) {
 			final var halfScale = subdivisionScale / 2;
 
 			switch (overlayAxis.getOrientation()) {
-			case HORIZONTAL -> g.fillRect(pos - halfScale, 0, subdivisionScale, height);
-			case VERTICAL -> g.fillRect(0, pos - halfScale, width, subdivisionScale);
+			case HORIZONTAL -> {
+				final var x = calculateLineX(pos, 1) - halfScale;
+				g.fillRect(x, 0, subdivisionScale, height);
+			}
+			case VERTICAL -> {
+				final var y = calculateLineY(pos, 1) - halfScale;
+				g.fillRect(0, y, width, subdivisionScale);
+			}
 			}
 		}
 
@@ -4570,7 +4584,7 @@ public final class Main {
 				case HORIZONTAL -> {
 					final var lineThickness = width / 10;
 					final var progressWidth = Math.round(percent * width);
-					final var x = progressWidth - lineThickness / 2 + ((progressWidth % 2 == 0) ? 0 : -1);
+					final var x = calculateLineX(progressWidth, lineThickness);
 					final var w = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
 
 					g2.fillRect(x, 0, w, height);
@@ -4578,7 +4592,7 @@ public final class Main {
 				case VERTICAL -> {
 					final var lineThickness = height / 10;
 					final var progressHeight = Math.round(percent * height);
-					final var y = height - progressHeight - lineThickness / 2 + ((progressHeight % 2 == 0) ? 0 : -1);
+					final var y = height - calculateLineY(progressHeight, lineThickness);
 					final var h = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
 
 					g2.fillRect(0, y, width, h);
