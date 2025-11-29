@@ -138,11 +138,9 @@ dependencies {
   implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") {
     exclude(group = "org.slf4j", module = "slf4j-api")
   }
+  implementation("com.github.weisj:jsvg:2.0.0")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("io.github.classgraph:classgraph:4.8.184")
-  implementation("org.apache.xmlgraphics:batik-swing:1.19") {
-    exclude(group = "xml-apis", module = "xml-apis")
-  }
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
@@ -546,24 +544,17 @@ tasks.register("generateModuleInfo") {
 
             requires com.google.gson;
             requires com.formdev.flatlaf;
+            requires com.github.weisj.jsvg;
             requires io.github.classgraph;
             requires transitive java.desktop;
             requires java.logging;
             requires java.prefs;
-            requires jdk.xml.dom;
             requires org.apache.commons.cli;
-            requires org.apache.xmlgraphics.batik.anim;
-            requires org.apache.xmlgraphics.batik.bridge;
-            requires org.apache.xmlgraphics.batik.constants;
-            requires org.apache.xmlgraphics.batik.dom;
-            requires org.apache.xmlgraphics.batik.util;
-            requires org.apache.xmlgraphics.batik.swing;
             requires org.freedesktop.dbus;
             requires org.lwjgl;
             requires org.lwjgl.natives;
             requires org.lwjgl.sdl;
             requires org.lwjgl.sdl.natives;
-            requires xml.apis.ext;
         }
 
         """

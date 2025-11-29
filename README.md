@@ -227,13 +227,13 @@ For an example, see [ControllerBuddy-DCS-Integration](https://github.com/bwRaven
 ControllerBuddy makes use of these awesome software technologies and libraries:
 
 - [OpenJDK](https://openjdk.org)
-- [Apache Batik](https://xmlgraphics.apache.org/batik)
 - [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
 - [ClassGraph](https://github.com/classgraph/classgraph)
 - [dbus-java](https://hypfvieh.github.io/dbus-java/)
 - [Error Prone](https://errorprone.info/)
 - [FlatLaf](https://www.formdev.com/flatlaf/)
 - [Gson](https://github.com/google/gson)
+- [JSVG](https://github.com/weisJ/jsvg)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
 - [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org/)
