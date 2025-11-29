@@ -19,6 +19,10 @@ package de.bwravencl.controllerbuddy.gui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.parser.LoaderContext;
+import com.github.weisj.jsvg.parser.SVGLoader;
+import com.github.weisj.jsvg.view.ViewBox;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -76,6 +80,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -89,6 +94,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -206,6 +213,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.PlainDocument;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -213,18 +221,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.anim.dom.SVGStylableElement;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.DocumentLoader;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.constants.XMLConstants;
-import org.apache.batik.dom.util.DOMUtilities;
-import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.util.CSSConstants;
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.util.XMLResourceDescriptor;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -253,8 +252,10 @@ import org.lwjgl.sdl.SDL_GUID;
 import org.lwjgl.sdl.SDL_Surface;
 import org.lwjgl.system.MemoryStack;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.svg.SVGDocument;
+import org.xml.sax.SAXException;
 
 public final class Main {
 
@@ -484,11 +485,15 @@ public final class Main {
 
 	private static final String SVG_ID_Y = "y";
 
-	private static final int SVG_VIEWBOX_MARGIN = 20;
+	private static final float SVG_VIEW_BOX_EXTENSION_FACTOR = 0.6f;
+
+	private static final int SVG_VIEW_BOX_MARGIN = 15;
 
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 
 	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
+
+	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
 	static volatile Main main;
 
@@ -629,6 +634,8 @@ public final class Main {
 
 	private JPanel currentModePanel;
 
+	private DocumentBuilder documentBuilder;
+
 	private boolean hasSystemTray = SystemTray.isSupported();
 
 	private JPanel horizontalIndicatorPanel;
@@ -677,9 +684,11 @@ public final class Main {
 
 	private long stopTrayEntry;
 
-	private JSVGCanvas svgCanvas;
+	private SVGPanel svgPanel;
 
-	private SVGDocument templateSvgDocument;
+	private Document templateSvgDocument;
+
+	private Rectangle templateSvgDocumentViewBox;
 
 	private volatile Rectangle totalDisplayBounds;
 
@@ -915,17 +924,16 @@ public final class Main {
 			}
 
 			if (tabbedPane.getSelectedComponent() == visualizationPanel) {
-				if (svgCanvas == null) {
-					svgCanvas = new JSVGCanvas(null, false, false);
-					svgCanvas.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-					visualizationPanel.add(svgCanvas, BorderLayout.CENTER);
+				if (svgPanel == null) {
+					svgPanel = new SVGPanel();
+					svgPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+					visualizationPanel.add(svgPanel, BorderLayout.CENTER);
 
 					updateVisualizationPanel();
 				}
-			} else if (svgCanvas != null) {
-				visualizationPanel.remove(svgCanvas);
-				svgCanvas.dispose();
-				svgCanvas = null;
+			} else if (svgPanel != null) {
+				visualizationPanel.remove(svgPanel);
+				svgPanel = null;
 			}
 		});
 
@@ -1860,8 +1868,8 @@ public final class Main {
 		System.exit(status);
 	}
 
-	private void addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode) {
-		addTSpanElement(actions.stream().map(action -> {
+	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode) {
+		return addTSpanElement(actions.stream().map(action -> {
 			var description = action.getDescription(input);
 
 			if (action instanceof final ButtonToModeAction buttonToModeAction) {
@@ -1872,17 +1880,81 @@ public final class Main {
 		}).distinct().collect(Collectors.joining(", ")), false, parentNode);
 	}
 
-	private void addTSpanElement(final String textContent, final boolean bold, final Node parentNode) {
-		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS(SVGConstants.SVG_NAMESPACE_URI,
-				SVGConstants.SVG_TSPAN_TAG);
+	private int addTSpanElement(final String textContent, final boolean bold, final Node parentNode) {
+		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS("http://www.w3.org/2000/svg",
+				"tspan");
 
 		if (bold) {
 			prefixTSpanElement.setAttribute("style", "font-weight: bold;");
 		}
-
 		prefixTSpanElement.setTextContent(textContent);
-
 		parentNode.appendChild(prefixTSpanElement);
+
+		String fontFamily = null;
+		String fontSizeString = null;
+		for (var node = parentNode; node != null; node = node.getParentNode()) {
+			if (!(node instanceof final Element element)) {
+				continue;
+			}
+			if (fontFamily == null) {
+				final var fontFamilyAttributeValue = element.getAttribute("font-family");
+				if (!fontFamilyAttributeValue.isBlank()) {
+					fontFamily = fontFamilyAttributeValue.trim();
+				}
+			}
+			if (fontSizeString == null) {
+				final var fontSizeAttributeValue = element.getAttribute("font-size");
+				if (!fontSizeAttributeValue.isBlank()) {
+					fontSizeString = fontSizeAttributeValue.trim();
+				}
+			}
+			if (fontFamily != null && fontSizeString != null) {
+				break;
+			}
+		}
+
+		if (fontFamily == null) {
+			fontFamily = "serif";
+		}
+
+		int fontSizePt = 12;
+		if (fontSizeString != null && !fontSizeString.isBlank()) {
+			fontSizeString = fontSizeString.toLowerCase(Locale.ROOT);
+
+			if (!fontSizeString.endsWith("pt")) {
+				throw new UnsupportedOperationException("Only pt font size units are supported");
+			}
+
+			final var numberPart = fontSizeString.substring(0, fontSizeString.length() - 2);
+
+			try {
+				fontSizePt = Math.round(Float.parseFloat(numberPart));
+			} catch (final NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid font size number format in: " + numberPart, e);
+			}
+		}
+
+		final var font = new Font(fontFamily, bold ? Font.BOLD : Font.PLAIN, fontSizePt);
+		final var fontMetrics = frame.getFontMetrics(font);
+
+		final var extensionWidth = fontMetrics.stringWidth(textContent);
+		for (var node = parentNode; node != null; node = node.getParentNode()) {
+			if (!(node instanceof final Element element)) {
+				continue;
+			}
+			final var textAnchor = element.getAttribute("text-anchor");
+			if (textAnchor.isBlank()) {
+				continue;
+			}
+
+			return switch (textAnchor.toLowerCase(Locale.ROOT)) {
+			case "start" -> extensionWidth;
+			case "end" -> -extensionWidth;
+			default -> 0;
+			};
+		}
+
+		return 0;
 	}
 
 	private int calculateCurrentModeLabelWidth(final Mode mode) {
@@ -1958,65 +2030,62 @@ public final class Main {
 	}
 
 	public void exportVisualization(final File file) {
-		initSvgDocument();
+		initTemplateSvgDocument();
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
 		try {
-			final var domImplementation = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder()
-					.getDOMImplementation();
+			final var domImplementation = documentBuilder.getDOMImplementation();
 			final var htmlDocumentType = domImplementation.createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN",
 					"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
-			final var htmlDocument = domImplementation.createDocument(XMLConstants.XLINK_NAMESPACE_URI, "html",
-					htmlDocumentType);
+			final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html", htmlDocumentType);
 
-			final var headElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "head");
+			final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
 			htmlDocument.getDocumentElement().appendChild(headElement);
 
-			final var colorSchemeMetaElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "meta");
+			final var colorSchemeMetaElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "meta");
 			colorSchemeMetaElement.setAttribute("name", "color-scheme");
 			colorSchemeMetaElement.setAttribute("content", "light dark");
 			headElement.appendChild(colorSchemeMetaElement);
 
-			final var darkColorSchemeStyleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI,
-					"style");
+			final var darkColorSchemeStyleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
 			darkColorSchemeStyleElement
 					.setTextContent("@media(prefers-color-scheme:dark){body{background-color:#969696}}");
 			headElement.appendChild(darkColorSchemeStyleElement);
 
-			final var svgDivStyleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "style");
+			final var svgDivStyleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
 			svgDivStyleElement.setTextContent(".svg-div{aspect-ratio:2.5;margin-top:50px}");
 			headElement.appendChild(svgDivStyleElement);
 
-			final var titleElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "title");
+			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
 			final var title = currentFile != null ? currentFile.getName() : STRINGS.getString("UNTITLED");
 			titleElement.setTextContent(title);
 			headElement.appendChild(titleElement);
 
-			final var bodyElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "body");
+			final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
 			bodyElement.setAttribute("style", "text-align:center");
 			htmlDocument.getDocumentElement().appendChild(bodyElement);
 
-			final var headerDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
+			final var headerDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
 			headerDivElement.setAttribute("style", "font-family:sans-serif");
 			bodyElement.appendChild(headerDivElement);
 
-			final var profileHeaderElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "h1");
+			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
 			profileHeaderElement.setTextContent(title);
 			headerDivElement.appendChild(profileHeaderElement);
 
-			final var labelElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "label");
+			final var labelElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "label");
 			labelElement.setTextContent("Mode: ");
 			labelElement.setAttribute("style", "font-size:1.17em;font-weight:bold");
 			headerDivElement.appendChild(labelElement);
 
-			final var selectElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "select");
+			final var selectElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "select");
 			selectElement.setAttribute("onchange",
 					"Array.from(document.getElementsByClassName('svg-div')).forEach(e=>e.style.display=(e.id===this.value?'block':'none'))");
 			selectElement.setAttribute("style", "vertical-align:text-bottom");
 			labelElement.appendChild(selectElement);
 
 			input.getProfile().getModes().forEach(mode -> {
-				final var svgDivElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "div");
+				final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
 				final var svgDivElementId = mode.getUuid().toString();
 
 				svgDivElement.setAttribute("id", svgDivElementId);
@@ -2025,11 +2094,11 @@ public final class Main {
 						"display:" + (Profile.DEFAULT_MODE.equals(mode) ? "block" : "none"));
 				bodyElement.appendChild(svgDivElement);
 
-				final var svgDocument = generateSvgDocument(mode, false);
-				final var importedSvgNode = htmlDocument.importNode(svgDocument.getRootElement(), true);
+				final var svgDocument = generateSvgDocument(mode, true);
+				final var importedSvgNode = htmlDocument.importNode(svgDocument.getDocumentElement(), true);
 				svgDivElement.appendChild(importedSvgNode);
 
-				final var optionElement = htmlDocument.createElementNS(XMLConstants.XLINK_NAMESPACE_URI, "option");
+				final var optionElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "option");
 				optionElement.setAttribute("value", svgDivElementId);
 				optionElement.setTextContent(mode.getDescription());
 				selectElement.appendChild(optionElement);
@@ -2044,27 +2113,28 @@ public final class Main {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
 				LOGGER.log(Level.INFO, "Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
 			}
-		} catch (final DOMException | ParserConfigurationException | TransformerException | IOException e) {
+		} catch (final DOMException | IOException | TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			GuiUtils.showMessageDialog(main, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	private SVGDocument generateSvgDocument(final Mode mode, final boolean darkTheme) {
-		initSvgDocument();
+	private Document generateSvgDocument(final Mode mode, final boolean export) {
+		initTemplateSvgDocument();
+		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
-		final var workingCopySvgDocument = (SVGDocument) DOMUtilities.deepCloneDocument(templateSvgDocument,
-				templateSvgDocument.getImplementation());
+		final var darkTheme = !export && lookAndFeel.isDark();
 
-		final var userAgentAdapter = new UserAgentAdapter();
-		final var documentLoader = new DocumentLoader(userAgentAdapter);
-		final var bridgeContext = new BridgeContext(userAgentAdapter, documentLoader);
-		bridgeContext.setDynamicState(BridgeContext.DYNAMIC);
-		new GVTBuilder().build(bridgeContext, workingCopySvgDocument);
+		final var workingCopySvgDocument = documentBuilder.newDocument();
+		final var copiedNode = workingCopySvgDocument.importNode(templateSvgDocument.getDocumentElement(), true);
+		workingCopySvgDocument.appendChild(copiedNode);
 
 		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
+
+		int minExtensionWidth = 0;
+		int maxExtensionWidth = 0;
 
 		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
 			var swapped = false;
@@ -2092,7 +2162,14 @@ public final class Main {
 			};
 
 			final var actions = mode.getAxisToActionsMap().get(axis);
-			updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
+			final var extensionWidth = updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
+
+			if (extensionWidth < minExtensionWidth) {
+				minExtensionWidth = extensionWidth;
+			}
+			if (extensionWidth > maxExtensionWidth) {
+				maxExtensionWidth = extensionWidth;
+			}
 		}
 
 		for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
@@ -2137,8 +2214,39 @@ public final class Main {
 				}
 			}
 
-			updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme, swapped);
+			final var extensionWidth = updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme,
+					swapped);
+
+			if (extensionWidth < minExtensionWidth) {
+				minExtensionWidth = extensionWidth;
+			}
+			if (extensionWidth > maxExtensionWidth) {
+				maxExtensionWidth = extensionWidth;
+			}
 		}
+
+		final var leftExtension = Math.round(minExtensionWidth * -SVG_VIEW_BOX_EXTENSION_FACTOR);
+		final var rightExtension = Math.round(maxExtensionWidth * SVG_VIEW_BOX_EXTENSION_FACTOR);
+
+		final var boundingRectangle = new Rectangle(templateSvgDocumentViewBox.x - leftExtension,
+				templateSvgDocumentViewBox.y, templateSvgDocumentViewBox.width + rightExtension + leftExtension,
+				templateSvgDocumentViewBox.height);
+
+		final var viewBoxX = boundingRectangle.x - SVG_VIEW_BOX_MARGIN;
+		final var viewBoxY = boundingRectangle.y - SVG_VIEW_BOX_MARGIN;
+		final var viewBoxWidth = boundingRectangle.width + SVG_VIEW_BOX_MARGIN * 2;
+		final var viewBoxHeight = boundingRectangle.height + SVG_VIEW_BOX_MARGIN * 2;
+
+		final var documentElement = workingCopySvgDocument.getDocumentElement();
+
+		if (export) {
+			documentElement.setAttribute("width", "100%");
+			documentElement.setAttribute("height", "100%");
+		} else {
+			documentElement.setAttribute("width", viewBoxWidth + "px");
+		}
+
+		documentElement.setAttribute("viewBox", viewBoxX + " " + viewBoxY + " " + viewBoxWidth + " " + viewBoxHeight);
 
 		return workingCopySvgDocument;
 	}
@@ -2149,6 +2257,20 @@ public final class Main {
 
 	public Set<Controller> getControllers() {
 		return controllers;
+	}
+
+	private Optional<Element> getDocumentElementById(final Document document, final String id) {
+		final var xpath = XPathFactory.newInstance().newXPath();
+		try {
+			final var result = xpath.evaluate("//*[@id='" + id + "']", document, XPathConstants.NODE);
+			if (result instanceof final Element element) {
+				return Optional.of(element);
+			}
+		} catch (final XPathExpressionException e) {
+			throw new RuntimeException(e);
+		}
+
+		return Optional.empty();
 	}
 
 	@SuppressWarnings("exports")
@@ -2394,6 +2516,21 @@ public final class Main {
 		};
 	}
 
+	private void initDocumentBuilder() {
+		if (documentBuilder != null) {
+			return;
+		}
+
+		final var documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (final ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void initOverlay() {
 		final var profile = input.getProfile();
 		if (!profile.isShowOverlay()) {
@@ -2610,23 +2747,34 @@ public final class Main {
 		}
 	}
 
-	private void initSvgDocument() {
+	private void initTemplateSvgDocument() {
 		if (templateSvgDocument != null) {
 			return;
 		}
 
-		final var controllerSvgInputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
-		if (controllerSvgInputStream == null) {
+		initDocumentBuilder();
+		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
+
+		final var inputStream = ClassLoader.getSystemResourceAsStream(CONTROLLER_SVG_FILENAME);
+		if (inputStream == null) {
 			throw new RuntimeException("Resource not found: " + CONTROLLER_SVG_FILENAME);
 		}
 
-		try (final var bufferedReader = new BufferedReader(
-				new InputStreamReader(controllerSvgInputStream, StandardCharsets.UTF_8))) {
-			final var svgDocumentFactory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
-			templateSvgDocument = (SVGDocument) svgDocumentFactory.createDocument(null, bufferedReader);
-		} catch (final IOException e) {
+		try {
+			templateSvgDocument = documentBuilder.parse(inputStream);
+		} catch (final IOException | SAXException e) {
 			throw new RuntimeException(e);
 		}
+
+		final var viewBox = templateSvgDocument.getDocumentElement().getAttribute("viewBox");
+		final var viewBoxParts = viewBox.split(" ", -1);
+		if (viewBoxParts.length != 4) {
+			throw new RuntimeException("Invalid viewBox attribute: " + viewBox);
+		}
+
+		templateSvgDocumentViewBox = new Rectangle(Math.round(Float.parseFloat(viewBoxParts[0])),
+				Math.round(Float.parseFloat(viewBoxParts[1])), Math.round(Float.parseFloat(viewBoxParts[2])),
+				Math.round(Float.parseFloat(viewBoxParts[3])));
 	}
 
 	public boolean isAutoRestartOutput() {
@@ -2833,7 +2981,6 @@ public final class Main {
 							EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
 						}
 					});
-
 				} catch (final ParseException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
@@ -4111,19 +4258,17 @@ public final class Main {
 		mainLoop.runSync(() -> SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, enabled));
 	}
 
-	private void updateSvgElements(final SVGDocument svgDocument, final String idPrefix,
+	private int updateSvgElements(final Document svgDocument, final String idPrefix,
 			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped) {
-		final var groupElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Group");
-		if (groupElement == null) {
-			throw new IllegalArgumentException("Parameter idPrefix has invalid value: " + idPrefix);
-		}
+		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
+				.orElseThrow(() -> new IllegalArgumentException(
+						"group element with id '" + idPrefix + "Group' not found in SVG document"));
 
 		final var hide = actions == null || actions.isEmpty();
-		groupElement.getStyle().setProperty(CSSConstants.CSS_DISPLAY_PROPERTY,
-				hide ? CSSConstants.CSS_NONE_VALUE : CSSConstants.CSS_INLINE_VALUE, "");
+		groupElement.setAttribute("style", "display:" + (hide ? "none" : "inline"));
 
 		if (hide) {
-			return;
+			return 0;
 		}
 
 		final var delayedActions = new ArrayList<ILongPressAction<?>>();
@@ -4169,45 +4314,41 @@ public final class Main {
 		final var groupBPresent = !actionGroupB.isEmpty();
 		final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
 
-		final var textElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Text");
+		final var textElement = getDocumentElementById(svgDocument, idPrefix + "Text")
+				.orElseThrow(() -> new IllegalArgumentException(
+						"text element with id '" + idPrefix + "Text' not found in SVG document"));
+
 		final var tSpanNode = textElement.getFirstChild();
 		tSpanNode.setTextContent(null);
 
-		if (bothGroupsPresent) {
-			addTSpanElement("• " + STRINGS.getString(groupAPrefix) + ": ", true, tSpanNode);
-		}
-
-		addTSpanElement(actionGroupA, tSpanNode);
+		var extensionWidth = 0;
 
 		if (bothGroupsPresent) {
-			addTSpanElement(" • " + STRINGS.getString(groupBPrefix) + ": ", true, tSpanNode);
+			extensionWidth += addTSpanElement("• " + STRINGS.getString(groupAPrefix) + ": ", true, tSpanNode);
 		}
 
-		addTSpanElement(actionGroupB, tSpanNode);
+		extensionWidth += addTSpanElement(actionGroupA, tSpanNode);
+
+		if (bothGroupsPresent) {
+			extensionWidth += addTSpanElement(" • " + STRINGS.getString(groupBPrefix) + ": ", true, tSpanNode);
+		}
+
+		extensionWidth += addTSpanElement(actionGroupB, tSpanNode);
 
 		if (swapped) {
-			addTSpanElement(" " + SWAPPED_SYMBOL, true, tSpanNode);
+			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, true, tSpanNode);
 		}
 
 		if (darkTheme) {
-			textElement.getStyle().setProperty(CSSConstants.CSS_FILL_PROPERTY, SVG_DARK_THEME_TEXT_COLOR, "");
+			textElement.setAttribute("fill", SVG_DARK_THEME_TEXT_COLOR);
 
-			final var pathElement = (SVGStylableElement) svgDocument.getElementById(idPrefix + "Path");
-			pathElement.getStyle().setProperty(CSSConstants.CSS_STROKE_PROPERTY, SVG_DARK_THEME_PATH_COLOR, "");
+			final var pathElement = getDocumentElementById(svgDocument, idPrefix + "Path")
+					.orElseThrow(() -> new IllegalArgumentException(
+							"path element with id '" + idPrefix + "Path' not found in SVG document"));
+			pathElement.setAttribute("stroke", SVG_DARK_THEME_PATH_COLOR);
 		}
 
-		final var rootElement = svgDocument.getRootElement();
-		final var bBox = rootElement.getBBox();
-
-		final var halfMargin = SVG_VIEWBOX_MARGIN / 2;
-
-		final var viewBoxX = bBox.getX() - halfMargin;
-		final var viewBoxY = bBox.getY() - halfMargin;
-		final var viewBoxWidth = bBox.getWidth() + SVG_VIEWBOX_MARGIN;
-		final var viewBoxHeight = bBox.getHeight() + SVG_VIEWBOX_MARGIN;
-
-		rootElement.setAttributeNS(null, "viewBox",
-				viewBoxX + " " + viewBoxY + " " + viewBoxWidth + " " + viewBoxHeight);
+		return extensionWidth;
 	}
 
 	private void updateTheme() {
@@ -4316,7 +4457,7 @@ public final class Main {
 	}
 
 	void updateVisualizationPanel() {
-		if (visualizationPanel == null || svgCanvas == null || input == null) {
+		if (visualizationPanel == null || svgPanel == null || input == null) {
 			return;
 		}
 
@@ -4334,9 +4475,19 @@ public final class Main {
 				public void actionPerformed(final ActionEvent e) {
 					final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
 
-					final var workingCopySvgDocument = generateSvgDocument(selectedMode, lookAndFeel.isDark());
+					final var document = generateSvgDocument(selectedMode, false);
 
-					svgCanvas.setSVGDocument(workingCopySvgDocument);
+					try {
+						final var byteArrayOutputStream = new ByteArrayOutputStream();
+						final var transformer = TransformerFactory.newInstance().newTransformer();
+						transformer.transform(new DOMSource(document), new StreamResult(byteArrayOutputStream));
+						final var inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+
+						final var svgDocument = new SVGLoader().load(inputStream, null, LoaderContext.createDefault());
+						svgPanel.setSvgDocument(svgDocument);
+					} catch (final TransformerException e1) {
+						throw new RuntimeException(e1);
+					}
 				}
 			});
 		}
@@ -4344,7 +4495,7 @@ public final class Main {
 		modeComboBox.setModel(model);
 		modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 
-		svgCanvas.setBackground(UIManager.getColor("Panel.background"));
+		svgPanel.setBackground(UIManager.getColor("Panel.background"));
 	}
 
 	public enum HotSwappingButton {
@@ -4933,6 +5084,45 @@ public final class Main {
 		}
 
 		private record TaskQueueEntry(Object task, CompletableFuture<Object> futureResult) {
+		}
+	}
+
+	private static class SVGPanel extends JPanel {
+
+		@Serial
+		private static final long serialVersionUID = 3771880542091875983L;
+
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		private SVGDocument svgDocument;
+
+		@Override
+		protected void paintComponent(final Graphics g) {
+			super.paintComponent(g);
+
+			if (svgDocument == null) {
+				return;
+			}
+
+			final var g2d = (Graphics2D) g;
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+			svgDocument.render(this, g2d, new ViewBox(0, 0, getWidth(), getHeight()));
+		}
+
+		@Serial
+		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(SVGPanel.class.getName());
+		}
+
+		private void setSvgDocument(final SVGDocument svgDocument) {
+			this.svgDocument = svgDocument;
+			repaint();
+		}
+
+		@Serial
+		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(SVGPanel.class.getName());
 		}
 	}
 
