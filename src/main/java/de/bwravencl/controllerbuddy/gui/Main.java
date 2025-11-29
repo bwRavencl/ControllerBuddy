@@ -871,9 +871,7 @@ public final class Main {
 		helpMenu.add(new ShowWebsiteAction());
 
 		if (IS_MAC && desktop.isSupported(Desktop.Action.APP_ABOUT)) {
-			desktop.setAboutHandler((_) -> {
-				showAboutDialog();
-			});
+			desktop.setAboutHandler((_) -> showAboutDialog());
 		} else {
 			helpMenu.add(new ShowAboutDialogAction());
 		}
