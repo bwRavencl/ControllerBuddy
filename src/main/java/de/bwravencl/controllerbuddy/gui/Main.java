@@ -522,6 +522,12 @@ public final class Main {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
+		if (IS_MAC) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("apple.awt.application.name", Constants.APPLICATION_NAME);
+			System.setProperty("apple.awt.application.appearance", "system");
+		}
+
 		try {
 			UIManager.setLookAndFeel(new FlatLightLaf());
 		} catch (final UnsupportedLookAndFeelException e) {
@@ -832,7 +838,19 @@ public final class Main {
 		fileMenu.add(new SaveAction());
 		fileMenu.add(new SaveAsAction());
 		fileMenu.insertSeparator(4);
-		fileMenu.add(quitAction);
+
+		final var desktop = Desktop.getDesktop();
+		if (IS_MAC && desktop.isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+			desktop.setQuitHandler((_, response) -> {
+				if (handleUnsavedChanges()) {
+					quit();
+				} else {
+					response.cancelQuit();
+				}
+			});
+		} else {
+			fileMenu.add(quitAction);
+		}
 
 		menuBar.add(fileMenu);
 
@@ -851,7 +869,14 @@ public final class Main {
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowLicensesAction());
 		helpMenu.add(new ShowWebsiteAction());
-		helpMenu.add(new ShowAboutDialogAction());
+
+		if (IS_MAC && desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+			desktop.setAboutHandler((_) -> {
+				showAboutDialog();
+			});
+		} else {
+			helpMenu.add(new ShowAboutDialogAction());
+		}
 
 		frame.getContentPane().add(tabbedPane);
 
@@ -1296,9 +1321,9 @@ public final class Main {
 					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
 					final var getDesktopMethod = unixToolkitClass.getDeclaredMethod("getDesktop");
-					final var desktop = getDesktopMethod.invoke(toolkit);
+					final var desktopName = getDesktopMethod.invoke(toolkit);
 
-					if ("gnome".equals(desktop)) {
+					if ("gnome".equals(desktopName)) {
 						hasSystemTray = false;
 						try (final var dBusConnection = DBusConnectionBuilder.forSessionBus().build()) {
 							final var extensions = dBusConnection.getRemoteObject("org.gnome.Shell.Extensions",
@@ -3404,6 +3429,26 @@ public final class Main {
 		frame.setVisible(true);
 
 		updateShowTrayEntry();
+	}
+
+	private void showAboutDialog() {
+		final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
+
+		final var buildDateTime = Instant.ofEpochMilli(Constants.BUILD_TIMESTAMP).atZone(ZoneId.systemDefault());
+
+		final var defaultLocale = Locale.getDefault();
+		final var buildTimeLocale = Locale.ROOT.equals(STRINGS.getLocale())
+				? (defaultLocale.getLanguage().equals(Locale.ENGLISH.getLanguage()) ? defaultLocale : Locale.US)
+				: STRINGS.getLocale();
+		final var buildTimeString = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+				.withLocale(buildTimeLocale).format(buildDateTime);
+
+		final var buildYear = String.valueOf(buildDateTime.getYear());
+
+		GuiUtils.showMessageDialog(main, frame,
+				MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
+						Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
+				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 	}
 
 	private void showTrayIconHint() {
@@ -5595,23 +5640,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
-
-			final var buildDateTime = Instant.ofEpochMilli(Constants.BUILD_TIMESTAMP).atZone(ZoneId.systemDefault());
-
-			final var defaultLocale = Locale.getDefault();
-			final var buildTimeLocale = Locale.ROOT.equals(STRINGS.getLocale())
-					? (defaultLocale.getLanguage().equals(Locale.ENGLISH.getLanguage()) ? defaultLocale : Locale.US)
-					: STRINGS.getLocale();
-			final var buildTimeString = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-					.withLocale(buildTimeLocale).format(buildDateTime);
-
-			final var buildYear = String.valueOf(buildDateTime.getYear());
-
-			GuiUtils.showMessageDialog(main, frame,
-					MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
-							Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
-					(String) getValue(NAME), JOptionPane.INFORMATION_MESSAGE, imageIcon);
+			showAboutDialog();
 		}
 	}
 
