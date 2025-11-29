@@ -178,153 +178,133 @@
 	transform="matrix(.44122 0 0 .44122 158.9 122.18)"><circle cx="650.3" cy="487.6" r="4.057" /></g><g
 	id="guideGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><text id="guideText" x="1160.8477"
 	y="79.235168" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1160.8477"
-	y="79.235168" font-size="26.667px" text-align="center"
-	text-anchor="middle">guide</tspan></text><path id="guidePath"
-	d="m1161.1 607.71v-515" fill="none" stroke="#000" stroke-width="3" /></g><g
-	id="backGroup" transform="matrix(.44122 0 0 .44122 -213.72 -26.021)"><path id="backPath"
-	d="m1204.6 607.71v-450h-554" fill="none" stroke="#000" stroke-width="3" /><text
-	id="backText" x="640.18732" y="166.18518" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="640.18732" y="166.18518" font-size="26.667px" text-align="end"
-	text-anchor="end">back</tspan></text></g><g id="lefttriggerGroup"
+	font-size="26.667px" text-anchor="middle" style="line-height:1.25"
+	xml:space="preserve"><tspan x="1160.8477" y="79.235168" font-size="26.667px">guide</tspan></text><path
+	id="guidePath" d="m1161.1 607.71v-515" fill="none" stroke="#000"
+	stroke-width="3" /></g><g id="backGroup"
+	transform="matrix(.44122 0 0 .44122 -213.72 -26.021)"><path id="backPath" d="m1204.6 607.71v-450h-554"
+	fill="none" stroke="#000" stroke-width="3" /><text id="backText"
+	x="640.18732" y="166.18518" fill="#000000" font-family="sans-serif"
+	font-size="26.667px" text-anchor="end" style="line-height:1.25"
+	xml:space="preserve"><tspan x="640.18732" y="166.18518" font-size="26.667px">back</tspan></text></g><g
+	id="lefttriggerGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="lefttriggerPath" d="m838.61 281.71h-360"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="lefttriggerText" x="468.21484" y="289.88519" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="289.88519" font-size="26.667px" text-align="end"
-	text-anchor="end">lefttrigger</tspan></text></g><g id="leftshoulderGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="289.88519" font-size="26.667px">lefttrigger</tspan></text></g><g
+	id="leftshoulderGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="leftshoulderPath" d="m798.61 394.71h-320"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="leftshoulderText" x="468.21484" y="402.78519" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="402.78519" font-size="26.667px" text-align="end"
-	text-anchor="end">leftshoulder</tspan></text></g><g id="leftyGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="leftyPath" transform="translate(-18.892,132.71)"
-	fill="none" stroke="#000" stroke-width="3"><path
-	d="m833.5 565h10v-148.25h-346" /><path d="m842 487h-8.5" /></g><text
-	id="leftyText" x="468.21484" y="557.33514" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="557.33514" font-size="26.667px" text-align="end"
-	text-anchor="end">lefty</tspan></text></g><g id="leftstickGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="402.78519" font-size="26.667px">leftshoulder</tspan></text></g><g
+	id="leftyGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="leftyPath"
+	transform="translate(-18.892,132.71)" fill="none" stroke="#000"
+	stroke-width="3"><path d="m833.5 565h10v-148.25h-346" /><path
+	d="m842 487h-8.5" /></g><text id="leftyText" x="468.21484"
+	y="557.33514" fill="#000000" font-family="sans-serif"
+	font-size="26.667px" text-anchor="end" style="line-height:1.25"
+	xml:space="preserve"><tspan x="468.21484" y="557.33514" font-size="26.667px">lefty</tspan></text></g><g
+	id="leftstickGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="leftstickPath" d="m808.61 655.21v-19h-330"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="leftstickText" x="468.21484" y="644.23517" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="644.23517" font-size="26.667px" text-align="end"
-	text-anchor="end">leftstick</tspan></text></g><g id="leftxGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="leftxPath"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="644.23517" font-size="26.667px">leftstick</tspan></text></g><g
+	id="leftxGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="leftxPath"
 	transform="matrix(0,1,1,0,293.11,-124.79)" fill="none" stroke="#000"
 	stroke-width="3"><path d="m791.5 565.5h52v-380" /><path
 	d="m842 468.5h-50.5" /></g><text id="leftxText" x="468.21484"
 	y="726.58514" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
-	y="726.58514" font-size="26.667px" text-align="end" text-anchor="end">leftx</tspan></text></g><g
+	font-size="26.667px" text-anchor="end" style="line-height:1.25"
+	xml:space="preserve"><tspan x="468.21484" y="726.58514" font-size="26.667px">leftx</tspan></text></g><g
 	id="dpupGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="dpupPath"
 	d="m983.61 733.71v40l-505 1" fill="none" stroke="#000" stroke-width="3" /><text
 	id="dpupText" x="468.21484" y="782.78516" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="782.78516" font-size="26.667px" text-align="end"
-	text-anchor="end">dpup</tspan></text></g><g id="dpleftGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="782.78516" font-size="26.667px">dpup</tspan></text></g><g id="dpleftGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="dpleftPath" d="m913.61 793.71v40h-435"
 	fill="none" stroke="#000" stroke-width="3" /><text id="dpleftText"
 	x="468.21484" y="841.68518" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
-	y="841.68518" font-size="26.667px" text-align="end" text-anchor="end">dpleft</tspan></text></g><g
+	font-size="26.667px" text-anchor="end" style="line-height:1.25"
+	xml:space="preserve"><tspan x="468.21484" y="841.68518" font-size="26.667px">dpleft</tspan></text></g><g
 	id="dpdownGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="dpdownPath"
 	d="m983.61 842.71v50h-505" fill="none" stroke="#000" stroke-width="3" /><text
 	id="dpdownText" x="468.21484" y="900.68518" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="900.68518" font-size="26.667px" text-align="end"
-	text-anchor="end">dpdown</tspan></text></g><g id="dprightGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="900.68518" font-size="26.667px">dpdown</tspan></text></g><g id="dprightGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="dprightPath" d="m1053.6 793.71v159h-575"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="dprightText" x="468.21484" y="960.58514" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="468.21484" y="960.58514" font-size="26.667px" text-align="end"
-	text-anchor="end">dpright</tspan></text></g><g id="rightyGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="end"
+	style="line-height:1.25" xml:space="preserve"><tspan x="468.21484"
+	y="960.58514" font-size="26.667px">dpright</tspan></text></g><g id="rightyGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="rightyPath" transform="rotate(180,1075.8,673.36)"
 	fill="none" stroke="#000" stroke-width="3"><path
 	d="m835 565h10v-171h-537" /><path d="m843.5 488h-8.5" /></g><text
 	id="rightyText" x="1856.5898" y="960.58514" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="1856.5898" y="960.58514" font-size="26.667px" text-align="start"
-	text-anchor="start">righty</tspan></text></g><g id="rightstickGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="start"
+	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
+	y="960.58514" font-size="26.667px">righty</tspan></text></g><g
+	id="rightstickGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="rightstickPath" d="m1322.1 830.21v14.5h521.5"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="rightstickText" x="1856.5898" y="852.68518" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="1856.5898" y="852.68518" font-size="26.667px" text-align="start"
-	text-anchor="start">rightstick</tspan></text></g><g id="rightxGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="rightxPath"
+	font-family="sans-serif" font-size="26.667px" text-anchor="start"
+	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
+	y="852.68518" font-size="26.667px">rightstick</tspan></text></g><g
+	id="rightxGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><g id="rightxPath"
 	transform="matrix(0,-1,-1,0,1837.6,1610.2)" fill="none" stroke="#000"
 	stroke-width="3"><path
 	d="m791.5 562h69.75c0.0438-125.5-0.43781-442.5-0.75-568" /><path
 	d="m859.75 463h-68.25" /></g><text id="rightxText" x="1856.5898"
 	y="757.68518" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
-	y="757.68518" font-size="26.667px" text-align="start"
-	text-anchor="start">rightx</tspan></text></g><g id="aGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="aPath" d="m1547.6 669.21h296" fill="none"
-	stroke="#000" stroke-width="3" /><text id="aText" x="1856.5898"
-	y="677.08514" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
-	y="677.08514" font-size="26.667px" text-align="start"
-	text-anchor="start">a</tspan></text></g><g id="bGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="bPath" d="m1639.6 593.21h204" fill="none"
-	stroke="#000" stroke-width="3" /><text id="bText" x="1856.5898"
-	y="601.08514" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
-	y="601.08514" font-size="26.667px" text-align="start"
-	text-anchor="start">b</tspan></text></g><g id="yGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="yPath" d="m1549.6 526.71h294" fill="none"
-	stroke="#000" stroke-width="3" /><text id="yText" x="1856.5898"
-	y="534.73517" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
-	y="534.73517" font-size="26.667px" text-align="start"
-	text-anchor="start">y</tspan></text></g><g id="xGroup"
-	transform="matrix(.44122 0 0 .44122 -137.83 -26.021)"><path id="xPath" d="m1418.6 580.71v-112h424.97"
-	fill="none" stroke="#000" stroke-width="3" /><text id="xText"
-	x="1856.5623" y="476.63519" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
-	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5623"
-	y="476.63519" font-size="26.667px" text-align="start"
-	text-anchor="start">x</tspan></text></g><g id="rightshoulderGroup"
+	font-size="26.667px" text-anchor="start" style="line-height:1.25"
+	xml:space="preserve"><tspan x="1856.5898" y="757.68518" font-size="26.667px">rightx</tspan></text></g><g
+	id="aGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="aPath" d="m1547.6 669.21h296"
+	fill="none" stroke="#000" stroke-width="3" /><text id="aText"
+	x="1856.5898" y="677.08514" fill="#000000" font-family="sans-serif"
+	font-size="26.667px" text-anchor="start" style="line-height:1.25"
+	xml:space="preserve"><tspan x="1856.5898" y="677.08514" font-size="26.667px">a</tspan></text></g><g
+	id="bGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="bPath" d="m1639.6 593.21h204"
+	fill="none" stroke="#000" stroke-width="3" /><text id="bText"
+	x="1856.5898" y="601.08514" fill="#000000" font-family="sans-serif"
+	font-size="26.667px" text-anchor="start" style="line-height:1.25"
+	xml:space="preserve"><tspan x="1856.5898" y="601.08514" font-size="26.667px">b</tspan></text></g><g
+	id="yGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="yPath" d="m1549.6 526.71h294"
+	fill="none" stroke="#000" stroke-width="3" /><text id="yText"
+	x="1856.5898" y="534.73517" fill="#000000" font-family="sans-serif"
+	font-size="26.667px" text-anchor="start" style="line-height:1.25"
+	xml:space="preserve"><tspan x="1856.5898" y="534.73517" font-size="26.667px">y</tspan></text></g><g
+	id="xGroup" transform="matrix(.44122 0 0 .44122 -137.83 -26.021)"><path id="xPath"
+	d="m1418.6 580.71v-112h424.97" fill="none" stroke="#000"
+	stroke-width="3" /><text id="xText" x="1856.5623" y="476.63519"
+	fill="#000000" font-family="sans-serif" font-size="26.667px"
+	text-anchor="start" style="line-height:1.25" xml:space="preserve"><tspan
+	x="1856.5623" y="476.63519" font-size="26.667px">x</tspan></text></g><g
+	id="rightshoulderGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="rightshoulderPath" d="m1523.6 394.71h320"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="rightshoulderText" x="1856.5898" y="402.78519" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="1856.5898" y="402.78519" font-size="26.667px" text-align="start"
-	text-anchor="start">rightshoulder</tspan></text></g><g id="righttriggerGroup"
+	font-family="sans-serif" font-size="26.667px" text-anchor="start"
+	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
+	y="402.78519" font-size="26.667px">rightshoulder</tspan></text></g><g
+	id="righttriggerGroup"
 	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="righttriggerPath" d="m1483.6 281.71h360"
 	fill="none" stroke="#000" stroke-width="3" /><text
 	id="righttriggerText" x="1856.5898" y="289.88519" fill="#000000"
-	font-family="sans-serif" font-size="26.667px" text-align="center"
-	text-anchor="middle" style="line-height:1.25" xml:space="preserve"><tspan
-	x="1856.5898" y="289.88519" font-size="26.667px" text-align="start"
-	text-anchor="start">righttrigger</tspan></text></g><g id="startGroup"
-	transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="startPath" d="m1289.6 607.71v-450h554"
-	fill="none" stroke="#000" stroke-width="3" /><text id="startText"
-	x="1856.5898" y="166.18517" fill="#000000" font-family="sans-serif"
-	font-size="26.667px" text-align="center" text-anchor="middle"
+	font-family="sans-serif" font-size="26.667px" text-anchor="start"
 	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
-	y="166.18517" font-size="26.667px" text-align="start"
-	text-anchor="start">start</tspan></text></g></svg>
+	y="289.88519" font-size="26.667px">righttrigger</tspan></text></g><g
+	id="startGroup" transform="matrix(.44122 0 0 .44122 -137.85 -26.021)"><path id="startPath"
+	d="m1289.6 607.71v-450h554" fill="none" stroke="#000" stroke-width="3" /><text
+	id="startText" x="1856.5898" y="166.18517" fill="#000000"
+	font-family="sans-serif" font-size="26.667px" text-anchor="start"
+	style="line-height:1.25" xml:space="preserve"><tspan x="1856.5898"
+	y="166.18517" font-size="26.667px">start</tspan></text></g></svg>
