@@ -306,6 +306,7 @@ fun getLicensesForDependency(
           License("Apache-2.0", "https://www.apache.org/licenses/LICENSE-2.0") to
               listOf(
                   "Apache-2.0",
+                  "Apache 2.0",
                   "Apache License, Version 2.0",
                   "The Apache License, Version 2.0",
                   "The Apache Software License, Version 2.0",
