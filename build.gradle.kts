@@ -67,7 +67,13 @@ val runtimeDir = tmpDir.map { it.dir("runtime") }
 
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
-    listOf("-XX:+UseSerialGC", "-Xms96m", "-Xmx96m", "--enable-native-access=$mainModule,org.lwjgl")
+    listOf(
+        "-XX:+UseSerialGC",
+        "-Xms96m",
+        "-Xmx96m",
+        "-XX:+UseCompactObjectHeaders",
+        "--enable-native-access=$mainModule,org.lwjgl",
+    )
 val windowsJvmArgs =
     listOf(
         "--add-opens=java.desktop/java.awt=$mainModule",
