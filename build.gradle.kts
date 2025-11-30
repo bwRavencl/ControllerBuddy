@@ -285,7 +285,7 @@ data class Coordinate(
 
 data class DependencyMetadata(
     val coordinate: Coordinate,
-    val file: File,
+    val fileName: String,
     val licenses: MutableList<License> = mutableListOf(),
 )
 
@@ -330,7 +330,7 @@ fun getLicensesForDependency(
           .newDocumentBuilder()
   val document = docBuilder.parse(pomFile)
 
-  val dependencyMetadata = DependencyMetadata(initialCoordinate, file)
+  val dependencyMetadata = DependencyMetadata(initialCoordinate, file.name)
 
   val licensesNodes = document.getElementsByTagName("license")
   for (i in 0 until licensesNodes.length) {
@@ -390,8 +390,19 @@ private fun Element.getChildText(tagName: String): String? {
 val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
     setOf(
         DependencyMetadata(
+            Coordinate(artifactId = "SDL3"),
+            fileName = "SDL3.dll / libSDL3.so / libSDL3.dylib",
+            listOf(
+                    License(
+                        "zlib License",
+                        "https://libsdl.org/license.php",
+                    )
+                )
+                .toMutableList(),
+        ),
+        DependencyMetadata(
             Coordinate(artifactId = "SDL_GameControllerDB"),
-            file = file(gamecontrollerdbGitFile),
+            fileName = file(gamecontrollerdbGitFile).name,
             listOf(
                     License(
                         "zlib License",
@@ -399,7 +410,7 @@ val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
                     )
                 )
                 .toMutableList(),
-        )
+        ),
     )
 
 val dependencyMetadataSet: Set<DependencyMetadata> =
@@ -474,7 +485,7 @@ tasks.register("generateConstants") {
                           td {
                             +entry.coordinate.toString()
                             br
-                            code { +entry.file.name }
+                            code { +entry.fileName }
                           }
                           td { +license.name }
                           td {

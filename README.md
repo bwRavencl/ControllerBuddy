@@ -235,6 +235,7 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [Gson](https://github.com/google/gson)
 - [JSVG](https://github.com/weisJ/jsvg)
 - [LWJGL - Lightweight Java Game Library 3](https://www.lwjgl.org)
+- [SDL](https://libsdl.org)
 - [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org/)
 
