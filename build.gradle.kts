@@ -29,7 +29,6 @@ plugins {
   id("com.diffplug.spotless") version "8.1.0"
   id("com.github.spotbugs") version "6.4.6"
   id("net.ltgt.errorprone") version "4.3.0"
-  id("org.gradlex.extra-java-module-info") version "1.13.1"
 }
 
 buildscript { dependencies { classpath("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0") } }
@@ -146,11 +145,6 @@ dependencies {
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.slf4j:slf4j-jdk14:2.0.17")
-}
-
-extraJavaModuleInfo {
-  deriveAutomaticModuleNamesFromFileNames = true
-  failOnMissingModuleInfo = false
 }
 
 spotless {
