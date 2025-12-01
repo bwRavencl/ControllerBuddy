@@ -275,9 +275,10 @@ data class Coordinate(
     val version: String? = null,
 ) : Comparable<Coordinate> {
   override fun compareTo(other: Coordinate): Int {
-    group?.compareTo(other.group ?: "")?.let { if (it != 0) return it }
-    artifactId?.compareTo(other.artifactId ?: "")?.let { if (it != 0) return it }
-    return version?.compareTo(other.version ?: "") ?: 0
+    return compareBy<Coordinate, String?>(nullsLast(String.CASE_INSENSITIVE_ORDER)) { it.group }
+        .thenBy(nullsLast(String.CASE_INSENSITIVE_ORDER)) { it.artifactId }
+        .thenBy(nullsLast(String.CASE_INSENSITIVE_ORDER)) { it.version }
+        .compare(this, other)
   }
 
   override fun toString(): String = listOfNotNull(group, artifactId, version).joinToString(":")
@@ -414,21 +415,20 @@ val hardcodedDependencyMetadataSet: Set<DependencyMetadata> =
     )
 
 val dependencyMetadataSet: Set<DependencyMetadata> =
-    hardcodedDependencyMetadataSet +
-        configurations.runtimeClasspath
-            .get()
-            .resolvedConfiguration
-            .resolvedArtifacts
-            .map { resolvedArtifact ->
-              val coordinate =
-                  Coordinate(
-                      group = resolvedArtifact.moduleVersion.id.group,
-                      artifactId = resolvedArtifact.moduleVersion.id.name,
-                      version = resolvedArtifact.moduleVersion.id.version,
-                  )
-              getLicensesForDependency(resolvedArtifact.file, coordinate)
-            }
-            .toSet()
+    configurations.runtimeClasspath
+        .get()
+        .resolvedConfiguration
+        .resolvedArtifacts
+        .map { resolvedArtifact ->
+          val coordinate =
+              Coordinate(
+                  group = resolvedArtifact.moduleVersion.id.group,
+                  artifactId = resolvedArtifact.moduleVersion.id.name,
+                  version = resolvedArtifact.moduleVersion.id.version,
+              )
+          getLicensesForDependency(resolvedArtifact.file, coordinate)
+        }
+        .toSet() + hardcodedDependencyMetadataSet
 
 tasks.register("generateConstants") {
   description = "Generates the '${file(constantsFile).relativeTo(projectDir)}' source file"
