@@ -159,6 +159,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -5089,11 +5090,104 @@ public final class Main {
 
 	private static class SVGPanel extends JPanel {
 
+		private static final float MAX_ZOOM_FACTOR = 5f;
+
+		private static final Cursor ZOOM_CURSOR;
+
+		private static final String ZOOM_GIF_RESOURCE_PATH = "/zoom.gif";
+
+		private static final float ZOOM_IN_PANNING_FACTOR = 1.5f;
+
+		private static final double ZOOM_OUT_RETURN_TO_CENTER_EXPONENT = 2.0;
+
+		private static final float ZOOM_STEP_CLICK = 1.3f;
+
+		private static final float ZOOM_STEP_WHEEL = 1.1f;
+
 		@Serial
 		private static final long serialVersionUID = 3771880542091875983L;
 
+		static {
+			final var inputStream = SVGPanel.class.getResourceAsStream(ZOOM_GIF_RESOURCE_PATH);
+			if (inputStream == null) {
+				throw new RuntimeException("Resource not found: " + ZOOM_GIF_RESOURCE_PATH);
+			}
+
+			try {
+				final var bufferedImage = ImageIO.read(inputStream);
+				final var hotSpot = new Point(bufferedImage.getWidth() / 2, bufferedImage.getHeight() / 2);
+				ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, hotSpot, "zoom");
+			} catch (final IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		private float offsetX = 0f;
+
+		private float offsetY = 0f;
+
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private SVGDocument svgDocument;
+
+		private float zoomFactor = 1f;
+
+		private SVGPanel() {
+			setCursor(ZOOM_CURSOR);
+
+			addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(final MouseEvent e) {
+					super.mouseClicked(e);
+
+					final float zoomRatio;
+					switch (e.getButton()) {
+					case MouseEvent.BUTTON1 -> zoomRatio = ZOOM_STEP_CLICK;
+					case MouseEvent.BUTTON3 -> zoomRatio = 1f / ZOOM_STEP_CLICK;
+					default -> {
+						return;
+					}
+					}
+
+					handleZoom(zoomRatio, e.getX(), e.getY());
+				}
+			});
+
+			addMouseWheelListener(e -> {
+				final var wheelRotation = e.getWheelRotation();
+
+				final var zoomRatio = (wheelRotation < 0 ? ZOOM_STEP_WHEEL : 1f / ZOOM_STEP_WHEEL);
+				handleZoom(zoomRatio, e.getX(), e.getY());
+			});
+		}
+
+		private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
+			zoomFactor = Math.min(Math.max(zoomFactor * zoomRatio, 1f), MAX_ZOOM_FACTOR);
+
+			if (zoomFactor >= MAX_ZOOM_FACTOR) {
+				return;
+			}
+
+			if (zoomFactor == 1f) {
+				offsetX = 0;
+				offsetY = 0;
+			} else {
+				if (zoomRatio >= 1f) {
+					final var x = (mouseX - getWidth() / 2f) * ZOOM_IN_PANNING_FACTOR;
+					final var y = (mouseY - getHeight() / 2f) * ZOOM_IN_PANNING_FACTOR;
+
+					offsetX -= (x - offsetX) * (1f - 1f / zoomRatio);
+					offsetY -= (y - offsetY) * (1f - 1f / zoomRatio);
+				} else {
+					final var factor = (float) Math.pow(zoomRatio, ZOOM_OUT_RETURN_TO_CENTER_EXPONENT);
+
+					offsetX *= factor;
+					offsetY *= factor;
+				}
+			}
+
+			repaint();
+		}
 
 		@Override
 		protected void paintComponent(final Graphics g) {
@@ -5107,7 +5201,14 @@ public final class Main {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-			svgDocument.render(this, g2d, new ViewBox(0, 0, getWidth(), getHeight()));
+			final var width = getWidth();
+			final var height = getHeight();
+
+			final var zoomedWidth = Math.round(width * zoomFactor);
+			final var zoomedHeight = Math.round(height * zoomFactor);
+
+			svgDocument.render(this, g2d, new ViewBox(-(zoomedWidth - width) / 2f + offsetX,
+					-(zoomedHeight - height) / 2f + offsetY, zoomedWidth, zoomedHeight));
 		}
 
 		@Serial
@@ -5117,6 +5218,10 @@ public final class Main {
 
 		private void setSvgDocument(final SVGDocument svgDocument) {
 			this.svgDocument = svgDocument;
+			zoomFactor = 1f;
+			offsetX = 0f;
+			offsetY = 0f;
+
 			repaint();
 		}
 
