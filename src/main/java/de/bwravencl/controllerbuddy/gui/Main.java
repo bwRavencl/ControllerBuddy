@@ -708,7 +708,7 @@ public final class Main {
 
 				Runtime.getRuntime().halt(2);
 			}
-		}));
+		}, "Shutdown Hook"));
 
 		this.mainLoop = mainLoop;
 
@@ -780,7 +780,7 @@ public final class Main {
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
-		}).start();
+		}, "Single Instance Server").start();
 
 		final var mainClassPackageName = Main.class.getPackageName();
 		final var applicationId = mainClassPackageName.substring(0, mainClassPackageName.lastIndexOf('.'));
