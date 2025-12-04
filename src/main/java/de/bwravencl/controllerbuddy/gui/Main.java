@@ -5094,6 +5094,8 @@ public final class Main {
 
 		private static final Cursor ZOOM_CURSOR;
 
+		private static final Point ZOOM_CURSOR_HOT_SPOT = new Point(11, 11);
+
 		private static final String ZOOM_GIF_RESOURCE_PATH = "/zoom.gif";
 
 		private static final float ZOOM_IN_PANNING_FACTOR = 1.5f;
@@ -5115,8 +5117,9 @@ public final class Main {
 
 			try {
 				final var bufferedImage = ImageIO.read(inputStream);
-				final var hotSpot = new Point(bufferedImage.getWidth() / 2, bufferedImage.getHeight() / 2);
-				ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, hotSpot, "zoom");
+
+				ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, ZOOM_CURSOR_HOT_SPOT,
+						"zoom");
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
