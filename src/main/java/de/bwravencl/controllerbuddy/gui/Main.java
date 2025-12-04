@@ -210,6 +210,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
@@ -4572,7 +4573,7 @@ public final class Main {
 		String getShellVersion();
 	}
 
-	private abstract static class AbstractProfileFileChooser extends JFileChooser {
+	private abstract static class AbstractProfileFileChooser extends LargeFileChooser {
 
 		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
@@ -4857,6 +4858,26 @@ public final class Main {
 					.registerTypeAdapter(ScanCode.class, new ScanCodeAdapter()).setPrettyPrinting().create();
 
 			return new JsonContext(gson, actionAdapter);
+		}
+	}
+
+	private static class LargeFileChooser extends JFileChooser {
+
+		@Serial
+		private static final long serialVersionUID = -2004524201953374585L;
+
+		private LargeFileChooser() {
+		}
+
+		private LargeFileChooser(final String currentDirectory) {
+			super(currentDirectory);
+		}
+
+		@Override
+		protected void setup(final FileSystemView view) {
+			super.setup(view);
+
+			setPreferredSize(new Dimension(DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT));
 		}
 	}
 
@@ -5280,7 +5301,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var vJoyDirectoryFileChooser = new JFileChooser(getVJoyDirectory());
+			final var vJoyDirectoryFileChooser = new LargeFileChooser(getVJoyDirectory());
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
