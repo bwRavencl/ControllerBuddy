@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.gui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.util.SystemFileChooser;
 import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.parser.LoaderContext;
 import com.github.weisj.jsvg.parser.SVGLoader;
@@ -208,8 +209,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatter;
@@ -4376,7 +4375,6 @@ public final class Main {
 
 		FlatLaf.updateUI();
 
-		profileFileChooser.updateUI();
 		statusPanelPopupMenu.updateUI();
 		toggleDonateCheckBoxMenuItem.updateUI();
 
@@ -4572,33 +4570,10 @@ public final class Main {
 		String getShellVersion();
 	}
 
-	private abstract static class AbstractProfileFileChooser extends JFileChooser {
-
-		@Serial
-		private static final long serialVersionUID = -4669170626378955605L;
+	private abstract static class AbstractProfileFileChooser extends SystemFileChooser {
 
 		private AbstractProfileFileChooser(final FileFilter fileFilter) {
 			setFileFilter(fileFilter);
-		}
-
-		@SuppressWarnings("fallthrough")
-		@Override
-		public void approveSelection() {
-			final var file = getSelectedFile();
-			if (file.exists() && getDialogType() == SAVE_DIALOG) {
-				final var selectedOption = JOptionPane.showConfirmDialog(this,
-						MessageFormat.format(file.getName(), STRINGS.getString("FILE_EXISTS_DIALOG_TEXT")),
-						STRINGS.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
-				switch (selectedOption) {
-				case JOptionPane.CANCEL_OPTION:
-					cancelSelection();
-				case JOptionPane.NO_OPTION, JOptionPane.CLOSED_OPTION:
-					return;
-				default:
-					break;
-				}
-			}
-			super.approveSelection();
 		}
 	}
 
@@ -4645,9 +4620,6 @@ public final class Main {
 	}
 
 	private static final class HtmlFileChooser extends AbstractProfileFileChooser {
-
-		@Serial
-		private static final long serialVersionUID = -1707951153902772391L;
 
 		private HtmlFileChooser(final File profileFile) {
 			super(new FileNameExtensionFilter(STRINGS.getString("HTML_FILE_DESCRIPTION"), "htm", "html"));
@@ -5280,7 +5252,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var vJoyDirectoryFileChooser = new JFileChooser(getVJoyDirectory());
+			final var vJoyDirectoryFileChooser = new SystemFileChooser(getVJoyDirectory());
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
@@ -5560,9 +5532,6 @@ public final class Main {
 	}
 
 	private final class ProfileFileChooser extends AbstractProfileFileChooser {
-
-		@Serial
-		private static final long serialVersionUID = -4669170626378955605L;
 
 		private ProfileFileChooser() {
 			super(new FileNameExtensionFilter(
