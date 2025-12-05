@@ -491,6 +491,8 @@ public final class Main {
 
 	private static final int SVG_VIEW_BOX_MARGIN = 15;
 
+	private static final Color TABBED_PANE_FOREGROUND_COLOR = new Color(68, 138, 222);
+
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 
 	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
@@ -887,6 +889,8 @@ public final class Main {
 			helpMenu.add(new ShowAboutDialogAction());
 		}
 
+		tabbedPane.setFont(tabbedPane.getFont().deriveFont(16f).deriveFont(Font.BOLD));
+		tabbedPane.setForeground(TABBED_PANE_FOREGROUND_COLOR);
 		frame.getContentPane().add(tabbedPane);
 
 		final JPanel modesPanel = new JPanel(new BorderLayout());
