@@ -71,6 +71,7 @@ val commonJvmArgs =
         "-Xms96m",
         "-Xmx96m",
         "-XX:+UseCompactObjectHeaders",
+        "--add-exports=org.lwjgl/org.lwjgl.system.ffm=org.lwjgl.sdl",
         "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
     )
 val windowsJvmArgs =
