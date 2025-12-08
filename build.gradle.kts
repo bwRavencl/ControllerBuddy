@@ -33,7 +33,7 @@ plugins {
 
 buildscript { dependencies { classpath("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0") } }
 
-val versionProvider =
+val versionProvider: Provider<String> =
     providers
         .exec { commandLine("git", "describe", "--long", "--dirty=.dirty") }
         .standardOutput
@@ -49,10 +49,11 @@ application {
   mainClass = "de.bwravencl.controllerbuddy.gui.Main"
 }
 
-val javaLanguageVersion = JavaLanguageVersion.of(25)
+val javaLanguageVersion: JavaLanguageVersion = JavaLanguageVersion.of(25)
 
-val launcher = javaToolchains.launcherFor { languageVersion = javaLanguageVersion }
-val javaHome = launcher.map { it.metadata.installationPath }
+val launcher: Provider<JavaLauncher> =
+    javaToolchains.launcherFor { languageVersion = javaLanguageVersion }
+val javaHome: Provider<Directory> = launcher.map { it.metadata.installationPath }
 
 val os = DefaultNativePlatform.getCurrentOperatingSystem()!!
 
@@ -61,8 +62,8 @@ val constantsFile =
     "$projectDir/src/main/java/de/bwravencl/controllerbuddy/constants/Constants.java"
 
 val resourcesDir = "$projectDir/src/main/resources"
-val tmpDir = layout.buildDirectory.dir("tmp")
-val runtimeDir = tmpDir.map { it.dir("runtime") }
+val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
+val runtimeDir: Provider<Directory> = tmpDir.map { it.dir("runtime") }
 
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
@@ -518,7 +519,6 @@ tasks.register("generateConstants") {
             	public static final String VERSION = "$version";
 
             	static {
-            		// noinspection HttpUrlsUsage
             		LICENSES_HTML = "${licensesHtml.replace("\"", "\\\"")}";
             	}
             }
