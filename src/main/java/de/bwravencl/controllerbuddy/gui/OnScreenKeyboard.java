@@ -283,6 +283,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 		for (final var row : keyboardButtons) {
 			for (final var keyboardButton : row) {
+				if (keyboardButton instanceof LockKeyButton) {
+					continue;
+				}
+
 				keyboardButton.changed = true;
 			}
 		}
