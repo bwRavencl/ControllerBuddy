@@ -127,7 +127,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		if (fluid) {
 			input.moveAxis(virtualAxis, resetValue);
 		} else {
-			input.setAxis(virtualAxis, resetValue, false, null);
+			input.setAxis(virtualAxis, resetValue, false, null, null, null);
 		}
 	}
 

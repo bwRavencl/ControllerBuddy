@@ -459,7 +459,7 @@ public final class Input {
 					newValue = Math.max(newValue, targetValue);
 				}
 
-				setAxis(virtualAxis, newValue, false, (Integer) null);
+				setAxis(virtualAxis, newValue, false, (Integer) null, null, null);
 
 				return newValue == targetValue;
 			}
@@ -599,23 +599,21 @@ public final class Input {
 	}
 
 	public void setAxis(final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback,
-			final Float detentValue) {
+			final Float minValue, final Float maxValue, final Float detentValue) {
 		setAxis(virtualAxis, floatToIntAxisValue(value), hapticFeedback,
+				minValue != null ? floatToIntAxisValue(minValue) : null,
+				maxValue != null ? floatToIntAxisValue(maxValue) : null,
 				detentValue != null ? floatToIntAxisValue(detentValue) : null);
 	}
 
-	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
-			final Integer detentValue) {
-		final var minAxisValue = runMode.getMinAxisValue();
-		final var maxAxisValue = runMode.getMaxAxisValue();
-
-		value = Math.max(value, minAxisValue);
-		value = Math.min(value, maxAxisValue);
+	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback, final Integer minValue,
+			final Integer maxValue, final Integer detentValue) {
+		value = Math.min(Math.max(value, runMode.getMinAxisValue()), runMode.getMaxAxisValue());
 
 		final var prevValue = axes.put(virtualAxis, value);
 
 		if (hapticFeedback && prevValue != null && prevValue != value) {
-			if (value == minAxisValue || value == maxAxisValue) {
+			if (value == minValue || value == maxValue) {
 				scheduledRumbleEffect = RumbleEffect.STRONG;
 			} else if (detentValue != null && ((prevValue > detentValue && value <= detentValue)
 					|| (prevValue < detentValue && value >= detentValue))) {

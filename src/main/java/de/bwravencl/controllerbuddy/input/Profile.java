@@ -153,7 +153,7 @@ public final class Profile implements Cloneable {
 									&& !(action instanceof AxisToRelativeAxisAction)) {
 								final var value = axis == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
 										|| axis == SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER ? -1f : 0f;
-								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null);
+								input.setAxis(axisToAxisAction.getVirtualAxis(), value, false, null, null, null);
 							}
 						});
 					}

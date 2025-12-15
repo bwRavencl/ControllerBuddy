@@ -81,7 +81,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 			}
 		}
 
-		input.setAxis(virtualAxis, invert ? -value : value, false, null);
+		input.setAxis(virtualAxis, invert ? -value : value, false, null, null, null);
 	}
 
 	public float getDeadZone() {
@@ -107,7 +107,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	@Override
 	public void init(final Input input) {
 		if (!input.isSkipAxisInitialization()) {
-			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null);
+			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null, null, null);
 		}
 	}
 
