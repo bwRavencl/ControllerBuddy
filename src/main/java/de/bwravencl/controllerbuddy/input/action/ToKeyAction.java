@@ -118,12 +118,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	@Override
-	public void init(final Input input) {
-		super.init(input);
-		IActivatableAction.super.init(input);
-	}
-
-	@Override
 	public boolean isLongPress() {
 		return longPress;
 	}

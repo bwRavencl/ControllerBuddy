@@ -26,7 +26,7 @@ import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
+		implements ILongPressAction<V>, IResetableAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
@@ -108,12 +108,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 			}
 		}
 		}
-	}
-
-	@Override
-	public void init(final Input input) {
-		super.init(input);
-		IActivatableAction.super.init(input);
 	}
 
 	@Override

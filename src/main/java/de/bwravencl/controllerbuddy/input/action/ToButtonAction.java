@@ -108,12 +108,6 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	@Override
-	public void init(final Input input) {
-		super.init(input);
-		IActivatableAction.super.init(input);
-	}
-
-	@Override
 	public boolean isLongPress() {
 		return longPress;
 	}
