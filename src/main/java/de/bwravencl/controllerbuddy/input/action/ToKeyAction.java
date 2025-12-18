@@ -27,7 +27,7 @@ import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
+		implements ILongPressAction<V>, IResetableAction<V> {
 
 	private transient Activatable activatable;
 
@@ -115,12 +115,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 			}
 		}
 		}
-	}
-
-	@Override
-	public void init(final Input input) {
-		super.init(input);
-		IActivatableAction.super.init(input);
 	}
 
 	@Override

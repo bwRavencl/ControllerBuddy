@@ -22,7 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBui
 import java.lang.constant.Constable;
 
 abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
-		implements IInitializationAction<V> {
+		implements IActivatableAction<V>, IInitializationAction<V> {
 
 	@ActionProperty(label = "MAX_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
@@ -82,6 +82,8 @@ abstract class ActivationIntervalAction<V extends Constable> extends Describable
 
 	@Override
 	public void init(final Input input) {
+		IActivatableAction.super.init(input);
+
 		wasUp = true;
 		minActivationTime = 0;
 		maxActivationTime = Long.MAX_VALUE;

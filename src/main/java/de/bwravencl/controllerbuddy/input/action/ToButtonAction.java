@@ -26,7 +26,7 @@ import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements IActivatableAction<V>, ILongPressAction<V>, IResetableAction<V> {
+		implements ILongPressAction<V>, IResetableAction<V> {
 
 	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
@@ -105,12 +105,6 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 			}
 		}
 		}
-	}
-
-	@Override
-	public void init(final Input input) {
-		super.init(input);
-		IActivatableAction.super.init(input);
 	}
 
 	@Override
