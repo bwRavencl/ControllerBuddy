@@ -35,13 +35,13 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.REPEAT;
 
-	private transient boolean initiator;
-
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	private int mouseButton = DEFAULT_MOUSE_BUTTON;
+
+	private transient boolean wasDown;
 
 	@Override
 	public Activatable getActivatable() {
@@ -78,13 +78,13 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 		case REPEAT -> {
 			final var downMouseButtons = input.getDownMouseButtons();
 			if (!hot) {
-				if (initiator) {
-					initiator = false;
+				if (wasDown) {
 					downMouseButtons.remove(mouseButton);
+					wasDown = false;
 				}
 			} else {
-				initiator = true;
 				downMouseButtons.add(mouseButton);
+				wasDown = true;
 			}
 		}
 		case SINGLE_IMMEDIATELY -> {
