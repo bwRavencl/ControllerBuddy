@@ -17,10 +17,12 @@
 package de.bwravencl.controllerbuddy.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
@@ -75,6 +77,35 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+		final var rawType = (Class<?>) type.getRawType();
+		if (rawType.isEnum()) {
+			final var delegate = gson.getDelegateAdapter(this, type);
+
+			return new TypeAdapter<>() {
+
+				@Override
+				public T read(final JsonReader in) throws IOException {
+					if (in.peek() == JsonToken.NULL) {
+						in.nextNull();
+						return null;
+					}
+
+					final var value = in.nextString();
+					final var result = delegate.fromJson("\"" + value + "\"");
+					if (result == null) {
+						throw new JsonParseException("Invalid enum value '" + value + "' for " + rawType.getName());
+					}
+
+					return result;
+				}
+
+				@Override
+				public void write(final JsonWriter out, final T value) throws IOException {
+					delegate.write(out, value);
+				}
+			};
+		}
+
 		final var delegate = gson.getDelegateAdapter(this, type);
 
 		return new TypeAdapter<>() {
