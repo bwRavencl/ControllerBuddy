@@ -151,7 +151,7 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 						overlayAxis.setStyle(OverlayAxisStyle.SOLID);
 					}
 				}
-				default -> {
+				case null, default -> {
 				}
 				}
 
