@@ -24,13 +24,13 @@ import java.lang.constant.Constable;
 abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
 		implements IActivatableAction<V>, IInitializationAction<V> {
 
+	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
+	protected int minActivationInterval;
+
 	@ActionProperty(label = "MAX_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
 	private transient long maxActivationTime = Integer.MAX_VALUE;
-
-	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
-	private int minActivationInterval;
 
 	private transient long minActivationTime;
 
