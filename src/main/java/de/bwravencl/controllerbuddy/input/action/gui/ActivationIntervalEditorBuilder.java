@@ -18,7 +18,9 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -26,17 +28,31 @@ import javax.swing.text.DefaultFormatter;
 
 public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
+	private final boolean disable;
+
 	public ActivationIntervalEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
+
+		if (editActionsDialog.isCycleEditor()) {
+			disable = true;
+		} else if (action instanceof final IActivatableAction<?> activatableAction
+				&& activatableAction.getActivation() != IActivatableAction.Activation.REPEAT) {
+			final var fieldToActionPropertyMap = EditActionsDialog
+					.getFieldToActionPropertiesMap(ActivationIntervalAction.class);
+			disable = fieldToActionPropertyMap.entrySet().stream().filter(e -> fieldName.equals(e.getKey().getName()))
+					.findFirst()
+					.map(e -> ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_LABEL.equals(e.getValue().label()))
+					.orElse(false);
+		} else {
+			disable = false;
+		}
 	}
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		final var cycleEditor = editActionsDialog.isCycleEditor();
-
-		if (cycleEditor) {
+		if (disable) {
 			initialValue = 0;
 		}
 
@@ -50,7 +66,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 		final var formatter = (DefaultFormatter) textField.getFormatter();
 		formatter.setCommitsOnValidEdit(true);
 
-		if (cycleEditor) {
+		if (disable) {
 			spinner.setEnabled(false);
 		}
 	}

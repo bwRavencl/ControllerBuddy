@@ -21,13 +21,15 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBuilder;
 import java.lang.constant.Constable;
 
-abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
+public abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
 		implements IActivatableAction<V>, IInitializationAction<V> {
+
+	public static final String MAX_ACTIVATION_INTERVAL_LABEL = "MAX_ACTIVATION_INTERVAL";
 
 	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
 	protected int minActivationInterval;
 
-	@ActionProperty(label = "MAX_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
+	@ActionProperty(label = MAX_ACTIVATION_INTERVAL_LABEL, editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
 	private transient long maxActivationTime = Integer.MAX_VALUE;

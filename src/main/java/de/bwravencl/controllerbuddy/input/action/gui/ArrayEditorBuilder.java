@@ -57,7 +57,10 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	abstract T[] getValues();
 
-	private static final class JComboBoxSetPropertyAction extends PropertySetterAction {
+	void onNewValueSet() {
+	}
+
+	private final class JComboBoxSetPropertyAction extends PropertySetterAction {
 
 		@Serial
 		private static final long serialVersionUID = 1938012378184518954L;
@@ -70,6 +73,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
+				onNewValueSet();
 			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}

@@ -173,6 +173,12 @@ public final class EditActionsDialog extends JDialog {
 
 	private JButton pasteButton;
 
+	private JLabel propertiesLabel;
+
+	private JPanel propertiesPanel;
+
+	private JScrollPane propertiesScrollPane;
+
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private AssignedAction selectedAssignedAction;
 
@@ -287,7 +293,7 @@ public final class EditActionsDialog extends JDialog {
 		return Math.min(expected + 1, maxValue);
 	}
 
-	private static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
+	public static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
 					"Parameter actionClass does not implement " + IAction.class.getSimpleName());
@@ -505,12 +511,12 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(new JLabel(Main.STRINGS.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1,
 				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var propertiesLabel = new JLabel(Main.STRINGS.getString("PROPERTIES_LABEL"));
+		propertiesLabel = new JLabel(Main.STRINGS.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var propertiesScrollPane = new JScrollPane();
+		propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
 		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 1d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -523,71 +529,7 @@ public final class EditActionsDialog extends JDialog {
 			removeButton.setEnabled(buttonsEnabled);
 			copyButton.setEnabled(buttonsEnabled);
 
-			JPanel propertiesPanel = null;
-			if (selectedAssignedAction != null) {
-				final var actionClass = selectedAssignedAction.action.getClass();
-				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
-				final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
-					final var action1 = entry1.getValue();
-					final var action2 = entry2.getValue();
-
-					return action1.order() - action2.order();
-				}).toList();
-
-				for (final var entry : sortedEntries) {
-					final var field = entry.getKey();
-					final var annotation = entry.getValue();
-
-					if (propertiesPanel == null) {
-						propertiesPanel = new JPanel(new GridBagLayout());
-					}
-
-					final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-					propertiesPanel.add(propertyPanel,
-							new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-									new Insets(5, 5, 5, 5), 0, 10));
-
-					final var propertyNameLabel = new JLabel(Main.STRINGS.getString(annotation.label()));
-					propertyNameLabel.setPreferredSize(new Dimension(155, 15));
-					propertyPanel.add(propertyNameLabel);
-
-					try {
-						final var editorBuilderClass = annotation.editorBuilder();
-
-						var fieldName = annotation.overrideFieldName();
-						if (fieldName.isEmpty()) {
-							fieldName = field.getName();
-						}
-
-						var fieldType = annotation.overrideFieldType();
-						if (fieldType == Void.class) {
-							fieldType = field.getType();
-						}
-
-						final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
-								IAction.class, String.class, Class.class);
-						final var editorBuilder = constructor.newInstance(this, selectedAssignedAction.action,
-								fieldName, fieldType);
-
-						editorBuilder.buildEditor(propertyPanel);
-					} catch (final NoSuchMethodException | SecurityException | InstantiationException
-							| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-						throw new RuntimeException(e1);
-					}
-				}
-			}
-
-			final var anyPropertiesFound = propertiesPanel != null;
-			if (anyPropertiesFound) {
-				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d,
-						1d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
-				propertiesScrollPane.setViewportView(propertiesPanel);
-			}
-			propertiesLabel.setVisible(anyPropertiesFound);
-			propertiesScrollPane.setVisible(anyPropertiesFound);
-			revalidate();
+			updateProperties();
 		});
 		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
 				new GridBagConstraints(2, 1, 1, 5, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
@@ -661,6 +603,78 @@ public final class EditActionsDialog extends JDialog {
 				&& getAllowedActionClasses().contains(clipboardAction.getClass());
 
 		pasteButton.setEnabled(pasteAllowed);
+	}
+
+	public void updateProperties() {
+		Objects.requireNonNull(propertiesLabel, "Field propertiesLabel must not be null");
+		Objects.requireNonNull(propertiesScrollPane, "Field propertiesScrollPane must not be null");
+
+		if (propertiesPanel != null) {
+			propertiesPanel.removeAll();
+		}
+
+		if (selectedAssignedAction != null) {
+			final var actionClass = selectedAssignedAction.action.getClass();
+			final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
+			final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
+				final var action1 = entry1.getValue();
+				final var action2 = entry2.getValue();
+
+				return action1.order() - action2.order();
+			}).toList();
+
+			for (final var entry : sortedEntries) {
+				final var field = entry.getKey();
+				final var annotation = entry.getValue();
+
+				if (propertiesPanel == null) {
+					propertiesPanel = new JPanel(new GridBagLayout());
+				}
+
+				final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+				propertiesPanel.add(propertyPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+						GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 10));
+
+				final var propertyNameLabel = new JLabel(Main.STRINGS.getString(annotation.label()));
+				propertyNameLabel.setPreferredSize(new Dimension(155, 15));
+				propertyPanel.add(propertyNameLabel);
+
+				try {
+					final var editorBuilderClass = annotation.editorBuilder();
+
+					var fieldName = annotation.overrideFieldName();
+					if (fieldName.isEmpty()) {
+						fieldName = field.getName();
+					}
+
+					var fieldType = annotation.overrideFieldType();
+					if (fieldType == Void.class) {
+						fieldType = field.getType();
+					}
+
+					final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
+							IAction.class, String.class, Class.class);
+					final var editorBuilder = constructor.newInstance(this, selectedAssignedAction.action, fieldName,
+							fieldType);
+
+					editorBuilder.buildEditor(propertyPanel);
+				} catch (final NoSuchMethodException | SecurityException | InstantiationException
+						| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+					throw new RuntimeException(e1);
+				}
+			}
+		}
+
+		final var anyPropertiesFound = propertiesPanel != null;
+		if (anyPropertiesFound) {
+			propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+			propertiesScrollPane.setViewportView(propertiesPanel);
+		}
+		propertiesLabel.setVisible(anyPropertiesFound);
+		propertiesScrollPane.setVisible(anyPropertiesFound);
+		revalidate();
 	}
 
 	@Serial

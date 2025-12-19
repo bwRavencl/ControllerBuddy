@@ -25,6 +25,8 @@ import javax.swing.JPanel;
 
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
+	private boolean initialized;
+
 	public ActivationEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -44,6 +46,8 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 		if (cycleEditor) {
 			comboBox.setEnabled(false);
 		}
+
+		initialized = true;
 	}
 
 	@Override
@@ -53,5 +57,17 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 		}
 
 		return Activation.values();
+	}
+
+	@Override
+	void onNewValueSet() {
+		super.onNewValueSet();
+
+		if (!initialized) {
+			return;
+		}
+
+		editActionsDialog.updateProperties();
+		editActionsDialog.revalidate();
 	}
 }
