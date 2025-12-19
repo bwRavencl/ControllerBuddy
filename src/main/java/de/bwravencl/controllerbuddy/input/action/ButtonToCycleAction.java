@@ -39,7 +39,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	private transient Activatable activatable = Activatable.YES;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.SINGLE_IMMEDIATELY;
+	private Activation activation = Activation.ON_PRESS;
 
 	private transient int index;
 
@@ -65,9 +65,9 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		value = handleLongPress(input, component, value);
 
 		switch (activation) {
-		case REPEAT -> throw new IllegalStateException(
-				ButtonToCycleAction.class.getSimpleName() + " must not have activation value: " + Activation.REPEAT);
-		case SINGLE_IMMEDIATELY -> {
+		case WHILE_PRESSED -> throw new IllegalStateException(ButtonToCycleAction.class.getSimpleName()
+				+ " must not have activation value: " + Activation.WHILE_PRESSED);
+		case ON_PRESS -> {
 			if (!value) {
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
@@ -75,7 +75,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 				doActionAndAdvanceIndex(input, component);
 			}
 		}
-		case SINGLE_ON_RELEASE -> {
+		case ON_RELEASE -> {
 			if (value) {
 				if (activatable == Activatable.NO) {
 					activatable = Activatable.YES;

@@ -4289,7 +4289,7 @@ public final class Main {
 				addToOtherActions = false;
 			}
 			if (action instanceof final IActivatableAction<?> activatableAction
-					&& activatableAction.getActivation() == Activation.SINGLE_ON_RELEASE) {
+					&& activatableAction.getActivation() == Activation.ON_RELEASE) {
 				onReleaseActions.add(activatableAction);
 				addToOtherActions = false;
 			}

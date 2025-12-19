@@ -31,6 +31,7 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -90,7 +91,17 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 						return null;
 					}
 
-					final var value = in.nextString();
+					var value = in.nextString();
+
+					if (rawType == Activation.class) {
+						value = switch (value) {
+						case "REPEAT" -> Activation.WHILE_PRESSED.name();
+						case "SINGLE_IMMEDIATELY" -> Activation.ON_PRESS.name();
+						case "SINGLE_ON_RELEASE" -> Activation.ON_RELEASE.name();
+						default -> value;
+						};
+					}
+
 					final var result = delegate.fromJson("\"" + value + "\"");
 					if (result == null) {
 						throw new JsonParseException("Invalid enum value '" + value + "' for " + rawType.getName());

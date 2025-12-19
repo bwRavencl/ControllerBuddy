@@ -32,7 +32,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	private transient Activatable activatable;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+	private Activation activation = Activation.WHILE_PRESSED;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
@@ -80,7 +80,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 		}
 
 		switch (activation) {
-		case REPEAT -> {
+		case WHILE_PRESSED -> {
 			hot = handleActivationInterval(hot);
 			if (!hot) {
 				if (wasDown) {
@@ -92,7 +92,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 				wasDown = true;
 			}
 		}
-		case SINGLE_IMMEDIATELY -> {
+		case ON_PRESS -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && hot);
 				if (!hot && !wasDown) {
@@ -116,7 +116,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 				}
 			}
 		}
-		case SINGLE_ON_RELEASE -> {
+		case ON_RELEASE -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && !hot);
 				if (hot && !wasDown) {

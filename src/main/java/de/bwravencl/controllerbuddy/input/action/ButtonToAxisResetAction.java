@@ -40,7 +40,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	private transient Activatable activatable;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
-	private Activation activation = Activation.SINGLE_IMMEDIATELY;
+	private Activation activation = Activation.ON_PRESS;
 
 	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
@@ -59,12 +59,12 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		value = handleLongPress(input, component, value);
 
 		switch (activation) {
-		case REPEAT -> {
+		case WHILE_PRESSED -> {
 			if (value) {
 				resetAxis(input);
 			}
 		}
-		case SINGLE_IMMEDIATELY -> {
+		case ON_PRESS -> {
 			if (!value) {
 				activatable = Activatable.YES;
 			} else if (activatable == Activatable.YES) {
@@ -72,7 +72,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 				resetAxis(input);
 			}
 		}
-		case SINGLE_ON_RELEASE -> {
+		case ON_RELEASE -> {
 			if (value) {
 				if (activatable == Activatable.NO) {
 					activatable = Activatable.YES;

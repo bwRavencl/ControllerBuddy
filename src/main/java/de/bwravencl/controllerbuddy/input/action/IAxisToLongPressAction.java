@@ -30,7 +30,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
-		return action.getActivation() == Activation.SINGLE_ON_RELEASE;
+		return action.getActivation() == Activation.ON_RELEASE;
 	}
 
 	static void onModeActivated(final Mode activeMode, final Mode newMode) {

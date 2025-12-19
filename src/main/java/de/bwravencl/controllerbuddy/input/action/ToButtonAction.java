@@ -34,7 +34,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	private transient Activatable activatable;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+	private Activation activation = Activation.WHILE_PRESSED;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -71,7 +71,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 		}
 
 		switch (activation) {
-		case REPEAT -> {
+		case WHILE_PRESSED -> {
 			hot = handleActivationInterval(hot);
 			if (!hot) {
 				wasDown = false;
@@ -80,7 +80,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 				wasDown = true;
 			}
 		}
-		case SINGLE_IMMEDIATELY -> {
+		case ON_PRESS -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && hot);
 				if (!hot && !wasDown) {
@@ -107,7 +107,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 				}
 			}
 		}
-		case SINGLE_ON_RELEASE -> {
+		case ON_RELEASE -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && !hot);
 				if (hot && !wasDown) {

@@ -28,7 +28,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 
 	@Override
 	default void init(final Input input) {
-		setActivatable(getActivation() == Activation.SINGLE_ON_RELEASE ? Activatable.NO : Activatable.YES);
+		setActivatable(getActivation() == Activation.ON_RELEASE ? Activatable.NO : Activatable.YES);
 	}
 
 	void setActivatable(final Activatable activatable);
@@ -41,8 +41,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 
 	enum Activation {
 
-		REPEAT("ACTIVATION_REPEAT"), SINGLE_IMMEDIATELY("ACTIVATION_SINGLE_IMMEDIATELY"),
-		SINGLE_ON_RELEASE("ACTIVATION_SINGLE_ON_RELEASE");
+		WHILE_PRESSED("ACTIVATION_WHILE_PRESSED"), ON_PRESS("ACTIVATION_ON_PRESS"), ON_RELEASE("ACTIVATION_ON_RELEASE");
 
 		private final String label;
 

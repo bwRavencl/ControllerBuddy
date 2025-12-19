@@ -38,7 +38,7 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 		final var cycleEditor = editActionsDialog.isCycleEditor();
 
 		if (cycleEditor) {
-			initialValue = Activation.SINGLE_IMMEDIATELY;
+			initialValue = Activation.ON_PRESS;
 		}
 
 		super.buildEditor(parentPanel);
@@ -53,7 +53,7 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 	@Override
 	Activation[] getValues() {
 		if (action instanceof ButtonToCycleAction) {
-			return new Activation[] { Activation.SINGLE_IMMEDIATELY, Activation.SINGLE_ON_RELEASE };
+			return new Activation[] { Activation.ON_PRESS, Activation.ON_RELEASE };
 		}
 
 		return Activation.values();

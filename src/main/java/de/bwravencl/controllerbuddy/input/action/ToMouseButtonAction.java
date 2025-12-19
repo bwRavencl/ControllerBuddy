@@ -33,7 +33,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	private transient Activatable activatable;
 
 	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.REPEAT;
+	private Activation activation = Activation.WHILE_PRESSED;
 
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -73,7 +73,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 		}
 
 		switch (activation) {
-		case REPEAT -> {
+		case WHILE_PRESSED -> {
 			hot = handleActivationInterval(hot);
 			if (!hot) {
 				if (wasDown) {
@@ -85,7 +85,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 				wasDown = true;
 			}
 		}
-		case SINGLE_IMMEDIATELY -> {
+		case ON_PRESS -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && hot);
 				if (!hot && !wasDown) {
@@ -109,7 +109,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 				}
 			}
 		}
-		case SINGLE_ON_RELEASE -> {
+		case ON_RELEASE -> {
 			if (minActivationInterval != 0) {
 				final var hold = handleActivationInterval(!wasDown && !hot);
 				if (hot && !wasDown) {
