@@ -91,6 +91,8 @@ public final class EditActionsDialog extends JDialog {
 
 	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
+	private static final Map<Class<?>, Map<Field, ActionProperty>> FIELD_ACTION_PROPERTY_MAP_CACHE = new HashMap<>();
+
 	private static final Logger LOGGER = Logger.getLogger(EditActionsDialog.class.getName());
 
 	private static final List<Class<?>> ON_SCREEN_KEYBOARD_ACTION_CLASSES;
@@ -269,6 +271,15 @@ public final class EditActionsDialog extends JDialog {
 		parentPanel.add(component);
 	}
 
+	private static void collectFields(final Class<?> clazz, final Map<Field, ActionProperty> map) {
+		for (final var field : clazz.getDeclaredFields()) {
+			final var annotation = field.getAnnotation(ActionProperty.class);
+			if (annotation != null) {
+				map.putIfAbsent(field, annotation);
+			}
+		}
+	}
+
 	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
 		final var it = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
@@ -299,22 +310,29 @@ public final class EditActionsDialog extends JDialog {
 					"Parameter actionClass does not implement " + IAction.class.getSimpleName());
 		}
 
-		final var propertyMap = new HashMap<Field, ActionProperty>();
+		synchronized (FIELD_ACTION_PROPERTY_MAP_CACHE) {
+			return FIELD_ACTION_PROPERTY_MAP_CACHE.computeIfAbsent(actionClass, clazz -> {
+				final var propertyMap = new HashMap<Field, ActionProperty>();
 
-		for (final var field : actionClass.getDeclaredFields()) {
-			final var annotation = field.getAnnotation(ActionProperty.class);
-			if (annotation != null) {
-				propertyMap.put(field, annotation);
-			}
+				collectFields(clazz, propertyMap);
+
+				var currentClass = clazz.getSuperclass();
+				while (currentClass != null && currentClass != Object.class
+						&& IAction.class.isAssignableFrom(currentClass)) {
+					final var cached = FIELD_ACTION_PROPERTY_MAP_CACHE.get(currentClass);
+					if (cached != null) {
+						propertyMap.putAll(cached);
+						break;
+					}
+
+					collectFields(currentClass, propertyMap);
+
+					currentClass = currentClass.getSuperclass();
+				}
+
+				return Map.copyOf(propertyMap);
+			});
 		}
-
-		final var parentClass = actionClass.getSuperclass();
-		if (parentClass != Object.class) {
-			final var parentClassPropertyMap = getFieldToActionPropertiesMap(parentClass);
-			propertyMap.putAll(parentClassPropertyMap);
-		}
-
-		return propertyMap;
 	}
 
 	@SuppressWarnings("unchecked")
