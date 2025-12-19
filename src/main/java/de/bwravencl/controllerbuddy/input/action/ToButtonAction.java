@@ -65,8 +65,6 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	void handleAction(boolean hot, final Input input) {
-		hot = handleActivationInterval(hot);
-
 		if (activatable == Activatable.ALWAYS) {
 			input.getButtons()[buttonId] = true;
 			return;
@@ -74,34 +72,73 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 
 		switch (activation) {
 		case REPEAT -> {
+			hot = handleActivationInterval(hot);
 			if (!hot) {
-				if (wasDown) {
-					input.getButtons()[buttonId] = false;
-					wasDown = false;
-				}
+				wasDown = false;
 			} else {
 				input.getButtons()[buttonId] = true;
 				wasDown = true;
 			}
 		}
 		case SINGLE_IMMEDIATELY -> {
-			if (!hot) {
-				activatable = Activatable.YES;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getButtons()[buttonId] = true;
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && hot);
+				if (!hot && !wasDown) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getButtons()[buttonId] = true;
+					wasDown = true;
+				}
+				if (hold) {
+					if (wasDown) {
+						input.getButtons()[buttonId] = true;
+					}
+				} else {
+					wasDown = false;
+				}
+			} else {
+				hot = handleActivationInterval(hot);
+				if (!hot) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getButtons()[buttonId] = true;
+				}
 			}
 		}
 		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO) {
-					activatable = Activatable.YES;
-				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && !hot);
+				if (hot && !wasDown) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
+					input.getButtons()[buttonId] = true;
+					wasDown = true;
+				} else if (hold) {
+					if (wasDown) {
+						input.getButtons()[buttonId] = true;
+					}
+				} else {
+					wasDown = false;
 				}
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getButtons()[buttonId] = true;
+			} else {
+				hot = handleActivationInterval(hot);
+				if (hot) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getButtons()[buttonId] = true;
+				}
 			}
 		}
 		}

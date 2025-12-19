@@ -74,8 +74,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	void handleAction(boolean hot, final Input input) {
-		hot = handleActivationInterval(hot);
-
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpKeyStrokes().add(keystroke);
 			return;
@@ -83,35 +81,72 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 
 		switch (activation) {
 		case REPEAT -> {
-			final var downKeyStrokes = input.getDownKeyStrokes();
+			hot = handleActivationInterval(hot);
 			if (!hot) {
 				if (wasDown) {
-					downKeyStrokes.remove(keystroke);
+					input.getDownKeyStrokes().remove(keystroke);
 					wasDown = false;
 				}
 			} else {
-				downKeyStrokes.add(keystroke);
+				input.getDownKeyStrokes().add(keystroke);
 				wasDown = true;
 			}
 		}
 		case SINGLE_IMMEDIATELY -> {
-			if (!hot) {
-				activatable = Activatable.YES;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpKeyStrokes().add(keystroke);
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && hot);
+				if (!hot && !wasDown) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownKeyStrokes().add(keystroke);
+					wasDown = true;
+				}
+				if (wasDown && !hold) {
+					input.getDownKeyStrokes().remove(keystroke);
+					wasDown = false;
+				}
+			} else {
+				hot = handleActivationInterval(hot);
+				if (!hot) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownUpKeyStrokes().add(keystroke);
+				}
 			}
 		}
 		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO) {
-					activatable = Activatable.YES;
-				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && !hot);
+				if (hot && !wasDown) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
+					input.getDownKeyStrokes().add(keystroke);
+					wasDown = true;
+				} else if (!hold) {
+					if (wasDown) {
+						input.getDownKeyStrokes().remove(keystroke);
+						wasDown = false;
+					}
 				}
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpKeyStrokes().add(keystroke);
+			} else {
+				hot = handleActivationInterval(hot);
+				if (hot) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownUpKeyStrokes().add(keystroke);
+				}
 			}
 		}
 		}

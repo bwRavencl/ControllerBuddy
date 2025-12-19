@@ -67,8 +67,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	}
 
 	void handleAction(boolean hot, final Input input) {
-		hot = handleActivationInterval(hot);
-
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpMouseButtons().add(mouseButton);
 			return;
@@ -76,35 +74,72 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 
 		switch (activation) {
 		case REPEAT -> {
-			final var downMouseButtons = input.getDownMouseButtons();
+			hot = handleActivationInterval(hot);
 			if (!hot) {
 				if (wasDown) {
-					downMouseButtons.remove(mouseButton);
+					input.getDownMouseButtons().remove(mouseButton);
 					wasDown = false;
 				}
 			} else {
-				downMouseButtons.add(mouseButton);
+				input.getDownMouseButtons().add(mouseButton);
 				wasDown = true;
 			}
 		}
 		case SINGLE_IMMEDIATELY -> {
-			if (!hot) {
-				activatable = Activatable.YES;
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpMouseButtons().add(mouseButton);
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && hot);
+				if (!hot && !wasDown) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownMouseButtons().add(mouseButton);
+					wasDown = true;
+				}
+				if (wasDown && !hold) {
+					input.getDownMouseButtons().remove(mouseButton);
+					wasDown = false;
+				}
+			} else {
+				hot = handleActivationInterval(hot);
+				if (!hot) {
+					activatable = Activatable.YES;
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownUpMouseButtons().add(mouseButton);
+				}
 			}
 		}
 		case SINGLE_ON_RELEASE -> {
-			if (hot) {
-				if (activatable == Activatable.NO) {
-					activatable = Activatable.YES;
-				} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+			if (minActivationInterval != 0) {
+				final var hold = handleActivationInterval(!wasDown && !hot);
+				if (hot && !wasDown) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
+					input.getDownMouseButtons().add(mouseButton);
+					wasDown = true;
+				} else if (!hold) {
+					if (wasDown) {
+						input.getDownMouseButtons().remove(mouseButton);
+						wasDown = false;
+					}
 				}
-			} else if (activatable == Activatable.YES) {
-				activatable = Activatable.NO;
-				input.getDownUpMouseButtons().add(mouseButton);
+			} else {
+				hot = handleActivationInterval(hot);
+				if (hot) {
+					if (activatable == Activatable.NO) {
+						activatable = Activatable.YES;
+					} else if (activatable == Activatable.DENIED_BY_OTHER_ACTION) {
+						activatable = Activatable.NO;
+					}
+				} else if (activatable == Activatable.YES) {
+					activatable = Activatable.NO;
+					input.getDownUpMouseButtons().add(mouseButton);
+				}
 			}
 		}
 		}
