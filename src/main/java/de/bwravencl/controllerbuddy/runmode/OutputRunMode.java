@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.runmode;
 import de.bwravencl.controllerbuddy.ffi.Kernel32;
 import de.bwravencl.controllerbuddy.ffi.User32;
 import de.bwravencl.controllerbuddy.ffi.User32.INPUT;
+import de.bwravencl.controllerbuddy.ffi.User32.INPUT.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
@@ -275,6 +276,16 @@ public abstract class OutputRunMode extends RunMode {
 						down ? INPUT.MOUSEINPUT.MOUSEEVENTF_RIGHTDOWN : INPUT.MOUSEINPUT.MOUSEEVENTF_RIGHTUP);
 				case 3 -> INPUT.MOUSEINPUT.setDwFlags(mi,
 						down ? INPUT.MOUSEINPUT.MOUSEEVENTF_MIDDLEDOWN : INPUT.MOUSEINPUT.MOUSEEVENTF_MIDDLEUP);
+				case 4 -> {
+					INPUT.MOUSEINPUT.setMouseData(mi, MOUSEINPUT.XBUTTON1);
+					INPUT.MOUSEINPUT.setDwFlags(mi,
+							down ? INPUT.MOUSEINPUT.MOUSEEVENTF_XDOWN : INPUT.MOUSEINPUT.MOUSEEVENTF_XUP);
+				}
+				case 5 -> {
+					INPUT.MOUSEINPUT.setMouseData(mi, MOUSEINPUT.XBUTTON2);
+					INPUT.MOUSEINPUT.setDwFlags(mi,
+							down ? INPUT.MOUSEINPUT.MOUSEEVENTF_XDOWN : INPUT.MOUSEINPUT.MOUSEEVENTF_XUP);
+				}
 				default -> throw buildInvalidMouseButtonException(button);
 				}
 
@@ -285,6 +296,8 @@ public abstract class OutputRunMode extends RunMode {
 			case 1 -> Event.BTN_LEFT;
 			case 2 -> Event.BTN_RIGHT;
 			case 3 -> Event.BTN_MIDDLE;
+			case 4 -> Event.BTN_SIDE;
+			case 5 -> Event.BTN_EXTRA;
 			default -> throw buildInvalidMouseButtonException(button);
 			};
 

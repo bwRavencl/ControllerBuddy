@@ -171,6 +171,14 @@ public final class User32 {
 
 			public static final int MOUSEEVENTF_WHEEL = 0x0800;
 
+			public static final int MOUSEEVENTF_XDOWN = 0x0080;
+
+			public static final int MOUSEEVENTF_XUP = 0x0100;
+
+			public static final int XBUTTON1 = 0x0001;
+
+			public static final int XBUTTON2 = 0x0002;
+
 			private static final String DW_FLAGS_NAME = "dwFlags";
 
 			private static final String DX_NAME = "dx";

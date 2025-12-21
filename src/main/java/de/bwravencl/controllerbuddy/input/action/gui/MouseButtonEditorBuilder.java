@@ -30,7 +30,7 @@ public final class MouseButtonEditorBuilder extends NumberEditorBuilder<Integer>
 
 	@Override
 	Comparable<Integer> getMaximum() {
-		return 3;
+		return 5;
 	}
 
 	@Override
