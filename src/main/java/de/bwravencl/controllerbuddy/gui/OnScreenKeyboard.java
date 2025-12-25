@@ -38,11 +38,12 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -81,7 +82,8 @@ public final class OnScreenKeyboard extends JFrame {
 	private final FrameDragListener frameDragListener;
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private final Set<AbstractKeyboardButton> heldButtons = ConcurrentHashMap.newKeySet();
+	private final Set<AbstractKeyboardButton> heldButtons = Collections
+			.newSetFromMap(Collections.synchronizedMap(new IdentityHashMap<>()));
 
 	private final AbstractKeyboardButton[][] keyboardButtons;
 
