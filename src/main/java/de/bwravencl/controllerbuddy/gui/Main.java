@@ -1891,7 +1891,7 @@ public final class Main {
 				"tspan");
 
 		if (bold) {
-			prefixTSpanElement.setAttribute("style", "font-weight: bold;");
+			prefixTSpanElement.setAttribute("style", "font-weight: bold");
 		}
 		prefixTSpanElement.setTextContent(textContent);
 		parentNode.appendChild(prefixTSpanElement);
