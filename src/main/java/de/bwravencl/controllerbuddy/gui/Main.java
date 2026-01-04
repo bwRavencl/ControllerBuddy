@@ -5117,6 +5117,8 @@ public final class Main {
 
 		private static final float MAX_ZOOM_FACTOR = 5f;
 
+		private static final Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+
 		private static final Cursor ZOOM_CURSOR;
 
 		private static final Point ZOOM_CURSOR_HOT_SPOT = new Point(11, 11);
@@ -5162,7 +5164,9 @@ public final class Main {
 		private SVGPanel() {
 			setCursor(ZOOM_CURSOR);
 
-			addMouseListener(new MouseAdapter() {
+			final var mouseAdapter = new MouseAdapter() {
+
+				private Point lastMouseLocation;
 
 				@Override
 				public void mouseClicked(final MouseEvent e) {
@@ -5179,7 +5183,59 @@ public final class Main {
 
 					handleZoom(zoomRatio, e.getX(), e.getY());
 				}
-			});
+
+				@Override
+				public void mouseDragged(final MouseEvent e) {
+					super.mouseDragged(e);
+
+					if (zoomFactor <= 1f || lastMouseLocation == null) {
+						return;
+					}
+
+					final var maxOffsetX = (getZoomedWidth() - getWidth()) / 2f;
+					final var maxOffsetY = (getZoomedHeight() - getHeight()) / 2f;
+
+					offsetX = Math.min(Math.max(offsetX + e.getX() - lastMouseLocation.x, -maxOffsetX), maxOffsetX);
+					offsetY = Math.min(Math.max(offsetY + e.getY() - lastMouseLocation.y, -maxOffsetY), maxOffsetY);
+
+					lastMouseLocation = e.getPoint();
+
+					repaint();
+
+					if (getCursor() != MOVE_CURSOR) {
+						setCursor(MOVE_CURSOR);
+					}
+				}
+
+				@Override
+				public void mousePressed(final MouseEvent e) {
+					super.mousePressed(e);
+
+					if (e.getButton() != MouseEvent.BUTTON1 || zoomFactor <= 1f) {
+						return;
+					}
+
+					lastMouseLocation = e.getPoint();
+				}
+
+				@Override
+				public void mouseReleased(final MouseEvent e) {
+					super.mouseReleased(e);
+
+					if (e.getButton() != MouseEvent.BUTTON1) {
+						return;
+					}
+
+					lastMouseLocation = null;
+
+					if (getCursor() != ZOOM_CURSOR) {
+						setCursor(ZOOM_CURSOR);
+					}
+				}
+			};
+
+			addMouseListener(mouseAdapter);
+			addMouseMotionListener(mouseAdapter);
 
 			addMouseWheelListener(e -> {
 				final var wheelRotation = e.getWheelRotation();
@@ -5187,6 +5243,14 @@ public final class Main {
 				final var zoomRatio = (wheelRotation < 0 ? ZOOM_STEP_WHEEL : 1f / ZOOM_STEP_WHEEL);
 				handleZoom(zoomRatio, e.getX(), e.getY());
 			});
+		}
+
+		private int getZoomedHeight() {
+			return Math.round(getHeight() * zoomFactor);
+		}
+
+		private int getZoomedWidth() {
+			return Math.round(getWidth() * zoomFactor);
 		}
 
 		private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
@@ -5232,8 +5296,8 @@ public final class Main {
 			final var width = getWidth();
 			final var height = getHeight();
 
-			final var zoomedWidth = Math.round(width * zoomFactor);
-			final var zoomedHeight = Math.round(height * zoomFactor);
+			final var zoomedWidth = getZoomedWidth();
+			final var zoomedHeight = getZoomedHeight();
 
 			svgDocument.render(this, g2d, new ViewBox(-(zoomedWidth - width) / 2f + offsetX,
 					-(zoomedHeight - height) / 2f + offsetY, zoomedWidth, zoomedHeight));
