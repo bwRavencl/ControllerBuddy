@@ -42,9 +42,10 @@ import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
-import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
 import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
+import de.bwravencl.controllerbuddy.input.action.ToCursorAction;
+import de.bwravencl.controllerbuddy.input.action.ToScrollAction;
 import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
@@ -128,6 +129,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -1887,20 +1891,17 @@ public final class Main {
 			var description = action.getDescription(input);
 
 			if (action instanceof final ButtonToModeAction buttonToModeAction) {
-				description = (buttonToModeAction.isToggle() ? "⇪" : "⇧") + " " + description;
+				description = description + " " + (buttonToModeAction.isToggle() ? "⇪" : "⇧");
 			}
 
 			return description;
-		}).distinct().collect(Collectors.joining(", ")), false, parentNode);
+		}).distinct().collect(Collectors.joining(", ")), parentNode);
 	}
 
-	private int addTSpanElement(final String textContent, final boolean bold, final Node parentNode) {
+	private int addTSpanElement(final String textContent, final Node parentNode) {
 		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS("http://www.w3.org/2000/svg",
 				"tspan");
 
-		if (bold) {
-			prefixTSpanElement.setAttribute("style", "font-weight: bold");
-		}
 		prefixTSpanElement.setTextContent(textContent);
 		parentNode.appendChild(prefixTSpanElement);
 
@@ -1948,7 +1949,7 @@ public final class Main {
 			}
 		}
 
-		final var font = new Font(fontFamily, bold ? Font.BOLD : Font.PLAIN, fontSizePt);
+		final var font = new Font(fontFamily, Font.PLAIN, fontSizePt);
 		final var fontMetrics = frame.getFontMetrics(font);
 
 		final var extensionWidth = fontMetrics.stringWidth(textContent);
@@ -4293,43 +4294,61 @@ public final class Main {
 		}
 
 		final var delayedActions = new ArrayList<ILongPressAction<?>>();
+		final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
+		final var onPressActions = new ArrayList<IActivatableAction<?>>();
 		final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
 		final var otherActions = new ArrayList<IAction<?>>();
 
 		for (final var action : actions) {
-			var addToOtherActions = true;
-
 			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
 				delayedActions.add(longPressAction);
-				addToOtherActions = false;
-			}
-			if (action instanceof final IActivatableAction<?> activatableAction
-					&& activatableAction.getActivation() == Activation.ON_RELEASE) {
-				onReleaseActions.add(activatableAction);
-				addToOtherActions = false;
-			}
-
-			if (addToOtherActions) {
+			} else if (action instanceof final IActivatableAction<?> activatableAction) {
+				switch (activatableAction.getActivation()) {
+				case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
+				case ON_PRESS -> onPressActions.add(activatableAction);
+				case ON_RELEASE -> onReleaseActions.add(activatableAction);
+				}
+			} else {
 				otherActions.add(action);
 			}
 		}
 
 		final List<? extends IAction<?>> actionGroupA;
-		final List<? extends IAction<?>> actionGroupB;
+		List<? extends IAction<?>> actionGroupB;
+		List<? extends IAction<?>> actionGroupC;
 		final String groupAPrefix;
-		final String groupBPrefix;
+		String groupBPrefix;
+		String groupCPrefix;
 
 		// noinspection SuspiciousMethodCalls
 		if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
-			actionGroupA = Stream.concat(otherActions.stream(), delayedActions.stream()).toList();
-			actionGroupB = onReleaseActions;
-			groupAPrefix = "VISUALIZATION_ON_PRESS_PREFIX";
-			groupBPrefix = "VISUALIZATION_ON_RELEASE_PREFIX";
+			final var partitionedNonActivateableActionsMap = Stream.of( otherActions, delayedActions).flatMap(Collection::stream).collect(Collectors.partitioningBy(action -> switch (action) {
+				case final ButtonToModeAction buttonToModeAction -> !buttonToModeAction.isToggle();
+				case final ToAxisAction<?> _, final ToCursorAction<?> _, final ToScrollAction<?> _ -> true;
+				default -> false;
+			}));
+
+			actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false)).flatMap(Collection::stream).toList();
+			actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true)).flatMap(Collection::stream).toList();
+			actionGroupC = onReleaseActions;
+			groupAPrefix = "⤓";
+			groupBPrefix = "↦";
+			groupCPrefix = "⤒";
 		} else {
-			actionGroupA = Stream.concat(otherActions.stream(), onReleaseActions.stream()).toList();
+			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
+					.toList();
 			actionGroupB = delayedActions;
-			groupAPrefix = "VISUALIZATION_SHORT_PREFIX";
-			groupBPrefix = "VISUALIZATION_LONG_PREFIX";
+			actionGroupC = Collections.emptyList();
+			groupAPrefix = "➧";
+			groupBPrefix = "➡";
+			groupCPrefix = null;
+		}
+
+		if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
+			actionGroupB = actionGroupC;
+			actionGroupC = Collections.emptyList();
+			groupBPrefix = groupCPrefix;
+			groupCPrefix = null;
 		}
 
 		final var groupBPresent = !actionGroupB.isEmpty();
@@ -4345,19 +4364,24 @@ public final class Main {
 		var extensionWidth = 0;
 
 		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement("• " + STRINGS.getString(groupAPrefix) + ": ", true, tSpanNode);
+			extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
 		}
 
 		extensionWidth += addTSpanElement(actionGroupA, tSpanNode);
 
 		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement(" • " + STRINGS.getString(groupBPrefix) + ": ", true, tSpanNode);
+			extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
 		}
 
 		extensionWidth += addTSpanElement(actionGroupB, tSpanNode);
 
+		if (!actionGroupC.isEmpty()) {
+			extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
+			extensionWidth += addTSpanElement(actionGroupC, tSpanNode);
+		}
+
 		if (swapped) {
-			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, true, tSpanNode);
+			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
 		}
 
 		if (darkTheme) {

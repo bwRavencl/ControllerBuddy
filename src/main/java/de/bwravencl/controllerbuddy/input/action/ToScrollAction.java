@@ -24,7 +24,7 @@ import java.lang.constant.Constable;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-abstract class ToScrollAction<V extends Constable> extends InvertableAction<V> {
+public abstract class ToScrollAction<V extends Constable> extends InvertableAction<V> {
 
 	private static final int DEFAULT_CLICKS = 10;
 

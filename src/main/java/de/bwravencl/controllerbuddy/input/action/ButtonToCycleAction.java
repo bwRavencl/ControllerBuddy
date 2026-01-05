@@ -16,7 +16,6 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
@@ -24,7 +23,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,8 +123,8 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("CYCLE"),
-				actions.stream().map(action -> action.getDescription(input)).collect(Collectors.joining(" → ")));
+		return actions.stream().map(action -> action.getDescription(input))
+				.collect(Collectors.joining(" → ", "\uD83D\uDDD8 ", " ↺"));
 	}
 
 	@Override
