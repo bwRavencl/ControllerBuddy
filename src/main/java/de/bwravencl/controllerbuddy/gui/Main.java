@@ -39,9 +39,11 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.ScanCode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
 import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction;
@@ -136,6 +138,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -290,6 +293,8 @@ public final class Main {
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
+	public static final int VISUALIZATION_LEGEND_ITEMS_PER_ROW = 6;
+
 	static final int BUTTON_DIMENSION_HEIGHT = 25;
 
 	@SuppressWarnings("exports")
@@ -330,7 +335,9 @@ public final class Main {
 
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-	private static final FlowLayout LOWER_BUTTONS_FLOW_LAYOUT = new FlowLayout(FlowLayout.RIGHT, DEFAULT_HGAP + 2, 5);
+	private static final int LOWER_BUTTONS_HGAP = DEFAULT_HGAP + 2;
+
+	private static final int LOWER_BUTTONS_VGAP = 5;
 
 	private static final Options OPTIONS = new Options();
 
@@ -499,6 +506,8 @@ public final class Main {
 
 	private static final int SVG_VIEW_BOX_MARGIN = 15;
 
+	private static final Map<String, String> SYMBOL_TO_DESCRIPTION_MAP;
+
 	private static final Color TABBED_PANE_FOREGROUND_COLOR = new Color(68, 138, 222);
 
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
@@ -536,6 +545,22 @@ public final class Main {
 		SINGLE_INSTANCE_LOCK_FILE = new File(
 				System.getProperty("java.io.tmpdir") + File.separator + Constants.APPLICATION_NAME + ".lock");
 
+		final var modifiableSymbolToDescriptionMap = new LinkedHashMap<String, String>();
+		modifiableSymbolToDescriptionMap.put(Activation.ON_PRESS.getSymbol(), Activation.ON_PRESS.toString());
+		modifiableSymbolToDescriptionMap.put(Activation.WHILE_PRESSED.getSymbol(), Activation.WHILE_PRESSED.toString());
+		modifiableSymbolToDescriptionMap.put(Activation.ON_RELEASE.getSymbol(), Activation.ON_RELEASE.toString());
+		modifiableSymbolToDescriptionMap.put(ButtonToCycleAction.CYCLE_SYMBOL,
+				STRINGS.getString("BUTTON_TO_CYCLE_ACTION"));
+		modifiableSymbolToDescriptionMap.put(ILongPressAction.SHORT_PRESS_SYMBOL,
+				STRINGS.getString("LEGEND_SHORT_PRESS"));
+		modifiableSymbolToDescriptionMap.put(ILongPressAction.LONG_PRESS_SYMBOL,
+				STRINGS.getString("LEGEND_LONG_PRESS"));
+		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.TOGGLE_SYMBOL, STRINGS.getString("LEGEND_TOGGLE"));
+		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.MOMENTARY_SYMBOL,
+				STRINGS.getString("LEGEND_MOMENTARY"));
+		modifiableSymbolToDescriptionMap.put(SWAPPED_SYMBOL, STRINGS.getString("LEGEND_SWAPPED"));
+		SYMBOL_TO_DESCRIPTION_MAP = Collections.unmodifiableMap(modifiableSymbolToDescriptionMap);
+
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
@@ -567,6 +592,8 @@ public final class Main {
 	private final JScrollPane indicatorsScrollPane;
 
 	private final JLabel ledPreviewLabel;
+
+	private final JLabel legendLabel = new JLabel();
 
 	private final Lock loadProfileLock = new ReentrantLock();
 
@@ -911,7 +938,7 @@ public final class Main {
 		modesScrollPane = new JScrollPane();
 		modesPanel.add(modesScrollPane, BorderLayout.CENTER);
 
-		newModePanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
+		newModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, LOWER_BUTTONS_HGAP, LOWER_BUTTONS_VGAP));
 		final var newModeButton = new JButton(new NewModeAction());
 		newModeButton.setPreferredSize(BUTTON_DIMENSION);
 		newModePanel.add(newModeButton);
@@ -951,9 +978,18 @@ public final class Main {
 			}
 		});
 
-		final var exportPanel = new JPanel(LOWER_BUTTONS_FLOW_LAYOUT);
+		final var exportPanel = new JPanel();
+		exportPanel.setLayout(new BoxLayout(exportPanel, BoxLayout.X_AXIS));
+		exportPanel.setBorder(BorderFactory.createEmptyBorder(LOWER_BUTTONS_VGAP, LOWER_BUTTONS_HGAP,
+				LOWER_BUTTONS_VGAP, LOWER_BUTTONS_HGAP));
+
+		legendLabel.setMinimumSize(new Dimension(0, 0));
+		legendLabel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		exportPanel.add(legendLabel);
+
 		final var exportButton = new JButton(new ExportAction());
 		exportButton.setPreferredSize(BUTTON_DIMENSION);
+		exportButton.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		exportPanel.add(exportButton);
 		visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
 
@@ -1557,6 +1593,42 @@ public final class Main {
 		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
+	private static String createVisualizationLegendHtml(final Set<String> usedSymbols) {
+		final var stringBuilder = new StringBuilder("<html>");
+
+		if (!usedSymbols.isEmpty()) {
+			stringBuilder.append("<b>").append(STRINGS.getString("LEGEND_TITLE"))
+					.append("</b><table cellpadding='5' cellspacing='0'>");
+
+			final var symbolToDescriptionMap = SYMBOL_TO_DESCRIPTION_MAP.entrySet().stream()
+					.filter(entry -> usedSymbols.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey,
+							Map.Entry::getValue, (existing, _) -> existing, LinkedHashMap::new));
+
+			var count = 0;
+
+			for (final var entry : symbolToDescriptionMap.entrySet()) {
+				if (count % VISUALIZATION_LEGEND_ITEMS_PER_ROW == 0) {
+					stringBuilder.append("<tr>");
+				}
+
+				stringBuilder.append("<td>").append(entry.getKey()).append("</td><td>").append(entry.getValue())
+						.append("</td>");
+
+				count++;
+
+				if (count % VISUALIZATION_LEGEND_ITEMS_PER_ROW == 0 || count == symbolToDescriptionMap.size()) {
+					stringBuilder.append("</tr>");
+				}
+			}
+
+			stringBuilder.append("</table>");
+		}
+
+		stringBuilder.append("</html>");
+
+		return stringBuilder.toString();
+	}
+
 	private static void deleteSingleInstanceLockFile() {
 		if (!SINGLE_INSTANCE_LOCK_FILE.delete()) {
 			LOGGER.log(Level.WARNING,
@@ -1886,12 +1958,15 @@ public final class Main {
 		System.exit(status);
 	}
 
-	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode) {
+	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode,
+			final Set<String> usedSymbols) {
 		return addTSpanElement(actions.stream().map(action -> {
 			var description = action.getDescription(input);
 
 			if (action instanceof final ButtonToModeAction buttonToModeAction) {
-				description = description + " " + (buttonToModeAction.isToggle() ? "⇪" : "⇧");
+				final var symbol = buttonToModeAction.getSymbol();
+				description = description + " " + symbol;
+				usedSymbols.add(symbol);
 			}
 
 			return description;
@@ -2084,11 +2159,10 @@ public final class Main {
 			headElement.appendChild(titleElement);
 
 			final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
-			bodyElement.setAttribute("style", "text-align:center");
 			htmlDocument.getDocumentElement().appendChild(bodyElement);
 
 			final var headerDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
-			headerDivElement.setAttribute("style", "font-family:sans-serif");
+			headerDivElement.setAttribute("style", "font-family:sans-serif;text-align:center");
 			bodyElement.appendChild(headerDivElement);
 
 			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
@@ -2106,6 +2180,8 @@ public final class Main {
 			selectElement.setAttribute("style", "vertical-align:text-bottom");
 			labelElement.appendChild(selectElement);
 
+			final var usedSymbols = new HashSet<String>();
+
 			input.getProfile().getModes().forEach(mode -> {
 				final var svgDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
 				final var svgDivElementId = mode.getUuid().toString();
@@ -2116,7 +2192,7 @@ public final class Main {
 						"display:" + (Profile.DEFAULT_MODE.equals(mode) ? "block" : "none"));
 				bodyElement.appendChild(svgDivElement);
 
-				final var svgDocument = generateSvgDocument(mode, true);
+				final var svgDocument = generateSvgDocument(mode, true, usedSymbols);
 				final var importedSvgNode = htmlDocument.importNode(svgDocument.getDocumentElement(), true);
 				svgDivElement.appendChild(importedSvgNode);
 
@@ -2125,6 +2201,23 @@ public final class Main {
 				optionElement.setTextContent(mode.getDescription());
 				selectElement.appendChild(optionElement);
 			});
+
+			final var legendDiv = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
+			legendDiv.setAttribute("style",
+					"border-radius:0.75em;border-style:solid;color:black;display:flex;flex-direction:column;font-family:sans-serif;gap:0.3em;margin:2em auto 0 auto;padding:0.5em;width:max-content");
+
+			final var legendHtml = createVisualizationLegendHtml(usedSymbols);
+			final var byteArrayInputStream = new ByteArrayInputStream(legendHtml.getBytes(StandardCharsets.UTF_8));
+			final var legendDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(byteArrayInputStream);
+
+			final var children = legendDocument.getDocumentElement().getChildNodes();
+			for (var i = 0; i < children.getLength(); i++) {
+				final var importedNode = htmlDocument.importNode(children.item(i), true);
+				legendDiv.appendChild(importedNode);
+			}
+
+			bodyElement.appendChild(legendDiv);
 
 			final var transformerFactory = TransformerFactory.newInstance();
 			final var transformer = transformerFactory.newTransformer();
@@ -2135,14 +2228,15 @@ public final class Main {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
 				LOGGER.log(Level.INFO, "Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
 			}
-		} catch (final DOMException | IOException | TransformerException e) {
+		} catch (final DOMException | IOException | ParserConfigurationException | SAXException
+				| TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			GuiUtils.showMessageDialog(main, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	private Document generateSvgDocument(final Mode mode, final boolean export) {
+	private Document generateSvgDocument(final Mode mode, final boolean export, final Set<String> usedSymbols) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
@@ -2184,7 +2278,8 @@ public final class Main {
 			};
 
 			final var actions = mode.getAxisToActionsMap().get(axis);
-			final var extensionWidth = updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped);
+			final var extensionWidth = updateSvgElements(workingCopySvgDocument, idPrefix, actions, darkTheme, swapped,
+					usedSymbols);
 
 			if (extensionWidth < minExtensionWidth) {
 				minExtensionWidth = extensionWidth;
@@ -2237,7 +2332,7 @@ public final class Main {
 			}
 
 			final var extensionWidth = updateSvgElements(workingCopySvgDocument, idPrefix, combinedActions, darkTheme,
-					swapped);
+					swapped, usedSymbols);
 
 			if (extensionWidth < minExtensionWidth) {
 				minExtensionWidth = extensionWidth;
@@ -4281,7 +4376,7 @@ public final class Main {
 	}
 
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
-			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped) {
+			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped, final Set<String> usedSymbols) {
 		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
 				.orElseThrow(() -> new IllegalArgumentException(
 						"group element with id '" + idPrefix + "Group' not found in SVG document"));
@@ -4308,6 +4403,10 @@ public final class Main {
 				case ON_PRESS -> onPressActions.add(activatableAction);
 				case ON_RELEASE -> onReleaseActions.add(activatableAction);
 				}
+
+				if (action instanceof ButtonToCycleAction) {
+					usedSymbols.add(ButtonToCycleAction.CYCLE_SYMBOL);
+				}
 			} else {
 				otherActions.add(action);
 			}
@@ -4331,16 +4430,16 @@ public final class Main {
 			actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false)).flatMap(Collection::stream).toList();
 			actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true)).flatMap(Collection::stream).toList();
 			actionGroupC = onReleaseActions;
-			groupAPrefix = "⤓";
-			groupBPrefix = "↦";
-			groupCPrefix = "⤒";
+			groupAPrefix = Activation.ON_PRESS.getSymbol();
+			groupBPrefix = Activation.WHILE_PRESSED.getSymbol();
+			groupCPrefix = Activation.ON_RELEASE.getSymbol();
 		} else {
 			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
 					.toList();
 			actionGroupB = delayedActions;
 			actionGroupC = Collections.emptyList();
-			groupAPrefix = "➧";
-			groupBPrefix = "➡";
+			groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
+			groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
 			groupCPrefix = null;
 		}
 
@@ -4365,23 +4464,27 @@ public final class Main {
 
 		if (bothGroupsPresent) {
 			extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
+			usedSymbols.add(groupAPrefix);
 		}
 
-		extensionWidth += addTSpanElement(actionGroupA, tSpanNode);
+		extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
 
 		if (bothGroupsPresent) {
 			extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
+			usedSymbols.add(groupBPrefix);
 		}
 
-		extensionWidth += addTSpanElement(actionGroupB, tSpanNode);
+		extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
 
 		if (!actionGroupC.isEmpty()) {
 			extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
-			extensionWidth += addTSpanElement(actionGroupC, tSpanNode);
+			extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
+			usedSymbols.add(groupCPrefix);
 		}
 
 		if (swapped) {
 			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
+			usedSymbols.add(SWAPPED_SYMBOL);
 		}
 
 		if (darkTheme) {
@@ -4519,8 +4622,9 @@ public final class Main {
 				@Override
 				public void actionPerformed(final ActionEvent e) {
 					final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
+					final var usedSymbols = new HashSet<String>();
 
-					final var document = generateSvgDocument(selectedMode, false);
+					final var document = generateSvgDocument(selectedMode, false, usedSymbols);
 
 					try {
 						final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -4530,6 +4634,9 @@ public final class Main {
 
 						final var svgDocument = new SVGLoader().load(inputStream, null, LoaderContext.createDefault());
 						svgPanel.setSvgDocument(svgDocument);
+
+						final var legendHtml = createVisualizationLegendHtml(usedSymbols);
+						legendLabel.setText(legendHtml);
 					} catch (final TransformerException e1) {
 						throw new RuntimeException(e1);
 					}

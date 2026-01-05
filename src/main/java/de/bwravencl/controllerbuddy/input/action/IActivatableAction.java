@@ -41,12 +41,20 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 
 	enum Activation {
 
-		WHILE_PRESSED("ACTIVATION_WHILE_PRESSED"), ON_PRESS("ACTIVATION_ON_PRESS"), ON_RELEASE("ACTIVATION_ON_RELEASE");
+		WHILE_PRESSED("ACTIVATION_WHILE_PRESSED", "↦"), ON_PRESS("ACTIVATION_ON_PRESS", "⤓"),
+		ON_RELEASE("ACTIVATION_ON_RELEASE", "⤒");
 
 		private final String label;
 
-		Activation(final String labelKey) {
+		private final String symbol;
+
+		Activation(final String labelKey, final String symbol) {
 			label = Main.STRINGS.getString(labelKey);
+			this.symbol = symbol;
+		}
+
+		public String getSymbol() {
+			return symbol;
 		}
 
 		@Override

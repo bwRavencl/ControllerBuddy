@@ -22,7 +22,11 @@ public interface ILongPressAction<V extends Constable> extends IAction<V> {
 
 	boolean DEFAULT_LONG_PRESS = false;
 
+	String LONG_PRESS_SYMBOL = "⟿";
+
 	long MIN_LONG_PRESS_TIME = 1000L;
+
+	String SHORT_PRESS_SYMBOL = "⇝";
 
 	boolean isLongPress();
 

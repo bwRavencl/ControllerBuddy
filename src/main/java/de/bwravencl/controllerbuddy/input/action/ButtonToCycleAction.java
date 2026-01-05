@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		implements IActivatableAction<Boolean>, IButtonToAction, IResetableAction<Boolean> {
 
+	public static final String CYCLE_SYMBOL = "⟳";
+
 	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
 	private List<IAction<Boolean>> actions = new ArrayList<>();
 
@@ -124,7 +126,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		}
 
 		return actions.stream().map(action -> action.getDescription(input))
-				.collect(Collectors.joining(" → ", "\uD83D\uDDD8 ", " ↺"));
+				.collect(Collectors.joining(" → ", CYCLE_SYMBOL + " ", " ⟲"));
 	}
 
 	@Override

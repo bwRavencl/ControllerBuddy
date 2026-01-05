@@ -36,6 +36,10 @@ import org.lwjgl.sdl.SDLGamepad;
 @Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
 public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Boolean> {
 
+	public static final String MOMENTARY_SYMBOL = "⇧";
+
+	public static final String TOGGLE_SYMBOL = "⇪";
+
 	@SuppressWarnings("JdkObsolete")
 	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
 
@@ -201,6 +205,10 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		}
 
 		return Profile.DEFAULT_MODE;
+	}
+
+	public String getSymbol() {
+		return toggle ? TOGGLE_SYMBOL : MOMENTARY_SYMBOL;
 	}
 
 	@Override
