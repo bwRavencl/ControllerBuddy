@@ -313,6 +313,10 @@ public final class Main {
 
 	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 
+	private static final String[] HTML_FILE_EXTENSIONS = { "html", "htm" };
+
+	private static final String HTML_FILE_SUFFIX = fileSuffix(HTML_FILE_EXTENSIONS[0]);
+
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
@@ -422,7 +426,7 @@ public final class Main {
 
 	private static final String PROFILE_FILE_EXTENSION = "json";
 
-	private static final String PROFILE_FILE_SUFFIX = "." + PROFILE_FILE_EXTENSION;
+	private static final String PROFILE_FILE_SUFFIX = fileSuffix(PROFILE_FILE_EXTENSION);
 
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 
@@ -1556,6 +1560,10 @@ public final class Main {
 		}
 	}
 
+	private static String fileSuffix(final String extension) {
+		return "." + extension;
+	}
+
 	private static String getDefaultVJoyPath() {
 		return System.getenv("ProgramFiles") + File.separator + "vJoy";
 	}
@@ -2035,9 +2043,16 @@ public final class Main {
 		});
 	}
 
-	public void exportVisualization(final File file) {
+	public void exportVisualization(File file) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
+
+		final var filename = file.getName().toLowerCase(Locale.ROOT);
+		final var missingExtension = Arrays.stream(HTML_FILE_EXTENSIONS)
+				.noneMatch(extension -> filename.endsWith(fileSuffix(extension)));
+		if (missingExtension) {
+			file = new File(file.getAbsoluteFile() + HTML_FILE_SUFFIX);
+		}
 
 		try {
 			final var domImplementation = documentBuilder.getDOMImplementation();
@@ -4655,7 +4670,7 @@ public final class Main {
 		private static final long serialVersionUID = -1707951153902772391L;
 
 		private HtmlFileChooser(final File profileFile) {
-			super(new FileNameExtensionFilter(STRINGS.getString("HTML_FILE_DESCRIPTION"), "htm", "html"));
+			super(new FileNameExtensionFilter(STRINGS.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
 
 			String filename;
 			if (profileFile != null) {
@@ -4665,7 +4680,7 @@ public final class Main {
 				filename = STRINGS.getString("UNTITLED");
 			}
 
-			setSelectedFile(new File(filename + ".html"));
+			setSelectedFile(new File(filename + HTML_FILE_SUFFIX));
 		}
 	}
 
