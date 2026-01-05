@@ -495,7 +495,7 @@ public final class Main {
 
 	private static final String SVG_ID_Y = "y";
 
-	private static final float SVG_VIEW_BOX_EXTENSION_FACTOR = 0.6f;
+	private static final float SVG_VIEW_BOX_EXTENSION_FACTOR = 1.3f;
 
 	private static final int SVG_VIEW_BOX_MARGIN = 15;
 
