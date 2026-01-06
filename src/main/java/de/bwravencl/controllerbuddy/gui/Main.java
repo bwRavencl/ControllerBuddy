@@ -2122,6 +2122,7 @@ public final class Main {
 	public void exportVisualization(File file) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
+		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 
 		final var filename = file.getName().toLowerCase(Locale.ROOT);
 		final var missingExtension = Arrays.stream(HTML_FILE_EXTENSIONS)
@@ -2136,8 +2137,15 @@ public final class Main {
 					"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
 			final var htmlDocument = domImplementation.createDocument(XLINK_NAMESPACE_URI, "html", htmlDocumentType);
 
+			final var documentElement = htmlDocument.getDocumentElement();
+			documentElement.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+			documentElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+			documentElement.setAttribute("xsi:schemaLocation",
+					"http://www.w3.org/1999/xhtml http://www.w3.org/2001/xml.xsd");
+			documentElement.setAttribute("style", "font-size:calc(1vw)");
+
 			final var headElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "head");
-			htmlDocument.getDocumentElement().appendChild(headElement);
+			documentElement.appendChild(headElement);
 
 			final var colorSchemeMetaElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "meta");
 			colorSchemeMetaElement.setAttribute("name", "color-scheme");
@@ -2150,7 +2158,7 @@ public final class Main {
 			headElement.appendChild(darkColorSchemeStyleElement);
 
 			final var svgDivStyleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
-			svgDivStyleElement.setTextContent(".svg-div{aspect-ratio:2.5;margin-top:50px}");
+			svgDivStyleElement.setTextContent(".svg-div{aspect-ratio:2.5}");
 			headElement.appendChild(svgDivStyleElement);
 
 			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
@@ -2159,25 +2167,29 @@ public final class Main {
 			headElement.appendChild(titleElement);
 
 			final var bodyElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "body");
-			htmlDocument.getDocumentElement().appendChild(bodyElement);
+			bodyElement.setAttribute("style", "font-family:sans-serif");
+			documentElement.appendChild(bodyElement);
 
 			final var headerDivElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
-			headerDivElement.setAttribute("style", "font-family:sans-serif;text-align:center");
+			headerDivElement.setAttribute("style", "text-align:center");
 			bodyElement.appendChild(headerDivElement);
 
-			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "h1");
+			final var profileHeaderElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
 			profileHeaderElement.setTextContent(title);
+			profileHeaderElement.setAttribute("style", "font-size:2.5rem;font-weight:bold;margin-bottom:1rem");
 			headerDivElement.appendChild(profileHeaderElement);
 
 			final var labelElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "label");
-			labelElement.setTextContent("Mode: ");
-			labelElement.setAttribute("style", "font-size:1.17em;font-weight:bold");
+			final var labelSpanElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "span");
+			labelSpanElement.setTextContent("Mode: ");
+			labelSpanElement.setAttribute("style", "font-size:1.2rem;font-weight:bold");
+			labelElement.appendChild(labelSpanElement);
 			headerDivElement.appendChild(labelElement);
 
 			final var selectElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "select");
 			selectElement.setAttribute("onchange",
 					"Array.from(document.getElementsByClassName('svg-div')).forEach(e=>e.style.display=(e.id===this.value?'block':'none'))");
-			selectElement.setAttribute("style", "vertical-align:text-bottom");
+			selectElement.setAttribute("style", "font-size:1rem;vertical-align:text-bottom");
 			labelElement.appendChild(selectElement);
 
 			final var usedSymbols = new HashSet<String>();
@@ -2204,12 +2216,11 @@ public final class Main {
 
 			final var legendDiv = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "div");
 			legendDiv.setAttribute("style",
-					"border-radius:0.75em;border-style:solid;color:black;display:flex;flex-direction:column;font-family:sans-serif;gap:0.3em;margin:2em auto 0 auto;padding:0.5em;width:max-content");
+					"border-width:0.25rem;border-radius:0.75rem;border-style:solid;color:black;display:flex;flex-direction:column;font-size:1rem;gap:0.25rem;margin:2rem auto 0 auto;padding:0.5rem;width:max-content");
 
 			final var legendHtml = createVisualizationLegendHtml(usedSymbols);
 			final var byteArrayInputStream = new ByteArrayInputStream(legendHtml.getBytes(StandardCharsets.UTF_8));
-			final var legendDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(byteArrayInputStream);
+			final var legendDocument = documentBuilder.parse(byteArrayInputStream);
 
 			final var children = legendDocument.getDocumentElement().getChildNodes();
 			for (var i = 0; i < children.getLength(); i++) {
@@ -2228,8 +2239,7 @@ public final class Main {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
 				LOGGER.log(Level.INFO, "Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
 			}
-		} catch (final DOMException | IOException | ParserConfigurationException | SAXException
-				| TransformerException e) {
+		} catch (final DOMException | IOException | SAXException | TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			GuiUtils.showMessageDialog(main, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -2640,6 +2650,7 @@ public final class Main {
 
 		final var documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		documentBuilderFactory.setNamespaceAware(true);
+		documentBuilderFactory.setIgnoringElementContentWhitespace(true);
 
 		try {
 			documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -4376,128 +4387,128 @@ public final class Main {
 	}
 
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
-			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped, final Set<String> usedSymbols) {
-		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
-				.orElseThrow(() -> new IllegalArgumentException(
-						"group element with id '" + idPrefix + "Group' not found in SVG document"));
+                                  final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped, final Set<String> usedSymbols) {
+        final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "group element with id '" + idPrefix + "Group' not found in SVG document"));
 
-		final var hide = actions == null || actions.isEmpty();
-		groupElement.setAttribute("style", "display:" + (hide ? "none" : "inline"));
+        final var hide = actions == null || actions.isEmpty();
+        groupElement.setAttribute("style", "display:" + (hide ? "none" : "inline"));
 
-		if (hide) {
-			return 0;
-		}
+        if (hide) {
+            return 0;
+        }
 
-		final var delayedActions = new ArrayList<ILongPressAction<?>>();
-		final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
-		final var onPressActions = new ArrayList<IActivatableAction<?>>();
-		final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
-		final var otherActions = new ArrayList<IAction<?>>();
+        final var delayedActions = new ArrayList<ILongPressAction<?>>();
+        final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
+        final var onPressActions = new ArrayList<IActivatableAction<?>>();
+        final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
+        final var otherActions = new ArrayList<IAction<?>>();
 
-		for (final var action : actions) {
-			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
-				delayedActions.add(longPressAction);
-			} else if (action instanceof final IActivatableAction<?> activatableAction) {
-				switch (activatableAction.getActivation()) {
-				case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
-				case ON_PRESS -> onPressActions.add(activatableAction);
-				case ON_RELEASE -> onReleaseActions.add(activatableAction);
-				}
+        for (final var action : actions) {
+            if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
+                delayedActions.add(longPressAction);
+            } else if (action instanceof final IActivatableAction<?> activatableAction) {
+                switch (activatableAction.getActivation()) {
+                    case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
+                    case ON_PRESS -> onPressActions.add(activatableAction);
+                    case ON_RELEASE -> onReleaseActions.add(activatableAction);
+                }
 
-				if (action instanceof ButtonToCycleAction) {
-					usedSymbols.add(ButtonToCycleAction.CYCLE_SYMBOL);
-				}
-			} else {
-				otherActions.add(action);
-			}
-		}
+                if (action instanceof ButtonToCycleAction) {
+                    usedSymbols.add(ButtonToCycleAction.CYCLE_SYMBOL);
+                }
+            } else {
+                otherActions.add(action);
+            }
+        }
 
-		final List<? extends IAction<?>> actionGroupA;
-		List<? extends IAction<?>> actionGroupB;
-		List<? extends IAction<?>> actionGroupC;
-		final String groupAPrefix;
-		String groupBPrefix;
-		String groupCPrefix;
+        final List<? extends IAction<?>> actionGroupA;
+        List<? extends IAction<?>> actionGroupB;
+        List<? extends IAction<?>> actionGroupC;
+        final String groupAPrefix;
+        String groupBPrefix;
+        String groupCPrefix;
 
-		// noinspection SuspiciousMethodCalls
-		if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
-			final var partitionedNonActivateableActionsMap = Stream.of( otherActions, delayedActions).flatMap(Collection::stream).collect(Collectors.partitioningBy(action -> switch (action) {
-				case final ButtonToModeAction buttonToModeAction -> !buttonToModeAction.isToggle();
-				case final ToAxisAction<?> _, final ToCursorAction<?> _, final ToScrollAction<?> _ -> true;
-				default -> false;
-			}));
+        // noinspection SuspiciousMethodCalls
+        if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
+            final var partitionedNonActivateableActionsMap = Stream.of(otherActions, delayedActions).flatMap(Collection::stream).collect(Collectors.partitioningBy(action -> switch (action) {
+                case final ButtonToModeAction buttonToModeAction -> !buttonToModeAction.isToggle();
+                case final ToAxisAction<?> _, final ToCursorAction<?> _, final ToScrollAction<?> _ -> true;
+                default -> false;
+            }));
 
-			actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false)).flatMap(Collection::stream).toList();
-			actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true)).flatMap(Collection::stream).toList();
-			actionGroupC = onReleaseActions;
-			groupAPrefix = Activation.ON_PRESS.getSymbol();
-			groupBPrefix = Activation.WHILE_PRESSED.getSymbol();
-			groupCPrefix = Activation.ON_RELEASE.getSymbol();
-		} else {
-			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
-					.toList();
-			actionGroupB = delayedActions;
-			actionGroupC = Collections.emptyList();
-			groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
-			groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
-			groupCPrefix = null;
-		}
+            actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false)).flatMap(Collection::stream).toList();
+            actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true)).flatMap(Collection::stream).toList();
+            actionGroupC = onReleaseActions;
+            groupAPrefix = Activation.ON_PRESS.getSymbol();
+            groupBPrefix = Activation.WHILE_PRESSED.getSymbol();
+            groupCPrefix = Activation.ON_RELEASE.getSymbol();
+        } else {
+            actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
+                    .toList();
+            actionGroupB = delayedActions;
+            actionGroupC = Collections.emptyList();
+            groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
+            groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
+            groupCPrefix = null;
+        }
 
-		if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
-			actionGroupB = actionGroupC;
-			actionGroupC = Collections.emptyList();
-			groupBPrefix = groupCPrefix;
-			groupCPrefix = null;
-		}
+        if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
+            actionGroupB = actionGroupC;
+            actionGroupC = Collections.emptyList();
+            groupBPrefix = groupCPrefix;
+            groupCPrefix = null;
+        }
 
-		final var groupBPresent = !actionGroupB.isEmpty();
-		final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
+        final var groupBPresent = !actionGroupB.isEmpty();
+        final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
 
-		final var textElement = getDocumentElementById(svgDocument, idPrefix + "Text")
-				.orElseThrow(() -> new IllegalArgumentException(
-						"text element with id '" + idPrefix + "Text' not found in SVG document"));
+        final var textElement = getDocumentElementById(svgDocument, idPrefix + "Text")
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "text element with id '" + idPrefix + "Text' not found in SVG document"));
 
-		final var tSpanNode = textElement.getFirstChild();
-		tSpanNode.setTextContent(null);
+        final var tSpanNode = textElement.getFirstChild();
+        tSpanNode.setTextContent(null);
 
-		var extensionWidth = 0;
+        var extensionWidth = 0;
 
-		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
-			usedSymbols.add(groupAPrefix);
-		}
+        if (bothGroupsPresent) {
+            extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
+            usedSymbols.add(groupAPrefix);
+        }
 
-		extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
+        extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
 
-		if (bothGroupsPresent) {
-			extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
-			usedSymbols.add(groupBPrefix);
-		}
+        if (bothGroupsPresent) {
+            extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
+            usedSymbols.add(groupBPrefix);
+        }
 
-		extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
+        extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
 
-		if (!actionGroupC.isEmpty()) {
-			extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
-			extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
-			usedSymbols.add(groupCPrefix);
-		}
+        if (!actionGroupC.isEmpty()) {
+            extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
+            extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
+            usedSymbols.add(groupCPrefix);
+        }
 
-		if (swapped) {
-			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
-			usedSymbols.add(SWAPPED_SYMBOL);
-		}
+        if (swapped) {
+            extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
+            usedSymbols.add(SWAPPED_SYMBOL);
+        }
 
-		if (darkTheme) {
-			textElement.setAttribute("fill", SVG_DARK_THEME_TEXT_COLOR);
+        if (darkTheme) {
+            textElement.setAttribute("fill", SVG_DARK_THEME_TEXT_COLOR);
 
-			final var pathElement = getDocumentElementById(svgDocument, idPrefix + "Path")
-					.orElseThrow(() -> new IllegalArgumentException(
-							"path element with id '" + idPrefix + "Path' not found in SVG document"));
-			pathElement.setAttribute("stroke", SVG_DARK_THEME_PATH_COLOR);
-		}
+            final var pathElement = getDocumentElementById(svgDocument, idPrefix + "Path")
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "path element with id '" + idPrefix + "Path' not found in SVG document"));
+            pathElement.setAttribute("stroke", SVG_DARK_THEME_PATH_COLOR);
+        }
 
-		return extensionWidth;
-	}
+        return extensionWidth;
+    }
 
 	private void updateTheme() {
 		lookAndFeel = switch (getSelectedTheme()) {
