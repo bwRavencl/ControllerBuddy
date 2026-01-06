@@ -1597,8 +1597,8 @@ public final class Main {
 		final var stringBuilder = new StringBuilder("<html>");
 
 		if (!usedSymbols.isEmpty()) {
-			stringBuilder.append("<b>").append(STRINGS.getString("LEGEND_TITLE"))
-					.append("</b><table cellpadding='5' cellspacing='0'>");
+			stringBuilder.append("<style>.description-cell{padding-right:10px}</style>").append("<b>")
+					.append(STRINGS.getString("LEGEND_TITLE")).append("</b><table>");
 
 			final var symbolToDescriptionMap = SYMBOL_TO_DESCRIPTION_MAP.entrySet().stream()
 					.filter(entry -> usedSymbols.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey,
@@ -1611,8 +1611,8 @@ public final class Main {
 					stringBuilder.append("<tr>");
 				}
 
-				stringBuilder.append("<td>").append(entry.getKey()).append("</td><td>").append(entry.getValue())
-						.append("</td>");
+				stringBuilder.append("<td>").append(entry.getKey()).append("</td><td class='description-cell'>")
+						.append(entry.getValue()).append("</td>");
 
 				count++;
 
@@ -2157,9 +2157,10 @@ public final class Main {
 					.setTextContent("@media(prefers-color-scheme:dark){body{background-color:#969696}}");
 			headElement.appendChild(darkColorSchemeStyleElement);
 
-			final var svgDivStyleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
-			svgDivStyleElement.setTextContent(".svg-div{aspect-ratio:2.5}");
-			headElement.appendChild(svgDivStyleElement);
+			final var styleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "style");
+			styleElement.setTextContent(".svg-div{aspect-ratio:2.5}");
+			styleElement.setTextContent(".description-cell{padding-right:1rem !important}");
+			headElement.appendChild(styleElement);
 
 			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
 			final var title = currentFile != null ? currentFile.getName() : STRINGS.getString("UNTITLED");
