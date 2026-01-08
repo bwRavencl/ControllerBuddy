@@ -106,7 +106,7 @@ java {
 }
 
 dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.45.0")
+  errorprone("com.google.errorprone:error_prone_core:2.46.0")
   spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
   val dbusJavaVersion = "5.2.0"
