@@ -28,7 +28,7 @@ plugins {
   application
   id("com.diffplug.spotless") version "8.1.0"
   id("com.github.spotbugs") version "6.4.8"
-  id("net.ltgt.errorprone") version "4.3.0"
+  id("net.ltgt.errorprone") version "4.4.0"
 }
 
 buildscript { dependencies { classpath("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0") } }
