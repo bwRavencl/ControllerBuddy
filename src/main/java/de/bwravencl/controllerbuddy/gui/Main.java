@@ -869,7 +869,8 @@ public final class Main {
 			}
 		});
 
-		frame.setBounds(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT);
+		GuiUtils.setBoundsWithMinimum(frame,
+				new Rectangle(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT));
 
 		final var icons = new ArrayList<Image>();
 		for (final var path : ICON_RESOURCE_PATHS) {

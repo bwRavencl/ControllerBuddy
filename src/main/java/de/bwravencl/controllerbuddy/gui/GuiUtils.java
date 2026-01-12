@@ -310,6 +310,11 @@ public final class GuiUtils {
 		window.setAlwaysOnTop(true);
 	}
 
+	static void setBoundsWithMinimum(final Component component, final Rectangle bounds) {
+		component.setBounds(bounds);
+		component.setMinimumSize(new Dimension(bounds.width / 2, bounds.height / 2));
+	}
+
 	static void setEnabledRecursive(final Component component, final boolean enabled) {
 		if (component == null) {
 			return;

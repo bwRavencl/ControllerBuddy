@@ -583,7 +583,8 @@ public final class EditActionsDialog extends JDialog {
 		bounds.y += DIALOG_BOUNDS_PARENT_OFFSET;
 		bounds.width = DIALOG_BOUNDS_WIDTH;
 		bounds.height = DIALOG_BOUNDS_HEIGHT;
-		setBounds(bounds);
+
+		GuiUtils.setBoundsWithMinimum(this, bounds);
 	}
 
 	@Serial
