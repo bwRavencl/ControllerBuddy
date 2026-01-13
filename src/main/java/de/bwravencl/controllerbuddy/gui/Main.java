@@ -1586,7 +1586,7 @@ public final class Main {
 
 	private static void checkMainThread() {
 		if (!SDLInit.SDL_IsMainThread()) {
-			throw new RuntimeException();
+			throw new RuntimeException("Not on SDL main thread");
 		}
 	}
 
