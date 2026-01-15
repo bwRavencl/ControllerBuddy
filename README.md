@@ -102,34 +102,44 @@ Profiles are used to configure your gamepad for a specific target application.
 
 The general structure of a profile is as follows:
 
-```
-Profile (.json file)
-├── Default Mode
-│   ├── X Axis
-│   │   ├── some Action
-│   │   └── another Action
-│   ├── Y Axis
-│   │   └── some Action
-│   ├── A Button
-│   │   ├── some Action
-│   │   └── another Action
-│   ├── B Button
-│   │   └── Switch Mode Action (switches to 'Another Mode' and back)
-│   ├── X Button
-│   │   └── Switch Mode Action (switches to 'Yet another Mode' and back)
-│   └── Y Button
-│       └── Cycle Action (performs 'Action 1', when pressed again 'Action 2', then 'Action 3', then starts over)
-│           ├── Action 1
-│           ├── Action 2
-│           └── Action 3
-├── Another Mode
-│   ├── X Axis
-│   │   └── some Action
-│   └── A Button
-│       └── some Action
-└── Yet another Mode
-    └── X Axis
-        └── some Action
+```mermaid
+flowchart LR
+    Profile[("Profile (.json file)")] ---- DefaultMode
+    Profile --- BButton(B Button) & XButton(X Button)
+    BButton --> BButtonModeAction[/Mode Action/] -. switch to .-> Mode1
+    XButton --> XButtonModeAction[/Mode Action/] -. switch to .-> Mode2
+    subgraph DefaultMode[Default Mode]
+        direction LR
+        DefaultModeXAxis(X Axis) --> DefaultModeXAxisAction1[/Action 1/] & DefaultModeXAxisAction2[/Action 2/]
+        DefaultModeYAxis(Y Axis) --> DefaultModeYAxisAction[/Action/]
+        DefaultModeAButton(A Button) --> DefaultModeAButtonAction1[/Action 1/] & DefaultModeAButtonAction2[/Action 2/]
+        DefaultModeYButton(Y Button) --> CycleAction[/Cycle Action/] -. perform next .-> CycleActions
+        DefaultModeXAxis ~~~ CycleAction
+        DefaultModeYAxis ~~~ CycleAction
+        DefaultModeAButton ~~~ CycleAction
+        DefaultModeYButton ~~~ CycleAction
+        subgraph CycleActions[Cycle]
+            CycleAction1[/Action 1/] --> CycleAction2[/Action 2/] --> CycleAction3[/Action 3/] --> CycleAction1
+        end
+    end
+    subgraph Mode1[Mode 1]
+        direction LR
+        Mode1XAxis(X Axis) --> Mode1XAxisAction[/Action/]
+        Mode1AButton(A Button) --> Mode1AButtonAction[/Action/]
+    end
+    subgraph Mode2[Mode 2]
+        direction LR
+        Mode2XAxis(X Axis) --> Mode2XAxisAction1[/Action 1/] & Mode2XAxisAction2[/Action 2/]
+    end
+    style DefaultModeXAxis fill:#D5000055
+    style Mode1XAxis fill:#D5000055
+    style Mode2XAxis fill:#D5000055
+    style DefaultModeAButton fill:#FFD60055
+    style Mode1AButton fill:#FFD60055
+    style DefaultModeYAxis fill:#2962FF55
+    style BButton fill:#AA00FF55
+    style XButton fill:#FF6D0055
+    style DefaultModeYButton fill:#00C85355
 ```
 
 When switching from one Mode to another, all the axes and buttons that are not used by the other mode retain their function from the previous mode. This works across multiple levels of modes.
@@ -145,42 +155,25 @@ The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Prof
 
 ### 🏠 Local Mode
 
-```
-            Local:
-
-     Physical Controller
-              │
-              │
-              ▼
-       ControllerBuddy
-              |
-              |
-              ▼
-    vJoy + Win32 / uinput
-              |
-              |
-              ▼
-      Target Application
+```mermaid
+flowchart
+    subgraph Local[Local]
+        PhysicalController[Physical Controller] --> ControllerBuddy[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
+    end
 ```
 
 ### 🌐 Client-Server Mode
 
-```
-             Server:                                 Client:
 
-       Physical Controller
-                |
-                |
-                ▼                  UDP
-         ControllerBuddy  ────────────────────►  ControllerBuddy
-                                                        |
-                                                        |
-                                                        ▼
-                                              vJoy + Win32 / uinput
-                                                        |
-                                                        |
-                                                        ▼
-                                                Target Application
+```mermaid
+flowchart LR
+    subgraph Server[Server]
+        PhysicalController[Physical Controller] --> ControllerBuddyServer[ControllerBuddy]
+    end
+    ControllerBuddyServer -. UDP .-> ControllerBuddyClient
+    subgraph Client[Client]
+        ControllerBuddyClient[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
+    end
 ```
 
 ## 🖼️ Screenshots
