@@ -98,7 +98,8 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ## 🗃️ Profiles
 
-Profiles are used to configure your gamepad for a specific target application.  
+Profiles are used to configure your gamepad for a specific target application.
+
 The general structure of a profile is as follows:
 
 ```
