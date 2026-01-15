@@ -259,7 +259,7 @@ public final class VjoyInterface {
 
 	public static boolean vJoyEnabled() {
 		try {
-			return (int) vJoyEnabled.invoke() != 0;
+			return (int) vJoyEnabled.invokeExact() != 0;
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}

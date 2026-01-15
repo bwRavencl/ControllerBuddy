@@ -39,7 +39,7 @@ public final class Kernel32 {
 
 	public static int GetLastError() {
 		try {
-			return (int) GET_LAST_ERROR_METHOD_HANDLE.invoke();
+			return (int) GET_LAST_ERROR_METHOD_HANDLE.invokeExact();
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}
