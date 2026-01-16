@@ -61,12 +61,12 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ## ✨ Features
 
-- Map gamepad axes and buttons to highly customizable actions:
-    - vJoy axis movements (absolute and relative)
-    - vJoy button presses
+- Map gamepad axes and buttons to highly customizable Actions:
+    - Virtual joystick axis movements (absolute and relative)
+    - Virtual joystick button presses
     - Keyboard inputs
     - Mouse inputs
-    - Cycles of actions
+    - Cycles of Actions
     - Mode switching
     - etc.
 - Powerful user interface:
@@ -74,7 +74,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
     - Configuration of settings
     - Support for light and dark UI themes
 - In-game overlay:
-    - Displays current mode
+    - Displays currently active Mode
     - Can show current position of virtual axes
     - On-Screen-Keyboard that can be controlled by gamepad
     - Customizable position and colors
@@ -98,16 +98,28 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ## 🗃️ Profiles
 
-Profiles are used to configure your gamepad for a specific target application.
+### 🧩 Definitions
 
-The general structure of a profile is as follows:
+**Profiles** are JSON-based configuration files that tailor ControllerBuddy to specific games. Once loaded, they can be edited and saved through the built-in interface.
+
+To manage complex setups, Profiles organize your input mappings into **Modes**. Think of Modes as different layers or "shift-states" for your controller.
+
+Within each Mode, you can map an axis or button to one or more **Actions**.  
+By assigning different Actions to the same control across multiple Modes, you enable ControllerBuddy to instantly remap your controller as you switch between layers.
+
+> [!TIP]
+> The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository contains a vast collection of official profiles for many different flight simulators.
+
+### 🗺️ Structure
+
+The general structure of a Profile looks as follows:
 
 ```mermaid
 flowchart LR
     Profile[("Profile (.json file)")] ---- DefaultMode
     Profile --- BButton(B Button) & XButton(X Button)
-    BButton --> BButtonModeAction[/Mode Action/] -. switch to .-> Mode1
-    XButton --> XButtonModeAction[/Mode Action/] -. switch to .-> Mode2
+    BButton --> BButtonModeAction[/Mode Action/] -. switch to .-> ModeA
+    XButton --> XButtonModeAction[/Mode Action/] -. switch to .-> ModeB
     subgraph DefaultMode[Default Mode]
         direction LR
         DefaultModeXAxis(X Axis) --> DefaultModeXAxisAction1[/Action 1/] & DefaultModeXAxisAction2[/Action 2/]
@@ -122,34 +134,38 @@ flowchart LR
             CycleAction1[/Action 1/] --> CycleAction2[/Action 2/] --> CycleAction3[/Action 3/] --> CycleAction1
         end
     end
-    subgraph Mode1[Mode 1]
+    subgraph ModeA[Mode A]
         direction LR
-        Mode1XAxis(X Axis) --> Mode1XAxisAction[/Action/]
-        Mode1AButton(A Button) --> Mode1AButtonAction[/Action/]
+        ModeAXAxis(X Axis) --> ModeAXAxisAction[/Action/]
+        ModeAAButton(A Button) --> ModeAAButtonAction[/Action/]
     end
-    subgraph Mode2[Mode 2]
+    subgraph ModeB[Mode B]
         direction LR
-        Mode2XAxis(X Axis) --> Mode2XAxisAction1[/Action 1/] & Mode2XAxisAction2[/Action 2/]
+        ModeBXAxis(X Axis) --> ModeBXAxisAction1[/Action 1/] & ModeBXAxisAction2[/Action 2/]
     end
     style DefaultModeXAxis fill:#D5000055
-    style Mode1XAxis fill:#D5000055
-    style Mode2XAxis fill:#D5000055
+    style ModeAXAxis fill:#D5000055
+    style ModeBXAxis fill:#D5000055
     style DefaultModeAButton fill:#FFD60055
-    style Mode1AButton fill:#FFD60055
+    style ModeAAButton fill:#FFD60055
     style DefaultModeYAxis fill:#2962FF55
     style BButton fill:#AA00FF55
     style XButton fill:#FF6D0055
     style DefaultModeYButton fill:#00C85355
 ```
 
-When switching from one Mode to another, all the axes and buttons that are not used by the other mode retain their function from the previous mode. This works across multiple levels of modes.
+### ⛓️ Mode Inheritance
 
-Mode switching can be configured to work in two different ways:
+When switching between Modes, any axes or buttons not explicitly redefined will inherit their behavior from the previously active Mode. This inheritance persists across multiple Mode levels, as illustrated by the following example:
 
-- Default: works like the Shift key on your keyboard
-- Toggle: works like the Caps Lock key
+**Default Mode** (Base) → **Mode A** (Layer 1) → **Mode B** (Layer 2)  
+*If an axis or button is not mapped in **Mode B**, ControllerBuddy checks **Mode A**, and finally the **Default Mode**.*
 
-The [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository contains a number of well-thought-out profiles for many different flight simulators.
+### 🔀 Switching Behaviors
+
+Two different switching behaviors can be configured:
+- **Momentary (Default):** The Mode remains active only while the button is held (similar to a **Shift key**).
+- **Toggle:** Press once to activate, press again to deactivate (similar to **Caps Lock**).
 
 ## 🏛️ Architecture
 
