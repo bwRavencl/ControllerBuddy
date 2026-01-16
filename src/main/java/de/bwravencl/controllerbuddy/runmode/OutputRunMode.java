@@ -33,13 +33,16 @@ import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.spi.AbstractInterruptibleChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -120,11 +123,13 @@ public abstract class OutputRunMode extends RunMode {
 
 	int scrollClicks;
 
+	private ByteBuffer brightnessByteBuffer;
+
 	private UinputDevice joystickUinputDevice;
 
 	private UinputDevice keyboardUinputDevice;
 
-	private Map<LockKey, File> lockKeyToBrightnessFileMap;
+	private Map<LockKey, FileChannel> lockKeyToBrightnessFileChannelMap;
 
 	private UinputDevice mouseUinputDevice;
 
@@ -226,6 +231,19 @@ public abstract class OutputRunMode extends RunMode {
 		} catch (final IOException e) {
 			LOGGER.log(Level.WARNING, e.getMessage(), e);
 		}
+
+		if (lockKeyToBrightnessFileChannelMap != null) {
+			lockKeyToBrightnessFileChannelMap.values().stream().filter(AbstractInterruptibleChannel::isOpen)
+					.forEach(channel -> {
+						try {
+							channel.close();
+						} catch (final IOException e) {
+							LOGGER.log(Level.WARNING, e.getMessage(), e);
+						}
+					});
+			lockKeyToBrightnessFileChannelMap = null;
+		}
+		brightnessByteBuffer = null;
 
 		EventQueue.invokeLater(() -> {
 			if (forceStop || restart) {
@@ -494,7 +512,6 @@ public abstract class OutputRunMode extends RunMode {
 
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
-
 		} else if (Main.IS_LINUX) {
 			numButtons = Event.JOYSTICK_BUTTON_EVENTS.length;
 			if (!enoughButtons(numButtons)) {
@@ -520,23 +537,23 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			try {
-				lockKeyToBrightnessFileMap = LockKey.LOCK_KEYS.stream()
+				lockKeyToBrightnessFileChannelMap = LockKey.LOCK_KEYS.stream()
 						.collect(Collectors.toUnmodifiableMap(lockKey -> lockKey, lockKey -> {
 							try (final var filesStream = Files.list(Path.of(SYSFS_LEDS_DIR))) {
-								final var brightnessFile = filesStream.sorted().filter(p -> {
+								final var brightnessPath = filesStream.sorted().filter(p -> {
 									final var fileName = p.getFileName();
 									return fileName != null && fileName.toString()
 											.matches(SYSFS_INPUT_DIR_REGEX_PREFIX + lockKey.sysfsLedName());
 								}).findFirst()
 										.orElseThrow(() -> new RuntimeException(
 												"No brightness file for " + lockKey.sysfsLedName() + " LED"))
-										.resolve(SYSFS_BRIGHTNESS_FILENAME).toFile();
+										.resolve(SYSFS_BRIGHTNESS_FILENAME);
 
-								if (!brightnessFile.isFile() || !brightnessFile.canRead()) {
-									throw new IOException("Unable to read: " + brightnessFile);
+								if (!Files.isRegularFile(brightnessPath) || !Files.isReadable(brightnessPath)) {
+									throw new IOException("Unable to read: " + brightnessPath);
 								}
 
-								return brightnessFile;
+								return FileChannel.open(brightnessPath, StandardOpenOption.READ);
 							} catch (final IOException e) {
 								throw new RuntimeException(e);
 							}
@@ -549,6 +566,8 @@ public abstract class OutputRunMode extends RunMode {
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
+
+			brightnessByteBuffer = ByteBuffer.allocateDirect(1);
 		} else {
 			throw buildNotImplementedException();
 		}
@@ -594,15 +613,22 @@ public abstract class OutputRunMode extends RunMode {
 				toolkit.setLockingKeyState(virtualKeyCode, false);
 			}
 		} else if (Main.IS_LINUX) {
-			final var brightnessFile = lockKeyToBrightnessFileMap.get(lockKey);
+			final var brightnessFileChannel = lockKeyToBrightnessFileChannelMap.get(lockKey);
+			if (brightnessFileChannel == null) {
+				throw new IllegalStateException("No brightness file channel for " + lockKey.sysfsLedName() + " LED");
+			}
 
-			try (final var fileInputStream = new FileInputStream(brightnessFile)) {
-				final var ledState = fileInputStream.read();
+			brightnessByteBuffer.clear();
 
-				if (ledState != (on ? '1' : '0')) {
-					keyboardUinputDevice.emit(lockKey.event(), 1, true);
-					keyboardUinputDevice.emit(lockKey.event(), 0, true);
-				}
+			final var bytesRead = brightnessFileChannel.read(brightnessByteBuffer, 0);
+			if (bytesRead == -1) {
+				throw new IOException("Brightness file is empty");
+			}
+
+			final var ledState = brightnessByteBuffer.get(0);
+			if (ledState != (on ? (byte) '1' : (byte) '0')) {
+				keyboardUinputDevice.emit(lockKey.event(), 1, true);
+				keyboardUinputDevice.emit(lockKey.event(), 0, true);
 			}
 		} else {
 			throw buildNotImplementedException();
