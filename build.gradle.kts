@@ -93,10 +93,7 @@ val gamecontrollerdbResFile = "$resourcesDir/gamecontrollerdb.txt"
 val arch: Architecture = DefaultNativePlatform.getCurrentArchitecture()
 val distAppendix = "${os.toFamilyName()}-${arch.name}"
 
-repositories {
-  mavenCentral()
-  maven { url = uri("https://central.sonatype.com/repository/maven-snapshots") }
-}
+repositories { mavenCentral() }
 
 java {
   toolchain {
