@@ -30,6 +30,7 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -190,7 +191,7 @@ public final class OnScreenKeyboard extends JFrame {
 		rootPane.setWindowDecorationStyle(JRootPane.NONE);
 		setUndecorated(true);
 		setTitle(OnScreenKeyboard.class.getSimpleName());
-		setType(JFrame.Type.POPUP);
+		setType(Window.Type.POPUP);
 		setFocusableWindowState(false);
 		setBackground(Main.TRANSPARENT);
 		rootPane.setBackground(Main.TRANSPARENT);
