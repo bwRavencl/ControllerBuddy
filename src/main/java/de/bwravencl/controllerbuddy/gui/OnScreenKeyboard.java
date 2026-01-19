@@ -27,6 +27,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
@@ -391,7 +392,13 @@ public final class OnScreenKeyboard extends JFrame {
 		synchronized (keyboardButtons) {
 			if (b) {
 				updateScaling();
-				setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+
+				final var graphicsConfiguration = getGraphicsConfiguration();
+				final var graphicsDevice = graphicsConfiguration.getDevice();
+				if (graphicsDevice
+						.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
+					setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+				}
 			} else {
 				releaseAllButtons();
 			}
