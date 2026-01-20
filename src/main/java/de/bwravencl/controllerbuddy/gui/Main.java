@@ -2253,7 +2253,7 @@ public final class Main {
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
-		final var darkTheme = !export && lookAndFeel.isDark();
+		final var darkTheme = !export && lookAndFeel != null && lookAndFeel.isDark();
 
 		final var workingCopySvgDocument = documentBuilder.newDocument();
 		final var copiedNode = workingCopySvgDocument.importNode(templateSvgDocument.getDocumentElement(), true);
