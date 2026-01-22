@@ -2679,6 +2679,7 @@ public final class Main {
 		overlayFrameRootPane.setWindowDecorationStyle(JRootPane.NONE);
 		overlayFrameRootPane.setBackground(TRANSPARENT);
 		overlayFrame.setUndecorated(true);
+		overlayFrame.setResizable(false);
 		overlayFrame.setType(Window.Type.POPUP);
 		overlayFrame.setLayout(new BorderLayout());
 		overlayFrame.setFocusableWindowState(false);

@@ -191,6 +191,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		rootPane.setWindowDecorationStyle(JRootPane.NONE);
 		setUndecorated(true);
+		setResizable(false);
 		setTitle(OnScreenKeyboard.class.getSimpleName());
 		setType(Window.Type.POPUP);
 		setFocusableWindowState(false);
