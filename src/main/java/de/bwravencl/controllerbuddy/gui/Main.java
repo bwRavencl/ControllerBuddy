@@ -312,7 +312,7 @@ public final class Main {
 
 	private static final int DIALOG_BOUNDS_HEIGHT = 710;
 
-	private static final int DIALOG_BOUNDS_WIDTH = 1015;
+	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
 	private static final int DIALOG_BOUNDS_X = 100;
 
