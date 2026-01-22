@@ -329,6 +329,8 @@ public final class Main {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
+	private static final boolean IS_X11_TOOLKIT;
+
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
@@ -563,6 +565,8 @@ public final class Main {
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
+
+		IS_X11_TOOLKIT = IS_LINUX && "sun.awt.X11.XToolkit".equals(Toolkit.getDefaultToolkit().getClass().getName());
 
 		if (IS_MAC) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -1373,7 +1377,7 @@ public final class Main {
 
 		if (IS_LINUX) {
 			final var toolkit = Toolkit.getDefaultToolkit();
-			if (isXToolkit(toolkit)) {
+			if (IS_X11_TOOLKIT) {
 				try {
 					@SuppressWarnings({ "Java9ReflectionClassVisibility", "RedundantSuppression" })
 					final var unixToolkitClass = Class.forName("sun.awt.UNIXToolkit");
@@ -1424,7 +1428,7 @@ public final class Main {
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES, VJOY_DEVICE_VID_PID);
 
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
-			if (IS_LINUX) {
+			if (IS_X11_TOOLKIT) {
 				SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_DRIVER, "x11");
 			}
 
@@ -1727,10 +1731,6 @@ public final class Main {
 
 		final var length = password.length();
 		return !password.isBlank() && length >= 6 && length <= 24;
-	}
-
-	private static boolean isXToolkit(final Toolkit toolkit) {
-		return "sun.awt.X11.XToolkit".equals(toolkit.getClass().getName());
 	}
 
 	public static String logSdlError(final String message) {
@@ -4553,7 +4553,7 @@ public final class Main {
 		frame.setTitle(title);
 		if (IS_LINUX) {
 			final var toolkit = Toolkit.getDefaultToolkit();
-			if (isXToolkit(toolkit)) {
+			if (IS_X11_TOOLKIT) {
 				final var toolkitClass = toolkit.getClass();
 				try {
 					final var awtAppClassName = toolkitClass.getDeclaredField("awtAppClassName");
