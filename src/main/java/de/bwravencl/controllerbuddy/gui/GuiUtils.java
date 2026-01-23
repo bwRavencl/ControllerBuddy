@@ -16,6 +16,8 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.jetbrains.JBR;
+import com.jetbrains.WindowMove;
 import de.bwravencl.controllerbuddy.ffi.Kernel32;
 import de.bwravencl.controllerbuddy.ffi.User32;
 import de.bwravencl.controllerbuddy.input.Mode;
@@ -377,11 +379,22 @@ public final class GuiUtils {
 
 		private final Main main;
 
+		private final WindowMove windowMove;
+
 		private Point mouseDownLocation = null;
 
 		FrameDragListener(final Main main, final JFrame frame) {
 			this.main = main;
 			this.frame = frame;
+
+			if (Main.IS_WAYLAND_TOOLKIT) {
+				windowMove = JBR.getWindowMove();
+				if (windowMove == null) {
+					throw new IllegalStateException("Failed to obtain JBR window move instance");
+				}
+			} else {
+				windowMove = null;
+			}
 		}
 
 		final boolean isDragging() {
@@ -390,7 +403,7 @@ public final class GuiUtils {
 
 		@Override
 		public void mouseDragged(final MouseEvent e) {
-			if (mouseDownLocation == null) {
+			if (Main.IS_WAYLAND_TOOLKIT || mouseDownLocation == null) {
 				return;
 			}
 
@@ -403,7 +416,18 @@ public final class GuiUtils {
 		}
 
 		@Override
+		public void mouseEntered(final MouseEvent e) {
+			if (Main.IS_WAYLAND_TOOLKIT && mouseDownLocation != null) {
+				mouseReleased(e);
+			}
+		}
+
+		@Override
 		public void mousePressed(final MouseEvent e) {
+			if (Main.IS_WAYLAND_TOOLKIT) {
+				windowMove.startMovingTogetherWithMouse(frame, e.getButton());
+			}
+
 			mouseDownLocation = e.getPoint();
 		}
 

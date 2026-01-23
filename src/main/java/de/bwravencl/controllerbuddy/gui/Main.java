@@ -26,6 +26,7 @@ import com.github.weisj.jsvg.view.ViewBox;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.jetbrains.JBR;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
@@ -329,8 +330,6 @@ public final class Main {
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
-	private static final boolean IS_X11_TOOLKIT;
-
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
@@ -518,9 +517,13 @@ public final class Main {
 
 	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
+	static boolean IS_WAYLAND_TOOLKIT = false;
+
 	static volatile Main main;
 
 	static boolean skipMessageDialogs;
+
+	private static boolean IS_X11_TOOLKIT = false;
 
 	private static volatile boolean terminated;
 
@@ -563,15 +566,42 @@ public final class Main {
 		modifiableSymbolToDescriptionMap.put(SWAPPED_SYMBOL, STRINGS.getString("LEGEND_SWAPPED"));
 		SYMBOL_TO_DESCRIPTION_MAP = Collections.unmodifiableMap(modifiableSymbolToDescriptionMap);
 
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
+		if (IS_LINUX) {
+			final var toolkitClassName = Toolkit.getDefaultToolkit().getClass().getName();
+			switch (toolkitClassName) {
+			case "sun.awt.wl.WLToolkit" -> {
+				if (!JBR.isAvailable()) {
+					throw new IllegalStateException("JBR is required for Wayland support");
+				}
+				if (!JBR.isWindowMoveSupported()) {
+					throw new IllegalStateException("JBR window move support is required for Wayland support");
+				}
 
-		IS_X11_TOOLKIT = IS_LINUX && "sun.awt.X11.XToolkit".equals(Toolkit.getDefaultToolkit().getClass().getName());
+				IS_WAYLAND_TOOLKIT = true;
+				IS_X11_TOOLKIT = false;
+			}
+			case "sun.awt.X11.XToolkit" -> {
+				IS_WAYLAND_TOOLKIT = false;
+				IS_X11_TOOLKIT = true;
+			}
+			default -> {
+			}
+			}
+		}
+
+		if (IS_WAYLAND_TOOLKIT) {
+			System.setProperty("sun.awt.wl.Shadow", "false");
+		} else {
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+		}
 
 		if (IS_MAC) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("apple.awt.application.name", Constants.APPLICATION_NAME);
 			System.setProperty("apple.awt.application.appearance", "system");
+		} else if (IS_WAYLAND_TOOLKIT) {
+			System.setProperty("sun.awt.wl.Shadow", "false");
 		}
 
 		try {
@@ -1430,6 +1460,8 @@ public final class Main {
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 			if (IS_X11_TOOLKIT) {
 				SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_DRIVER, "x11");
+			} else if (IS_WAYLAND_TOOLKIT) {
+				SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_DRIVER, "wayland");
 			}
 
 			var flags = SDLInit.SDL_INIT_GAMEPAD;
@@ -2816,9 +2848,8 @@ public final class Main {
 			public void mouseDragged(final MouseEvent e) {
 				super.mouseDragged(e);
 
-				if (!IS_MAC) {
-					totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
-					updateOverlayAlignment(totalDisplayBounds);
+				if (!IS_MAC && !IS_WAYLAND_TOOLKIT) {
+					onDisplayBoundsChanged();
 				}
 			}
 
@@ -2838,7 +2869,14 @@ public final class Main {
 				if (IS_MAC) {
 					deInitOverlay();
 					initOverlay();
+				} else if (IS_WAYLAND_TOOLKIT) {
+					onDisplayBoundsChanged();
 				}
+			}
+
+			private void onDisplayBoundsChanged() {
+				totalDisplayBounds = GuiUtils.getTotalDisplayBounds();
+				updateOverlayAlignment(totalDisplayBounds);
 			}
 		};
 		overlayFrame.addMouseListener(overlayFrameDragListener);
