@@ -164,6 +164,7 @@ spotless {
     importOrderFile("spotless.importorder")
     removeUnusedImports()
     forbidWildcardImports()
+    forbidModuleImports()
     licenseHeader(
         $$"""
         /* Copyright (C) $YEAR  Matteo Hausner
