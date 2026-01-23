@@ -4390,128 +4390,132 @@ public final class Main {
 	}
 
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
-                                  final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped, final Set<String> usedSymbols) {
-        final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "group element with id '" + idPrefix + "Group' not found in SVG document"));
+			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
+			final Set<String> usedSymbols) {
+		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
+				.orElseThrow(() -> new IllegalArgumentException(
+						"group element with id '" + idPrefix + "Group' not found in SVG document"));
 
-        final var hide = actions == null || actions.isEmpty();
-        groupElement.setAttribute("style", "display:" + (hide ? "none" : "inline"));
+		final var hide = actions == null || actions.isEmpty();
+		groupElement.setAttribute("style", "display:" + (hide ? "none" : "inline"));
 
-        if (hide) {
-            return 0;
-        }
+		if (hide) {
+			return 0;
+		}
 
-        final var delayedActions = new ArrayList<ILongPressAction<?>>();
-        final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
-        final var onPressActions = new ArrayList<IActivatableAction<?>>();
-        final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
-        final var otherActions = new ArrayList<IAction<?>>();
+		final var delayedActions = new ArrayList<ILongPressAction<?>>();
+		final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
+		final var onPressActions = new ArrayList<IActivatableAction<?>>();
+		final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
+		final var otherActions = new ArrayList<IAction<?>>();
 
-        for (final var action : actions) {
-            if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
-                delayedActions.add(longPressAction);
-            } else if (action instanceof final IActivatableAction<?> activatableAction) {
-                switch (activatableAction.getActivation()) {
-                    case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
-                    case ON_PRESS -> onPressActions.add(activatableAction);
-                    case ON_RELEASE -> onReleaseActions.add(activatableAction);
-                }
+		for (final var action : actions) {
+			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
+				delayedActions.add(longPressAction);
+			} else if (action instanceof final IActivatableAction<?> activatableAction) {
+				switch (activatableAction.getActivation()) {
+				case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
+				case ON_PRESS -> onPressActions.add(activatableAction);
+				case ON_RELEASE -> onReleaseActions.add(activatableAction);
+				}
 
-                if (action instanceof ButtonToCycleAction) {
-                    usedSymbols.add(ButtonToCycleAction.CYCLE_SYMBOL);
-                }
-            } else {
-                otherActions.add(action);
-            }
-        }
+				if (action instanceof ButtonToCycleAction) {
+					usedSymbols.add(ButtonToCycleAction.CYCLE_SYMBOL);
+				}
+			} else {
+				otherActions.add(action);
+			}
+		}
 
-        final List<? extends IAction<?>> actionGroupA;
-        List<? extends IAction<?>> actionGroupB;
-        List<? extends IAction<?>> actionGroupC;
-        final String groupAPrefix;
-        String groupBPrefix;
-        String groupCPrefix;
+		final List<? extends IAction<?>> actionGroupA;
+		List<? extends IAction<?>> actionGroupB;
+		List<? extends IAction<?>> actionGroupC;
+		final String groupAPrefix;
+		String groupBPrefix;
+		String groupCPrefix;
 
-        // noinspection SuspiciousMethodCalls
-        if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
-            final var partitionedNonActivateableActionsMap = Stream.of(otherActions, delayedActions).flatMap(Collection::stream).collect(Collectors.partitioningBy(action -> switch (action) {
-                case final ButtonToModeAction buttonToModeAction -> !buttonToModeAction.isToggle();
-                case final ToAxisAction<?> _, final ToCursorAction<?> _, final ToScrollAction<?> _ -> true;
-                default -> false;
-            }));
+		// noinspection SuspiciousMethodCalls
+		if (delayedActions.isEmpty() || delayedActions.containsAll(actions)) {
+			final var partitionedNonActivateableActionsMap = Stream.of(otherActions, delayedActions)
+					.flatMap(Collection::stream).collect(Collectors.partitioningBy(action -> switch (action) {
+					case final ButtonToModeAction buttonToModeAction -> !buttonToModeAction.isToggle();
+					case final ToAxisAction<?> _, final ToCursorAction<?> _, final ToScrollAction<?> _ -> true;
+					default -> false;
+					}));
 
-            actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false)).flatMap(Collection::stream).toList();
-            actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true)).flatMap(Collection::stream).toList();
-            actionGroupC = onReleaseActions;
-            groupAPrefix = Activation.ON_PRESS.getSymbol();
-            groupBPrefix = Activation.WHILE_PRESSED.getSymbol();
-            groupCPrefix = Activation.ON_RELEASE.getSymbol();
-        } else {
-            actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
-                    .toList();
-            actionGroupB = delayedActions;
-            actionGroupC = Collections.emptyList();
-            groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
-            groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
-            groupCPrefix = null;
-        }
+			actionGroupA = Stream.of(onPressActions, partitionedNonActivateableActionsMap.get(false))
+					.flatMap(Collection::stream).toList();
+			actionGroupB = Stream.of(whilePressedActions, partitionedNonActivateableActionsMap.get(true))
+					.flatMap(Collection::stream).toList();
+			actionGroupC = onReleaseActions;
+			groupAPrefix = Activation.ON_PRESS.getSymbol();
+			groupBPrefix = Activation.WHILE_PRESSED.getSymbol();
+			groupCPrefix = Activation.ON_RELEASE.getSymbol();
+		} else {
+			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
+					.toList();
+			actionGroupB = delayedActions;
+			actionGroupC = Collections.emptyList();
+			groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
+			groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
+			groupCPrefix = null;
+		}
 
-        if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
-            actionGroupB = actionGroupC;
-            actionGroupC = Collections.emptyList();
-            groupBPrefix = groupCPrefix;
-            groupCPrefix = null;
-        }
+		if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
+			actionGroupB = actionGroupC;
+			actionGroupC = Collections.emptyList();
+			groupBPrefix = groupCPrefix;
+			groupCPrefix = null;
+		}
 
-        final var groupBPresent = !actionGroupB.isEmpty();
-        final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
+		final var groupBPresent = !actionGroupB.isEmpty();
+		final var bothGroupsPresent = !actionGroupA.isEmpty() && groupBPresent;
 
-        final var textElement = getDocumentElementById(svgDocument, idPrefix + "Text")
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "text element with id '" + idPrefix + "Text' not found in SVG document"));
+		final var textElement = getDocumentElementById(svgDocument, idPrefix + "Text")
+				.orElseThrow(() -> new IllegalArgumentException(
+						"text element with id '" + idPrefix + "Text' not found in SVG document"));
 
-        final var tSpanNode = textElement.getFirstChild();
-        tSpanNode.setTextContent(null);
+		final var tSpanNode = textElement.getFirstChild();
+		tSpanNode.setTextContent(null);
 
-        var extensionWidth = 0;
+		var extensionWidth = 0;
 
-        if (bothGroupsPresent) {
-            extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
-            usedSymbols.add(groupAPrefix);
-        }
+		if (bothGroupsPresent) {
+			extensionWidth += addTSpanElement(groupAPrefix + " ", tSpanNode);
+			usedSymbols.add(groupAPrefix);
+		}
 
-        extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
+		extensionWidth += addTSpanElement(actionGroupA, tSpanNode, usedSymbols);
 
-        if (bothGroupsPresent) {
-            extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
-            usedSymbols.add(groupBPrefix);
-        }
+		if (bothGroupsPresent) {
+			extensionWidth += addTSpanElement(" " + groupBPrefix + " ", tSpanNode);
+			usedSymbols.add(groupBPrefix);
+		}
 
-        extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
+		extensionWidth += addTSpanElement(actionGroupB, tSpanNode, usedSymbols);
 
-        if (!actionGroupC.isEmpty()) {
-            extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
-            extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
-            usedSymbols.add(groupCPrefix);
-        }
+		if (!actionGroupC.isEmpty()) {
+			extensionWidth += addTSpanElement(" " + groupCPrefix + " ", tSpanNode);
+			extensionWidth += addTSpanElement(actionGroupC, tSpanNode, usedSymbols);
+			usedSymbols.add(groupCPrefix);
+		}
 
-        if (swapped) {
-            extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
-            usedSymbols.add(SWAPPED_SYMBOL);
-        }
+		if (swapped) {
+			extensionWidth += addTSpanElement(" " + SWAPPED_SYMBOL, tSpanNode);
+			usedSymbols.add(SWAPPED_SYMBOL);
+		}
 
-        if (darkTheme) {
-            textElement.setAttribute("fill", SVG_DARK_THEME_TEXT_COLOR);
+		if (darkTheme) {
+			textElement.setAttribute("fill", SVG_DARK_THEME_TEXT_COLOR);
 
-            final var pathElement = getDocumentElementById(svgDocument, idPrefix + "Path")
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "path element with id '" + idPrefix + "Path' not found in SVG document"));
-            pathElement.setAttribute("stroke", SVG_DARK_THEME_PATH_COLOR);
-        }
+			final var pathElement = getDocumentElementById(svgDocument, idPrefix + "Path")
+					.orElseThrow(() -> new IllegalArgumentException(
+							"path element with id '" + idPrefix + "Path' not found in SVG document"));
+			pathElement.setAttribute("stroke", SVG_DARK_THEME_PATH_COLOR);
+		}
 
-        return extensionWidth;
-    }
+		return extensionWidth;
+	}
 
 	private void updateTheme() {
 		lookAndFeel = switch (getSelectedTheme()) {
