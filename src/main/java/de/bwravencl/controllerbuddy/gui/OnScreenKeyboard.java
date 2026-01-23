@@ -16,6 +16,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import com.jetbrains.JBR;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
@@ -82,6 +83,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final FrameDragListener frameDragListener;
+
+	private final boolean hasJbrRoundedCorners = JBR.isRoundedCornersManagerSupported();
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Set<AbstractKeyboardButton> heldButtons = Collections
@@ -223,6 +226,10 @@ public final class OnScreenKeyboard extends JFrame {
 
 		focusSelectedButton();
 		add(parentPanel);
+
+		if (hasJbrRoundedCorners) {
+			JBR.getRoundedCornersManager().setRoundedCorners(this, "small");
+		}
 	}
 
 	private static String getDefaultKeyDisplayName(final String directInputKeyCodeName) {
@@ -394,11 +401,13 @@ public final class OnScreenKeyboard extends JFrame {
 			if (b) {
 				updateScaling();
 
-				final var graphicsConfiguration = getGraphicsConfiguration();
-				final var graphicsDevice = graphicsConfiguration.getDevice();
-				if (graphicsDevice
-						.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
-					setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+				if (!hasJbrRoundedCorners) {
+					final var graphicsConfiguration = getGraphicsConfiguration();
+					final var graphicsDevice = graphicsConfiguration.getDevice();
+					if (graphicsDevice
+							.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
+						setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+					}
 				}
 			} else {
 				releaseAllButtons();
