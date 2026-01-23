@@ -52,7 +52,7 @@ application {
 val javaToolchainSpec =
     Action<JavaToolchainSpec> {
       languageVersion.set(JavaLanguageVersion.of(25))
-      vendor.set(JvmVendorSpec.AZUL)
+      @Suppress("UnstableApiUsage") vendor.set(JvmVendorSpec.JETBRAINS)
     }
 
 val javaHome: Provider<Directory> =
@@ -86,7 +86,10 @@ val windowsJvmArgs =
 val linuxJvmArgs =
     listOf(
         "--add-opens=java.desktop/sun.awt=$mainModule",
+        "--add-opens=java.desktop/sun.awt.wl=$mainModule",
         "--add-opens=java.desktop/sun.awt.X11=$mainModule",
+        // TODO: just for testing - remove!
+        "-Dawt.toolkit.name=WLToolkit",
     )
 
 val sdlGameControllerDBDir = "$projectDir/SDL_GameControllerDB"
@@ -137,6 +140,7 @@ dependencies {
   implementation("com.github.weisj:jsvg:2.0.0")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("io.github.classgraph:classgraph:4.8.184")
+  implementation("org.jetbrains.runtime:jbr-api:1.9.0")
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
@@ -551,6 +555,7 @@ tasks.register("generateModuleInfo") {
         	requires transitive java.desktop;
         	requires java.logging;
         	requires java.prefs;
+        	requires jetbrains.runtime.api;
         	requires org.apache.commons.cli;
         	requires org.freedesktop.dbus;
         	requires org.lwjgl;

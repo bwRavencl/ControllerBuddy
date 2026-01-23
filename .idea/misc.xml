@@ -12,5 +12,5 @@
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration" detection-enabled="false" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" default="true" project-jdk-name="zulu-25" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" default="true" project-jdk-name="jbr-25" project-jdk-type="JavaSDK" />
 </project>
