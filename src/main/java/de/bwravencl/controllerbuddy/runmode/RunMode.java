@@ -20,7 +20,6 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.awt.EventQueue;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
@@ -63,8 +62,7 @@ public abstract class RunMode implements Runnable {
 
 		final var controller = input.getSelectedController();
 		if (controller != null) {
-			LOGGER.log(Level.WARNING,
-					Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
+			LOGGER.warning(Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
 		}
 
 		if (!main.isSkipControllerDialogs()) {
@@ -95,11 +93,11 @@ public abstract class RunMode implements Runnable {
 	}
 
 	final void logStart() {
-		getLogger().log(Level.INFO, "Starting output");
+		getLogger().info("Starting output");
 	}
 
 	final void logStop() {
-		getLogger().log(Level.INFO, "Stopped output");
+		getLogger().info("Stopped output");
 	}
 
 	final void process() {

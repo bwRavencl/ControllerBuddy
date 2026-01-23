@@ -121,7 +121,7 @@ public final class UinputDevice implements Closeable {
 			uinputDevice = new UinputDevice(deviceType);
 			DEVICE_MAP.put(deviceType, uinputDevice);
 
-			LOGGER.log(Level.INFO, "Opened uinput device: " + uinputDevice);
+			LOGGER.info("Opened uinput device: " + uinputDevice);
 		}
 
 		return uinputDevice;
@@ -147,7 +147,7 @@ public final class UinputDevice implements Closeable {
 			throw new IOException("Could not close: " + DEVICE_PATH);
 		}
 
-		LOGGER.log(Level.INFO, "Closed uinput device: " + this);
+		LOGGER.info("Closed uinput device: " + this);
 	}
 
 	void emit(final Event event, final int value, final boolean syn) throws IOException {

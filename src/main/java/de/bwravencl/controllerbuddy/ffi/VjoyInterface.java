@@ -26,7 +26,6 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings({ "exports", "restricted" })
@@ -198,7 +197,7 @@ public final class VjoyInterface {
 		final var vJoyPath = main.getVJoyDirectory();
 		final var libraryPathFile = new File(vJoyPath, GetVJoyArchFolderName());
 
-		LOGGER.log(Level.INFO, "Using vJoy library path: " + libraryPathFile.getAbsolutePath());
+		LOGGER.info("Using vJoy library path: " + libraryPathFile.getAbsolutePath());
 
 		final var symbolLookup = SymbolLookup.libraryLookup(libraryPathFile.toPath().resolve(VJOY_LIBRARY_FILENAME),
 				Arena.global());

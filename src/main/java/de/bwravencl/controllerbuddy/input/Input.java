@@ -37,7 +37,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.sdl.SDLGamepad;
 import org.lwjgl.sdl.SDLProperties;
@@ -396,8 +395,8 @@ public final class Input {
 						if (optionalController.isPresent()) {
 							final var controller = optionalController.get();
 
-							LOGGER.log(Level.INFO, Main.assembleControllerLoggingMessage(
-									"Initiating hot swap to controller ", controller));
+							LOGGER.info(Main.assembleControllerLoggingMessage("Initiating hot swap to controller ",
+									controller));
 
 							hotSwappingButtonId = HotSwappingButton.NONE.id;
 							EventQueue.invokeLater(() -> {

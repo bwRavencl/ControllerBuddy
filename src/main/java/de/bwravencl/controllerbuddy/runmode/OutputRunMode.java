@@ -341,13 +341,13 @@ public abstract class OutputRunMode extends RunMode {
 
 		if (numButtons < requiredButtons) {
 			if (Main.IS_WINDOWS) {
-				LOGGER.log(Level.WARNING, "vJoy device has not enough buttons");
+				LOGGER.warning("vJoy device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						MessageFormat.format(Main.STRINGS.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"), vJoyDevice,
 								numButtons, requiredButtons),
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else if (Main.IS_LINUX) {
-				LOGGER.log(Level.WARNING, "uinput device has not enough buttons");
+				LOGGER.warning("uinput device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						MessageFormat.format(Main.STRINGS.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
 								requiredButtons),
@@ -386,7 +386,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			if (!VjoyInterface.vJoyEnabled()) {
-				LOGGER.log(Level.WARNING, "vJoy driver is not enabled");
+				LOGGER.warning("vJoy driver is not enabled");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						Main.STRINGS.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
@@ -397,8 +397,7 @@ public abstract class OutputRunMode extends RunMode {
 				final var dllVersion = arena.allocate(Short.BYTES);
 				final var drvVersion = arena.allocate(Short.BYTES);
 				if (!VjoyInterface.DriverMatch(dllVersion, drvVersion)) {
-					LOGGER.log(Level.WARNING,
-							"vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
+					LOGGER.warning("vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.STRINGS.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.get(ValueLayout.JAVA_SHORT, 0L),
@@ -408,10 +407,10 @@ public abstract class OutputRunMode extends RunMode {
 				}
 			}
 
-			LOGGER.log(Level.INFO, "Using vJoy device: " + vJoyDevice);
+			LOGGER.info("Using vJoy device: " + vJoyDevice);
 
 			if (VjoyInterface.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
-				LOGGER.log(Level.WARNING, "vJoy device is not available");
+				LOGGER.warning("vJoy device is not available");
 				EventQueue
 						.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 								MessageFormat.format(Main.STRINGS.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
@@ -457,7 +456,7 @@ public abstract class OutputRunMode extends RunMode {
 				}
 
 				final var missingAxesString = String.join(", ", missingAxes);
-				LOGGER.log(Level.WARNING, "vJoy device is missing the following axes: " + missingAxesString);
+				LOGGER.warning("vJoy device is missing the following axes: " + missingAxesString);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 						MessageFormat.format(Main.STRINGS.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice,
 								missingAxesString),
@@ -466,7 +465,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			if (!VjoyInterface.AcquireVJD(vJoyDevice)) {
-				LOGGER.log(Level.WARNING, "Could not acquire vJoy device");
+				LOGGER.warning("Could not acquire vJoy device");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(), MessageFormat
 						.format(Main.STRINGS.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice),
 						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
@@ -474,7 +473,7 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			if (!VjoyInterface.ResetVJD(vJoyDevice)) {
-				LOGGER.log(Level.WARNING, "Could not reset vJoy device");
+				LOGGER.warning("Could not reset vJoy device");
 				EventQueue
 						.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
@@ -486,7 +485,7 @@ public abstract class OutputRunMode extends RunMode {
 			try (final var arena = Arena.ofConfined()) {
 				final var min = arena.allocate(Integer.SIZE);
 				if (!VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, min)) {
-					LOGGER.log(Level.WARNING, "Could not determine minimum axis value of vJoy device");
+					LOGGER.warning("Could not determine minimum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),
@@ -496,7 +495,7 @@ public abstract class OutputRunMode extends RunMode {
 
 				final var max = arena.allocate(Integer.SIZE);
 				if (!VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, max)) {
-					LOGGER.log(Level.WARNING, "Could not determine maximum axis value of vJoy device");
+					LOGGER.warning("Could not determine maximum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),

@@ -140,7 +140,7 @@ public final class ClientRunMode extends OutputRunMode {
 
 		switch (clientState) {
 		case CONNECTING -> {
-			LOGGER.log(Level.INFO, "Connecting to " + host + ":" + port);
+			LOGGER.info("Connecting to " + host + ":" + port);
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTING_TO_HOST"), host, port)));
 
@@ -173,8 +173,8 @@ public final class ClientRunMode extends OutputRunMode {
 							if (messageType == MessageType.SERVER_HELLO.getId()) {
 								final var serverProtocolVersion = dataInputStream.readByte();
 								if (serverProtocolVersion != ServerRunMode.PROTOCOL_VERSION) {
-									LOGGER.log(Level.WARNING, "Protocol version mismatch: client "
-											+ ServerRunMode.PROTOCOL_VERSION + " vs server " + serverProtocolVersion);
+									LOGGER.warning("Protocol version mismatch: client " + ServerRunMode.PROTOCOL_VERSION
+											+ " vs server " + serverProtocolVersion);
 									EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 											MessageFormat.format(
 													Main.STRINGS.getString("PROTOCOL_VERSION_MISMATCH_DIALOG_TEXT"),
@@ -207,12 +207,12 @@ public final class ClientRunMode extends OutputRunMode {
 
 				if (success) {
 					clientState = ClientState.CONNECTED;
-					LOGGER.log(Level.INFO, "Successfully connected");
+					LOGGER.info("Successfully connected");
 					EventQueue.invokeLater(() -> main.setStatusBarText(
 							MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"), host, port)));
 				} else {
 					if (retry != -1 && run) {
-						LOGGER.log(Level.INFO, "Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
+						LOGGER.info("Could not connect after " + NUM_CONNECTION_RETRIES + " retries");
 						EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_CONNECT_DIALOG_TEXT"),
 										NUM_CONNECTION_RETRIES),
@@ -407,7 +407,7 @@ public final class ClientRunMode extends OutputRunMode {
 		} catch (final UnknownHostException e) {
 			forceStop = true;
 
-			LOGGER.log(Level.INFO, "Could not resolve host: " + host);
+			LOGGER.info("Could not resolve host: " + host);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
 					MessageFormat.format(Main.STRINGS.getString("INVALID_HOST_ADDRESS_DIALOG_TEXT"), host),
 					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));

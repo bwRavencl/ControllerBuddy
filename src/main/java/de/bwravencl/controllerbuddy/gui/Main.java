@@ -746,7 +746,7 @@ public final class Main {
 	private Main(final MainLoop mainLoop, final CommandLine commandLine) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
-				LOGGER.log(Level.INFO, "Forcing immediate halt");
+				LOGGER.info("Forcing immediate halt");
 
 				Runtime.getRuntime().halt(2);
 			}
@@ -781,7 +781,7 @@ public final class Main {
 									new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
 						line = bufferedReader.readLine();
 						if (!String.valueOf(randomNumber).equals(line)) {
-							LOGGER.log(Level.WARNING,
+							LOGGER.warning(
 									"Received unexpected value for random number on single instance socket: " + line);
 							continue;
 						}
@@ -803,7 +803,7 @@ public final class Main {
 							}
 							arguments = receivedArgs.toArray(String[]::new);
 						} else {
-							LOGGER.log(Level.WARNING, "Received unexpected line on single instance socket: " + line);
+							LOGGER.warning("Received unexpected line on single instance socket: " + line);
 						}
 
 						if (arguments != null) {
@@ -1448,7 +1448,7 @@ public final class Main {
 			var errorDetails = SDLError.SDL_GetError();
 
 			final var hasErrorDetails = errorDetails != null && !errorDetails.isBlank();
-			LOGGER.log(Level.SEVERE, "Could not initialize SDL" + (hasErrorDetails ? ": " + errorDetails : ""));
+			LOGGER.severe("Could not initialize SDL" + (hasErrorDetails ? ": " + errorDetails : ""));
 
 			if (!hasErrorDetails) {
 				errorDetails = STRINGS.getString("NO_ERROR_DETAILS");
@@ -1517,20 +1517,19 @@ public final class Main {
 		});
 
 		if (!controllers.isEmpty()) {
-			LOGGER.log(Level.INFO,
-					"Present controllers:" + controllers.stream()
-							.map(controller -> assembleControllerLoggingMessage("\n\t", controller))
+			LOGGER.info("Present controllers:"
+					+ controllers.stream().map(controller -> assembleControllerLoggingMessage("\n\t", controller))
 							.collect(Collectors.joining()));
 
 			final var lastControllerGuid = preferences.get(PREFERENCES_LAST_CONTROLLER, null);
 			if (lastControllerGuid != null) {
 				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
 						.ifPresentOrElse(controller -> {
-							LOGGER.log(Level.INFO,
+							LOGGER.info(
 									assembleControllerLoggingMessage("Found previously used controller ", controller));
 							setSelectedController(controller);
 						}, () -> {
-							LOGGER.log(Level.INFO, "Previously used controller is not present");
+							LOGGER.info("Previously used controller is not present");
 							setSelectedController(controllers.stream().findFirst().orElse(null));
 						});
 			}
@@ -1636,8 +1635,7 @@ public final class Main {
 
 	private static void deleteSingleInstanceLockFile() {
 		if (!SINGLE_INSTANCE_LOCK_FILE.delete()) {
-			LOGGER.log(Level.WARNING,
-					"Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
+			LOGGER.warning("Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 		}
 	}
 
@@ -1735,16 +1733,15 @@ public final class Main {
 
 	public static String logSdlError(final String message) {
 		final var errorDetails = SDLError.SDL_GetError();
-		LOGGER.log(Level.WARNING,
-				message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
+		LOGGER.warning(message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
 
 		return errorDetails;
 	}
 
 	static void main(final String[] args) {
-		LOGGER.log(Level.INFO, "Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
-		LOGGER.log(Level.INFO, "Operating System: " + System.getProperty("os.name") + " "
-				+ System.getProperty("os.version") + " " + OS_ARCH);
+		LOGGER.info("Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
+		LOGGER.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
+				+ OS_ARCH);
 
 		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -1843,7 +1840,7 @@ public final class Main {
 							}
 
 							if (continueLaunch) {
-								LOGGER.log(Level.WARNING, "Other " + Constants.APPLICATION_NAME
+								LOGGER.warning("Other " + Constants.APPLICATION_NAME
 										+ " instance did not acknowledge invocation");
 							}
 						}
@@ -1866,7 +1863,7 @@ public final class Main {
 
 					taskRunner.enterLoop();
 				} else {
-					LOGGER.log(Level.INFO, "Another " + Constants.APPLICATION_NAME + " instance is already running");
+					LOGGER.info("Another " + Constants.APPLICATION_NAME + " instance is already running");
 					terminate(0, null);
 				}
 
@@ -1952,7 +1949,7 @@ public final class Main {
 			main.mainLoop.shutdown();
 		}
 
-		LOGGER.log(Level.INFO, "Terminated (" + status + ")");
+		LOGGER.info("Terminated (" + status + ")");
 
 		terminated = true;
 
@@ -2239,7 +2236,7 @@ public final class Main {
 
 			try (final var fileOutputStream = new FileOutputStream(file)) {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
-				LOGGER.log(Level.INFO, "Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
+				LOGGER.info("Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
 			}
 		} catch (final DOMException | IOException | SAXException | TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -2575,8 +2572,7 @@ public final class Main {
 
 			var visible = !hasTrayOption || isModalDialogShowing();
 			if (tray == 0L && hasTrayOption) {
-				LOGGER.log(Level.WARNING,
-						"System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
+				LOGGER.warning("System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
 				visible = true;
 			}
 
@@ -2870,7 +2866,7 @@ public final class Main {
 		if (profilePath != null) {
 			loadProfile(new File(profilePath), noControllerConnected, false, commandLine, true);
 			if (loadedProfile == null && cmdProfilePath == null) {
-				LOGGER.log(Level.INFO, "Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+				LOGGER.info("Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
 		} else {
@@ -2969,7 +2965,7 @@ public final class Main {
 
 			EventQueue.invokeLater(() -> {
 				try {
-					LOGGER.log(Level.INFO, "Loading profile: " + file.getAbsolutePath());
+					LOGGER.info("Loading profile: " + file.getAbsolutePath());
 
 					var profileLoaded = false;
 
@@ -2981,7 +2977,7 @@ public final class Main {
 							final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
 							final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 							if (versionsComparisonResult.isEmpty()) {
-								LOGGER.log(Level.WARNING, "Trying to load a profile without version information");
+								LOGGER.warning("Trying to load a profile without version information");
 
 								if (!skipMessageDialogs) {
 									GuiUtils.showMessageDialog(main, frame, MessageFormat.format(
@@ -2992,7 +2988,7 @@ public final class Main {
 							} else {
 								final int v = versionsComparisonResult.get();
 								if (v < 0) {
-									LOGGER.log(Level.WARNING, "Trying to load a profile for an older release");
+									LOGGER.warning("Trying to load a profile for an older release");
 
 									if (!skipMessageDialogs) {
 										GuiUtils.showMessageDialog(main, frame,
@@ -3003,7 +2999,7 @@ public final class Main {
 												STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 									}
 								} else if (v > 0) {
-									LOGGER.log(Level.WARNING, "Trying to load a profile for a newer release");
+									LOGGER.warning("Trying to load a profile for a newer release");
 
 									if (!skipMessageDialogs) {
 										GuiUtils.showMessageDialog(main, frame,
@@ -3018,7 +3014,7 @@ public final class Main {
 
 							final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
 							if (!unknownActionClasses.isEmpty()) {
-								LOGGER.log(Level.WARNING, "Encountered the unknown actions while loading profile:"
+								LOGGER.warning("Encountered the unknown actions while loading profile:"
 										+ String.join(", ", unknownActionClasses));
 
 								if (!skipMessageDialogs) {
@@ -3058,7 +3054,7 @@ public final class Main {
 					}
 
 					if (!profileLoaded) {
-						LOGGER.log(Level.SEVERE, "Could not load profile");
+						LOGGER.severe("Could not load profile");
 
 						if (!skipMessageDialogs) {
 							GuiUtils.showMessageDialog(main, frame,
@@ -3093,7 +3089,7 @@ public final class Main {
 	public void newActivation(final String[] args) {
 		loadProfileLock.lock();
 		try {
-			LOGGER.log(Level.INFO, "New activation with arguments: " + String.join(" ", args));
+			LOGGER.info("New activation with arguments: " + String.join(" ", args));
 
 			if (args.length > 0) {
 				try {
@@ -3322,7 +3318,7 @@ public final class Main {
 			});
 			menuBar.add(deviceMenu, 1);
 		} else {
-			LOGGER.log(Level.INFO, "No controllers connected");
+			LOGGER.info("No controllers connected");
 		}
 
 		updateDeviceMenuSelection();
@@ -3378,7 +3374,7 @@ public final class Main {
 
 					final var controller = new Controller(instanceId);
 					if (controllers.add(controller)) {
-						LOGGER.log(Level.INFO, assembleControllerLoggingMessage("Connected controller ", controller));
+						LOGGER.info(assembleControllerLoggingMessage("Connected controller ", controller));
 
 						if (input.isInitialized()) {
 							input.openController(controller);
@@ -3393,8 +3389,7 @@ public final class Main {
 					controllers.stream().filter(controller -> controller.instanceId == instanceId).findFirst()
 							.ifPresent(controller -> {
 								controllers.remove(controller);
-								LOGGER.log(Level.INFO,
-										assembleControllerLoggingMessage("Disconnected controller ", controller));
+								LOGGER.info(assembleControllerLoggingMessage("Disconnected controller ", controller));
 
 								if (selectedController != null && selectedController.instanceId == instanceId) {
 									selectedController = null;
@@ -3557,7 +3552,7 @@ public final class Main {
 			profileFileChooser.setSelectedFile(file);
 		}
 
-		LOGGER.log(Level.INFO, "Saving profile: " + file.getAbsolutePath());
+		LOGGER.info("Saving profile: " + file.getAbsolutePath());
 
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
@@ -3657,7 +3652,7 @@ public final class Main {
 		selectedController = controller;
 
 		if (controller != null) {
-			LOGGER.log(Level.INFO, assembleControllerLoggingMessage("Selected controller ", controller));
+			LOGGER.info(assembleControllerLoggingMessage("Selected controller ", controller));
 
 			if (controller.guid != null) {
 				preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
@@ -3928,7 +3923,7 @@ public final class Main {
 				return logSdlError("Failed to update game controller mappings from " + sourceName);
 			}
 
-			LOGGER.log(Level.INFO, "Added " + numMappingsAdded + " game controller mappings from " + sourceName);
+			LOGGER.info("Added " + numMappingsAdded + " game controller mappings from " + sourceName);
 
 			return null;
 		}).orElse(null);
@@ -3945,7 +3940,7 @@ public final class Main {
 		try {
 			errorDetails = updateGameControllerMappings(path, "external file: " + path);
 		} catch (final Throwable t) {
-			LOGGER.log(Level.WARNING, "Could not read external game controller mappings file: " + path);
+			LOGGER.warning("Could not read external game controller mappings file: " + path);
 
 			GuiUtils.showMessageDialog(main, frame, MessageFormat
 					.format(STRINGS.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
@@ -5103,7 +5098,7 @@ public final class Main {
 		}
 
 		private void enterLoop() {
-			LOGGER.log(Level.INFO, "Entering main loop");
+			LOGGER.info("Entering main loop");
 			try {
 				while (!Thread.interrupted()) {
 					currentTaskQueueEntry = taskQueue.poll();
@@ -5155,7 +5150,7 @@ public final class Main {
 					LOGGER.log(Level.SEVERE, t.getMessage(), t);
 				}
 
-				LOGGER.log(Level.INFO, "Exiting main loop");
+				LOGGER.info("Exiting main loop");
 			}
 		}
 

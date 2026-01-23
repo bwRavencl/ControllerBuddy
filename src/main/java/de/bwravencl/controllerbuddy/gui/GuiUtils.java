@@ -300,7 +300,7 @@ public final class GuiUtils {
 						User32.SWP_NOMOVE | User32.SWP_NOSIZE) != 0) {
 					return;
 				}
-				LOGGER.log(Level.SEVERE, "SetWindowPos failed: " + Kernel32.GetLastError());
+				LOGGER.severe("SetWindowPos failed: " + Kernel32.GetLastError());
 			} catch (final IllegalAccessException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}

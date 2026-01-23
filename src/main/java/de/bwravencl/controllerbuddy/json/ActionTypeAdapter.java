@@ -29,7 +29,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
@@ -69,7 +68,7 @@ public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, Json
 			}
 
 			if (typeOfT == IAction.class) {
-				LOGGER.log(Level.WARNING, "Action class '" + typeNameString + "' not found, substituting with '"
+				LOGGER.warning("Action class '" + typeNameString + "' not found, substituting with '"
 						+ NullAction.class.getSimpleName() + "'");
 				unknownActionClasses.add(typeNameString);
 
