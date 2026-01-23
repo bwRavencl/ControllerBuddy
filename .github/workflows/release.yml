@@ -4,7 +4,8 @@ on:
       - master
 
 env:
-  JAVA_VERSION: 25.0.2+10
+  JAVA_VERSION: 25.0.2
+  JBR_BUILD: 300.57
   GRADLE_OPTS: -Dorg.gradle.daemon=false
 
 jobs:
@@ -28,26 +29,20 @@ jobs:
             windows-latest)
                 echo jdk_os=windows >> "$GITHUB_OUTPUT"
                 echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=zip >> "$GITHUB_OUTPUT"
                 echo dist_os=windows >> "$GITHUB_OUTPUT"
                 echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=zip >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-latest)
                 echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
                 echo jdk_arch=x64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
                 echo dist_os=linux >> "$GITHUB_OUTPUT"
                 echo dist_arch=x86-64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
                 ;;
             ubuntu-24.04-arm)
                 echo jdk_os=linux-glibc >> "$GITHUB_OUTPUT"
                 echo jdk_arch=aarch64 >> "$GITHUB_OUTPUT"
-                echo jdk_archive_type=tar.gz >> "$GITHUB_OUTPUT"
                 echo dist_os=linux >> "$GITHUB_OUTPUT"
                 echo dist_arch=aarch64 >> "$GITHUB_OUTPUT"
-                echo dist_archive_extension=tgz >> "$GITHUB_OUTPUT"
                 ;;
             *)
                 exit 1
@@ -59,18 +54,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
-      - name: Download Zulu (without CRaC)
-        id: download_zulu
+      - name: Download JBR
         shell: bash
         run: |
-          cd $RUNNER_TEMP
-          jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=$JAVA_VERSION&os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" -H  'accept: application/json' | jq -r '.[0].download_url')")
-          echo "jdk_archive_filename=$jdk_archive_filename" >> "$GITHUB_OUTPUT"
+          wget -O "$RUNNER_TEMP/java_package.tar.gz" "https://cache-redirector.jetbrains.com/intellij-jbr/jbrsdk-$JAVA_VERSION-${{ steps.platform_variables.outputs.jdk_os }}-${{ steps.platform_variables.outputs.jdk_arch }}-$JBR_BUILD.tar.gz"
       - name: Install JDK
         uses: actions/setup-java@v5
         with:
           distribution: jdkfile
-          jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
+          jdkFile: ${{ runner.temp }}/java_package.tar.gz
           java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Gradle Init Script
         shell: bash
