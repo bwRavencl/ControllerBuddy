@@ -751,7 +751,7 @@ tasks.named<Tar>("distTar") {
   archiveAppendix = distAppendix
   compression = Compression.GZIP
   isPreserveFileTimestamps = true
-  @Suppress("UnstableApiUsage") useFileSystemPermissions()
+  useFileSystemPermissions()
 }
 
 tasks.named<Zip>("distZip") {
@@ -762,7 +762,7 @@ tasks.named<Zip>("distZip") {
 
   archiveAppendix = distAppendix
   isPreserveFileTimestamps = true
-  @Suppress("UnstableApiUsage") useFileSystemPermissions()
+  useFileSystemPermissions()
 }
 
 tasks.named<Sync>("installDist") {
