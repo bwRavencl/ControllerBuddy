@@ -49,11 +49,14 @@ application {
   mainClass = "de.bwravencl.controllerbuddy.gui.Main"
 }
 
-val javaLanguageVersion: JavaLanguageVersion = JavaLanguageVersion.of(25)
+val javaToolchainSpec =
+    Action<JavaToolchainSpec> {
+      languageVersion.set(JavaLanguageVersion.of(25))
+      vendor.set(JvmVendorSpec.AZUL)
+    }
 
-val launcher: Provider<JavaLauncher> =
-    javaToolchains.launcherFor { languageVersion = javaLanguageVersion }
-val javaHome: Provider<Directory> = launcher.map { it.metadata.installationPath }
+val javaHome: Provider<Directory> =
+    javaToolchains.launcherFor(javaToolchainSpec).map { it.metadata.installationPath }
 
 val os = DefaultNativePlatform.getCurrentOperatingSystem()!!
 
@@ -95,12 +98,7 @@ val distAppendix = "${os.toFamilyName()}-${arch.name}"
 
 repositories { mavenCentral() }
 
-java {
-  toolchain {
-    languageVersion = javaLanguageVersion
-    vendor = JvmVendorSpec.AZUL
-  }
-}
+java { toolchain(javaToolchainSpec) }
 
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.46.0")
