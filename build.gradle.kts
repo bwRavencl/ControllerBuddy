@@ -541,24 +541,24 @@ tasks.register("generateModuleInfo") {
         """
         @SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
         module de.bwravencl.controllerbuddy {
-            exports de.bwravencl.controllerbuddy.gui;
+        	exports de.bwravencl.controllerbuddy.gui;
 
-            opens de.bwravencl.controllerbuddy.input to com.google.gson;
-            opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
+        	opens de.bwravencl.controllerbuddy.input to com.google.gson;
+        	opens de.bwravencl.controllerbuddy.input.action to com.google.gson;
 
-            requires com.google.gson;
-            requires com.formdev.flatlaf;
-            requires com.github.weisj.jsvg;
-            requires io.github.classgraph;
-            requires transitive java.desktop;
-            requires java.logging;
-            requires java.prefs;
-            requires org.apache.commons.cli;
-            requires org.freedesktop.dbus;
-            requires org.lwjgl;
-            requires org.lwjgl.natives;
-            requires org.lwjgl.sdl;
-            requires org.lwjgl.sdl.natives;
+        	requires com.google.gson;
+        	requires com.formdev.flatlaf;
+        	requires com.github.weisj.jsvg;
+        	requires io.github.classgraph;
+        	requires transitive java.desktop;
+        	requires java.logging;
+        	requires java.prefs;
+        	requires org.apache.commons.cli;
+        	requires org.freedesktop.dbus;
+        	requires org.lwjgl;
+        	requires org.lwjgl.natives;
+        	requires org.lwjgl.sdl;
+        	requires org.lwjgl.sdl.natives;
         }
 
         """
