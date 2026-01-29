@@ -66,7 +66,6 @@ val constantsFile =
 
 val resourcesDir = "$projectDir/src/main/resources"
 val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
-val runtimeDir: Provider<Directory> = tmpDir.map { it.dir("runtime") }
 
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
@@ -96,7 +95,10 @@ val gamecontrollerdbResFile = "$resourcesDir/gamecontrollerdb.txt"
 val arch: Architecture = DefaultNativePlatform.getCurrentArchitecture()
 val distAppendix = "${os.toFamilyName()}-${arch.name}"
 
-repositories { mavenCentral() }
+repositories {
+  mavenCentral()
+  maven { url = uri("https://central.sonatype.com/repository/maven-snapshots") }
+}
 
 java { toolchain(javaToolchainSpec) }
 
@@ -134,7 +136,7 @@ dependencies {
   implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") {
     exclude(group = "org.slf4j", module = "slf4j-api")
   }
-  implementation("com.github.weisj:jsvg:2.0.0")
+  implementation("com.github.weisj:jsvg:2.0.1-SNAPSHOT")
   implementation("com.google.code.gson:gson:2.13.2")
   implementation("io.github.classgraph:classgraph:4.8.184")
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
@@ -245,11 +247,6 @@ tasks.register<Delete>("cleanModuleInfo") {
   delete(moduleInfoFile)
 }
 
-tasks.register<Delete>("cleanRuntimeDir") {
-  description = "Removes the '${runtimeDir.get().asFile.relativeTo(projectDir)}' directory"
-  delete(runtimeDir)
-}
-
 tasks.register<Delete>("cleanTmpProjectDir") {
   val tmpProjectFile = tmpDir.get().file(project.name)
   description = "Removes the '${tmpProjectFile.asFile.relativeTo(projectDir)}' directory"
@@ -262,7 +259,6 @@ tasks.named("clean") {
       "cleanGameControllerDB",
       "cleanLibsDirectory",
       "cleanModuleInfo",
-      "cleanRuntimeDir",
       "cleanTmpProjectDir",
   )
 }
@@ -646,59 +642,11 @@ tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
 
 tasks.named("test") { enabled = false }
 
-tasks.register<Exec>("jlink") {
-  description = "Executes the jlink command to create a customized minimal Java runtime"
-
-  dependsOn("check", "jar", "cleanRuntimeDir")
-
-  commandLine(
-      "${javaHome.get()}/bin/jlink",
-      "--output",
-      runtimeDir.get(),
-      "--strip-debug",
-      "--no-header-files",
-      "--no-man-pages",
-      "--strip-native-commands",
-      "--add-modules",
-      "java.desktop,java.management,jdk.unsupported,java.logging,jdk.accessibility,jdk.net,jdk.security.auth,jdk.xml.dom",
-  )
-}
-
-tasks.register("customizeLoggingProperties") {
-  val loggingPropertiesFile = runtimeDir.get().file("conf/logging.properties")
-  description =
-      "Customizes the '${file(loggingPropertiesFile).relativeTo(projectDir)}' Java runtime configuration file"
-
-  dependsOn("jlink")
-
-  val projectName = project.name
-
-  doLast {
-    ant.withGroovyBuilder {
-      "propertyfile"("file" to loggingPropertiesFile) {
-        "entry"(
-            "key" to "handlers",
-            "value" to "java.util.logging.FileHandler, java.util.logging.ConsoleHandler",
-        )
-        "entry"("key" to "java.util.logging.FileHandler.pattern", "value" to "%t/$projectName.log")
-        "entry"(
-            "key" to "java.util.logging.FileHandler.formatter",
-            "value" to "java.util.logging.SimpleFormatter",
-        )
-        "entry"(
-            "key" to "java.util.logging.SimpleFormatter.format",
-            "value" to $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n",
-        )
-      }
-    }
-  }
-}
-
 tasks.register<Exec>("jpackage") {
   description =
       "Executes the jpackage command to create a standalone application image packaged with the custom Java runtime"
 
-  dependsOn("copyLibs", "customizeLoggingProperties", "cleanTmpProjectDir")
+  dependsOn("check", "copyLibs", "cleanTmpProjectDir")
 
   val commandLineParts =
       mutableListOf(
@@ -709,8 +657,6 @@ tasks.register<Exec>("jpackage") {
           "app-image",
           "--name",
           project.name,
-          "--runtime-image",
-          runtimeDir.get(),
           "--module-path",
           base.libsDirectory.get(),
           "--module",
@@ -738,10 +684,41 @@ tasks.register<Exec>("jpackage") {
   commandLine(commandLineParts)
 }
 
+tasks.register("customizeLoggingProperties") {
+  val loggingPropertiesFile =
+      tmpDir.get().file("${project.name}/lib/runtime/conf/logging.properties")
+  description =
+      "Customizes the '${file(loggingPropertiesFile).relativeTo(projectDir)}' Java runtime configuration file"
+
+  dependsOn("jpackage")
+
+  val projectName = project.name
+
+  doLast {
+    ant.withGroovyBuilder {
+      "propertyfile"("file" to loggingPropertiesFile) {
+        "entry"(
+            "key" to "handlers",
+            "value" to "java.util.logging.FileHandler, java.util.logging.ConsoleHandler",
+        )
+        "entry"("key" to "java.util.logging.FileHandler.pattern", "value" to "%t/$projectName.log")
+        "entry"(
+            "key" to "java.util.logging.FileHandler.formatter",
+            "value" to "java.util.logging.SimpleFormatter",
+        )
+        "entry"(
+            "key" to "java.util.logging.SimpleFormatter.format",
+            "value" to $$"[%1$tY-%1$tm-%1$td %1$tk:%1$tM:%1$tS:%1$tL] %3$s: %5$s%6$s%n",
+        )
+      }
+    }
+  }
+}
+
 tasks.named("startScripts") { enabled = false }
 
 tasks.named<Tar>("distTar") {
-  dependsOn("jpackage")
+  dependsOn("customizeLoggingProperties")
 
   from(tmpDir)
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
