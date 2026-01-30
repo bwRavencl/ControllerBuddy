@@ -38,26 +38,18 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 #### 🐧 Linux x86-64 / aarch64
 
-1. Create a controllerbuddy group:
+1. Allow access to uinput:
     ```sh
-    sudo /usr/sbin/groupadd -f controllerbuddy
+    echo 'KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"' | sudo tee /etc/udev/rules.d/60-controllerbuddy.rules
     ```
-2. Add yourself to the group:
+2. Load the uinput kernel module at boot:
     ```sh
-    sudo gpasswd -a "$USER" controllerbuddy
+    echo uinput | sudo tee /etc/modules-load.d/controllerbuddy.conf
     ```
-3. Allow the group to access uinput:
-    ```sh
-    echo 'KERNEL=="uinput", SUBSYSTEM=="misc", MODE="0660", GROUP="controllerbuddy"' | sudo tee /etc/udev/rules.d/99-controllerbuddy.rules
-    ```
-4. Load the uinput kernel module at boot:
-    ```sh
-    echo uinput | sudo tee -a /etc/modules-load.d/uinput.conf
-    ```
-5. Reboot
-6. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
-7. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
-8. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
+3. Reboot
+4. [Click here](https://github.com/bwRavencl/ControllerBuddy/releases/latest) and download the latest build of ControllerBuddy for Linux as a TGZ archive.
+5. Extract the `ControllerBuddy` directory from the archive to any desired location on your hard-drive.
+6. Run `ControllerBuddy` inside the extracted `ControllerBuddy/bin` directory.
 
 ## ✨ Features
 
