@@ -89,6 +89,7 @@ jobs:
                     username = user
                     password = pass
                   }
+                  mavenContent { releasesOnly() }
                 }
                 maven {
                   url = baseUrl.resolve("snapshots")
@@ -96,6 +97,7 @@ jobs:
                     username = user
                     password = pass
                   }
+                  mavenContent { snapshotsOnly() }
                 }
               }
             }
@@ -106,6 +108,7 @@ jobs:
                   username = user
                   password = pass
                 }
+                mavenContent { releasesOnly() }
               }
               maven {
                 url = baseUrl.resolve("snapshots")
@@ -113,6 +116,7 @@ jobs:
                   username = user
                   password = pass
                 }
+              mavenContent { snapshotsOnly() }
               }
             }
           }
