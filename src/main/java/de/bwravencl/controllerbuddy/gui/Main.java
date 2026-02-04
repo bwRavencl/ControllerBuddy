@@ -4450,7 +4450,7 @@ public final class Main {
 			actionGroupA = Stream.of(onPressActions, whilePressedActions, onReleaseActions).flatMap(Collection::stream)
 					.toList();
 			actionGroupB = delayedActions;
-			actionGroupC = Collections.emptyList();
+			actionGroupC = List.of();
 			groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
 			groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
 			groupCPrefix = null;
@@ -4458,7 +4458,7 @@ public final class Main {
 
 		if (actionGroupB.isEmpty() && !actionGroupC.isEmpty()) {
 			actionGroupB = actionGroupC;
-			actionGroupC = Collections.emptyList();
+			actionGroupC = List.of();
 			groupBPrefix = groupCPrefix;
 			groupCPrefix = null;
 		}

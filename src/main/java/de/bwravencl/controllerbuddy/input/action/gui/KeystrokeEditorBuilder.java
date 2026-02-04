@@ -37,7 +37,6 @@ import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -224,10 +223,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	private void updateUpdateKeyStrokeVisualization() {
 		visualizationPanel.removeAll();
 
-		final var selectedModifiersList = modifierList != null ? modifierList.getSelectedValuesList()
-				: Collections.emptyList();
+		final var selectedModifiersList = modifierList != null ? modifierList.getSelectedValuesList() : List.of();
 
-		final var selectedKeysList = keyList != null ? keyList.getSelectedValuesList() : Collections.emptyList();
+		final var selectedKeysList = keyList != null ? keyList.getSelectedValuesList() : List.of();
 
 		final var modifierVisualizationPanel = new JPanel();
 		modifierVisualizationPanel.setLayout(new BoxLayout(modifierVisualizationPanel, BoxLayout.Y_AXIS));
