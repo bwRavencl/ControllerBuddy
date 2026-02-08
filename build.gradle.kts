@@ -690,8 +690,18 @@ tasks.register<Exec>("jpackage") {
 }
 
 tasks.register("customizeLoggingProperties") {
-  val loggingPropertiesFile =
-      tmpDir.get().file("${project.name}/lib/runtime/conf/logging.properties")
+  val confDir =
+      tmpDir
+          .get()
+          .dir(
+              when {
+                os.isWindows -> "${project.name}/runtime/conf"
+                os.isMacOsX -> "${project.name}.app/Contents/runtime/Contents/Home/conf"
+                os.isLinux -> "${project.name}/lib/runtime/conf"
+                else -> throw GradleException("Unsupported operating system ${os.displayName}")
+              }
+          )
+  val loggingPropertiesFile = confDir.file("logging.properties")
   description =
       "Customizes the '${file(loggingPropertiesFile).relativeTo(projectDir)}' Java runtime configuration file"
 
@@ -735,7 +745,7 @@ tasks.named<Tar>("distTar") {
 }
 
 tasks.named<Zip>("distZip") {
-  dependsOn("jpackage")
+  dependsOn("customizeLoggingProperties")
 
   from(tmpDir)
   include("${project.name}${if (os.isMacOsX) ".app" else ""}/**")
