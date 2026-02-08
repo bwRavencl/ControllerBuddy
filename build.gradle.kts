@@ -664,7 +664,12 @@ tasks.register<Exec>("jpackage") {
           "--app-version",
           versionProvider.map { it.substringBefore("-") }.get(),
           "--icon",
-          "$projectDir/icon.${if (os.isWindows) "ico" else "png"}",
+          "$projectDir/icon.${when {
+              os.isWindows -> "ico"
+              os.isMacOsX -> "icns"
+              os.isLinux -> "png"
+              else -> throw GradleException("Unsupported operating system ${os.displayName}")
+          }}",
           "--copyright",
           "Copyright ${SimpleDateFormat("yyyy").format(Date())} Matteo Hausner",
           "--vendor",
