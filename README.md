@@ -92,9 +92,11 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ### 🧩 Definitions
 
-**Profiles** are JSON-based configuration files that tailor ControllerBuddy to specific games. Once loaded, they can be edited and saved through the built-in interface.
+**Profiles
+** are JSON-based configuration files that tailor ControllerBuddy to specific games. Once loaded, they can be edited and saved through the built-in interface.
 
-To manage complex setups, Profiles organize your input mappings into **Modes**. Think of Modes as different layers or "shift-states" for your controller.
+To manage complex setups, Profiles organize your input mappings into **Modes
+**. Think of Modes as different layers or "shift-states" for your controller.
 
 Within each Mode, you can map an axis or button to one or more **Actions**.  
 By assigning different Actions to the same control across multiple Modes, you enable ControllerBuddy to instantly remap your controller as you switch between layers.
@@ -156,6 +158,7 @@ When switching between Modes, any axes or buttons not explicitly redefined will 
 ### 🔀 Switching Behaviors
 
 Two different switching behaviors can be configured:
+
 - **Momentary (Default):** The Mode remains active only while the button is held (similar to a **Shift key**).
 - **Toggle:** Press once to activate, press again to deactivate (similar to **Caps Lock**).
 
@@ -171,7 +174,6 @@ flowchart
 ```
 
 ### 🌐 Client-Server Mode
-
 
 ```mermaid
 flowchart LR
@@ -190,7 +192,7 @@ flowchart LR
 
 ![Assignments Tab](screenshots/screenshot_2.png)
 
-![Component Editor - Button](screenshot_3.png)
+![Component Editor - Button](screenshots/screenshot_3.png)
 
 ![Component Editor - Axis](screenshots/screenshot_4.png)
 
