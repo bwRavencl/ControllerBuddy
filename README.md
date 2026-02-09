@@ -1,7 +1,7 @@
 # ControllerBuddy
 
 <!--suppress HtmlDeprecatedAttribute -->
-<img src="icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/>
+<img src="icon/icon.svg" alt="ControllerBuddy Logo" align="right" width="128px"/>
 
 [![ControllerBuddy Release Status](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml/badge.svg)](https://github.com/bwRavencl/ControllerBuddy/actions/workflows/release.yml)
 
@@ -186,19 +186,19 @@ flowchart LR
 
 ## 🖼️ Screenshots
 
-![Modes Tab](screenshot_1.png)
+![Modes Tab](screenshots/screenshot_1.png)
 
-![Assignments Tab](screenshot_2.png)
+![Assignments Tab](screenshots/screenshot_2.png)
 
 ![Component Editor - Button](screenshot_3.png)
 
-![Component Editor - Axis](screenshot_4.png)
+![Component Editor - Axis](screenshots/screenshot_4.png)
 
-![Dark Mode](screenshot_5.png)
+![Dark Mode](screenshots/screenshot_5.png)
 
-![Visualization Tab](screenshot_6.png)
+![Visualization Tab](screenshots/screenshot_6.png)
 
-![Overlay](screenshot_7.png)
+![Overlay](screenshots/screenshot_7.png)
 
 ## ⌨️ Command Line Parameters
 

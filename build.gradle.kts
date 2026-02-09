@@ -664,7 +664,7 @@ tasks.register<Exec>("jpackage") {
           "--app-version",
           versionProvider.map { it.substringBefore("-") }.get(),
           "--icon",
-          "$projectDir/icon.${when {
+          "$projectDir/icon/icon.${when {
               os.isWindows -> "ico"
               os.isMacOsX -> "icns"
               os.isLinux -> "png"
