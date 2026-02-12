@@ -287,7 +287,7 @@ public final class EditActionsDialog extends JDialog {
 			return 0;
 		}
 
-		int expected = it.nextInt();
+		var expected = it.nextInt();
 		if (expected > maxValue) {
 			return maxValue;
 		}
@@ -793,9 +793,8 @@ public final class EditActionsDialog extends JDialog {
 				cycleAction.setActions(cycleActions);
 			} else {
 				var requiresOnScreenKeyboardMode = false;
-				outer: for (final List<ButtonToModeAction> buttonToModeActions : unsavedProfile
-						.getButtonToModeActionsMap().values()) {
-					for (final ButtonToModeAction a : buttonToModeActions) {
+				outer: for (final var buttonToModeActions : unsavedProfile.getButtonToModeActionsMap().values()) {
+					for (final var a : buttonToModeActions) {
 						if (a.targetsOnScreenKeyboardMode()) {
 							requiresOnScreenKeyboardMode = true;
 							break outer;

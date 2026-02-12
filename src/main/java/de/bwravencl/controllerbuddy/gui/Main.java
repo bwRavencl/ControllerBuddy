@@ -885,7 +885,7 @@ public final class Main {
 
 		frame.setJMenuBar(menuBar);
 
-		final JMenu fileMenu = new JMenu(STRINGS.getString("FILE_MENU"));
+		final var fileMenu = new JMenu(STRINGS.getString("FILE_MENU"));
 		fileMenu.add(new NewAction());
 		fileMenu.add(openAction);
 		fileMenu.add(new SaveAction());
@@ -933,8 +933,8 @@ public final class Main {
 		tabbedPane.setForeground(TABBED_PANE_FOREGROUND_COLOR);
 		frame.getContentPane().add(tabbedPane);
 
-		final JPanel modesPanel = new JPanel(new BorderLayout());
-		final JScrollPane globalSettingsScrollPane = new JScrollPane();
+		final var modesPanel = new JPanel(new BorderLayout());
+		final var globalSettingsScrollPane = new JScrollPane();
 		tabbedPane.addTab(STRINGS.getString("MODES_TAB"), modesPanel);
 
 		modesListPanel = new JPanel();
@@ -952,7 +952,7 @@ public final class Main {
 		assignmentsComponent = new AssignmentsComponent(this);
 		tabbedPane.addTab(STRINGS.getString("ASSIGNMENTS_TAB"), assignmentsComponent);
 
-		final JPanel overlayPanel = new JPanel(new BorderLayout());
+		final var overlayPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(STRINGS.getString("OVERLAY_TAB"), overlayPanel);
 
 		indicatorsListPanel = new JPanel();
@@ -1001,7 +1001,7 @@ public final class Main {
 		profileSettingsPanel = new JPanel();
 		profileSettingsPanel.setLayout(new GridBagLayout());
 
-		final JScrollPane profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
+		final var profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
 		tabbedPane.addTab(STRINGS.getString("PROFILE_SETTINGS_TAB"), profileSettingsScrollPane);
 
 		globalSettingsPanel = new JPanel();
@@ -1708,7 +1708,7 @@ public final class Main {
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
 		if (windows != null) {
-			for (final Window w : windows) {
+			for (final var w : windows) {
 				if (w.isShowing() && w instanceof final Dialog dialog && dialog.isModal()) {
 					return true;
 				}
@@ -1819,7 +1819,7 @@ public final class Main {
 							printStream.println(randomNumberString);
 							printStream.println(SINGLE_INSTANCE_INIT);
 
-							for (final String arg : args) {
+							for (final var arg : args) {
 								printStream.println(arg);
 							}
 
@@ -2005,7 +2005,7 @@ public final class Main {
 			fontFamily = "serif";
 		}
 
-		int fontSizePt = 12;
+		var fontSizePt = 12;
 		if (fontSizeString != null && !fontSizeString.isBlank()) {
 			fontSizeString = fontSizeString.toLowerCase(Locale.ROOT);
 
@@ -2258,8 +2258,8 @@ public final class Main {
 
 		final var swapLeftAndRightSticks = isSwapLeftAndRightSticks();
 
-		int minExtensionWidth = 0;
-		int maxExtensionWidth = 0;
+		var minExtensionWidth = 0;
+		var maxExtensionWidth = 0;
 
 		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
 			var swapped = false;
@@ -4207,7 +4207,7 @@ public final class Main {
 			orientationPanel.add(orientationLabel);
 
 			final var orientationComboBox = new JComboBox<>(OverlayAxisOrientation.values());
-			final OverlayAxisOrientation overlayAxisOrientation = enabled ? overlayAxis.getOrientation()
+			final var overlayAxisOrientation = enabled ? overlayAxis.getOrientation()
 					: virtualAxis.getDefaultOrientation();
 			orientationComboBox.setSelectedItem(overlayAxisOrientation);
 			orientationComboBox.setAction(new SetOverlayAxisOrientationAction(virtualAxis));
@@ -4222,7 +4222,7 @@ public final class Main {
 			stylePanel.add(styleLabel);
 
 			final var styleComboBox = new JComboBox<>(OverlayAxisStyle.values());
-			final OverlayAxisStyle overlayAxisStyle = enabled ? overlayAxis.getStyle() : virtualAxis.getDefaultStyle();
+			final var overlayAxisStyle = enabled ? overlayAxis.getStyle() : virtualAxis.getDefaultStyle();
 			styleComboBox.setSelectedItem(overlayAxisStyle);
 			styleComboBox.setAction(new SetOverlayAxisStyleAction(virtualAxis));
 			styleComboBox.setEnabled(enabled);

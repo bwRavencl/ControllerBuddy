@@ -247,7 +247,7 @@ public final class ServerRunMode extends RunMode {
 
 					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
 						var gotClientAlive = false;
-						for (int i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {
+						for (var i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 								dataOutputStream.writeInt(MessageType.REQUEST_ALIVE.getId());

@@ -606,8 +606,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 			final var showAlternativeKeyName = locked.get() ^ isKeyboardShifted();
 
-			for (final AbstractKeyboardButton[] row : keyboardButtons) {
-				for (final AbstractKeyboardButton keyboardButton : row) {
+			for (final var row : keyboardButtons) {
+				for (final var keyboardButton : row) {
 					if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton) {
 						shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
 					}
@@ -898,8 +898,8 @@ public final class OnScreenKeyboard extends JFrame {
 		void toggleLock() {
 			super.toggleLock();
 
-			for (final AbstractKeyboardButton[] row : keyboardButtons) {
-				for (final AbstractKeyboardButton keyboardButton : row) {
+			for (final var row : keyboardButtons) {
+				for (final var keyboardButton : row) {
 					if (keyboardButton instanceof final NumPadKeyboardButton numPadKeyboardButton) {
 						numPadKeyboardButton.setShowAlternativeKeyName(locked.get());
 					}
@@ -944,8 +944,8 @@ public final class OnScreenKeyboard extends JFrame {
 
 			final var showAlternativeKeyName = isKeyboardShifted() ^ capsLockKeyButton.locked.get();
 
-			for (final AbstractKeyboardButton[] row : keyboardButtons) {
-				for (final AbstractKeyboardButton keyboardButton : row) {
+			for (final var row : keyboardButtons) {
+				for (final var keyboardButton : row) {
 					if (keyboardButton instanceof final ShiftableKeyboardButton shiftableKeyboardButton) {
 						shiftableKeyboardButton.setShowAlternativeKeyName(showAlternativeKeyName);
 					}

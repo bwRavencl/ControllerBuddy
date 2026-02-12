@@ -229,7 +229,7 @@ public final class ClientRunMode extends OutputRunMode {
 			try {
 				final var receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 				SocketTimeoutException socketTimeoutException = null;
-				for (int i = 0; i < NUM_RECEIVE_PACKET_RETRIES; i++) {
+				for (var i = 0; i < NUM_RECEIVE_PACKET_RETRIES; i++) {
 					try {
 						clientSocket.receive(receivePacket);
 						socketTimeoutException = null;

@@ -102,10 +102,10 @@ public final class Linux {
 	}
 
 	private static int _IOC(final int dir, final int type, final int nr, final int size) {
-		final int _IOC_NRSHIFT = 0;
-		final int _IOC_TYPESHIFT = _IOC_NRSHIFT + _IOC_NRBITS;
-		final int _IOC_SIZESHIFT = _IOC_TYPESHIFT + _IOC_TYPEBITS;
-		final int _IOC_DIRSHIFT = _IOC_SIZESHIFT + _IOC_SIZEBITS;
+		final var _IOC_NRSHIFT = 0;
+		final var _IOC_TYPESHIFT = _IOC_NRSHIFT + _IOC_NRBITS;
+		final var _IOC_SIZESHIFT = _IOC_TYPESHIFT + _IOC_TYPEBITS;
+		final var _IOC_DIRSHIFT = _IOC_SIZESHIFT + _IOC_SIZEBITS;
 
 		return dir << _IOC_DIRSHIFT | type << _IOC_TYPESHIFT | nr << _IOC_NRSHIFT | size << _IOC_SIZESHIFT;
 	}
