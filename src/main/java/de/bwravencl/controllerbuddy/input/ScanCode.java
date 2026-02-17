@@ -307,9 +307,9 @@ public record ScanCode(String name, int keyCode, Event event) {
 		final var modifiableNameToScanCodeMap = new TreeMap<String, ScanCode>();
 		final var modifiableKeyCodeToScanCodeMap = new HashMap<Integer, ScanCode>();
 
-		for (final var sc : KEY_CODES) {
-			modifiableNameToScanCodeMap.put(sc.name, sc);
-			modifiableKeyCodeToScanCodeMap.put(sc.keyCode, sc);
+		for (final var scanCode : KEY_CODES) {
+			modifiableNameToScanCodeMap.put(scanCode.name, scanCode);
+			modifiableKeyCodeToScanCodeMap.put(scanCode.keyCode, scanCode);
 		}
 
 		NAME_TO_SCAN_CODE_MAP = Collections.unmodifiableMap(modifiableNameToScanCodeMap);

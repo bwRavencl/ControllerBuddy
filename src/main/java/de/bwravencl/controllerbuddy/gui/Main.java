@@ -1708,8 +1708,8 @@ public final class Main {
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
 		if (windows != null) {
-			for (final var w : windows) {
-				if (w.isShowing() && w instanceof final Dialog dialog && dialog.isModal()) {
+			for (final var window : windows) {
+				if (window.isShowing() && window instanceof final Dialog dialog && dialog.isModal()) {
 					return true;
 				}
 			}

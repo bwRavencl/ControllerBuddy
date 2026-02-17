@@ -794,8 +794,8 @@ public final class EditActionsDialog extends JDialog {
 			} else {
 				var requiresOnScreenKeyboardMode = false;
 				outer: for (final var buttonToModeActions : unsavedProfile.getButtonToModeActionsMap().values()) {
-					for (final var a : buttonToModeActions) {
-						if (a.targetsOnScreenKeyboardMode()) {
+					for (final var buttonToModeAction : buttonToModeActions) {
+						if (buttonToModeAction.targetsOnScreenKeyboardMode()) {
 							requiresOnScreenKeyboardMode = true;
 							break outer;
 						}
