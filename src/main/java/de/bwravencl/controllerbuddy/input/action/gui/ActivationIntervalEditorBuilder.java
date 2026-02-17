@@ -38,7 +38,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 		if (editActionsDialog.isCycleEditor()) {
 			disable = true;
 		} else if (action instanceof final IActivatableAction<?> activatableAction
-				&& activatableAction.getActivation() != IActivatableAction.Activation.WHILE_PRESSED) {
+				&& !ActivationIntervalAction.activationSupportsMaxInterval(activatableAction.getActivation())) {
 			final var fieldToActionPropertyMap = EditActionsDialog
 					.getFieldToActionPropertiesMap(ActivationIntervalAction.class);
 			disable = fieldToActionPropertyMap.entrySet().stream().filter(e -> fieldName.equals(e.getKey().getName()))

@@ -18,6 +18,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBuilder;
 import java.lang.constant.Constable;
 
@@ -26,8 +27,11 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 
 	public static final String MAX_ACTIVATION_INTERVAL_LABEL = "MAX_ACTIVATION_INTERVAL";
 
+	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	Activation activation = Activation.WHILE_PRESSED;
+
 	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
-	protected int minActivationInterval;
+	int minActivationInterval;
 
 	@ActionProperty(label = MAX_ACTIVATION_INTERVAL_LABEL, editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
@@ -37,6 +41,15 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	private transient long minActivationTime;
 
 	private transient boolean wasUp = true;
+
+	public static boolean activationSupportsMaxInterval(final Activation activation) {
+		return activation == Activation.WHILE_PRESSED;
+	}
+
+	@Override
+	public Activation getActivation() {
+		return activation;
+	}
 
 	public int getMaxActivationInterval() {
 		return maxActivationInterval;
@@ -48,7 +61,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 
 	boolean handleActivationInterval(final boolean hot) {
 		final var hasMinActivationInterval = minActivationInterval > 0L;
-		final var hasMaxActivationInterval = maxActivationInterval > 0L;
+		final var hasMaxActivationInterval = maxActivationInterval > 0L && activationSupportsMaxInterval(activation);
 
 		if (hasMinActivationInterval || hasMaxActivationInterval) {
 			final var currentTime = System.currentTimeMillis();
@@ -89,6 +102,15 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 		wasUp = true;
 		minActivationTime = 0;
 		maxActivationTime = Long.MAX_VALUE;
+	}
+
+	@Override
+	public void setActivation(final Activation activation) {
+		this.activation = activation;
+
+		if (!activationSupportsMaxInterval(activation)) {
+			maxActivationInterval = 0;
+		}
 	}
 
 	public void setMaxActivationInterval(final int maxActivationInterval) {

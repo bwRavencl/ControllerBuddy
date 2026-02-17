@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 import java.lang.constant.Constable;
@@ -32,9 +31,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 
 	private transient Activatable activatable;
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.WHILE_PRESSED;
-
 	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
@@ -46,11 +42,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	@Override
 	public Activatable getActivatable() {
 		return activatable;
-	}
-
-	@Override
-	public Activation getActivation() {
-		return activation;
 	}
 
 	@Override
@@ -158,11 +149,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	@Override
 	public void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
-	}
-
-	@Override
-	public void setActivation(final Activation activation) {
-		this.activation = activation;
 	}
 
 	@Override

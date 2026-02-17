@@ -20,7 +20,6 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.lang.constant.Constable;
@@ -30,9 +29,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 		implements ILongPressAction<V>, IResetableAction<V> {
 
 	private transient Activatable activatable;
-
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
-	private Activation activation = Activation.WHILE_PRESSED;
 
 	@ActionProperty(label = "KEYSTROKE", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
@@ -53,11 +49,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	@Override
 	public Activatable getActivatable() {
 		return activatable;
-	}
-
-	@Override
-	public Activation getActivation() {
-		return activation;
 	}
 
 	@Override
@@ -165,11 +156,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	@Override
 	public void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
-	}
-
-	@Override
-	public void setActivation(final Activation activation) {
-		this.activation = activation;
 	}
 
 	public void setKeystroke(final KeyStroke keystroke) {
