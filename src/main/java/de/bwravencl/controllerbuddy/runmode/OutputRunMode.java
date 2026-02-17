@@ -202,6 +202,30 @@ public abstract class OutputRunMode extends RunMode {
 			}
 		}
 
+		for (final var mouseButton : oldDownMouseButtons) {
+			try {
+				doMouseButtonInput(mouseButton, false);
+			} catch (final IOException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+
+		for (final var scanCode : oldDownNormalKeys) {
+			try {
+				doKeyboardInput(scanCode, false);
+			} catch (final IOException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+
+		for (final var scanCode : oldDownModifiers) {
+			try {
+				doKeyboardInput(scanCode, false);
+			} catch (final IOException e) {
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+
 		if (Main.IS_WINDOWS) {
 			if (VjoyInterface.isInitialized()) {
 				VjoyInterface.ResetButtons(vJoyDevice);
@@ -212,24 +236,16 @@ public abstract class OutputRunMode extends RunMode {
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
+			for (final var event : Event.JOYSTICK_EVENTS) {
+				try {
+					joystickUinputDevice.emit(event, 0, true);
+				} catch (final IOException e) {
+					LOGGER.log(Level.WARNING, e.getMessage(), e);
+				}
+			}
+
 			EventQueue.invokeLater(
 					() -> main.setStatusBarText(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_UINPUT_DEVICES")));
-		}
-
-		try {
-			for (final var mouseButton : oldDownMouseButtons) {
-				doMouseButtonInput(mouseButton, false);
-			}
-		} catch (final IOException e) {
-			LOGGER.log(Level.WARNING, e.getMessage(), e);
-		}
-
-		try {
-			for (final var scanCode : oldDownModifiers) {
-				doKeyboardInput(scanCode, false);
-			}
-		} catch (final IOException e) {
-			LOGGER.log(Level.WARNING, e.getMessage(), e);
 		}
 
 		if (lockKeyToBrightnessFileChannelMap != null) {
