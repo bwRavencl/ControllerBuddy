@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 
-@Action(label = "AXIS_TO_RELATIVE_AXIS_ACTION", category = ActionCategory.AXIS, order = 15)
+@Action(title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
@@ -33,13 +33,13 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	transient float remainingD;
 
-	@ActionProperty(label = "DETENT_VALUE", editorBuilder = DetentValueEditorBuilder.class, order = 203)
+	@ActionProperty(title = "DETENT_VALUE_TITLE", description = "DETENT_VALUE_DESCRIPTION", editorBuilder = DetentValueEditorBuilder.class, order = 203)
 	private Float detentValue = null;
 
-	@ActionProperty(label = "HAPTIC_FEEDBACK", editorBuilder = BooleanEditorBuilder.class, order = 204)
+	@ActionProperty(title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
-	@ActionProperty(label = "MAX_RELATIVE_SPEED", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
+	@ActionProperty(title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
 	@Override

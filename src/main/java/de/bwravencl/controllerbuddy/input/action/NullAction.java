@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import java.lang.constant.Constable;
 
-@Action(label = "NULL_ACTION", category = ActionCategory.ALL, order = 999)
+@Action(title = "NULL_ACTION_TITLE", description = "NULL_ACTION_DESCRIPTION", category = ActionCategory.ALL, order = 999)
 public final class NullAction implements IAction<Constable> {
 
 	@Override

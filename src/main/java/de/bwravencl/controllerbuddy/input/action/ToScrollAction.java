@@ -28,7 +28,7 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 
 	private static final int DEFAULT_CLICKS = 10;
 
-	@ActionProperty(label = "CLICKS", editorBuilder = ClicksEditorBuilder.class, order = 10)
+	@ActionProperty(title = "CLICKS_TITLE", description = "CLICKS_DESCRIPTION", editorBuilder = ClicksEditorBuilder.class, order = 10)
 	int clicks = DEFAULT_CLICKS;
 
 	transient float remainingD = 0f;

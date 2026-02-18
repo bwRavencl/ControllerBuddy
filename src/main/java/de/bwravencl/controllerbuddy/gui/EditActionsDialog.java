@@ -32,13 +32,19 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -53,11 +59,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -65,6 +73,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -92,6 +101,12 @@ public final class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
 	private static final Map<Class<?>, Map<Field, ActionProperty>> FIELD_ACTION_PROPERTY_MAP_CACHE = new HashMap<>();
+
+	private static final Cursor HELP_CURSOR;
+
+	private static final Point HELP_CURSOR_HOT_SPOT = new Point(0, 0);
+
+	private static final String HELP_GIF_RESOURCE_PATH = "/help.gif";
 
 	private static final Logger LOGGER = Logger.getLogger(EditActionsDialog.class.getName());
 
@@ -149,6 +164,19 @@ public final class EditActionsDialog extends JDialog {
 		BUTTON_ACTION_CLASSES = Collections.unmodifiableList(mutableButtonActionClasses);
 		CYCLE_ACTION_CLASSES = Collections.unmodifiableList(mutableCycleActionClasses);
 		ON_SCREEN_KEYBOARD_ACTION_CLASSES = Collections.unmodifiableList(mutableOnScreenKeyboardActionClasses);
+
+		final var inputStream = EditActionsDialog.class.getResourceAsStream(HELP_GIF_RESOURCE_PATH);
+		if (inputStream == null) {
+			throw new RuntimeException("Resource not found: " + HELP_GIF_RESOURCE_PATH);
+		}
+
+		try {
+			final var bufferedImage = ImageIO.read(inputStream);
+
+			HELP_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, HELP_CURSOR_HOT_SPOT, "help");
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private final JList<AssignedAction> assignedActionsList = new JList<>();
@@ -157,6 +185,8 @@ public final class EditActionsDialog extends JDialog {
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final List<IAction<Boolean>> cycleActions = new ArrayList<>();
+
+	private final JEditorPane helpEditorPane = GuiUtils.createHtmlViewerEditorPane();
 
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
@@ -492,7 +522,7 @@ public final class EditActionsDialog extends JDialog {
 
 		final var actionButtonsPanel = new JPanel();
 		actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
-		actionsPanel.add(actionButtonsPanel, new GridBagConstraints(1, 3, 1, 0, 0d, 1d, GridBagConstraints.CENTER,
+		actionsPanel.add(actionButtonsPanel, new GridBagConstraints(1, 1, 1, 1, 0d, 1d, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
 
 		actionButtonsPanel.add(Box.createVerticalGlue());
@@ -518,12 +548,14 @@ public final class EditActionsDialog extends JDialog {
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(_ -> {
 			selectedAvailableAction = availableActionsList.getSelectedValue();
-			addButton.setEnabled(selectedAvailableAction != null);
+			final var notNull = selectedAvailableAction != null;
+			addButton.setEnabled(notNull);
+			updateHelp(notNull ? selectedAvailableAction.actionClass : null);
 		});
 		updateAvailableActions();
 
 		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(availableActionsList),
-				new GridBagConstraints(0, 1, 1, 5, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+				new GridBagConstraints(0, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
 						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		actionsPanel.add(new JLabel(Main.STRINGS.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1,
@@ -534,23 +566,33 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
+		final var helpScrollPane = new JScrollPane(helpEditorPane);
+		actionsPanel.add(helpScrollPane, new GridBagConstraints(0, 2, 3, 1, 0d, 0.5, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+
+		final var helpScrollPaneBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("HELP_BORDER_TITLE"));
+		helpScrollPane.setBorder(helpScrollPaneBorder);
+		final var helpScrollPaneBorderInsets = helpScrollPaneBorder.getBorder().getBorderInsets(helpScrollPane);
+
 		propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
-		actionsPanel.add(propertiesScrollPane, new GridBagConstraints(3, 1, 1, 5, 1d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		actionsPanel.add(propertiesScrollPane,
+				new GridBagConstraints(3, 1, 1, 2, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(0, 0, helpScrollPaneBorderInsets.top + helpScrollPaneBorderInsets.bottom, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignedActionsList.addListSelectionListener(_ -> {
 			selectedAssignedAction = assignedActionsList.getSelectedValue();
 
-			final var buttonsEnabled = selectedAssignedAction != null;
-			removeButton.setEnabled(buttonsEnabled);
-			copyButton.setEnabled(buttonsEnabled);
+			final var notNull = selectedAssignedAction != null;
+			removeButton.setEnabled(notNull);
+			copyButton.setEnabled(notNull);
 
 			updateProperties();
+			updateHelp(notNull ? selectedAssignedAction.action.getClass() : null);
 		});
 		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
-				new GridBagConstraints(2, 1, 1, 5, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+				new GridBagConstraints(2, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
 						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var okCancelButtonPanel = new JPanel();
@@ -568,6 +610,7 @@ public final class EditActionsDialog extends JDialog {
 		okCancelButtonPanel.add(cancelButton);
 
 		updateAssignedActions();
+		updateHelp(null);
 	}
 
 	public boolean isCycleEditor() {
@@ -616,6 +659,44 @@ public final class EditActionsDialog extends JDialog {
 		updatePasteButton();
 	}
 
+	private void updateHelp(final Class<?> actionClass) {
+		final String title;
+		String descriptionLabel = null;
+
+		if (actionClass != null) {
+			title = IAction.getLabel(actionClass);
+			final var actionAnnotation = actionClass.getAnnotation(Action.class);
+			if (actionAnnotation != null) {
+				descriptionLabel = actionAnnotation.description();
+			}
+		} else {
+			title = Main.STRINGS.getString("NO_SELECTION_HELP_TITLE");
+			descriptionLabel = "NO_SELECTION_HELP_DESCRIPTION";
+		}
+
+		updateHelp(title, descriptionLabel);
+	}
+
+	private void updateHelp(final String title, final String descriptionLabel) {
+		String description = null;
+		if (descriptionLabel != null && !descriptionLabel.isBlank()) {
+			try {
+				description = Main.STRINGS.getString(descriptionLabel);
+			} catch (final MissingResourceException _) {
+				// handled below
+			}
+		}
+
+		if ( description == null || description.isBlank()) {
+			description = Main.STRINGS.getString("NO_HELP_AVAILABLE_HELP_DESCRIPTION");
+		}
+
+		helpEditorPane.setText(
+				"<html>" + (title != null && !title.isBlank() ? "<h3 style='margin-top: 0'>" + title + "</h3>" : "")
+						+ description + "</html>");
+		helpEditorPane.setCaretPosition(0);
+	}
+
 	private void updatePasteButton() {
 		final var clipboardAction = main.getClipboardAction();
 		final var pasteAllowed = clipboardAction != null
@@ -630,6 +711,7 @@ public final class EditActionsDialog extends JDialog {
 
 		if (propertiesPanel != null) {
 			propertiesPanel.removeAll();
+			propertiesPanel = null;
 		}
 
 		if (selectedAssignedAction != null) {
@@ -654,8 +736,30 @@ public final class EditActionsDialog extends JDialog {
 				propertiesPanel.add(propertyPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 						GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 10));
 
-				final var propertyNameLabel = new JLabel(Main.STRINGS.getString(annotation.label()));
+				final var propertyTitle = Main.STRINGS.getString(annotation.title());
+				final var propertyDescriptionLabel = annotation.description();
+				final var propertyNameLabel = new JLabel(propertyTitle);
 				propertyNameLabel.setPreferredSize(new Dimension(155, 15));
+				if (propertyDescriptionLabel != null && !propertyDescriptionLabel.isBlank()) {
+					propertyNameLabel.setCursor(HELP_CURSOR);
+					propertyNameLabel.addMouseListener(new MouseAdapter() {
+
+						@Override
+						public void mouseClicked(final MouseEvent e) {
+							updateHelp(propertyTitle, propertyDescriptionLabel);
+						}
+
+						@Override
+						public void mouseEntered(final MouseEvent e) {
+							propertyNameLabel.setText("<html><u>" + propertyTitle + "</u></html>");
+						}
+
+						@Override
+						public void mouseExited(final MouseEvent e) {
+							propertyNameLabel.setText(propertyTitle);
+						}
+					});
+				}
 				propertyPanel.add(propertyNameLabel);
 
 				try {

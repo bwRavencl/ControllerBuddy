@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 import org.lwjgl.sdl.SDLGamepad;
 
-@Action(label = "BUTTON_TO_MODE_ACTION", category = ActionCategory.BUTTON, order = 145)
+@Action(title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
 public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Boolean> {
 
 	public static final String MOMENTARY_SYMBOL = "⇧";
@@ -43,13 +43,13 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 	@SuppressWarnings("JdkObsolete")
 	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "MODE_UUID", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
+	@ActionProperty(title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
 
-	@ActionProperty(label = "TOGGLE", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean toggle;
 
 	private transient boolean up = true;

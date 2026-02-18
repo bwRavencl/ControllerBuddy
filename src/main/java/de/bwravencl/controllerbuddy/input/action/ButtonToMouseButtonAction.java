@@ -20,7 +20,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
-@Action(label = "TO_MOUSE_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
+@Action(title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
 public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean> implements IButtonToAction {
 
 	@Override

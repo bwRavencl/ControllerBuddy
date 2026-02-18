@@ -31,10 +31,10 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 
 	private transient Activatable activatable;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "MOUSE_BUTTON", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
+	@ActionProperty(title = "MOUSE_BUTTON_TITLE", description = "MOUSE_BUTTON_DESCRIPTION", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	private int mouseButton = DEFAULT_MOUSE_BUTTON;
 
 	private transient boolean wasDown;

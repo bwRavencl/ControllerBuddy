@@ -23,7 +23,7 @@ import java.lang.constant.Constable;
 
 public abstract class DescribableAction<V extends Constable> implements IAction<V> {
 
-	@ActionProperty(label = "DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
+	@ActionProperty(title = "DESCRIPTION_TITLE", description = "DESCRIPTION_DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
 	private String description;
 
 	@Override

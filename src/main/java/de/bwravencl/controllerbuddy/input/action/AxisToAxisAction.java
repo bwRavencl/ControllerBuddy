@@ -26,7 +26,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxAxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
 
-@Action(label = "TO_AXIS_ACTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
+@Action(title = "TO_AXIS_ACTION_TITLE", description = "TO_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
 	private static final float DEFAULT_DEAD_ZONE = 0f;
@@ -39,19 +39,19 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 
 	private static final float DEFAULT_MIN_VALUE = -1f;
 
-	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	@ActionProperty(title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 103)
+	@ActionProperty(title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 103)
 	float exponent = DEFAULT_EXPONENT;
 
-	@ActionProperty(label = "INITIAL_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 202)
+	@ActionProperty(title = "INITIAL_VALUE_TITLE", description = "INITIAL_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 202)
 	float initialValue = DEFAULT_INITIAL_VALUE;
 
-	@ActionProperty(label = "MAX_AXIS_VALUE", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
+	@ActionProperty(title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
 	float maxValue = DEFAULT_MAX_VALUE;
 
-	@ActionProperty(label = "MIN_AXIS_VALUE", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
+	@ActionProperty(title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
 	float minValue = DEFAULT_MIN_VALUE;
 
 	@Override

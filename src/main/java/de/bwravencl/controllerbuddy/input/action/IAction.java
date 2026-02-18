@@ -34,7 +34,7 @@ public interface IAction<V extends Constable> extends Cloneable {
 					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
 		}
 
-		return Main.STRINGS.getString(annotation.label());
+		return Main.STRINGS.getString(annotation.title());
 	}
 
 	Object clone() throws CloneNotSupportedException;

@@ -43,7 +43,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 					.getFieldToActionPropertiesMap(ActivationIntervalAction.class);
 			disable = fieldToActionPropertyMap.entrySet().stream().filter(e -> fieldName.equals(e.getKey().getName()))
 					.findFirst()
-					.map(e -> ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_LABEL.equals(e.getValue().label()))
+					.map(e -> ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_TITLE.equals(e.getValue().title()))
 					.orElse(false);
 		} else {
 			disable = false;

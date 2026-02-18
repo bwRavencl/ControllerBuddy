@@ -27,12 +27,12 @@ import java.text.MessageFormat;
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements ILongPressAction<V>, IResetableAction<V> {
 
-	@ActionProperty(label = "BUTTON_ID", editorBuilder = ButtonEditorBuilder.class, order = 10)
+	@ActionProperty(title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
 
 	private transient Activatable activatable;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	private transient boolean wasDown;

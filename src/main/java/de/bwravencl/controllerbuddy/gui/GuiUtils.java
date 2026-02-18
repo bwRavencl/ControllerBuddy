@@ -47,6 +47,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -101,6 +102,16 @@ public final class GuiUtils {
 		modePanel.add(modeComboBox);
 
 		return modeComboBox;
+	}
+
+	static JEditorPane createHtmlViewerEditorPane() {
+		final var editorPane = new JEditorPane();
+		editorPane.setContentType("text/html");
+		editorPane.setEditable(false);
+		editorPane.setFocusable(false);
+		editorPane.setCaretColor(editorPane.getBackground());
+
+		return editorPane;
 	}
 
 	public static JTextField createTextFieldWithMenu(final String text, final int columns) {

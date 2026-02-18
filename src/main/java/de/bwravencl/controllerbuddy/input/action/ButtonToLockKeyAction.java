@@ -26,16 +26,16 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
 
-@Action(label = "BUTTON_TO_LOCK_KEY_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
+@Action(title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		implements IButtonToAction, IInitializationAction<Boolean> {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "ON", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
 
-	@ActionProperty(label = "KEY", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
+	@ActionProperty(title = "KEY_TITLE", description = "KEY_DESCRIPTION", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
 	private LockKey virtualKeyCode = LockKey.CAPS_LOCK_LOCK_KEY;
 
 	private transient boolean wasUp = true;

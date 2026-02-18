@@ -20,7 +20,7 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
-@Action(label = "TO_BUTTON_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
+@Action(title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
 public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToAction {
 
 	@Override

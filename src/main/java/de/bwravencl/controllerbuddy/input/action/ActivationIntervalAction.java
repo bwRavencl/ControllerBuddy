@@ -25,15 +25,15 @@ import java.lang.constant.Constable;
 public abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
 		implements IActivatableAction<V>, IInitializationAction<V> {
 
-	public static final String MAX_ACTIVATION_INTERVAL_LABEL = "MAX_ACTIVATION_INTERVAL";
+	public static final String MAX_ACTIVATION_INTERVAL_TITLE = "MAX_ACTIVATION_INTERVAL_TITLE";
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.WHILE_PRESSED;
 
-	@ActionProperty(label = "MIN_ACTIVATION_INTERVAL", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
+	@ActionProperty(title = "MIN_ACTIVATION_INTERVAL_TITLE", description = "MIN_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
 	int minActivationInterval;
 
-	@ActionProperty(label = MAX_ACTIVATION_INTERVAL_LABEL, editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
+	@ActionProperty(title = MAX_ACTIVATION_INTERVAL_TITLE, description = "MAX_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
 	private transient long maxActivationTime = Integer.MAX_VALUE;

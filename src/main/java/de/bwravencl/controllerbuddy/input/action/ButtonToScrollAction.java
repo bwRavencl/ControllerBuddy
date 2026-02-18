@@ -22,10 +22,10 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
-@Action(label = "TO_SCROLL_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
+@Action(title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
 public final class ButtonToScrollAction extends ToScrollAction<Boolean> implements IButtonToAction {
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override

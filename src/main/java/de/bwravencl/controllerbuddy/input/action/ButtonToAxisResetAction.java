@@ -29,7 +29,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.text.MessageFormat;
 
-@Action(label = "BUTTON_TO_AXIS_RESET_ACTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
+@Action(title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		implements IButtonToAction, IActivatableAction<Boolean> {
 
@@ -39,19 +39,19 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 
 	private transient Activatable activatable;
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
 	private Activation activation = Activation.ON_PRESS;
 
-	@ActionProperty(label = "FLUID", editorBuilder = BooleanEditorBuilder.class, order = 30)
+	@ActionProperty(title = "FLUID_TITLE", description = "FLUID_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 50)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 50)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
-	@ActionProperty(label = "RESET_VALUE", editorBuilder = AxisValueEditorBuilder.class, order = 20)
+	@ActionProperty(title = "RESET_VALUE_TITLE", description = "RESET_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 20)
 	private float resetValue = DEFAULT_RESET_VALUE;
 
-	@ActionProperty(label = "VIRTUAL_AXIS", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	@ActionProperty(title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	private VirtualAxis virtualAxis = VirtualAxis.X;
 
 	@Override

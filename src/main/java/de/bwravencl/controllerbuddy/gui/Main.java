@@ -182,7 +182,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -552,7 +551,7 @@ public final class Main {
 		modifiableSymbolToDescriptionMap.put(Activation.WHILE_PRESSED.getSymbol(), Activation.WHILE_PRESSED.toString());
 		modifiableSymbolToDescriptionMap.put(Activation.ON_RELEASE.getSymbol(), Activation.ON_RELEASE.toString());
 		modifiableSymbolToDescriptionMap.put(ButtonToCycleAction.CYCLE_SYMBOL,
-				STRINGS.getString("BUTTON_TO_CYCLE_ACTION"));
+				STRINGS.getString("BUTTON_TO_CYCLE_ACTION_TITLE"));
 		modifiableSymbolToDescriptionMap.put(ILongPressAction.SHORT_PRESS_SYMBOL,
 				STRINGS.getString("LEGEND_SHORT_PRESS"));
 		modifiableSymbolToDescriptionMap.put(ILongPressAction.LONG_PRESS_SYMBOL,
@@ -6227,10 +6226,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent actionEvent) {
-			final var editorPane = new JEditorPane();
-			editorPane.setContentType("text/html");
-			editorPane.setEditable(false);
-			editorPane.setCaretColor(editorPane.getBackground());
+			final var editorPane = GuiUtils.createHtmlViewerEditorPane();
 
 			final var scrollPane = new JScrollPane(editorPane);
 			scrollPane.setPreferredSize(new Dimension(650, 400));

@@ -23,17 +23,17 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 
-@Action(label = "TO_SCROLL_ACTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 35)
+@Action(title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 35)
 public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
 	private static final float DEFAULT_DEAD_ZONE = 0.1f;
 
 	private static final float DEFAULT_EXPONENT = 1f;
 
-	@ActionProperty(label = "DEAD_ZONE", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	@ActionProperty(title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	private float deadZone = DEFAULT_DEAD_ZONE;
 
-	@ActionProperty(label = "EXPONENT", editorBuilder = ExponentEditorBuilder.class, order = 101)
+	@ActionProperty(title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 101)
 	private float exponent = DEFAULT_EXPONENT;
 
 	@Override

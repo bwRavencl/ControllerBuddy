@@ -27,23 +27,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Action(label = "BUTTON_TO_CYCLE_ACTION", category = ActionCategory.BUTTON, order = 140)
+@Action(title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		implements IActivatableAction<Boolean>, IButtonToAction, IResetableAction<Boolean> {
 
 	public static final String CYCLE_SYMBOL = "⟳";
 
-	@ActionProperty(label = "ACTIONS", editorBuilder = ActionsEditorBuilder.class, order = 10)
+	@ActionProperty(title = "ACTIONS_TITLE", description = "ACTIONS_DESCRIPTION", editorBuilder = ActionsEditorBuilder.class, order = 10)
 	private List<IAction<Boolean>> actions = new ArrayList<>();
 
 	private transient Activatable activatable = Activatable.YES;
 
-	@ActionProperty(label = "ACTIVATION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.ON_PRESS;
 
 	private transient int index;
 
-	@ActionProperty(label = "LONG_PRESS", editorBuilder = LongPressEditorBuilder.class, order = 400)
+	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@SuppressWarnings("unchecked")

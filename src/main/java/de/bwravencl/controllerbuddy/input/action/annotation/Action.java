@@ -27,9 +27,11 @@ public @interface Action {
 
 	ActionCategory category();
 
-	String label();
+	String description();
 
 	int order();
+
+	String title();
 
 	enum ActionCategory {
 		ALL, AXIS, AXIS_AND_TRIGGER, BUTTON, BUTTON_AND_CYCLES, ON_SCREEN_KEYBOARD_MODE

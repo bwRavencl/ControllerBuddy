@@ -28,12 +28,12 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 
 	private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
 
-	@ActionProperty(label = "CURSOR_SENSITIVITY", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
+	@ActionProperty(title = "CURSOR_SENSITIVITY_TITLE", description = "CURSOR_SENSITIVITY_DESCRIPTION", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
 	int cursorSensitivity = DEFAULT_CURSOR_SENSITIVITY;
 
 	transient float remainingD;
 
-	@ActionProperty(label = "MOUSE_AXIS", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
+	@ActionProperty(title = "MOUSE_AXIS_TITLE", description = "MOUSE_AXIS_DESCRIPTION", editorBuilder = MouseAxisEditorBuilder.class, order = 10)
 	private MouseAxis axis = MouseAxis.X;
 
 	public MouseAxis getAxis() {
