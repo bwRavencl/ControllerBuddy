@@ -86,7 +86,7 @@ import org.lwjgl.sdl.SDLGamepad;
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
-	private static final double ACTIONS_LIST_WEIGHT_X = 0.15;
+	private static final double ACTIONS_LIST_WEIGHT_X = 0.16;
 
 	private static final List<Class<?>> AXIS_ACTION_CLASSES;
 
