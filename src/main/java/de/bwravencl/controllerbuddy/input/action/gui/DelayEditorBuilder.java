@@ -17,13 +17,14 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 
-public final class LongPressEditorBuilder extends BooleanEditorBuilder {
+public final class DelayEditorBuilder extends NumberEditorBuilder<Long> {
 
-	public LongPressEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
+	public DelayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		super(editActionsDialog, action, fieldName, fieldType);
@@ -34,13 +35,30 @@ public final class LongPressEditorBuilder extends BooleanEditorBuilder {
 		final var cycleEditor = editActionsDialog.isCycleEditor();
 
 		if (cycleEditor) {
-			initialValue = false;
+			initialValue = 0L;
 		}
 
 		super.buildEditor(parentPanel);
 
+		GuiUtils.makeMillisecondSpinner(spinner, 6);
+
 		if (cycleEditor) {
-			checkBox.setEnabled(false);
+			spinner.setEnabled(false);
 		}
+	}
+
+	@Override
+	Comparable<Long> getMaximum() {
+		return 10_000L;
+	}
+
+	@Override
+	Comparable<Long> getMinimum() {
+		return 0L;
+	}
+
+	@Override
+	Number getStepSize() {
+		return 10L;
 	}
 }

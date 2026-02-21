@@ -22,17 +22,17 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 
 @Action(title = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
 public final class ButtonToPressOnScreenKeyboardKeyAction
-		implements IButtonToLongPressAction, IInitializationAction<Boolean> {
+		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
+
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
 	@ActionProperty(title = "LOCK_KEY_TITLE", description = "LOCK_KEY_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 10)
 	private boolean lockKey;
-
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	private transient boolean wasDown;
 
@@ -45,7 +45,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		final var onScreenKeyboard = input.getMain().getOnScreenKeyboard();
 
@@ -70,6 +70,11 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 	}
 
 	@Override
+	public long getDelay() {
+		return delay;
+	}
+
+	@Override
 	public String getDescription(final Input input) {
 		return Main.STRINGS
 				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
@@ -86,16 +91,11 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
 	public void setLockKey(final boolean lockKey) {
 		this.lockKey = lockKey;
-	}
-
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
 	}
 }

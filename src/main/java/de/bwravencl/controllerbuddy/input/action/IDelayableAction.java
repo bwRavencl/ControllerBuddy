@@ -18,17 +18,19 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import java.lang.constant.Constable;
 
-public interface ILongPressAction<V extends Constable> extends IAction<V> {
+public interface IDelayableAction<V extends Constable> extends IAction<V> {
 
-	boolean DEFAULT_LONG_PRESS = false;
+	long DEFAULT_DELAY = 0L;
 
-	String LONG_PRESS_SYMBOL = "⟿";
+	String DELAYED_SYMBOL = "⟿";
 
-	long MIN_LONG_PRESS_TIME = 1000L;
+	String INSTANT_SYMBOL = "⇝";
 
-	String SHORT_PRESS_SYMBOL = "⇝";
+	long getDelay();
 
-	boolean isLongPress();
+	default boolean isDelayed() {
+		return getDelay() > 0L;
+	}
 
-	void setLongPress(final boolean longPress);
+	void setDelay(final long delay);
 }

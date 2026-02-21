@@ -21,11 +21,11 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
 @Action(title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
-public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToLongPressAction {
+public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToDelayableAction {
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 		handleAction(value, input);
 	}
 }

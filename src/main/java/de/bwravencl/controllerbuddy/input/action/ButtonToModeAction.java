@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -34,7 +34,7 @@ import java.util.UUID;
 import org.lwjgl.sdl.SDLGamepad;
 
 @Action(title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
-public final class ButtonToModeAction implements IButtonToLongPressAction, IResetableAction<Boolean> {
+public final class ButtonToModeAction implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	public static final String MOMENTARY_SYMBOL = "⇧";
 
@@ -43,8 +43,8 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 	@SuppressWarnings("JdkObsolete")
 	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
 
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
 	@ActionProperty(title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
@@ -64,8 +64,8 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 			final var activeMode = profile.getActiveMode();
 
 			profile.getModeByUuid(modeUuid).ifPresent(newMode -> {
-				IAxisToLongPressAction.onModeActivated(activeMode, newMode);
-				IButtonToLongPressAction.onModeActivated(activeMode, newMode);
+				IAxisToDelayableAction.onModeActivated(activeMode, newMode);
+				IButtonToDelayableAction.onModeActivated(activeMode, newMode);
 
 				profile.setActiveMode(input, newMode);
 			});
@@ -146,8 +146,8 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 							.filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
 		}
 
-		IAxisToLongPressAction.onModeDeactivated(activeMode);
-		IButtonToLongPressAction.onModeDeactivated(activeMode);
+		IAxisToDelayableAction.onModeDeactivated(activeMode);
+		IButtonToDelayableAction.onModeDeactivated(activeMode);
 
 		profile.setActiveMode(input, previousMode);
 
@@ -158,7 +158,7 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		final var profile = input.getProfile();
 
@@ -181,6 +181,11 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 		} else if (Profile.DEFAULT_MODE.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 			activateMode(input, profile);
 		}
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
@@ -211,11 +216,6 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 		return toggle ? TOGGLE_SYMBOL : MOMENTARY_SYMBOL;
 	}
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
 	public boolean isToggle() {
 		return toggle;
 	}
@@ -230,8 +230,8 @@ public final class ButtonToModeAction implements IButtonToLongPressAction, IRese
 	}
 
 	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
 	public void setMode(final Mode mode) {

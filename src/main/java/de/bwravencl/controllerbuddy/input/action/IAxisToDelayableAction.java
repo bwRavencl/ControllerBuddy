@@ -23,9 +23,9 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<Float> {
+public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<Float> {
 
-	Map<IAxisToLongPressAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
+	Map<IAxisToDelayableAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
 
 	Map<IAction<?>, Boolean> ACTION_TO_MUST_DENY_ACTIVATION_MAP = new HashMap<>();
 
@@ -59,8 +59,8 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 
 	float getMinAxisValue();
 
-	default Float handleLongPress(final Input input, final int component, final Float value) {
-		if (!isLongPress()) {
+	default Float handleDelay(final Input input, final int component, final Float value) {
+		if (!isDelayed()) {
 			return value;
 		}
 
@@ -69,7 +69,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
 			if (!ACTION_TO_DOWN_SINCE_MAP.containsKey(this)) {
 				ACTION_TO_DOWN_SINCE_MAP.put(this, currentTime);
-			} else if (currentTime - ACTION_TO_DOWN_SINCE_MAP.get(this) >= MIN_LONG_PRESS_TIME) {
+			} else if (currentTime - ACTION_TO_DOWN_SINCE_MAP.get(this) >= getDelay()) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getAxisToActionsMap().get(component);
 
@@ -85,15 +85,15 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 								isUndelayedOnReleaseAction = false;
 
 								if (action instanceof final AxisToButtonAction axisToButtonAction) {
-									if (!axisToButtonAction.isLongPress()) {
+									if (!axisToButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToButtonAction);
 									}
 								} else if (action instanceof final AxisToKeyAction axisToKeyAction) {
-									if (!axisToKeyAction.isLongPress()) {
+									if (!axisToKeyAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
 									}
 								} else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction) {
-									if (!axisToMouseButtonAction.isLongPress()) {
+									if (!axisToMouseButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
 									}
 								}

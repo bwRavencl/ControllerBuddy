@@ -22,14 +22,14 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.text.MessageFormat;
 import java.util.Locale;
 
 @Action(title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
 public final class ButtonToSelectOnScreenKeyboardKeyAction
-		implements IButtonToLongPressAction, IResetableAction<Boolean> {
+		implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	private static final long ACCELERATION_TIME = 300L;
 
@@ -40,15 +40,15 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 	private static final float PEAK_ELAPSE_TIME_REDUCTION = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
 			/ (float) ACCELERATION_TIME;
 
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
+
 	@ActionProperty(title = "DIRECTION_TITLE", description = "DIRECTION_DESCRIPTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
 	private Direction direction = Direction.UP;
 
 	private transient long initialPressTime;
 
 	private transient long lastPressTime;
-
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -57,7 +57,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		if (value) {
 			final var currentTime = System.currentTimeMillis();
@@ -79,6 +79,11 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 	}
 
 	@Override
+	public long getDelay() {
+		return delay;
+	}
+
+	@Override
 	public String getDescription(final Input input) {
 		return MessageFormat.format(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
 				direction.toString().toLowerCase(Locale.ROOT));
@@ -89,22 +94,17 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
 	public void reset(final Input input) {
 		initialPressTime = 0L;
 		lastPressTime = 0L;
 	}
 
-	public void setDirection(final Direction direction) {
-		this.direction = direction;
+	@Override
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDirection(final Direction direction) {
+		this.direction = direction;
 	}
 }

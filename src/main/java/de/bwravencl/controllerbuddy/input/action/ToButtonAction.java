@@ -20,20 +20,20 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements ILongPressAction<V>, IResetableAction<V> {
+		implements IDelayableAction<V>, IResetableAction<V> {
 
 	@ActionProperty(title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
 
 	private transient Activatable activatable;
 
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
 	private transient boolean wasDown;
 
@@ -44,6 +44,11 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 
 	public int getButtonId() {
 		return buttonId;
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
@@ -136,11 +141,6 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
 	public void reset(final Input input) {
 		wasDown = false;
 	}
@@ -155,7 +155,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 }

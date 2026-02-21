@@ -54,8 +54,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.text.DefaultFormatter;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
@@ -298,6 +301,22 @@ public final class GuiUtils {
 		});
 
 		setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
+	}
+
+	public static void makeMillisecondSpinner(final JSpinner spinner) {
+		makeMillisecondSpinner(spinner, null);
+	}
+
+	public static void makeMillisecondSpinner(final JSpinner spinner, final Integer columns) {
+		final var numberEditor = new NumberEditor(spinner, "# " + Main.STRINGS.getString("MILLISECOND_SYMBOL"));
+		((DefaultFormatter) numberEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+
+		if (columns != null) {
+			final var textField = numberEditor.getTextField();
+			textField.setColumns(6);
+		}
+
+		spinner.setEditor(numberEditor);
 	}
 
 	static void makeWindowTopmost(final Window window) {

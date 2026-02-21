@@ -28,9 +28,9 @@ import java.text.MessageFormat;
 
 @Action(title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
-		implements IButtonToLongPressAction, IInitializationAction<Boolean> {
+		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	private long delay = DEFAULT_DELAY;
 
 	@ActionProperty(title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
@@ -42,7 +42,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		if (value) {
 			if (wasUp) {
@@ -56,6 +56,11 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		} else {
 			wasUp = true;
 		}
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
@@ -76,11 +81,6 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		resetWasUp();
 	}
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
 	public boolean isOn() {
 		return on;
 	}
@@ -89,13 +89,13 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		wasUp = true;
 	}
 
-	public void setLockKey(final LockKey lockKey) {
-		virtualKeyCode = lockKey;
+	@Override
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setLockKey(final LockKey lockKey) {
+		virtualKeyCode = lockKey;
 	}
 
 	public void setOn(final boolean on) {

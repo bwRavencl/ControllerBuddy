@@ -23,8 +23,8 @@ import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
-import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
-import de.bwravencl.controllerbuddy.input.action.IButtonToLongPressAction;
+import de.bwravencl.controllerbuddy.input.action.IAxisToDelayableAction;
+import de.bwravencl.controllerbuddy.input.action.IButtonToDelayableAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
@@ -576,8 +576,8 @@ public final class Input {
 
 		profile.setActiveMode(this, 0);
 
-		IAxisToLongPressAction.reset();
-		IButtonToLongPressAction.reset();
+		IAxisToDelayableAction.reset();
+		IButtonToDelayableAction.reset();
 
 		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions
 				.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
@@ -688,15 +688,15 @@ public final class Input {
 
 			for (final var actions : mode.getButtonToActionsMap().values()) {
 				actions.sort((action1, action2) -> {
-					if (action1 instanceof final IButtonToLongPressAction buttonToLongPressAction1
-							&& action2 instanceof final IButtonToLongPressAction buttonToLongPressAction2) {
-						final var mode1IsLongPress = buttonToLongPressAction1.isLongPress();
-						final var mode2IsLongPress = buttonToLongPressAction2.isLongPress();
+					if (action1 instanceof final IButtonToDelayableAction buttonToDelayableAction1
+							&& action2 instanceof final IButtonToDelayableAction buttonToDelayableAction2) {
+						final var mode1IsDelayed = buttonToDelayableAction1.isDelayed();
+						final var mode2IsDelayed = buttonToDelayableAction2.isDelayed();
 
-						if (mode1IsLongPress && !mode2IsLongPress) {
+						if (mode1IsDelayed && !mode2IsDelayed) {
 							return -1;
 						}
-						if (!mode1IsLongPress && mode2IsLongPress) {
+						if (!mode1IsDelayed && mode2IsDelayed) {
 							return 1;
 						}
 					}

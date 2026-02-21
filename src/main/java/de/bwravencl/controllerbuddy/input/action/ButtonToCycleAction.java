@@ -22,14 +22,14 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActionsEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Action(title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
-		implements IActivatableAction<Boolean>, IButtonToLongPressAction, IResetableAction<Boolean> {
+		implements IActivatableAction<Boolean>, IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	public static final String CYCLE_SYMBOL = "⟳";
 
@@ -41,10 +41,10 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.ON_PRESS;
 
-	private transient int index;
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	private transient int index;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -62,7 +62,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		switch (activation) {
 		case WHILE_PRESSED -> throw new IllegalStateException(ButtonToCycleAction.class.getSimpleName()
@@ -120,6 +120,11 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	}
 
 	@Override
+	public long getDelay() {
+		return delay;
+	}
+
+	@Override
 	public String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
@@ -145,11 +150,6 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
 	public void reset(final Input input) {
 		index = 0;
 	}
@@ -169,7 +169,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	}
 
 	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 }

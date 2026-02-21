@@ -17,6 +17,7 @@
 package de.bwravencl.controllerbuddy.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -32,6 +33,7 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.IDelayableAction;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -108,6 +110,31 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 					}
 
 					return result;
+				}
+
+				@Override
+				public void write(final JsonWriter out, final T value) throws IOException {
+					delegate.write(out, value);
+				}
+			};
+		} else if (IDelayableAction.class.isAssignableFrom(rawType)) {
+			final var delegate = gson.getDelegateAdapter(this, type);
+
+			return new TypeAdapter<>() {
+
+				@Override
+				public T read(final JsonReader in) throws IOException {
+					final var jsonElement = gson.getAdapter(JsonElement.class).read(in);
+					final var object = delegate.fromJsonTree(jsonElement);
+
+					if (object instanceof final IDelayableAction<?> delayableAction && jsonElement.isJsonObject()) {
+						final var jsonObject = jsonElement.getAsJsonObject();
+						if (jsonObject.has("longPress") && jsonObject.get("longPress").getAsBoolean()) {
+							delayableAction.setDelay(1000L);
+						}
+					}
+
+					return object;
 				}
 
 				@Override

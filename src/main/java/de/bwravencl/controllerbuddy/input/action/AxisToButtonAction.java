@@ -23,7 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 
 @Action(title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
-public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToLongPressAction {
+public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToDelayableAction {
 
 	private static final float DEFAULT_MAX_AXIS_VALUE = 1f;
 
@@ -37,7 +37,7 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 
 	@Override
 	public void doAction(final Input input, final int component, Float value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		final var inZone = !input.isAxisSuspended(component) && value >= minAxisValue && value <= maxAxisValue;
 		handleAction(inZone, input);

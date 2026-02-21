@@ -19,20 +19,20 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements ILongPressAction<V>, IResetableAction<V> {
+		implements IDelayableAction<V>, IResetableAction<V> {
 
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
 	private transient Activatable activatable;
 
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
 	@ActionProperty(title = "MOUSE_BUTTON_TITLE", description = "MOUSE_BUTTON_DESCRIPTION", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	private int mouseButton = DEFAULT_MOUSE_BUTTON;
@@ -42,6 +42,11 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	@Override
 	public Activatable getActivatable() {
 		return activatable;
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
@@ -137,11 +142,6 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
 	public void reset(final Input input) {
 		wasDown = false;
 	}
@@ -152,8 +152,8 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	}
 
 	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
 	public void setMouseButton(final int mouseButton) {

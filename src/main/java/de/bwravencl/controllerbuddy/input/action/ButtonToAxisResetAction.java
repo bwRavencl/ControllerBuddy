@@ -25,13 +25,13 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.text.MessageFormat;
 
 @Action(title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
-		implements IButtonToLongPressAction, IActivatableAction<Boolean> {
+		implements IButtonToDelayableAction, IActivatableAction<Boolean> {
 
 	private static final boolean DEFAULT_FLUID = false;
 
@@ -42,11 +42,11 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
 	private Activation activation = Activation.ON_PRESS;
 
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 50)
+	private long delay = DEFAULT_DELAY;
+
 	@ActionProperty(title = "FLUID_TITLE", description = "FLUID_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
-
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 50)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	@ActionProperty(title = "RESET_VALUE_TITLE", description = "RESET_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 20)
 	private float resetValue = DEFAULT_RESET_VALUE;
@@ -56,7 +56,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		switch (activation) {
 		case WHILE_PRESSED -> {
@@ -98,6 +98,11 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	}
 
 	@Override
+	public long getDelay() {
+		return delay;
+	}
+
+	@Override
 	public String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
@@ -118,11 +123,6 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		return fluid;
 	}
 
-	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
 	private void resetAxis(final Input input) {
 		if (fluid) {
 			input.moveAxis(virtualAxis, resetValue);
@@ -141,13 +141,13 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		this.activation = activation;
 	}
 
-	public void setFluid(final boolean fluid) {
-		this.fluid = fluid;
+	@Override
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setFluid(final boolean fluid) {
+		this.fluid = fluid;
 	}
 
 	public void setResetValue(final float resetValue) {

@@ -44,7 +44,7 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
-import de.bwravencl.controllerbuddy.input.action.ILongPressAction;
+import de.bwravencl.controllerbuddy.input.action.IDelayableAction;
 import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction;
 import de.bwravencl.controllerbuddy.input.action.ToScrollAction;
@@ -552,10 +552,8 @@ public final class Main {
 		modifiableSymbolToDescriptionMap.put(Activation.ON_RELEASE.getSymbol(), Activation.ON_RELEASE.toString());
 		modifiableSymbolToDescriptionMap.put(ButtonToCycleAction.CYCLE_SYMBOL,
 				STRINGS.getString("BUTTON_TO_CYCLE_ACTION_TITLE"));
-		modifiableSymbolToDescriptionMap.put(ILongPressAction.SHORT_PRESS_SYMBOL,
-				STRINGS.getString("LEGEND_SHORT_PRESS"));
-		modifiableSymbolToDescriptionMap.put(ILongPressAction.LONG_PRESS_SYMBOL,
-				STRINGS.getString("LEGEND_LONG_PRESS"));
+		modifiableSymbolToDescriptionMap.put(IDelayableAction.INSTANT_SYMBOL, STRINGS.getString("LEGEND_INSTANT"));
+		modifiableSymbolToDescriptionMap.put(IDelayableAction.DELAYED_SYMBOL, STRINGS.getString("LEGEND_DELAYED"));
 		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.TOGGLE_SYMBOL, STRINGS.getString("LEGEND_TOGGLE"));
 		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.MOMENTARY_SYMBOL,
 				STRINGS.getString("LEGEND_MOMENTARY"));
@@ -1026,12 +1024,7 @@ public final class Main {
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(getPollInterval(), 1, 100, 1));
-		final var pollIntervalSpinnerEditor = new NumberEditor(pollIntervalSpinner,
-				"# " + STRINGS.getString("MILLISECOND_SYMBOL"));
-		((DefaultFormatter) pollIntervalSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		pollIntervalSpinner.setEditor(pollIntervalSpinnerEditor);
-		pollIntervalSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_POLL_INTERVAL,
-				(int) ((JSpinner) event.getSource()).getValue()));
+		GuiUtils.makeMillisecondSpinner(pollIntervalSpinner);
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		final var physicalAxesPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -4336,10 +4329,7 @@ public final class Main {
 
 		final var keyRepeatIntervalSpinner = new JSpinner(
 				new SpinnerNumberModel((int) profile.getKeyRepeatInterval(), 0, 1000, 1));
-		final var keyRepeatIntervalEditor = new NumberEditor(keyRepeatIntervalSpinner,
-				"# " + STRINGS.getString("MILLISECOND_SYMBOL"));
-		((DefaultFormatter) keyRepeatIntervalEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-		keyRepeatIntervalSpinner.setEditor(keyRepeatIntervalEditor);
+		GuiUtils.makeMillisecondSpinner(keyRepeatIntervalSpinner);
 		keyRepeatIntervalSpinner.addChangeListener(event -> {
 			final var keyRepeatInterval = (int) ((JSpinner) event.getSource()).getValue();
 			input.getProfile().setKeyRepeatInterval(keyRepeatInterval);
@@ -4397,15 +4387,15 @@ public final class Main {
 			return 0;
 		}
 
-		final var delayedActions = new ArrayList<ILongPressAction<?>>();
+		final var delayedActions = new ArrayList<IDelayableAction<?>>();
 		final var whilePressedActions = new ArrayList<IActivatableAction<?>>();
 		final var onPressActions = new ArrayList<IActivatableAction<?>>();
 		final var onReleaseActions = new ArrayList<IActivatableAction<?>>();
 		final var otherActions = new ArrayList<IAction<?>>();
 
 		for (final var action : actions) {
-			if (action instanceof final ILongPressAction<?> longPressAction && longPressAction.isLongPress()) {
-				delayedActions.add(longPressAction);
+			if (action instanceof final IDelayableAction<?> delayableAction && delayableAction.isDelayed()) {
+				delayedActions.add(delayableAction);
 			} else if (action instanceof final IActivatableAction<?> activatableAction) {
 				switch (activatableAction.getActivation()) {
 				case WHILE_PRESSED -> whilePressedActions.add(activatableAction);
@@ -4450,8 +4440,8 @@ public final class Main {
 					.toList();
 			actionGroupB = delayedActions;
 			actionGroupC = List.of();
-			groupAPrefix = ILongPressAction.SHORT_PRESS_SYMBOL;
-			groupBPrefix = ILongPressAction.LONG_PRESS_SYMBOL;
+			groupAPrefix = IDelayableAction.INSTANT_SYMBOL;
+			groupBPrefix = IDelayableAction.DELAYED_SYMBOL;
 			groupCPrefix = null;
 		}
 
@@ -5661,10 +5651,7 @@ public final class Main {
 			timeoutPanel.add(timeoutLabel);
 
 			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
-			final var timeoutSpinnerEditor = new NumberEditor(timeoutSpinner,
-					"# " + STRINGS.getString("MILLISECOND_SYMBOL"));
-			((DefaultFormatter) timeoutSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
-			timeoutSpinner.setEditor(timeoutSpinnerEditor);
+			GuiUtils.makeMillisecondSpinner(timeoutSpinner);
 			timeoutPanel.add(timeoutSpinner);
 
 			final var passwordPanel = new JPanel(DEFAULT_FLOW_LAYOUT);

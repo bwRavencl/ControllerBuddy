@@ -20,21 +20,21 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
 abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
-		implements ILongPressAction<V>, IResetableAction<V> {
+		implements IDelayableAction<V>, IResetableAction<V> {
 
 	private transient Activatable activatable;
 
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
+
 	@ActionProperty(title = "KEYSTROKE_TITLE", description = "KEYSTROKE_DESCRIPTION", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
-
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
 
 	private transient boolean wasDown;
 
@@ -49,6 +49,11 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	@Override
 	public Activatable getActivatable() {
 		return activatable;
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
@@ -144,11 +149,6 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
-	}
-
-	@Override
 	public void reset(final Input input) {
 		wasDown = false;
 	}
@@ -158,12 +158,12 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 		this.activatable = activatable;
 	}
 
-	public void setKeystroke(final KeyStroke keystroke) {
-		this.keystroke = keystroke;
+	@Override
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
-	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setKeystroke(final KeyStroke keystroke) {
+		this.keystroke = keystroke;
 	}
 }

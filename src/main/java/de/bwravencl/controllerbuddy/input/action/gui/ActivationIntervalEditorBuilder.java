@@ -17,14 +17,12 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.text.DefaultFormatter;
 
 public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
@@ -58,13 +56,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 
 		super.buildEditor(parentPanel);
 
-		final var editor = new JSpinner.NumberEditor(spinner, "# " + Main.STRINGS.getString("MILLISECOND_SYMBOL"));
-		spinner.setEditor(editor);
-		textField = editor.getTextField();
-		textField.setColumns(6);
-
-		final var formatter = (DefaultFormatter) textField.getFormatter();
-		formatter.setCommitsOnValidEdit(true);
+		GuiUtils.makeMillisecondSpinner(spinner, 6);
 
 		if (disable) {
 			spinner.setEnabled(false);

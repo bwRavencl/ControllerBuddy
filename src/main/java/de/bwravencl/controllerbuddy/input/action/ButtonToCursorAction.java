@@ -20,17 +20,17 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 
 @Action(title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 125)
-public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToLongPressAction {
+public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToDelayableAction {
 
-	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
-	private boolean longPress = DEFAULT_LONG_PRESS;
+	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	private long delay = DEFAULT_DELAY;
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
-		value = handleLongPress(input, component, value);
+		value = handleDelay(input, component, value);
 
 		if (!value) {
 			remainingD = 0f;
@@ -43,12 +43,12 @@ public final class ButtonToCursorAction extends ToCursorAction<Boolean> implemen
 	}
 
 	@Override
-	public boolean isLongPress() {
-		return longPress;
+	public long getDelay() {
+		return delay;
 	}
 
 	@Override
-	public void setLongPress(final boolean longPress) {
-		this.longPress = longPress;
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 }
