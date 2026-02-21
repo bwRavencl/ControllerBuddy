@@ -28,7 +28,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 @Action(title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
-public final class ButtonToSelectOnScreenKeyboardKeyAction implements IButtonToAction, IResetableAction<Boolean> {
+public final class ButtonToSelectOnScreenKeyboardKeyAction
+		implements IButtonToLongPressAction, IResetableAction<Boolean> {
 
 	private static final long ACCELERATION_TIME = 300L;
 

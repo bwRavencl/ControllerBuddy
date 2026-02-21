@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Action(title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
-		implements IActivatableAction<Boolean>, IButtonToAction, IResetableAction<Boolean> {
+		implements IActivatableAction<Boolean>, IButtonToLongPressAction, IResetableAction<Boolean> {
 
 	public static final String CYCLE_SYMBOL = "⟳";
 

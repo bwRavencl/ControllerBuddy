@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 
 @Action(title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 110)
-public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToAction {
+public final class ButtonToButtonAction extends ToButtonAction<Boolean> implements IButtonToLongPressAction {
 
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {

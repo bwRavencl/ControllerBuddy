@@ -34,7 +34,7 @@ import java.util.UUID;
 import org.lwjgl.sdl.SDLGamepad;
 
 @Action(title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
-public final class ButtonToModeAction implements IButtonToAction, IResetableAction<Boolean> {
+public final class ButtonToModeAction implements IButtonToLongPressAction, IResetableAction<Boolean> {
 
 	public static final String MOMENTARY_SYMBOL = "⇧";
 
@@ -65,7 +65,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 
 			profile.getModeByUuid(modeUuid).ifPresent(newMode -> {
 				IAxisToLongPressAction.onModeActivated(activeMode, newMode);
-				IButtonToAction.onModeActivated(activeMode, newMode);
+				IButtonToLongPressAction.onModeActivated(activeMode, newMode);
 
 				profile.setActiveMode(input, newMode);
 			});
@@ -147,7 +147,7 @@ public final class ButtonToModeAction implements IButtonToAction, IResetableActi
 		}
 
 		IAxisToLongPressAction.onModeDeactivated(activeMode);
-		IButtonToAction.onModeDeactivated(activeMode);
+		IButtonToLongPressAction.onModeDeactivated(activeMode);
 
 		profile.setActiveMode(input, previousMode);
 

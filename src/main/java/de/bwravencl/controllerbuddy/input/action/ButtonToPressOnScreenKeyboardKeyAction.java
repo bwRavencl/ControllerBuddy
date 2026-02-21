@@ -25,7 +25,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(title = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
-public final class ButtonToPressOnScreenKeyboardKeyAction implements IButtonToAction, IInitializationAction<Boolean> {
+public final class ButtonToPressOnScreenKeyboardKeyAction
+		implements IButtonToLongPressAction, IInitializationAction<Boolean> {
 
 	@ActionProperty(title = "LOCK_KEY_TITLE", description = "LOCK_KEY_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 10)
 	private boolean lockKey;

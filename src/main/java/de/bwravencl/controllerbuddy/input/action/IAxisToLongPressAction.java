@@ -25,16 +25,16 @@ import java.util.Map;
 
 public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<Float> {
 
-	Map<IAxisToLongPressAction, Long> actionToDownSinceMap = new HashMap<>();
+	Map<IAxisToLongPressAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
 
-	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
+	Map<IAction<?>, Boolean> ACTION_TO_MUST_DENY_ACTIVATION_MAP = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
 		return action.getActivation() == Activation.ON_RELEASE;
 	}
 
 	static void onModeActivated(final Mode activeMode, final Mode newMode) {
-		actionToDownSinceMap.keySet().removeIf(action -> {
+		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> {
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalAxisId = activeMode.getAxisToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
@@ -47,12 +47,12 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 	}
 
 	static void onModeDeactivated(final Mode activeMode) {
-		actionToDownSinceMap.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
+		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
 	}
 
 	static void reset() {
-		actionToDownSinceMap.clear();
-		actionToMustDenyActivationMap.clear();
+		ACTION_TO_DOWN_SINCE_MAP.clear();
+		ACTION_TO_MUST_DENY_ACTIVATION_MAP.clear();
 	}
 
 	float getMaxAxisValue();
@@ -67,9 +67,9 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 		final var currentTime = System.currentTimeMillis();
 
 		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
-			if (!actionToDownSinceMap.containsKey(this)) {
-				actionToDownSinceMap.put(this, currentTime);
-			} else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+			if (!ACTION_TO_DOWN_SINCE_MAP.containsKey(this)) {
+				ACTION_TO_DOWN_SINCE_MAP.put(this, currentTime);
+			} else if (currentTime - ACTION_TO_DOWN_SINCE_MAP.get(this) >= MIN_LONG_PRESS_TIME) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getAxisToActionsMap().get(component);
 
@@ -79,7 +79,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 								continue;
 							}
 
-							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
+							var isUndelayedOnReleaseAction = ACTION_TO_MUST_DENY_ACTIVATION_MAP.get(action);
 
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
@@ -98,7 +98,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 									}
 								}
 
-								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
+								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);
 							}
 
 							if (isUndelayedOnReleaseAction) {
@@ -113,7 +113,7 @@ public interface IAxisToLongPressAction extends IAxisToAction, ILongPressAction<
 				return value;
 			}
 		} else {
-			actionToDownSinceMap.remove(this);
+			ACTION_TO_DOWN_SINCE_MAP.remove(this);
 		}
 
 		return Float.MIN_VALUE;

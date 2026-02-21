@@ -28,7 +28,7 @@ import java.text.MessageFormat;
 
 @Action(title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
-		implements IButtonToAction, IInitializationAction<Boolean> {
+		implements IButtonToLongPressAction, IInitializationAction<Boolean> {
 
 	private boolean longPress = DEFAULT_LONG_PRESS;
 

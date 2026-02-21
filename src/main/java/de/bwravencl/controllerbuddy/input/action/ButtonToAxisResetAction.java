@@ -31,7 +31,7 @@ import java.text.MessageFormat;
 
 @Action(title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
-		implements IButtonToAction, IActivatableAction<Boolean> {
+		implements IButtonToLongPressAction, IActivatableAction<Boolean> {
 
 	private static final boolean DEFAULT_FLUID = false;
 

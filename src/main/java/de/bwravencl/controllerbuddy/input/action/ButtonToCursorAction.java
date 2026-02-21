@@ -23,7 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 125)
-public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToAction {
+public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToLongPressAction {
 
 	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;

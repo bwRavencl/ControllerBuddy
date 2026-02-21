@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAxisToLongPressAction;
-import de.bwravencl.controllerbuddy.input.action.IButtonToAction;
+import de.bwravencl.controllerbuddy.input.action.IButtonToLongPressAction;
 import de.bwravencl.controllerbuddy.input.action.IInitializationAction;
 import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
@@ -577,7 +577,7 @@ public final class Input {
 		profile.setActiveMode(this, 0);
 
 		IAxisToLongPressAction.reset();
-		IButtonToAction.reset();
+		IButtonToLongPressAction.reset();
 
 		profile.getButtonToModeActionsMap().values().forEach(buttonToModeActions -> buttonToModeActions
 				.forEach(buttonToModeAction -> buttonToModeAction.reset(this)));
@@ -688,10 +688,10 @@ public final class Input {
 
 			for (final var actions : mode.getButtonToActionsMap().values()) {
 				actions.sort((action1, action2) -> {
-					if (action1 instanceof final IButtonToAction buttonToAction1
-							&& action2 instanceof final IButtonToAction buttonToAction2) {
-						final var mode1IsLongPress = buttonToAction1.isLongPress();
-						final var mode2IsLongPress = buttonToAction2.isLongPress();
+					if (action1 instanceof final IButtonToLongPressAction buttonToLongPressAction1
+							&& action2 instanceof final IButtonToLongPressAction buttonToLongPressAction2) {
+						final var mode1IsLongPress = buttonToLongPressAction1.isLongPress();
+						final var mode2IsLongPress = buttonToLongPressAction2.isLongPress();
 
 						if (mode1IsLongPress && !mode2IsLongPress) {
 							return -1;

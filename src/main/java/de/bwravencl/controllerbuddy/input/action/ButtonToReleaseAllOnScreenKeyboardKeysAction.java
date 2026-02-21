@@ -24,7 +24,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.LongPressEditorBuilder;
 
 @Action(title = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE", description = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 530)
-public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButtonToAction {
+public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButtonToLongPressAction {
 
 	@ActionProperty(title = "LONG_PRESS_TITLE", description = "LONG_PRESS_DESCRIPTION", editorBuilder = LongPressEditorBuilder.class, order = 400)
 	private boolean longPress = DEFAULT_LONG_PRESS;

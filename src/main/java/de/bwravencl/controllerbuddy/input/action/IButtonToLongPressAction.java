@@ -23,18 +23,18 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface IButtonToAction extends ILongPressAction<Boolean> {
+public interface IButtonToLongPressAction extends ILongPressAction<Boolean> {
 
-	Map<IButtonToAction, Long> actionToDownSinceMap = new HashMap<>();
+	Map<IButtonToLongPressAction, Long> ACTION_TO_DOWN_SINCE_MAP = new HashMap<>();
 
-	Map<IAction<?>, Boolean> actionToMustDenyActivationMap = new HashMap<>();
+	Map<IAction<?>, Boolean> ACTION_TO_MUST_DENY_ACTIVATION_MAP = new HashMap<>();
 
 	private static boolean isOnReleaseAction(final IActivatableAction<?> action) {
 		return action.getActivation() == Activation.ON_RELEASE;
 	}
 
 	static void onModeActivated(final Mode activeMode, final Mode newMode) {
-		actionToDownSinceMap.keySet().removeIf(action -> {
+		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> {
 			if (activeMode.getAllActions().contains(action)) {
 				final var optionalButtonId = activeMode.getButtonToActionsMap().entrySet().stream()
 						.filter(entry -> entry.getValue().contains(action)).map(Map.Entry::getKey).findFirst();
@@ -48,12 +48,12 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 	}
 
 	static void onModeDeactivated(final Mode activeMode) {
-		actionToDownSinceMap.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
+		ACTION_TO_DOWN_SINCE_MAP.keySet().removeIf(action -> activeMode.getAllActions().contains(action));
 	}
 
 	static void reset() {
-		actionToDownSinceMap.clear();
-		actionToMustDenyActivationMap.clear();
+		ACTION_TO_DOWN_SINCE_MAP.clear();
+		ACTION_TO_MUST_DENY_ACTIVATION_MAP.clear();
 	}
 
 	default boolean handleLongPress(final Input input, final int component, final boolean value) {
@@ -64,9 +64,9 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 		final var currentTime = System.currentTimeMillis();
 
 		if (value) {
-			if (!actionToDownSinceMap.containsKey(this)) {
-				actionToDownSinceMap.put(this, currentTime);
-			} else if (currentTime - actionToDownSinceMap.get(this) >= MIN_LONG_PRESS_TIME) {
+			if (!ACTION_TO_DOWN_SINCE_MAP.containsKey(this)) {
+				ACTION_TO_DOWN_SINCE_MAP.put(this, currentTime);
+			} else if (currentTime - ACTION_TO_DOWN_SINCE_MAP.get(this) >= MIN_LONG_PRESS_TIME) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getButtonToActionsMap().get(component);
 
@@ -76,7 +76,7 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 								continue;
 							}
 
-							var isUndelayedOnReleaseAction = actionToMustDenyActivationMap.get(action);
+							var isUndelayedOnReleaseAction = ACTION_TO_MUST_DENY_ACTIVATION_MAP.get(action);
 
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
@@ -99,7 +99,7 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 									}
 								}
 
-								actionToMustDenyActivationMap.put(action, isUndelayedOnReleaseAction);
+								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);
 							}
 
 							if (isUndelayedOnReleaseAction) {
@@ -114,7 +114,7 @@ public interface IButtonToAction extends ILongPressAction<Boolean> {
 				return true;
 			}
 		} else {
-			actionToDownSinceMap.remove(this);
+			ACTION_TO_DOWN_SINCE_MAP.remove(this);
 		}
 
 		return false;
