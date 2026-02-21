@@ -566,7 +566,7 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
-		final var helpScrollPane = new JScrollPane(helpEditorPane);
+		final var helpScrollPane = GuiUtils.wrapComponentInScrollPane(helpEditorPane);
 		actionsPanel.add(helpScrollPane, new GridBagConstraints(0, 2, 3, 1, 0d, 0.5, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
 
