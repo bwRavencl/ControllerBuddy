@@ -35,6 +35,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -44,6 +45,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -744,6 +746,8 @@ public final class EditActionsDialog extends JDialog {
 					propertyNameLabel.setCursor(HELP_CURSOR);
 					propertyNameLabel.addMouseListener(new MouseAdapter() {
 
+						private final Font originalFont = propertyNameLabel.getFont();
+
 						@Override
 						public void mouseClicked(final MouseEvent e) {
 							updateHelp(propertyTitle, propertyDescriptionLabel);
@@ -751,12 +755,26 @@ public final class EditActionsDialog extends JDialog {
 
 						@Override
 						public void mouseEntered(final MouseEvent e) {
-							propertyNameLabel.setText("<html><u>" + propertyTitle + "</u></html>");
+							setUnderlineEnabled(true);
 						}
 
 						@Override
 						public void mouseExited(final MouseEvent e) {
-							propertyNameLabel.setText(propertyTitle);
+							setUnderlineEnabled(false);
+						}
+
+						private void setUnderlineEnabled(final boolean enabled) {
+							final Font newFont;
+							if (enabled) {
+								final var newAttributes = new HashMap<TextAttribute, Object>(
+										originalFont.getAttributes());
+								newAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+								newFont = originalFont.deriveFont(newAttributes);
+							} else {
+								newFont = originalFont;
+							}
+
+							propertyNameLabel.setFont(newFont);
 						}
 					});
 				}
