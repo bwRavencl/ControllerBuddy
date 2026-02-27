@@ -131,7 +131,7 @@ jobs:
         run: ./gradlew distTar --info
       - name: Upload Spotbugs-Reports Artifact
         if: ${{ (steps.build_zip.outcome == 'failure') || (steps.build_tgz.outcome == 'failure') }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: spotbugs-reports
           path: build/reports/spotbugs
@@ -145,7 +145,7 @@ jobs:
           echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
           echo "tag_name=$(basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
       - name: Upload Archive Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.release_variables.outputs.archive_filename }}
           path: ${{ steps.release_variables.outputs.archive_path }}
@@ -164,7 +164,7 @@ jobs:
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
           echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
       - name: Upload Signature Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.sign_archive.outputs.signature_filename }}
           path: ${{ steps.sign_archive.outputs.signature_path }}
