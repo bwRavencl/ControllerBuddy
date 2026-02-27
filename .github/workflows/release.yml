@@ -174,7 +174,7 @@ jobs:
     needs: build
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
       - name: Collect Artifact Files
         id: collect_files
         shell: bash
