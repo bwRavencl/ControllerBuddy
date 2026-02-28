@@ -743,8 +743,6 @@ public final class Main {
 	private Main(final MainLoop mainLoop, final CommandLine commandLine) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
-				LOGGER.info("Forcing immediate halt");
-
 				Runtime.getRuntime().halt(2);
 			}
 		}, "Shutdown Hook"));
