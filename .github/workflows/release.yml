@@ -151,7 +151,7 @@ jobs:
           path: ${{ steps.release_variables.outputs.archive_path }}
           if-no-files-found: error
       - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v6
+        uses: crazy-max/ghaction-import-gpg@v7
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
