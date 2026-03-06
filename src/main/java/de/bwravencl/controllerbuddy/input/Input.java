@@ -780,7 +780,7 @@ public final class Input {
 		}
 	}
 
-	private class GamepadState {
+	private final class GamepadState {
 
 		private final float[] axes = new float[SDLGamepad.SDL_GAMEPAD_AXIS_COUNT];
 

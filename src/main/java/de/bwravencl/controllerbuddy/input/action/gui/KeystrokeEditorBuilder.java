@@ -436,7 +436,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		}
 	}
 
-	private static class FilterTextField extends JTextField {
+	private static final class FilterTextField extends JTextField {
 
 		@Serial
 		private static final long serialVersionUID = -7998118986240546988L;

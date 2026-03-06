@@ -56,7 +56,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 		parentPanel.add(textField);
 	}
 
-	private static class TextFieldPropertySetter extends PropertySetter
+	private static final class TextFieldPropertySetter extends PropertySetter
 			implements ActionListener, DocumentListener, FocusListener {
 
 		private final JTextField textField;
