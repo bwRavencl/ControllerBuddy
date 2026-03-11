@@ -1481,6 +1481,7 @@ public final class Main {
 			errorDetails = STRINGS.getString("NO_ERROR_DETAILS");
 		}
 
+		// noinspection ConstantValue
 		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(this, frame,
 					MessageFormat.format(
