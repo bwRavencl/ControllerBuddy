@@ -96,6 +96,8 @@ val gamecontrollerdbResFile = "$resourcesDir/gamecontrollerdb.txt"
 val arch: Architecture = DefaultNativePlatform.getCurrentArchitecture()
 val distAppendix = "${os.toFamilyName()}-${arch.name}"
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 repositories {
   mavenCentral()
   maven { url = uri("https://central.sonatype.com/repository/maven-snapshots") }
@@ -109,6 +111,7 @@ dependencies {
 
   val dbusJavaVersion = "5.2.0"
   val lwjglVersion = "3.4.1"
+  val mockitoVersion = "5.22.0"
 
   val lwjglOs =
       when {
@@ -145,6 +148,13 @@ dependencies {
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.slf4j:slf4j-jdk14:2.0.17")
+
+  testImplementation(platform("org.junit:junit-bom:6.0.3"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+  testImplementation("org.mockito:mockito-core:$mockitoVersion")
+  testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+  mockitoAgent("org.mockito:mockito-core:$mockitoVersion") { isTransitive = false }
 }
 
 spotless {
@@ -153,7 +163,7 @@ spotless {
   encoding(StandardCharsets.UTF_8.displayName())
 
   java {
-    target("src/main/java/de/bwravencl/**/*.java")
+    target("src/**/java/de/bwravencl/**/*.java")
     targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
     eclipse("4.33").configFile("spotless.eclipseformat.xml")
     formatAnnotations()
@@ -651,7 +661,17 @@ tasks.named("spotlessOnlyNewline") { dependsOn("copyGameControllerDB") }
 
 tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
 
-tasks.named("test") { enabled = false }
+tasks.named<Test>("test") {
+  useJUnitPlatform()
+
+  jvmArgs(mockitoAgent.map { "-javaagent:${it.absolutePath}" })
+  jvmArgs("--enable-native-access=ALL-UNNAMED")
+  jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
+
+  if (os.isWindows) {
+    jvmArgs(windowsJvmArgs.map { it.replace(mainModule, "ALL-UNNAMED") })
+  }
+}
 
 tasks.register<Exec>("jpackage") {
   group = "distribution"

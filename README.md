@@ -239,6 +239,8 @@ ControllerBuddy makes use of these awesome software technologies and libraries:
 - [Gson](https://github.com/google/gson)
 - [JSVG](https://github.com/weisJ/jsvg)
 - [LWJGL](https://www.lwjgl.org)
+- [JUnit](https://junit.org)
+- [Mockito](https://mockito.org)
 - [SDL](https://libsdl.org)
 - [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
 - [SLF4J](https://www.slf4j.org)
@@ -251,7 +253,7 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Task                                   | Command                   |
 |----------------------------------------|---------------------------|
 | Generate version source file           | `gradlew generateVersion` |
-| Run SpotBugs and Spotless              | `gradlew check`           |
+| Run all checks                         | `gradlew check`           |
 | Apply Spotless formatting              | `gradlew spotlessApply`   |
 | Run ControllerBuddy                    | `gradlew run`             |
 | Install a jpackage image               | `gradlew installDist`     |
