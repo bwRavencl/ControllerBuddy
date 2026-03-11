@@ -558,7 +558,6 @@ public final class Input {
 	}
 
 	public void reset() {
-		clearOnNextPoll = false;
 		repeatModeActionWalk = false;
 		skipAxisInitialization = false;
 		initialized = false;
@@ -575,6 +574,7 @@ public final class Input {
 		resetLastHotSwapPollTime();
 
 		profile.setActiveMode(this, 0);
+		clearOnNextPoll = false;
 
 		IAxisToDelayableAction.reset();
 		IButtonToDelayableAction.reset();
