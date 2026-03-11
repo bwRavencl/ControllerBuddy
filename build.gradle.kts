@@ -500,7 +500,7 @@ tasks.register("generateConstants") {
         """
             package de.bwravencl.controllerbuddy.constants;
 
-            public class Constants {
+            public final class Constants {
 
             	public static final String APPLICATION_NAME = "$applicationName";
 

@@ -3576,7 +3576,7 @@ public final class Main {
 	}
 
 	public void scheduleStatusBarText(final String text) {
-		class StatusBarTextTimerTask extends TimerTask {
+		final class StatusBarTextTimerTask extends TimerTask {
 
 			private final String newText;
 
@@ -5259,7 +5259,7 @@ public final class Main {
 		}
 	}
 
-	private static class SVGPanel extends JPanel {
+	private static final class SVGPanel extends JPanel {
 
 		private static final float MAX_ZOOM_FACTOR = 5f;
 
@@ -5591,7 +5591,7 @@ public final class Main {
 		}
 	}
 
-	private class ConnectionSettingsPanel extends JPanel {
+	private final class ConnectionSettingsPanel extends JPanel {
 
 		private static final int TEXT_FIELD_COLUMNS = 15;
 
