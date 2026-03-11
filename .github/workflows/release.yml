@@ -129,12 +129,14 @@ jobs:
         id: build_tgz
         if: runner.os == 'Linux'
         run: ./gradlew distTar --info
-      - name: Upload Spotbugs-Reports Artifact
+      - name: Upload Build-Reports Artifact
         if: ${{ (steps.build_zip.outcome == 'failure') || (steps.build_tgz.outcome == 'failure') }}
         uses: actions/upload-artifact@v7
         with:
           name: spotbugs-reports
-          path: build/reports/spotbugs
+          path: |
+            build/reports/spotbugs
+            build/tests/test
           if-no-files-found: ignore
       - name: Setup Release Variables
         id: release_variables
