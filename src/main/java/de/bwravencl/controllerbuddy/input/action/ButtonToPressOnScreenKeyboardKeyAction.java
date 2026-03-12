@@ -28,15 +28,19 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 public final class ButtonToPressOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
+	private static final boolean INITIAL_WAS_DOWN = false;
+
+	private static final boolean INITIAL_WAS_UP = true;
+
 	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	@ActionProperty(title = "LOCK_KEY_TITLE", description = "LOCK_KEY_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 10)
 	private boolean lockKey;
 
-	private transient boolean wasDown;
+	private transient boolean wasDown = INITIAL_WAS_DOWN;
 
-	private transient boolean wasUp = true;
+	private transient boolean wasUp = INITIAL_WAS_UP;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -82,8 +86,8 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 
 	@Override
 	public void init(final Input input) {
-		wasUp = true;
-		wasDown = false;
+		wasUp = INITIAL_WAS_UP;
+		wasDown = INITIAL_WAS_DOWN;
 	}
 
 	public boolean isLockKey() {

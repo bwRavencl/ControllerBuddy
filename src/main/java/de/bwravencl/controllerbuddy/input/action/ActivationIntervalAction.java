@@ -27,6 +27,12 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 
 	public static final String MAX_ACTIVATION_INTERVAL_TITLE = "MAX_ACTIVATION_INTERVAL_TITLE";
 
+	private static final long INITIAL_MAX_ACTIVATION_TIME = Long.MAX_VALUE;
+
+	private static final long INITIAL_MIN_ACTIVATION_TIME = 0L;
+
+	private static final boolean INITIAL_WAS_UP = true;
+
 	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.WHILE_PRESSED;
 
@@ -36,11 +42,11 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	@ActionProperty(title = MAX_ACTIVATION_INTERVAL_TITLE, description = "MAX_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
-	private transient long maxActivationTime = Long.MAX_VALUE;
+	private transient long maxActivationTime = INITIAL_MAX_ACTIVATION_TIME;
 
-	private transient long minActivationTime;
+	private transient long minActivationTime = INITIAL_MIN_ACTIVATION_TIME;
 
-	private transient boolean wasUp = true;
+	private transient boolean wasUp = INITIAL_WAS_UP;
 
 	public static boolean activationSupportsMaxInterval(final Activation activation) {
 		return activation == Activation.WHILE_PRESSED;
@@ -88,7 +94,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 				}
 
 				minActivationTime = 0L;
-				maxActivationTime = Long.MAX_VALUE;
+				maxActivationTime = INITIAL_MAX_ACTIVATION_TIME;
 			}
 		}
 
@@ -99,9 +105,9 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	public void init(final Input input) {
 		IActivatableAction.super.init(input);
 
-		wasUp = true;
-		minActivationTime = 0;
-		maxActivationTime = Long.MAX_VALUE;
+		wasUp = INITIAL_WAS_UP;
+		minActivationTime = INITIAL_MIN_ACTIVATION_TIME;
+		maxActivationTime = INITIAL_MAX_ACTIVATION_TIME;
 	}
 
 	@Override
