@@ -36,7 +36,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	@ActionProperty(title = MAX_ACTIVATION_INTERVAL_TITLE, description = "MAX_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
-	private transient long maxActivationTime = Integer.MAX_VALUE;
+	private transient long maxActivationTime = Long.MAX_VALUE;
 
 	private transient long minActivationTime;
 
