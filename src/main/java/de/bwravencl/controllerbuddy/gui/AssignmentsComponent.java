@@ -1,17 +1,18 @@
-/* Copyright (C) 2018  Matteo Hausner
+/*
+ * Copyright (C) 2018 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -52,15 +53,28 @@ import javax.swing.UIManager;
 import javax.swing.plaf.UIResource;
 import org.lwjgl.sdl.SDLGamepad;
 
+/// A scroll pane that displays a visual representation of a gamepad's controls
+/// as interactive buttons.
+///
+/// Each button corresponds to a gamepad component (axis, button, or D-pad
+/// direction) and opens an assignment editor dialog when clicked. The layout
+/// mimics a physical gamepad, with sticks, triggers, bumpers, and face
+/// buttons placed in their conventional positions.
 final class AssignmentsComponent extends JScrollPane {
 
+	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
 
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
 
+	/// The panel that holds the arranged gamepad component buttons.
 	private final JPanel assignmentsPanel = new JPanel();
 
+	/// Creates a new assignments component with buttons arranged in a grid to
+	/// resemble a gamepad layout.
+	///
+	/// @param main the main application instance
 	AssignmentsComponent(final Main main) {
 		assignmentsPanel.setLayout(new GridBagLayout());
 
@@ -147,12 +161,23 @@ final class AssignmentsComponent extends JScrollPane {
 		setViewportView(assignmentsPanel);
 	}
 
+	/// Throws an exception if the given dimension is not square (width != height).
+	///
+	/// @param dimension the dimension to check
+	/// @throws IllegalArgumentException if `dimension` is not square
 	private static void checkDimensionIsSquare(final Dimension dimension) {
 		if (dimension.width != dimension.height) {
 			throw new IllegalArgumentException("Parameter dimension is not square");
 		}
 	}
 
+	/// Creates a [JButton] for a gamepad component, using a round [CustomButton]
+	/// for face and guide buttons and a standard [JButton] for all others.
+	///
+	/// @param main the main application instance
+	/// @param name the localized display name of the component
+	/// @param component the gamepad component this button represents
+	/// @return the configured button
 	private static JButton createComponentButton(final Main main, final String name, final Component component) {
 		final boolean round;
 		final JButton button;
@@ -175,6 +200,10 @@ final class AssignmentsComponent extends JScrollPane {
 					return Point2D.distance(x, y, getWidth() / 2d, getHeight() / 2d) < radius;
 				}
 
+				/// Returns the diameter of this round button, computed as the smaller of
+				/// its current width and height.
+				///
+				/// @return the diameter in pixels
 				private int getDiameter() {
 					return Math.min(getWidth(), getHeight());
 				}
@@ -265,36 +294,72 @@ final class AssignmentsComponent extends JScrollPane {
 		return button;
 	}
 
+	/// Enables or disables all child components recursively.
 	@Override
 	public void setEnabled(final boolean enabled) {
 		GuiUtils.setEnabledRecursive(assignmentsPanel, enabled);
 	}
 
+	/// A custom button used to represent compound stick controls, supporting
+	/// pie-shaped segments for directional axes and a circular center region for
+	/// the stick press button.
+	///
+	/// Multiple instances share a button model when they represent two ends of
+	/// the same axis, so that hover and press state is synchronized. The
+	/// button's hit area and painted shape are determined by its
+	/// [CompoundButtonLocation].
 	private static final class CompoundButton extends CustomButton {
 
 		@Serial
 		private static final long serialVersionUID = 5560396295119690740L;
 
+		/// The position of this button within the circular stick control.
 		private final CompoundButtonLocation buttonLocation;
 
+		/// The preferred size inherited from the parent panel.
 		private final Dimension preferredSize;
 
+		/// The cached bounding rectangle used to detect when the shape must be
+		/// recomputed.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private Shape base;
 
+		/// The opposing axis button that shares this button's model, or `null` if there
+		/// is none.
 		private CompoundButton peer;
 
+		/// The cached hit and paint shape for this button.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private Shape shape;
 
+		/// Whether this button can display a swap indicator when sticks are swapped.
 		private boolean swapTextPossible;
 
+		/// The display text rendered via the icon painter.
 		private String text;
 
+		/// Creates a center [CompoundButton] for the stick-press component.
+		///
+		/// @param main the main application instance
+		/// @param parentPanel the parent panel whose preferred size governs this
+		/// button's preferred size
+		/// @param component the gamepad component this button represents
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component) {
 			this(main, parentPanel, component, CompoundButtonLocation.CENTER, null);
 		}
 
+		/// Creates a [CompoundButton] at the specified location, optionally sharing
+		/// its button model with a peer button representing the opposite end of
+		/// the same axis.
+		///
+		/// @param main the main application instance
+		/// @param parentPanel the parent panel whose preferred size governs this
+		/// button's preferred size
+		/// @param component the gamepad component this button represents
+		/// @param buttonLocation the position of this button within the circular
+		/// stick control
+		/// @param peer the opposing axis button that shares this button's model or
+		/// `null` if there is no peer
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
 			preferredSize = parentPanel.getPreferredSize();
@@ -359,6 +424,15 @@ final class AssignmentsComponent extends JScrollPane {
 					return preferredSize.width;
 				}
 
+				/// Returns the bounding rectangle for a line of text centered within
+				/// the icon bounds.
+				///
+				/// @param text the string to measure
+				/// @param g2d the graphics context used to get font metrics
+				/// @param x the x origin of the icon
+				/// @param y the y origin of the icon
+				/// @param line the zero-based line index for multi-line text layout
+				/// @return the bounding rectangle for the text
 				private Rectangle getTextRectangle(final String text, final Graphics2D g2d, final int x, final int y,
 						final int line) {
 					final var metrics = g2d.getFontMetrics(getFont());
@@ -427,12 +501,19 @@ final class AssignmentsComponent extends JScrollPane {
 			initShape();
 		}
 
+		/// Builds an [IllegalArgumentException] describing an unrecognized component
+		/// index for the given component type.
+		///
+		/// @param componentType the type of component that was being processed
+		/// @param componentIndex the unrecognized index value
+		/// @return an exception with a descriptive message
 		private static IllegalArgumentException buildInvalidComponentIndexException(final ComponentType componentType,
 				final int componentIndex) {
 			return new IllegalArgumentException("Invalid componentIndex for " + ComponentType.class.getSimpleName()
 					+ " " + componentType + ": " + componentIndex);
 		}
 
+		/// Tests whether a point is within this button's shaped region.
 		@Override
 		public boolean contains(final int x, final int y) {
 			if (shape == null) {
@@ -442,6 +523,9 @@ final class AssignmentsComponent extends JScrollPane {
 			return shape.contains(x, y);
 		}
 
+		/// Returns the preferred size inherited from the parent panel.
+		///
+		/// @return the preferred size
 		@Override
 		public Dimension getPreferredSize() {
 			return preferredSize;
@@ -452,6 +536,12 @@ final class AssignmentsComponent extends JScrollPane {
 			return null;
 		}
 
+		/// Initializes or recomputes the button's hit and paint shape based on its
+		/// current bounds and [CompoundButtonLocation].
+		///
+		/// For the center location the shape is a filled circle; for directional
+		/// locations it is a 90-degree pie arc with the center circle subtracted.
+		/// The shape is only recomputed when the bounds have changed.
 		private void initShape() {
 			if (!getBounds().equals(base)) {
 				base = getBounds();
@@ -472,6 +562,7 @@ final class AssignmentsComponent extends JScrollPane {
 			}
 		}
 
+		/// Paints the border by drawing the outline of this button's shape.
 		@Override
 		protected void paintBorder(final Graphics g) {
 			if (!isBorderPainted()) {
@@ -488,17 +579,25 @@ final class AssignmentsComponent extends JScrollPane {
 			g2d.draw(shape);
 		}
 
+		/// Initializes the shape geometry before delegating to the superclass paint.
 		@Override
 		protected void paintComponent(final Graphics g) {
 			initShape();
 			super.paintComponent(g);
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(CompoundButton.class.getName());
 		}
 
+		/// Sets the peer button that represents the opposite end of the same axis.
+		///
+		/// @param peer the opposing [CompoundButton]
 		private void setPeer(final CompoundButton peer) {
 			this.peer = peer;
 		}
@@ -508,75 +607,128 @@ final class AssignmentsComponent extends JScrollPane {
 			this.text = text;
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(CompoundButton.class.getName());
 		}
 
+		/// Specifies the position of a compound button segment within a circular stick
+		/// control.
+		///
+		/// Each location defines the arc start angle for rendering its pie-shaped
+		/// region.
 		private enum CompoundButtonLocation {
 
-			EAST(-45f), CENTER(0f), NORTH(45f), WEST(135f), SOUTH(225f);
+			/// East (right) segment.
+			EAST(-45f),
+			/// Center (stick press) region.
+			CENTER(0f),
+			/// North (up) segment.
+			NORTH(45f),
+			/// West (left) segment.
+			WEST(135f),
+			/// South (down) segment.
+			SOUTH(225f);
 
+			/// The arc start angle in degrees for this location's pie-shaped segment.
 			final float startAngle;
 
+			/// Creates a location constant with the given arc start angle.
+			///
+			/// @param startAngle the start angle in degrees for the pie-arc segment
 			CompoundButtonLocation(final float startAngle) {
 				this.startAngle = startAngle;
 			}
 		}
 	}
 
+	/// Abstract base class for buttons with custom-painted backgrounds, borders,
+	/// and foregrounds.
+	///
+	/// Handles theme-aware rendering using FlatLaf UI colors and supports round
+	/// or shaped button painting with anti-aliased graphics.
 	private abstract static class CustomButton extends JButton {
 
 		@Serial
 		private static final long serialVersionUID = 5458020346838696827L;
 
+		/// Whether the content area of this button should be painted.
 		boolean contentAreaFilled = true;
 
+		/// The color used for disabled button text.
 		Color disabledText;
 
+		/// The theme color used for the button border in its normal state.
 		private Color borderColor;
 
+		/// The theme background color for default buttons.
 		private Color defaultBackground;
 
+		/// Whether default buttons should render their label in bold.
 		private boolean defaultBoldText;
 
+		/// The theme border color for default buttons.
 		private Color defaultBorderColor;
 
+		/// The theme background color for focused default buttons.
 		private Color defaultFocusedBackground;
 
+		/// The theme border color for focused default buttons.
 		private Color defaultFocusedBorderColor;
 
+		/// The theme foreground color for default buttons.
 		private Color defaultForeground;
 
+		/// The theme background color for hovered default buttons.
 		private Color defaultHoverBackground;
 
+		/// The theme border color for hovered default buttons.
 		private Color defaultHoverBorderColor;
 
+		/// The theme background color for pressed default buttons.
 		private Color defaultPressedBackground;
 
+		/// The theme border color used when the button is disabled.
 		private Color disabledBorderColor;
 
+		/// The theme background color used when the button is focused.
 		private Color focusedBackground;
 
+		/// The theme border color used when the button is focused.
 		private Color focusedBorderColor;
 
+		/// The theme background color used when the button is hovered.
 		private Color hoverBackground;
 
+		/// The theme border color used when the button is hovered.
 		private Color hoverBorderColor;
 
+		/// The theme background color used when the button is pressed.
 		private Color pressedBackground;
 
+		/// Creates a custom button with no associated action.
 		private CustomButton() {
 			updateTheme();
 			super.setContentAreaFilled(false);
 		}
 
+		/// Creates a custom button with the given action.
+		///
+		/// @param action the action to associate with this button
 		private CustomButton(final Action action) {
 			super(action);
 			updateTheme();
 			super.setContentAreaFilled(false);
 		}
 
+		/// Configures the graphics context for painting the button's background by
+		/// enabling anti-aliasing and setting the state-dependent background color.
+		///
+		/// @param g2d the graphics context to configure
 		void beginBackground(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -588,6 +740,10 @@ final class AssignmentsComponent extends JScrollPane {
 			g2d.setColor(FlatUIUtils.deriveColor(background, def ? defaultBackground : getBackground()));
 		}
 
+		/// Configures the graphics context for painting the button's border by
+		/// enabling anti-aliasing and setting the state-dependent border color.
+		///
+		/// @param g2d the graphics context to configure
 		void beginBorder(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -599,6 +755,10 @@ final class AssignmentsComponent extends JScrollPane {
 			g2d.setColor(color);
 		}
 
+		/// Configures the graphics context for painting the button's foreground
+		/// (text and icons) by setting the state-dependent foreground color.
+		///
+		/// @param g2d the graphics context to configure
 		void beginForeground(final Graphics2D g2d) {
 			final var color = isDefaultButton() ? defaultForeground : getForeground();
 			g2d.setColor(color);
@@ -609,6 +769,12 @@ final class AssignmentsComponent extends JScrollPane {
 			return false;
 		}
 
+		/// Paints the given text within the specified rectangle, wrapping it onto
+		/// two lines at the centermost space when the text contains spaces.
+		///
+		/// @param g the graphics context
+		/// @param textRect the bounding rectangle in which to paint the text
+		/// @param text the text to paint
 		void paintText(final Graphics g, final Rectangle textRect, final String text) {
 			if (defaultBoldText && isDefaultButton() && getFont() instanceof UIResource) {
 				final var boldFont = g.getFont().deriveFont(Font.BOLD);
@@ -662,11 +828,15 @@ final class AssignmentsComponent extends JScrollPane {
 			FlatButtonUI.paintText(g, this, textRect, text, foreground);
 		}
 
+		/// Stores the content area filled flag without delegating to the superclass,
+		/// since custom painting is handled manually.
 		@Override
 		public void setContentAreaFilled(final boolean b) {
 			contentAreaFilled = b;
 		}
 
+		/// Refreshes all cached theme colors from the current [UIManager] look-and-feel
+		/// settings.
 		private void updateTheme() {
 			defaultForeground = UIManager.getColor("Button.default.foreground");
 			defaultBackground = UIManager.getColor("Button.default.background");
@@ -687,6 +857,7 @@ final class AssignmentsComponent extends JScrollPane {
 			defaultBoldText = UIManager.getBoolean("Button.default.boldText");
 		}
 
+		/// Updates the UI delegate and refreshes theme colors.
 		@Override
 		public void updateUI() {
 			super.updateUI();
@@ -694,19 +865,33 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
+	/// An action that opens the [EditActionsDialog] for editing the assignments of
+	/// a specific gamepad component.
+	///
+	/// The action name and short description are derived from the component's
+	/// localized label and are used as the button text and tooltip respectively.
 	private static final class EditComponentAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -2879419156880580931L;
 
+		/// The gamepad component whose assignments this action edits.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Component component;
 
+		/// The main application instance used to open the edit dialog.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Main main;
 
+		/// The localized display name of the component.
 		private final String name;
 
+		/// Creates an action that will open the assignment editor for the given
+		/// component.
+		///
+		/// @param main the main application instance
+		/// @param name the localized display name of the component
+		/// @param component the gamepad component to edit
 		private EditComponentAction(final Main main, final String name, final Component component) {
 			this.main = main;
 			this.name = name;
@@ -717,28 +902,56 @@ final class AssignmentsComponent extends JScrollPane {
 					MessageFormat.format(Main.STRINGS.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
+		/// Opens the edit dialog for the associated component.
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var editComponentDialog = new EditActionsDialog(main, component, name);
 			editComponentDialog.setVisible(true);
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(EditComponentAction.class.getName());
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(EditComponentAction.class.getName());
 		}
 	}
 
+	/// A panel containing four buttons arranged in a cross pattern, used for the
+	/// D-pad and the face button cluster (A, B, X, Y).
+	///
+	/// Each arm of the cross is a separate component button created via
+	/// [AssignmentsComponent#createComponentButton], laid out in a
+	/// [java.awt.GridBagLayout] with the up button at row 0, left and right at
+	/// row 1, and down at row 2.
 	private static final class FourWay extends JPanel {
 
 		@Serial
 		private static final long serialVersionUID = -5178710302755638535L;
 
+		/// Creates a four-way cross panel with buttons for the up, left, right, and
+		/// down directions.
+		///
+		/// @param main the main application instance
+		/// @param upTitle the localized label for the up button
+		/// @param upComponent the gamepad component for the up direction
+		/// @param leftTitle the localized label for the left button
+		/// @param leftComponent the gamepad component for the left direction
+		/// @param rightTitle the localized label for the right button
+		/// @param rightComponent the gamepad component for the right direction
+		/// @param downTitle the localized label for the down button
+		/// @param downComponent the gamepad component for the down direction
 		private FourWay(final Main main, final String upTitle, final Component upComponent, final String leftTitle,
 				final Component leftComponent, final String rightTitle, final Component rightComponent,
 				final String downTitle, final Component downComponent) {
@@ -764,11 +977,22 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
+	/// A panel representing a gamepad analog stick, composed of compound buttons
+	/// for the stick press.
+	///
+	/// Contains one [CompoundButton] for the center (stick-press) region and
+	/// four pie-shaped buttons for the north, south, east, and west axis
+	/// directions.
 	private static final class Stick extends JPanel {
 
 		@Serial
 		private static final long serialVersionUID = -8389190445101809929L;
 
+		/// Creates a stick panel for the given stick type, adding compound buttons for
+		/// the stick press and the four axis directions.
+		///
+		/// @param main the main application instance
+		/// @param type whether this panel represents the left or right stick
 		private Stick(final Main main, final StickType type) {
 			final var preferredSize = new Dimension(171, 171);
 			setPreferredSize(preferredSize);
@@ -796,8 +1020,16 @@ final class AssignmentsComponent extends JScrollPane {
 					northernButton));
 		}
 
+		/// Identifies which analog stick (left or right) a [Stick] panel represents.
+		///
+		/// The value controls which SDL gamepad axis and button indices are used
+		/// when constructing the [CompoundButton] children of the panel.
 		private enum StickType {
-			LEFT, RIGHT
+
+			/// Left analog stick.
+			LEFT,
+			/// Right analog stick.
+			RIGHT
 		}
 	}
 }

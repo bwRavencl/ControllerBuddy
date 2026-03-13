@@ -1,17 +1,18 @@
-/* Copyright (C) 2019  Matteo Hausner
+/*
+ * Copyright (C) 2019 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action.gui;
@@ -32,8 +33,23 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+/// Editor builder for exponent (response curve) properties, providing a spinner
+/// with a range of 0.1 to 10.0 alongside a live power-function plot.
+///
+/// The plot visualizes the current curve shape in real time as the user
+/// adjusts the exponent value, making it easier to understand the effect of
+/// different response curves on axis input.
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
+	/// Constructs an exponent editor builder for the specified action property.
+	///
+	/// @param editActionsDialog the parent dialog hosting the editor
+	/// @param action the action whose exponent property is being edited
+	/// @param fieldName the name of the property field
+	/// @param fieldType the type of the property field
+	/// @throws IllegalAccessException if the property cannot be accessed
+	/// @throws InvocationTargetException if the property getter throws an exception
+	/// @throws NoSuchMethodException if the property getter method is not found
 	public ExponentEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -70,17 +86,29 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		return 0.1f;
 	}
 
+	/// Component that renders a live plot of the power function `y = x^power`
+	/// within its bounds.
+	///
+	/// Implements [Consumer] so it can be registered as a value consumer on the
+	/// spinner change listener; each time the exponent value changes the component
+	/// repaints itself to reflect the new curve shape.
 	private static final class PowerFunctionPlotter extends JComponent implements Consumer<Object> {
 
 		@Serial
 		private static final long serialVersionUID = 5075932419255249325L;
 
+		/// The background color used to fill the plot area.
 		private final Color defaultBackground;
 
+		/// The foreground color used to draw the curve.
 		private final Color defaultForeground;
 
+		/// The current exponent value for the power function curve.
 		private float power;
 
+		/// Constructs a plotter with the given initial exponent value.
+		///
+		/// @param power the initial exponent to use when drawing the curve
 		private PowerFunctionPlotter(final float power) {
 			this.power = power;
 
@@ -99,6 +127,15 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 			}
 		}
 
+		/// Calculates the Y pixel coordinate for a given X position on the power curve.
+		///
+		/// Maps the input X pixel position to an output Y pixel position according to
+		/// the formula `y = x ^ power`, scaled to fit within the plot dimensions.
+		///
+		/// @param x the X pixel coordinate within the plot area
+		/// @param plotWidth the total width of the plot area in pixels
+		/// @param plotHeight the total height of the plot area in pixels
+		/// @return the Y pixel coordinate corresponding to the given X
 		private int calculateY(final int x, final int plotWidth, final int plotHeight) {
 			return plotHeight - 1
 					- (x == 0 ? 0 : (int) (plotHeight / Math.pow((double) (plotWidth - 1) / (double) x, power)));

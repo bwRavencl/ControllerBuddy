@@ -1,17 +1,18 @@
-/* Copyright (C) 2015  Matteo Hausner
+/*
+ * Copyright (C) 2015 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.runmode;
@@ -54,38 +55,64 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
 
+/// Client-side run mode that receives controller input state over the
+/// network.
+///
+/// Connects to a remote [ServerRunMode] via an encrypted UDP channel,
+/// receives serialized input state updates, and writes them to the
+/// local virtual output device.
 public final class ClientRunMode extends OutputRunMode {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientRunMode.class.getName());
 
+	/// Number of retries when attempting to establish the initial connection.
 	private static final int NUM_CONNECTION_RETRIES = 10;
 
+	/// Number of retries when waiting to receive a packet from the server.
 	private static final int NUM_RECEIVE_PACKET_RETRIES = 10;
 
+	/// Cipher instance used for AES-GCM encryption and decryption.
 	private final Cipher cipher;
 
+	/// Hostname or IP address of the remote server to connect to.
 	private final String host;
 
+	/// Buffer holding the initialization vector for AES-GCM decryption.
 	private final byte[] iv = new byte[ServerRunMode.IV_LENGTH];
 
+	/// Secret key derived from the salt used for encrypting and decrypting packets.
 	private final Key key;
 
+	/// UDP port number used to communicate with the server.
 	private final int port;
 
+	/// Reusable byte buffer for incoming UDP packets.
 	private final byte[] receiveBuf = new byte[1024];
 
+	/// Random salt sent to the server during the handshake for key derivation.
 	private final byte[] salt = new byte[ServerRunMode.SALT_LENGTH];
 
+	/// Socket timeout in milliseconds when waiting for incoming packets.
 	private final int timeout;
 
+	/// UDP socket used to send and receive packets to and from the server.
 	private DatagramSocket clientSocket;
 
+	/// Current connection state of the client.
 	private ClientState clientState = ClientState.CONNECTING;
 
+	/// Monotonically increasing counter used to discard out-of-order packets.
 	private long counter = -1;
 
+	/// Resolved network address of the remote server host.
 	private InetAddress hostAddress;
 
+	/// Creates a new client run mode that will connect to the configured remote
+	/// server.
+	///
+	/// @param main the main application instance providing host, port, timeout,
+	/// and encryption settings
+	/// @param input the input instance for controller state
 	public ClientRunMode(final Main main, final Input input) {
 		super(main, input);
 
@@ -103,6 +130,14 @@ public final class ClientRunMode extends OutputRunMode {
 		key = ServerRunMode.deriveKey(main, salt);
 	}
 
+	/// Decrypts the payload of the given datagram packet using AES-GCM.
+	///
+	/// Reads the initialization vector from the beginning of the packet data,
+	/// initializes the cipher in decrypt mode, and returns the decrypted bytes.
+	///
+	/// @param packet the datagram packet whose payload is to be decrypted
+	/// @return the decrypted byte array
+	/// @throws GeneralSecurityException if decryption fails
 	private byte[] decrypt(final DatagramPacket packet) throws GeneralSecurityException {
 		final var packetByteBuffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
@@ -120,6 +155,10 @@ public final class ClientRunMode extends OutputRunMode {
 		return LOGGER;
 	}
 
+	/// Handles a [GeneralSecurityException] that occurred during decryption by
+	/// logging the error, showing an error dialog, and requesting a stop.
+	///
+	/// @param e the security exception that was caught
 	private void handleGeneralSecurityException(final GeneralSecurityException e) {
 		LOGGER.log(Level.WARNING, e.getMessage(), e);
 
@@ -355,6 +394,8 @@ public final class ClientRunMode extends OutputRunMode {
 		return retVal;
 	}
 
+	/// Requests this client run mode to stop by closing the UDP socket and
+	/// signaling a forced stop.
 	@Override
 	public void requestStop() {
 		super.requestStop();
@@ -365,6 +406,9 @@ public final class ClientRunMode extends OutputRunMode {
 		}
 	}
 
+	/// Runs the client loop: initializes the UDP socket, connects to the remote
+	/// server, and repeatedly receives input state and writes it to the local
+	/// output device until stopped.
 	@Override
 	public void run() {
 		logStart();
@@ -435,7 +479,15 @@ public final class ClientRunMode extends OutputRunMode {
 		logStop();
 	}
 
+	/// Represents the connection state of the client run mode.
+	///
+	/// Tracks whether the client is in the process of establishing a connection
+	/// to the server or has successfully connected and is receiving input data.
 	private enum ClientState {
-		CONNECTING, CONNECTED
+		/// The client is attempting to establish a connection to the server
+		CONNECTING,
+
+		/// The client has successfully connected to the server
+		CONNECTED
 	}
 }

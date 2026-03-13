@@ -1,17 +1,18 @@
-/* Copyright (C) 2018  Matteo Hausner
+/*
+ * Copyright (C) 2018 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -57,17 +58,28 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+/// An on-screen virtual keyboard displayed as a translucent, always-on-top
+/// popup window.
+///
+/// The keyboard is navigable via gamepad input and supports key press, release,
+/// hold, and lock operations. It renders a standard QWERTY layout with function
+/// keys, numpad, and modifier keys.
 @SuppressWarnings("exports")
 public final class OnScreenKeyboard extends JFrame {
 
+	/// The mode associated with the on-screen keyboard.
 	public static final Mode ON_SCREEN_KEYBOARD_MODE;
 
+	/// Background color used for held keyboard buttons.
 	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
 
+	/// UUID used to identify the on-screen keyboard mode across serialization.
 	private static final UUID ON_SCREEN_KEYBOARD_MODE_UUID = UUID.fromString("daf53639-9518-48db-bd63-19cde7bf9a96");
 
+	/// Background color used for key row panels.
 	private static final Color ROW_BACKGROUND = new Color(128, 128, 128, 64);
 
+	/// Padding width in pixels applied to key row borders.
 	private static final int ROW_BORDER_WIDTH = 15;
 
 	@Serial
@@ -78,30 +90,43 @@ public final class OnScreenKeyboard extends JFrame {
 		ON_SCREEN_KEYBOARD_MODE.setDescription(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
+	/// The Caps Lock key button on this keyboard.
 	private final CapsLockKeyButton capsLockKeyButton;
 
+	/// Listener that allows dragging the keyboard window by its background.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final FrameDragListener frameDragListener;
 
+	/// Set of keyboard buttons currently held down (locked).
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Set<AbstractKeyboardButton> heldButtons = Collections
 			.newSetFromMap(Collections.synchronizedMap(new IdentityHashMap<>()));
 
+	/// Two-dimensional array of keyboard buttons arranged in rows and columns.
 	private final AbstractKeyboardButton[][] keyboardButtons;
 
+	/// The left Shift key button on this keyboard.
 	private final ShiftKeyboardButton leftShiftKeyboardButton;
 
+	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
 
+	/// The right Shift key button on this keyboard.
 	private final ShiftKeyboardButton rightShiftKeyboardButton;
 
+	/// Whether any keyboard button state changed since the last poll.
 	private volatile boolean anyChanges;
 
+	/// Column index of the currently selected keyboard button.
 	private volatile int selectedColumn;
 
+	/// Row index of the currently selected keyboard button.
 	private volatile int selectedRow;
 
+	/// Creates the on-screen keyboard and lays out all key rows.
+	///
+	/// @param main the main application instance
 	OnScreenKeyboard(final Main main) {
 		this.main = main;
 
@@ -225,6 +250,15 @@ public final class OnScreenKeyboard extends JFrame {
 		add(parentPanel);
 	}
 
+	/// Returns a shortened display name for a standard (non-lock) key based on its
+	/// DirectInput key code name.
+	///
+	/// Strips leading directional prefixes ("L ", "R ") and the "Num" prefix,
+	/// converts single uppercase letters to lowercase, and replaces arrow-key names
+	/// with Unicode arrow characters.
+	///
+	/// @param directInputKeyCodeName the DirectInput key code name
+	/// @return the display name for the key
 	private static String getDefaultKeyDisplayName(final String directInputKeyCodeName) {
 		if (ScanCode.DIK_SYSRQ.equals(directInputKeyCodeName)) {
 			return multilineDisplayName("Sys Rq");
@@ -253,6 +287,11 @@ public final class OnScreenKeyboard extends JFrame {
 		return shortName;
 	}
 
+	/// Returns the display name for a lock key. Returns the key name unchanged for
+	/// Caps Lock; wraps other lock key names in a multiline HTML label.
+	///
+	/// @param lockKeyName the lock key name
+	/// @return the display name for the lock key
 	private static String getLockKeyDisplayName(final String lockKeyName) {
 		if (LockKey.CAPS_LOCK.equals(lockKeyName)) {
 			return lockKeyName;
@@ -261,10 +300,20 @@ public final class OnScreenKeyboard extends JFrame {
 		return multilineDisplayName(lockKeyName);
 	}
 
+	/// Wraps a display name in centered HTML so that the first space becomes a line
+	/// break, producing a two-line button label.
+	///
+	/// @param displayName the display name to wrap
+	/// @return an HTML string with the display name split across two centered lines
 	private static String multilineDisplayName(final String displayName) {
 		return "<html><center>" + displayName.replaceFirst(" ", "<br>") + "</center></html>";
 	}
 
+	/// Deselects the currently selected button by releasing it if pressed and
+	/// removing its focus highlight.
+	///
+	/// @return an optional containing the button that was deselected or empty if
+	/// no button was selected
 	private Optional<AbstractKeyboardButton> deselectButton() {
 		final var optionalSelectedButton = getSelectedButton();
 
@@ -279,10 +328,13 @@ public final class OnScreenKeyboard extends JFrame {
 		return optionalSelectedButton;
 	}
 
+	/// Applies the focus highlight to the currently selected button.
 	private void focusSelectedButton() {
 		getSelectedButton().ifPresent(selectedButton -> selectedButton.setFocus(true));
 	}
 
+	/// Marks all non-lock key buttons as changed, forcing them to be repolled on
+	/// the next input cycle.
 	public void forceRepoll() {
 		anyChanges = true;
 
@@ -297,6 +349,10 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// Returns the currently selected keyboard button.
+	///
+	/// @return an optional containing the selected button, or empty if the keyboard
+	/// grid has not yet been initialized
 	private Optional<AbstractKeyboardButton> getSelectedButton() {
 		if (keyboardButtons == null) {
 			return Optional.empty();
@@ -305,10 +361,17 @@ public final class OnScreenKeyboard extends JFrame {
 		return Optional.of(keyboardButtons[selectedRow][selectedColumn]);
 	}
 
+	/// Returns whether the keyboard is currently in a shifted state.
+	///
+	/// @return `true` if either the left or right Shift key is active
 	private boolean isKeyboardShifted() {
 		return leftShiftKeyboardButton.isShifting() || rightShiftKeyboardButton.isShifting();
 	}
 
+	/// Moves the keyboard selector highlight in the specified direction, wrapping
+	/// around at edges.
+	///
+	/// @param direction the direction to move
 	@SuppressWarnings({ "NonAtomicOperationOnVolatileField", "NonAtomicVolatileUpdate" })
 	public void moveSelector(final Direction direction) {
 		EventQueue.invokeLater(() -> {
@@ -353,6 +416,10 @@ public final class OnScreenKeyboard extends JFrame {
 		});
 	}
 
+	/// Polls all keyboard buttons and applies their pending key events to the given
+	/// input state.
+	///
+	/// @param input the input state to update
 	public void poll(@SuppressWarnings("exports") final Input input) {
 		synchronized (keyboardButtons) {
 			if (anyChanges) {
@@ -367,15 +434,21 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// Presses the currently selected keyboard button.
 	public void pressSelectedButton() {
 		getSelectedButton().ifPresent(selectedButton -> selectedButton.press(false));
 	}
 
+	/// Prevents deserialization.
+	///
+	/// @param ignoredStream ignored
+	/// @throws NotSerializableException always
 	@Serial
 	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(OnScreenKeyboard.class.getName());
 	}
 
+	/// Releases all currently held keyboard buttons.
 	public void releaseAllButtons() {
 		for (final var row : keyboardButtons) {
 			for (final var keyboardButton : row) {
@@ -384,10 +457,16 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// Releases the currently selected keyboard button.
 	public void releaseSelectedButton() {
 		getSelectedButton().ifPresent(AbstractKeyboardButton::release);
 	}
 
+	/// Shows or hides the on-screen keyboard. When showing, updates scaling and
+	/// applies a rounded window shape if supported. When hiding, releases all held
+	/// buttons.
+	///
+	/// @param b whether to show or hide the keyboard
 	@Override
 	public void setVisible(final boolean b) {
 		synchronized (keyboardButtons) {
@@ -408,10 +487,15 @@ public final class OnScreenKeyboard extends JFrame {
 		EventQueue.invokeLater(() -> super.setVisible(b));
 	}
 
+	/// Toggles the lock state of the currently selected keyboard button.
 	public void toggleLock() {
 		getSelectedButton().ifPresent(AbstractKeyboardButton::toggleLock);
 	}
 
+	/// Updates the on-screen keyboard's position. Packs the window to its preferred
+	/// size and then restores any previously saved location from preferences,
+	/// defaulting to the bottom-center of the screen. Does nothing while a drag
+	/// operation is in progress.
 	void updateLocation() {
 		if (frameDragListener.isDragging()) {
 			return;
@@ -428,6 +512,8 @@ public final class OnScreenKeyboard extends JFrame {
 		GuiUtils.loadFrameLocation(main.getPreferences(), this, defaultLocation, totalDisplayBounds);
 	}
 
+	/// Updates button sizes and font sizes to match the current overlay scaling
+	/// factor, then repacks and repositions the window.
 	private void updateScaling() {
 		final var overlayScaling = main.getOverlayScaling();
 		final var buttonSideLength = Math.round(AbstractKeyboardButton.BASE_BUTTON_SIZE * overlayScaling);
@@ -447,6 +533,14 @@ public final class OnScreenKeyboard extends JFrame {
 		updateLocation();
 	}
 
+	/// Updates the selected column in the new row to best align with the horizontal
+	/// position of the previously selected button.
+	///
+	/// Prefers a button that fully contains the previous button's x-range;
+	/// otherwise selects the button whose center is closest to the previous
+	/// button's center.
+	///
+	/// @param previousButton the button that was selected before the row change
 	private void updateSelectedColumn(final AbstractKeyboardButton previousButton) {
 		final var previousButtonX = previousButton.getX();
 		final var previousButtonWidth = previousButton.getPreferredSize().width;
@@ -477,52 +571,96 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// Prevents serialization.
+	///
+	/// @param ignoredStream ignored
+	/// @throws NotSerializableException always
 	@Serial
 	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(OnScreenKeyboard.class.getName());
 	}
 
+	/// Navigation directions for moving the keyboard selector.
+	///
+	/// Used with [#moveSelector] to control which key receives focus next
+	/// during gamepad-driven navigation of the on-screen keyboard.
 	public enum Direction {
 
-		UP("DIRECTION_UP"), DOWN("DIRECTION_DOWN"), LEFT("DIRECTION_LEFT"), RIGHT("DIRECTION_RIGHT");
+		/// Upward navigation.
+		UP("DIRECTION_UP"),
 
+		/// Downward navigation.
+		DOWN("DIRECTION_DOWN"),
+
+		/// Leftward navigation.
+		LEFT("DIRECTION_LEFT"),
+
+		/// Rightward navigation.
+		RIGHT("DIRECTION_RIGHT");
+
+		/// Localized display label for this direction.
 		private final String label;
 
+		/// Creates a [Direction] constant with the given localization key.
+		///
+		/// @param labelKey the resource bundle key used to look up the display label
 		Direction(final String labelKey) {
 			label = Main.STRINGS.getString(labelKey);
 		}
 
+		/// Returns the localized label for this direction.
+		///
+		/// @return the display label
 		@Override
 		public String toString() {
 			return label;
 		}
 	}
 
+	/// Abstract base class for all on-screen keyboard buttons. Handles focus border
+	/// rendering, theme updates, and defines the press/release/poll/toggleLock
+	/// contract.
+	///
+	/// Concrete subclasses implement [#press], [#release], [#poll], and
+	/// [#toggleLock] to provide key-type-specific behavior. Focus is indicated
+	/// by a red compound border applied by [#setFocus].
 	private abstract class AbstractKeyboardButton extends JButton {
 
+		/// Base size in pixels for each keyboard button.
 		private static final int BASE_BUTTON_SIZE = 55;
 
+		/// Font size in points used for keyboard button labels.
 		private static final int BUTTON_FONT_SIZE = 15;
 
+		/// Thickness in pixels of the focus indicator border.
 		private static final int FOCUSED_BUTTON_BORDER_THICKNESS = 2;
 
 		@Serial
 		private static final long serialVersionUID = 4567858619453576258L;
 
+		/// Whether this button's visual state changed since the last repaint.
 		volatile boolean changed;
 
+		/// Default background color of this button.
 		Color defaultBackground;
 
+		/// Default border applied to this button when it is not focused.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		Border defaultButtonBorder;
 
+		/// Default foreground color of this button.
 		Color defaultForeground;
 
+		/// Border applied to this button when it has focus.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		Border focusedButtonBorder;
 
+		/// Whether this button is currently in a pressed state.
 		private volatile boolean pressed;
 
+		/// Creates an [AbstractKeyboardButton] with the given label text.
+		///
+		/// @param text the button label
 		private AbstractKeyboardButton(final String text) {
 			super(text);
 
@@ -530,31 +668,61 @@ public final class OnScreenKeyboard extends JFrame {
 			setMargin(new Insets(1, 1, 1, 1));
 		}
 
+		/// Returns whether this button is currently pressed.
+		///
+		/// @return `true` if the button is pressed
 		boolean isPressed() {
 			return pressed;
 		}
 
+		/// Polls this button's state and applies any pending key events to the given
+		/// input.
+		///
+		/// @param input the input state to update
+		/// @return `true` if the button requires continued polling on the next cycle
 		abstract boolean poll(final Input input);
 
+		/// Presses this button.
+		///
+		/// @param lock `true` if the button should be locked down (held indefinitely)
+		/// rather than treated as a momentary press
 		abstract void press(final boolean lock);
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream ignored
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(AbstractKeyboardButton.class.getName());
 		}
 
+		/// Releases this button.
 		abstract void release();
 
+		/// Sets the focus highlight on this button. Applies a red compound border when
+		/// focused and restores the default border otherwise.
+		///
+		/// @param focus `true` to apply the focus border, `false` to restore the
+		/// default border
 		private void setFocus(final boolean focus) {
 			setBorder(focus ? focusedButtonBorder : defaultButtonBorder);
 		}
 
+		/// Sets whether this button is pressed.
+		///
+		/// @param pressed `true` to mark the button as pressed, `false` to mark it as
+		/// released
 		void setPressed(final boolean pressed) {
 			this.pressed = pressed;
 		}
 
+		/// Toggles the lock state of this button.
 		abstract void toggleLock();
 
+		/// Refreshes theme colors and border objects from the current UI manager
+		/// settings and reapplies the focus border if this button is currently
+		/// selected.
 		private void updateTheme() {
 			defaultBackground = UIManager.getColor("Button.background");
 			defaultForeground = UIManager.getColor("Button.foreground");
@@ -569,33 +737,54 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 		}
 
+		/// Updates the UI delegate and refreshes theme colors and borders.
 		@Override
 		public void updateUI() {
 			super.updateUI();
 			updateTheme();
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream ignored
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(AbstractKeyboardButton.class.getName());
 		}
 	}
 
+	/// A keyboard button for alphabetic keys whose display toggles between
+	/// lowercase and uppercase based on the Shift /Caps Lock state.
+	///
+	/// The label is shown in uppercase when either Shift is held or Caps Lock
+	/// is active, and in lowercase otherwise.
 	private final class AlphabeticKeyboardButton extends ShiftableKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = -43249779147068577L;
 
+		/// Creates an [AlphabeticKeyboardButton] for the key identified by the given
+		/// DirectInput key code name.
+		///
+		/// @param directInputKeyCodeName the DirectInput key code name
 		private AlphabeticKeyboardButton(final String directInputKeyCodeName) {
 			super(directInputKeyCodeName, directInputKeyCodeName);
 		}
 	}
 
+	/// The Caps Lock button. Toggling this lock updates all shiftable key labels to
+	/// reflect the current case.
+	///
+	/// When Caps Lock is toggled, each [ShiftableKeyboardButton] in the keyboard
+	/// grid is updated to show either its default or its alternative label,
+	/// taking the current Shift key state into account.
 	private final class CapsLockKeyButton extends LockKeyButton {
 
 		@Serial
 		private static final long serialVersionUID = 6891401614243607392L;
 
+		/// Creates a [CapsLockKeyButton].
 		private CapsLockKeyButton() {
 			super(LockKey.CAPS_LOCK_LOCK_KEY);
 		}
@@ -616,23 +805,40 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// Standard keyboard button that sends key-down and key-up events. Supports
+	/// mouse interaction, hold-to-repeat behavior after a minimum press time, and
+	/// toggle locking.
+	///
+	/// Short presses produce a down-up event pair; holding the button beyond
+	/// `MIN_REPEAT_PRESS_TIME` keeps the key in the down state. Right-clicking
+	/// the button toggles its lock state.
 	private class DefaultKeyboardButton extends AbstractKeyboardButton {
 
+		/// Minimum time in milliseconds a button must be held before repeating.
 		private static final long MIN_REPEAT_PRESS_TIME = 150L;
 
 		@Serial
 		private static final long serialVersionUID = -1739002089027358633L;
 
+		/// DirectInput key code name identifying the key this button represents.
 		final String directInputKeyCodeName;
 
+		/// Key stroke sent to the input layer when this button is pressed.
 		private final KeyStroke keyStroke;
 
+		/// Timestamp in milliseconds when the current press began.
 		private volatile long beginPressTime;
 
+		/// Whether a down-up event pair should be sent on the next poll cycle.
 		private volatile boolean doDownUp;
 
+		/// Whether the mouse button is currently held down over this button.
 		private volatile boolean mouseDown;
 
+		/// Creates a [DefaultKeyboardButton] for the key identified by the given
+		/// DirectInput key code name.
+		///
+		/// @param directInputKeyCodeName the DirectInput key code name
 		private DefaultKeyboardButton(final String directInputKeyCodeName) {
 			super(getDefaultKeyDisplayName(directInputKeyCodeName));
 
@@ -693,6 +899,10 @@ public final class OnScreenKeyboard extends JFrame {
 			});
 		}
 
+		/// Returns the preferred size, adjusted by key-specific width multipliers
+		/// (e.g., greater width for Space, Backspace, Shift).
+		///
+		/// @return the preferred size
 		@SuppressWarnings({ "NarrowingCompoundAssignment", "lossy-conversions" })
 		@Override
 		public Dimension getPreferredSize() {
@@ -787,15 +997,30 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// A keyboard button that can display one of two labels depending on a toggle
+	/// state (e.g., shifted or Num Lock active).
+	///
+	/// Subclasses provide the two label values and call
+	/// [#setShowAlternativeKeyName] to switch between them in response to
+	/// modifier key or lock key state changes.
 	private abstract class DualPurposeKeyboardButton extends DefaultKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = -722664487208124876L;
 
+		/// Alternative label shown when the keyboard is in shifted or lock state.
 		String alternativeKeyName;
 
+		/// Default label shown in the normal (unshifted) keyboard state.
 		String defaultKeyName;
 
+		/// Creates a [DualPurposeKeyboardButton] with a default and an alternative
+		/// label.
+		///
+		/// @param directInputKeyCodeName the DirectInput key code name used for the
+		/// default label
+		/// @param shiftedKeyName the alternative label shown when the keyboard is in
+		/// the shifted or alternative state
 		private DualPurposeKeyboardButton(final String directInputKeyCodeName, final String shiftedKeyName) {
 			super(directInputKeyCodeName);
 
@@ -803,23 +1028,40 @@ public final class OnScreenKeyboard extends JFrame {
 			alternativeKeyName = shiftedKeyName;
 		}
 
+		/// Sets whether to display the alternative key name instead of the default
+		/// label.
+		///
+		/// @param showAlternativeKeyName `true` to display the alternative label,
+		/// `false` to display the default label
 		void setShowAlternativeKeyName(final boolean showAlternativeKeyName) {
 			setText(showAlternativeKeyName ? alternativeKeyName : defaultKeyName);
 		}
 	}
 
+	/// A keyboard button representing a lock key (Caps Lock, Num Lock, Scroll
+	/// Lock). Toggling changes the button's foreground color to green when locked.
+	///
+	/// The lock state is stored in an [java.util.concurrent.atomic.AtomicBoolean]
+	/// and propagated to the input layer via `onLockKeys` or `offLockKeys`
+	/// during the next [#poll] cycle.
 	private class LockKeyButton extends AbstractKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = 4014130700331413635L;
 
+		/// Current lock state of this button.
 		final AtomicBoolean locked = new AtomicBoolean();
 
+		/// The lock key that this button controls.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final LockKey lockKey;
 
+		/// Whether the button was in the up (unpressed) state during the previous poll.
 		private volatile boolean wasUp = true;
 
+		/// Creates a [LockKeyButton] for the given lock key.
+		///
+		/// @param lockKey the lock key represented by this button
 		private LockKeyButton(final LockKey lockKey) {
 			super(getLockKeyDisplayName(lockKey.name()));
 			this.lockKey = lockKey;
@@ -827,6 +1069,9 @@ public final class OnScreenKeyboard extends JFrame {
 			addActionListener(_ -> toggleLock());
 		}
 
+		/// Returns the preferred size, doubled in width for the Caps Lock key.
+		///
+		/// @return the preferred size
 		@Override
 		public Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();
@@ -885,11 +1130,17 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// The Num Lock button. Toggling this lock switches all numpad buttons between
+	/// their numeric and navigation labels.
+	///
+	/// When Num Lock is toggled, every [NumPadKeyboardButton] in the keyboard
+	/// grid is updated to show either its numeric or its navigation label.
 	private final class NumLockKeyButton extends LockKeyButton {
 
 		@Serial
 		private static final long serialVersionUID = 296846375213986255L;
 
+		/// Creates a [NumLockKeyButton].
 		private NumLockKeyButton() {
 			super(LockKey.NUM_LOCK_LOCK_KEY);
 		}
@@ -908,11 +1159,26 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// A numpad keyboard button that displays its numeric label when Num Lock is
+	/// on and a navigation label (e.g., Home, End, arrows) when Num Lock is off.
+	///
+	/// The label roles are swapped relative to [DualPurposeKeyboardButton]
+	/// convention so that the navigation label is the default and the digit
+	/// label is the alternative, matching standard Num Lock-off behavior.
 	private final class NumPadKeyboardButton extends DualPurposeKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = -460568797568937461L;
 
+		/// Creates a [NumPadKeyboardButton] for the given numpad key.
+		///
+		/// The default label shows the navigation symbol (Num Lock off) and the
+		/// alternative label shows the digit (Num Lock on).
+		///
+		/// @param directInputKeyCodeName the DirectInput key code name for the digit
+		/// key
+		/// @param numLockOffDirectInputKeyCodeName the DirectInput key code name for
+		/// the navigation key shown when Num Lock is off
 		private NumPadKeyboardButton(final String directInputKeyCodeName,
 				final String numLockOffDirectInputKeyCodeName) {
 			super(directInputKeyCodeName, getDefaultKeyDisplayName(numLockOffDirectInputKeyCodeName));
@@ -925,15 +1191,27 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 	}
 
+	/// A Shift key button. When pressed or held, it toggles the display of all
+	/// shiftable keyboard buttons between their default and shifted labels.
+	///
+	/// Pressing either the left or right Shift button updates every
+	/// [ShiftableKeyboardButton] in the grid, taking the Caps Lock state into
+	/// account to determine whether to show the shifted or unshifted label.
 	private final class ShiftKeyboardButton extends DefaultKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = -1789796245988164919L;
 
+		/// Creates a [ShiftKeyboardButton] for the given Shift key type.
+		///
+		/// @param type the type identifying whether this is the left or right Shift key
 		private ShiftKeyboardButton(final ShiftKeyboardButtonType type) {
 			super(type.directInputKeyCodeName);
 		}
 
+		/// Returns whether this Shift key is currently active (pressed or held).
+		///
+		/// @return `true` if the Shift key is pressed or held down
 		private boolean isShifting() {
 			return isPressed() || heldButtons.contains(this);
 		}
@@ -953,23 +1231,48 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 		}
 
+		/// Identifies the left or right Shift key by its DirectInput scan code.
+		///
+		/// Each constant carries the scan code name used to look up the key's
+		/// [KeyStroke] when constructing a [ShiftKeyboardButton].
 		private enum ShiftKeyboardButtonType {
 
-			LEFT(ScanCode.DIK_LSHIFT), RIGHT(ScanCode.DIK_RSHIFT);
+			/// Left Shift key.
+			LEFT(ScanCode.DIK_LSHIFT),
+			/// Right Shift key.
+			RIGHT(ScanCode.DIK_RSHIFT);
 
+			/// DirectInput key code name for this Shift key.
 			private final String directInputKeyCodeName;
 
+			/// Creates a [ShiftKeyboardButtonType] constant with the given DirectInput
+			/// key code name.
+			///
+			/// @param directInputKeyCodeName the DirectInput key code name for this
+			/// Shift key
 			ShiftKeyboardButtonType(final String directInputKeyCodeName) {
 				this.directInputKeyCodeName = directInputKeyCodeName;
 			}
 		}
 	}
 
+	/// A keyboard button whose label changes based on Shift/Caps Lock state (e.g.,
+	/// `1` becomes `!` when shifted).
+	///
+	/// The default label is shown when neither Shift is held nor Caps Lock is
+	/// active; the alternative label is shown when the keyboard is in a shifted
+	/// state.
 	private class ShiftableKeyboardButton extends DualPurposeKeyboardButton {
 
 		@Serial
 		private static final long serialVersionUID = -106361505843077547L;
 
+		/// Creates a [ShiftableKeyboardButton] with a default and a shifted label.
+		///
+		/// @param directInputKeyCodeName the DirectInput key code name used for the
+		/// default (unshifted) label
+		/// @param shiftedKeyName the label shown when the keyboard is in the shifted
+		/// state
 		private ShiftableKeyboardButton(final String directInputKeyCodeName, final String shiftedKeyName) {
 			super(directInputKeyCodeName, shiftedKeyName);
 		}

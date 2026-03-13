@@ -1,17 +1,18 @@
-/* Copyright (C) 2014  Matteo Hausner
+/*
+ * Copyright (C) 2014 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -85,35 +86,57 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import org.lwjgl.sdl.SDLGamepad;
 
+/// A modal dialog for editing the actions assigned to a controller component
+/// (axis or button) or to a cycle action. Provides lists of available and
+/// assigned actions, along with a property editor for configuring individual
+/// action parameters and a help panel describing each action.
+///
+/// This dialog supports two modes of operation:
+/// - **Component editor**: edits actions for a specific controller component
+/// within a profile.
+/// - **Cycle editor**: edits the sub-actions within a [ButtonToCycleAction].
 @SuppressWarnings("exports")
 public final class EditActionsDialog extends JDialog {
 
+	/// Horizontal weight for the actions list columns in the grid layout.
 	private static final double ACTIONS_LIST_WEIGHT_X = 0.16;
 
+	/// Action classes available for axis components.
 	private static final List<Class<?>> AXIS_ACTION_CLASSES;
 
+	/// Action classes available for button components.
 	private static final List<Class<?>> BUTTON_ACTION_CLASSES;
 
+	/// Action classes available inside a cycle action editor.
 	private static final List<Class<?>> CYCLE_ACTION_CLASSES;
 
+	/// Default height of the dialog bounds in pixels.
 	private static final int DIALOG_BOUNDS_HEIGHT = 690;
 
+	/// Pixel offset applied to the dialog position relative to its parent.
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
 
+	/// Default width of the dialog bounds in pixels.
 	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
+	/// Cache mapping action classes to their field-to-annotation maps.
 	private static final Map<Class<?>, Map<Field, ActionProperty>> FIELD_ACTION_PROPERTY_MAP_CACHE = new HashMap<>();
 
+	/// Custom cursor shown when hovering over a property label that has help text.
 	private static final Cursor HELP_CURSOR;
 
+	/// Hot-spot point for the custom help cursor image.
 	private static final Point HELP_CURSOR_HOT_SPOT = new Point(0, 0);
 
+	/// Classpath resource path for the help cursor GIF image.
 	private static final String HELP_GIF_RESOURCE_PATH = "/help.gif";
 
 	private static final Logger LOGGER = Logger.getLogger(EditActionsDialog.class.getName());
 
+	/// Action classes available for on-screen keyboard mode components.
 	private static final List<Class<?>> ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 
+	/// Action classes available for trigger (half-axis) components.
 	private static final List<Class<?>> TRIGGER_ACTION_CLASSES;
 
 	@Serial
@@ -181,47 +204,72 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// The list displaying currently assigned actions.
 	private final JList<AssignedAction> assignedActionsList = new JList<>();
 
+	/// The list displaying available action types that can be added.
 	private final JList<AvailableAction> availableActionsList = new JList<>();
 
+	/// The list of sub-actions being edited in cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final List<IAction<Boolean>> cycleActions = new ArrayList<>();
 
+	/// The editor pane used to display help text for the selected action.
 	private final JEditorPane helpEditorPane = GuiUtils.createHtmlViewerEditorPane();
 
+	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
 
+	/// A working copy of the profile modified by this dialog before saving.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Profile unsavedProfile;
 
+	/// The controller component whose actions are being edited, or `null` in
+	/// cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Component component;
 
+	/// The cycle action whose sub-actions are being edited, or `null` in
+	/// component-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private ButtonToCycleAction cycleAction;
 
+	/// The input instance associated with the current editing session.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Input input;
 
+	/// The paste button, enabled only when the clipboard holds a compatible action.
 	private JButton pasteButton;
 
+	/// The label shown above the properties panel when a property editor is
+	/// visible.
 	private JLabel propertiesLabel;
 
+	/// The panel containing property editors for the selected action.
 	private JPanel propertiesPanel;
 
+	/// The scroll pane wrapping the properties panel.
 	private JScrollPane propertiesScrollPane;
 
+	/// The action currently selected in the assigned-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private AssignedAction selectedAssignedAction;
 
+	/// The action type currently selected in the available-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private AvailableAction selectedAvailableAction;
 
+	/// The mode currently selected in the mode combo box.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Mode selectedMode;
 
+	/// Creates a cycle editor dialog for editing the sub-actions of a
+	/// [ButtonToCycleAction].
+	///
+	/// @param parentDialog the parent [EditActionsDialog] that owns this cycle
+	/// editor
+	/// @param cycleAction the cycle action whose sub-actions are to be edited
 	@SuppressWarnings("unchecked")
 	public EditActionsDialog(@SuppressWarnings("exports") final EditActionsDialog parentDialog,
 			@SuppressWarnings("exports") final ButtonToCycleAction cycleAction) {
@@ -247,6 +295,12 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
+	/// Creates a component editor dialog for editing the actions assigned to a
+	/// specific controller component within a profile.
+	///
+	/// @param main the main application instance owning this dialog
+	/// @param component the controller component whose actions are to be edited
+	/// @param name the display name of the component, used in the dialog title
 	EditActionsDialog(final Main main, final Component component, final String name) {
 		super(main.getFrame());
 
@@ -282,6 +336,14 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
+	/// Creates a [JButton] from the given action, adds it to the parent panel with
+	/// a fixed size, and returns the button in a disabled state.
+	///
+	/// @param action the Swing action to wrap in a button
+	/// @param parentPanel the panel to which the button is added
+	/// @param dimension the fixed preferred, minimum, and maximum size of the
+	/// button
+	/// @return the newly created, initially disabled button
 	private static JButton addActionButton(final javax.swing.Action action, final JPanel parentPanel,
 			final Dimension dimension) {
 		final var button = new JButton(action);
@@ -291,6 +353,14 @@ public final class EditActionsDialog extends JDialog {
 		return button;
 	}
 
+	/// Adds a component to a panel with a fixed size, centering it on both axes.
+	///
+	/// Sets the preferred, minimum, and maximum size of the component to the
+	/// given dimension, then adds it to the parent panel.
+	///
+	/// @param component the component to size and add
+	/// @param parentPanel the panel to which the component is added
+	/// @param dimension the fixed size to apply to the component
 	private static void addComponentToPanelFixedSize(final javax.swing.JComponent component, final JPanel parentPanel,
 			final Dimension dimension) {
 		component.setPreferredSize(dimension);
@@ -303,6 +373,14 @@ public final class EditActionsDialog extends JDialog {
 		parentPanel.add(component);
 	}
 
+	/// Collects all fields of the given class that are annotated with
+	/// [ActionProperty] and adds them to the provided map.
+	///
+	/// Fields already present in the map are not overwritten, preserving entries
+	/// from subclasses over those from superclasses.
+	///
+	/// @param clazz the class whose declared fields are inspected
+	/// @param map the map to populate with field-to-annotation entries
 	private static void collectFields(final Class<?> clazz, final Map<Field, ActionProperty> map) {
 		for (final var field : clazz.getDeclaredFields()) {
 			final var annotation = field.getAnnotation(ActionProperty.class);
@@ -312,6 +390,17 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Returns the smallest non-negative integer not present in the given stream,
+	/// or the next integer after the maximum present value, capped at `maxValue`.
+	///
+	/// Returns `0` if the stream is empty. If the sequence is contiguous from the
+	/// first value, returns the value immediately following the last element,
+	/// capped at `maxValue`.
+	///
+	/// @param numbers the stream of integers to examine; values above `maxValue`
+	/// are ignored
+	/// @param maxValue the inclusive upper bound for the returned value
+	/// @return the first missing or next integer in the range [0, maxValue]
 	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
 		final var it = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
@@ -336,6 +425,15 @@ public final class EditActionsDialog extends JDialog {
 		return Math.min(expected + 1, maxValue);
 	}
 
+	/// Returns a map of fields to their [ActionProperty] annotations for the given
+	/// action class.
+	/// Results are cached for performance. The map includes fields from the class
+	/// itself and all superclasses that implement [IAction].
+	///
+	/// @param actionClass the action class to inspect; must implement [IAction]
+	/// @return an unmodifiable map of fields to their action property annotations
+	/// @throws IllegalArgumentException if the provided class does not implement
+	/// [IAction]
 	public static Map<Field, ActionProperty> getFieldToActionPropertiesMap(final Class<?> actionClass) {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
@@ -367,6 +465,16 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Adds the given action to the appropriate data structure and refreshes the
+	/// dialog's action lists.
+	///
+	/// Depending on the action type and editor mode, the action is appended to the
+	/// button-to-mode actions map, the cycle sub-action list, or the
+	/// component-to-actions map of the currently selected mode. The assigned-
+	/// and available-actions lists are then refreshed and the appropriate row is
+	/// selected in the assigned-actions list.
+	///
+	/// @param action the action instance to add
 	@SuppressWarnings("unchecked")
 	private void addAction(final IAction<?> action) {
 		if (action instanceof final ButtonToModeAction buttonToModeAction) {
@@ -399,11 +507,29 @@ public final class EditActionsDialog extends JDialog {
 				- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
 	}
 
+	/// Hides the dialog and dispatches a window-closing event to trigger any
+	/// registered window listeners.
 	private void closeDialog() {
 		setVisible(false);
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
+	/// Creates and returns a new instance of the given action class, initializing
+	/// smart defaults for [ButtonToModeAction], [ToAxisAction], and
+	/// [ToButtonAction]
+	/// based on the current profile state.
+	///
+	/// For [ButtonToModeAction], sets the target mode to the second profile mode or
+	/// the on-screen keyboard mode as a fallback. For [ToAxisAction], assigns the
+	/// first unused virtual axis ordinal. For [ToButtonAction], assigns the first
+	/// unused button ID.
+	///
+	/// @param actionClass the action class to instantiate; must implement [IAction]
+	/// @return the newly created and initialized action instance
+	/// @throws IllegalAccessException if the constructor is not accessible
+	/// @throws InstantiationException if the class represents an abstract class
+	/// @throws InvocationTargetException if the constructor throws an exception
+	/// @throws NoSuchMethodException if no no-arg constructor exists
 	@SuppressWarnings("EnumOrdinal")
 	private IAction<?> getActionClassInstance(final Class<?> actionClass)
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
@@ -459,6 +585,17 @@ public final class EditActionsDialog extends JDialog {
 		return action;
 	}
 
+	/// Returns the list of action classes that may be assigned to the current
+	/// component or cycle, based on the editor mode and the selected mode and
+	/// component type.
+	///
+	/// Cycle editors return cycle-compatible classes. On-screen keyboard mode
+	/// returns the keyboard-specific class list. Trigger axes return
+	/// trigger-compatible classes. Axis components return axis-compatible classes.
+	/// Button components in the default mode return the full button class list;
+	/// other modes exclude [ButtonToModeAction].
+	///
+	/// @return the list of allowed action classes for the current context
 	private List<Class<?>> getAllowedActionClasses() {
 		if (isCycleEditor()) {
 			return CYCLE_ACTION_CLASSES;
@@ -478,6 +615,15 @@ public final class EditActionsDialog extends JDialog {
 		return BUTTON_ACTION_CLASSES.stream().filter(clazz -> clazz != ButtonToModeAction.class).toList();
 	}
 
+	/// Returns an array of [AssignedAction] wrappers representing all actions
+	/// currently assigned to the component or cycle being edited.
+	///
+	/// In cycle-editor mode, wraps each action from the local cycle action list.
+	/// In component-editor mode, wraps actions from the selected mode's
+	/// component-to-actions map and, for button components in the default mode,
+	/// also includes any [ButtonToModeAction] entries from the profile.
+	///
+	/// @return an array of assigned action wrappers; never `null`
 	@SuppressWarnings("unchecked")
 	private AssignedAction[] getAssignedActions() {
 		final var assignedActions = new ArrayList<AssignedAction>();
@@ -504,11 +650,20 @@ public final class EditActionsDialog extends JDialog {
 		return assignedActions.toArray(AssignedAction[]::new);
 	}
 
+	/// Returns the [Input] instance associated with this dialog.
+	///
+	/// @return the input instance, or `null` if this is a cycle editor
 	@SuppressWarnings("exports")
 	public Input getInput() {
 		return input;
 	}
 
+	/// Builds and populates the dialog's content pane with the actions panel,
+	/// available-actions list, assigned-actions list, action buttons, copy/paste
+	/// controls, properties panel, help panel, and OK/Cancel buttons.
+	///
+	/// This method must be called after [#preInit] and after any subclass-specific
+	/// initialization (such as setting the dialog title and mode selector).
 	private void init() {
 		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -610,10 +765,21 @@ public final class EditActionsDialog extends JDialog {
 		updateHelp(null);
 	}
 
+	/// Determines whether this dialog is operating as a cycle editor (editing
+	/// sub-actions of a [ButtonToCycleAction]) rather than a component editor.
+	///
+	/// @return `true` if this dialog is a cycle editor, `false` if it is a
+	/// component editor
 	public boolean isCycleEditor() {
 		return component == null;
 	}
 
+	/// Performs common pre-initialization shared by all constructors: sets modal,
+	/// configures the content pane layout, and positions and sizes the dialog
+	/// relative to the given parent component.
+	///
+	/// @param parentComponent the component used to derive the dialog's initial
+	/// position and as the offset reference
 	private void preInit(final java.awt.Component parentComponent) {
 		setModal(true);
 		getContentPane().setLayout(new BorderLayout());
@@ -627,15 +793,27 @@ public final class EditActionsDialog extends JDialog {
 		GuiUtils.setBoundsWithMinimum(this, bounds);
 	}
 
+	/// Prevents deserialization.
+	///
+	/// @param ignoredStream the object input stream (unused)
+	/// @throws NotSerializableException always
 	@Serial
 	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(EditActionsDialog.class.getName());
 	}
 
+	/// Refreshes the assigned-actions list to reflect the current state of the
+	/// edited component or cycle.
 	private void updateAssignedActions() {
 		assignedActionsList.setListData(getAssignedActions());
 	}
 
+	/// Refreshes the available-actions list and the paste button based on the
+	/// current context.
+	///
+	/// Rebuilds the list from the allowed action classes for the current mode and
+	/// component type, excluding [ButtonToModeAction] when not in the default mode,
+	/// and then updates the enabled state of the paste button.
 	private void updateAvailableActions() {
 		Objects.requireNonNull(pasteButton, "Field pasteButton must not be null");
 
@@ -656,6 +834,12 @@ public final class EditActionsDialog extends JDialog {
 		updatePasteButton();
 	}
 
+	/// Updates the help panel to show the title and description for the given
+	/// action class, or a default "no selection" message if `actionClass` is
+	/// `null`.
+	///
+	/// @param actionClass the action class whose help text is displayed, or `null`
+	/// to show the default help text
 	private void updateHelp(final Class<?> actionClass) {
 		final String title;
 		String descriptionLabel = null;
@@ -674,6 +858,16 @@ public final class EditActionsDialog extends JDialog {
 		updateHelp(title, descriptionLabel);
 	}
 
+	/// Updates the help panel with the given title and a description looked up from
+	/// the resource bundle via `descriptionLabel`.
+	///
+	/// If `descriptionLabel` is `null`, blank, or not found in the resource bundle,
+	/// falls back to the "no help available" description string. The HTML content
+	/// of the help editor pane is rebuilt and the caret is reset to the top.
+	///
+	/// @param title the heading text displayed in the help panel
+	/// @param descriptionLabel the resource bundle key for the description text, or
+	/// `null` to use the fallback
 	private void updateHelp(final String title, final String descriptionLabel) {
 		String description = null;
 		if (descriptionLabel != null && !descriptionLabel.isBlank()) {
@@ -694,6 +888,12 @@ public final class EditActionsDialog extends JDialog {
 		helpEditorPane.setCaretPosition(0);
 	}
 
+	/// Updates the enabled state of the paste button based on whether the
+	/// clipboard contains an action that is allowed in the current context.
+	///
+	/// The paste button is enabled only when the application clipboard holds a
+	/// non-`null` action whose class is present in the list returned by
+	/// [#getAllowedActionClasses].
 	private void updatePasteButton() {
 		final var clipboardAction = main.getClipboardAction();
 		final var pasteAllowed = clipboardAction != null
@@ -702,6 +902,11 @@ public final class EditActionsDialog extends JDialog {
 		pasteButton.setEnabled(pasteAllowed);
 	}
 
+	/// Updates the properties panel to reflect the currently selected assigned
+	/// action. Rebuilds
+	/// the property editors for each annotated field of the selected action, or
+	/// hides the panel
+	/// if no action is selected.
 	public void updateProperties() {
 		Objects.requireNonNull(propertiesLabel, "Field propertiesLabel must not be null");
 		Objects.requireNonNull(propertiesScrollPane, "Field propertiesScrollPane must not be null");
@@ -758,6 +963,10 @@ public final class EditActionsDialog extends JDialog {
 							setUnderlineEnabled(false);
 						}
 
+						/// Sets whether the property label is displayed with an underline font.
+						///
+						/// @param enabled `true` to apply underline, `false` to restore the original
+						/// font
 						private void setUnderlineEnabled(final boolean enabled) {
 							final Font newFont;
 							if (enabled) {
@@ -813,11 +1022,21 @@ public final class EditActionsDialog extends JDialog {
 		revalidate();
 	}
 
+	/// Prevents serialization.
+	///
+	/// @param ignoredStream the object output stream (unused)
+	/// @throws NotSerializableException always
 	@Serial
 	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(EditActionsDialog.class.getName());
 	}
 
+	/// Wraps an [IAction] instance for display in the assigned-actions list.
+	///
+	/// Provides a [#toString] implementation that returns the human-readable label
+	/// for the action, as shown in the GUI list of currently assigned actions.
+	///
+	/// @param action the action instance being wrapped
 	@SuppressWarnings("unused")
 	private record AssignedAction(IAction<?> action) {
 
@@ -827,6 +1046,13 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Wraps an action [Class] for display in the available-actions list.
+	///
+	/// Provides a [#toString] implementation that returns the human-readable label
+	/// for the action type, as shown in the GUI list of actions that can be added
+	/// to a component.
+	///
+	/// @param actionClass the action class being wrapped
 	@SuppressWarnings("unused")
 	private record AvailableAction(Class<?> actionClass) {
 
@@ -836,11 +1062,18 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Adds a new instance of the currently selected available action to the
+	/// component or cycle.
+	///
+	/// When performed, instantiates the action class selected in the
+	/// available-actions list and delegates to the enclosing dialog's add-action
+	/// logic.
 	private final class AddActionAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -7713175853948284887L;
 
+		/// Creates a new [AddActionAction] and initializes its name and description.
 		private AddActionAction() {
 			putValue(NAME, Main.STRINGS.getString("ADD_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("ADD_ACTION_ACTION_DESCRIPTION"));
@@ -857,11 +1090,16 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Closes the dialog without saving any changes.
+	///
+	/// When performed, discards all unsaved edits and closes the
+	/// [EditActionsDialog] by calling the enclosing dialog's close logic.
 	private final class CancelAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 8086810563127997199L;
 
+		/// Creates a new [CancelAction] and initializes its name and description.
 		private CancelAction() {
 			putValue(NAME, UIManager.getString("OptionPane.cancelButtonText"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CANCEL_ACTION_DESCRIPTION"));
@@ -873,11 +1111,17 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Copies the currently selected assigned action to the clipboard.
+	///
+	/// When performed, clones the action selected in the assigned-actions list and
+	/// stores the clone in the application clipboard via [Main], enabling it to be
+	/// pasted into another component or mode.
 	private final class CopyActionAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
 
+		/// Creates a new [CopyActionAction] and initializes its name and description.
 		private CopyActionAction() {
 			putValue(NAME, "🗐");
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("COPY_ACTION_ACTION_DESCRIPTION"));
@@ -894,11 +1138,18 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Saves all pending changes and closes the dialog.
+	///
+	/// When performed in cycle-editor mode, commits the edited sub-action list back
+	/// to the [ButtonToCycleAction]. In component-editor mode, applies the updated
+	/// profile to the [Input], refreshes the relevant UI panels in [Main], and
+	/// marks the profile as having unsaved changes before closing.
 	private final class OKAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -6947022759101822700L;
 
+		/// Creates a new [OKAction] and initializes its name and description.
 		private OKAction() {
 			putValue(NAME, UIManager.getString("OptionPane.okButtonText"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("OK_ACTION_DESCRIPTION"));
@@ -937,11 +1188,18 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Pastes a cloned copy of the clipboard action into the current component or
+	/// cycle.
+	///
+	/// When performed, retrieves the action stored in the application clipboard via
+	/// [Main], clones it, and delegates to the enclosing dialog's add-action logic
+	/// so the copy is appended to the assigned-actions list.
 	private final class PasteActionAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
 
+		/// Creates a new [PasteActionAction] and initializes its name and description.
 		private PasteActionAction() {
 			putValue(NAME, "📋");
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("PASTE_ACTION_ACTION_DESCRIPTION"));
@@ -957,11 +1215,19 @@ public final class EditActionsDialog extends JDialog {
 		}
 	}
 
+	/// Removes the currently selected assigned action from the component or cycle.
+	///
+	/// When performed, deletes the action selected in the assigned-actions list
+	/// from the appropriate data structure: the button-to-mode actions map for
+	/// [ButtonToModeAction] instances, the cycle sub-action list in cycle-editor
+	/// mode, or the component-to-actions map in component-editor mode. After
+	/// removal it refreshes both the available- and assigned-actions lists.
 	private final class RemoveActionAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -5681740772832902238L;
 
+		/// Creates a new [RemoveActionAction] and initializes its name and description.
 		private RemoveActionAction() {
 			putValue(NAME, Main.STRINGS.getString("REMOVE_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));

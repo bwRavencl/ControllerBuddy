@@ -1,17 +1,18 @@
-/* Copyright (C) 2018  Matteo Hausner
+/*
+ * Copyright (C) 2018 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.json;
@@ -40,28 +41,56 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.lwjgl.sdl.SDLGamepad;
 
+/// A Gson [TypeAdapterFactory] that provides custom type adapters for profile
+/// deserialization.
+///
+/// Handles migration of legacy GLFW gamepad button indices to SDL equivalents,
+/// applies default values for missing fields such as overlay axis orientation
+/// and style, resolves legacy enum constant names for [Activation], and
+/// migrates the deprecated `longPress` field to the delay mechanism on
+/// [IDelayableAction] instances.
 public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 
+	/// Legacy GLFW button index for the Back button.
 	private static final int GLFW_GAMEPAD_BUTTON_BACK = 6;
 
+	/// Legacy GLFW button index for the D-pad Down button.
 	private static final int GLFW_GAMEPAD_BUTTON_DPAD_DOWN = 13;
 
+	/// Legacy GLFW button index for the D-pad Left button.
 	private static final int GLFW_GAMEPAD_BUTTON_DPAD_LEFT = 14;
 
+	/// Legacy GLFW button index for the D-pad Right button.
 	private static final int GLFW_GAMEPAD_BUTTON_DPAD_RIGHT = 12;
 
+	/// Legacy GLFW button index for the Guide button.
 	private static final int GLFW_GAMEPAD_BUTTON_GUIDE = 8;
 
+	/// Legacy GLFW button index for the Left Bumper button.
 	private static final int GLFW_GAMEPAD_BUTTON_LEFT_BUMPER = 4;
 
+	/// Legacy GLFW button index for the Left Thumb (stick click) button.
 	private static final int GLFW_GAMEPAD_BUTTON_LEFT_THUMB = 9;
 
+	/// Legacy GLFW button index for the Right Bumper button.
 	private static final int GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER = 5;
 
+	/// Legacy GLFW button index for the Right Thumb (stick click) button.
 	private static final int GLFW_GAMEPAD_BUTTON_RIGHT_THUMB = 10;
 
+	/// Legacy GLFW button index for the Start button.
 	private static final int GLFW_GAMEPAD_BUTTON_START = 7;
 
+	/// Converts a legacy GLFW gamepad button index to its SDL equivalent.
+	///
+	/// GLFW and SDL use different numeric indices for the same physical buttons.
+	/// This method maps the GLFW-era indices stored in old profiles to the
+	/// corresponding SDL constants. Indices that have no special mapping are
+	/// returned unchanged.
+	///
+	/// @param glfwButton the GLFW gamepad button index to convert
+	/// @return the corresponding SDL gamepad button constant, or the original
+	/// value if no mapping exists
 	private static int convertGlfwToSdlButton(final int glfwButton) {
 		return switch (glfwButton) {
 		case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER -> SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER;
@@ -78,6 +107,18 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 		};
 	}
 
+	/// Creates a type adapter for the given type, applying profile migration logic
+	/// as needed.
+	///
+	/// Returns specialized adapters for enum types (with legacy name mapping),
+	/// [IDelayableAction]
+	/// subtypes (with `longPress` migration), and general types (with profile
+	/// version migration, default mode descriptions, and overlay axis defaults).
+	///
+	/// @param gson the Gson instance
+	/// @param type the type token for the target type
+	/// @param <T> the type being adapted
+	/// @return a [TypeAdapter] for the given type
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
 		final var rawType = (Class<?>) type.getRawType();
