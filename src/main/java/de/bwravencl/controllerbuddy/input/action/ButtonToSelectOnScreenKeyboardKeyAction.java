@@ -1,17 +1,18 @@
-/* Copyright (C) 2018  Matteo Hausner
+/*
+ * Copyright (C) 2018 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action;
@@ -27,27 +28,40 @@ import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+/// Maps a gamepad button press to moving the on-screen keyboard key selector.
+///
+/// Moves the selection cursor in the configured direction with acceleration:
+/// repeated holds increase the movement speed up to a peak rate.
 @Action(title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
 public final class ButtonToSelectOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
+	/// Duration in milliseconds over which the movement speed ramps up to its peak.
 	private static final long ACCELERATION_TIME = 300L;
 
+	/// Minimum elapsed time between selector moves at the start of a hold.
 	private static final long INITIAL_MIN_ELAPSE_TIME = 250L;
 
+	/// Minimum elapsed time between selector moves at peak acceleration.
 	private static final long PEAK_MIN_ELAPSE_TIME = 90L;
 
+	/// Rate at which the minimum elapsed time decreases per millisecond of hold
+	/// time.
 	private static final float PEAK_ELAPSE_TIME_REDUCTION = (INITIAL_MIN_ELAPSE_TIME - PEAK_MIN_ELAPSE_TIME)
 			/ (float) ACCELERATION_TIME;
 
+	/// Delay in milliseconds before this action becomes active.
 	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
+	/// Direction in which the on-screen keyboard selector moves.
 	@ActionProperty(title = "DIRECTION_TITLE", description = "DIRECTION_DESCRIPTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
 	private Direction direction = Direction.UP;
 
+	/// Timestamp of the initial button press used for acceleration calculation.
 	private transient long initialPressTime;
 
+	/// Timestamp of the most recent selector move event.
 	private transient long lastPressTime;
 
 	@Override
@@ -89,6 +103,9 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 				direction.toString().toLowerCase(Locale.ROOT));
 	}
 
+	/// Returns the navigation direction for on-screen keyboard key selection.
+	///
+	/// @return the direction
 	public Direction getDirection() {
 		return direction;
 	}
@@ -104,6 +121,9 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 		this.delay = delay;
 	}
 
+	/// Sets the navigation direction for on-screen keyboard key selection.
+	///
+	/// @param direction the direction
 	public void setDirection(final Direction direction) {
 		this.direction = direction;
 	}

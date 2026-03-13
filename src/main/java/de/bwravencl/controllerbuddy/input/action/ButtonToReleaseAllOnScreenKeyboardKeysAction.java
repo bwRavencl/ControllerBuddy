@@ -1,17 +1,18 @@
-/* Copyright (C) 2022  Matteo Hausner
+/*
+ * Copyright (C) 2022 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action;
@@ -23,9 +24,15 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 
+/// Maps a button press to releasing all on-screen keyboard keys.
+///
+/// When activated, this action iterates over every currently held on-screen
+/// keyboard key and releases it, effectively clearing the on-screen keyboard
+/// state in one step.
 @Action(title = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE", description = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 530)
 public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButtonToDelayableAction {
 
+	/// Delay in milliseconds before this action becomes active.
 	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
@@ -34,6 +41,7 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 		return super.clone();
 	}
 
+	/// Releases all on-screen keyboard buttons when the gamepad button is pressed.
 	@Override
 	public void doAction(final Input input, final int component, Boolean value) {
 		value = handleDelay(input, component, value);
@@ -48,6 +56,7 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 		return delay;
 	}
 
+	/// Returns a localized description of this action.
 	@Override
 	public String getDescription(final Input input) {
 		return Main.STRINGS.getString("BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE");

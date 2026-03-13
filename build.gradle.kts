@@ -5,6 +5,7 @@ import com.github.spotbugs.snom.SpotBugsTask
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlinx.html.a
 import kotlinx.html.body
@@ -178,20 +179,21 @@ spotless {
     forbidModuleImports()
     licenseHeader(
         $$"""
-        /* Copyright (C) $YEAR  Matteo Hausner
+        /*
+         * Copyright (C) $YEAR Matteo Hausner
          *
-         * This program is free software: you can redistribute it and/or modify
-         * it under the terms of the GNU General Public License as published by
-         * the Free Software Foundation, either version 3 of the License, or
-         * (at your option) any later version.
+         * This program is free software: you can redistribute it and/or modify it under
+         * the terms of the GNU General Public License as published by the Free Software
+         * Foundation, either version 3 of the License, or (at your option) any later
+         * version.
          *
-         * This program is distributed in the hope that it will be useful,
-         * but WITHOUT ANY WARRANTY; without even the implied warranty of
-         * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-         * GNU General Public License for more details.
+         * This program is distributed in the hope that it will be useful, but WITHOUT
+         * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+         * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+         * details.
          *
-         * You should have received a copy of the GNU General Public License
-         * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+         * You should have received a copy of the GNU General Public License along with
+         * this program. If not, see <https://www.gnu.org/licenses/>.
          */
 
 
@@ -517,14 +519,27 @@ tasks.register("generateConstants") {
         """
             package de.bwravencl.controllerbuddy.constants;
 
+            /// Build-time generated constants for the application.
+            ///
+            /// Contains the application name, version string, build timestamp, and
+            /// aggregated license HTML that are populated at compile time by the Gradle
+            /// build.
             public final class Constants {
 
+            	/// Prevents instantiation.
+            	private Constants() {
+            	}
+
+            	/// The application name.
             	public static final String APPLICATION_NAME = "$applicationName";
 
+            	/// The build timestamp in milliseconds since the epoch.
             	public static final long BUILD_TIMESTAMP = ${System.currentTimeMillis()}L;
 
+            	/// The HTML string containing the application and third-party licenses.
             	public static final String LICENSES_HTML;
 
+            	/// The application version string derived from git tags.
             	public static final String VERSION = "$version";
 
             	static {
@@ -551,6 +566,7 @@ tasks.register("generateModuleInfo") {
   doLast {
     moduleInfoFile.writeText(
         """
+        /// Module descriptor for the ControllerBuddy application.
         @SuppressWarnings("Java9RedundantRequiresStatement")
         module de.bwravencl.controllerbuddy {
         	exports de.bwravencl.controllerbuddy.gui;
@@ -660,6 +676,112 @@ tasks.named("spotlessNewlineAndTrailingWhitespace") { dependsOn("copyGameControl
 tasks.named("spotlessOnlyNewline") { dependsOn("copyGameControllerDB") }
 
 tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
+
+tasks.register<Javadoc>("checkJavadoc") {
+  group = LifecycleBasePlugin.VERIFICATION_GROUP
+  description = "Checks the source code for missing Javadoc comments"
+
+  dependsOn("generateModuleInfo", "generateConstants")
+
+  isFailOnError = false
+  val mainSourceSet = sourceSets.main.get()
+  source = mainSourceSet.allJava
+  classpath = mainSourceSet.compileClasspath
+
+  options.jFlags("-Duser.language=${Locale.US.language}", "-Duser.country=${Locale.US.country}")
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  (options as StandardJavadocDocletOptions).addStringOption("Xmaxerrs", 0.toString())
+  (options as StandardJavadocDocletOptions).addStringOption("Xmaxwarns", 0.toString())
+
+  val sharedState =
+      object {
+        var numIgnored = 0
+        val warningList = mutableListOf<String>()
+        val errorList = mutableListOf<String>()
+      }
+
+  doFirst {
+    val ignoredFields = listOf("long serialVersionUID", "Logger LOGGER")
+    var currentProblem: StringBuilder? = null
+    var isError = false
+
+    logging.addStandardErrorListener { line ->
+      if (line.isBlank()) return@addStandardErrorListener
+
+      when {
+        line.contains("warning: ") -> {
+          currentProblem = StringBuilder(line)
+        }
+        line.contains("error: ") -> {
+          currentProblem = StringBuilder(line)
+          isError = true
+        }
+        currentProblem != null -> {
+          if (
+              currentProblem!!.endsWith(
+                  "warning: use of default constructor, which does not provide a comment"
+              ) ||
+                  (currentProblem!!.endsWith("warning: no comment") &&
+                      ignoredFields.any { line.contains(it) })
+          ) {
+            sharedState.numIgnored++
+            currentProblem = null
+            isError = false
+          } else {
+            currentProblem!!.append("\n    $line")
+
+            if (line.endsWith('^')) {
+              if (isError) {
+                sharedState.errorList.add(currentProblem.toString())
+              } else {
+                sharedState.warningList.add(currentProblem.toString())
+              }
+              currentProblem = null
+              isError = false
+            }
+          }
+        }
+      }
+    }
+  }
+
+  doLast {
+    val errorsString = sharedState.errorList.size.toString()
+    val warningsString = sharedState.warningList.size.toString()
+    val ignoredString = sharedState.numIgnored.toString()
+    val numbersLength = maxOf(errorsString.length, warningsString.length, ignoredString.length)
+
+    val hasErrors = sharedState.errorList.isNotEmpty()
+    val hasWarnings = sharedState.warningList.isNotEmpty()
+
+    println(
+        buildString {
+          appendLine("\nJavadoc Lint Summary:\n")
+          appendLine("  Errors:   ${errorsString.padStart(numbersLength)}")
+          appendLine("  Warnings: ${warningsString.padStart(numbersLength)}")
+          appendLine("  Ignored:  ${ignoredString.padStart(numbersLength)}")
+
+          if (hasErrors) {
+            appendLine("\n  Error Details:\n")
+            sharedState.errorList.forEach { appendLine("    $it") }
+          }
+
+          if (hasWarnings) {
+            appendLine("\n  Warning Details:\n")
+            sharedState.warningList.forEach { appendLine("    $it") }
+          }
+        }
+    )
+
+    if (hasWarnings || hasErrors) {
+      throw GradleException(
+          "Found ${sharedState.errorList.size + sharedState.warningList.size} Javadoc problems."
+      )
+    }
+  }
+}
+
+tasks.named("check") { dependsOn("checkJavadoc") }
 
 tasks.named<Test>("test") {
   useJUnitPlatform()

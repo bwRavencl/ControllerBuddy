@@ -1,17 +1,18 @@
-/* Copyright (C) 2022  Matteo Hausner
+/*
+ * Copyright (C) 2022 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.runmode;
@@ -24,14 +25,25 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+/// Run mode for local input processing on the same machine.
+///
+/// Polls a locally connected controller for input and writes the
+/// resulting axis, button, key, and mouse state to the virtual
+/// output device.
 public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger LOGGER = Logger.getLogger(LocalRunMode.class.getName());
 
+	/// Set of normal (non-modifier) scan codes active in the current output cycle.
 	private final HashSet<ScanCode> sourceKeyCodes = new HashSet<>();
 
+	/// Set of modifier scan codes active in the current output cycle.
 	private final HashSet<ScanCode> sourceModifiersCodes = new HashSet<>();
 
+	/// Creates a new local run mode.
+	///
+	/// @param main the main application instance
+	/// @param input the input instance for controller state
 	public LocalRunMode(final Main main, final Input input) {
 		super(main, input);
 	}
@@ -127,6 +139,9 @@ public final class LocalRunMode extends OutputRunMode {
 		return true;
 	}
 
+	/// Runs the local polling loop: initializes the output device, then repeatedly
+	/// polls the controller, and writes the input state to the output device at the
+	/// configured poll interval until stopped.
 	@Override
 	public void run() {
 		logStart();

@@ -15,6 +15,7 @@
       <option name="REPORT_VARIABLES" value="true" />
       <option name="REPORT_PARAMETERS" value="true" />
     </inspection_tool>
+    <inspection_tool class="MissingJavadoc" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES">
       <option name="ignoreObjectMethods" value="true" />
       <option name="ignoreAnonymousClassMethods" value="false" />
@@ -47,6 +48,7 @@
       <option name="m_ignoreStaticAccessFromStaticContext" value="false" />
     </inspection_tool>
     <inspection_tool class="UnnecessarilyQualifiedStaticallyImportedElement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnnecessaryInheritDoc" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryQualifierForThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessarySuperConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessarySuperQualifier" enabled="true" level="WARNING" enabled_by_default="true" />

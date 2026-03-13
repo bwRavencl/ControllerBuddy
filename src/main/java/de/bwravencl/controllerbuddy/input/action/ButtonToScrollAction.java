@@ -1,17 +1,18 @@
-/* Copyright (C) 2014  Matteo Hausner
+/*
+ * Copyright (C) 2014 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action;
@@ -22,9 +23,15 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 
+/// Maps a gamepad button press to mouse scroll wheel movement.
+///
+/// While the button is held, scroll events are generated at a rate proportional
+/// to the input polling rate. Releasing the button resets the accumulated
+/// scroll remainder.
 @Action(title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
 public final class ButtonToScrollAction extends ToScrollAction<Boolean> implements IButtonToDelayableAction {
 
+	/// Delay in milliseconds before this action becomes active.
 	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 

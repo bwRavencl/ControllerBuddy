@@ -1,17 +1,18 @@
-/* Copyright (C) 2014  Matteo Hausner
+/*
+ * Copyright (C) 2014 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action;
@@ -25,17 +26,27 @@ import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 
+/// Abstract base class for actions that produce keystroke output.
+///
+/// Manages keystroke press/release state based on the configured activation
+/// mode and activation interval.
+///
+/// @param <V> the input value type
 abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
+	/// Current activatable state tracking whether the action may fire.
 	private transient Activatable activatable;
 
+	/// Delay in milliseconds before repeated activation triggers.
 	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
+	/// Keystroke produced by this action.
 	@ActionProperty(title = "KEYSTROKE_TITLE", description = "KEYSTROKE_DESCRIPTION", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
 
+	/// Whether the keystroke is currently held down.
 	private transient boolean wasDown;
 
 	@Override
@@ -65,10 +76,23 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 		return MessageFormat.format(Main.STRINGS.getString("PRESS"), keystroke);
 	}
 
+	/// Returns the keystroke produced by this action.
+	///
+	/// @return the keystroke
 	public KeyStroke getKeystroke() {
 		return keystroke;
 	}
 
+	/// Handles a key press or release by updating the target keystroke state
+	/// according to the configured activation mode and interval.
+	///
+	/// When the activatable state is [Activatable#ALWAYS], a down-up keystroke is
+	/// enqueued unconditionally. Otherwise, the activation mode determines whether
+	/// the key is held while pressed, fired on press, or fired on release, with
+	/// optional minimum interval hold behavior.
+	///
+	/// @param hot `true` if the input is currently active
+	/// @param input the current input state
 	void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpKeyStrokes().add(keystroke);
@@ -163,6 +187,9 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 		this.delay = delay;
 	}
 
+	/// Sets the keystroke produced by this action.
+	///
+	/// @param keystroke the keystroke to set
 	public void setKeystroke(final KeyStroke keystroke) {
 		this.keystroke = keystroke;
 	}

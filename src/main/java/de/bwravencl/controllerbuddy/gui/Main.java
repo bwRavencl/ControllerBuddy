@@ -1,17 +1,18 @@
-/* Copyright (C) 2014  Matteo Hausner
+/*
+ * Copyright (C) 2014 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.gui;
@@ -264,262 +265,393 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+/// Main application class for ControllerBuddy.
+///
+/// Manages the primary GUI frame, system tray integration, SDL gamepad event
+/// handling, profile loading/saving, overlay rendering, and all run modes
+/// (local, client, server).
+/// This class is a singleton; the static `main` field holds the active
+/// instance.
 public final class Main {
 
+	/// Default horizontal gap in pixels used for layout spacing.
 	public static final int DEFAULT_HGAP = 10;
 
+	/// Default vertical gap in pixels used for layout spacing.
 	public static final int DEFAULT_VGAP = 10;
 
+	/// The OS architecture string, as reported by the `os.arch` system property.
 	public static final String OS_ARCH = System.getProperty("os.arch");
 
+	/// The OS name string, as reported by the `os.name` system property.
 	public static final String OS_NAME = System.getProperty("os.name");
 
+	/// Whether the current operating system is Linux.
 	public static final boolean IS_LINUX = OS_NAME.startsWith("Linux");
 
+	/// Whether the current operating system is macOS.
 	public static final boolean IS_MAC = OS_NAME.startsWith("Mac") || OS_NAME.startsWith("Darwin");
 
+	/// Whether the current operating system is Windows.
 	public static final boolean IS_WINDOWS = OS_NAME.startsWith("Windows");
 
+	/// Maximum allowed length for network passwords.
 	public static final int PASSWORD_MAX_LENGTH = 24;
 
+	/// Minimum allowed length for network passwords.
 	public static final int PASSWORD_MIN_LENGTH = 6;
 
+	/// Resource bundle containing localized UI strings.
 	public static final ResourceBundle STRINGS = ResourceBundle.getBundle("strings");
 
+	/// Unicode symbol used to indicate swapped axes.
 	public static final String SWAPPED_SYMBOL = "⇆";
 
+	/// A fully transparent white color used for overlay backgrounds.
 	@SuppressWarnings("exports")
 	public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
 
+	/// Number of legend items displayed per row in the visualization overlay.
 	public static final int VISUALIZATION_LEGEND_ITEMS_PER_ROW = 6;
 
+	/// Height in pixels of standard UI buttons.
 	static final int BUTTON_DIMENSION_HEIGHT = 25;
 
+	/// Standard dimension for rectangular UI buttons.
 	@SuppressWarnings("exports")
 	public static final Dimension BUTTON_DIMENSION = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
 
+	/// Standard dimension for square UI buttons.
 	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
 	public static final Dimension SQUARE_BUTTON_DIMENSION = new Dimension(BUTTON_DIMENSION_HEIGHT,
 			BUTTON_DIMENSION_HEIGHT);
 
+	/// Default overlay scaling factor applied when no preference is stored.
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 
+	/// Filename of the controller SVG resource used in the visualization overlay.
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 
+	/// Default left-aligned flow layout used for panels with standard gaps.
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
 
+	/// Default height in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_HEIGHT = 710;
 
+	/// Default width in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_WIDTH = 1020;
 
+	/// Default horizontal position in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_X = 100;
 
+	/// Default vertical position in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_Y = 100;
 
+	/// Filename of the SDL game controller database resource.
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
 
+	/// Insets applied to items laid out with `GridBagLayout`.
 	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 
+	/// Accepted file extensions for HTML files used in profile export.
 	private static final String[] HTML_FILE_EXTENSIONS = { "html", "htm" };
 
+	/// File suffix string derived from the primary HTML extension.
 	private static final String HTML_FILE_SUFFIX = fileSuffix(HTML_FILE_EXTENSIONS[0]);
 
+	/// Classpath resource paths for the application window icon at various sizes.
 	private static final String[] ICON_RESOURCE_PATHS = { "/icon_16.png", "/icon_32.png", "/icon_64.png",
 			"/icon_128.png" };
 
+	/// Whether the current AWT toolkit is the X11 toolkit.
 	private static final boolean IS_X11_TOOLKIT;
 
+	/// Border used around items in list panels.
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
+	/// Insets applied inside list item borders.
 	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
 
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
+	/// Horizontal gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_HGAP = DEFAULT_HGAP + 2;
 
+	/// Vertical gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_VGAP = 5;
 
+	/// Apache Commons CLI options descriptor for the application's command line.
 	private static final Options OPTIONS = new Options();
 
+	/// CLI option name for the autostart mode selection.
 	private static final String OPTION_AUTOSTART = "autostart";
 
+	/// CLI autostart value that selects client mode.
 	private static final String OPTION_AUTOSTART_VALUE_CLIENT = "client";
 
+	/// CLI autostart value that selects local mode.
 	private static final String OPTION_AUTOSTART_VALUE_LOCAL = "local";
 
+	/// CLI autostart value that selects server mode.
 	private static final String OPTION_AUTOSTART_VALUE_SERVER = "server";
 
+	/// CLI option name for exporting a profile to HTML.
 	private static final String OPTION_EXPORT = "export";
 
+	/// CLI option name for specifying a custom game controller database path.
 	private static final String OPTION_GAME_CONTROLLER_DB = "gamecontrollerdb";
 
+	/// CLI option name for printing the help text.
 	private static final String OPTION_HELP = "help";
 
+	/// CLI option name for specifying the remote host address.
 	private static final String OPTION_HOST = "host";
 
+	/// CLI option name for specifying the connection password.
 	private static final String OPTION_PASSWORD = "password";
 
+	/// CLI option name for specifying the network port.
 	private static final String OPTION_PORT = "port";
 
+	/// CLI option name for specifying the profile file to load.
 	private static final String OPTION_PROFILE = "profile";
 
+	/// CLI option name for quitting a running instance.
 	private static final String OPTION_QUIT = "quit";
 
+	/// CLI option name for saving the current profile on start.
 	private static final String OPTION_SAVE = "save";
 
+	/// CLI option name for suppressing message dialogs.
 	private static final String OPTION_SKIP_MESSAGE_DIALOGS = "skipMessageDialogs";
 
+	/// CLI option name for specifying the connection timeout.
 	private static final String OPTION_TIMEOUT = "timeout";
 
+	/// CLI option name for minimizing the application to the system tray on start.
 	private static final String OPTION_TRAY = "tray";
 
+	/// CLI option name for printing the application version.
 	private static final String OPTION_VERSION = "version";
 
+	/// Long dimension in pixels of the overlay progress indicator bar.
 	private static final int OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION = 150;
 
+	/// Short dimension in pixels of the overlay progress indicator bar.
 	private static final int OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION = 20;
 
+	/// Maximum width in pixels of the overlay mode label.
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
+	/// Initial delay in milliseconds before the overlay position updater fires.
 	private static final long OVERLAY_POSITION_UPDATE_DELAY = 1L;
 
+	/// Interval in milliseconds between overlay position update ticks.
 	private static final long OVERLAY_POSITION_UPDATE_INTERVAL = 10L;
 
+	/// Maximum width in pixels of the overlay settings description label.
 	private static final int OVERLAY_SETTINGS_DESCRIPTION_LABEL_MAX_WIDTH = 300;
 
+	/// Preferences key for the auto-restart output setting.
 	private static final String PREFERENCES_AUTO_RESTART_OUTPUT = "auto_restart_output";
 
+	/// Preferences key for the haptic feedback setting.
 	private static final String PREFERENCES_HAPTIC_FEEDBACK = "haptic_feedback";
 
+	/// Preferences key for the stored remote host address.
 	private static final String PREFERENCES_HOST = "host";
 
+	/// Preferences key for the hot-swapping button assignment.
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
 
+	/// Preferences key for the last used controller identifier.
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 
+	/// Preferences key for the last loaded profile path.
 	private static final String PREFERENCES_LAST_PROFILE = "last_profile";
 
+	/// Preferences key for the controller LED color.
 	private static final String PREFERENCES_LED_COLOR = "led_color";
 
+	/// Preferences key for the map-circular-axes-to-square setting.
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 
+	/// Preferences key for the overlay scaling factor.
 	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
 
+	/// Preferences key for the stored connection password.
 	private static final String PREFERENCES_PASSWORD = "password";
 
+	/// Preferences key for the controller poll interval.
 	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
 
+	/// Preferences key for the stored network port.
 	private static final String PREFERENCES_PORT = "port";
 
+	/// Preferences key for the prevent-power-save-mode setting.
 	private static final String PREFERENCES_PREVENT_POWER_SAVE_MODE = "prevent_power_save_mode";
 
+	/// Preferences key for the show-donate-button visibility setting.
 	private static final String PREFERENCES_SHOW_DONATE_BUTTON = "show_donate_button";
 
+	/// Preferences key for the skip-controller-dialogs setting.
 	private static final String PREFERENCES_SKIP_CONTROLLER_DIALOGS = "skip_controller_dialogs";
 
+	/// Preferences key for the skip-tray-icon-hint setting.
 	private static final String PREFERENCES_SKIP_TRAY_ICON_HINT = "skip_tray_icon_hint";
 
+	/// Preferences key for the swap-left-and-right-sticks setting.
 	private static final String PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS = "swap_left_and_right_sticks";
 
+	/// Preferences key for the UI theme selection.
 	private static final String PREFERENCES_THEME = "theme";
 
+	/// Preferences key for the stored connection timeout value.
 	private static final String PREFERENCES_TIMEOUT = "timeout";
 
+	/// Preferences key for the touchpad cursor sensitivity value.
 	private static final String PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY = "touchpad_cursor_sensitivity";
 
+	/// Preferences key for the touchpad-enabled setting.
 	private static final String PREFERENCES_TOUCHPAD_ENABLED = "touchpad_enabled";
 
+	/// Preferences key for the touchpad scroll sensitivity value.
 	private static final String PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY = "touchpad_scroll_sensitivity";
 
+	/// Preferences key for the vJoy device index.
 	private static final String PREFERENCES_VJOY_DEVICE = "vjoy_device";
 
+	/// Preferences key for the vJoy installation directory path.
 	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
 
+	/// File extension used for profile files.
 	private static final String PROFILE_FILE_EXTENSION = "json";
 
+	/// File suffix string derived from the profile file extension.
 	private static final String PROFILE_FILE_SUFFIX = fileSuffix(PROFILE_FILE_EXTENSION);
 
+	/// Height in pixels shared by all settings label dimensions.
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 
+	/// Dimension for long settings labels in the settings panels.
 	private static final Dimension LONG_SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
 
+	/// Dimension for medium-width settings labels in the settings panels.
 	private static final Dimension MEDIUM_SETTINGS_LABEL_DIMENSION = new Dimension(100,
 			SETTINGS_LABEL_DIMENSION_HEIGHT);
 
+	/// Dimension for short settings labels in the settings panels.
 	private static final Dimension SHORT_SETTINGS_LABEL_DIMENSION = new Dimension(80, SETTINGS_LABEL_DIMENSION_HEIGHT);
 
+	/// Acknowledgement token exchanged in the single-instance IPC protocol.
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 
+	/// End-of-file sentinel token in the single-instance IPC protocol.
 	private static final String SINGLE_INSTANCE_EOF = "EOF";
 
+	/// Initialisation token sent when a second instance contacts the first.
 	private static final String SINGLE_INSTANCE_INIT = "INIT";
 
+	/// Lock file used to detect and communicate with an already-running instance.
 	private static final File SINGLE_INSTANCE_LOCK_FILE;
 
+	/// SVG path fill color used when the dark theme is active.
 	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
 
+	/// SVG text fill color used when the dark theme is active.
 	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
 
+	/// SVG element ID for the A button.
 	private static final String SVG_ID_A = "a";
 
+	/// SVG element ID for the B button.
 	private static final String SVG_ID_B = "b";
 
+	/// SVG element ID for the Back button.
 	private static final String SVG_ID_BACK = "back";
 
+	/// SVG element ID for the D-pad down direction.
 	private static final String SVG_ID_DPAD_DOWN = "dpdown";
 
+	/// SVG element ID for the D-pad left direction.
 	private static final String SVG_ID_DPAD_LEFT = "dpleft";
 
+	/// SVG element ID for the D-pad right direction.
 	private static final String SVG_ID_DPAD_RIGHT = "dpright";
 
+	/// SVG element ID for the D-pad up direction.
 	private static final String SVG_ID_DPAD_UP = "dpup";
 
+	/// SVG element ID for the Guide button.
 	private static final String SVG_ID_GUIDE = "guide";
 
+	/// SVG element ID for the left shoulder button.
 	private static final String SVG_ID_LEFT_SHOULDER = "leftshoulder";
 
+	/// SVG element ID for the left stick click button.
 	private static final String SVG_ID_LEFT_STICK = "leftstick";
 
+	/// SVG element ID for the left trigger.
 	private static final String SVG_ID_LEFT_TRIGGER = "lefttrigger";
 
+	/// SVG element ID for the left stick X axis.
 	private static final String SVG_ID_LEFT_X = "leftx";
 
+	/// SVG element ID for the left stick Y axis.
 	private static final String SVG_ID_LEFT_Y = "lefty";
 
+	/// SVG element ID for the right shoulder button.
 	private static final String SVG_ID_RIGHT_SHOULDER = "rightshoulder";
 
+	/// SVG element ID for the right stick click button.
 	private static final String SVG_ID_RIGHT_STICK = "rightstick";
 
+	/// SVG element ID for the right trigger.
 	private static final String SVG_ID_RIGHT_TRIGGER = "righttrigger";
 
+	/// SVG element ID for the right stick X axis.
 	private static final String SVG_ID_RIGHT_X = "rightx";
 
+	/// SVG element ID for the right stick Y axis.
 	private static final String SVG_ID_RIGHT_Y = "righty";
 
+	/// SVG element ID for the Start button.
 	private static final String SVG_ID_START = "start";
 
+	/// SVG element ID for the X button.
 	private static final String SVG_ID_X = "x";
 
+	/// SVG element ID for the Y button.
 	private static final String SVG_ID_Y = "y";
 
+	/// Scale factor applied to the SVG viewBox to provide padding around elements.
 	private static final float SVG_VIEW_BOX_EXTENSION_FACTOR = 1.3f;
 
+	/// Margin in SVG units added around the computed viewBox.
 	private static final int SVG_VIEW_BOX_MARGIN = 15;
 
+	/// Map from SDL symbol strings to human-readable button descriptions.
 	private static final Map<String, String> SYMBOL_TO_DESCRIPTION_MAP;
 
+	/// Foreground color used for the tab labels in the tabbed settings pane.
 	private static final Color TABBED_PANE_FOREGROUND_COLOR = new Color(68, 138, 222);
 
+	/// Classpath resource path for the tray icon hint image.
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
 
+	/// USB VID/PID string identifying the vJoy virtual device.
 	private static final String VJOY_DEVICE_VID_PID = "0x1234/0xBEAD";
 
+	/// XML namespace URI for XLink attributes used in SVG documents.
 	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
+	/// The singleton `Main` application instance.
 	static volatile Main main;
 
+	/// Whether message dialogs should be suppressed during automated runs.
 	static boolean skipMessageDialogs;
 
+	/// Whether the application has received a termination signal.
 	private static volatile boolean terminated;
 
 	static {
@@ -577,166 +709,254 @@ public final class Main {
 		}
 	}
 
+	/// Component that displays the current mode's button-to-action assignments.
 	private final AssignmentsComponent assignmentsComponent;
 
+	/// Set of currently connected controllers discovered via SDL.
 	private final Set<Controller> controllers = new HashSet<>();
 
+	/// Menu providing device-specific actions in the menu bar.
 	private final JMenu deviceMenu = new JMenu(STRINGS.getString("DEVICE_MENU"));
 
+	/// The main application window frame.
 	private final JFrame frame;
 
+	/// Panel containing global (cross-profile) settings controls.
 	private final JPanel globalSettingsPanel;
 
+	/// Panel holding the list of virtual axis indicator bars.
 	private final JPanel indicatorsListPanel;
 
+	/// Scroll pane wrapping the indicators list panel.
 	private final JScrollPane indicatorsScrollPane;
 
+	/// Label displaying a color preview of the current LED setting.
 	private final JLabel ledPreviewLabel;
 
+	/// Label displaying the overlay legend for action symbols.
 	private final JLabel legendLabel = new JLabel();
 
+	/// Lock that serializes concurrent profile load operations.
 	private final Lock loadProfileLock = new ReentrantLock();
 
+	/// Reference to the SDL main loop used for SDL thread dispatch.
 	private final MainLoop mainLoop;
 
+	/// The application menu bar.
 	private final JMenuBar menuBar = new JMenuBar();
 
+	/// Panel holding the list of profile mode entries.
 	private final JPanel modesListPanel;
 
+	/// Scroll pane wrapping the modes list panel.
 	private final JScrollPane modesScrollPane;
 
+	/// Panel containing the controls for adding a new mode.
 	private final JPanel newModePanel;
 
+	/// The on-screen keyboard overlay window.
 	private final OnScreenKeyboard onScreenKeyboard;
 
+	/// Action that handles opening a profile file.
 	private final OpenAction openAction = new OpenAction();
 
+	/// Persistent user preferences store for this application.
 	private final Preferences preferences;
 
+	/// File chooser pre-configured for profile JSON files.
 	private final ProfileFileChooser profileFileChooser = new ProfileFileChooser();
 
+	/// Panel containing per-profile settings controls.
 	private final JPanel profileSettingsPanel;
 
+	/// Action that handles quitting the application.
 	private final QuitAction quitAction = new QuitAction();
 
+	/// Random number generator used for tray entry ID generation.
 	private final Random random;
 
+	/// Menu providing run-mode actions in the menu bar.
 	private final JMenu runMenu = new JMenu(STRINGS.getString("RUN_MENU"));
 
+	/// Whether SDL video subsystem was successfully initialised.
 	private final boolean sdlVideoInitialized;
 
+	/// Action that starts client run mode.
 	private final StartClientAction startClientAction = new StartClientAction();
 
+	/// Action that starts local run mode.
 	private final StartLocalAction startLocalAction = new StartLocalAction();
 
+	/// Action that starts server run mode.
 	private final StartServerAction startServerAction = new StartServerAction();
 
+	/// Menu item that triggers starting the server run mode.
 	private final JMenuItem startServerMenuItem;
 
+	/// Status bar label displaying the current application status text.
 	private final JLabel statusLabel = new JLabel(STRINGS.getString("STATUS_READY"));
 
+	/// Popup menu shown on the status bar for additional actions.
 	private final JPopupMenu statusPanelPopupMenu;
 
+	/// Action that stops the currently active run mode.
 	private final StopAction stopAction = new StopAction();
 
+	/// Menu item that triggers stopping the active run mode.
 	private final JMenuItem stopMenuItem;
 
+	/// Tabbed pane that organises the main settings panels.
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
+	/// Check-box menu item that toggles the donate button visibility.
 	private final JCheckBoxMenuItem toggleDonateCheckBoxMenuItem;
 
+	/// Panel containing the touchpad cursor sensitivity setting controls.
 	private final JPanel touchpadCursorSensitivityPanel;
 
+	/// Panel containing the touchpad scroll sensitivity setting controls.
 	private final JPanel touchpadScrollSensitivityPanel;
 
+	/// Map from each virtual axis to its corresponding progress bar indicator.
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new EnumMap<>(VirtualAxis.class);
 
+	/// Panel displaying the controller visualization SVG overlay.
 	private final JPanel visualizationPanel;
 
+	/// Cached overlay scaling factor used to avoid repeated preference reads.
 	private Float cachedOverlayScaling;
 
+	/// Cached touchpad cursor sensitivity used to avoid repeated preference reads.
 	private Float cachedTouchpadCursorSensitivity;
 
+	/// Cached touchpad scroll sensitivity used to avoid repeated preference reads.
 	private Float cachedTouchpadScrollSensitivity;
 
+	/// Action currently held on the internal clipboard for paste operations.
 	private IAction<?> clipboardAction;
 
+	/// The currently open profile file, or `null` if none is open.
 	private File currentFile;
 
+	/// Overlay label showing the name of the currently active mode.
 	private JLabel currentModeLabel;
 
+	/// Inner border providing padding inside the current mode label.
 	private EmptyBorder currentModeLabelInnerBorder;
 
+	/// Outer border providing a colored outline around the current mode label.
 	private LineBorder currentModeLabelOuterBorder;
 
+	/// Panel wrapping the current mode label in the overlay.
 	private JPanel currentModePanel;
 
+	/// DOM document builder used to parse and clone SVG documents.
 	private DocumentBuilder documentBuilder;
 
+	/// Whether a system tray is available on the current platform.
 	private boolean hasSystemTray = SystemTray.isSupported();
 
+	/// Horizontal panel holding axis indicator bars in the overlay.
 	private JPanel horizontalIndicatorPanel;
 
+	/// The active input handler, driving controller polling and action dispatch.
 	private Input input;
 
+	/// The run mode type that was active during the previous cycle.
 	private RunModeType lastRunModeType = RunModeType.NONE;
 
+	/// Display name of the currently loaded profile, or `null` if none is loaded.
 	private String loadedProfile = null;
 
+	/// The currently active FlatLaf look-and-feel instance.
 	private FlatLaf lookAndFeel;
 
+	/// Combo box for selecting the active mode within the current profile.
 	private JComboBox<Mode> modeComboBox;
 
+	/// Executor that schedules periodic overlay position update tasks.
 	private ScheduledExecutorService overlayExecutorService;
 
+	/// The floating overlay window shown during an active run mode.
 	private volatile JFrame overlayFrame;
 
+	/// Drag listener that allows the overlay window to be repositioned.
 	private FrameDragListener overlayFrameDragListener;
 
+	/// X coordinate of the first touch finger from the previous SDL event.
 	private Float prevFinger0X;
 
+	/// Y coordinate of the first touch finger from the previous SDL event.
 	private Float prevFinger0Y;
 
+	/// Y coordinate of the second touch finger from the previous SDL event.
 	private Float prevFinger1Y;
 
+	/// Total display bounds rectangle recorded during the previous overlay update.
 	private Rectangle prevTotalDisplayBounds;
 
+	/// The currently active run mode, or `null` when stopped.
 	private volatile RunMode runMode;
 
+	/// Whether an on-screen keyboard mode switch has been scheduled.
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 
+	/// The controller currently selected for input, or `null` if none.
 	private volatile Controller selectedController;
 
+	/// SDL tray entry handle for the show/hide window action.
 	private volatile long showTrayEntry;
 
+	/// Menu item that triggers starting the client run mode.
 	private JMenuItem startClientMenuItem;
 
+	/// SDL tray entry handle for the start-client action.
 	private long startClientTrayEntry;
 
+	/// Menu item that triggers starting the local run mode.
 	private JMenuItem startLocalMenuItem;
 
+	/// SDL tray entry handle for the start-local action.
 	private long startLocalTrayEntry;
 
+	/// SDL tray entry handle for the start-server action.
 	private long startServerTrayEntry;
 
+	/// SDL tray entry handle for the stop action.
 	private long stopTrayEntry;
 
+	/// SVG panel component rendering the controller visualization.
 	private SVGPanel svgPanel;
 
+	/// Parsed DOM document of the template controller SVG resource.
 	private Document templateSvgDocument;
 
+	/// ViewBox rectangle extracted from the template SVG document.
 	private Rectangle templateSvgDocumentViewBox;
 
+	/// Combined bounding rectangle of all connected displays.
 	private volatile Rectangle totalDisplayBounds;
 
+	/// SDL system tray handle, or `0` if the tray is not available.
 	private volatile long tray;
 
+	/// SDL tray menu handle attached to the system tray icon.
 	private volatile long trayMenu;
 
+	/// Whether the currently loaded profile has unsaved modifications.
 	private volatile boolean unsavedChanges = false;
 
+	/// Label displaying the currently configured vJoy installation directory.
 	private JLabel vJoyDirectoryLabel;
 
+	/// Creates the main application window and initializes all subsystems.
+	///
+	/// Sets up the single-instance server socket, preferences, the Swing frame,
+	/// menus, toolbars, overlays, the on-screen keyboard, the system tray, and the
+	/// initial controller/profile state.
+	///
+	/// @param mainLoop the SDL main loop used to dispatch tasks on the SDL thread
+	/// @param commandLine the parsed command-line arguments supplied at startup
 	private Main(final MainLoop mainLoop, final CommandLine commandLine) {
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			if (!terminated) {
@@ -1335,6 +1555,9 @@ public final class Main {
 				showPopup(e);
 			}
 
+			/// Shows the status-panel context menu if the event is a popup trigger.
+			///
+			/// @param e the mouse event to evaluate
 			private void showPopup(final MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					toggleDonateCheckBoxMenuItem.setSelected(donateButton.isVisible());
@@ -1542,6 +1765,10 @@ public final class Main {
 		initProfile(commandLine, noControllerConnected);
 	}
 
+	/// Adds invisible glue components to the settings panel to push its contents to
+	/// the top.
+	///
+	/// @param settingsPanel the settings panel to add the glue to
 	private static void addGlueToSettingsPanel(final JPanel settingsPanel) {
 		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
 				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
@@ -1552,6 +1779,12 @@ public final class Main {
 		settingsPanel.add(Box.createGlue(), constraints);
 	}
 
+	/// Assembles a human-readable logging message for the given controller.
+	///
+	/// @param prefix the prefix to prepend to the message
+	/// @param controller the controller to describe
+	/// @return a formatted string containing the controller name, instance ID, and
+	/// GUID
 	public static String assembleControllerLoggingMessage(final String prefix, final Controller controller) {
 		final var sb = new StringBuilder();
 		sb.append(prefix);
@@ -1575,16 +1808,31 @@ public final class Main {
 		return sb.toString();
 	}
 
+	/// Verifies that the current thread is the SDL main thread.
+	///
+	/// @throws RuntimeException if called from a thread other than the SDL main
+	/// thread
 	private static void checkMainThread() {
 		if (!SDLInit.SDL_IsMainThread()) {
 			throw new RuntimeException("Not on SDL main thread");
 		}
 	}
 
+	/// Creates a one-pixel border styled with the current UI theme's component
+	/// border color, used for overlays.
+	///
+	/// @return a new [LineBorder] instance
 	private static LineBorder createOverlayBorder() {
 		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
+	/// Creates an HTML snippet for the visualization legend showing only the
+	/// symbols that are actually used.
+	///
+	/// @param usedSymbols the set of symbol strings present in the current
+	/// visualization
+	/// @return an HTML string containing the legend table, or an empty
+	/// `<html></html>` string if no symbols are used
 	private static String createVisualizationLegendHtml(final Set<String> usedSymbols) {
 		final var stringBuilder = new StringBuilder("<html>");
 
@@ -1621,20 +1869,40 @@ public final class Main {
 		return stringBuilder.toString();
 	}
 
+	/// Deletes the single-instance lock file and logs a warning if deletion fails.
 	private static void deleteSingleInstanceLockFile() {
 		if (!SINGLE_INSTANCE_LOCK_FILE.delete()) {
 			LOGGER.warning("Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 		}
 	}
 
+	/// Returns a file suffix string by prepending a dot to the given extension.
+	///
+	/// @param extension the file extension without a leading dot
+	/// @return the extension prefixed with a dot (e.g. `".json"`)
 	private static String fileSuffix(final String extension) {
 		return "." + extension;
 	}
 
+	/// Returns the default installation path for vJoy by combining the
+	/// `ProgramFiles` environment variable with the vJoy directory name.
+	///
+	/// @return the default vJoy installation path string
 	private static String getDefaultVJoyPath() {
 		return System.getenv("ProgramFiles") + File.separator + "vJoy";
 	}
 
+	/// Returns a unique extended key code to use as the mnemonic for a menu button.
+	///
+	/// Iterates over the characters of the button's label until a character whose
+	/// extended key code
+	/// has not already been assigned to another menu item is found.
+	///
+	/// @param button the menu button for which a mnemonic key code is needed
+	/// @param alreadyAssignedKeyCodes the set of key codes already in use; the
+	/// chosen code is added to this set
+	/// @return the extended key code of the first available character, or
+	/// `KeyEvent.VK_UNDEFINED` if none is found
 	private static int getExtendedKeyCodeForMenu(final AbstractButton button,
 			final Set<Integer> alreadyAssignedKeyCodes) {
 		var keyCode = KeyEvent.VK_UNDEFINED;
@@ -1651,6 +1919,17 @@ public final class Main {
 		return keyCode;
 	}
 
+	/// Returns the hardcoded mnemonic key code for a known menu-item action.
+	///
+	/// Maps well-known action types ([NewAction], [OpenAction], [SaveAction], etc.)
+	/// to their
+	/// designated mnemonic key codes. Returns `KeyEvent.VK_UNDEFINED` for
+	/// unrecognized actions or
+	/// when the button has no associated action.
+	///
+	/// @param button the menu item button whose action is inspected
+	/// @return the key code for the matching action, or `KeyEvent.VK_UNDEFINED` if
+	/// no match is found
 	private static int getExtendedKeyCodeForMenuItem(final AbstractButton button) {
 		final var action = button.getAction();
 
@@ -1670,6 +1949,11 @@ public final class Main {
 		};
 	}
 
+	/// Returns the URL of a classpath resource by its path.
+	///
+	/// @param resourcePath the path of the resource relative to the classpath
+	/// @return the [URL] of the resource
+	/// @throws RuntimeException if no resource is found at the given path
 	private static URL getResourceLocation(final String resourcePath) {
 		final var resourceLocation = Main.class.getResource(resourcePath);
 		if (resourceLocation == null) {
@@ -1679,6 +1963,17 @@ public final class Main {
 		return resourceLocation;
 	}
 
+	/// Inserts a button tray entry at the end of the given SDL tray menu and wires
+	/// it to the provided Swing action.
+	///
+	/// Must be called on the SDL main thread. The tray entry's label is taken from
+	/// the action's
+	/// `Action.NAME` value. When the user clicks the entry, the action is performed
+	/// on the EDT.
+	///
+	/// @param menu the native handle of the SDL tray menu to insert into
+	/// @param action the Swing action to invoke when the tray entry is activated
+	/// @return the native handle of the newly created tray entry
 	private static long insertTrayEntryFromAction(final long menu, final Action action) {
 		checkMainThread();
 
@@ -1693,6 +1988,10 @@ public final class Main {
 		return trayEntry;
 	}
 
+	/// Returns whether any modal dialog is currently visible on screen.
+	///
+	/// @return `true` if at least one visible modal [Dialog] exists, `false`
+	/// otherwise
 	private static boolean isModalDialogShowing() {
 		final var windows = Window.getWindows();
 		if (windows != null) {
@@ -1706,10 +2005,22 @@ public final class Main {
 		return false;
 	}
 
+	/// Returns whether the given host string is a valid (non-null, non-blank)
+	/// hostname or address.
+	///
+	/// @param host the hostname or IP address string to validate
+	/// @return `true` if the host is non-null and non-blank, `false` otherwise
 	private static boolean isValidHost(final String host) {
 		return host != null && !host.isBlank();
 	}
 
+	/// Returns whether the given password satisfies the application's requirements.
+	///
+	/// A valid password must be non-null, non-blank, and have a length between 6
+	/// and 24 characters (inclusive).
+	///
+	/// @param password the password string to validate
+	/// @return `true` if the password meets all requirements, `false` otherwise
 	private static boolean isValidPassword(final String password) {
 		if (password == null) {
 			return false;
@@ -1719,6 +2030,10 @@ public final class Main {
 		return !password.isBlank() && length >= 6 && length <= 24;
 	}
 
+	/// Logs an SDL error and returns the error details string.
+	///
+	/// @param message the contextual message to log alongside the SDL error
+	/// @return the SDL error detail string, or `null` if unavailable
 	public static String logSdlError(final String message) {
 		final var errorDetails = SDLError.SDL_GetError();
 		LOGGER.warning(message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
@@ -1726,6 +2041,11 @@ public final class Main {
 		return errorDetails;
 	}
 
+	/// Application entry point. Parses command-line arguments, enforces
+	/// single-instance constraints, initializes SDL, and launches the GUI on the
+	/// event dispatch thread.
+	///
+	/// @param args command-line arguments
 	static void main(final String[] args) {
 		LOGGER.info("Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
 		LOGGER.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
@@ -1873,6 +2193,15 @@ public final class Main {
 		printCommandLineMessage(stringWriter.toString());
 	}
 
+	/// Opens the given URI in the system's default browser.
+	///
+	/// Tries the Java [Desktop] API first, then falls back to `SDL_OpenURL`. If
+	/// both fail, shows
+	/// a dialog asking the user to visit the URL manually.
+	///
+	/// @param parentComponent the parent component for any fallback dialog, may be
+	/// `null`
+	/// @param uri the URI to open
 	private static void openBrowser(final Component parentComponent, final URI uri) {
 		if (Desktop.isDesktopSupported()) {
 			final var desktop = Desktop.getDesktop();
@@ -1894,6 +2223,14 @@ public final class Main {
 		showPleaseVisitDialog(parentComponent, uri);
 	}
 
+	/// Opens a page on the ControllerBuddy website in the system's default browser.
+	///
+	/// Constructs a [controllerbuddy.org](https://controllerbuddy.org) URI from the
+	/// given path and delegates to [#openBrowser].
+	///
+	/// @param parentComponent the parent component for any fallback dialog may be
+	/// `null`
+	/// @param path the path component of the URL to open (e.g. `"/donate"`)
 	private static void openWebsite(final Component parentComponent, final String path) {
 		try {
 			openBrowser(parentComponent, new URI("https", "controllerbuddy.org", path, null));
@@ -1902,6 +2239,10 @@ public final class Main {
 		}
 	}
 
+	/// Prints a message to standard output and, when running in a graphical
+	/// environment, also shows it in a dialog.
+	///
+	/// @param message the message text to display
 	private static void printCommandLineMessage(final String message) {
 		IO.println(message);
 
@@ -1918,12 +2259,26 @@ public final class Main {
 		}
 	}
 
+	/// Shows an informational dialog prompting the user to manually visit the given
+	/// URI.
+	///
+	/// @param parentComponent the parent component for the dialog, may be `null`
+	/// @param uri the URI to display in the dialog message
 	private static void showPleaseVisitDialog(final Component parentComponent, final URI uri) {
 		JOptionPane.showMessageDialog(parentComponent,
 				MessageFormat.format(STRINGS.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
 				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/// Shuts down the application cleanly and exits the JVM with the given status
+	/// code.
+	///
+	/// Destroys the SDL system tray, shuts down the main loop if present, logs the
+	/// termination, and
+	/// calls `System.exit`.
+	///
+	/// @param status the exit status code to pass to `System.exit`
+	/// @param main the [Main] instance to shut down, or `null` if none was created
 	private static void terminate(final int status, final Main main) {
 		if (main != null && main.mainLoop != null) {
 			if (main.trayMenu != 0L && main.mainLoop.isAvailable()) {
@@ -1944,6 +2299,19 @@ public final class Main {
 		System.exit(status);
 	}
 
+	/// Adds a `tspan` SVG element to the given parent node whose text content is
+	/// built from the descriptions of the supplied actions.
+	///
+	/// For any action that is a [ButtonToModeAction], the mode symbol is appended
+	/// to its description and recorded in `usedSymbols`. Duplicate descriptions are
+	/// removed before joining them with ", ".
+	///
+	/// @param actions the list of actions whose descriptions form the text content
+	/// @param parentNode the SVG node to which the new `tspan` element is appended
+	/// @param usedSymbols the set that collects mode symbols encountered during
+	/// processing
+	/// @return the signed pixel width contribution of the new `tspan` element,
+	/// relative to its text anchor
 	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode,
 			final Set<String> usedSymbols) {
 		return addTSpanElement(actions.stream().map(action -> {
@@ -1959,6 +2327,22 @@ public final class Main {
 		}).distinct().collect(Collectors.joining(", ")), parentNode);
 	}
 
+	/// Adds a `tspan` SVG element with the given text content to the parent node
+	/// and returns the signed pixel width contribution of the element.
+	///
+	/// The font family and size are resolved by walking up the ancestor chain and
+	/// reading the `font-family` and `font-size` SVG attributes. Only `pt` font
+	/// size units are supported. The return value is positive when the text anchor
+	/// is `start`, negative when it is `end`, and zero otherwise.
+	///
+	/// @param textContent the text string to place inside the new `tspan` element
+	/// @param parentNode the SVG node to which the new `tspan` element is appended
+	/// @return the signed pixel width contribution of the new element, relative to
+	/// its text anchor
+	/// @throws UnsupportedOperationException if a non-`pt` font size unit is
+	/// encountered
+	/// @throws IllegalArgumentException if the font size value cannot be parsed as
+	/// a number
 	private int addTSpanElement(final String textContent, final Node parentNode) {
 		final var prefixTSpanElement = parentNode.getOwnerDocument().createElementNS("http://www.w3.org/2000/svg",
 				"tspan");
@@ -2033,6 +2417,12 @@ public final class Main {
 		return 0;
 	}
 
+	/// Calculates the display width of the current mode label for the given mode,
+	/// capped at the maximum overlay mode label width.
+	///
+	/// @param mode the mode whose description text is measured
+	/// @return the label width in pixels, including inner border insets and outer
+	/// border thickness, capped at the scaled maximum
 	private int calculateCurrentModeLabelWidth(final Mode mode) {
 		final var fontMetrics = currentModeLabel.getFontMetrics(currentModeLabel.getFont());
 		final var overlayScaling = getOverlayScaling();
@@ -2044,6 +2434,11 @@ public final class Main {
 				Math.round(OVERLAY_MODE_LABEL_MAX_WIDTH * overlayScaling));
 	}
 
+	/// Disposes and cleans up the overlay frame and its associated UI components.
+	///
+	/// Attempts to dispose the overlay frame up to ten times with 100 ms pauses
+	/// between attempts until it is no longer displayable. Clears the horizontal
+	/// indicator panel, current mode label, and virtual axis progress bar map.
 	private void deInitOverlay() {
 		if (overlayFrame != null) {
 			for (var i = 0; i < 10; i++) {
@@ -2068,11 +2463,21 @@ public final class Main {
 		virtualAxisToProgressBarMap.clear();
 	}
 
+	/// Deinitializes the overlay and hides the on-screen keyboard.
+	///
+	/// Delegates to [#deInitOverlay] and then sets the on-screen keyboard
+	/// visibility to `false`.
 	private void deInitOverlayAndHideOnScreenKeyboard() {
 		deInitOverlay();
 		onScreenKeyboard.setVisible(false);
 	}
 
+	/// Executes a callable while ensuring the main frame is visible, restoring
+	/// prior visibility afterward.
+	///
+	/// @param callable the task to execute
+	/// @param <T> the return type of the callable
+	/// @return the result of the callable
 	public <T> T executeWhileVisible(final Callable<T> callable) {
 		final var wasInvisible = !frame.isVisible();
 		final var wasIconified = frame.getState() == Frame.ICONIFIED;
@@ -2097,6 +2502,10 @@ public final class Main {
 		}
 	}
 
+	/// Executes a runnable while ensuring the main frame is visible, restoring
+	/// prior visibility afterward.
+	///
+	/// @param runnable the task to execute
 	private void executeWhileVisible(final Runnable runnable) {
 		executeWhileVisible(() -> {
 			runnable.run();
@@ -2105,6 +2514,11 @@ public final class Main {
 		});
 	}
 
+	/// Exports the current profile visualization as an HTML file containing SVG
+	/// diagrams for each mode.
+	///
+	/// @param file the destination file; an `.html` extension is appended if
+	/// missing
 	public void exportVisualization(File file) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
@@ -2233,6 +2647,20 @@ public final class Main {
 		}
 	}
 
+	/// Generates an SVG document representing the action bindings for the given
+	/// mode.
+	///
+	/// The returned document is a working copy of the template SVG, updated with
+	/// labels for all axis and button mappings defined in the mode. The viewBox is
+	/// adjusted to accommodate label extensions on either side of the controller
+	/// graphic.
+	///
+	/// @param mode the mode whose bindings are rendered into the SVG
+	/// @param export `true` if the document is being generated for HTML export,
+	/// affecting sizing attributes
+	/// @param usedSymbols a mutable set that is populated with the symbol IDs
+	/// referenced by the generated document
+	/// @return the generated SVG [Document]
 	private Document generateSvgDocument(final Mode mode, final boolean export, final Set<String> usedSymbols) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
@@ -2365,14 +2793,27 @@ public final class Main {
 		return workingCopySvgDocument;
 	}
 
+	/// Returns the currently copied action on the internal clipboard.
+	///
+	/// @return the action on the clipboard, or `null` if the clipboard is empty
 	IAction<?> getClipboardAction() {
 		return clipboardAction;
 	}
 
+	/// Returns the set of currently connected controllers.
+	///
+	/// @return the set of currently connected controllers
 	public Set<Controller> getControllers() {
 		return controllers;
 	}
 
+	/// Returns the first element in the document that has the specified `id`
+	/// attribute value.
+	///
+	/// @param document the document to search
+	/// @param id the element ID to look up
+	/// @return an [java.util.Optional] containing the matching element, or an
+	/// empty [java.util.Optional] if no element with that ID exists
 	private Optional<Element> getDocumentElementById(final Document document, final String id) {
 		final var xpath = XPathFactory.newInstance().newXPath();
 		try {
@@ -2387,31 +2828,53 @@ public final class Main {
 		return Optional.empty();
 	}
 
+	/// Returns the main application frame.
+	///
+	/// @return the main application frame
 	@SuppressWarnings("exports")
 	public JFrame getFrame() {
 		return frame;
 	}
 
+	/// Returns the configured host address for network connections.
+	///
+	/// @return the configured host address
 	public String getHost() {
 		return preferences.get(PREFERENCES_HOST, "");
 	}
 
+	/// Returns the current input handler.
+	///
+	/// @return the current input handler
 	Input getInput() {
 		return input;
 	}
 
+	/// Returns the configured LED color for the controller.
+	///
+	/// @return the configured LED color
 	public Color getLedColor() {
 		return new Color(preferences.getInt(PREFERENCES_LED_COLOR, 0x448ADE));
 	}
 
+	/// Returns the main loop used for SDL thread task scheduling.
+	///
+	/// @return the main loop
 	public MainLoop getMainLoop() {
 		return mainLoop;
 	}
 
+	/// Returns the on-screen keyboard instance.
+	///
+	/// @return the on-screen keyboard instance
 	public OnScreenKeyboard getOnScreenKeyboard() {
 		return onScreenKeyboard;
 	}
 
+	/// Returns the overlay scaling factor from preferences, using a cached value
+	/// when available.
+	///
+	/// @return the overlay scaling factor
 	float getOverlayScaling() {
 		if (cachedOverlayScaling == null) {
 			cachedOverlayScaling = preferences.getFloat(PREFERENCES_OVERLAY_SCALING, DEFAULT_OVERLAY_SCALING);
@@ -2420,40 +2883,67 @@ public final class Main {
 		return cachedOverlayScaling;
 	}
 
+	/// Returns the configured network password.
+	///
+	/// @return the configured network password
 	public String getPassword() {
 		return preferences.get(PREFERENCES_PASSWORD, "");
 	}
 
+	/// Returns the configured input poll interval in milliseconds.
+	///
+	/// @return the poll interval in milliseconds
 	public int getPollInterval() {
 		return preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
 	}
 
+	/// Returns the configured network port.
+	///
+	/// @return the configured network port
 	public int getPort() {
 		return preferences.getInt(PREFERENCES_PORT, ServerRunMode.DEFAULT_PORT);
 	}
 
+	/// Returns the application preferences store.
+	///
+	/// @return the application preferences store
 	@SuppressWarnings("exports")
 	public Preferences getPreferences() {
 		return preferences;
 	}
 
+	/// Returns the secure random number generator.
+	///
+	/// @return the secure random number generator
 	public Random getRandom() {
 		return random;
 	}
 
+	/// Returns the SDL button ID of the selected hot-swapping button.
+	///
+	/// @return the SDL button ID of the selected hot-swapping button
 	public int getSelectedHotSwappingButtonId() {
 		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.NONE.id),
 				HotSwappingButton.NONE.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
+	/// Returns the currently selected UI theme from preferences.
+	///
+	/// @return the selected [Theme]
 	private Theme getSelectedTheme() {
 		return Theme.fromId(preferences.getInt(PREFERENCES_THEME, Theme.SYSTEM.id));
 	}
 
+	/// Returns the configured network timeout in milliseconds.
+	///
+	/// @return the configured network timeout in milliseconds
 	public int getTimeout() {
 		return preferences.getInt(PREFERENCES_TIMEOUT, ServerRunMode.DEFAULT_TIMEOUT);
 	}
 
+	/// Returns the configured touchpad cursor sensitivity multiplier.
+	///
+	/// @return the touchpad cursor sensitivity multiplier
 	public float getTouchpadCursorSensitivity() {
 		if (cachedTouchpadCursorSensitivity == null) {
 			cachedTouchpadCursorSensitivity = preferences.getFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, 1f);
@@ -2462,6 +2952,9 @@ public final class Main {
 		return cachedTouchpadCursorSensitivity;
 	}
 
+	/// Returns the configured touchpad scroll sensitivity multiplier.
+	///
+	/// @return the touchpad scroll sensitivity multiplier
 	public float getTouchpadScrollSensitivity() {
 		if (cachedTouchpadScrollSensitivity == null) {
 			cachedTouchpadScrollSensitivity = preferences.getFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, 1f);
@@ -2470,14 +2963,28 @@ public final class Main {
 		return cachedTouchpadScrollSensitivity;
 	}
 
+	/// Returns the configured vJoy virtual device number.
+	///
+	/// @return the configured vJoy virtual device number
 	public int getVJoyDevice() {
 		return preferences.getInt(PREFERENCES_VJOY_DEVICE, OutputRunMode.VJOY_DEFAULT_DEVICE);
 	}
 
+	/// Returns the configured vJoy installation directory path.
+	///
+	/// @return the configured vJoy installation directory path
 	public String getVJoyDirectory() {
 		return preferences.get(PREFERENCES_VJOY_DIRECTORY, getDefaultVJoyPath());
 	}
 
+	/// Validates and applies network-related command-line options to preferences.
+	///
+	/// Processes host, port, timeout, and password options. Shows an error
+	/// dialog for each invalid value encountered.
+	///
+	/// @param commandLine the parsed command line containing the network options
+	/// @return `true` if all provided network options were valid, `false` if any
+	/// value was rejected
 	private boolean handleNetworkCommandLineOptions(final CommandLine commandLine) {
 		var valid = true;
 
@@ -2539,6 +3046,8 @@ public final class Main {
 		return valid;
 	}
 
+	/// Handles a pending on-screen keyboard mode switch by activating the
+	/// corresponding `ButtonToModeAction` if a switch was previously scheduled.
 	public void handleOnScreenKeyboardModeChange() {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
@@ -2554,6 +3063,13 @@ public final class Main {
 		}
 	}
 
+	/// Processes the remaining command-line options after profile loading.
+	///
+	/// Handles tray visibility, network options, autostart, save, export, and
+	/// quit options. On initial launch the frame visibility is also configured.
+	///
+	/// @param commandLine the parsed command line to process
+	/// @param initialLaunch `true` if this is the first invocation at startup
 	private void handleRemainingCommandLine(final CommandLine commandLine, final boolean initialLaunch) {
 		if (frame != null && (initialLaunch || (frame.isVisible() && frame.getExtendedState() != Frame.ICONIFIED))) {
 			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
@@ -2608,6 +3124,13 @@ public final class Main {
 		}
 	}
 
+	/// Prompts the user to handle unsaved profile changes before proceeding.
+	///
+	/// Shows a save-changes dialog if there are unsaved changes. Returns `true`
+	/// if it is safe to proceed (no unsaved changes, or the user chose to save
+	/// or discard), or `false` if the user cancelled.
+	///
+	/// @return `true` if the caller may proceed, `false` if the user cancelled
 	private boolean handleUnsavedChanges() {
 		if (!unsavedChanges) {
 			return true;
@@ -2629,6 +3152,10 @@ public final class Main {
 		};
 	}
 
+	/// Initializes the XML document builder if not already initialized.
+	///
+	/// Configures a namespace-aware [javax.xml.parsers.DocumentBuilder] and
+	/// caches it for reuse by SVG generation and template loading.
 	private void initDocumentBuilder() {
 		if (documentBuilder != null) {
 			return;
@@ -2645,6 +3172,12 @@ public final class Main {
 		}
 	}
 
+	/// Initializes and displays the overlay frame for the current profile.
+	///
+	/// Creates a transparent always-on-top window showing the current mode
+	/// label and virtual axis progress bars. Does nothing if the profile has
+	/// overlay disabled or if neither multiple modes nor overlay axes are
+	/// configured.
 	private void initOverlay() {
 		final var profile = input.getProfile();
 		if (!profile.isShowOverlay()) {
@@ -2757,6 +3290,15 @@ public final class Main {
 
 				private static final Insets INSETS = new Insets(THICKNESS, THICKNESS, THICKNESS, THICKNESS);
 
+				/// Paints a segmented alternating-color line used for the overlay drag
+				/// border.
+				///
+				/// @param g2 the graphics context to paint into
+				/// @param x1 the start x coordinate
+				/// @param y1 the start y coordinate
+				/// @param x2 the end x coordinate
+				/// @param y2 the end y coordinate
+				/// @param horizontal `true` if the line is horizontal, `false` if vertical
 				private static void paintSegmentedLine(final Graphics2D g2, final int x1, final int y1, final int x2,
 						final int y2, final boolean horizontal) {
 					final var length = horizontal ? x2 - x1 : y2 - y1;
@@ -2847,6 +3389,13 @@ public final class Main {
 		overlayFrame.setVisible(true);
 	}
 
+	/// Initializes the active profile from the command line or the last-used
+	/// profile stored in preferences.
+	///
+	/// @param commandLine the parsed command line, which may specify a profile
+	/// path via the profile option
+	/// @param noControllerConnected `true` if no controller is connected at
+	/// startup
 	private void initProfile(final CommandLine commandLine, final boolean noControllerConnected) {
 		final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 		final var profilePath = cmdProfilePath != null ? cmdProfilePath
@@ -2862,6 +3411,10 @@ public final class Main {
 		}
 	}
 
+	/// Initializes the template SVG document used for controller visualizations.
+	///
+	/// Parses the bundled controller SVG resource and caches both the document
+	/// and its viewBox rectangle. Does nothing if already initialized.
 	private void initTemplateSvgDocument() {
 		if (templateSvgDocument != null) {
 			return;
@@ -2892,58 +3445,117 @@ public final class Main {
 				Math.round(Float.parseFloat(viewBoxParts[3])));
 	}
 
+	/// Returns whether automatic output restart on controller reconnection is
+	/// enabled.
+	///
+	/// @return `true` if automatic output restart is enabled
 	public boolean isAutoRestartOutput() {
 		return preferences.getBoolean(PREFERENCES_AUTO_RESTART_OUTPUT, false);
 	}
 
+	/// Returns whether a client run mode is currently active.
+	///
+	/// @return `true` if a client run mode is currently active
 	private boolean isClientRunning() {
 		return mainLoop.isTaskOfTypeRunning(ClientRunMode.class);
 	}
 
+	/// Returns whether haptic feedback is enabled.
+	///
+	/// @return `true` if haptic feedback is enabled
 	public boolean isHapticFeedback() {
 		return preferences.getBoolean(PREFERENCES_HAPTIC_FEEDBACK, true);
 	}
 
+	/// Returns whether a local run mode is currently active.
+	///
+	/// @return `true` if a local run mode is currently active
 	public boolean isLocalRunning() {
 		return mainLoop.isTaskOfTypeRunning(LocalRunMode.class);
 	}
 
+	/// Returns whether circular-to-square axis mapping is enabled.
+	///
+	/// @return `true` if circular-to-square axis mapping is enabled
 	public boolean isMapCircularAxesToSquareAxes() {
 		return preferences.getBoolean(PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE, true);
 	}
 
+	/// Checks whether the overlay frame is positioned in the lower half of the
+	/// display.
+	///
+	/// @param totalDisplayBounds the total display bounds to test against
+	/// @return `true` if the overlay center is in the lower half
 	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
 		return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
 	}
 
+	/// Returns whether power save mode prevention is enabled.
+	///
+	/// @return `true` if power save mode prevention is enabled
 	public boolean isPreventPowerSaveMode() {
 		return preferences.getBoolean(PREFERENCES_PREVENT_POWER_SAVE_MODE, true);
 	}
 
+	/// Returns whether any run mode (local, client, or server) is currently
+	/// active.
+	///
+	/// @return `true` if any run mode is currently active
 	private boolean isRunning() {
 		return isLocalRunning() || isClientRunning() || isServerRunning();
 	}
 
+	/// Returns whether the controller with the given instance ID is the
+	/// currently selected controller.
+	///
+	/// @param instanceId the SDL instance ID of the controller to check
+	/// @return `true` if the specified controller is currently selected
 	private boolean isSelectedController(final int instanceId) {
 		return selectedController != null && selectedController.instanceId == instanceId;
 	}
 
+	/// Returns whether a server run mode is currently active.
+	///
+	/// @return `true` if a server run mode is currently active
 	public boolean isServerRunning() {
 		return mainLoop.isTaskOfTypeRunning(ServerRunMode.class);
 	}
 
+	/// Returns whether controller-related information dialogs are suppressed.
+	///
+	/// @return `true` if controller-related information dialogs are suppressed
 	public boolean isSkipControllerDialogs() {
 		return preferences.getBoolean(PREFERENCES_SKIP_CONTROLLER_DIALOGS, false);
 	}
 
+	/// Returns whether left and right stick axes are swapped.
+	///
+	/// @return `true` if left and right stick axes are swapped
 	public boolean isSwapLeftAndRightSticks() {
 		return preferences.getBoolean(PREFERENCES_SWAP_LEFT_AND_RIGHT_STICKS, false);
 	}
 
+	/// Returns whether touchpad input is enabled.
+	///
+	/// @return `true` if touchpad input is enabled
 	public boolean isTouchpadEnabled() {
 		return preferences.getBoolean(PREFERENCES_TOUCHPAD_ENABLED, true);
 	}
 
+	/// Loads a profile from the given file.
+	///
+	/// Stops any active run mode, deserializes the profile JSON, and applies
+	/// the loaded profile. Shows warning dialogs for version mismatches or
+	/// unknown action types unless `skipMessageDialogs` is `true`.
+	///
+	/// @param file the profile file to load
+	/// @param skipMessageDialogs `true` to suppress all message dialogs
+	/// @param performGarbageCollection `true` if a garbage collection cycle
+	/// should be requested after stopping
+	/// @param commandLine the parsed command line to process after loading,
+	/// or `null` to skip remaining command-line handling
+	/// @param initialLaunch `true` if this load is part of the initial
+	/// application startup
 	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
 			final CommandLine commandLine, final boolean initialLaunch) {
 		loadProfileLock.lock();
@@ -3074,6 +3686,10 @@ public final class Main {
 		}
 	}
 
+	/// Handles a new activation from another process instance via single-instance
+	/// communication.
+	///
+	/// @param args the command-line arguments received from the other instance
 	public void newActivation(final String[] args) {
 		loadProfileLock.lock();
 		try {
@@ -3110,6 +3726,13 @@ public final class Main {
 		}
 	}
 
+	/// Resets the application to an empty profile state.
+	///
+	/// Stops any active run mode, clears the current file reference, and
+	/// reinitializes the input handler with a blank profile.
+	///
+	/// @param performGarbageCollection `true` if a garbage collection cycle
+	/// should be requested after stopping
 	private void newProfile(final boolean performGarbageCollection) {
 		stopAll(true, false, performGarbageCollection);
 
@@ -3132,6 +3755,13 @@ public final class Main {
 		setStatusBarText(STRINGS.getString("STATUS_READY"));
 	}
 
+	/// Handles a change in the set of connected controllers.
+	///
+	/// Updates menus, device tabs, tray entries, and controller selection
+	/// in response to controllers being added or removed.
+	///
+	/// @param selectFirstTab `true` if the first device tab should be
+	/// selected after rebuilding the tab panel
 	private void onControllersChanged(final boolean selectFirstTab) {
 		final var controllerConnected = !controllers.isEmpty();
 
@@ -3331,6 +3961,15 @@ public final class Main {
 		}
 	}
 
+	/// Updates UI controls and menu state in response to a change in the running
+	/// state of the current run mode.
+	///
+	/// Enables or disables the start/stop menu items, refreshes tray entries,
+	/// updates menu shortcuts, and adjusts panel access based on whether a run mode
+	/// is active.
+	///
+	/// @param running `true` if a run mode has just started, `false` if it has
+	/// stopped
 	private void onRunModeChanged(final boolean running) {
 		if (startLocalMenuItem != null) {
 			startLocalMenuItem.setEnabled(!running);
@@ -3351,6 +3990,9 @@ public final class Main {
 		updatePanelAccess(running);
 	}
 
+	/// Polls and dispatches all pending SDL events, including gamepad
+	/// connect/disconnect, touchpad input, battery updates, and system theme
+	/// changes.
 	public void pollSdlEvents() {
 		try (final var stack = MemoryStack.stackPush()) {
 			final var sdlEvent = SDL_Event.malloc(stack);
@@ -3485,6 +4127,11 @@ public final class Main {
 		}
 	}
 
+	/// Stops all run modes, deinitializes input and virtual devices, and terminates
+	/// the application.
+	///
+	/// Calls [#stopAll], deinitializes the [Input] instance, shuts down the uinput
+	/// device on Linux, and then invokes [#terminate] with exit code 0.
 	private void quit() {
 		stopAll(true, false, false);
 
@@ -3499,6 +4146,8 @@ public final class Main {
 		terminate(0, this);
 	}
 
+	/// Repaints the on-screen keyboard and, on Windows, the overlay frame if they
+	/// are currently visible.
 	private void repaintOnScreenKeyboardAndOverlay() {
 		if (onScreenKeyboard.isVisible()) {
 			onScreenKeyboard.validate();
@@ -3511,6 +4160,7 @@ public final class Main {
 		}
 	}
 
+	/// Restarts the last used run mode (local, client, or server).
 	public void restartLast() {
 		switch (lastRunModeType) {
 		case LOCAL -> startLocal();
@@ -3521,11 +4171,20 @@ public final class Main {
 		}
 	}
 
+	/// Stores the given file as the current profile file and persists its path in
+	/// the user preferences as the last used profile.
+	///
+	/// @param file the profile file to record as the last used profile
 	private void saveLastProfile(final File file) {
 		currentFile = file;
 		preferences.put(PREFERENCES_LAST_PROFILE, file.getAbsolutePath());
 	}
 
+	/// Saves the current profile to the previously used file, or prompts the user
+	/// to choose a location if no file has been set.
+	///
+	/// Delegates to [#saveProfile(File,boolean)] when a current file exists, or to
+	/// [#saveProfileAs] otherwise.
 	private void saveProfile() {
 		if (currentFile != null) {
 			saveProfile(currentFile, true);
@@ -3534,6 +4193,17 @@ public final class Main {
 		}
 	}
 
+	/// Serializes the current profile to the specified file and optionally records
+	/// it as the last used profile.
+	///
+	/// If the filename lacks the expected suffix, the suffix is appended
+	/// automatically. The profile version is stamped with the current major and
+	/// minor version before serialization. On success the status bar is updated; on
+	/// failure an error dialog is shown.
+	///
+	/// @param file the target file to write the profile to
+	/// @param saveAsLastProfile `true` to persist the file path as the last used
+	/// profile in preferences
 	private void saveProfile(File file, final boolean saveAsLastProfile) {
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX)) {
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
@@ -3564,6 +4234,12 @@ public final class Main {
 		}
 	}
 
+	/// Prompts the user with a save dialog and writes the current profile to the
+	/// chosen file.
+	///
+	/// Pre-populates the file chooser with the current file, or a default
+	/// "Untitled" filename when no file has been set. If the user confirms the
+	/// dialog, delegates to [#saveProfile(File,boolean)].
 	private void saveProfileAs() {
 		profileFileChooser.setSelectedFile(
 				currentFile != null ? currentFile : new File(STRINGS.getString("UNTITLED") + PROFILE_FILE_SUFFIX));
@@ -3573,6 +4249,10 @@ public final class Main {
 		}
 	}
 
+	/// Schedules a status bar text update after a 5-second delay, only if the text
+	/// has not changed.
+	///
+	/// @param text the new status bar text to display
 	public void scheduleStatusBarText(final String text) {
 		final var originalText = statusLabel.getText();
 
@@ -3586,10 +4266,17 @@ public final class Main {
 		swingTimer.start();
 	}
 
+	/// Sets the action currently held on the internal clipboard.
+	///
+	/// @param action the action to place on the clipboard, or `null` to clear it
 	void setClipboardAction(final IAction<?> action) {
 		clipboardAction = action;
 	}
 
+	/// Sets the visibility of the on-screen keyboard if a local or server run mode
+	/// is active.
+	///
+	/// @param visible `true` to show, `false` to hide
 	public void setOnScreenKeyboardVisible(final boolean visible) {
 		if (isLocalRunning() || isServerRunning()) {
 			EventQueue.invokeLater(() -> {
@@ -3600,6 +4287,9 @@ public final class Main {
 		}
 	}
 
+	/// Updates the overlay to display the given mode label.
+	///
+	/// @param mode the mode to display in the overlay
 	@SuppressWarnings("exports")
 	public void setOverlayMode(final Mode mode) {
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
@@ -3620,6 +4310,10 @@ public final class Main {
 		});
 	}
 
+	/// Sets the selected controller, updates the stored preference for the last
+	/// used controller GUID, and logs the selection.
+	///
+	/// @param controller the controller to select, or `null` to deselect
 	private void setSelectedController(final Controller controller) {
 		if (Objects.equals(selectedController, controller)) {
 			return;
@@ -3636,6 +4330,11 @@ public final class Main {
 		}
 	}
 
+	/// Sets the selected controller, reinitializes the input system, and preserves
+	/// the current profile.
+	///
+	/// @param controller the controller to select, or `null` to deselect
+	/// @param axes the axis values to restore, or `null` to use defaults
 	public void setSelectedControllerAndUpdateInput(final Controller controller,
 			@SuppressWarnings("exports") final Map<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
@@ -3655,19 +4354,29 @@ public final class Main {
 		}
 	}
 
+	/// Sets the status bar text immediately.
+	///
+	/// @param text the text to display
 	public void setStatusBarText(final String text) {
 		statusLabel.setText(text);
 	}
 
+	/// Sets the cached total display bounds rectangle.
+	///
+	/// @param totalDisplayBounds the combined bounding rectangle of all displays
 	void setTotalDisplayBounds(final Rectangle totalDisplayBounds) {
 		this.totalDisplayBounds = totalDisplayBounds;
 	}
 
+	/// Sets the unsaved changes flag and updates the title bar accordingly.
+	///
+	/// @param unsavedChanges `true` if the profile has unsaved modifications
 	void setUnsavedChanges(final boolean unsavedChanges) {
 		this.unsavedChanges = unsavedChanges;
 		updateTitleAndTooltip();
 	}
 
+	/// Makes the main frame visible and updates the system tray show/hide entry.
 	void show() {
 		if (frame == null) {
 			return;
@@ -3678,6 +4387,8 @@ public final class Main {
 		updateShowTrayEntry();
 	}
 
+	/// Shows a modal dialog containing application name, version, build timestamp,
+	/// OS details, and copyright year.
 	private void showAboutDialog() {
 		final var imageIcon = new ImageIcon(getResourceLocation(ICON_RESOURCE_PATHS[2]));
 
@@ -3698,6 +4409,9 @@ public final class Main {
 				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 	}
 
+	/// Shows a one-time informational dialog explaining how to locate the system
+	/// tray icon, unless the user has previously dismissed it with "do not show
+	/// again".
 	private void showTrayIconHint() {
 		if (preferences.getBoolean(PREFERENCES_SKIP_TRAY_ICON_HINT, false)) {
 			return;
@@ -3719,6 +4433,8 @@ public final class Main {
 		}
 	}
 
+	/// Starts the client run mode asynchronously, recording it as the last run mode
+	/// type and notifying listeners of the state change.
 	private void startClient() {
 		lastRunModeType = RunModeType.CLIENT;
 
@@ -3733,6 +4449,8 @@ public final class Main {
 		onRunModeChanged(true);
 	}
 
+	/// Starts the local run mode asynchronously, initializing the overlay and its
+	/// periodic position-update task.
 	private void startLocal() {
 		lastRunModeType = RunModeType.LOCAL;
 
@@ -3750,6 +4468,8 @@ public final class Main {
 		startOverlayTimerTask();
 	}
 
+	/// Starts the periodic overlay position-update task, replacing any previously
+	/// running task.
 	@SuppressWarnings("FutureReturnValueIgnored")
 	private void startOverlayTimerTask() {
 		stopOverlayTimerTask();
@@ -3759,6 +4479,8 @@ public final class Main {
 				OVERLAY_POSITION_UPDATE_DELAY, OVERLAY_POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS);
 	}
 
+	/// Starts the server run mode asynchronously, initializing the overlay and its
+	/// periodic position-update task.
 	private void startServer() {
 		lastRunModeType = RunModeType.SERVER;
 
@@ -3776,6 +4498,13 @@ public final class Main {
 		startOverlayTimerTask();
 	}
 
+	/// Stops all active run modes.
+	///
+	/// @param initiateStop whether to request each run mode to stop
+	/// @param resetLastRunModeType whether to reset the last run mode type to
+	/// `NONE`
+	/// @param performGarbageCollection whether to trigger garbage collection after
+	/// stopping
 	public void stopAll(final boolean initiateStop, final boolean resetLastRunModeType,
 			final boolean performGarbageCollection) {
 		if (IS_WINDOWS || IS_LINUX) {
@@ -3789,6 +4518,12 @@ public final class Main {
 		}
 	}
 
+	/// Stops the client run mode, optionally requesting it to halt and optionally
+	/// resetting the last run mode type.
+	///
+	/// @param initiateStop whether to call `requestStop()` on the active run mode
+	/// @param resetLastRunModeType whether to reset the last run mode type to
+	/// `NONE`
 	private void stopClient(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = isClientRunning();
 
@@ -3807,6 +4542,13 @@ public final class Main {
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> onRunModeChanged(isRunning()));
 	}
 
+	/// Stops the local run mode, optionally requesting it to halt and optionally
+	/// resetting the last run mode type, then tears down the overlay if no run mode
+	/// remains active.
+	///
+	/// @param initiateStop whether to call `requestStop()` on the active run mode
+	/// @param resetLastRunModeType whether to reset the last run mode type to
+	/// `NONE`
 	private void stopLocal(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = isLocalRunning();
 
@@ -3834,6 +4576,8 @@ public final class Main {
 		});
 	}
 
+	/// Shuts down the overlay position-update executor, waiting up to 2 seconds for
+	/// in-progress tasks to finish.
 	private void stopOverlayTimerTask() {
 		if (overlayExecutorService != null) {
 			overlayExecutorService.shutdown();
@@ -3849,6 +4593,13 @@ public final class Main {
 		}
 	}
 
+	/// Stops the server run mode, optionally requesting it to halt and optionally
+	/// resetting the last run mode type, then tears down the overlay if no run mode
+	/// remains active.
+	///
+	/// @param initiateStop whether to call `requestStop()` on the active run mode
+	/// @param resetLastRunModeType whether to reset the last run mode type to
+	/// `NONE`
 	private void stopServer(final boolean initiateStop, final boolean resetLastRunModeType) {
 		final var running = runMode instanceof ServerRunMode;
 
@@ -3876,6 +4627,8 @@ public final class Main {
 		});
 	}
 
+	/// Updates the device menu radio button selection to match the currently
+	/// selected controller.
 	public void updateDeviceMenuSelection() {
 		if (selectedController == null) {
 			return;
@@ -3891,6 +4644,14 @@ public final class Main {
 		}
 	}
 
+	/// Loads SDL gamepad mappings from the given file path on the main loop thread
+	/// and returns an error description on failure, or `null` on success.
+	///
+	/// @param path the filesystem path to the SDL gamepad mapping file
+	/// @param sourceName a human-readable description of the mapping source used in
+	/// log messages
+	/// @return an SDL error string if the mappings could not be loaded, or `null`
+	/// on success
 	private String updateGameControllerMappings(final String path, final String sourceName) {
 		return mainLoop.runSync(() -> {
 			final var numMappingsAdded = SDLGamepad.SDL_AddGamepadMappingsFromFile(path);
@@ -3905,6 +4666,11 @@ public final class Main {
 		}).orElse(null);
 	}
 
+	/// Stops any active local or server run mode, then loads SDL gamepad mappings
+	/// from an external file, displaying an error dialog if the file cannot be read
+	/// or the mappings cannot be applied.
+	///
+	/// @param path the filesystem path to the external SDL gamepad mapping file
 	private void updateGameControllerMappingsFromFile(final String path) {
 		if (isLocalRunning()) {
 			stopLocal(true, false);
@@ -3932,6 +4698,8 @@ public final class Main {
 		}
 	}
 
+	/// Assigns mnemonic keys to all menus and keyboard accelerators to all enabled
+	/// menu items, avoiding conflicts between menus.
 	private void updateMenuShortcuts() {
 		final var menuCount = menuBar.getMenuCount();
 		final var alreadyAssignedMenuKeyCodes = new HashSet<Integer>(menuCount);
@@ -3960,6 +4728,9 @@ public final class Main {
 		}
 	}
 
+	/// Rebuilds the modes list panel from the current profile.
+	///
+	/// @param newModeAdded if `true`, scrolls to and focuses the newly added mode
 	void updateModesPanel(final boolean newModeAdded) {
 		if (modesListPanel == null) {
 			return;
@@ -4032,6 +4803,16 @@ public final class Main {
 		}
 	}
 
+	/// Updates the overlay frame layout so the indicator panel and mode label are
+	/// positioned in the correct half of the display.
+	///
+	/// When the overlay is in the lower half of the total display bounds, the
+	/// indicator panel is placed at the bottom and the mode label at the top;
+	/// otherwise the positions are reversed. After repositioning the components
+	/// the frame is repacked to adjust its size.
+	///
+	/// @param totalDisplayBounds the bounding rectangle covering all connected
+	/// displays
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
 		final String horizontalIndicatorPanelConstraint;
 		final String currentModePanelConstraint;
@@ -4057,6 +4838,11 @@ public final class Main {
 		overlayFrame.pack();
 	}
 
+	/// Updates the overlay axis indicator progress bars with the current axis
+	/// values.
+	///
+	/// @param forceRepaint if `true`, all indicators are repainted regardless of
+	/// value changes
 	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
 		if (runMode == null || (!isLocalRunning() && !isServerRunning())) {
 			return;
@@ -4092,6 +4878,7 @@ public final class Main {
 				});
 	}
 
+	/// Rebuilds the overlay indicators panel from the current profile settings.
 	void updateOverlayPanel() {
 		if (indicatorsListPanel == null) {
 			return;
@@ -4222,6 +5009,13 @@ public final class Main {
 		indicatorsScrollPane.setViewportView(indicatorsListPanel);
 	}
 
+	/// Updates the overlay window position and re-initializes the overlay if the
+	/// total display bounds have changed.
+	///
+	/// Schedules the work on the AWT event queue. When the display configuration
+	/// changes, the overlay is torn down and rebuilt at the correct position.
+	/// Also ensures the overlay and on-screen keyboard remain topmost when no
+	/// modal dialog is showing, and triggers a repaint of all overlay components.
 	private void updateOverlayPosition() {
 		EventQueue.invokeLater(() -> {
 			if (!isModalDialogShowing()) {
@@ -4257,10 +5051,25 @@ public final class Main {
 		});
 	}
 
+	/// Updates the enabled state of all editor panels based on the current
+	/// running state.
+	///
+	/// Delegates to [#updatePanelAccess(boolean)] passing the result of
+	/// [#isRunning].
 	private void updatePanelAccess() {
 		updatePanelAccess(isRunning());
 	}
 
+	/// Updates the enabled state of all editor panels according to the given
+	/// running state.
+	///
+	/// Disables the modes list, new-mode panel, assignments component,
+	/// indicators list, profile settings panel, and global settings panel while
+	/// a run mode is active. Re-enables and refreshes them when the run mode
+	/// stops.
+	///
+	/// @param running `true` if a run mode is currently active, `false`
+	/// otherwise
 	private void updatePanelAccess(final boolean running) {
 		GuiUtils.setEnabledRecursive(modesListPanel, !running);
 		GuiUtils.setEnabledRecursive(newModePanel, !running);
@@ -4282,6 +5091,12 @@ public final class Main {
 		GuiUtils.setEnabledRecursive(globalSettingsPanel, !running);
 	}
 
+	/// Rebuilds the profile settings panel with the current profile's settings.
+	///
+	/// Clears and repopulates the panel with spinners and check boxes for
+	/// per-profile options such as key repeat interval and overlay visibility.
+	/// Does nothing if the panel has not yet been created or no input is
+	/// available.
 	private void updateProfileSettingsPanel() {
 		if (profileSettingsPanel == null) {
 			return;
@@ -4348,6 +5163,11 @@ public final class Main {
 		addGlueToSettingsPanel(profileSettingsPanel);
 	}
 
+	/// Updates the enabled state of the "show window" system tray entry.
+	///
+	/// Enables the entry when the main frame is hidden and disables it when the
+	/// frame is visible, so the user can always bring the window back from the
+	/// tray. Does nothing if the tray entry has not been created.
 	private void updateShowTrayEntry() {
 		if (showTrayEntry == 0L) {
 			return;
@@ -4357,6 +5177,25 @@ public final class Main {
 		mainLoop.runSync(() -> SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, enabled));
 	}
 
+	/// Updates the SVG group, text, and path elements identified by the given
+	/// prefix with text representations of the provided actions.
+	///
+	/// Partitions the actions into up to three labeled groups based on their
+	/// activation timing (on-press, while-pressed, on-release) or delay status,
+	/// then writes the combined label into the SVG text element. Applies
+	/// dark-theme colors when requested and records every symbol string added
+	/// to the `usedSymbols` set so callers can build a legend.
+	///
+	/// @param svgDocument the SVG document whose elements are updated
+	/// @param idPrefix the prefix used to locate the group, text, and path
+	/// elements by id
+	/// @param actions the list of actions to render, or `null`/empty to hide
+	/// the group
+	/// @param darkTheme `true` to apply dark-theme text and stroke colors
+	/// @param swapped `true` to append the swapped indicator symbol
+	/// @param usedSymbols set that is populated with every symbol string added
+	/// to the SVG text
+	/// @return the total extension width contributed by the rendered text
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
 			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
 			final Set<String> usedSymbols) {
@@ -4485,6 +5324,13 @@ public final class Main {
 		return extensionWidth;
 	}
 
+	/// Applies the currently selected UI theme by setting the FlatLaf
+	/// look-and-feel and refreshing all Swing components.
+	///
+	/// Resolves the [Theme#SYSTEM] value at runtime by querying the platform's
+	/// current light/dark preference via SDL. After switching the look-and-feel,
+	/// all UI components are updated through `FlatLaf.updateUI` and the
+	/// visualization panel is refreshed.
 	private void updateTheme() {
 		lookAndFeel = switch (getSelectedTheme()) {
 		case SYSTEM -> {
@@ -4516,6 +5362,8 @@ public final class Main {
 		updateVisualizationPanel();
 	}
 
+	/// Updates the main frame title to reflect the current profile name and unsaved
+	/// changes state.
 	public void updateTitle() {
 		final String title;
 		final var profileTitle = (unsavedChanges ? "*" : "")
@@ -4538,6 +5386,7 @@ public final class Main {
 		}
 	}
 
+	/// Updates the main frame title and the system tray tooltip.
 	public void updateTitleAndTooltip() {
 		updateTitle();
 
@@ -4550,6 +5399,11 @@ public final class Main {
 		}
 	}
 
+	/// Updates the enabled state of the touchpad sensitivity panels.
+	///
+	/// Disables the cursor and scroll sensitivity controls when the touchpad is
+	/// not enabled, preventing the user from configuring settings that have no
+	/// effect.
 	private void updateTouchpadSettings() {
 		final var enableTouchpad = isTouchpadEnabled();
 
@@ -4557,6 +5411,11 @@ public final class Main {
 		GuiUtils.setEnabledRecursive(touchpadScrollSensitivityPanel, enableTouchpad);
 	}
 
+	/// Updates the enabled state of the start and stop system tray entries.
+	///
+	/// Enables the start entries and disables the stop entry while no run mode
+	/// is active, and reverses this when a run mode is running. Only modifies
+	/// entries that have been created (non-zero handle).
 	private void updateTrayEntriesEnabled() {
 		final var running = isRunning();
 
@@ -4574,6 +5433,11 @@ public final class Main {
 		}
 	}
 
+	/// Updates the system tray icon tooltip with the current title and optional
+	/// battery percentage.
+	///
+	/// @param batteryPercent the battery percentage (0-100), or a negative value to
+	/// omit battery info
 	public void updateTrayIconToolTip(final int batteryPercent) {
 		checkMainThread();
 
@@ -4589,6 +5453,8 @@ public final class Main {
 		SDLTray.SDL_SetTrayTooltip(tray, tooltip);
 	}
 
+	/// Rebuilds the visualization panel with SVG controller diagrams for all
+	/// profile modes.
 	void updateVisualizationPanel() {
 		if (visualizationPanel == null || svgPanel == null || input == null) {
 			return;
@@ -4635,32 +5501,83 @@ public final class Main {
 		svgPanel.setBackground(UIManager.getColor("Panel.background"));
 	}
 
+	/// Enumeration of gamepad buttons that can be assigned as the hot-swapping
+	/// trigger.
+	///
+	/// Each constant maps a human-readable label to its corresponding SDL gamepad
+	/// button identifier. [#NONE] represents the unassigned state with an id of
+	/// `-1`.
 	public enum HotSwappingButton {
 
-		NONE(-1, "NONE"), A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
-		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"), X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
+		/// No button assigned for hot-swapping.
+		NONE(-1, "NONE"),
+
+		/// The A (south) gamepad button.
+		A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
+
+		/// The B (east) gamepad button.
+		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"),
+
+		/// The X (west) gamepad button.
+		X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
+
+		/// The Y (north) gamepad button.
 		Y(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, "Y_BUTTON"),
+
+		/// The left shoulder gamepad button.
 		LEFT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, "LEFT_SHOULDER"),
+
+		/// The right shoulder gamepad button.
 		RIGHT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, "RIGHT_SHOULDER"),
+
+		/// The back gamepad button.
 		BACK(SDLGamepad.SDL_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"),
+
+		/// The start gamepad button.
 		START(SDLGamepad.SDL_GAMEPAD_BUTTON_START, "START_BUTTON"),
+
+		/// The guide gamepad button.
 		GUIDE(SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
+
+		/// The left stick press gamepad button.
 		LEFT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, "LEFT_STICK"),
+
+		/// The right stick press gamepad button.
 		RIGHT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, "RIGHT_STICK"),
+
+		/// The D-pad up gamepad button.
 		DPAD_UP(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
+
+		/// The D-pad right gamepad button.
 		DPAD_RIGHT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
+
+		/// The D-pad down gamepad button.
 		DPAD_DOWN(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
+
+		/// The D-pad left gamepad button.
 		DPAD_LEFT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
 
+		/// The SDL button identifier, or `-1` for [#NONE].
 		public final int id;
 
+		/// Localized display label for this button constant.
 		private final String label;
 
+		/// Creates a new [HotSwappingButton] constant with the given SDL button id
+		/// and localization key.
+		///
+		/// @param id the SDL button identifier, or `-1` for [#NONE]
+		/// @param labelKey the resource-bundle key for the localized display label
 		HotSwappingButton(final int id, final String labelKey) {
 			this.id = id;
 			label = STRINGS.getString(labelKey);
 		}
 
+		/// Returns the [HotSwappingButton] constant whose id matches the given
+		/// SDL button id, or [#NONE] if no match is found.
+		///
+		/// @param id the SDL button id to look up
+		/// @return the matching [HotSwappingButton] constant, or [#NONE] as default
 		private static HotSwappingButton fromId(final int id) {
 			return EnumSet.allOf(HotSwappingButton.class).stream()
 					.filter(hotSwappingButton -> hotSwappingButton.id == id).findFirst().orElse(NONE);
@@ -4672,23 +5589,58 @@ public final class Main {
 		}
 	}
 
+	/// Internal enumeration of the available run mode types.
+	///
+	/// Used to track which run mode was most recently started so the application
+	/// can restart the correct mode after a controller hot-swap or other
+	/// interruption.
 	private enum RunModeType {
-		NONE, LOCAL, CLIENT, SERVER
+		/// No run mode is currently active.
+		NONE,
+		/// Local feeder run mode.
+		LOCAL,
+		/// Client run mode.
+		CLIENT,
+		/// Server run mode.
+		SERVER
 	}
 
+	/// Enumeration of available UI themes: system-detected, light, and dark.
+	///
+	/// Each constant stores a numeric id and a localized label. The id is persisted
+	/// in the user preferences and used to restore the selected theme on next
+	/// launch. [#SYSTEM] applies the theme that matches the platform's current
+	/// light/dark appearance setting.
 	private enum Theme {
 
-		SYSTEM(0, "THEME_SYSTEM"), LIGHT(1, "THEME_LIGHT"), DARK(2, "THEME_DARK");
+		/// System-detected theme that follows the platform's appearance setting.
+		SYSTEM(0, "THEME_SYSTEM"),
+		/// Light theme.
+		LIGHT(1, "THEME_LIGHT"),
+		/// Dark theme.
+		DARK(2, "THEME_DARK");
 
+		/// Numeric identifier persisted in user preferences.
 		private final int id;
 
+		/// Localized display label for this theme constant.
 		private final String label;
 
+		/// Creates a new [Theme] constant with the given numeric id and
+		/// localization key.
+		///
+		/// @param id the numeric identifier persisted in user preferences
+		/// @param labelKey the resource-bundle key for the localized display label
 		Theme(final int id, final String labelKey) {
 			this.id = id;
 			label = STRINGS.getString(labelKey);
 		}
 
+		/// Returns the [Theme] constant whose id matches the given value, or
+		/// [#SYSTEM] if no match is found.
+		///
+		/// @param id the numeric theme id to look up
+		/// @return the matching [Theme] constant, or [#SYSTEM] as default
 		private static Theme fromId(final int id) {
 			return EnumSet.allOf(Theme.class).stream().filter(theme -> theme.id == id).findFirst().orElse(SYSTEM);
 		}
@@ -4699,20 +5651,41 @@ public final class Main {
 		}
 	}
 
+	/// D-Bus interface for querying GNOME Shell extension information.
+	///
+	/// Provides access to the GNOME Shell extension registry over D-Bus, allowing
+	/// the application to detect whether specific extensions such as AppIndicator
+	/// support are installed and enabled.
 	@DBusInterfaceName("org.gnome.Shell.Extensions")
 	private interface Extensions extends DBusInterface {
 
+		/// Returns a map of all installed GNOME Shell extensions keyed by their
+		/// UUID.
+		///
+		/// @return a map from extension UUID to a map of extension metadata properties
 		Map<String, Map<String, Variant<?>>> ListExtensions();
 
+		/// Returns the version string of the running GNOME Shell.
+		///
+		/// @return the GNOME Shell version, e.g. `"45.0"`
 		@DBusBoundProperty(access = Access.READ, name = "ShellVersion")
 		String getShellVersion();
 	}
 
+	/// Base file chooser with overwrite-confirmation support for profile-related
+	/// file dialogs.
+	///
+	/// When the user selects an existing file in a save dialog, this class displays
+	/// a confirmation prompt before overriding the built-in approval behavior.
+	/// Concrete subclasses configure the appropriate file filter.
 	private abstract static class AbstractProfileFileChooser extends LargeFileChooser {
 
 		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
+		/// Creates a new file chooser with the given file filter applied.
+		///
+		/// @param fileFilter the file filter to restrict the file chooser display
 		private AbstractProfileFileChooser(final FileFilter fileFilter) {
 			setFileFilter(fileFilter);
 		}
@@ -4738,12 +5711,33 @@ public final class Main {
 		}
 	}
 
+	/// Immutable record representing a connected gamepad controller, identified by
+	/// SDL instance ID, name, and GUID.
+	///
+	/// Instances are created when SDL reports a gamepad connection event. The GUID
+	/// is derived from the SDL gamepad GUID and uniquely identifies the controller
+	/// model for database lookups.
+	///
+	/// @param instanceId the SDL instance ID of the controller
+	/// @param name the human-readable name of the controller
+	/// @param guid the globally unique identifier string for the controller
 	public record Controller(int instanceId, String name, String guid) {
 
+		/// Creates a new [Controller] by resolving the name and GUID from the given
+		/// SDL instance ID.
+		///
+		/// @param instanceId the SDL instance ID of the controller
 		private Controller(final int instanceId) {
 			this(instanceId, SDLGamepad.SDL_GetGamepadNameForID(instanceId), prepareGuid(instanceId));
 		}
 
+		/// Converts the SDL GUID for the given instance ID to a hex string.
+		///
+		/// Allocates a stack buffer, calls `SDL_GUIDToString`, and strips any
+		/// trailing null characters before returning the result.
+		///
+		/// @param instanceId the SDL instance ID whose GUID is requested
+		/// @return the GUID as a trimmed hex string
 		private static String prepareGuid(final int instanceId) {
 			String guid;
 			try (final var stack = MemoryStack.stackPush()) {
@@ -4762,11 +5756,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that opens the donation page in the user's default browser.
+	///
+	/// Navigates to the `/donate` path of the ControllerBuddy website.
+	/// The action's display name renders as an underlined hyperlink with a red
+	/// heart symbol.
 	private static final class DonateAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -9029607010261185834L;
 
+		/// Creates a new [DonateAction] and initializes its name and description.
 		private DonateAction() {
 			putValue(NAME, "<html><span style='text-decoration:underline'>" + STRINGS.getString("DONATE_ACTION_NAME")
 					+ "</span> <span style='color:#D10000'>❤</span></html>");
@@ -4780,11 +5780,24 @@ public final class Main {
 		}
 	}
 
+	/// File chooser preconfigured for HTML export file selection.
+	///
+	/// Initializes the filter to accept HTML files and pre-fills the selected file
+	/// name based on the currently open profile file, substituting the profile
+	/// extension with `.html`.
 	private static final class HtmlFileChooser extends AbstractProfileFileChooser {
 
 		@Serial
 		private static final long serialVersionUID = -1707951153902772391L;
 
+		/// Creates a new [HtmlFileChooser] for the given profile file.
+		///
+		/// Pre-fills the selected file name with the profile file's base name and
+		/// the `.html` suffix. If `profileFile` is `null`, uses the localized
+		/// "untitled" string as the base name.
+		///
+		/// @param profileFile the currently open profile file, or `null` if no
+		/// profile is loaded
 		private HtmlFileChooser(final File profileFile) {
 			super(new FileNameExtensionFilter(STRINGS.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
 
@@ -4800,23 +5813,45 @@ public final class Main {
 		}
 	}
 
+	/// Custom progress bar used as an overlay axis indicator, supporting solid and
+	/// line styles, orientation, inversion, detent markers, and overlay scaling.
+	///
+	/// Renders the current virtual axis value as a colored bar or line drawn
+	/// directly in the component's `paintComponent` method. Detent positions are
+	/// shown as tick marks, and the bar dimensions are scaled by the configured
+	/// overlay scaling factor.
 	private static final class IndicatorProgressBar extends JProgressBar {
 
+		/// Number of subdivisions used to compute detent tick-mark positions.
 		private static final int SUBDIVISIONS = 3;
 
 		@Serial
 		private static final long serialVersionUID = 8167193907929992395L;
 
+		/// Set of normalized axis values at which detent tick marks are drawn.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Set<Float> detentValues;
 
+		/// Whether axis values should be inverted before rendering.
 		private final boolean inverted;
 
+		/// Overlay axis configuration used to derive rendering parameters.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final OverlayAxis overlayAxis;
 
+		/// Scale factor applied to subdivisions based on overlay scaling.
 		private final int subdivisionScale;
 
+		/// Creates a new [IndicatorProgressBar] for the given overlay axis and detent
+		/// values.
+		///
+		/// Configures the orientation, dimensions, inversion, border, and foreground
+		/// color from the [OverlayAxis] and the current overlay scaling factor.
+		///
+		/// @param overlayAxis the overlay axis configuration defining orientation,
+		/// style, color, and inversion
+		/// @param detentValues the set of normalized axis values at which detent tick
+		/// marks should be drawn
 		private IndicatorProgressBar(final OverlayAxis overlayAxis, final Set<Float> detentValues) {
 			final var overlayAxisOrientation = overlayAxis.getOrientation();
 			super(overlayAxisOrientation.toSwingConstant());
@@ -4851,14 +5886,36 @@ public final class Main {
 			setForeground(overlayAxis.getColor());
 		}
 
+		/// Calculates the x-coordinate of the left edge of a centered vertical line
+		/// at the given position.
+		///
+		/// @param pos the center position in pixels
+		/// @param lineThickness the thickness of the line in pixels
+		/// @return the left x-coordinate for the line rectangle
 		private static int calculateLineX(final int pos, final int lineThickness) {
 			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
 		}
 
+		/// Calculates the y-coordinate of the top edge of a centered horizontal line
+		/// at the given position.
+		///
+		/// @param pos the center position in pixels
+		/// @param lineThickness the thickness of the line in pixels
+		/// @return the top y-coordinate for the line rectangle
 		private static int calculateLineY(final int pos, final int lineThickness) {
 			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
 		}
 
+		/// Draws a subdivision tick mark or detent marker at the given position.
+		///
+		/// For horizontal orientation the tick is a vertical rectangle; for
+		/// vertical orientation it is a horizontal rectangle. The width of the
+		/// rectangle is scaled by the `subdivisionScale` factor.
+		///
+		/// @param g the graphics context to draw into
+		/// @param pos the pixel position along the progress bar's major axis
+		/// @param width the current component width in pixels
+		/// @param height the current component height in pixels
 		private void drawDivider(final Graphics g, final int pos, final int width, final int height) {
 			final var halfScale = subdivisionScale / 2;
 
@@ -4947,6 +6004,10 @@ public final class Main {
 			}
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(IndicatorProgressBar.class.getName());
@@ -4975,15 +6036,36 @@ public final class Main {
 			super.setValue(inverted ? -n : n);
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(IndicatorProgressBar.class.getName());
 		}
 	}
 
+	/// Record holding a configured Gson instance and its associated
+	/// ActionTypeAdapter for profile serialization.
+	///
+	/// Created via the static factory method [#create], which registers all
+	/// required type adapters for colors, actions, lock keys, and scan codes. Both
+	/// components are kept together so the adapter can be accessed after the
+	/// context is built.
+	///
+	/// @param gson the configured Gson instance
+	/// @param actionTypeAdapter the action type adapter registered with the Gson
+	/// instance
 	private record JsonContext(@SuppressWarnings("unused") Gson gson,
 			@SuppressWarnings("unused") ActionTypeAdapter actionTypeAdapter) {
 
+		/// Creates a new [JsonContext] with all required type adapters registered.
+		///
+		/// Registers adapters for [Color], [IAction], [LockKey], and [ScanCode],
+		/// and enables pretty printing.
+		///
+		/// @return a fully configured [JsonContext]
 		private static JsonContext create() {
 			final var actionAdapter = new ActionTypeAdapter();
 			final var gson = new GsonBuilder().registerTypeAdapterFactory(new ProfileTypeAdapterFactory())
@@ -4996,14 +6078,23 @@ public final class Main {
 		}
 	}
 
+	/// File chooser with an enlarged preferred size for better usability.
+	///
+	/// Overrides `setup` to set the preferred dialog size to the standard
+	/// application dialog dimensions, preventing the default compact file chooser
+	/// layout on high-resolution displays.
 	private static class LargeFileChooser extends JFileChooser {
 
 		@Serial
 		private static final long serialVersionUID = -2004524201953374585L;
 
+		/// Creates a new [LargeFileChooser] with the default starting directory.
 		private LargeFileChooser() {
 		}
 
+		/// Creates a new [LargeFileChooser] with the given starting directory.
+		///
+		/// @param currentDirectory the path of the directory to display initially
 		private LargeFileChooser(final String currentDirectory) {
 			super(currentDirectory);
 		}
@@ -5016,13 +6107,24 @@ public final class Main {
 		}
 	}
 
+	/// A `PlainDocument` that enforces a maximum character length on text
+	/// insertion.
+	///
+	/// Any attempt to insert text that would cause the total document length to
+	/// exceed the configured limit is silently ignored, keeping the existing
+	/// content unchanged.
 	private static final class LimitedLengthPlainDocument extends PlainDocument {
 
 		@Serial
 		private static final long serialVersionUID = 6672096787814740118L;
 
+		/// Maximum number of characters the document may contain.
 		private final int limit;
 
+		/// Creates a new [LimitedLengthPlainDocument] that rejects insertions
+		/// exceeding the given character limit.
+		///
+		/// @param limit the maximum number of characters the document may contain
 		private LimitedLengthPlainDocument(final int limit) {
 			this.limit = limit;
 		}
@@ -5039,21 +6141,37 @@ public final class Main {
 		}
 	}
 
+	/// The SDL main-thread event loop and task scheduler.
+	///
+	/// All SDL API calls must be executed on this loop's thread. Tasks can be
+	/// submitted synchronously (blocking the caller) or asynchronously. The loop
+	/// also polls SDL events when SDL event polling is active.
 	public static final class MainLoop {
 
+		/// Queue of pending tasks to be executed on the SDL main thread.
 		private final BlockingQueue<TaskQueueEntry> taskQueue = new LinkedBlockingDeque<>();
 
+		/// The SDL main thread that runs this loop.
 		private final Thread thread = Thread.currentThread();
 
+		/// The task currently being executed, or `null` if idle.
 		private volatile TaskQueueEntry currentTaskQueueEntry;
 
+		/// Whether the loop should poll SDL events on each iteration.
 		private volatile boolean pollSdlEvents;
 
+		/// Whether the loop is in the process of shutting down.
 		private volatile boolean shuttingDown;
 
+		/// Prevents instantiation by clients outside of [Main].
 		private MainLoop() {
 		}
 
+		/// Enqueues a task entry and wakes the main loop thread.
+		///
+		/// @param taskQueueEntry the entry to enqueue
+		/// @throws IllegalStateException if the main loop thread is no longer alive
+		/// or is shutting down
 		private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
 			if (!thread.isAlive()) {
 				throw new IllegalStateException("Main loop thread is not alive");
@@ -5069,6 +6187,14 @@ public final class Main {
 			}
 		}
 
+		/// Runs the main loop, processing tasks and polling SDL events until
+		/// interrupted.
+		///
+		/// Continuously dequeues and executes [TaskQueueEntry] instances. When no
+		/// tasks are pending and SDL event polling is not active, the thread waits.
+		/// If an uncaught exception escapes a task, all remaining queued tasks are
+		/// completed exceptionally and the exception is re-thrown. On exit, SDL is
+		/// shut down via `SDL_Quit`.
 		private void enterLoop() {
 			LOGGER.info("Entering main loop");
 			try {
@@ -5126,6 +6252,15 @@ public final class Main {
 			}
 		}
 
+		/// Executes a single queued task entry on the main loop thread.
+		///
+		/// Calls [Callable#call] or [Runnable#run] depending on the task type and
+		/// completes the associated [CompletableFuture] with the result. On
+		/// failure, completes the future exceptionally when one is present, or
+		/// sets the shutting-down flag and re-throws wrapped in a
+		/// [RuntimeException] otherwise.
+		///
+		/// @param taskQueueEntry the entry to execute
 		private void executeTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
 			try {
 				if (taskQueueEntry.task instanceof final Callable<?> callable) {
@@ -5147,10 +6282,19 @@ public final class Main {
 			}
 		}
 
+		/// Returns whether the main loop is available to accept new tasks.
+		///
+		/// @return `true` if the loop thread is alive and not shutting down
 		private boolean isAvailable() {
 			return thread.isAlive() && !shuttingDown;
 		}
 
+		/// Returns whether the currently executing task is an instance of the
+		/// given class.
+		///
+		/// @param clazz the class to check against the current task
+		/// @return `true` if a task is running and its type is assignable from
+		/// `clazz`
 		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
 			if (currentTaskQueueEntry == null) {
 				return false;
@@ -5159,10 +6303,21 @@ public final class Main {
 			return clazz.isAssignableFrom(currentTaskQueueEntry.task.getClass());
 		}
 
+		/// Submits a [Runnable] task for asynchronous execution on the main loop
+		/// thread.
+		///
+		/// Returns immediately without waiting for the task to complete.
+		///
+		/// @param runnable the task to execute
 		private void runAsync(final Runnable runnable) {
 			addTaskQueueEntry(new TaskQueueEntry(runnable, null));
 		}
 
+		/// Submits a [Runnable] task for synchronous execution on the main loop
+		/// thread and blocks until it completes.
+		///
+		/// @param runnable the task to execute
+		/// @throws RuntimeException if the task throws an exception
 		private void runSync(final Runnable runnable) {
 			final var futureResult = new CompletableFuture<>();
 			addTaskQueueEntry(new TaskQueueEntry(runnable, futureResult));
@@ -5176,6 +6331,14 @@ public final class Main {
 			}
 		}
 
+		/// Submits a [Callable] task for synchronous execution on the main loop
+		/// thread and blocks until it completes.
+		///
+		/// @param <V> the return type of the callable
+		/// @param callable the task to execute
+		/// @return an [Optional] containing the task result, or empty if the
+		/// calling thread was interrupted
+		/// @throws RuntimeException if the task throws an exception
 		@SuppressWarnings("unchecked")
 		private <V> Optional<V> runSync(final Callable<V> callable) {
 			final var futureResult = new CompletableFuture<>();
@@ -5192,6 +6355,11 @@ public final class Main {
 			return Optional.empty();
 		}
 
+		/// Shuts down the main loop by interrupting its thread and waiting for it
+		/// to terminate.
+		///
+		/// Disables SDL event polling, interrupts the loop thread, and spins until
+		/// the thread has fully stopped.
 		private void shutdown() {
 			pollSdlEvents = false;
 
@@ -5207,6 +6375,10 @@ public final class Main {
 			}
 		}
 
+		/// Enables SDL event polling in the main loop and wakes the loop thread.
+		///
+		/// Once enabled, each loop iteration calls `pollSdlEvents` after
+		/// processing the task queue.
 		private void startSdlEventPolling() {
 			synchronized (this) {
 				pollSdlEvents = true;
@@ -5214,6 +6386,8 @@ public final class Main {
 			}
 		}
 
+		/// Blocks the calling thread until all queued tasks and the currently
+		/// executing task have completed.
 		private void waitForTask() {
 			while (currentTaskQueueEntry != null || !taskQueue.isEmpty()) {
 				try {
@@ -5225,6 +6399,8 @@ public final class Main {
 			}
 		}
 
+		/// Drains and executes all pending tasks in the queue, then returns. Must be
+		/// called from the main loop thread.
 		@SuppressWarnings("NamedLikeContextualKeyword")
 		public void yield() {
 			if (Thread.currentThread() != thread) {
@@ -5240,28 +6416,51 @@ public final class Main {
 			}
 		}
 
+		/// Internal record pairing a task ([Runnable] or [Callable]) with its
+		/// [CompletableFuture] result.
+		///
+		/// The `futureResult` is completed by the main loop thread once the task
+		/// finishes, allowing synchronous callers to block until the result is
+		/// available.
+		///
+		/// @param task the task to execute, either a [Runnable] or a [Callable]
+		/// @param futureResult the future that is completed with the task's result
 		private record TaskQueueEntry(Object task, CompletableFuture<Object> futureResult) {
 		}
 	}
 
+	/// Panel that renders an [SVGDocument] with interactive zoom and pan support.
+	///
+	/// Left-clicking zooms in and right-clicking zooms out at the cursor position.
+	/// When zoomed in, the user can pan by dragging the panel. The mouse wheel also
+	/// adjusts the zoom level incrementally.
 	private static final class SVGPanel extends JPanel {
 
+		/// Maximum zoom factor the panel allows.
 		private static final float MAX_ZOOM_FACTOR = 5f;
 
+		/// Cursor shown when the panel is in pan mode (zoomed in).
 		private static final Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
+		/// Cursor shown when the panel is in zoom mode.
 		private static final Cursor ZOOM_CURSOR;
 
+		/// Hot-spot point within the zoom cursor image.
 		private static final Point ZOOM_CURSOR_HOT_SPOT = new Point(11, 11);
 
+		/// Classpath resource path for the zoom cursor GIF image.
 		private static final String ZOOM_GIF_RESOURCE_PATH = "/zoom.gif";
 
+		/// Panning weight applied when zooming in via click.
 		private static final float ZOOM_IN_PANNING_FACTOR = 1.5f;
 
+		/// Exponent controlling how fast the view re-centers when zooming out.
 		private static final double ZOOM_OUT_RETURN_TO_CENTER_EXPONENT = 2.0;
 
+		/// Zoom factor multiplier applied per click.
 		private static final float ZOOM_STEP_CLICK = 1.3f;
 
+		/// Zoom factor multiplier applied per mouse-wheel notch.
 		private static final float ZOOM_STEP_WHEEL = 1.1f;
 
 		@Serial
@@ -5283,15 +6482,20 @@ public final class Main {
 			}
 		}
 
+		/// Current horizontal pan offset in panel coordinates.
 		private float offsetX = 0f;
 
+		/// Current vertical pan offset in panel coordinates.
 		private float offsetY = 0f;
 
+		/// The SVG document currently rendered by this panel.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private SVGDocument svgDocument;
 
+		/// Current zoom factor applied to the SVG rendering.
 		private float zoomFactor = 1f;
 
+		/// Creates a new [SVGPanel] with zoom and pan mouse listeners registered.
 		private SVGPanel() {
 			setCursor(ZOOM_CURSOR);
 
@@ -5376,14 +6580,31 @@ public final class Main {
 			});
 		}
 
+		/// Returns the component height scaled by the current zoom factor.
+		///
+		/// @return the zoomed height in pixels
 		private int getZoomedHeight() {
 			return Math.round(getHeight() * zoomFactor);
 		}
 
+		/// Returns the component width scaled by the current zoom factor.
+		///
+		/// @return the zoomed width in pixels
 		private int getZoomedWidth() {
 			return Math.round(getWidth() * zoomFactor);
 		}
 
+		/// Applies a zoom ratio relative to the given mouse cursor position and
+		/// repaints the panel.
+		///
+		/// Clamps the resulting zoom factor between `1.0` and [#MAX_ZOOM_FACTOR].
+		/// When zooming in, the pan offset is adjusted so the area under the
+		/// cursor stays centered. When zooming out, the offset is reduced toward
+		/// zero to smoothly return the view to the center.
+		///
+		/// @param zoomRatio the multiplicative factor to apply to the current zoom
+		/// @param mouseX the x-coordinate of the zoom focus point in component space
+		/// @param mouseY the y-coordinate of the zoom focus point in component space
 		private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
 			zoomFactor = Math.min(Math.max(zoomFactor * zoomRatio, 1f), MAX_ZOOM_FACTOR);
 
@@ -5434,11 +6655,22 @@ public final class Main {
 					-(zoomedHeight - height) / 2f + offsetY, zoomedWidth, zoomedHeight));
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(SVGPanel.class.getName());
 		}
 
+		/// Sets the SVG document to render and resets the zoom and pan state.
+		///
+		/// After updating the document the panel is repainted to display the new
+		/// content.
+		///
+		/// @param svgDocument the SVG document to display, or `null` to clear the
+		/// panel
 		private void setSvgDocument(final SVGDocument svgDocument) {
 			this.svgDocument = svgDocument;
 			zoomFactor = 1f;
@@ -5448,17 +6680,28 @@ public final class Main {
 			repaint();
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(SVGPanel.class.getName());
 		}
 	}
 
+	/// Action that opens the ControllerBuddy project website in the default
+	/// browser.
+	///
+	/// Navigates to the root path of the ControllerBuddy website using the
+	/// platform's default browser via the `openWebsite` helper method.
 	private static final class ShowWebsiteAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -9029607010261185834L;
 
+		/// Creates a new [ShowWebsiteAction] and initializes its name and
+		/// description.
 		private ShowWebsiteAction() {
 			putValue(NAME, STRINGS.getString("SHOW_WEBSITE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, MessageFormat.format(STRINGS.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"),
@@ -5471,6 +6714,12 @@ public final class Main {
 		}
 	}
 
+	/// Custom etched border that draws only the top highlight and shadow lines for
+	/// the status bar.
+	///
+	/// Unlike a full [EtchedBorder], only the topmost two pixel rows are painted,
+	/// giving the status bar a thin visual separator without enclosing the
+	/// component on all four sides.
 	private static final class StatusBarBorder extends EtchedBorder {
 
 		@Serial
@@ -5488,11 +6737,18 @@ public final class Main {
 		}
 	}
 
+	/// Action to change the vJoy installation directory via a file chooser dialog.
+	///
+	/// Validates that the chosen directory contains the expected vJoy DLL before
+	/// persisting the new path in preferences. If vJoy is already initialized,
+	/// prompts the user to restart the application so the change takes effect.
 	private final class ChangeVJoyDirectoryAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -7672382299595684105L;
 
+		/// Creates a new [ChangeVJoyDirectoryAction] and initializes its name and
+		/// description.
 		private ChangeVJoyDirectoryAction() {
 			putValue(NAME, "...");
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
@@ -5537,13 +6793,24 @@ public final class Main {
 		}
 	}
 
+	/// Abstract action that shows a connection settings dialog before proceeding
+	/// with a network run mode.
+	///
+	/// Displays a [ConnectionSettingsPanel] in a confirmation dialog and, if the
+	/// user confirms valid settings, delegates to the abstract [#proceed] method
+	/// implemented by concrete subclasses to start the chosen run mode.
 	private abstract class ConnectAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 3506732842101613495L;
 
+		/// Whether to show the host address field for client connections.
 		private final boolean withHost;
 
+		/// Creates a new [ConnectAction] configured with or without a host field.
+		///
+		/// @param withHost `true` to show the host address field in the connection
+		/// settings dialog (used for client connections)
 		private ConnectAction(final boolean withHost) {
 			this.withHost = withHost;
 		}
@@ -5553,8 +6820,17 @@ public final class Main {
 			showConnectDialog();
 		}
 
+		/// Proceeds with starting the network run mode after the user confirms
+		/// the connection settings dialog.
+		///
+		/// Implemented by concrete subclasses to start the appropriate run mode.
 		abstract void proceed();
 
+		/// Shows the connection settings dialog and, if the user confirms valid
+		/// settings, calls [#proceed].
+		///
+		/// On validation failure, displays an error message and re-shows the
+		/// dialog.
 		private void showConnectDialog() {
 			final var connectionSettingsPanel = new ConnectionSettingsPanel(withHost);
 
@@ -5576,21 +6852,38 @@ public final class Main {
 		}
 	}
 
+	/// Panel containing host, port, timeout, and password fields for network
+	/// connection configuration.
+	///
+	/// The host field is only shown when the `withHost` constructor argument is
+	/// `true` (used for client connections). Calling [#saveSettings] validates the
+	/// inputs and writes accepted values to the user preferences store, returning
+	/// an error message on validation failure.
 	private final class ConnectionSettingsPanel extends JPanel {
 
+		/// Number of columns for the text fields in the settings panel.
 		private static final int TEXT_FIELD_COLUMNS = 15;
 
 		@Serial
 		private static final long serialVersionUID = 2959405425250777631L;
 
+		/// Password entry field for the connection password preference.
 		private final JPasswordField passwordPasswordField;
 
+		/// Spinner for entering the network port number.
 		private final JSpinner portSpinner;
 
+		/// Spinner for entering the connection timeout value.
 		private final JSpinner timeoutSpinner;
 
+		/// Text field for entering the remote host address.
 		private JTextField hostTextField;
 
+		/// Creates a new [ConnectionSettingsPanel] with or without a host field.
+		///
+		/// Pre-populates all fields from the current user preferences.
+		///
+		/// @param withHost `true` to include the host address text field
 		private ConnectionSettingsPanel(final boolean withHost) {
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -5651,6 +6944,12 @@ public final class Main {
 			passwordPanel.add(passwordPasswordField);
 		}
 
+		/// Validates and persists the current field values to user preferences.
+		///
+		/// Returns `null` if all fields are valid and the values have been saved.
+		/// Returns a localized error message string if validation fails.
+		///
+		/// @return `null` on success, or an error message string on failure
 		private String saveSettings() {
 			if (hostTextField != null) {
 				final var host = hostTextField.getText().strip();
@@ -5674,11 +6973,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that exports the current profile visualization to an HTML file.
+	///
+	/// Opens an [HtmlFileChooser] for the user to select the destination file, then
+	/// delegates to the `exportVisualization` method to generate and write the HTML
+	/// content.
 	private final class ExportAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -6582801831348704984L;
 
+		/// Creates a new [ExportAction] and initializes its name and description.
 		private ExportAction() {
 			putValue(NAME, STRINGS.getString("EXPORT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("EXPORT_ACTION_DESCRIPTION"));
@@ -5696,13 +7001,23 @@ public final class Main {
 		}
 	}
 
+	/// Action that toggles the inversion state of an overlay axis indicator.
+	///
+	/// Reads the selected state from the triggering [JCheckBox] and writes it to
+	/// the [OverlayAxis] for the associated virtual axis, then marks the profile as
+	/// having unsaved changes and refreshes the overlay panel.
 	private final class InvertIndicatorAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
+		/// The virtual axis whose indicator inversion state this action controls.
 		private final VirtualAxis virtualAxis;
 
+		/// Creates a new [InvertIndicatorAction] for the given virtual axis.
+		///
+		/// @param virtualAxis the virtual axis whose indicator inversion state is
+		/// controlled by this action
 		private InvertIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
@@ -5720,11 +7035,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that creates a new empty profile, prompting to save unsaved changes
+	/// first.
+	///
+	/// Extends [UnsavedChangesAwareAction] so that any in-progress edits are
+	/// handled before the new profile replaces the current one.
 	private final class NewAction extends UnsavedChangesAwareAction {
 
 		@Serial
 		private static final long serialVersionUID = 5703987691203427504L;
 
+		/// Creates a new [NewAction] and initializes its name and description.
 		private NewAction() {
 			putValue(NAME, STRINGS.getString("NEW_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_ACTION_DESCRIPTION"));
@@ -5736,11 +7057,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that adds a new mode to the current profile.
+	///
+	/// Creates a default [Mode] instance, appends it to the profile's mode list,
+	/// marks the profile as having unsaved changes, and refreshes the modes panel
+	/// to show the new entry.
 	private final class NewModeAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -4881923833724315489L;
 
+		/// Creates a new [NewModeAction] and initializes its name and description.
 		private NewModeAction() {
 			putValue(NAME, STRINGS.getString("NEW_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_MODE_ACTION_DESCRIPTION"));
@@ -5756,11 +7083,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that opens an existing profile from disk, prompting to save unsaved
+	/// changes first.
+	///
+	/// Displays the [ProfileFileChooser] dialog and, if the user selects a file,
+	/// loads the chosen profile. Extends [UnsavedChangesAwareAction] to handle
+	/// pending edits before discarding the current profile.
 	private final class OpenAction extends UnsavedChangesAwareAction {
 
 		@Serial
 		private static final long serialVersionUID = -8932510785275935297L;
 
+		/// Creates a new [OpenAction] and initializes its name and description.
 		private OpenAction() {
 			putValue(NAME, STRINGS.getString("OPEN_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("OPEN_ACTION_DESCRIPTION"));
@@ -5776,11 +7110,21 @@ public final class Main {
 		}
 	}
 
+	/// File chooser preconfigured for ControllerBuddy profile file selection.
+	///
+	/// Filters for JSON profile files and pre-selects the directory of the most
+	/// recently opened profile, or the directory specified by the
+	/// `CONTROLLER_BUDDY_PROFILES_DIR` environment variable if set.
 	private final class ProfileFileChooser extends AbstractProfileFileChooser {
 
 		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
+		/// Creates a new [ProfileFileChooser] with the profile file filter applied.
+		///
+		/// Sets the initial directory to the location of the most recently opened
+		/// profile, or to the directory specified by the
+		/// `CONTROLLER_BUDDY_PROFILES_DIR` environment variable if set.
 		private ProfileFileChooser() {
 			super(new FileNameExtensionFilter(
 					MessageFormat.format(STRINGS.getString("PROFILE_FILE_DESCRIPTION"), Constants.APPLICATION_NAME),
@@ -5789,6 +7133,11 @@ public final class Main {
 			resetSelectedFile();
 		}
 
+		/// Resets the selected file to the appropriate initial directory.
+		///
+		/// Uses the directory of the currently open profile, or falls back to the
+		/// `CONTROLLER_BUDDY_PROFILES_DIR` environment variable. Appends a wildcard
+		/// file name pattern so the chooser opens in directory-listing mode.
 		private void resetSelectedFile() {
 			var profileDirectoryPath = "";
 
@@ -5813,11 +7162,16 @@ public final class Main {
 		}
 	}
 
+	/// Action that quits the application, prompting to save unsaved changes first.
+	///
+	/// Extends [UnsavedChangesAwareAction] to ensure that any unsaved profile edits
+	/// are addressed before the application terminates via the [Main#quit] method.
 	private final class QuitAction extends UnsavedChangesAwareAction {
 
 		@Serial
 		private static final long serialVersionUID = 8952460723177800923L;
 
+		/// Creates a new [QuitAction] and initializes its name and description.
 		private QuitAction() {
 			putValue(NAME, STRINGS.getString("QUIT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
@@ -5830,14 +7184,23 @@ public final class Main {
 		}
 	}
 
+	/// Action that removes a specific mode from the current profile.
+	///
+	/// Delegates to [Profile#removeMode] which also cleans up any references to the
+	/// mode from other modes' fallback chains, then marks the profile as having
+	/// unsaved changes and refreshes both the modes panel and visualization panel.
 	private final class RemoveModeAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -1056071724769862582L;
 
+		/// The mode to be removed when this action is triggered.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Mode mode;
 
+		/// Creates a new [RemoveModeAction] for the given mode.
+		///
+		/// @param mode the mode to be removed when the action is triggered
 		private RemoveModeAction(final Mode mode) {
 			this.mode = mode;
 
@@ -5854,22 +7217,37 @@ public final class Main {
 			updateVisualizationPanel();
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(RemoveModeAction.class.getName());
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(RemoveModeAction.class.getName());
 		}
 	}
 
+	/// Action that saves the current profile to its existing file, or prompts for a
+	/// new file.
+	///
+	/// If the profile has never been saved, this action behaves like [SaveAsAction]
+	/// and opens a file chooser. Otherwise, it overwrites the existing file without
+	/// prompting.
 	private final class SaveAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
+		/// Creates a new [SaveAction] and initializes its name and description.
 		private SaveAction() {
 			putValue(NAME, STRINGS.getString("SAVE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_ACTION_DESCRIPTION"));
@@ -5881,11 +7259,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that saves the current profile to a new file chosen via a file
+	/// dialog.
+	///
+	/// Always opens a [ProfileFileChooser] save dialog regardless of whether the
+	/// profile already has an associated file, allowing the user to create a copy
+	/// under a different name.
 	private final class SaveAsAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
+		/// Creates a new [SaveAsAction] and initializes its name and description.
 		private SaveAsAction() {
 			putValue(NAME, STRINGS.getString("SAVE_AS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_AS_ACTION_DESCRIPTION"));
@@ -5897,14 +7282,24 @@ public final class Main {
 		}
 	}
 
+	/// Action that selects a specific controller as the active input device.
+	///
+	/// If the chosen controller differs from the currently selected one, updates
+	/// the input and, if a run mode was already active, restarts it with the new
+	/// controller automatically.
 	private final class SelectControllerAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -2043467156713598592L;
 
+		/// The controller that becomes selected when this action is triggered.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Controller controller;
 
+		/// Creates a new [SelectControllerAction] for the given controller.
+		///
+		/// @param controller the controller that will become selected when the
+		/// action is triggered
 		private SelectControllerAction(final Controller controller) {
 			this.controller = controller;
 
@@ -5927,24 +7322,43 @@ public final class Main {
 			}
 		}
 
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(SelectControllerAction.class.getName());
 		}
 
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused stream parameter
+		/// @throws NotSerializableException always
 		@Serial
 		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(SelectControllerAction.class.getName());
 		}
 	}
 
+	/// Action that opens a color chooser to change the color of an overlay axis
+	/// indicator.
+	///
+	/// Displays a [JColorChooser] dialog pre-seeded with the current indicator
+	/// color. If the user confirms a selection, the color is applied to the
+	/// [OverlayAxis] and the overlay panel is refreshed.
 	private final class SelectIndicatorColorAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
+		/// The virtual axis whose indicator color is changed by this action.
 		private final VirtualAxis virtualAxis;
 
+		/// Creates a new [SelectIndicatorColorAction] for the given virtual axis.
+		///
+		/// @param virtualAxis the virtual axis whose indicator color is changed
+		/// by this action
 		private SelectIndicatorColorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
@@ -5967,11 +7381,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that opens a color chooser to configure the controller LED color.
+	///
+	/// Displays a [JColorChooser] dialog pre-seeded with the current LED color
+	/// stored in preferences. If the user confirms a selection, the RGB value is
+	/// persisted and the LED preview label is updated.
 	private final class SelectLedColorAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
+		/// Creates a new [SelectLedColorAction] and initializes its name and
+		/// description.
 		private SelectLedColorAction() {
 			putValue(NAME, "🎨");
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("CHANGE_LED_COLOR_ACTION_DESCRIPTION"));
@@ -5990,6 +7411,12 @@ public final class Main {
 		}
 	}
 
+	/// Action that updates the hot-swapping button preference when the combo box
+	/// selection changes.
+	///
+	/// Reads the selected [HotSwappingButton] from the triggering combo box and
+	/// persists its SDL button id to user preferences so it is restored on the next
+	/// application launch.
 	private final class SetHotSwapButtonAction extends AbstractAction {
 
 		@Serial
@@ -6004,16 +7431,30 @@ public final class Main {
 		}
 	}
 
+	/// Action and listener that updates a mode's description text whenever the
+	/// associated text field changes.
+	///
+	/// Implements [DocumentListener] to react to every keystroke and
+	/// [FocusListener] to strip surrounding whitespace when the text field loses
+	/// focus, keeping the mode description in sync with the input.
 	private final class SetModeDescriptionAction extends AbstractAction implements DocumentListener, FocusListener {
 
 		@Serial
 		private static final long serialVersionUID = -6706537047137827688L;
 
+		/// The mode whose description is managed by this action.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Mode mode;
 
+		/// The text field that provides the new mode description value.
 		private final JTextField modeDescriptionTextField;
 
+		/// Creates a new [SetModeDescriptionAction] bound to the given mode and
+		/// text field.
+		///
+		/// @param mode the mode whose description is managed by this action
+		/// @param modeDescriptionTextField the text field that provides the new
+		/// description value
 		private SetModeDescriptionAction(final Mode mode, final JTextField modeDescriptionTextField) {
 			this.mode = mode;
 			this.modeDescriptionTextField = modeDescriptionTextField;
@@ -6048,6 +7489,14 @@ public final class Main {
 			setModeDescription(false);
 		}
 
+		/// Reads the text field content and applies it as the mode description.
+		///
+		/// When `updateTextField` is `true`, the text field is updated with the
+		/// stripped value via `EventQueue.invokeLater` if the value changed. If
+		/// the description is unchanged, no update is performed.
+		///
+		/// @param updateTextField `true` to strip surrounding whitespace and push
+		/// the result back to the text field
 		private void setModeDescription(final boolean updateTextField) {
 			var description = modeDescriptionTextField.getText();
 
@@ -6070,13 +7519,24 @@ public final class Main {
 		}
 	}
 
+	/// Action that updates the orientation of an overlay axis indicator.
+	///
+	/// Reads the selected [OverlayAxisOrientation] from the triggering combo box
+	/// and applies it to the [OverlayAxis] for the bound virtual axis, then marks
+	/// the profile as having unsaved changes.
 	private final class SetOverlayAxisOrientationAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 5051198612503040534L;
 
+		/// The virtual axis whose indicator orientation this action controls.
 		private final VirtualAxis virtualAxis;
 
+		/// Creates a new [SetOverlayAxisOrientationAction] for the given virtual
+		/// axis.
+		///
+		/// @param virtualAxis the virtual axis whose indicator orientation is
+		/// controlled by this action
 		private SetOverlayAxisOrientationAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 		}
@@ -6098,13 +7558,23 @@ public final class Main {
 		}
 	}
 
+	/// Action that updates the rendering style of an overlay axis indicator.
+	///
+	/// Reads the selected [OverlayAxisStyle] from the triggering combo box and
+	/// applies it to the [OverlayAxis] for the bound virtual axis, then marks the
+	/// profile as having unsaved changes.
 	private final class SetOverlayAxisStyleAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 6674344153838320133L;
 
+		/// The virtual axis whose indicator style this action controls.
 		private final VirtualAxis virtualAxis;
 
+		/// Creates a new [SetOverlayAxisStyleAction] for the given virtual axis.
+		///
+		/// @param virtualAxis the virtual axis whose indicator style is controlled
+		/// by this action
 		private SetOverlayAxisStyleAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 		}
@@ -6126,6 +7596,11 @@ public final class Main {
 		}
 	}
 
+	/// Action that applies the selected UI theme.
+	///
+	/// Reads the selected [Theme] from the triggering combo box, persists its
+	/// numeric id to user preferences, and calls `updateTheme` to switch the active
+	/// FlatLaf look-and-feel immediately.
 	private final class SetThemeAction extends AbstractAction {
 
 		@Serial
@@ -6141,11 +7616,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that displays the About dialog with version and build information.
+	///
+	/// Delegates to the `showAboutDialog` method, which assembles and presents a
+	/// dialog containing the application version, build timestamp, and copyright
+	/// information.
 	private final class ShowAboutDialogAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -2578971543384483382L;
 
+		/// Creates a new [ShowAboutDialogAction] and initializes its name and
+		/// description.
 		private ShowAboutDialogAction() {
 			putValue(NAME, STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
@@ -6157,13 +7639,23 @@ public final class Main {
 		}
 	}
 
+	/// Action that toggles the visibility of an overlay axis indicator.
+	///
+	/// When the triggering [JCheckBox] is selected, a new [OverlayAxis] is added
+	/// for the bound virtual axis; when deselected, the existing entry is removed.
+	/// The overlay panel is refreshed after either change.
 	private final class ShowIndicatorAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
+		/// The virtual axis whose indicator visibility is toggled by this action.
 		private final VirtualAxis virtualAxis;
 
+		/// Creates a new [ShowIndicatorAction] for the given virtual axis.
+		///
+		/// @param virtualAxis the virtual axis whose indicator visibility is
+		/// toggled by this action
 		private ShowIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
@@ -6184,11 +7676,19 @@ public final class Main {
 		}
 	}
 
+	/// Action that displays the open-source licenses dialog.
+	///
+	/// Renders the HTML license content from [Constants#LICENSES_HTML] in a
+	/// scrollable editor pane. Hyperlinks within the content are handled: anchor
+	/// links scroll within the pane, and external URLs are opened in the default
+	/// browser.
 	private final class ShowLicensesAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = 2471952794110895043L;
 
+		/// Creates a new [ShowLicensesAction] and initializes its name and
+		/// description.
 		private ShowLicensesAction() {
 			putValue(NAME, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
@@ -6226,11 +7726,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that starts the client run mode after collecting connection settings.
+	///
+	/// Extends [ConnectAction] with the host field enabled, so the user must supply
+	/// a server address in addition to port, timeout, and password before the
+	/// client connection is initiated.
 	private final class StartClientAction extends ConnectAction {
 
 		@Serial
 		private static final long serialVersionUID = 3975574941559749481L;
 
+		/// Creates a new [StartClientAction] and initializes its name and
+		/// description.
 		private StartClientAction() {
 			super(true);
 
@@ -6244,11 +7751,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that starts the local run mode.
+	///
+	/// Directly invokes `startLocal` without a connection settings dialog, as local
+	/// mode does not require network configuration.
 	private final class StartLocalAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -2003502124995392039L;
 
+		/// Creates a new [StartLocalAction] and initializes its name and
+		/// description.
 		private StartLocalAction() {
 			putValue(NAME, STRINGS.getString("START_LOCAL_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("START_LOCAL_ACTION_DESCRIPTION"));
@@ -6260,11 +7773,18 @@ public final class Main {
 		}
 	}
 
+	/// Action that starts the server run mode after collecting connection settings.
+	///
+	/// Extends [ConnectAction] without the host field, since the server listens on
+	/// all interfaces. Only port, timeout, and password settings are collected
+	/// before `startServer` is invoked.
 	private final class StartServerAction extends ConnectAction {
 
 		@Serial
 		private static final long serialVersionUID = 1758447420975631146L;
 
+		/// Creates a new [StartServerAction] and initializes its name and
+		/// description.
 		private StartServerAction() {
 			super(false);
 
@@ -6278,11 +7798,17 @@ public final class Main {
 		}
 	}
 
+	/// Action that stops all active run modes.
+	///
+	/// Calls `stopAll` requesting that the output be stopped and the UI updated,
+	/// while not requesting a full application quit, allowing the user to
+	/// reconfigure and restart a run mode afterward.
 	private final class StopAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -2863419586328503426L;
 
+		/// Creates a new [StopAction] and initializes its name and description.
 		private StopAction() {
 			putValue(NAME, STRINGS.getString("STOP_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("STOP_ACTION_DESCRIPTION"));
@@ -6294,6 +7820,11 @@ public final class Main {
 		}
 	}
 
+	/// Abstract action that checks for unsaved profile changes before proceeding.
+	///
+	/// Overrides `actionPerformed` to call `handleUnsavedChanges` first; the
+	/// abstract [#doAction] method is only invoked when the check passes (i.e. the
+	/// user chose to save or discard changes, or there were none).
 	private abstract class UnsavedChangesAwareAction extends AbstractAction {
 
 		@Serial
@@ -6306,6 +7837,11 @@ public final class Main {
 			}
 		}
 
+		/// Performs the action-specific logic after unsaved-changes handling has
+		/// passed.
+		///
+		/// Called by `actionPerformed` only when `handleUnsavedChanges` returns
+		/// `true`.
 		abstract void doAction();
 	}
 }

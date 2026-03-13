@@ -1,17 +1,18 @@
-/* Copyright (C) 2020  Matteo Hausner
+/*
+ * Copyright (C) 2020 Matteo Hausner
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.bwravencl.controllerbuddy.input.action.gui;
@@ -33,10 +34,24 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/// Editor builder for string properties, rendering a text field that updates
+/// the action property on every document change, action event, and focus loss.
+///
+/// This ensures the property value stays in sync with the text field contents
+/// regardless of how the user commits the input.
 public final class StringEditorBuilder extends EditorBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
 
+	/// Constructs a string editor builder for the specified action property.
+	///
+	/// @param editActionsDialog the parent dialog hosting the editor
+	/// @param action the action whose string property is being edited
+	/// @param fieldName the name of the property field
+	/// @param fieldType the type of the property field
+	/// @throws IllegalAccessException if the property cannot be accessed
+	/// @throws InvocationTargetException if the property getter throws an exception
+	/// @throws NoSuchMethodException if the property getter method is not found
 	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
 			final String fieldName, final Class<?> fieldType)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -56,11 +71,24 @@ public final class StringEditorBuilder extends EditorBuilder {
 		parentPanel.add(textField);
 	}
 
+	/// Listener that writes the current text field content to the action property
+	/// in response to document changes, action events, and focus-loss events.
+	///
+	/// When updating due to an action event or focus loss the text is also
+	/// stripped of leading and trailing whitespace, and the field is updated
+	/// asynchronously on the event dispatch thread if the stripped value differs
+	/// from the original.
 	private static final class TextFieldPropertySetter extends PropertySetter
 			implements ActionListener, DocumentListener, FocusListener {
 
+		/// Text field whose content is read and written on each change event.
 		private final JTextField textField;
 
+		/// Constructs the setter holding the text field, action, and setter method.
+		///
+		/// @param textField the text field whose content is read on each change
+		/// @param action the action whose string property is updated
+		/// @param setterMethod the setter method to invoke with the current text
 		private TextFieldPropertySetter(final JTextField textField, final IAction<?> action,
 				final Method setterMethod) {
 			super(action, setterMethod);
@@ -97,6 +125,14 @@ public final class StringEditorBuilder extends EditorBuilder {
 			setString(false);
 		}
 
+		/// Reads the current text from the field, strips surrounding whitespace when
+		/// applicable, and invokes the setter with the result.
+		///
+		/// When `updateTextField` is `true` and the stripped text differs from the
+		/// original, the field is updated asynchronously on the event dispatch thread.
+		///
+		/// @param updateTextField `true` to also update the text field when whitespace
+		/// is stripped
 		private void setString(final boolean updateTextField) {
 			var text = textField.getText();
 
