@@ -40,7 +40,7 @@ public final class Mode implements Cloneable {
 	private String description;
 
 	// Field must not be final to allow modification by Gson
-	@SuppressWarnings("FieldMayBeFinal")
+	@SuppressWarnings({ "CanBeFinal", "FieldMayBeFinal" })
 	private UUID uuid;
 
 	public Mode() {
