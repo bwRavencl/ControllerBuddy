@@ -4546,8 +4546,7 @@ public final class Main {
 					final var awtAppClassName = toolkitClass.getDeclaredField("awtAppClassName");
 					awtAppClassName.setAccessible(true);
 					awtAppClassName.set(null, title);
-				} catch (final NoSuchFieldException | SecurityException | IllegalArgumentException
-						| IllegalAccessException e) {
+				} catch (final IllegalAccessException | NoSuchFieldException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}

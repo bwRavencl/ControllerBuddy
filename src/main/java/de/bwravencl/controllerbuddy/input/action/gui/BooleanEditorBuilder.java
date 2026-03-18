@@ -34,8 +34,8 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	JCheckBox checkBox;
 
 	public BooleanEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -60,7 +60,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 			try {
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 				setterMethod.invoke(action, selected);
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

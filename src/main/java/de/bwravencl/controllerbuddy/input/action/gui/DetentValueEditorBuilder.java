@@ -32,8 +32,8 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 	private static final Logger LOGGER = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
 	public DetentValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -70,7 +70,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 				try {
 					setterMethod.invoke(action, value);
-				} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				} catch (final IllegalAccessException | InvocationTargetException e1) {
 					LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 

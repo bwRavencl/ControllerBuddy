@@ -369,38 +369,34 @@ public final class EditActionsDialog extends JDialog {
 
 	@SuppressWarnings("unchecked")
 	private void addAction(final IAction<?> action) {
-		try {
-			if (action instanceof final ButtonToModeAction buttonToModeAction) {
-				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-				if (!buttonToModeActionsMap.containsKey(component.index())) {
-					buttonToModeActionsMap.put(component.index(), new ArrayList<>());
-				}
-
-				buttonToModeActionsMap.get(component.index()).add(buttonToModeAction);
-			} else if (isCycleEditor()) {
-				cycleActions.add((IAction<Boolean>) action);
-			} else {
-				final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
-						.getComponentToActionsMap(component.type());
-
-				if (!componentToActionMap.containsKey(component.index())) {
-					componentToActionMap.put(component.index(), new ArrayList<>());
-				}
-
-				componentToActionMap.get(component.index()).add(action);
+		if (action instanceof final ButtonToModeAction buttonToModeAction) {
+			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
+			if (!buttonToModeActionsMap.containsKey(component.index())) {
+				buttonToModeActionsMap.put(component.index(), new ArrayList<>());
 			}
 
-			updateAvailableActions();
-			updateAssignedActions();
+			buttonToModeActionsMap.get(component.index()).add(buttonToModeAction);
+		} else if (isCycleEditor()) {
+			cycleActions.add((IAction<Boolean>) action);
+		} else {
+			final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
+					.getComponentToActionsMap(component.type());
 
-			final var hasModeAction = Arrays.stream(getAssignedActions())
-					.anyMatch(assignedAction -> assignedAction.action instanceof ButtonToModeAction);
+			if (!componentToActionMap.containsKey(component.index())) {
+				componentToActionMap.put(component.index(), new ArrayList<>());
+			}
 
-			assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
-					- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
-		} catch (final IllegalArgumentException | SecurityException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			componentToActionMap.get(component.index()).add(action);
 		}
+
+		updateAvailableActions();
+		updateAssignedActions();
+
+		final var hasModeAction = Arrays.stream(getAssignedActions())
+				.anyMatch(assignedAction -> assignedAction.action instanceof ButtonToModeAction);
+
+		assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
+				- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
 	}
 
 	private void closeDialog() {
@@ -410,8 +406,7 @@ public final class EditActionsDialog extends JDialog {
 
 	@SuppressWarnings("EnumOrdinal")
 	private IAction<?> getActionClassInstance(final Class<?> actionClass)
-			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
 					"Class '" + actionClass.getName() + "' does not implement '" + IAction.class.getSimpleName() + "'");
@@ -799,8 +794,8 @@ public final class EditActionsDialog extends JDialog {
 							fieldType);
 
 					editorBuilder.buildEditor(propertyPanel);
-				} catch (final NoSuchMethodException | SecurityException | InstantiationException
-						| IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				} catch (final IllegalAccessException | InstantiationException | InvocationTargetException
+						| NoSuchMethodException e1) {
 					throw new RuntimeException(e1);
 				}
 			}

@@ -31,8 +31,8 @@ import javax.swing.text.DefaultFormatterFactory;
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	public ButtonEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

@@ -23,8 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	public CursorSensitivityEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

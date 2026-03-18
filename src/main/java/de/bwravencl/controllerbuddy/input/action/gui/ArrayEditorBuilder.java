@@ -35,8 +35,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	JComboBox<T> comboBox;
 
 	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -74,7 +73,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
 				onNewValueSet();
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

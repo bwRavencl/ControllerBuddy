@@ -44,8 +44,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	JFormattedTextField textField;
 
 	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -102,7 +101,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 				if (valueConsumer != null) {
 					valueConsumer.accept(value);
 				}
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

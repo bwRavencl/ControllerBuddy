@@ -40,8 +40,7 @@ public abstract class EditorBuilder {
 	protected Object initialValue;
 
 	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws SecurityException, NoSuchMethodException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		this.editActionsDialog = editActionsDialog;
 		this.action = action;
 

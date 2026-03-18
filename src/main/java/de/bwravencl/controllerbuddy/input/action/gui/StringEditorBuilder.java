@@ -38,8 +38,8 @@ public final class StringEditorBuilder extends EditorBuilder {
 	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
 
 	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType) throws SecurityException, NoSuchMethodException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			final String fieldName, final Class<?> fieldType)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -112,7 +112,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 
 			try {
 				setterMethod.invoke(action, text);
-			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (final IllegalAccessException | InvocationTargetException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
