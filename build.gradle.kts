@@ -51,7 +51,7 @@ application {
 
 val javaToolchainSpec =
     Action<JavaToolchainSpec> {
-      languageVersion.set(JavaLanguageVersion.of(25))
+      languageVersion.set(JavaLanguageVersion.of(26))
       vendor.set(JvmVendorSpec.AZUL)
     }
 
