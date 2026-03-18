@@ -33,13 +33,15 @@ import org.lwjgl.sdl.SDLGamepad;
 
 public final class Mode implements Cloneable {
 
-	private final UUID uuid;
-
 	private Map<Integer, List<IAction<Float>>> axisToActionsMap = new HashMap<>();
 
 	private Map<Integer, List<IAction<Boolean>>> buttonToActionsMap = new HashMap<>();
 
 	private String description;
+
+	// Field must not be final to allow modification by Gson
+	@SuppressWarnings("FieldMayBeFinal")
+	private UUID uuid;
 
 	public Mode() {
 		uuid = UUID.randomUUID();
