@@ -147,8 +147,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -204,6 +202,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -643,8 +642,6 @@ public final class Main {
 	private final JMenuItem stopMenuItem;
 
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-
-	private final Timer timer = new Timer();
 
 	private final JCheckBoxMenuItem toggleDonateCheckBoxMenuItem;
 
@@ -3577,28 +3574,16 @@ public final class Main {
 	}
 
 	public void scheduleStatusBarText(final String text) {
-		final class StatusBarTextTimerTask extends TimerTask {
+		final var originalText = statusLabel.getText();
 
-			private final String newText;
-
-			private final String originalText;
-
-			private StatusBarTextTimerTask(final String newText) {
-				this.newText = newText;
-				originalText = statusLabel.getText();
+		final var swingTimer = new Timer(5000, (_) -> {
+			if (statusLabel.getText().equals(originalText)) {
+				setStatusBarText(text);
 			}
+		});
 
-			@Override
-			public void run() {
-				EventQueue.invokeLater(() -> {
-					if (statusLabel.getText().equals(originalText)) {
-						setStatusBarText(newText);
-					}
-				});
-			}
-		}
-
-		timer.schedule(new StatusBarTextTimerTask(text), 5000L);
+		swingTimer.setRepeats(false);
+		swingTimer.start();
 	}
 
 	void setClipboardAction(final IAction<?> action) {
