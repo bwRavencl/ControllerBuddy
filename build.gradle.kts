@@ -228,27 +228,32 @@ spotbugs {
 }
 
 tasks.register<Delete>("cleanConstants") {
+  group = BasePlugin.BUILD_GROUP
   description = "Removes the '${file(constantsFile).relativeTo(projectDir)}' source file"
   delete(constantsFile)
 }
 
 tasks.register<Delete>("cleanGameControllerDB") {
+  group = BasePlugin.BUILD_GROUP
   description =
       "Removes the '${file(gamecontrollerdbResFile).relativeTo(projectDir)}' resource file"
   delete(gamecontrollerdbResFile)
 }
 
 tasks.register<Delete>("cleanLibsDirectory") {
+  group = BasePlugin.BUILD_GROUP
   description = "Removes the '${base.libsDirectory.get().asFile.relativeTo(projectDir)}' directory"
   delete(base.libsDirectory)
 }
 
 tasks.register<Delete>("cleanModuleInfo") {
+  group = BasePlugin.BUILD_GROUP
   description = "Removes the '${file(moduleInfoFile).relativeTo(projectDir)}' source file"
   delete(moduleInfoFile)
 }
 
 tasks.register<Delete>("cleanTmpProjectDir") {
+  group = BasePlugin.BUILD_GROUP
   val tmpProjectFile = tmpDir.get().file(project.name)
   description = "Removes the '${tmpProjectFile.asFile.relativeTo(projectDir)}' directory"
   delete(tmpProjectFile)
@@ -426,6 +431,7 @@ val dependencyMetadataSet: Set<DependencyMetadata> =
         .toSet() + hardcodedDependencyMetadataSet
 
 tasks.register("generateConstants") {
+  group = BasePlugin.BUILD_GROUP
   description = "Generates the '${file(constantsFile).relativeTo(projectDir)}' source file"
 
   mustRunAfter("cleanConstants")
@@ -524,6 +530,7 @@ tasks.register("generateConstants") {
 }
 
 tasks.register("generateModuleInfo") {
+  group = BasePlugin.BUILD_GROUP
   description = "Generates the '${file(moduleInfoFile).relativeTo(projectDir)}' source file"
 
   mustRunAfter("cleanModuleInfo")
@@ -591,6 +598,7 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.register("checkGameControllerDBSubmodule") {
+  group = LifecycleBasePlugin.VERIFICATION_GROUP
   description = "Checks that the SDL_GameControllerDB submodule is checked out"
 
   val gamecontrollerdbGitFile = file(gamecontrollerdbGitFile)
@@ -604,6 +612,7 @@ tasks.register("checkGameControllerDBSubmodule") {
 }
 
 tasks.register<Copy>("copyGameControllerDB") {
+  group = BasePlugin.BUILD_GROUP
   description =
       "Places a copy of '${file(gamecontrollerdbGitFile).relativeTo(projectDir)}' into the '${file(resourcesDir).relativeTo(projectDir)}' directory"
 
@@ -617,6 +626,7 @@ tasks.register<Copy>("copyGameControllerDB") {
 tasks.named("processResources") { dependsOn("copyGameControllerDB") }
 
 tasks.register<Copy>("copyLibs") {
+  group = BasePlugin.BUILD_GROUP
   description =
       "Copies all jar files into the '${base.libsDirectory.asFile.get().relativeTo(projectDir)}' directory"
 
@@ -644,6 +654,7 @@ tasks.named("spotlessXml") { dependsOn("copyGameControllerDB") }
 tasks.named("test") { enabled = false }
 
 tasks.register<Exec>("jpackage") {
+  group = "distribution"
   description =
       "Executes the jpackage command to create a standalone application image packaged with the custom Java runtime"
 
@@ -691,6 +702,7 @@ tasks.register<Exec>("jpackage") {
 }
 
 tasks.register("customizeLoggingProperties") {
+  group = "distribution"
   val confDir =
       tmpDir
           .get()
