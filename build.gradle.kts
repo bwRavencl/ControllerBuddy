@@ -541,7 +541,7 @@ tasks.register("generateModuleInfo") {
   doLast {
     moduleInfoFile.writeText(
         """
-        @SuppressWarnings({"requires-automatic", "Java9RedundantRequiresStatement"})
+        @SuppressWarnings("Java9RedundantRequiresStatement")
         module de.bwravencl.controllerbuddy {
         	exports de.bwravencl.controllerbuddy.gui;
 
