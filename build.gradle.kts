@@ -112,7 +112,7 @@ dependencies {
 
   val dbusJavaVersion = "5.2.0"
   val lwjglVersion = "3.4.1"
-  val mockitoVersion = "5.22.0"
+  val mockitoVersion = "5.23.0"
 
   val lwjglOs =
       when {
