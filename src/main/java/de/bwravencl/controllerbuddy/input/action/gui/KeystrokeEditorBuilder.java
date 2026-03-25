@@ -125,7 +125,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			return;
 		}
 
-		scanCodes.stream().map(scanCode -> scanCode.toString().replaceAll(" ", "\u00A0")).forEach(text -> {
+		scanCodes.stream().map(scanCode -> scanCode.toString().replace(" ", "\u00A0")).forEach(text -> {
 			final var scanCodeLabel = new JLabel(text);
 			scanCodeLabel
 					.setPreferredSize(new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, scanCodeLabel.getMinimumSize().height));

@@ -211,7 +211,7 @@ public final class Input {
 	/// @param v the value to clamp
 	/// @return the clamped value in the range [-1, 1]
 	private static float clamp(final float v) {
-		return Math.min(Math.max(v, -1f), 1f);
+		return Math.clamp(v, -1f, 1f);
 	}
 
 	/// Corrects near-zero numerical imprecision by snapping values smaller than
@@ -807,7 +807,7 @@ public final class Input {
 	/// none
 	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback, final Integer minValue,
 			final Integer maxValue, final Integer detentValue) {
-		value = Math.min(Math.max(value, runMode.getMinAxisValue()), runMode.getMaxAxisValue());
+		value = Math.clamp(value, runMode.getMinAxisValue(), runMode.getMaxAxisValue());
 
 		final var prevValue = axes.put(virtualAxis, value);
 

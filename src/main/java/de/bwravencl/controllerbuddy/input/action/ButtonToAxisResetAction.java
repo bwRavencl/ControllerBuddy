@@ -154,7 +154,8 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	/// Resets the target virtual axis to the configured reset value.
 	///
 	/// Uses [Input#moveAxis] if fluid mode is enabled, otherwise uses
-	/// [Input#setAxis] for an absolute position reset.
+	/// [Input#setAxis(VirtualAxis, float, boolean, Float, Float, Float)] for an
+	/// absolute position reset.
 	///
 	/// @param input the current input state
 	private void resetAxis(final Input input) {

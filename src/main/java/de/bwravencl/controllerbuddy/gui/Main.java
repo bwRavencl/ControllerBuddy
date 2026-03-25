@@ -1701,7 +1701,6 @@ public final class Main {
 			errorDetails = STRINGS.getString("NO_ERROR_DETAILS");
 		}
 
-		// noinspection ConstantValue
 		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(this, frame,
 					MessageFormat.format(
@@ -2923,8 +2922,8 @@ public final class Main {
 	///
 	/// @return the SDL button ID of the selected hot-swapping button
 	public int getSelectedHotSwappingButtonId() {
-		return Math.min(Math.max(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.NONE.id),
-				HotSwappingButton.NONE.id), SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
+		return Math.clamp(preferences.getInt(PREFERENCES_HOT_SWAPPING_BUTTON, HotSwappingButton.NONE.id),
+				HotSwappingButton.NONE.id, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 	}
 
 	/// Returns the currently selected UI theme from preferences.
@@ -6530,8 +6529,8 @@ public final class Main {
 					final var maxOffsetX = (getZoomedWidth() - getWidth()) / 2f;
 					final var maxOffsetY = (getZoomedHeight() - getHeight()) / 2f;
 
-					offsetX = Math.min(Math.max(offsetX + e.getX() - lastMouseLocation.x, -maxOffsetX), maxOffsetX);
-					offsetY = Math.min(Math.max(offsetY + e.getY() - lastMouseLocation.y, -maxOffsetY), maxOffsetY);
+					offsetX = Math.clamp(offsetX + e.getX() - lastMouseLocation.x, -maxOffsetX, maxOffsetX);
+					offsetY = Math.clamp(offsetY + e.getY() - lastMouseLocation.y, -maxOffsetY, maxOffsetY);
 
 					lastMouseLocation = e.getPoint();
 
@@ -6606,7 +6605,7 @@ public final class Main {
 		/// @param mouseX the x-coordinate of the zoom focus point in component space
 		/// @param mouseY the y-coordinate of the zoom focus point in component space
 		private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
-			zoomFactor = Math.min(Math.max(zoomFactor * zoomRatio, 1f), MAX_ZOOM_FACTOR);
+			zoomFactor = Math.clamp(zoomFactor * zoomRatio, 1f, MAX_ZOOM_FACTOR);
 
 			if (zoomFactor >= MAX_ZOOM_FACTOR) {
 				return;

@@ -456,9 +456,8 @@ public final class GuiUtils {
 	/// @param totalDisplayBounds the bounding rectangle of all displays
 	private static void setFrameLocationRespectingBounds(final Frame frame, final Point location,
 			final Rectangle totalDisplayBounds) {
-		location.x = Math.max(totalDisplayBounds.x, Math.min(totalDisplayBounds.width - frame.getWidth(), location.x));
-		location.y = Math.max(totalDisplayBounds.y,
-				Math.min(totalDisplayBounds.height - frame.getHeight(), location.y));
+		location.x = Math.clamp(location.x, totalDisplayBounds.x, totalDisplayBounds.width - frame.getWidth());
+		location.y = Math.clamp(location.y, totalDisplayBounds.y, totalDisplayBounds.height - frame.getHeight());
 		frame.setLocation(location);
 	}
 
