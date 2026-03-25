@@ -817,19 +817,12 @@ public final class EditActionsDialog extends JDialog {
 	private void updateAvailableActions() {
 		Objects.requireNonNull(pasteButton, "Field pasteButton must not be null");
 
-		final var availableActions = new ArrayList<AvailableAction>();
+		final var availableActions = getAllowedActionClasses().stream().map(AvailableAction::new)
+				.filter(availableAction -> !ButtonToModeAction.class.equals(availableAction.actionClass)
+						|| Profile.DEFAULT_MODE.equals(selectedMode))
+				.toArray(AvailableAction[]::new);
 
-		for (final var actionClass : getAllowedActionClasses()) {
-			final var availableAction = new AvailableAction(actionClass);
-
-			if (ButtonToModeAction.class.equals(availableAction.actionClass)
-					&& !Profile.DEFAULT_MODE.equals(selectedMode)) {
-				continue;
-			}
-			availableActions.add(availableAction);
-		}
-
-		availableActionsList.setListData(availableActions.toArray(AvailableAction[]::new));
+		availableActionsList.setListData(availableActions);
 
 		updatePasteButton();
 	}
