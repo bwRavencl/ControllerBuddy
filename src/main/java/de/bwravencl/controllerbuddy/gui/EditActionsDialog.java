@@ -903,10 +903,8 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// Updates the properties panel to reflect the currently selected assigned
-	/// action. Rebuilds
-	/// the property editors for each annotated field of the selected action, or
-	/// hides the panel
-	/// if no action is selected.
+	/// action. Rebuilds the property editors for each annotated field of the
+	/// selected action or hides the panel if no action is selected.
 	public void updateProperties() {
 		Objects.requireNonNull(propertiesLabel, "Field propertiesLabel must not be null");
 		Objects.requireNonNull(propertiesScrollPane, "Field propertiesScrollPane must not be null");
