@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 ///
 /// The button is considered pressed when the axis value falls within a
 /// configurable range defined by [#minAxisValue] and [#maxAxisValue].
-@Action(title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
+@Action(icon = "🔘", title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
 public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToDelayableAction {
 
 	/// Default upper bound of the activation axis range.
@@ -37,11 +37,11 @@ public final class AxisToButtonAction extends ToButtonAction<Float> implements I
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 
 	/// The upper bound of the axis range that activates the virtual button.
-	@ActionProperty(title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 101)
+	@ActionProperty(icon = "≤", title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 101)
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	/// The lower bound of the axis range that activates the virtual button.
-	@ActionProperty(title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
 	/// Processes the axis value and activates the virtual button if the value is

@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 ///
 /// The axis value is transformed using a configurable dead zone and exponent
 /// curve, then applied as a cursor delta scaled by sensitivity and rate.
-@Action(title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 25)
+@Action(icon = "➚", title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 25)
 public final class AxisToCursorAction extends ToCursorAction<Float> implements IAxisToAction {
 
 	/// Default dead zone threshold below which axis input is ignored.
@@ -38,11 +38,11 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	private static final float DEFAULT_EXPONENT = 2f;
 
 	/// Dead zone threshold below which axis input is ignored.
-	@ActionProperty(title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
+	@ActionProperty(icon = "🚫", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
 	private float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// Exponent applied to the input response curve.
-	@ActionProperty(title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 12)
+	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 12)
 	private float exponent = DEFAULT_EXPONENT;
 
 	/// Processes the axis value and moves the cursor proportionally, applying dead

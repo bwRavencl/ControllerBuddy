@@ -39,11 +39,11 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	private transient Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Keystroke produced by this action.
-	@ActionProperty(title = "KEYSTROKE_TITLE", description = "KEYSTROKE_DESCRIPTION", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "⌨️", title = "KEYSTROKE_TITLE", description = "KEYSTROKE_DESCRIPTION", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
 	private KeyStroke keystroke = new KeyStroke();
 
 	/// Whether the keystroke is currently held down.

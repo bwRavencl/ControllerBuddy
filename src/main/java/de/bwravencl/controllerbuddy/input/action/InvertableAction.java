@@ -30,7 +30,7 @@ import java.lang.constant.Constable;
 abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
 
 	/// Whether the action output is inverted.
-	@ActionProperty(title = "INVERT_TITLE", description = "INVERT_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 500)
+	@ActionProperty(icon = "🔃", title = "INVERT_TITLE", description = "INVERT_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 500)
 	boolean invert;
 
 	/// Returns whether inversion is enabled for this action.

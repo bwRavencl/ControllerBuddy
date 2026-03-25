@@ -30,7 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuild
 /// The axis value controls the speed and direction of change rather than
 /// setting an absolute position, with support for dead zones, exponent curves,
 /// detent values, and haptic feedback.
-@Action(title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
+@Action(icon = "🎚️", title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	/// Default haptic feedback enabled state.
@@ -43,15 +43,15 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	transient float remainingD;
 
 	/// Optional snap-to value for the virtual axis; `null` disables detent.
-	@ActionProperty(title = "DETENT_VALUE_TITLE", description = "DETENT_VALUE_DESCRIPTION", editorBuilder = DetentValueEditorBuilder.class, order = 203)
+	@ActionProperty(icon = "⬹", title = "DETENT_VALUE_TITLE", description = "DETENT_VALUE_DESCRIPTION", editorBuilder = DetentValueEditorBuilder.class, order = 203)
 	private Float detentValue = null;
 
 	/// Whether haptic feedback is triggered on axis movement.
-	@ActionProperty(title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
+	@ActionProperty(icon = "📳", title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
 	/// Maximum relative speed applied to axis movement per polling cycle.
-	@ActionProperty(title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
+	@ActionProperty(icon = "⚡", title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
 	/// Applies relative axis movement based on the current axis value, dead zone,

@@ -42,6 +42,11 @@ public @interface Action {
 	/// @return the action description
 	String description();
 
+	/// Returns the UTF-8 icon for this action in the UI.
+	///
+	/// @return the action icon
+	String icon();
+
 	/// Returns the display order for this action within its category.
 	///
 	/// @return the sort order value

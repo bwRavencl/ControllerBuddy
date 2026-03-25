@@ -35,7 +35,7 @@ import java.text.MessageFormat;
 public abstract class ToAxisAction<V extends Constable> extends InvertableAction<V> {
 
 	/// The target virtual axis to which input values are mapped.
-	@ActionProperty(title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "✥", title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	VirtualAxis virtualAxis = VirtualAxis.X;
 
 	/// Returns a description including the target virtual axis name.

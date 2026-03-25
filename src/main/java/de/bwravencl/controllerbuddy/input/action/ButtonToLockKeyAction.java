@@ -33,7 +33,7 @@ import java.text.MessageFormat;
 /// On each button press, the configured [LockKey] is added to either the on or
 /// off lock key set depending on the [#on] property. Uses edge detection so
 /// that holding the button does not repeatedly toggle the key.
-@Action(title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
+@Action(icon = "🔒", title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
@@ -41,11 +41,11 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether the lock key is toggled to the on state by this action.
-	@ActionProperty(title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "💡", title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
 
 	/// Lock key targeted by this action.
-	@ActionProperty(title = "KEY_TITLE", description = "KEY_DESCRIPTION", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
+	@ActionProperty(icon = "⌨️", title = "KEY_TITLE", description = "KEY_DESCRIPTION", editorBuilder = LockKeyEditorBuilder.class, overrideFieldName = "lockKey", overrideFieldType = LockKey.class, order = 10)
 	private LockKey virtualKeyCode = LockKey.CAPS_LOCK_LOCK_KEY;
 
 	/// Edge-detection flag; `true` when the button was last observed as released.

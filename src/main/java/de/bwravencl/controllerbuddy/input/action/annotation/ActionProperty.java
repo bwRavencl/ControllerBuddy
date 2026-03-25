@@ -43,6 +43,11 @@ public @interface ActionProperty {
 	/// @return the editor builder class
 	Class<? extends EditorBuilder> editorBuilder();
 
+	/// Returns the UTF-8 icon for this property in the UI.
+	///
+	/// @return the property icon
+	String icon();
+
 	/// Returns the display order for this property within the action's property
 	/// list.
 	///

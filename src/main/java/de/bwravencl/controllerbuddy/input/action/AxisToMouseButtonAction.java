@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 ///
 /// Extends [ToMouseButtonAction] with axis-specific min/max threshold support
 /// and delay handling.
-@Action(title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 30)
+@Action(icon = "🖱️", title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 30)
 public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements IAxisToDelayableAction {
 
 	/// Default upper bound of the axis activation range.
@@ -38,11 +38,11 @@ public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> im
 	private static final float DEFAULT_MIN_AXIS_VALUE = 0.5f;
 
 	/// Upper bound of the axis value range that triggers the mouse button action.
-	@ActionProperty(title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 101)
+	@ActionProperty(icon = "≤", title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 101)
 	private float maxAxisValue = DEFAULT_MAX_AXIS_VALUE;
 
 	/// Lower bound of the axis value range that triggers the mouse button action.
-	@ActionProperty(title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
+	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 100)
 	private float minAxisValue = DEFAULT_MIN_AXIS_VALUE;
 
 	/// Executes the mouse button action if the axis value is within the configured

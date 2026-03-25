@@ -32,7 +32,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
 /// Applies dead zone filtering, exponent-based response curves, and value
 /// normalization to translate raw axis values into the configured virtual axis
 /// range.
-@Action(title = "TO_AXIS_ACTION_TITLE", description = "TO_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
+@Action(icon = "🕹", title = "TO_AXIS_ACTION_TITLE", description = "TO_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 
 	/// Default dead zone threshold below which axis values are treated as zero.
@@ -51,23 +51,23 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	private static final float DEFAULT_MIN_VALUE = -1f;
 
 	/// The dead zone threshold below which axis input values are treated as zero.
-	@ActionProperty(title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	@ActionProperty(icon = "🚫", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// The exponent applied to the input value for a non-linear response curve.
-	@ActionProperty(title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 103)
+	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 103)
 	float exponent = DEFAULT_EXPONENT;
 
 	/// The value assigned to the virtual axis when the action is initialized.
-	@ActionProperty(title = "INITIAL_VALUE_TITLE", description = "INITIAL_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 202)
+	@ActionProperty(icon = "🚩", title = "INITIAL_VALUE_TITLE", description = "INITIAL_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 202)
 	float initialValue = DEFAULT_INITIAL_VALUE;
 
 	/// The maximum output value mapped to the virtual axis.
-	@ActionProperty(title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
+	@ActionProperty(icon = "≤", title = "MAX_AXIS_VALUE_TITLE", description = "MAX_AXIS_VALUE_DESCRIPTION", editorBuilder = MaxAxisValueEditorBuilder.class, order = 102)
 	float maxValue = DEFAULT_MAX_VALUE;
 
 	/// The minimum output value mapped to the virtual axis.
-	@ActionProperty(title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
+	@ActionProperty(icon = "≥", title = "MIN_AXIS_VALUE_TITLE", description = "MIN_AXIS_VALUE_DESCRIPTION", editorBuilder = MinAxisValueEditorBuilder.class, order = 101)
 	float minValue = DEFAULT_MIN_VALUE;
 
 	/// Processes the axis input value by applying dead zone, exponent curve, and

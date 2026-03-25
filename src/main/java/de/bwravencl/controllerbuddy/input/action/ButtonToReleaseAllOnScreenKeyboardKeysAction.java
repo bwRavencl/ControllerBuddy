@@ -29,11 +29,11 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 /// When activated, this action iterates over every currently held on-screen
 /// keyboard key and releases it, effectively clearing the on-screen keyboard
 /// state in one step.
-@Action(title = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE", description = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 530)
+@Action(icon = "⬆️", title = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE", description = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 530)
 public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	@Override

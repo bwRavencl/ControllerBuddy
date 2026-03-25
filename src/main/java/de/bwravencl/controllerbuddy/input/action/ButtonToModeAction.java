@@ -39,7 +39,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// Supports both momentary (held) and toggle activation. Manages a stack of
 /// active mode actions to allow nested mode switching with proper deactivation
 /// order.
-@Action(title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
+@Action(icon = "⎇", title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
 public final class ButtonToModeAction implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	/// Symbol used to represent momentary mode activation.
@@ -53,15 +53,15 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// UUID of the target mode to activate.
-	@ActionProperty(title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
+	@ActionProperty(icon = "📂", title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
 
 	/// Whether this action uses toggle mode instead of momentary activation.
-	@ActionProperty(title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "🔀", title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean toggle;
 
 	/// Edge-detection flag; `true` when the button was last observed as released.

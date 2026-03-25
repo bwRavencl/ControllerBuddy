@@ -36,14 +36,14 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 		implements IDelayableAction<V>, IResetableAction<V> {
 
 	/// The zero-based ID of the target virtual button.
-	@ActionProperty(title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "⚪", title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
 
 	/// Current activatable state tracking whether the action may fire.
 	private transient Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether the virtual button is currently held down.

@@ -28,11 +28,11 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 /// While the button is held, the cursor moves continuously in the configured
 /// direction at a rate determined by cursor sensitivity and the current rate
 /// multiplier. Supports configurable activation delay.
-@Action(title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 125)
+@Action(icon = "➚", title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 125)
 public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Processes a button input value and moves the cursor while the button is

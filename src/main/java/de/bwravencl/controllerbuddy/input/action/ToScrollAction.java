@@ -37,7 +37,7 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	private static final int DEFAULT_CLICKS = 10;
 
 	/// Number of scroll clicks generated per input event.
-	@ActionProperty(title = "CLICKS_TITLE", description = "CLICKS_DESCRIPTION", editorBuilder = ClicksEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "⇕️", title = "CLICKS_TITLE", description = "CLICKS_DESCRIPTION", editorBuilder = ClicksEditorBuilder.class, order = 10)
 	int clicks = DEFAULT_CLICKS;
 
 	/// Accumulated fractional scroll amount carried over between frames.

@@ -30,7 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 ///
 /// Supports a lock-key mode that toggles the key state on each press, as well
 /// as a standard press-and-release mode tied to the button hold duration.
-@Action(title = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
+@Action(icon = "⬇️", title = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
 public final class ButtonToPressOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 
@@ -41,11 +41,11 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 	private static final boolean INITIAL_WAS_UP = true;
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether this action toggles the key lock state instead of press-and-release.
-	@ActionProperty(title = "LOCK_KEY_TITLE", description = "LOCK_KEY_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "🔒", title = "LOCK_KEY_TITLE", description = "LOCK_KEY_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 10)
 	private boolean lockKey;
 
 	/// Tracks whether the key was pressed in the previous frame (non-lock mode).

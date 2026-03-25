@@ -47,16 +47,16 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	private static final boolean INITIAL_WAS_UP = true;
 
 	/// The activation mode controlling when the action triggers.
-	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.WHILE_PRESSED;
 
 	/// The minimum time in milliseconds the input must be held before release takes
 	/// effect.
-	@ActionProperty(title = "MIN_ACTIVATION_INTERVAL_TITLE", description = "MIN_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
+	@ActionProperty(icon = "⏳", title = "MIN_ACTIVATION_INTERVAL_TITLE", description = "MIN_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 500)
 	int minActivationInterval;
 
 	/// The maximum time in milliseconds the action remains active while pressed.
-	@ActionProperty(title = MAX_ACTIVATION_INTERVAL_TITLE, description = "MAX_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
+	@ActionProperty(icon = "⌛", title = MAX_ACTIVATION_INTERVAL_TITLE, description = "MAX_ACTIVATION_INTERVAL_DESCRIPTION", editorBuilder = ActivationIntervalEditorBuilder.class, order = 501)
 	private int maxActivationInterval;
 
 	/// The absolute timestamp in milliseconds at which the maximum activation

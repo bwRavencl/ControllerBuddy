@@ -41,11 +41,11 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	private transient Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Mouse button number produced by this action.
-	@ActionProperty(title = "MOUSE_BUTTON_TITLE", description = "MOUSE_BUTTON_DESCRIPTION", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "🖱️", title = "MOUSE_BUTTON_TITLE", description = "MOUSE_BUTTON_DESCRIPTION", editorBuilder = MouseButtonEditorBuilder.class, order = 10)
 	private int mouseButton = DEFAULT_MOUSE_BUTTON;
 
 	/// Whether the mouse button is currently held down.

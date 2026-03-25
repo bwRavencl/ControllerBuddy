@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 ///
 /// Delegates to [ToMouseButtonAction] for the actual mouse button press/release
 /// handling, with support for configurable activation delay.
-@Action(title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
+@Action(icon = "🖱️", title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
 public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Processes the button input, applying delay handling before delegating the

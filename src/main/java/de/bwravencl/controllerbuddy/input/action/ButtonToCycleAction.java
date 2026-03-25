@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /// the first action after the last one is reached. Supports on-press and
 /// on-release activation modes, configurable delay, and can be reset to the
 /// beginning of the cycle.
-@Action(title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
+@Action(icon = "🔁", title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		implements IActivatableAction<Boolean>, IButtonToDelayableAction, IResetableAction<Boolean> {
 
@@ -42,18 +42,18 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	public static final String CYCLE_SYMBOL = "⟳";
 
 	/// Ordered list of sub-actions that this cycle iterates through.
-	@ActionProperty(title = "ACTIONS_TITLE", description = "ACTIONS_DESCRIPTION", editorBuilder = ActionsEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "🛠️", title = "ACTIONS_TITLE", description = "ACTIONS_DESCRIPTION", editorBuilder = ActionsEditorBuilder.class, order = 10)
 	private List<IAction<Boolean>> actions = new ArrayList<>();
 
 	/// Transient activatable state used for edge-triggered activation modes.
 	private transient Activatable activatable = Activatable.YES;
 
 	/// Activation mode that controls when the cycle advances.
-	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.ON_PRESS;
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Current position in the sub-action list.

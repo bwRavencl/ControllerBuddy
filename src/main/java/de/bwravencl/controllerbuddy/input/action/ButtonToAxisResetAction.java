@@ -35,7 +35,7 @@ import java.text.MessageFormat;
 /// When activated, the target [VirtualAxis] is set (or moved, if fluid mode is
 /// enabled) to the configured reset value. Supports configurable activation
 /// modes and delay.
-@Action(title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
+@Action(icon = "🕹", title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IActivatableAction<Boolean> {
 
@@ -49,23 +49,23 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	private transient Activatable activatable;
 
 	/// Activation mode that determines when the axis reset fires.
-	@ActionProperty(title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
 	private Activation activation = Activation.ON_PRESS;
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 50)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 50)
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether to use relative movement instead of absolute axis positioning.
-	@ActionProperty(title = "FLUID_TITLE", description = "FLUID_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 30)
+	@ActionProperty(icon = "∿", title = "FLUID_TITLE", description = "FLUID_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 30)
 	private boolean fluid = DEFAULT_FLUID;
 
 	/// Value to which the virtual axis is reset when this action fires.
-	@ActionProperty(title = "RESET_VALUE_TITLE", description = "RESET_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 20)
+	@ActionProperty(icon = "⏪", title = "RESET_VALUE_TITLE", description = "RESET_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 20)
 	private float resetValue = DEFAULT_RESET_VALUE;
 
 	/// Virtual axis targeted by this reset action.
-	@ActionProperty(title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "✥", title = "VIRTUAL_AXIS_TITLE", description = "VIRTUAL_AXIS_DESCRIPTION", editorBuilder = VirtualAxisEditorBuilder.class, order = 10)
 	private VirtualAxis virtualAxis = VirtualAxis.X;
 
 	/// Processes a button input value and resets the configured virtual axis based

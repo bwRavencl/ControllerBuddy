@@ -32,7 +32,7 @@ import java.util.Locale;
 ///
 /// Moves the selection cursor in the configured direction with acceleration:
 /// repeated holds increase the movement speed up to a peak rate.
-@Action(title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
+@Action(icon = "✥", title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
 public final class ButtonToSelectOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
@@ -51,11 +51,11 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 			/ (float) ACCELERATION_TIME;
 
 	/// Delay in milliseconds before this action becomes active.
-	@ActionProperty(title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
+	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
 	private long delay = DEFAULT_DELAY;
 
 	/// Direction in which the on-screen keyboard selector moves.
-	@ActionProperty(title = "DIRECTION_TITLE", description = "DIRECTION_DESCRIPTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "✥", title = "DIRECTION_TITLE", description = "DIRECTION_DESCRIPTION", editorBuilder = DirectionEditorBuilder.class, order = 10)
 	private Direction direction = Direction.UP;
 
 	/// Timestamp of the initial button press used for acceleration calculation.

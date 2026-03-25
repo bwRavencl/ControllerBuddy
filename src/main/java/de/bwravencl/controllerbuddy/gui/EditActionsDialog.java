@@ -33,6 +33,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -82,6 +83,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import org.lwjgl.sdl.SDLGamepad;
@@ -130,6 +132,9 @@ public final class EditActionsDialog extends JDialog {
 
 	/// Classpath resource path for the help cursor GIF image.
 	private static final String HELP_GIF_RESOURCE_PATH = "/help.gif";
+
+	/// Dimension for icon labels.
+	private static final Dimension ICON_LABEL_DIMENSION = new Dimension(24, 24);
 
 	private static final Logger LOGGER = Logger.getLogger(EditActionsDialog.class.getName());
 
@@ -205,10 +210,10 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// The list displaying currently assigned actions.
-	private final JList<AssignedAction> assignedActionsList = new JList<>();
+	private final JList<IAction<?>> assignedActionsList = new JList<>();
 
 	/// The list displaying available action types that can be added.
-	private final JList<AvailableAction> availableActionsList = new JList<>();
+	private final JList<Class<?>> availableActionsList = new JList<>();
 
 	/// The list of sub-actions being edited in cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -254,11 +259,11 @@ public final class EditActionsDialog extends JDialog {
 
 	/// The action currently selected in the assigned-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private AssignedAction selectedAssignedAction;
+	private IAction<?> selectedAssignedAction;
 
 	/// The action type currently selected in the available-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private AvailableAction selectedAvailableAction;
+	private Class<?> selectedAvailableActionClass;
 
 	/// The mode currently selected in the mode combo box.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -501,7 +506,7 @@ public final class EditActionsDialog extends JDialog {
 		updateAssignedActions();
 
 		final var hasModeAction = Arrays.stream(getAssignedActions())
-				.anyMatch(assignedAction -> assignedAction.action instanceof ButtonToModeAction);
+				.anyMatch(assignedAction -> assignedAction instanceof ButtonToModeAction);
 
 		assignedActionsList.setSelectedIndex(assignedActionsList.getLastVisibleIndex()
 				- (hasModeAction && !(action instanceof ButtonToModeAction) ? 1 : 0));
@@ -615,39 +620,38 @@ public final class EditActionsDialog extends JDialog {
 		return BUTTON_ACTION_CLASSES.stream().filter(clazz -> clazz != ButtonToModeAction.class).toList();
 	}
 
-	/// Returns an array of [AssignedAction] wrappers representing all actions
-	/// currently assigned to the component or cycle being edited.
+	/// Returns an array of [IAction]s representing all actions currently assigned
+	/// to the component or cycle being edited.
 	///
-	/// In cycle-editor mode, wraps each action from the local cycle action list.
-	/// In component-editor mode, wraps actions from the selected mode's
+	/// In cycle-editor mode, adds each action from the local cycle action list.
+	/// In component-editor mode, adds actions from the selected mode's
 	/// component-to-actions map and, for button components in the default mode,
 	/// also includes any [ButtonToModeAction] entries from the profile.
 	///
-	/// @return an array of assigned action wrappers; never `null`
+	/// @return an array of assigned actions
 	@SuppressWarnings("unchecked")
-	private AssignedAction[] getAssignedActions() {
-		final var assignedActions = new ArrayList<AssignedAction>();
+	private IAction<?>[] getAssignedActions() {
+		final var assignedActions = new ArrayList<IAction<?>>();
 
 		final var cycleEditor = isCycleEditor();
 
 		if (cycleEditor && cycleActions != null) {
-			cycleActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
+			assignedActions.addAll(cycleActions);
 		} else if (component != null) {
 			final var componentActions = selectedMode.getComponentToActionsMap(component.type()).get(component.index());
 			if (componentActions != null) {
-				((Collection<? extends IAction<?>>) componentActions)
-						.forEach(action -> assignedActions.add(new AssignedAction(action)));
+				assignedActions.addAll(((Collection<? extends IAction<?>>) componentActions));
 			}
 		}
 
 		if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.DEFAULT_MODE.equals(selectedMode)) {
 			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index());
 			if (buttonToModeActions != null) {
-				buttonToModeActions.forEach(action -> assignedActions.add(new AssignedAction(action)));
+				assignedActions.addAll(buttonToModeActions);
 			}
 		}
 
-		return assignedActions.toArray(AssignedAction[]::new);
+		return assignedActions.toArray(IAction<?>[]::new);
 	}
 
 	/// Returns the [Input] instance associated with this dialog.
@@ -665,6 +669,10 @@ public final class EditActionsDialog extends JDialog {
 	/// This method must be called after [#preInit] and after any subclass-specific
 	/// initialization (such as setting the dialog title and mode selector).
 	private void init() {
+		availableActionsList.setCellRenderer((list, value, _, isSelected, _) -> new IconLabel(value, list, isSelected));
+		assignedActionsList
+				.setCellRenderer((list, value, _, isSelected, _) -> new IconLabel(value.getClass(), list, isSelected));
+
 		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
@@ -699,10 +707,10 @@ public final class EditActionsDialog extends JDialog {
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		availableActionsList.addListSelectionListener(_ -> {
-			selectedAvailableAction = availableActionsList.getSelectedValue();
-			final var notNull = selectedAvailableAction != null;
+			selectedAvailableActionClass = availableActionsList.getSelectedValue();
+			final var notNull = selectedAvailableActionClass != null;
 			addButton.setEnabled(notNull);
-			updateHelp(notNull ? selectedAvailableAction.actionClass : null);
+			updateHelp(selectedAvailableActionClass);
 		});
 		updateAvailableActions();
 
@@ -741,7 +749,7 @@ public final class EditActionsDialog extends JDialog {
 			copyButton.setEnabled(notNull);
 
 			updateProperties();
-			updateHelp(notNull ? selectedAssignedAction.action.getClass() : null);
+			updateHelp(notNull ? selectedAssignedAction.getClass() : null);
 		});
 		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
 				new GridBagConstraints(2, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
@@ -817,10 +825,10 @@ public final class EditActionsDialog extends JDialog {
 	private void updateAvailableActions() {
 		Objects.requireNonNull(pasteButton, "Field pasteButton must not be null");
 
-		final var availableActions = getAllowedActionClasses().stream().map(AvailableAction::new)
-				.filter(availableAction -> !ButtonToModeAction.class.equals(availableAction.actionClass)
+		final var availableActions = getAllowedActionClasses().stream()
+				.filter(actionClass -> !ButtonToModeAction.class.equals(actionClass)
 						|| Profile.DEFAULT_MODE.equals(selectedMode))
-				.toArray(AvailableAction[]::new);
+				.toArray(Class<?>[]::new);
 
 		availableActionsList.setListData(availableActions);
 
@@ -908,7 +916,7 @@ public final class EditActionsDialog extends JDialog {
 		}
 
 		if (selectedAssignedAction != null) {
-			final var actionClass = selectedAssignedAction.action.getClass();
+			final var actionClass = selectedAssignedAction.getClass();
 			final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
 			final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
 				final var action1 = entry1.getValue();
@@ -929,8 +937,10 @@ public final class EditActionsDialog extends JDialog {
 				propertiesPanel.add(propertyPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
 						GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 10));
 
+				final var propertyIcon = annotation.icon();
 				final var propertyTitle = Main.STRINGS.getString(annotation.title());
 				final var propertyDescriptionLabel = annotation.description();
+
 				final var propertyNameLabel = new JLabel(propertyTitle);
 				propertyNameLabel.setPreferredSize(new Dimension(155, 15));
 				if (propertyDescriptionLabel != null && !propertyDescriptionLabel.isBlank()) {
@@ -941,7 +951,7 @@ public final class EditActionsDialog extends JDialog {
 
 						@Override
 						public void mouseClicked(final MouseEvent e) {
-							updateHelp(propertyTitle, propertyDescriptionLabel);
+							updateHelp(propertyIcon + " " + propertyTitle, propertyDescriptionLabel);
 						}
 
 						@Override
@@ -973,7 +983,7 @@ public final class EditActionsDialog extends JDialog {
 						}
 					});
 				}
-				propertyPanel.add(propertyNameLabel);
+				propertyPanel.add(new IconLabel(propertyIcon, propertyTitle, propertyNameLabel));
 
 				try {
 					final var editorBuilderClass = annotation.editorBuilder();
@@ -990,7 +1000,7 @@ public final class EditActionsDialog extends JDialog {
 
 					final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
 							IAction.class, String.class, Class.class);
-					final var editorBuilder = constructor.newInstance(this, selectedAssignedAction.action, fieldName,
+					final var editorBuilder = constructor.newInstance(this, selectedAssignedAction, fieldName,
 							fieldType);
 
 					editorBuilder.buildEditor(propertyPanel);
@@ -1022,34 +1032,99 @@ public final class EditActionsDialog extends JDialog {
 		throw new NotSerializableException(EditActionsDialog.class.getName());
 	}
 
-	/// Wraps an [IAction] instance for display in the assigned-actions list.
+	/// A panel that displays an icon alongside a title label in a horizontal
+	/// layout.
 	///
-	/// Provides a [#toString] implementation that returns the human-readable label
-	/// for the action, as shown in the GUI list of currently assigned actions.
-	///
-	/// @param action the action instance being wrapped
-	@SuppressWarnings("unused")
-	private record AssignedAction(IAction<?> action) {
+	/// This component is used to render action entries in the edit-actions dialog,
+	/// showing a fixed-size icon on the left followed by a title. It supports both
+	/// custom icon and title strings as well as construction from an action class
+	/// annotation, adapting its colors to match the list selection state.
+	private static final class IconLabel extends JPanel {
 
-		@Override
-		public String toString() {
-			return IAction.getLabel(action.getClass());
+		@Serial
+		private static final long serialVersionUID = 3892761470881313182L;
+
+		/// The label displaying the icon.
+		private final JLabel iconLabel;
+
+		/// The label displaying the title text.
+		private final JLabel titleLabel;
+
+		/// Creates a new [IconLabel] with the specified icon, title, and optional title
+		/// label.
+		///
+		/// If `titleLabel` is `null`, a new [JLabel] is created. The panel uses a
+		/// horizontal [BoxLayout] with the icon sized to [#ICON_LABEL_DIMENSION],
+		/// followed by a small strut and the title label.
+		///
+		/// @param icon the icon text to display
+		/// @param title the title text to display
+		/// @param titleLabel an existing label to reuse for the title, or `null` to
+		/// create a new one
+		private IconLabel(final String icon, final String title, JLabel titleLabel) {
+			if (titleLabel == null) {
+				titleLabel = new JLabel();
+			}
+
+			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+			setBackground(null);
+
+			iconLabel = new JLabel(icon);
+			iconLabel.setPreferredSize(ICON_LABEL_DIMENSION);
+			iconLabel.setMinimumSize(ICON_LABEL_DIMENSION);
+			iconLabel.setMaximumSize(ICON_LABEL_DIMENSION);
+			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			add(iconLabel);
+
+			add(Box.createHorizontalStrut(5));
+
+			this.titleLabel = titleLabel;
+			this.titleLabel.setText(title);
+			add(this.titleLabel);
 		}
-	}
 
-	/// Wraps an action [Class] for display in the available-actions list.
-	///
-	/// Provides a [#toString] implementation that returns the human-readable label
-	/// for the action type, as shown in the GUI list of actions that can be added
-	/// to a component.
-	///
-	/// @param actionClass the action class being wrapped
-	@SuppressWarnings("unused")
-	private record AvailableAction(Class<?> actionClass) {
+		/// Creates a new [IconLabel] from an action class annotation, styled for list
+		/// rendering.
+		///
+		/// Extracts the icon and title from the [Action] annotation on the given class
+		/// and sets the foreground and background colors based on the list selection
+		/// state.
+		///
+		/// @param actionClass the action class whose [Action] annotation provides the
+		/// icon and title
+		/// @param list the list component providing selection colors
+		/// @param isSelected whether the item is currently selected in the list
+		private IconLabel(final Class<?> actionClass, final JList<?> list, final boolean isSelected) {
+			final var annotation = actionClass.getAnnotation(Action.class);
+			this(annotation.icon(), Main.STRINGS.getString(annotation.title()), null);
 
+			if (isSelected) {
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+			} else {
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+		}
+
+		/// Sets the foreground color of the panel and propagates it to the icon and
+		/// title labels.
+		///
+		/// The `null` checks are necessary because this method may be called during
+		/// superclass initialization before the labels are assigned.
+		///
+		/// @param fg the foreground color to set
 		@Override
-		public String toString() {
-			return IAction.getLabel(actionClass);
+		public void setForeground(final Color fg) {
+			super.setForeground(fg);
+
+			if (iconLabel != null) {
+				iconLabel.setForeground(fg);
+			}
+
+			if (titleLabel != null) {
+				titleLabel.setForeground(fg);
+			}
 		}
 	}
 
@@ -1073,7 +1148,7 @@ public final class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				addAction(getActionClassInstance(selectedAvailableAction.actionClass));
+				addAction(getActionClassInstance(selectedAvailableActionClass));
 			} catch (final InstantiationException | IllegalAccessException | InvocationTargetException
 					| NoSuchMethodException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
@@ -1121,7 +1196,7 @@ public final class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			try {
-				main.setClipboardAction((IAction<?>) selectedAssignedAction.action.clone());
+				main.setClipboardAction((IAction<?>) selectedAssignedAction.clone());
 				updatePasteButton();
 			} catch (final CloneNotSupportedException e1) {
 				throw new RuntimeException(e1);
@@ -1212,7 +1287,7 @@ public final class EditActionsDialog extends JDialog {
 	/// from the appropriate data structure: the button-to-mode actions map for
 	/// [ButtonToModeAction] instances, the cycle sub-action list in cycle-editor
 	/// mode, or the component-to-actions map in component-editor mode. After
-	/// removal it refreshes both the available- and assigned-actions lists.
+	/// removal, it refreshes both the available- and assigned-actions lists.
 	private final class RemoveActionAction extends AbstractAction {
 
 		@Serial
@@ -1226,19 +1301,19 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedAssignedAction.action instanceof final ButtonToModeAction buttonToModeAction) {
+			if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
 				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
 				buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
 				if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
 					buttonToModeActionsMap.remove(component.index());
 				}
 			} else if (isCycleEditor()) {
-				cycleActions.remove(selectedAssignedAction.action);
+				cycleActions.remove(selectedAssignedAction);
 			} else {
 				final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
 				@SuppressWarnings("unchecked")
 				final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
-				actions.remove(selectedAssignedAction.action);
+				actions.remove(selectedAssignedAction);
 
 				if (actions.isEmpty()) {
 					componentToActionMap.remove(component.index());

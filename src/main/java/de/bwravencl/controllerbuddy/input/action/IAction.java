@@ -45,10 +45,10 @@ public interface IAction<V extends Constable> extends Cloneable {
 
 	/// Returns the localized label for the given action class, based on its
 	/// [Action][de.bwravencl.controllerbuddy.input.action.annotation.Action]
-	/// annotation.
+	/// annotation. The label is prefixed with the action's UTF-8 icon character.
 	///
 	/// @param actionClass the action class to retrieve the label for
-	/// @return the localized label string
+	/// @return the localized label string, prefixed with the action's icon
 	/// @throws RuntimeException if the class is missing, the Action annotation
 	static String getLabel(final Class<?> actionClass) {
 		final var annotation = actionClass.getAnnotation(Action.class);
@@ -57,7 +57,7 @@ public interface IAction<V extends Constable> extends Cloneable {
 					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
 		}
 
-		return Main.STRINGS.getString(annotation.title());
+		return annotation.icon() + " " + Main.STRINGS.getString(annotation.title());
 	}
 
 	/// Creates and returns a copy of this action.

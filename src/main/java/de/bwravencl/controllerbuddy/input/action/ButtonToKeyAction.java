@@ -25,7 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 ///
 /// Delegates to [ToKeyAction] for the actual keystroke handling and supports
 /// configurable activation delay via [IButtonToDelayableAction].
-@Action(title = "TO_KEY_ACTION_TITLE", description = "TO_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
+@Action(icon = "⌨️", title = "TO_KEY_ACTION_TITLE", description = "TO_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
 public final class ButtonToKeyAction extends ToKeyAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Processes a button input value by applying delay handling, then delegating

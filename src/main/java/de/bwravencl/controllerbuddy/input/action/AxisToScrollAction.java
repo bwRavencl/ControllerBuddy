@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 ///
 /// Applies a dead zone and exponent curve to the axis value before converting
 /// it to scroll clicks.
-@Action(title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 35)
+@Action(icon = "⇕", title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 35)
 public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
 	/// Default dead zone threshold below which axis input is ignored.
@@ -38,11 +38,11 @@ public final class AxisToScrollAction extends ToScrollAction<Float> implements I
 	private static final float DEFAULT_EXPONENT = 1f;
 
 	/// Dead zone threshold below which axis input is ignored.
-	@ActionProperty(title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	@ActionProperty(icon = "🚫", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	private float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// Exponent applied to the axis value curve.
-	@ActionProperty(title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 101)
+	@ActionProperty(icon = "📈", title = "EXPONENT_TITLE", description = "EXPONENT_DESCRIPTION", editorBuilder = ExponentEditorBuilder.class, order = 101)
 	private float exponent = DEFAULT_EXPONENT;
 
 	/// Converts the axis value to scroll clicks, applying dead zone filtering and
