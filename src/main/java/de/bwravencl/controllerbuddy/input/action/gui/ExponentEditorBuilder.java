@@ -91,7 +91,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 	/// within its bounds.
 	///
 	/// Implements [Consumer] so it can be registered as a value consumer on the
-	/// spinner change listener; each time the exponent value changes the component
+	/// spinner change listener; each time the exponent value changes, the component
 	/// repaints itself to reflect the new curve shape.
 	private static final class PowerFunctionPlotter extends JComponent implements Consumer<Object> {
 

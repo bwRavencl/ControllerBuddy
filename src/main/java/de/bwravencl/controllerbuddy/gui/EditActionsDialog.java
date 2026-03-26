@@ -493,7 +493,7 @@ public final class EditActionsDialog extends JDialog {
 	/// Depending on the action type and editor mode, the action is appended to the
 	/// button-to-mode actions map, the cycle sub-action list, or the
 	/// component-to-actions map of the currently selected mode. The assigned-
-	/// and available-actions lists are then refreshed and the appropriate row is
+	/// and available-actions lists are then refreshed, and the appropriate row is
 	/// selected in the assigned-actions list.
 	///
 	/// @param action the action instance to add
@@ -917,7 +917,7 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// If `descriptionLabel` is `null`, blank, or not found in the resource bundle,
 	/// falls back to the "no help available" description string. The HTML content
-	/// of the help editor pane is rebuilt and the caret is reset to the top.
+	/// of the help editor pane is rebuilt, and the caret is reset to the top.
 	///
 	/// @param title the heading text displayed in the help panel
 	/// @param descriptionLabel the resource bundle key for the description text, or
@@ -1334,7 +1334,7 @@ public final class EditActionsDialog extends JDialog {
 	/// cycle.
 	///
 	/// When performed, retrieves the action stored in the application clipboard via
-	/// [Main], clones it, and delegates to the enclosing dialog's add-action logic
+	/// [Main], clones it, and delegates to the enclosing dialog's add-action logic,
 	/// so the copy is appended to the assigned-actions list.
 	private final class PasteActionAction extends AbstractAction {
 

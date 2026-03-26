@@ -115,7 +115,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// Float values are rounded to a fixed number of decimal places before being
 	/// passed to the setter, preventing floating-point drift from accumulating
 	/// as the user steps through values. An optional [Consumer] can be registered
-	/// via [#setValueConsumer(Consumer)] to receive each new value, for example
+	/// via [#setValueConsumer(Consumer)] to receive each new value, for example,
 	/// to update a live preview component.
 	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 

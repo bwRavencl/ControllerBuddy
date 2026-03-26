@@ -1072,8 +1072,10 @@ public final class Input {
 			this.sdlGamepad = sdlGamepad;
 		}
 
-		/// Remaps the circular range of a pair of axes to a square range using the
-		/// Fernsby algebraic mapping, updating the axis values in place.
+		/// Remaps the circular range of a pair of axes to a square range using disc to
+		/// square mapping as described in ["Analytical Methods for Squaring the Disc"
+		/// by Chamberlain Fong](https://arxiv.org/abs/1509.06344), updating the axis
+		/// values in place.
 		///
 		/// @param xAxisIndex the index of the horizontal axis in the axes array
 		/// @param yAxisIndex the index of the vertical axis in the axes array
