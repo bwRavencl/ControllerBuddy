@@ -842,13 +842,15 @@ public final class EditActionsDialog extends JDialog {
 	/// @param actionClass the action class whose help text is displayed, or `null`
 	/// to show the default help text
 	private void updateHelp(final Class<?> actionClass) {
-		final String title;
+		String title;
 		String descriptionLabel = null;
 
 		if (actionClass != null) {
 			title = IAction.getLabel(actionClass);
+
 			final var actionAnnotation = actionClass.getAnnotation(Action.class);
 			if (actionAnnotation != null) {
+				title = actionAnnotation.icon() + " " + title;
 				descriptionLabel = actionAnnotation.description();
 			}
 		} else {
