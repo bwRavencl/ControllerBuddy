@@ -157,7 +157,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	/// sub-actions joined with arrow separators and wrapped in cycle symbols.
 	@Override
 	public String getDescription(final Input input) {
-		if (!isDescriptionEmpty()) {
+		if (!isDescriptionEmpty() || actions.isEmpty()) {
 			return super.getDescription(input);
 		}
 
