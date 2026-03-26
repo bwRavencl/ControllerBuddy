@@ -688,6 +688,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				setterMethod.invoke(action, keyStroke);
 
 				updateUpdateKeyStrokeVisualization();
+				onNewValueSet();
 			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}

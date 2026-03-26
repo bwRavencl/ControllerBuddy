@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
-import de.bwravencl.controllerbuddy.input.action.gui.StringEditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.DescriptionEditorBuilder;
 import java.lang.constant.Constable;
 
 /// Abstract base class for actions that carry a user-configurable description.
@@ -31,7 +31,7 @@ import java.lang.constant.Constable;
 public abstract class DescribableAction<V extends Constable> implements IAction<V> {
 
 	/// The user-configurable description text, or `null` if none has been set.
-	@ActionProperty(icon = "📖", title = "DESCRIPTION_TITLE", description = "DESCRIPTION_DESCRIPTION", editorBuilder = StringEditorBuilder.class, order = 0)
+	@ActionProperty(icon = "📖", title = "DESCRIPTION_TITLE", description = "DESCRIPTION_DESCRIPTION", editorBuilder = DescriptionEditorBuilder.class, order = 0)
 	private String description;
 
 	@Override

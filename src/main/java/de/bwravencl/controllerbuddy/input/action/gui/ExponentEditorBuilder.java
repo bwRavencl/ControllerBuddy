@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.function.Consumer;
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -65,10 +64,12 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		final var powerFunctionPlotter = new PowerFunctionPlotter((float) initialValue);
 		parentPanel.add(powerFunctionPlotter);
 
-		Arrays.stream(spinner.getChangeListeners())
-				.filter(changeListener -> changeListener instanceof JSpinnerSetPropertyChangeListener).findFirst()
-				.ifPresent(changeListener -> ((JSpinnerSetPropertyChangeListener) changeListener)
-						.setValueConsumer(powerFunctionPlotter));
+		for (final var changeListener : spinner.getChangeListeners()) {
+			if (changeListener instanceof final JSpinnerSetPropertyChangeListener spinnerSetPropertyChangeListener) {
+				spinnerSetPropertyChangeListener.setValueConsumer(powerFunctionPlotter);
+				break;
+			}
+		}
 	}
 
 	@Override

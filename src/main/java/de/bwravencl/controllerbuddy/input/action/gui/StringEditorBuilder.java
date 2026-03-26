@@ -39,7 +39,7 @@ import javax.swing.event.DocumentListener;
 ///
 /// This ensures the property value stays in sync with the text field contents
 /// regardless of how the user commits the input.
-public final class StringEditorBuilder extends EditorBuilder {
+public class StringEditorBuilder extends EditorBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
 
@@ -78,7 +78,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 	/// stripped of leading and trailing whitespace, and the field is updated
 	/// asynchronously on the event dispatch thread if the stripped value differs
 	/// from the original.
-	private static final class TextFieldPropertySetter extends PropertySetter
+	private final class TextFieldPropertySetter extends PropertySetter
 			implements ActionListener, DocumentListener, FocusListener {
 
 		/// Text field whose content is read and written on each change event.
@@ -148,6 +148,7 @@ public final class StringEditorBuilder extends EditorBuilder {
 
 			try {
 				setterMethod.invoke(action, text);
+				onNewValueSet();
 			} catch (final IllegalAccessException | InvocationTargetException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}

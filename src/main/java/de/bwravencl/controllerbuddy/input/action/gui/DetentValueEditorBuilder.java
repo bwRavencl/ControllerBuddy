@@ -92,6 +92,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 				}
 
 				spinner.setEnabled(selected);
+				onNewValueSet();
 			}
 		});
 		checkBox.setSelected(enabled);

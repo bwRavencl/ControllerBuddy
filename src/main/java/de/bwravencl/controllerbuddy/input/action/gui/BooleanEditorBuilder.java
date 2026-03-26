@@ -67,7 +67,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	///
 	/// Invoked automatically by the checkbox whenever the user toggles it,
 	/// immediately updating the boolean property on the action.
-	private static final class JCheckBoxSetPropertyAction extends PropertySetterAction {
+	private final class JCheckBoxSetPropertyAction extends PropertySetterAction {
 
 		@Serial
 		private static final long serialVersionUID = -33052386834598414L;
@@ -85,6 +85,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 			try {
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 				setterMethod.invoke(action, selected);
+				onNewValueSet();
 			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}

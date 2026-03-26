@@ -89,7 +89,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		final var formatter = (DefaultFormatter) textField.getFormatter();
 		formatter.setCommitsOnValidEdit(true);
 
-		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod));
+		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
 
 		parentPanel.add(spinner);
 	}
@@ -119,6 +119,9 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// to update a live preview component.
 	static final class JSpinnerSetPropertyChangeListener extends PropertySetter implements ChangeListener {
 
+		/// The editor builder providing rounding and step-size configuration.
+		private final NumberEditorBuilder<?> numberEditorBuilder;
+
 		/// Optional consumer notified with each new value after it is applied.
 		private Consumer<Object> valueConsumer;
 
@@ -126,8 +129,13 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		///
 		/// @param action the action whose property is updated on spinner change
 		/// @param setterMethod the setter method to invoke with the new value
-		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod) {
+		/// @param numberEditorBuilder the editor builder providing rounding and
+		/// step-size configuration
+		private JSpinnerSetPropertyChangeListener(final IAction<?> action, final Method setterMethod,
+				final NumberEditorBuilder<?> numberEditorBuilder) {
 			super(action, setterMethod);
+
+			this.numberEditorBuilder = numberEditorBuilder;
 		}
 
 		/// Sets a consumer that receives each new value after it is applied to the
@@ -153,6 +161,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 				if (valueConsumer != null) {
 					valueConsumer.accept(value);
 				}
+
+				numberEditorBuilder.onNewValueSet();
 			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}

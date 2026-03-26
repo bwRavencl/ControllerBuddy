@@ -78,13 +78,6 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	/// @return the array of selectable values
 	abstract T[] getValues();
 
-	/// Called after a new value has been applied to the action property.
-	///
-	/// The default implementation is empty; subclasses may override to react
-	/// to the change.
-	void onNewValueSet() {
-	}
-
 	/// Action that applies the currently selected [JComboBox] item to the action
 	/// property via the setter method.
 	///

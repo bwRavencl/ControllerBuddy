@@ -92,6 +92,13 @@ public abstract class EditorBuilder {
 	/// @param parentPanel the panel to which the editor component is added
 	public abstract void buildEditor(final JPanel parentPanel);
 
+	/// Called after a new value has been applied to the action property.
+	///
+	/// The default implementation is empty; subclasses may override to react
+	/// to the change.
+	void onNewValueSet() {
+	}
+
 	/// Base class that holds a reference to an action and its setter method for
 	/// use by property-setting listeners.
 	///

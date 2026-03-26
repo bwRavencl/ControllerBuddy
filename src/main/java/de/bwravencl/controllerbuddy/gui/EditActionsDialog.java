@@ -210,10 +210,10 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// The list displaying currently assigned actions.
-	private final JList<IAction<?>> assignedActionsList = new JList<>();
+	private final JList<IAction<?>> assignedActionsList = new ViewportWidthTrackingJList<>();
 
 	/// The list displaying available action types that can be added.
-	private final JList<Class<?>> availableActionsList = new JList<>();
+	private final JList<Class<?>> availableActionsList = new ViewportWidthTrackingJList<>();
 
 	/// The list of sub-actions being edited in cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -333,8 +333,8 @@ public final class EditActionsDialog extends JDialog {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
-				updateAssignedActions();
 				updateAvailableActions();
+				updateAssignedActions();
 			}
 		});
 
@@ -376,6 +376,23 @@ public final class EditActionsDialog extends JDialog {
 		component.setAlignmentY(CENTER_ALIGNMENT);
 
 		parentPanel.add(component);
+	}
+
+	/// Applies the selection or default background and foreground colors from the
+	/// given [JList] to the specified component.
+	///
+	/// @param component the component whose colors are updated
+	/// @param list the list providing selection and default colors
+	/// @param isSelected whether the item is currently selected
+	private static void applyListColors(final java.awt.Component component, final JList<?> list,
+			final boolean isSelected) {
+		if (isSelected) {
+			component.setBackground(list.getSelectionBackground());
+			component.setForeground(list.getSelectionForeground());
+		} else {
+			component.setBackground(list.getBackground());
+			component.setForeground(list.getForeground());
+		}
 	}
 
 	/// Collects all fields of the given class that are annotated with
@@ -669,9 +686,38 @@ public final class EditActionsDialog extends JDialog {
 	/// This method must be called after [#preInit] and after any subclass-specific
 	/// initialization (such as setting the dialog title and mode selector).
 	private void init() {
-		availableActionsList.setCellRenderer((list, value, _, isSelected, _) -> new IconLabel(value, list, isSelected));
-		assignedActionsList
-				.setCellRenderer((list, value, _, isSelected, _) -> new IconLabel(value.getClass(), list, isSelected));
+		final var cellBorder = BorderFactory.createEmptyBorder(0, 0, 0, 5);
+		availableActionsList.setCellRenderer((list, value, _, isSelected, _) -> {
+			final var iconLabel = new IconLabel(value, list, isSelected);
+			iconLabel.setBorder(cellBorder);
+			return iconLabel;
+		});
+		assignedActionsList.setCellRenderer((list, value, _, isSelected, _) -> {
+			final var panel = new JPanel(new BorderLayout());
+			panel.setBorder(cellBorder);
+			applyListColors(panel, list, isSelected);
+
+			final var iconLabel = new IconLabel(value.getClass(), list, isSelected);
+			panel.add(iconLabel, BorderLayout.NORTH);
+
+			final var description = value.getDescription(input);
+			if (!Objects.equals(iconLabel.getTitle(), description)) {
+				final var descriptionLabel = new JLabel(description);
+				descriptionLabel.setBorder(BorderFactory.createEmptyBorder(0,
+						ICON_LABEL_DIMENSION.width + IconLabel.ICON_LABEL_SPACING, 0, 0));
+				applyListColors(descriptionLabel, list, isSelected);
+				final var defaultForegroundColor = descriptionLabel.getForeground();
+				final var dimmedForegroundColor = new Color(defaultForegroundColor.getRed(),
+						defaultForegroundColor.getGreen(), defaultForegroundColor.getBlue(), 192);
+				descriptionLabel.setForeground(dimmedForegroundColor);
+				panel.add(descriptionLabel, BorderLayout.SOUTH);
+
+				assignedActionsList.setFixedCellHeight(0);
+				assignedActionsList.setFixedCellHeight(-1);
+			}
+
+			return panel;
+		});
 
 		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -738,7 +784,7 @@ public final class EditActionsDialog extends JDialog {
 		propertiesScrollPane.setVisible(false);
 		actionsPanel.add(propertiesScrollPane,
 				new GridBagConstraints(3, 1, 1, 2, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 0, helpScrollPaneBorderInsets.top + helpScrollPaneBorderInsets.bottom, 0), 0, 0));
+						new Insets(0, 5, helpScrollPaneBorderInsets.top + helpScrollPaneBorderInsets.bottom, 0), 0, 0));
 
 		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignedActionsList.addListSelectionListener(_ -> {
@@ -808,6 +854,11 @@ public final class EditActionsDialog extends JDialog {
 	@Serial
 	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 		throw new NotSerializableException(EditActionsDialog.class.getName());
+	}
+
+	/// Repaints the assigned-actions list to reflect changes in action properties.
+	public void repaintAssignedActionsList() {
+		assignedActionsList.repaint();
 	}
 
 	/// Refreshes the assigned-actions list to reflect the current state of the
@@ -1043,6 +1094,9 @@ public final class EditActionsDialog extends JDialog {
 	/// annotation, adapting its colors to match the list selection state.
 	private static final class IconLabel extends JPanel {
 
+		/// Horizontal spacing in pixels between the icon and the title label.
+		private static final int ICON_LABEL_SPACING = 5;
+
 		@Serial
 		private static final long serialVersionUID = 3892761470881313182L;
 
@@ -1078,7 +1132,7 @@ public final class EditActionsDialog extends JDialog {
 			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			add(iconLabel);
 
-			add(Box.createHorizontalStrut(5));
+			add(Box.createHorizontalStrut(ICON_LABEL_SPACING));
 
 			this.titleLabel = titleLabel;
 			this.titleLabel.setText(title);
@@ -1100,13 +1154,14 @@ public final class EditActionsDialog extends JDialog {
 			final var annotation = actionClass.getAnnotation(Action.class);
 			this(annotation.icon(), Main.STRINGS.getString(annotation.title()), null);
 
-			if (isSelected) {
-				setBackground(list.getSelectionBackground());
-				setForeground(list.getSelectionForeground());
-			} else {
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
-			}
+			applyListColors(this, list, isSelected);
+		}
+
+		/// Returns the title text displayed by this icon label.
+		///
+		/// @return the title text
+		private String getTitle() {
+			return titleLabel.getText();
 		}
 
 		/// Sets the foreground color of the panel and propagates it to the icon and
@@ -1127,6 +1182,25 @@ public final class EditActionsDialog extends JDialog {
 			if (titleLabel != null) {
 				titleLabel.setForeground(fg);
 			}
+		}
+	}
+
+	/// A [JList] subclass that always tracks the viewport width of its enclosing
+	/// scroll pane.
+	///
+	/// Overrides [JList#getScrollableTracksViewportWidth()] to return `true`,
+	/// ensuring the list stretches horizontally to fill the available viewport
+	/// width rather than scrolling.
+	///
+	/// @param <E> the type of elements in the list
+	private static final class ViewportWidthTrackingJList<E> extends JList<E> {
+
+		@Serial
+		private static final long serialVersionUID = -5416293197170067165L;
+
+		@Override
+		public boolean getScrollableTracksViewportWidth() {
+			return true;
 		}
 	}
 
