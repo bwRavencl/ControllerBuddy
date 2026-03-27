@@ -31,7 +31,7 @@ import java.lang.constant.Constable;
 public abstract class DescribableAction<V extends Constable> implements IAction<V> {
 
 	/// The user-configurable description text, or `null` if none has been set.
-	@ActionProperty(icon = "📖", title = "DESCRIPTION_TITLE", description = "DESCRIPTION_DESCRIPTION", editorBuilder = DescriptionEditorBuilder.class, order = 0)
+	@ActionProperty(icon = "✏", title = "DESCRIPTION_TITLE", description = "DESCRIPTION_DESCRIPTION", editorBuilder = DescriptionEditorBuilder.class, order = 0)
 	private String description;
 
 	@Override

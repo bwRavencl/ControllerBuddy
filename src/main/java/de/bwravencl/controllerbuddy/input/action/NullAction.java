@@ -26,7 +26,7 @@ import java.lang.constant.Constable;
 ///
 /// This is used as a placeholder action in configurations where an action slot
 /// must be filled, but no actual behavior is desired.
-@Action(icon = "🚫", title = "NULL_ACTION_TITLE", description = "NULL_ACTION_DESCRIPTION", category = ActionCategory.ALL, order = 999)
+@Action(icon = "∅", title = "NULL_ACTION_TITLE", description = "NULL_ACTION_DESCRIPTION", category = ActionCategory.ALL, order = 999)
 public final class NullAction implements IAction<Constable> {
 
 	@Override

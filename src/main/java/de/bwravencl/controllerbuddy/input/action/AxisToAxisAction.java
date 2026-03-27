@@ -51,7 +51,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	private static final float DEFAULT_MIN_VALUE = -1f;
 
 	/// The dead zone threshold below which axis input values are treated as zero.
-	@ActionProperty(icon = "🚫", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
+	@ActionProperty(icon = "∅", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 100)
 	float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// The exponent applied to the input value for a non-linear response curve.
@@ -59,7 +59,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	float exponent = DEFAULT_EXPONENT;
 
 	/// The value assigned to the virtual axis when the action is initialized.
-	@ActionProperty(icon = "🚩", title = "INITIAL_VALUE_TITLE", description = "INITIAL_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 202)
+	@ActionProperty(icon = "⚐", title = "INITIAL_VALUE_TITLE", description = "INITIAL_VALUE_DESCRIPTION", editorBuilder = AxisValueEditorBuilder.class, order = 202)
 	float initialValue = DEFAULT_INITIAL_VALUE;
 
 	/// The maximum output value mapped to the virtual axis.

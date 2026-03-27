@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 ///
 /// The button is considered pressed when the axis value falls within a
 /// configurable range defined by [#minAxisValue] and [#maxAxisValue].
-@Action(icon = "🔘", title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
+@Action(icon = "◉", title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
 public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToDelayableAction {
 
 	/// Default upper bound of the activation axis range.

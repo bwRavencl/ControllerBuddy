@@ -47,11 +47,11 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	private Float detentValue = null;
 
 	/// Whether haptic feedback is triggered on axis movement.
-	@ActionProperty(icon = "📳", title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
+	@ActionProperty(icon = "⌇", title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
 	private boolean hapticFeedback = DEFAULT_HAPTIC_FEEDBACK;
 
 	/// Maximum relative speed applied to axis movement per polling cycle.
-	@ActionProperty(icon = "⚡", title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
+	@ActionProperty(icon = "⏩", title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
 
 	/// Applies relative axis movement based on the current axis value, dead zone,

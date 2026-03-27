@@ -47,7 +47,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	private static final boolean INITIAL_WAS_UP = true;
 
 	/// The activation mode controlling when the action triggers.
-	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "⚡", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	Activation activation = Activation.WHILE_PRESSED;
 
 	/// The minimum time in milliseconds the input must be held before release takes

@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /// the first action after the last one is reached. Supports on-press and
 /// on-release activation modes, configurable delay, and can be reset to the
 /// beginning of the cycle.
-@Action(icon = "🔁", title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
+@Action(icon = ButtonToCycleAction.CYCLE_SYMBOL, title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		implements IActivatableAction<Boolean>, IButtonToDelayableAction, IResetableAction<Boolean> {
 
@@ -49,7 +49,7 @@ public final class ButtonToCycleAction extends DescribableAction<Boolean>
 	private transient Activatable activatable = Activatable.YES;
 
 	/// Activation mode that controls when the cycle advances.
-	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "⚡", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 11)
 	private Activation activation = Activation.ON_PRESS;
 
 	/// Delay in milliseconds before this action becomes active.

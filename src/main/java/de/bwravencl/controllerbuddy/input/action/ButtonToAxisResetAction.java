@@ -49,7 +49,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	private transient Activatable activatable;
 
 	/// Activation mode that determines when the axis reset fires.
-	@ActionProperty(icon = "🚀", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
+	@ActionProperty(icon = "⚡", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
 	private Activation activation = Activation.ON_PRESS;
 
 	/// Delay in milliseconds before this action becomes active.

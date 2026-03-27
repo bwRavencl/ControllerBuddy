@@ -38,7 +38,7 @@ public final class AxisToCursorAction extends ToCursorAction<Float> implements I
 	private static final float DEFAULT_EXPONENT = 2f;
 
 	/// Dead zone threshold below which axis input is ignored.
-	@ActionProperty(icon = "🚫", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
+	@ActionProperty(icon = "∅", title = "DEAD_ZONE_TITLE", description = "DEAD_ZONE_DESCRIPTION", editorBuilder = DeadZoneEditorBuilder.class, order = 13)
 	private float deadZone = DEFAULT_DEAD_ZONE;
 
 	/// Exponent applied to the input response curve.

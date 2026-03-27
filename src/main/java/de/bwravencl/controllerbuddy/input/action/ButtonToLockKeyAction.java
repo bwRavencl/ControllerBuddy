@@ -41,7 +41,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 	private long delay = DEFAULT_DELAY;
 
 	/// Whether the lock key is toggled to the on state by this action.
-	@ActionProperty(icon = "💡", title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "⏻", title = "ON_TITLE", description = "ON_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean on = true;
 
 	/// Lock key targeted by this action.

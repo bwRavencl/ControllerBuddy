@@ -36,7 +36,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 		implements IDelayableAction<V>, IResetableAction<V> {
 
 	/// The zero-based ID of the target virtual button.
-	@ActionProperty(icon = "⚪", title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
+	@ActionProperty(icon = "◉", title = "BUTTON_ID_TITLE", description = "BUTTON_ID_DESCRIPTION", editorBuilder = ButtonEditorBuilder.class, order = 10)
 	int buttonId;
 
 	/// Current activatable state tracking whether the action may fire.

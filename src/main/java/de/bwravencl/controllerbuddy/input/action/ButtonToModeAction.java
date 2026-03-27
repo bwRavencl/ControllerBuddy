@@ -57,11 +57,11 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	private long delay = DEFAULT_DELAY;
 
 	/// UUID of the target mode to activate.
-	@ActionProperty(icon = "📂", title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
+	@ActionProperty(icon = "☰", title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
 	private UUID modeUuid;
 
 	/// Whether this action uses toggle mode instead of momentary activation.
-	@ActionProperty(icon = "🔀", title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "⇋", title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
 	private boolean toggle;
 
 	/// Edge-detection flag; `true` when the button was last observed as released.

@@ -38,7 +38,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	private static final int DEFAULT_CURSOR_SENSITIVITY = 2000;
 
 	/// Cursor sensitivity scaling factor applied to raw input deltas.
-	@ActionProperty(icon = "⚡", title = "CURSOR_SENSITIVITY_TITLE", description = "CURSOR_SENSITIVITY_DESCRIPTION", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
+	@ActionProperty(icon = "⏩", title = "CURSOR_SENSITIVITY_TITLE", description = "CURSOR_SENSITIVITY_DESCRIPTION", editorBuilder = CursorSensitivityEditorBuilder.class, order = 11)
 	int cursorSensitivity = DEFAULT_CURSOR_SENSITIVITY;
 
 	/// Accumulated subpixel movement remainder carried over between frames.
