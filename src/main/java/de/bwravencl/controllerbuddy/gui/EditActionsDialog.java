@@ -711,9 +711,6 @@ public final class EditActionsDialog extends JDialog {
 						defaultForegroundColor.getGreen(), defaultForegroundColor.getBlue(), 192);
 				descriptionLabel.setForeground(dimmedForegroundColor);
 				panel.add(descriptionLabel, BorderLayout.SOUTH);
-
-				assignedActionsList.setFixedCellHeight(0);
-				assignedActionsList.setFixedCellHeight(-1);
 			}
 
 			return panel;
