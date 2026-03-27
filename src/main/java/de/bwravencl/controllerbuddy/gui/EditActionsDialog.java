@@ -1120,7 +1120,7 @@ public final class EditActionsDialog extends JDialog {
 			}
 
 			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-			setBackground(null);
+			setOpaque(true);
 
 			iconLabel = new JLabel(icon);
 			iconLabel.setPreferredSize(ICON_LABEL_DIMENSION);
