@@ -47,6 +47,6 @@ public final class DescriptionEditorBuilder extends StringEditorBuilder {
 	void onNewValueSet() {
 		super.onNewValueSet();
 
-		editActionsDialog.repaintAssignedActionsList();
+		editActionsDialog.updateAssignedActionsListCellHeight();
 	}
 }

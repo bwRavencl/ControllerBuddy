@@ -903,15 +903,17 @@ public final class EditActionsDialog extends JDialog {
 		updateAssignedActions();
 	}
 
-	/// Repaints the assigned-actions list to reflect changes in action properties.
-	public void repaintAssignedActionsList() {
-		assignedActionsList.repaint();
-	}
-
 	/// Refreshes the assigned-actions list to reflect the current state of the
 	/// edited component or cycle.
 	private void updateAssignedActions() {
 		assignedActionsList.setListData(getAssignedActions());
+	}
+
+	/// Forces a recalculation of the assigned-actions list cell height by
+	/// temporarily setting it to `0` and then back to `-1` (the default).
+	public void updateAssignedActionsListCellHeight() {
+		assignedActionsList.setFixedCellHeight(0);
+		assignedActionsList.setFixedCellHeight(-1);
 	}
 
 	/// Refreshes the available-actions list and the paste button based on the
