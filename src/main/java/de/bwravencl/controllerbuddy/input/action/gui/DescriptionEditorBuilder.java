@@ -42,11 +42,4 @@ public final class DescriptionEditorBuilder extends StringEditorBuilder {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
-
-	@Override
-	void onNewValueSet() {
-		super.onNewValueSet();
-
-		editActionsDialog.repaintAssignedActionsList();
-	}
 }

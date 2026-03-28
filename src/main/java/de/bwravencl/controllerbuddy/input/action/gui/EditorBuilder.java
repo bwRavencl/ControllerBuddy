@@ -97,6 +97,7 @@ public abstract class EditorBuilder {
 	/// The default implementation is empty; subclasses may override to react
 	/// to the change.
 	void onNewValueSet() {
+		editActionsDialog.updateAssignedActionsListLayout();
 	}
 
 	/// Base class that holds a reference to an action and its setter method for
