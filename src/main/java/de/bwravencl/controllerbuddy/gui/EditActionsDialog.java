@@ -38,10 +38,13 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -101,7 +104,7 @@ import org.lwjgl.sdl.SDLGamepad;
 public final class EditActionsDialog extends JDialog {
 
 	/// Horizontal weight for the actions list columns in the grid layout.
-	private static final double ACTIONS_LIST_WEIGHT_X = 0.16;
+	private static final double ACTIONS_LIST_WEIGHT_X = 0.2;
 
 	/// Action classes available for axis components.
 	private static final List<Class<?>> AXIS_ACTION_CLASSES;
@@ -119,7 +122,7 @@ public final class EditActionsDialog extends JDialog {
 	private static final int DIALOG_BOUNDS_PARENT_OFFSET = 25;
 
 	/// Default width of the dialog bounds in pixels.
-	private static final int DIALOG_BOUNDS_WIDTH = 1020;
+	private static final int DIALOG_BOUNDS_WIDTH = 1005;
 
 	/// Cache mapping action classes to their field-to-annotation maps.
 	private static final Map<Class<?>, Map<Field, ActionProperty>> FIELD_ACTION_PROPERTY_MAP_CACHE = new HashMap<>();
@@ -210,7 +213,36 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// The list displaying currently assigned actions.
-	private final JList<IAction<?>> assignedActionsList = new ViewportWidthTrackingJList<>();
+	private final JList<IAction<?>> assignedActionsList = new ViewportWidthTrackingJList<>() {
+
+		private static final int PLACEHOLDER_MESSAGE_MARGIN = 5;
+
+		@Serial
+		private static final long serialVersionUID = -3862365536659647863L;
+
+		@Override
+		protected void paintComponent(final Graphics g) {
+			super.paintComponent(g);
+
+			if (getModel().getSize() == 0) {
+				final var g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2d.setColor(UIManager.getColor("Label.disabledForeground"));
+
+				final var fontMetrics = g2d.getFontMetrics();
+				final var text = Main.STRINGS.getString("NO_ASSIGNED_ACTIONS_PLACEHOLDER");
+
+				if (fontMetrics.stringWidth(text) > getWidth() - PLACEHOLDER_MESSAGE_MARGIN * 2) {
+					return;
+				}
+
+				final var x = (getWidth() - fontMetrics.stringWidth(text)) / 2;
+				final var y = (getHeight() - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent();
+
+				g2d.drawString(text, x, y);
+			}
+		}
+	};
 
 	/// The list displaying available action types that can be added.
 	private final JList<Class<?>> availableActionsList = new ViewportWidthTrackingJList<>();
@@ -245,7 +277,7 @@ public final class EditActionsDialog extends JDialog {
 	private Input input;
 
 	/// The paste button, enabled only when the clipboard holds a compatible action.
-	private JButton pasteButton;
+	private JButton pasteActionButton;
 
 	/// The label shown above the properties panel when a property editor is
 	/// visible.
@@ -341,43 +373,6 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
-	/// Creates a [JButton] from the given action, adds it to the parent panel with
-	/// a fixed size, and returns the button in a disabled state.
-	///
-	/// @param action the Swing action to wrap in a button
-	/// @param parentPanel the panel to which the button is added
-	/// @param dimension the fixed preferred, minimum, and maximum size of the
-	/// button
-	/// @return the newly created, initially disabled button
-	private static JButton addActionButton(final javax.swing.Action action, final JPanel parentPanel,
-			final Dimension dimension) {
-		final var button = new JButton(action);
-		button.setEnabled(false);
-		addComponentToPanelFixedSize(button, parentPanel, dimension);
-
-		return button;
-	}
-
-	/// Adds a component to a panel with a fixed size, centering it on both axes.
-	///
-	/// Sets the preferred, minimum, and maximum size of the component to the
-	/// given dimension, then adds it to the parent panel.
-	///
-	/// @param component the component to size and add
-	/// @param parentPanel the panel to which the component is added
-	/// @param dimension the fixed size to apply to the component
-	private static void addComponentToPanelFixedSize(final javax.swing.JComponent component, final JPanel parentPanel,
-			final Dimension dimension) {
-		component.setPreferredSize(dimension);
-		component.setMinimumSize(dimension);
-		component.setMaximumSize(dimension);
-
-		component.setAlignmentX(CENTER_ALIGNMENT);
-		component.setAlignmentY(CENTER_ALIGNMENT);
-
-		parentPanel.add(component);
-	}
-
 	/// Applies the selection or default background and foreground colors from the
 	/// given [JList] to the specified component.
 	///
@@ -422,7 +417,7 @@ public final class EditActionsDialog extends JDialog {
 	/// @param numbers the stream of integers to examine; values above `maxValue`
 	/// are ignored
 	/// @param maxValue the inclusive upper bound for the returned value
-	/// @return the first missing or next integer in the range [0, maxValue]
+	/// @return the first missing or next integer in the range 0 to maxValue
 	static int findFirstMissingOrNext(final IntStream numbers, final int maxValue) {
 		final var it = numbers.filter(n -> n <= maxValue).distinct().sorted().iterator();
 
@@ -680,18 +675,49 @@ public final class EditActionsDialog extends JDialog {
 	}
 
 	/// Builds and populates the dialog's content pane with the actions panel,
-	/// available-actions list, assigned-actions list, action buttons, copy/paste
-	/// controls, properties panel, help panel, and OK/Cancel buttons.
+	/// available-actions list, assigned-actions list, action buttons, clipboard
+	/// controls, properties panel, help panel, OK, and Cancel buttons.
 	///
-	/// This method must be called after [#preInit] and after any subclass-specific
-	/// initialization (such as setting the dialog title and mode selector).
+	/// This method must be called after [#preInit].
 	private void init() {
+		final var actionsPanel = new JPanel(new GridBagLayout());
+		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		getContentPane().add(actionsPanel, BorderLayout.CENTER);
+
+		actionsPanel.add(new JLabel(Main.STRINGS.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
+				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 0, 0));
+
+		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		final var cellBorder = BorderFactory.createEmptyBorder(0, 0, 0, 5);
 		availableActionsList.setCellRenderer((list, value, _, isSelected, _) -> {
 			final var iconLabel = new IconLabel(value, list, isSelected);
 			iconLabel.setBorder(cellBorder);
 			return iconLabel;
 		});
+
+		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(availableActionsList),
+				new GridBagConstraints(0, 1, 1, 2, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+
+		final var addActionButton = new JButton(new AddActionAction());
+		addActionButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		addActionButton.setEnabled(false);
+		actionsPanel.add(addActionButton, new GridBagConstraints(0, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+
+		final var clipboardPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 0));
+		final var titledBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("CLIPBOARD_BORDER_TITLE"));
+		final var emptyBorder = (EmptyBorder) BorderFactory.createEmptyBorder(5, 0, 5, 0);
+		final var border = BorderFactory.createCompoundBorder(titledBorder, emptyBorder);
+		clipboardPanel.setBorder(border);
+
+		availableActionsList.addListSelectionListener(_ -> {
+			selectedAvailableActionClass = availableActionsList.getSelectedValue();
+			addActionButton.setEnabled(selectedAvailableActionClass != null);
+			updateHelp(selectedAvailableActionClass);
+		});
+
+		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignedActionsList.setCellRenderer((list, value, _, isSelected, _) -> {
 			final var panel = new JPanel(new BorderLayout());
 			panel.setBorder(cellBorder);
@@ -716,92 +742,82 @@ public final class EditActionsDialog extends JDialog {
 			return panel;
 		});
 
-		final var actionsPanel = new JPanel(new GridBagLayout());
-		actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		getContentPane().add(actionsPanel, BorderLayout.CENTER);
+		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
+				new GridBagConstraints(1, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-		actionsPanel.add(new JLabel(Main.STRINGS.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
-				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
+		actionsPanel.add(new JLabel(Main.STRINGS.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(1, 0, 1,
+				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 0, 0));
 
-		final var actionButtonsPanel = new JPanel();
-		actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
-		actionsPanel.add(actionButtonsPanel, new GridBagConstraints(1, 1, 1, 1, 0d, 1d, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
+		final var cutActionButton = new JButton(new CutActionAction());
+		cutActionButton.setEnabled(false);
+		cutActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
+		cutActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
+		cutActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
+		cutActionButton.setAlignmentX(CENTER_ALIGNMENT);
+		cutActionButton.setAlignmentY(CENTER_ALIGNMENT);
+		clipboardPanel.add(cutActionButton);
 
-		actionButtonsPanel.add(Box.createVerticalGlue());
-		final var addButton = addActionButton(new AddActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
-		actionButtonsPanel.add(Box.createVerticalStrut(Main.BUTTON_DIMENSION_HEIGHT));
-		final var removeButton = addActionButton(new RemoveActionAction(), actionButtonsPanel, Main.BUTTON_DIMENSION);
-		actionButtonsPanel.add(Box.createVerticalGlue());
+		final var copyActionButton = new JButton(new CopyActionAction());
+		copyActionButton.setEnabled(false);
+		copyActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
+		copyActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
+		copyActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
+		copyActionButton.setAlignmentX(CENTER_ALIGNMENT);
+		copyActionButton.setAlignmentY(CENTER_ALIGNMENT);
+		clipboardPanel.add(copyActionButton);
 
-		final var copyPastePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-		final var titledBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("CLIPBOARD_BORDER_TITLE"));
-		final var emptyBorder = (EmptyBorder) BorderFactory.createEmptyBorder(5, 0, 5, 0);
-		final var border = BorderFactory.createCompoundBorder(titledBorder, emptyBorder);
-		copyPastePanel.setBorder(border);
-		final var insideBorderInsets = emptyBorder.getBorderInsets();
-		addComponentToPanelFixedSize(copyPastePanel, actionButtonsPanel,
-				new Dimension(Main.BUTTON_DIMENSION.width,
-						Main.BUTTON_DIMENSION_HEIGHT + titledBorder.getMinimumSize(copyPastePanel).height
-								+ insideBorderInsets.top + insideBorderInsets.bottom));
+		pasteActionButton = new JButton(new PasteActionAction());
+		pasteActionButton.setEnabled(false);
+		pasteActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
+		pasteActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
+		pasteActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
+		pasteActionButton.setAlignmentX(CENTER_ALIGNMENT);
+		pasteActionButton.setAlignmentY(CENTER_ALIGNMENT);
+		clipboardPanel.add(pasteActionButton);
 
-		final var copyButton = addActionButton(new CopyActionAction(), copyPastePanel, Main.SQUARE_BUTTON_DIMENSION);
-		pasteButton = addActionButton(new PasteActionAction(), copyPastePanel, Main.SQUARE_BUTTON_DIMENSION);
+		actionsPanel.add(clipboardPanel, new GridBagConstraints(1, 2, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0));
 
-		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		availableActionsList.addListSelectionListener(_ -> {
-			selectedAvailableActionClass = availableActionsList.getSelectedValue();
-			final var notNull = selectedAvailableActionClass != null;
-			addButton.setEnabled(notNull);
-			updateHelp(selectedAvailableActionClass);
+		final var removeActionButton = new JButton(new RemoveActionAction());
+		removeActionButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		removeActionButton.setEnabled(false);
+		actionsPanel.add(removeActionButton, new GridBagConstraints(1, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+
+		assignedActionsList.addListSelectionListener(_ -> {
+			selectedAssignedAction = assignedActionsList.getSelectedValue();
+
+			final var notNull = selectedAssignedAction != null;
+			removeActionButton.setEnabled(notNull);
+			cutActionButton.setEnabled(notNull);
+			copyActionButton.setEnabled(notNull);
+
+			updateProperties();
+			updateHelp(notNull ? selectedAssignedAction.getClass() : null);
 		});
-		updateAvailableActions();
-
-		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(availableActionsList),
-				new GridBagConstraints(0, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-
-		actionsPanel.add(new JLabel(Main.STRINGS.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(2, 0, 1,
-				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
-
-		propertiesLabel = new JLabel(Main.STRINGS.getString("PROPERTIES_LABEL"));
-		propertiesLabel.setVisible(false);
-		actionsPanel.add(propertiesLabel, new GridBagConstraints(3, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 25));
 
 		final var helpScrollPane = GuiUtils.wrapComponentInScrollPane(helpEditorPane);
-		actionsPanel.add(helpScrollPane, new GridBagConstraints(0, 2, 3, 1, 0d, 0.5, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+		actionsPanel.add(helpScrollPane, new GridBagConstraints(0, 4, 2, 1, 0d, 0.5, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		final var helpScrollPaneBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("HELP_BORDER_TITLE"));
 		helpScrollPane.setBorder(helpScrollPaneBorder);
 		final var helpScrollPaneBorderInsets = helpScrollPaneBorder.getBorder().getBorderInsets(helpScrollPane);
 
+		propertiesLabel = new JLabel(Main.STRINGS.getString("PROPERTIES_LABEL"));
+		propertiesLabel.setVisible(false);
+		actionsPanel.add(propertiesLabel, new GridBagConstraints(2, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 0, 0));
+
 		propertiesScrollPane = new JScrollPane();
 		propertiesScrollPane.setVisible(false);
 		actionsPanel.add(propertiesScrollPane,
-				new GridBagConstraints(3, 1, 1, 2, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-						new Insets(0, 5, helpScrollPaneBorderInsets.top + helpScrollPaneBorderInsets.bottom, 0), 0, 0));
-
-		assignedActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		assignedActionsList.addListSelectionListener(_ -> {
-			selectedAssignedAction = assignedActionsList.getSelectedValue();
-
-			final var notNull = selectedAssignedAction != null;
-			removeButton.setEnabled(notNull);
-			copyButton.setEnabled(notNull);
-
-			updateProperties();
-			updateHelp(notNull ? selectedAssignedAction.getClass() : null);
-		});
-		actionsPanel.add(GuiUtils.wrapComponentInScrollPane(assignedActionsList),
-				new GridBagConstraints(2, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
-						GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+				new GridBagConstraints(2, 1, 1, 5, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(5, 5, helpScrollPaneBorderInsets.top + helpScrollPaneBorderInsets.bottom, 0), 0, 0));
 
 		final var okCancelButtonPanel = new JPanel();
 		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
 
 		final var okButton = new JButton(new OKAction());
 		okButton.setPreferredSize(Main.BUTTON_DIMENSION);
@@ -812,6 +828,9 @@ public final class EditActionsDialog extends JDialog {
 		cancelButton.setPreferredSize(Main.BUTTON_DIMENSION);
 		okCancelButtonPanel.add(cancelButton);
 
+		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
+
+		updateAvailableActions();
 		updateAssignedActions();
 		updateHelp(null);
 	}
@@ -853,6 +872,37 @@ public final class EditActionsDialog extends JDialog {
 		throw new NotSerializableException(EditActionsDialog.class.getName());
 	}
 
+	/// Removes the currently selected assigned action from the component or cycle.
+	///
+	/// Deletes the action selected in the assigned-actions list from the
+	/// appropriate data structure: the button-to-mode actions map for
+	/// [ButtonToModeAction] instances, the cycle sub-action list in cycle-editor
+	/// mode, or the component-to-actions map in component-editor mode. After
+	/// removal, it refreshes both the available- and assigned-actions lists.
+	private void removeAction() {
+		if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
+			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
+			buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
+			if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
+				buttonToModeActionsMap.remove(component.index());
+			}
+		} else if (isCycleEditor()) {
+			cycleActions.remove(selectedAssignedAction);
+		} else {
+			final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
+			@SuppressWarnings("unchecked")
+			final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
+			actions.remove(selectedAssignedAction);
+
+			if (actions.isEmpty()) {
+				componentToActionMap.remove(component.index());
+			}
+		}
+
+		updateAvailableActions();
+		updateAssignedActions();
+	}
+
 	/// Repaints the assigned-actions list to reflect changes in action properties.
 	public void repaintAssignedActionsList() {
 		assignedActionsList.repaint();
@@ -871,7 +921,7 @@ public final class EditActionsDialog extends JDialog {
 	/// component type, excluding [ButtonToModeAction] when not in the default mode,
 	/// and then updates the enabled state of the paste button.
 	private void updateAvailableActions() {
-		Objects.requireNonNull(pasteButton, "Field pasteButton must not be null");
+		Objects.requireNonNull(pasteActionButton, "Field pasteButton must not be null");
 
 		final var availableActions = getAllowedActionClasses().stream()
 				.filter(actionClass -> !ButtonToModeAction.class.equals(actionClass)
@@ -890,15 +940,13 @@ public final class EditActionsDialog extends JDialog {
 	/// @param actionClass the action class whose help text is displayed, or `null`
 	/// to show the default help text
 	private void updateHelp(final Class<?> actionClass) {
-		String title;
+		final String title;
 		String descriptionLabel = null;
 
 		if (actionClass != null) {
 			title = IAction.getLabel(actionClass);
-
 			final var actionAnnotation = actionClass.getAnnotation(Action.class);
 			if (actionAnnotation != null) {
-				title = actionAnnotation.icon() + " " + title;
 				descriptionLabel = actionAnnotation.description();
 			}
 		} else {
@@ -950,7 +998,7 @@ public final class EditActionsDialog extends JDialog {
 		final var pasteAllowed = clipboardAction != null
 				&& getAllowedActionClasses().contains(clipboardAction.getClass());
 
-		pasteButton.setEnabled(pasteAllowed);
+		pasteActionButton.setEnabled(pasteAllowed);
 	}
 
 	/// Updates the properties panel to reflect the currently selected assigned
@@ -1129,7 +1177,7 @@ public final class EditActionsDialog extends JDialog {
 			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			add(iconLabel);
 
-			add(Box.createHorizontalStrut(ICON_LABEL_SPACING));
+			add(Box.createHorizontalStrut(5));
 
 			this.titleLabel = titleLabel;
 			this.titleLabel.setText(title);
@@ -1190,7 +1238,7 @@ public final class EditActionsDialog extends JDialog {
 	/// width rather than scrolling.
 	///
 	/// @param <E> the type of elements in the list
-	private static final class ViewportWidthTrackingJList<E> extends JList<E> {
+	private static class ViewportWidthTrackingJList<E> extends JList<E> {
 
 		@Serial
 		private static final long serialVersionUID = -5416293197170067165L;
@@ -1255,7 +1303,7 @@ public final class EditActionsDialog extends JDialog {
 	/// When performed, clones the action selected in the assigned-actions list and
 	/// stores the clone in the application clipboard via [Main], enabling it to be
 	/// pasted into another component or mode.
-	private final class CopyActionAction extends AbstractAction {
+	private class CopyActionAction extends AbstractAction {
 
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
@@ -1274,6 +1322,30 @@ public final class EditActionsDialog extends JDialog {
 			} catch (final CloneNotSupportedException e1) {
 				throw new RuntimeException(e1);
 			}
+		}
+	}
+
+	/// Cuts the currently selected assigned action to the clipboard.
+	///
+	/// When performed, clones the action selected in the assigned-actions list,
+	/// stores the clone in the application clipboard via [Main], enabling it to be
+	/// pasted into another component or mode, and removes the original from the
+	/// assigned actions.
+	private final class CutActionAction extends CopyActionAction {
+
+		@Serial
+		private static final long serialVersionUID = -6630683334825900710L;
+
+		/// Creates a new [CutActionAction] and initializes its name and description.
+		private CutActionAction() {
+			putValue(NAME, "✂");
+			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CUT_ACTION_ACTION_DESCRIPTION"));
+		}
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			super.actionPerformed(e);
+			removeAction();
 		}
 	}
 
@@ -1356,11 +1428,8 @@ public final class EditActionsDialog extends JDialog {
 
 	/// Removes the currently selected assigned action from the component or cycle.
 	///
-	/// When performed, deletes the action selected in the assigned-actions list
-	/// from the appropriate data structure: the button-to-mode actions map for
-	/// [ButtonToModeAction] instances, the cycle sub-action list in cycle-editor
-	/// mode, or the component-to-actions map in component-editor mode. After
-	/// removal, it refreshes both the available- and assigned-actions lists.
+	/// Delegates to [#removeAction] which deletes the action selected in the
+	/// assigned-actions list.
 	private final class RemoveActionAction extends AbstractAction {
 
 		@Serial
@@ -1374,27 +1443,7 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
-				final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-				buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
-				if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
-					buttonToModeActionsMap.remove(component.index());
-				}
-			} else if (isCycleEditor()) {
-				cycleActions.remove(selectedAssignedAction);
-			} else {
-				final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
-				@SuppressWarnings("unchecked")
-				final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
-				actions.remove(selectedAssignedAction);
-
-				if (actions.isEmpty()) {
-					componentToActionMap.remove(component.index());
-				}
-			}
-
-			updateAvailableActions();
-			updateAssignedActions();
+			removeAction();
 		}
 	}
 }
