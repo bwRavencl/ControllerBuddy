@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
@@ -44,7 +44,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 
 	/// Keystroke produced by this action.
 	@ActionProperty(icon = "⌨️", title = "KEYSTROKE_TITLE", description = "KEYSTROKE_DESCRIPTION", editorBuilder = KeystrokeEditorBuilder.class, order = 10)
-	private KeyStroke keystroke = new KeyStroke();
+	private Keystroke keystroke = new Keystroke();
 
 	/// Whether the keystroke is currently held down.
 	private transient boolean wasDown;
@@ -52,7 +52,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		final var toKeyAction = (ToKeyAction<?>) super.clone();
-		toKeyAction.setKeystroke((KeyStroke) keystroke.clone());
+		toKeyAction.setKeystroke((Keystroke) keystroke.clone());
 
 		return toKeyAction;
 	}
@@ -79,7 +79,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	/// Returns the keystroke produced by this action.
 	///
 	/// @return the keystroke
-	public KeyStroke getKeystroke() {
+	public Keystroke getKeystroke() {
 		return keystroke;
 	}
 
@@ -95,7 +95,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	/// @param input the current input state
 	void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
-			input.getDownUpKeyStrokes().add(keystroke);
+			input.getDownUpKeystrokes().add(keystroke);
 			return;
 		}
 
@@ -104,11 +104,11 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 			hot = handleActivationInterval(hot);
 			if (!hot) {
 				if (wasDown) {
-					input.getDownKeyStrokes().remove(keystroke);
+					input.getDownKeystrokes().remove(keystroke);
 					wasDown = false;
 				}
 			} else {
-				input.getDownKeyStrokes().add(keystroke);
+				input.getDownKeystrokes().add(keystroke);
 				wasDown = true;
 			}
 		}
@@ -119,11 +119,11 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 					activatable = Activatable.YES;
 				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
-					input.getDownKeyStrokes().add(keystroke);
+					input.getDownKeystrokes().add(keystroke);
 					wasDown = true;
 				}
 				if (wasDown && !hold) {
-					input.getDownKeyStrokes().remove(keystroke);
+					input.getDownKeystrokes().remove(keystroke);
 					wasDown = false;
 				}
 			} else {
@@ -132,7 +132,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 					activatable = Activatable.YES;
 				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
-					input.getDownUpKeyStrokes().add(keystroke);
+					input.getDownUpKeystrokes().add(keystroke);
 				}
 			}
 		}
@@ -147,11 +147,11 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 					}
 				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
-					input.getDownKeyStrokes().add(keystroke);
+					input.getDownKeystrokes().add(keystroke);
 					wasDown = true;
 				} else if (!hold) {
 					if (wasDown) {
-						input.getDownKeyStrokes().remove(keystroke);
+						input.getDownKeystrokes().remove(keystroke);
 						wasDown = false;
 					}
 				}
@@ -165,7 +165,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 					}
 				} else if (activatable == Activatable.YES) {
 					activatable = Activatable.NO;
-					input.getDownUpKeyStrokes().add(keystroke);
+					input.getDownUpKeystrokes().add(keystroke);
 				}
 			}
 		}
@@ -190,7 +190,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	/// Sets the keystroke produced by this action.
 	///
 	/// @param keystroke the keystroke to set
-	public void setKeystroke(final KeyStroke keystroke) {
+	public void setKeystroke(final Keystroke keystroke) {
 		this.keystroke = keystroke;
 	}
 }

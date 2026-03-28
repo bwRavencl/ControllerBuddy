@@ -38,7 +38,7 @@ import de.bwravencl.controllerbuddy.input.OverlayAxis;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.Profile;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
@@ -53,7 +53,7 @@ import de.bwravencl.controllerbuddy.json.ActionTypeAdapter;
 import de.bwravencl.controllerbuddy.json.ColorTypeAdapter;
 import de.bwravencl.controllerbuddy.json.LockKeyAdapter;
 import de.bwravencl.controllerbuddy.json.ProfileTypeAdapterFactory;
-import de.bwravencl.controllerbuddy.json.ScanCodeAdapter;
+import de.bwravencl.controllerbuddy.json.ScancodeAdapter;
 import de.bwravencl.controllerbuddy.runmode.ClientRunMode;
 import de.bwravencl.controllerbuddy.runmode.LocalRunMode;
 import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
@@ -6049,7 +6049,7 @@ public final class Main {
 	/// ActionTypeAdapter for profile serialization.
 	///
 	/// Created via the static factory method [#create], which registers all
-	/// required type adapters for colors, actions, lock keys, and scan codes. Both
+	/// required type adapters for colors, actions, lock keys, and scancodes. Both
 	/// components are kept together so the adapter can be accessed after the
 	/// context is built.
 	///
@@ -6061,7 +6061,7 @@ public final class Main {
 
 		/// Creates a new [JsonContext] with all required type adapters registered.
 		///
-		/// Registers adapters for [Color], [IAction], [LockKey], and [ScanCode],
+		/// Registers adapters for [Color], [IAction], [LockKey], and [Scancode],
 		/// and enables pretty printing.
 		///
 		/// @return a fully configured [JsonContext]
@@ -6071,7 +6071,7 @@ public final class Main {
 					.registerTypeAdapter(Color.class, new ColorTypeAdapter())
 					.registerTypeAdapter(IAction.class, actionAdapter)
 					.registerTypeAdapter(LockKey.class, new LockKeyAdapter())
-					.registerTypeAdapter(ScanCode.class, new ScanCodeAdapter()).setPrettyPrinting().create();
+					.registerTypeAdapter(Scancode.class, new ScancodeAdapter()).setPrettyPrinting().create();
 
 			return new JsonContext(gson, actionAdapter);
 		}

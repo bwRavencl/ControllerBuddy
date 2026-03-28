@@ -259,8 +259,8 @@ public final class ServerRunMode extends RunMode {
 							objectOutputStream.writeInt(input.getCursorDeltaY());
 							objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
 							objectOutputStream.writeObject(input.getDownUpMouseButtons());
-							objectOutputStream.writeObject(input.getDownKeyStrokes());
-							objectOutputStream.writeObject(input.getDownUpKeyStrokes());
+							objectOutputStream.writeObject(input.getDownKeystrokes());
+							objectOutputStream.writeObject(input.getDownUpKeystrokes());
 
 							objectOutputStream.writeInt(input.getScrollClicks());
 
@@ -273,7 +273,7 @@ public final class ServerRunMode extends RunMode {
 							input.setCursorDeltaY(0);
 
 							input.getDownUpMouseButtons().clear();
-							input.getDownUpKeyStrokes().clear();
+							input.getDownUpKeystrokes().clear();
 
 							input.setScrollClicks(0);
 

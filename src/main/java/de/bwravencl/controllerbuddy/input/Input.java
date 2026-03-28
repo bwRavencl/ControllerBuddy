@@ -81,13 +81,13 @@ public final class Input {
 	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
 
 	/// Keystrokes currently held down continuously.
-	private final Set<KeyStroke> downKeyStrokes = new HashSet<>();
+	private final Set<Keystroke> downKeystrokes = new HashSet<>();
 
 	/// Mouse buttons currently held down continuously.
 	private final Set<Integer> downMouseButtons = new HashSet<>();
 
 	/// Keystrokes to be pressed and immediately released this poll cycle.
-	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
+	private final Set<Keystroke> downUpKeystrokes = new HashSet<>();
 
 	/// Mouse buttons to be pressed and immediately released this poll cycle.
 	private final Set<Integer> downUpMouseButtons = new HashSet<>();
@@ -320,8 +320,8 @@ public final class Input {
 	/// Returns the set of keystrokes currently held down.
 	///
 	/// @return the set of currently pressed keystrokes
-	public Set<KeyStroke> getDownKeyStrokes() {
-		return downKeyStrokes;
+	public Set<Keystroke> getDownKeystrokes() {
+		return downKeystrokes;
 	}
 
 	/// Returns the set of mouse buttons currently held down.
@@ -334,8 +334,8 @@ public final class Input {
 	/// Returns the set of keystrokes to be pressed and immediately released.
 	///
 	/// @return the set of down-up keystrokes
-	public Set<KeyStroke> getDownUpKeyStrokes() {
-		return downUpKeyStrokes;
+	public Set<Keystroke> getDownUpKeystrokes() {
+		return downUpKeystrokes;
 	}
 
 	/// Returns the set of mouse buttons to be pressed and immediately released.
@@ -600,7 +600,7 @@ public final class Input {
 		if (clearOnNextPoll) {
 			Arrays.fill(buttons, false);
 
-			downKeyStrokes.clear();
+			downKeystrokes.clear();
 			downMouseButtons.clear();
 
 			onScreenKeyboard.forceRepoll();

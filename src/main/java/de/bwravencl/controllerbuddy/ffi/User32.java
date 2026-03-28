@@ -211,7 +211,7 @@ public final class User32 {
 			/// Windows `KEYEVENTF_KEYUP` flag indicating a key-release event.
 			public static final int KEYEVENTF_KEYUP = 2;
 
-			/// Windows `KEYEVENTF_SCANCODE` flag indicating the scan code identifies the
+			/// Windows `KEYEVENTF_SCANCODE` flag indicating the scancode identifies the
 			/// key.
 			public static final int KEYEVENTF_SCANCODE = 8;
 
@@ -250,7 +250,7 @@ public final class User32 {
 			/// Sets the wScan field of the KEYBDINPUT structure.
 			///
 			/// @param seg the KEYBDINPUT memory segment
-			/// @param wScan the hardware scan code for the key
+			/// @param wScan the hardware scancode for the key
 			public static void setWScan(final MemorySegment seg, final short wScan) {
 				W_SCAN_VAR_HANDLE.set(seg, 0L, wScan);
 			}

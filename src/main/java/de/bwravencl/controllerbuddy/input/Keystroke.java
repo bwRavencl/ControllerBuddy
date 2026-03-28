@@ -33,32 +33,32 @@ import java.util.stream.Collectors;
 /// keys.
 ///
 /// Supports serialization using legacy key code sets for backward
-/// compatibility, converting between [ScanCode]-based and integer-based
+/// compatibility, converting between [Scancode]-based and integer-based
 /// representations as needed.
-public final class KeyStroke implements Cloneable, Serializable {
+public final class Keystroke implements Cloneable, Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 3572153768203547877L;
 
-	/// The primary scan codes making up the keystroke.
+	/// The primary scancodes making up the keystroke.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private ScanCode[] keyCodes;
+	private Scancode[] keyCodes;
 
-	/// The modifier scan codes (e.g., Shift, Ctrl) accompanying the keystroke.
+	/// The modifier scancodes (e.g., Shift, Ctrl) accompanying the keystroke.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private ScanCode[] modifierCodes;
+	private Scancode[] modifierCodes;
 
 	/// Constructs an empty keystroke with no key codes or modifier codes.
-	public KeyStroke() {
-		this(new ScanCode[0], new ScanCode[0]);
+	public Keystroke() {
+		this(new Scancode[0], new Scancode[0]);
 	}
 
 	/// Constructs a keystroke with the specified key codes and modifier codes.
 	///
-	/// @param keyCodes the primary scan codes for this keystroke
-	/// @param modifierCodes the modifier scan codes (e.g., Shift, Ctrl) for this
+	/// @param keyCodes the primary scancodes for this keystroke
+	/// @param modifierCodes the modifier scancodes (e.g., Shift, Ctrl) for this
 	/// keystroke
-	public KeyStroke(final ScanCode[] keyCodes, final ScanCode[] modifierCodes) {
+	public Keystroke(final Scancode[] keyCodes, final Scancode[] modifierCodes) {
 		this.keyCodes = keyCodes;
 		this.modifierCodes = modifierCodes;
 	}
@@ -66,40 +66,40 @@ public final class KeyStroke implements Cloneable, Serializable {
 	/// Creates a deep copy of this keystroke, including copies of the key code and
 	/// modifier code arrays.
 	///
-	/// @return a cloned KeyStroke instance
+	/// @return a cloned Keystroke instance
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		final var keyStroke = (KeyStroke) super.clone();
+		final var keystroke = (Keystroke) super.clone();
 
-		final var clonedKeyCodes = new ScanCode[keyCodes.length];
+		final var clonedKeyCodes = new Scancode[keyCodes.length];
 		System.arraycopy(keyCodes, 0, clonedKeyCodes, 0, keyCodes.length);
-		keyStroke.keyCodes = clonedKeyCodes;
+		keystroke.keyCodes = clonedKeyCodes;
 
-		final var clonedModifierCodes = new ScanCode[modifierCodes.length];
+		final var clonedModifierCodes = new Scancode[modifierCodes.length];
 		System.arraycopy(modifierCodes, 0, clonedModifierCodes, 0, modifierCodes.length);
-		keyStroke.modifierCodes = clonedModifierCodes;
+		keystroke.modifierCodes = clonedModifierCodes;
 
-		return keyStroke;
+		return keystroke;
 	}
 
 	/// Checks equality based on key codes and modifier codes arrays.
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof final KeyStroke keyStroke && Arrays.equals(keyCodes, keyStroke.keyCodes)
-				&& Arrays.equals(modifierCodes, keyStroke.modifierCodes);
+		return obj instanceof final Keystroke keystroke && Arrays.equals(keyCodes, keystroke.keyCodes)
+				&& Arrays.equals(modifierCodes, keystroke.modifierCodes);
 	}
 
-	/// Returns the primary scan codes for this keystroke.
+	/// Returns the primary scancodes for this keystroke.
 	///
 	/// @return the key codes array
-	public ScanCode[] getKeyCodes() {
+	public Scancode[] getKeyCodes() {
 		return keyCodes;
 	}
 
-	/// Returns the modifier scan codes for this keystroke.
+	/// Returns the modifier scancodes for this keystroke.
 	///
 	/// @return the modifier codes array
-	public ScanCode[] getModifierCodes() {
+	public Scancode[] getModifierCodes() {
 		return modifierCodes;
 	}
 
@@ -110,7 +110,7 @@ public final class KeyStroke implements Cloneable, Serializable {
 
 	/// Deserializes this keystroke from the given stream, reading the modifier
 	/// and key code sets and mapping each stored integer key code to its
-	/// corresponding [ScanCode].
+	/// corresponding [Scancode].
 	///
 	/// @param stream the object input stream to read from
 	/// @throws ClassNotFoundException if the class of a serialized object cannot be
@@ -120,25 +120,25 @@ public final class KeyStroke implements Cloneable, Serializable {
 	private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		final var modifierCodesKeyCodes = (Set<Integer>) stream.readObject();
-		modifierCodes = modifierCodesKeyCodes.stream().map(ScanCode.KEY_CODE_TO_SCAN_CODE_MAP::get)
-				.toArray(ScanCode[]::new);
+		modifierCodes = modifierCodesKeyCodes.stream().map(Scancode.KEY_CODE_TO_SCAN_CODE_MAP::get)
+				.toArray(Scancode[]::new);
 
 		@SuppressWarnings("unchecked")
 		final var keyCodesKeyCodes = (Set<Integer>) stream.readObject();
-		keyCodes = keyCodesKeyCodes.stream().map(ScanCode.KEY_CODE_TO_SCAN_CODE_MAP::get).toArray(ScanCode[]::new);
+		keyCodes = keyCodesKeyCodes.stream().map(Scancode.KEY_CODE_TO_SCAN_CODE_MAP::get).toArray(Scancode[]::new);
 	}
 
-	/// Sets the primary scan codes for this keystroke.
+	/// Sets the primary scancodes for this keystroke.
 	///
 	/// @param keyCodes the key codes to set
-	public void setKeyCodes(final ScanCode[] keyCodes) {
+	public void setKeyCodes(final Scancode[] keyCodes) {
 		this.keyCodes = keyCodes;
 	}
 
-	/// Sets the modifier scan codes for this keystroke.
+	/// Sets the modifier scancodes for this keystroke.
 	///
 	/// @param modifierCodes the modifier codes to set
-	public void setModifierCodes(final ScanCode[] modifierCodes) {
+	public void setModifierCodes(final Scancode[] modifierCodes) {
 		this.modifierCodes = modifierCodes;
 	}
 
@@ -155,7 +155,7 @@ public final class KeyStroke implements Cloneable, Serializable {
 			return Main.STRINGS.getString("NOTHING");
 		}
 
-		return collectedKeyCodes.stream().map(ScanCode::name).collect(Collectors.joining(" + "));
+		return collectedKeyCodes.stream().map(Scancode::name).collect(Collectors.joining(" + "));
 	}
 
 	/// Serializes this keystroke to the given stream, writing the modifier codes
@@ -165,7 +165,7 @@ public final class KeyStroke implements Cloneable, Serializable {
 	/// @throws IOException if an I/O error occurs during serialization
 	@Serial
 	private void writeObject(final ObjectOutputStream stream) throws IOException {
-		stream.writeObject(Arrays.stream(modifierCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
-		stream.writeObject(Arrays.stream(keyCodes).map(ScanCode::keyCode).collect(Collectors.toSet()));
+		stream.writeObject(Arrays.stream(modifierCodes).map(Scancode::keyCode).collect(Collectors.toSet()));
+		stream.writeObject(Arrays.stream(keyCodes).map(Scancode::keyCode).collect(Collectors.toSet()));
 	}
 }

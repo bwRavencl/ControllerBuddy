@@ -19,10 +19,10 @@ package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Mode;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -136,78 +136,78 @@ public final class OnScreenKeyboard extends JFrame {
 		rightShiftKeyboardButton = new ShiftKeyboardButton(ShiftKeyboardButton.ShiftKeyboardButtonType.RIGHT);
 
 		keyboardButtons = new AbstractKeyboardButton[][] {
-				{ new DefaultKeyboardButton(ScanCode.DIK_ESCAPE), new DefaultKeyboardButton(ScanCode.DIK_F1),
-						new DefaultKeyboardButton(ScanCode.DIK_F2), new DefaultKeyboardButton(ScanCode.DIK_F3),
-						new DefaultKeyboardButton(ScanCode.DIK_F4), new DefaultKeyboardButton(ScanCode.DIK_F5),
-						new DefaultKeyboardButton(ScanCode.DIK_F6), new DefaultKeyboardButton(ScanCode.DIK_F7),
-						new DefaultKeyboardButton(ScanCode.DIK_F8), new DefaultKeyboardButton(ScanCode.DIK_F9),
-						new DefaultKeyboardButton(ScanCode.DIK_F10), new DefaultKeyboardButton(ScanCode.DIK_F11),
-						new DefaultKeyboardButton(ScanCode.DIK_F12), new DefaultKeyboardButton(ScanCode.DIK_SYSRQ),
-						new LockKeyButton(LockKey.SCROLL_LOCK_LOCK_KEY), new DefaultKeyboardButton(ScanCode.DIK_PAUSE),
-						new DefaultKeyboardButton(ScanCode.DIK_INSERT), new DefaultKeyboardButton(ScanCode.DIK_DELETE),
-						new DefaultKeyboardButton(ScanCode.DIK_HOME), new DefaultKeyboardButton(ScanCode.DIK_END) },
-				{ new ShiftableKeyboardButton(ScanCode.DIK_GRAVE, "~"),
-						new ShiftableKeyboardButton(ScanCode.DIK_1, "!"),
-						new ShiftableKeyboardButton(ScanCode.DIK_2, "@"),
-						new ShiftableKeyboardButton(ScanCode.DIK_3, "#"),
-						new ShiftableKeyboardButton(ScanCode.DIK_4, "$"),
-						new ShiftableKeyboardButton(ScanCode.DIK_5, "%"),
-						new ShiftableKeyboardButton(ScanCode.DIK_6, "^"),
-						new ShiftableKeyboardButton(ScanCode.DIK_7, "&"),
-						new ShiftableKeyboardButton(ScanCode.DIK_8, "*"),
-						new ShiftableKeyboardButton(ScanCode.DIK_9, "("),
-						new ShiftableKeyboardButton(ScanCode.DIK_0, ")"),
-						new ShiftableKeyboardButton(ScanCode.DIK_MINUS, "_"),
-						new ShiftableKeyboardButton(ScanCode.DIK_EQUALS, "+"),
-						new DefaultKeyboardButton(ScanCode.DIK_BACK), new NumLockKeyButton(),
-						new DefaultKeyboardButton(ScanCode.DIK_DIVIDE),
-						new DefaultKeyboardButton(ScanCode.DIK_MULTIPLY),
-						new DefaultKeyboardButton(ScanCode.DIK_SUBTRACT) },
-				{ new DefaultKeyboardButton(ScanCode.DIK_TAB), new AlphabeticKeyboardButton(ScanCode.DIK_Q),
-						new AlphabeticKeyboardButton(ScanCode.DIK_W), new AlphabeticKeyboardButton(ScanCode.DIK_E),
-						new AlphabeticKeyboardButton(ScanCode.DIK_R), new AlphabeticKeyboardButton(ScanCode.DIK_T),
-						new AlphabeticKeyboardButton(ScanCode.DIK_Y), new AlphabeticKeyboardButton(ScanCode.DIK_U),
-						new AlphabeticKeyboardButton(ScanCode.DIK_I), new AlphabeticKeyboardButton(ScanCode.DIK_O),
-						new AlphabeticKeyboardButton(ScanCode.DIK_P),
-						new ShiftableKeyboardButton(ScanCode.DIK_LBRACKET, "{"),
-						new ShiftableKeyboardButton(ScanCode.DIK_RBRACKET, "}"),
-						new ShiftableKeyboardButton(ScanCode.DIK_BACKSLASH, "|"),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD7, ScanCode.DIK_HOME),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD8, ScanCode.DIK_UP),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD9, ScanCode.DIK_PRIOR),
-						new DefaultKeyboardButton(ScanCode.DIK_ADD) },
-				{ capsLockKeyButton, new AlphabeticKeyboardButton(ScanCode.DIK_A),
-						new AlphabeticKeyboardButton(ScanCode.DIK_S), new AlphabeticKeyboardButton(ScanCode.DIK_D),
-						new AlphabeticKeyboardButton(ScanCode.DIK_F), new AlphabeticKeyboardButton(ScanCode.DIK_G),
-						new AlphabeticKeyboardButton(ScanCode.DIK_H), new AlphabeticKeyboardButton(ScanCode.DIK_J),
-						new AlphabeticKeyboardButton(ScanCode.DIK_K), new AlphabeticKeyboardButton(ScanCode.DIK_L),
-						new ShiftableKeyboardButton(ScanCode.DIK_SEMICOLON, ":"),
-						new ShiftableKeyboardButton(ScanCode.DIK_APOSTROPHE, "\""),
-						new DefaultKeyboardButton(ScanCode.DIK_RETURN),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD4, ScanCode.DIK_LEFT),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD5, ""),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD6, ScanCode.DIK_RIGHT),
-						new DefaultKeyboardButton(ScanCode.DIK_PRIOR) },
-				{ leftShiftKeyboardButton, new AlphabeticKeyboardButton(ScanCode.DIK_Z),
-						new AlphabeticKeyboardButton(ScanCode.DIK_X), new AlphabeticKeyboardButton(ScanCode.DIK_C),
-						new AlphabeticKeyboardButton(ScanCode.DIK_V), new AlphabeticKeyboardButton(ScanCode.DIK_B),
-						new AlphabeticKeyboardButton(ScanCode.DIK_N), new AlphabeticKeyboardButton(ScanCode.DIK_M),
-						new ShiftableKeyboardButton(ScanCode.DIK_COMMA, "<"),
-						new ShiftableKeyboardButton(ScanCode.DIK_PERIOD, ">"),
-						new ShiftableKeyboardButton(ScanCode.DIK_SLASH, "?"), rightShiftKeyboardButton,
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD1, ScanCode.DIK_END),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD2, ScanCode.DIK_DOWN),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD3, ScanCode.DIK_NEXT),
-						new DefaultKeyboardButton(ScanCode.DIK_NEXT) },
-				{ new DefaultKeyboardButton(ScanCode.DIK_LCONTROL), new DefaultKeyboardButton(ScanCode.DIK_LWIN),
-						new DefaultKeyboardButton(ScanCode.DIK_LMENU), new DefaultKeyboardButton(ScanCode.DIK_SPACE),
-						new DefaultKeyboardButton(ScanCode.DIK_RMENU), new DefaultKeyboardButton(ScanCode.DIK_RWIN),
-						new DefaultKeyboardButton(ScanCode.DIK_RCONTROL), new DefaultKeyboardButton(ScanCode.DIK_UP),
-						new DefaultKeyboardButton(ScanCode.DIK_DOWN), new DefaultKeyboardButton(ScanCode.DIK_LEFT),
-						new DefaultKeyboardButton(ScanCode.DIK_RIGHT),
-						new NumPadKeyboardButton(ScanCode.DIK_NUMPAD0, ScanCode.DIK_INSERT),
-						new NumPadKeyboardButton(ScanCode.DIK_DECIMAL, ScanCode.DIK_DELETE),
-						new DefaultKeyboardButton(ScanCode.DIK_NUMPADENTER) } };
+				{ new DefaultKeyboardButton(Scancode.DIK_ESCAPE), new DefaultKeyboardButton(Scancode.DIK_F1),
+						new DefaultKeyboardButton(Scancode.DIK_F2), new DefaultKeyboardButton(Scancode.DIK_F3),
+						new DefaultKeyboardButton(Scancode.DIK_F4), new DefaultKeyboardButton(Scancode.DIK_F5),
+						new DefaultKeyboardButton(Scancode.DIK_F6), new DefaultKeyboardButton(Scancode.DIK_F7),
+						new DefaultKeyboardButton(Scancode.DIK_F8), new DefaultKeyboardButton(Scancode.DIK_F9),
+						new DefaultKeyboardButton(Scancode.DIK_F10), new DefaultKeyboardButton(Scancode.DIK_F11),
+						new DefaultKeyboardButton(Scancode.DIK_F12), new DefaultKeyboardButton(Scancode.DIK_SYSRQ),
+						new LockKeyButton(LockKey.SCROLL_LOCK_LOCK_KEY), new DefaultKeyboardButton(Scancode.DIK_PAUSE),
+						new DefaultKeyboardButton(Scancode.DIK_INSERT), new DefaultKeyboardButton(Scancode.DIK_DELETE),
+						new DefaultKeyboardButton(Scancode.DIK_HOME), new DefaultKeyboardButton(Scancode.DIK_END) },
+				{ new ShiftableKeyboardButton(Scancode.DIK_GRAVE, "~"),
+						new ShiftableKeyboardButton(Scancode.DIK_1, "!"),
+						new ShiftableKeyboardButton(Scancode.DIK_2, "@"),
+						new ShiftableKeyboardButton(Scancode.DIK_3, "#"),
+						new ShiftableKeyboardButton(Scancode.DIK_4, "$"),
+						new ShiftableKeyboardButton(Scancode.DIK_5, "%"),
+						new ShiftableKeyboardButton(Scancode.DIK_6, "^"),
+						new ShiftableKeyboardButton(Scancode.DIK_7, "&"),
+						new ShiftableKeyboardButton(Scancode.DIK_8, "*"),
+						new ShiftableKeyboardButton(Scancode.DIK_9, "("),
+						new ShiftableKeyboardButton(Scancode.DIK_0, ")"),
+						new ShiftableKeyboardButton(Scancode.DIK_MINUS, "_"),
+						new ShiftableKeyboardButton(Scancode.DIK_EQUALS, "+"),
+						new DefaultKeyboardButton(Scancode.DIK_BACK), new NumLockKeyButton(),
+						new DefaultKeyboardButton(Scancode.DIK_DIVIDE),
+						new DefaultKeyboardButton(Scancode.DIK_MULTIPLY),
+						new DefaultKeyboardButton(Scancode.DIK_SUBTRACT) },
+				{ new DefaultKeyboardButton(Scancode.DIK_TAB), new AlphabeticKeyboardButton(Scancode.DIK_Q),
+						new AlphabeticKeyboardButton(Scancode.DIK_W), new AlphabeticKeyboardButton(Scancode.DIK_E),
+						new AlphabeticKeyboardButton(Scancode.DIK_R), new AlphabeticKeyboardButton(Scancode.DIK_T),
+						new AlphabeticKeyboardButton(Scancode.DIK_Y), new AlphabeticKeyboardButton(Scancode.DIK_U),
+						new AlphabeticKeyboardButton(Scancode.DIK_I), new AlphabeticKeyboardButton(Scancode.DIK_O),
+						new AlphabeticKeyboardButton(Scancode.DIK_P),
+						new ShiftableKeyboardButton(Scancode.DIK_LBRACKET, "{"),
+						new ShiftableKeyboardButton(Scancode.DIK_RBRACKET, "}"),
+						new ShiftableKeyboardButton(Scancode.DIK_BACKSLASH, "|"),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD7, Scancode.DIK_HOME),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD8, Scancode.DIK_UP),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD9, Scancode.DIK_PRIOR),
+						new DefaultKeyboardButton(Scancode.DIK_ADD) },
+				{ capsLockKeyButton, new AlphabeticKeyboardButton(Scancode.DIK_A),
+						new AlphabeticKeyboardButton(Scancode.DIK_S), new AlphabeticKeyboardButton(Scancode.DIK_D),
+						new AlphabeticKeyboardButton(Scancode.DIK_F), new AlphabeticKeyboardButton(Scancode.DIK_G),
+						new AlphabeticKeyboardButton(Scancode.DIK_H), new AlphabeticKeyboardButton(Scancode.DIK_J),
+						new AlphabeticKeyboardButton(Scancode.DIK_K), new AlphabeticKeyboardButton(Scancode.DIK_L),
+						new ShiftableKeyboardButton(Scancode.DIK_SEMICOLON, ":"),
+						new ShiftableKeyboardButton(Scancode.DIK_APOSTROPHE, "\""),
+						new DefaultKeyboardButton(Scancode.DIK_RETURN),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD4, Scancode.DIK_LEFT),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD5, ""),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD6, Scancode.DIK_RIGHT),
+						new DefaultKeyboardButton(Scancode.DIK_PRIOR) },
+				{ leftShiftKeyboardButton, new AlphabeticKeyboardButton(Scancode.DIK_Z),
+						new AlphabeticKeyboardButton(Scancode.DIK_X), new AlphabeticKeyboardButton(Scancode.DIK_C),
+						new AlphabeticKeyboardButton(Scancode.DIK_V), new AlphabeticKeyboardButton(Scancode.DIK_B),
+						new AlphabeticKeyboardButton(Scancode.DIK_N), new AlphabeticKeyboardButton(Scancode.DIK_M),
+						new ShiftableKeyboardButton(Scancode.DIK_COMMA, "<"),
+						new ShiftableKeyboardButton(Scancode.DIK_PERIOD, ">"),
+						new ShiftableKeyboardButton(Scancode.DIK_SLASH, "?"), rightShiftKeyboardButton,
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD1, Scancode.DIK_END),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD2, Scancode.DIK_DOWN),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD3, Scancode.DIK_NEXT),
+						new DefaultKeyboardButton(Scancode.DIK_NEXT) },
+				{ new DefaultKeyboardButton(Scancode.DIK_LCONTROL), new DefaultKeyboardButton(Scancode.DIK_LWIN),
+						new DefaultKeyboardButton(Scancode.DIK_LMENU), new DefaultKeyboardButton(Scancode.DIK_SPACE),
+						new DefaultKeyboardButton(Scancode.DIK_RMENU), new DefaultKeyboardButton(Scancode.DIK_RWIN),
+						new DefaultKeyboardButton(Scancode.DIK_RCONTROL), new DefaultKeyboardButton(Scancode.DIK_UP),
+						new DefaultKeyboardButton(Scancode.DIK_DOWN), new DefaultKeyboardButton(Scancode.DIK_LEFT),
+						new DefaultKeyboardButton(Scancode.DIK_RIGHT),
+						new NumPadKeyboardButton(Scancode.DIK_NUMPAD0, Scancode.DIK_INSERT),
+						new NumPadKeyboardButton(Scancode.DIK_DECIMAL, Scancode.DIK_DELETE),
+						new DefaultKeyboardButton(Scancode.DIK_NUMPADENTER) } };
 
 		selectedRow = keyboardButtons.length / 2;
 		selectedColumn = keyboardButtons[selectedRow].length / 2;
@@ -260,7 +260,7 @@ public final class OnScreenKeyboard extends JFrame {
 	/// @param directInputKeyCodeName the DirectInput key code name
 	/// @return the display name for the key
 	private static String getDefaultKeyDisplayName(final String directInputKeyCodeName) {
-		if (ScanCode.DIK_SYSRQ.equals(directInputKeyCodeName)) {
+		if (Scancode.DIK_SYSRQ.equals(directInputKeyCodeName)) {
 			return multilineDisplayName("Sys Rq");
 		}
 
@@ -823,8 +823,8 @@ public final class OnScreenKeyboard extends JFrame {
 		/// DirectInput key code name identifying the key this button represents.
 		final String directInputKeyCodeName;
 
-		/// Key stroke sent to the input layer when this button is pressed.
-		private final KeyStroke keyStroke;
+		/// Keystroke sent to the input layer when this button is pressed.
+		private final Keystroke keystroke;
 
 		/// Timestamp in milliseconds when the current press began.
 		private volatile long beginPressTime;
@@ -844,26 +844,26 @@ public final class OnScreenKeyboard extends JFrame {
 
 			this.directInputKeyCodeName = directInputKeyCodeName;
 
-			final ScanCode[] keyScanCodes;
-			final ScanCode[] modifierScanCodes;
+			final Scancode[] keyScancodes;
+			final Scancode[] modifierScancodes;
 
-			final var scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(directInputKeyCodeName);
+			final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(directInputKeyCodeName);
 
-			if (ScanCode.DIK_LMENU.equals(directInputKeyCodeName) || ScanCode.DIK_RMENU.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_RSHIFT.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_LCONTROL.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_RCONTROL.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_LWIN.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_RWIN.equals(directInputKeyCodeName)) {
-				keyScanCodes = new ScanCode[0];
-				modifierScanCodes = new ScanCode[] { scanCode };
+			if (Scancode.DIK_LMENU.equals(directInputKeyCodeName) || Scancode.DIK_RMENU.equals(directInputKeyCodeName)
+					|| Scancode.DIK_LSHIFT.equals(directInputKeyCodeName)
+					|| Scancode.DIK_RSHIFT.equals(directInputKeyCodeName)
+					|| Scancode.DIK_LCONTROL.equals(directInputKeyCodeName)
+					|| Scancode.DIK_RCONTROL.equals(directInputKeyCodeName)
+					|| Scancode.DIK_LWIN.equals(directInputKeyCodeName)
+					|| Scancode.DIK_RWIN.equals(directInputKeyCodeName)) {
+				keyScancodes = new Scancode[0];
+				modifierScancodes = new Scancode[] { scancode };
 			} else {
-				keyScanCodes = new ScanCode[] { scanCode };
-				modifierScanCodes = new ScanCode[0];
+				keyScancodes = new Scancode[] { scancode };
+				modifierScancodes = new Scancode[0];
 			}
 
-			keyStroke = new KeyStroke(keyScanCodes, modifierScanCodes);
+			keystroke = new Keystroke(keyScancodes, modifierScancodes);
 
 			addMouseListener(new MouseListener() {
 
@@ -909,23 +909,23 @@ public final class OnScreenKeyboard extends JFrame {
 			final var preferredSize = super.getPreferredSize();
 
 			if (this instanceof NumPadKeyboardButton) {
-				if (ScanCode.DIK_NUMPAD0.equals(directInputKeyCodeName)) {
+				if (Scancode.DIK_NUMPAD0.equals(directInputKeyCodeName)) {
 					preferredSize.width *= 2;
 				}
-			} else if (ScanCode.DIK_INSERT.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_DELETE.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_INSERT.equals(directInputKeyCodeName)
+					|| Scancode.DIK_DELETE.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 0.75;
-			} else if (ScanCode.DIK_TAB.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_TAB.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 1.5;
-			} else if (ScanCode.DIK_BACKSLASH.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_BACKSLASH.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 2;
-			} else if (ScanCode.DIK_LSHIFT.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_RETURN.equals(directInputKeyCodeName)
-					|| ScanCode.DIK_BACK.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_LSHIFT.equals(directInputKeyCodeName)
+					|| Scancode.DIK_RETURN.equals(directInputKeyCodeName)
+					|| Scancode.DIK_BACK.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 2.5;
-			} else if (ScanCode.DIK_RSHIFT.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_RSHIFT.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 3;
-			} else if (ScanCode.DIK_SPACE.equals(directInputKeyCodeName)) {
+			} else if (Scancode.DIK_SPACE.equals(directInputKeyCodeName)) {
 				preferredSize.width *= 5.5;
 			}
 
@@ -936,17 +936,17 @@ public final class OnScreenKeyboard extends JFrame {
 		boolean poll(final Input input) {
 			if (mouseDown || changed) {
 				if (doDownUp) {
-					input.getDownUpKeyStrokes().add(keyStroke);
+					input.getDownUpKeystrokes().add(keystroke);
 					doDownUp = false;
 				} else {
-					final var downKeyStrokes = input.getDownKeyStrokes();
+					final var downKeystrokes = input.getDownKeystrokes();
 
 					if (heldButtons.contains(this)) {
 						if (System.currentTimeMillis() - beginPressTime >= MIN_REPEAT_PRESS_TIME) {
-							downKeyStrokes.add(keyStroke);
+							downKeystrokes.add(keystroke);
 						}
 					} else {
-						downKeyStrokes.remove(keyStroke);
+						downKeystrokes.remove(keystroke);
 					}
 				}
 
@@ -1231,16 +1231,16 @@ public final class OnScreenKeyboard extends JFrame {
 			}
 		}
 
-		/// Identifies the left or right Shift key by its DirectInput scan code.
+		/// Identifies the left or right Shift key by its DirectInput scancode.
 		///
-		/// Each constant carries the scan code name used to look up the key's
-		/// [KeyStroke] when constructing a [ShiftKeyboardButton].
+		/// Each constant carries the scancode name used to look up the key's
+		/// [Keystroke] when constructing a [ShiftKeyboardButton].
 		private enum ShiftKeyboardButtonType {
 
 			/// Left Shift key.
-			LEFT(ScanCode.DIK_LSHIFT),
+			LEFT(Scancode.DIK_LSHIFT),
 			/// Right Shift key.
-			RIGHT(ScanCode.DIK_RSHIFT);
+			RIGHT(Scancode.DIK_RSHIFT);
 
 			/// DirectInput key code name for this Shift key.
 			private final String directInputKeyCodeName;

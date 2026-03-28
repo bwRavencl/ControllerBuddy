@@ -20,8 +20,8 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Keystroke;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -69,10 +69,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /// Editor builder for keystroke properties, rendering two filterable checkbox
-/// lists for selecting modifier and key scan codes.
+/// lists for selecting modifier and key scancodes.
 ///
 /// Displays a visualization of the resulting key combination that updates
-/// in real time as the user selects or deselects scan codes. Both lists
+/// in real time as the user selects or deselects scancodes. Both lists
 /// support prefix and wildcard filtering to quickly locate specific keys.
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
@@ -90,10 +90,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// Panel displaying a live visualization of the currently selected keystroke.
 	private final JPanel visualizationPanel = new JPanel();
 
-	/// List of selectable normal (non-modifier) key scan codes.
+	/// List of selectable normal (non-modifier) key scancodes.
 	private CheckboxJList<?> keyList;
 
-	/// List of selectable modifier scan codes.
+	/// List of selectable modifier scancodes.
 	private CheckboxJList<?> modifierList;
 
 	/// Constructs a keystroke editor builder for the specified action property.
@@ -111,26 +111,26 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
-	/// Adds a label for each scan code in the list to the given panel.
+	/// Adds a label for each scancode in the list to the given panel.
 	///
 	/// If the list is empty, a horizontal strut of the standard list width is
 	/// added instead, preserving layout spacing. Non-breaking spaces replace
 	/// regular spaces in the label text, so word-wrapping does not occur.
 	///
-	/// @param scanCodes the list of scan codes whose names are displayed
+	/// @param scancodes the list of scancodes whose names are displayed
 	/// @param panel the panel to which the labels are added
-	private static void addScanCodeLabels(final List<?> scanCodes, final JPanel panel) {
-		if (scanCodes.isEmpty()) {
+	private static void addScancodeLabels(final List<?> scancodes, final JPanel panel) {
+		if (scancodes.isEmpty()) {
 			panel.add(Box.createHorizontalStrut(KEY_LIST_SCROLL_PANE_WIDTH));
 			return;
 		}
 
-		scanCodes.stream().map(scanCode -> scanCode.toString().replace(" ", "\u00A0")).forEach(text -> {
-			final var scanCodeLabel = new JLabel(text);
-			scanCodeLabel
-					.setPreferredSize(new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, scanCodeLabel.getMinimumSize().height));
-			scanCodeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-			panel.add(scanCodeLabel);
+		scancodes.stream().map(scancode -> scancode.toString().replace(" ", "\u00A0")).forEach(text -> {
+			final var scancodeLabel = new JLabel(text);
+			scancodeLabel
+					.setPreferredSize(new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, scancodeLabel.getMinimumSize().height));
+			scancodeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+			panel.add(scancodeLabel);
 		});
 	}
 
@@ -160,27 +160,27 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		return -1;
 	}
 
-	/// Builds a labeled, filterable checkbox list for selecting scan codes and
+	/// Builds a labeled, filterable checkbox list for selecting scancodes and
 	/// adds it to the keystroke panel at the given layout constraints.
 	///
-	/// The list is populated with all known scan code names and is wired to a
-	/// selection listener that updates the [KeyStroke] property and refreshes
+	/// The list is populated with all known scancode names and is wired to a
+	/// selection listener that updates the [Keystroke] property and refreshes
 	/// the visualization whenever the selection changes.
 	///
 	/// @param labelKey the resource bundle key for the list header label
-	/// @param keyStroke the keystroke whose property is updated on selection change
+	/// @param keystroke the keystroke whose property is updated on selection change
 	/// @param keystrokePanel the panel to which the list panel is added
 	/// @param constraints the layout constraint string passed to the panel
-	/// @param scanCodeConsumer the consumer that receives the updated scan code
+	/// @param scancodeConsumer the consumer that receives the updated scancode
 	/// array
 	/// @return the constructed [CheckboxJList]
-	private CheckboxJList<String> buildCheckboxList(final String labelKey, final KeyStroke keyStroke,
-			final JPanel keystrokePanel, final String constraints, final Consumer<ScanCode[]> scanCodeConsumer) {
-		final var listData = ScanCode.NAME_TO_SCAN_CODE_MAP.keySet().toArray(String[]::new);
+	private CheckboxJList<String> buildCheckboxList(final String labelKey, final Keystroke keystroke,
+			final JPanel keystrokePanel, final String constraints, final Consumer<Scancode[]> scancodeConsumer) {
+		final var listData = Scancode.NAME_TO_SCAN_CODE_MAP.keySet().toArray(String[]::new);
 
 		final var checkboxList = new CheckboxJList<>(listData);
 		checkboxList.addListSelectionListener(
-				new JListSetPropertyListSelectionListener(setterMethod, keyStroke, scanCodeConsumer));
+				new JListSetPropertyListSelectionListener(setterMethod, keystroke, scancodeConsumer));
 
 		final var checkboxListCellRenderer = new CheckboxListCellRenderer<>(checkboxList);
 		checkboxList.setCellRenderer(checkboxListCellRenderer);
@@ -241,10 +241,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
 		parentPanel.add(keystrokePanel);
 
-		final var keyStroke = (KeyStroke) initialValue;
-		modifierList = buildCheckboxList("MODIFIERS_LABEL", keyStroke, keystrokePanel, BorderLayout.WEST,
-				keyStroke::setModifierCodes);
-		keyList = buildCheckboxList("KEYS_LABEL", keyStroke, keystrokePanel, BorderLayout.EAST, keyStroke::setKeyCodes);
+		final var keystroke = (Keystroke) initialValue;
+		modifierList = buildCheckboxList("MODIFIERS_LABEL", keystroke, keystrokePanel, BorderLayout.WEST,
+				keystroke::setModifierCodes);
+		keyList = buildCheckboxList("KEYS_LABEL", keystroke, keystrokePanel, BorderLayout.EAST, keystroke::setKeyCodes);
 
 		plusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		plusLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -252,20 +252,20 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		visualizationPanel.setLayout(new BoxLayout(visualizationPanel, BoxLayout.X_AXIS));
 		keystrokePanel.add(visualizationPanel, BorderLayout.SOUTH);
 
-		initListSelection(modifierList, keyStroke.getModifierCodes());
-		initListSelection(keyList, keyStroke.getKeyCodes());
+		initListSelection(modifierList, keystroke.getModifierCodes());
+		initListSelection(keyList, keystroke.getKeyCodes());
 
-		updateUpdateKeyStrokeVisualization();
+		updateUpdateKeystrokeVisualization();
 	}
 
-	/// Selects the list items that correspond to the given scan codes and scrolls
+	/// Selects the list items that correspond to the given scancodes and scrolls
 	/// to the first selected item.
 	///
 	/// @param list the list in which to apply the selection
-	/// @param scanCodes the scan codes that should be selected
-	private void initListSelection(final JList<?> list, final ScanCode[] scanCodes) {
-		Arrays.stream(scanCodes).map(ScanCode::name).forEach(scanCodeName -> {
-			final var index = getListModelIndex(list.getModel(), scanCodeName);
+	/// @param scancodes the scancodes that should be selected
+	private void initListSelection(final JList<?> list, final Scancode[] scancodes) {
+		Arrays.stream(scancodes).map(Scancode::name).forEach(scancodeName -> {
+			final var index = getListModelIndex(list.getModel(), scancodeName);
 			if (index >= 0) {
 				list.addSelectionInterval(index, index);
 			}
@@ -281,9 +281,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// and key selections.
 	///
 	/// Clears the visualization panel and repopulates it with labels for the
-	/// currently selected modifier and key scan codes, separated by a "+" label
+	/// currently selected modifier and key scancodes, separated by a "+" label
 	/// when both modifiers and keys are selected.
-	private void updateUpdateKeyStrokeVisualization() {
+	private void updateUpdateKeystrokeVisualization() {
 		visualizationPanel.removeAll();
 
 		final var selectedModifiersList = modifierList != null ? modifierList.getSelectedValuesList() : List.of();
@@ -292,7 +292,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var modifierVisualizationPanel = new JPanel();
 		modifierVisualizationPanel.setLayout(new BoxLayout(modifierVisualizationPanel, BoxLayout.Y_AXIS));
-		addScanCodeLabels(selectedModifiersList, modifierVisualizationPanel);
+		addScancodeLabels(selectedModifiersList, modifierVisualizationPanel);
 		visualizationPanel.add(modifierVisualizationPanel);
 
 		visualizationPanel.add(Box.createHorizontalGlue());
@@ -309,7 +309,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		final var keyVisualizationPanel = new JPanel();
 		keyVisualizationPanel.setLayout(new BoxLayout(keyVisualizationPanel, BoxLayout.Y_AXIS));
-		addScanCodeLabels(selectedKeysList, keyVisualizationPanel);
+		addScancodeLabels(selectedKeysList, keyVisualizationPanel);
 		visualizationPanel.add(keyVisualizationPanel);
 
 		visualizationPanel.revalidate();
@@ -640,54 +640,54 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		}
 	}
 
-	/// Selection listener that converts the selected list items to [ScanCode]
-	/// values, updates the [KeyStroke] property, and refreshes the keystroke
+	/// Selection listener that converts the selected list items to [Scancode]
+	/// values, updates the [Keystroke] property, and refreshes the keystroke
 	/// visualization.
 	///
-	/// Invokes the action's setter method with the updated [KeyStroke] each time
+	/// Invokes the action's setter method with the updated [Keystroke] each time
 	/// the user changes the selection in the modifier or key list, keeping the
 	/// action property and the visualization panel in sync.
 	private final class JListSetPropertyListSelectionListener implements ListSelectionListener {
 
 		/// The keystroke being edited by this listener.
-		private final KeyStroke keyStroke;
+		private final Keystroke keystroke;
 
-		/// Consumer that receives the updated array of scan codes.
-		private final Consumer<ScanCode[]> scanCodeConsumer;
+		/// Consumer that receives the updated array of scancodes.
+		private final Consumer<Scancode[]> scancodeConsumer;
 
 		/// The setter method to invoke with the updated keystroke.
 		private final Method setterMethod;
 
-		/// Constructs the listener with the setter method, keystroke, and scan code
+		/// Constructs the listener with the setter method, keystroke, and scancode
 		/// consumer.
 		///
 		/// @param setterMethod the setter method to invoke with the updated keystroke
-		/// @param keyStroke the keystroke object that is updated and passed to the
+		/// @param keystroke the keystroke object that is updated and passed to the
 		/// setter
-		/// @param scanCodeConsumer the consumer that receives the new scan code array
+		/// @param scancodeConsumer the consumer that receives the new scancode array
 		/// on
 		/// each selection change
-		private JListSetPropertyListSelectionListener(final Method setterMethod, final KeyStroke keyStroke,
-				final Consumer<ScanCode[]> scanCodeConsumer) {
+		private JListSetPropertyListSelectionListener(final Method setterMethod, final Keystroke keystroke,
+				final Consumer<Scancode[]> scancodeConsumer) {
 			this.setterMethod = setterMethod;
-			this.keyStroke = keyStroke;
-			this.scanCodeConsumer = scanCodeConsumer;
+			this.keystroke = keystroke;
+			this.scancodeConsumer = scancodeConsumer;
 		}
 
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			try {
-				final Set<ScanCode> scanCodes = new HashSet<>();
+				final Set<Scancode> scancodes = new HashSet<>();
 
 				// noinspection SuspiciousMethodCalls
 				((JList<?>) e.getSource()).getSelectedValuesList()
-						.forEach(object -> scanCodes.add(ScanCode.NAME_TO_SCAN_CODE_MAP.get(object)));
+						.forEach(object -> scancodes.add(Scancode.NAME_TO_SCAN_CODE_MAP.get(object)));
 
-				scanCodeConsumer.accept(scanCodes.toArray(ScanCode[]::new));
+				scancodeConsumer.accept(scancodes.toArray(Scancode[]::new));
 
-				setterMethod.invoke(action, keyStroke);
+				setterMethod.invoke(action, keystroke);
 
-				updateUpdateKeyStrokeVisualization();
+				updateUpdateKeystrokeVisualization();
 				onNewValueSet();
 			} catch (final IllegalAccessException | InvocationTargetException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);

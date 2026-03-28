@@ -25,9 +25,9 @@ import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.DeviceType;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice.Event;
@@ -84,43 +84,43 @@ public abstract class OutputRunMode extends RunMode {
 	private static final int WHEEL_DELTA = 120;
 
 	/// Keystrokes that should be pressed and immediately released this cycle.
-	final Set<KeyStroke> downUpKeyStrokes = new HashSet<>();
+	final Set<Keystroke> downUpKeystrokes = new HashSet<>();
 
 	/// Mouse buttons that should be pressed and immediately released this cycle.
 	final Set<Integer> downUpMouseButtons = new HashSet<>();
 
-	/// Modifier scan codes newly pressed since the last output cycle.
-	final Set<ScanCode> newDownModifiers = new HashSet<>();
+	/// Modifier scancodes newly pressed since the last output cycle.
+	final Set<Scancode> newDownModifiers = new HashSet<>();
 
 	/// Mouse buttons newly pressed since the last output cycle.
 	final Set<Integer> newDownMouseButtons = new HashSet<>();
 
-	/// Normal (non-modifier) key scan codes newly pressed since the last output
+	/// Normal (non-modifier) key scancodes newly pressed since the last output
 	/// cycle.
-	final Set<ScanCode> newDownNormalKeys = new HashSet<>();
+	final Set<Scancode> newDownNormalKeys = new HashSet<>();
 
-	/// Modifier scan codes newly released since the last output cycle.
-	final Set<ScanCode> newUpModifiers = new HashSet<>();
+	/// Modifier scancodes newly released since the last output cycle.
+	final Set<Scancode> newUpModifiers = new HashSet<>();
 
 	/// Mouse buttons newly released since the last output cycle.
 	final Set<Integer> newUpMouseButtons = new HashSet<>();
 
-	/// Normal (non-modifier) key scan codes newly released since the last output
+	/// Normal (non-modifier) key scancodes newly released since the last output
 	/// cycle.
-	final Set<ScanCode> newUpNormalKeys = new HashSet<>();
+	final Set<Scancode> newUpNormalKeys = new HashSet<>();
 
 	/// Lock keys that should be turned off this cycle.
 	final Set<LockKey> offLockKeys = new HashSet<>();
 
-	/// Modifier scan codes that were pressed in the previous output cycle.
-	final Set<ScanCode> oldDownModifiers = new HashSet<>();
+	/// Modifier scancodes that were pressed in the previous output cycle.
+	final Set<Scancode> oldDownModifiers = new HashSet<>();
 
 	/// Mouse buttons that were pressed in the previous output cycle.
 	final Set<Integer> oldDownMouseButtons = new HashSet<>();
 
-	/// Normal (non-modifier) key scan codes that were pressed in the previous
+	/// Normal (non-modifier) key scancodes that were pressed in the previous
 	/// output cycle.
-	final Set<ScanCode> oldDownNormalKeys = new HashSet<>();
+	final Set<Scancode> oldDownNormalKeys = new HashSet<>();
 
 	/// Lock keys that should be turned on this cycle.
 	final Set<LockKey> onLockKeys = new HashSet<>();
@@ -296,17 +296,17 @@ public abstract class OutputRunMode extends RunMode {
 			}
 		}
 
-		for (final var scanCode : oldDownNormalKeys) {
+		for (final var scancode : oldDownNormalKeys) {
 			try {
-				doKeyboardInput(scanCode, false);
+				doKeyboardInput(scancode, false);
 			} catch (final IOException e) {
 				LOGGER.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 
-		for (final var scanCode : oldDownModifiers) {
+		for (final var scancode : oldDownModifiers) {
 			try {
-				doKeyboardInput(scanCode, false);
+				doKeyboardInput(scancode, false);
 			} catch (final IOException e) {
 				LOGGER.log(Level.WARNING, e.getMessage(), e);
 			}
@@ -360,23 +360,23 @@ public abstract class OutputRunMode extends RunMode {
 		});
 	}
 
-	/// Sends a keyboard key press or release event for the given scan code.
+	/// Sends a keyboard key press or release event for the given scancode.
 	///
-	/// On Windows this uses `SendInput` with the scan code; on Linux it emits
+	/// On Windows this uses `SendInput` with the scancode; on Linux it emits
 	/// the corresponding uinput event to the keyboard device.
 	///
-	/// @param scanCode the scan code of the key to press or release
+	/// @param scancode the scancode of the key to press or release
 	/// @param down `true` to press the key, `false` to release it
 	/// @throws IOException if sending the input event fails
-	private void doKeyboardInput(final ScanCode scanCode, final boolean down) throws IOException {
+	private void doKeyboardInput(final Scancode scancode, final boolean down) throws IOException {
 		if (Main.IS_WINDOWS) {
 			try (final var arena = Arena.ofConfined()) {
 				final var input = arena.allocate(INPUT.LAYOUT);
 				INPUT.setType(input, INPUT.INPUT_KEYBOARD);
 				final var ki = INPUT.getKi(input);
-				INPUT.KEYBDINPUT.setWScan(ki, (short) scanCode.keyCode());
+				INPUT.KEYBDINPUT.setWScan(ki, (short) scancode.keyCode());
 				var flags = (down ? 0 : INPUT.KEYBDINPUT.KEYEVENTF_KEYUP) | INPUT.KEYBDINPUT.KEYEVENTF_SCANCODE;
-				if (ScanCode.EXTENDED_KEY_SCAN_CODES_SET.contains(scanCode.keyCode())) {
+				if (Scancode.EXTENDED_KEY_SCAN_CODES_SET.contains(scancode.keyCode())) {
 					flags |= INPUT.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY;
 				}
 				INPUT.KEYBDINPUT.setDwFlags(ki, flags);
@@ -384,7 +384,7 @@ public abstract class OutputRunMode extends RunMode {
 				sendInputChecked(input);
 			}
 		} else if (Main.IS_LINUX) {
-			keyboardUinputDevice.emit(scanCode.event(), down ? 1 : 0, true);
+			keyboardUinputDevice.emit(scancode.event(), down ? 1 : 0, true);
 		} else {
 			throw buildNotImplementedException();
 		}
@@ -962,47 +962,47 @@ public abstract class OutputRunMode extends RunMode {
 				doMouseButtonInput(mouseButton, false);
 			}
 
-			for (final var scanCode : newUpNormalKeys) {
-				doKeyboardInput(scanCode, false);
+			for (final var scancode : newUpNormalKeys) {
+				doKeyboardInput(scancode, false);
 			}
 
-			for (final var scanCode : newUpModifiers) {
-				doKeyboardInput(scanCode, false);
+			for (final var scancode : newUpModifiers) {
+				doKeyboardInput(scancode, false);
 			}
 
-			for (final var scanCode : offLockKeys) {
-				setLockKeyState(scanCode, false);
+			for (final var scancode : offLockKeys) {
+				setLockKeyState(scancode, false);
 			}
 
-			for (final var scanCode : onLockKeys) {
-				setLockKeyState(scanCode, true);
+			for (final var scancode : onLockKeys) {
+				setLockKeyState(scancode, true);
 			}
 
-			for (final var scanCode : newDownModifiers) {
-				doKeyboardInput(scanCode, true);
+			for (final var scancode : newDownModifiers) {
+				doKeyboardInput(scancode, true);
 			}
 
 			final var currentTime = System.currentTimeMillis();
 			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
-				for (final var scanCode : newDownNormalKeys) {
-					doKeyboardInput(scanCode, true);
+				for (final var scancode : newDownNormalKeys) {
+					doKeyboardInput(scancode, true);
 				}
 
 				prevKeyInputTime = currentTime;
 			}
 
-			for (final var keyStroke : downUpKeyStrokes) {
-				for (final var scanCode : keyStroke.getModifierCodes()) {
-					doKeyboardInput(scanCode, true);
+			for (final var keystroke : downUpKeystrokes) {
+				for (final var scancode : keystroke.getModifierCodes()) {
+					doKeyboardInput(scancode, true);
 				}
 
-				for (final var scanCode : keyStroke.getKeyCodes()) {
-					doKeyboardInput(scanCode, true);
-					doKeyboardInput(scanCode, false);
+				for (final var scancode : keystroke.getKeyCodes()) {
+					doKeyboardInput(scancode, true);
+					doKeyboardInput(scancode, false);
 				}
 
-				for (final var scanCode : keyStroke.getModifierCodes()) {
-					doKeyboardInput(scanCode, false);
+				for (final var scancode : keystroke.getModifierCodes()) {
+					doKeyboardInput(scancode, false);
 				}
 			}
 

@@ -20,16 +20,16 @@ package de.bwravencl.controllerbuddy.json;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ScanCodeAdapterTest {
+class ScancodeAdapterTest {
 
-	private static ScanCodeAdapter createAdapter() {
-		return new ScanCodeAdapter();
+	private static ScancodeAdapter createAdapter() {
+		return new ScancodeAdapter();
 	}
 
 	@Nested
@@ -40,8 +40,8 @@ class ScanCodeAdapterTest {
 		@DisplayName("deserializes ESCAPE from its name string")
 		void deserializesEscapeFromName() {
 			final var adapter = createAdapter();
-			final var expected = ScanCode.NAME_TO_SCAN_CODE_MAP.get(ScanCode.DIK_ESCAPE);
-			final var result = adapter.deserialize(new JsonPrimitive(ScanCode.DIK_ESCAPE), ScanCode.class, null);
+			final var expected = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_ESCAPE);
+			final var result = adapter.deserialize(new JsonPrimitive(Scancode.DIK_ESCAPE), Scancode.class, null);
 			Assertions.assertSame(expected, result);
 		}
 
@@ -49,8 +49,8 @@ class ScanCodeAdapterTest {
 		@DisplayName("deserializes a JSON number by looking up the key code in KEY_CODE_TO_SCAN_CODE_MAP")
 		void deserializesFromKeyCode() {
 			final var adapter = createAdapter();
-			final var expected = ScanCode.NAME_TO_SCAN_CODE_MAP.get(ScanCode.DIK_A);
-			final var result = adapter.deserialize(new JsonPrimitive(expected.keyCode()), ScanCode.class, null);
+			final var expected = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			final var result = adapter.deserialize(new JsonPrimitive(expected.keyCode()), Scancode.class, null);
 			Assertions.assertSame(expected, result);
 		}
 
@@ -58,8 +58,8 @@ class ScanCodeAdapterTest {
 		@DisplayName("deserializes a JSON string by looking up the name in NAME_TO_SCAN_CODE_MAP")
 		void deserializesFromStringName() {
 			final var adapter = createAdapter();
-			final var expected = ScanCode.NAME_TO_SCAN_CODE_MAP.get(ScanCode.DIK_A);
-			final var result = adapter.deserialize(new JsonPrimitive(ScanCode.DIK_A), ScanCode.class, null);
+			final var expected = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			final var result = adapter.deserialize(new JsonPrimitive(Scancode.DIK_A), Scancode.class, null);
 			Assertions.assertSame(expected, result);
 		}
 
@@ -68,7 +68,7 @@ class ScanCodeAdapterTest {
 		void throwsForNonPrimitiveJson() {
 			final var adapter = createAdapter();
 			Assertions.assertThrows(JsonParseException.class,
-					() -> adapter.deserialize(new JsonObject(), ScanCode.class, null));
+					() -> adapter.deserialize(new JsonObject(), Scancode.class, null));
 		}
 
 		@Test
@@ -76,15 +76,15 @@ class ScanCodeAdapterTest {
 		void throwsForUnknownKeyCode() {
 			final var adapter = createAdapter();
 			Assertions.assertThrows(JsonParseException.class,
-					() -> adapter.deserialize(new JsonPrimitive(-1), ScanCode.class, null));
+					() -> adapter.deserialize(new JsonPrimitive(-1), Scancode.class, null));
 		}
 
 		@Test
-		@DisplayName("throws JsonParseException when the string does not match any known scan code name")
+		@DisplayName("throws JsonParseException when the string does not match any known scancode name")
 		void throwsForUnknownStringName() {
 			final var adapter = createAdapter();
 			Assertions.assertThrows(JsonParseException.class,
-					() -> adapter.deserialize(new JsonPrimitive("DIK_UNKNOWN_KEY"), ScanCode.class, null));
+					() -> adapter.deserialize(new JsonPrimitive("DIK_UNKNOWN_KEY"), Scancode.class, null));
 		}
 	}
 
@@ -93,22 +93,22 @@ class ScanCodeAdapterTest {
 	class SerializeTests {
 
 		@Test
-		@DisplayName("returns a JsonPrimitive containing the scan code's name")
+		@DisplayName("returns a JsonPrimitive containing the scancode's name")
 		void serializesAsName() {
 			final var adapter = createAdapter();
-			final var scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(ScanCode.DIK_A);
-			final var result = adapter.serialize(scanCode, ScanCode.class, null);
+			final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			final var result = adapter.serialize(scancode, Scancode.class, null);
 			Assertions.assertInstanceOf(JsonPrimitive.class, result);
-			Assertions.assertEquals(ScanCode.DIK_A, result.getAsString());
+			Assertions.assertEquals(Scancode.DIK_A, result.getAsString());
 		}
 
 		@Test
-		@DisplayName("serializes ESCAPE scan code as its name string")
+		@DisplayName("serializes ESCAPE scancode as its name string")
 		void serializesEscapeAsName() {
 			final var adapter = createAdapter();
-			final var scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(ScanCode.DIK_ESCAPE);
-			final var result = adapter.serialize(scanCode, ScanCode.class, null);
-			Assertions.assertEquals(ScanCode.DIK_ESCAPE, result.getAsString());
+			final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_ESCAPE);
+			final var result = adapter.serialize(scancode, Scancode.class, null);
+			Assertions.assertEquals(Scancode.DIK_ESCAPE, result.getAsString());
 		}
 	}
 }

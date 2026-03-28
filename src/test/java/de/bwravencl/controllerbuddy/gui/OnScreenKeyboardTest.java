@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.input.LockKey;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,46 +52,46 @@ class OnScreenKeyboardTest {
 		@DisplayName("DIK_SYSRQ returns a multiline HTML display name")
 		void dikSysrqReturnsMultilineDisplayName() throws ReflectiveOperationException {
 			Assertions.assertEquals("<html><center>Sys<br>Rq</center></html>",
-					invokeGetDefaultKeyDisplayName(ScanCode.DIK_SYSRQ));
+					invokeGetDefaultKeyDisplayName(Scancode.DIK_SYSRQ));
 		}
 
 		@Test
 		@DisplayName("Down Arrow key name is converted to the ↓ character")
 		void downArrowKeyConvertsToUnicodeArrow() throws ReflectiveOperationException {
-			Assertions.assertEquals("↓", invokeGetDefaultKeyDisplayName(ScanCode.DIK_DOWN));
+			Assertions.assertEquals("↓", invokeGetDefaultKeyDisplayName(Scancode.DIK_DOWN));
 		}
 
 		@Test
 		@DisplayName("'L ' prefix is stripped from key name")
 		void lPrefixIsStripped() throws ReflectiveOperationException {
 			// DIK_LCONTROL = "L Ctrl" → "Ctrl"
-			Assertions.assertEquals("Ctrl", invokeGetDefaultKeyDisplayName(ScanCode.DIK_LCONTROL));
+			Assertions.assertEquals("Ctrl", invokeGetDefaultKeyDisplayName(Scancode.DIK_LCONTROL));
 		}
 
 		@Test
 		@DisplayName("Left Arrow key name is converted to the ← character")
 		void leftArrowKeyConvertsToUnicodeArrow() throws ReflectiveOperationException {
-			Assertions.assertEquals("←", invokeGetDefaultKeyDisplayName(ScanCode.DIK_LEFT));
+			Assertions.assertEquals("←", invokeGetDefaultKeyDisplayName(Scancode.DIK_LEFT));
 		}
 
 		@Test
 		@DisplayName("'Num' prefix is stripped from numpad key name")
 		void numPrefixIsStripped() throws ReflectiveOperationException {
 			// DIK_NUMPAD7 = "Num7" → "7"
-			Assertions.assertEquals("7", invokeGetDefaultKeyDisplayName(ScanCode.DIK_NUMPAD7));
+			Assertions.assertEquals("7", invokeGetDefaultKeyDisplayName(Scancode.DIK_NUMPAD7));
 		}
 
 		@Test
 		@DisplayName("'R ' prefix is stripped from key name")
 		void rPrefixIsStripped() throws ReflectiveOperationException {
 			// DIK_RCONTROL = "R Ctrl" → "Ctrl"
-			Assertions.assertEquals("Ctrl", invokeGetDefaultKeyDisplayName(ScanCode.DIK_RCONTROL));
+			Assertions.assertEquals("Ctrl", invokeGetDefaultKeyDisplayName(Scancode.DIK_RCONTROL));
 		}
 
 		@Test
 		@DisplayName("Right Arrow key name is converted to the → character")
 		void rightArrowKeyConvertsToUnicodeArrow() throws ReflectiveOperationException {
-			Assertions.assertEquals("→", invokeGetDefaultKeyDisplayName(ScanCode.DIK_RIGHT));
+			Assertions.assertEquals("→", invokeGetDefaultKeyDisplayName(Scancode.DIK_RIGHT));
 		}
 
 		@Test
@@ -111,7 +111,7 @@ class OnScreenKeyboardTest {
 		@Test
 		@DisplayName("Up Arrow key name is converted to the ↑ character")
 		void upArrowKeyConvertsToUnicodeArrow() throws ReflectiveOperationException {
-			Assertions.assertEquals("↑", invokeGetDefaultKeyDisplayName(ScanCode.DIK_UP));
+			Assertions.assertEquals("↑", invokeGetDefaultKeyDisplayName(Scancode.DIK_UP));
 		}
 	}
 

@@ -24,46 +24,46 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import java.lang.reflect.Type;
 
-/// Gson type adapter for serializing and deserializing [ScanCode] instances.
+/// Gson type adapter for serializing and deserializing [Scancode] instances.
 ///
 /// Supports deserializing from either a JSON number (key code) or a JSON string
-/// (scan code name). Serializes a [ScanCode] using its name.
-public final class ScanCodeAdapter implements JsonSerializer<ScanCode>, JsonDeserializer<ScanCode> {
+/// (scancode name). Serializes a [Scancode] using its name.
+public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDeserializer<Scancode> {
 
-	/// Deserializes a [ScanCode] from a JSON element.
+	/// Deserializes a [Scancode] from a JSON element.
 	///
 	/// Accepts either a numeric key code or a string name to look up the
-	/// corresponding [ScanCode]. Throws [JsonParseException] if no matching scan
+	/// corresponding [Scancode]. Throws [JsonParseException] if no matching scan
 	/// code is found.
 	///
 	/// @param json the JSON element to deserialize
 	/// @param typeOfT the target type
 	/// @param context the deserialization context
-	/// @return the deserialized [ScanCode]
+	/// @return the deserialized [Scancode]
 	@Override
-	public ScanCode deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+	public Scancode deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
 			throws JsonParseException {
 		try {
-			ScanCode scanCode = null;
+			Scancode scancode = null;
 			if (json.isJsonPrimitive()) {
 				final var jsonPrimitive = (JsonPrimitive) json;
 
 				if (jsonPrimitive.isNumber()) {
-					scanCode = ScanCode.KEY_CODE_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsInt());
+					scancode = Scancode.KEY_CODE_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsInt());
 				} else if (jsonPrimitive.isString()) {
-					scanCode = ScanCode.NAME_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsString());
+					scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(jsonPrimitive.getAsString());
 				}
 			}
 
-			if (scanCode == null) {
+			if (scancode == null) {
 				throw new JsonParseException(
-						"Could not deserialize as " + ScanCode.class.getSimpleName() + ": " + json);
+						"Could not deserialize as " + Scancode.class.getSimpleName() + ": " + json);
 			}
 
-			return scanCode;
+			return scancode;
 		} catch (final JsonParseException e) {
 			throw e;
 		} catch (final Throwable t) {
@@ -71,14 +71,14 @@ public final class ScanCodeAdapter implements JsonSerializer<ScanCode>, JsonDese
 		}
 	}
 
-	/// Serializes a [ScanCode] as a JSON primitive containing its name.
+	/// Serializes a [Scancode] as a JSON primitive containing its name.
 	///
-	/// @param src the scan code to serialize
+	/// @param src the scancode to serialize
 	/// @param typeOfSrc the source type
 	/// @param context the serialization context
-	/// @return a [JsonPrimitive] containing the scan code name
+	/// @return a [JsonPrimitive] containing the scancode name
 	@Override
-	public JsonElement serialize(final ScanCode src, final Type typeOfSrc, final JsonSerializationContext context) {
+	public JsonElement serialize(final Scancode src, final Type typeOfSrc, final JsonSerializationContext context) {
 		return new JsonPrimitive(src.name());
 	}
 }

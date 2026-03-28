@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.ScanCode;
+import de.bwravencl.controllerbuddy.input.Scancode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,11 +34,11 @@ public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger LOGGER = Logger.getLogger(LocalRunMode.class.getName());
 
-	/// Set of normal (non-modifier) scan codes active in the current output cycle.
-	private final HashSet<ScanCode> sourceKeyCodes = new HashSet<>();
+	/// Set of normal (non-modifier) scancodes active in the current output cycle.
+	private final HashSet<Scancode> sourceKeyCodes = new HashSet<>();
 
-	/// Set of modifier scan codes active in the current output cycle.
-	private final HashSet<ScanCode> sourceModifiersCodes = new HashSet<>();
+	/// Set of modifier scancodes active in the current output cycle.
+	private final HashSet<Scancode> sourceModifiersCodes = new HashSet<>();
 
 	/// Creates a new local run mode.
 	///
@@ -110,18 +110,18 @@ public final class LocalRunMode extends OutputRunMode {
 
 		sourceModifiersCodes.clear();
 		sourceKeyCodes.clear();
-		input.getDownKeyStrokes().forEach(keyStroke -> {
-			sourceModifiersCodes.addAll(Arrays.asList(keyStroke.getModifierCodes()));
-			sourceKeyCodes.addAll(Arrays.asList(keyStroke.getKeyCodes()));
+		input.getDownKeystrokes().forEach(keystroke -> {
+			sourceModifiersCodes.addAll(Arrays.asList(keystroke.getModifierCodes()));
+			sourceKeyCodes.addAll(Arrays.asList(keystroke.getKeyCodes()));
 		});
 
 		updateOutputSets(sourceModifiersCodes, oldDownModifiers, newUpModifiers, newDownModifiers, false);
 		updateOutputSets(sourceKeyCodes, oldDownNormalKeys, newUpNormalKeys, newDownNormalKeys, true);
 
-		downUpKeyStrokes.clear();
-		final var inputDownUpKeyStrokes = input.getDownUpKeyStrokes();
-		downUpKeyStrokes.addAll(inputDownUpKeyStrokes);
-		inputDownUpKeyStrokes.clear();
+		downUpKeystrokes.clear();
+		final var inputDownUpKeystrokes = input.getDownUpKeystrokes();
+		downUpKeystrokes.addAll(inputDownUpKeystrokes);
+		inputDownUpKeystrokes.clear();
 
 		scrollClicks = input.getScrollClicks();
 		input.setScrollClicks(0);

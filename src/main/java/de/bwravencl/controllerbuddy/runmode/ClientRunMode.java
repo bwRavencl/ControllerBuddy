@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode.MessageType;
 import java.awt.EventQueue;
@@ -300,7 +300,7 @@ public final class ClientRunMode extends OutputRunMode {
 											clazz -> clazz == null || clazz.isArray() || clazz == Number.class
 													|| clazz == Integer.class || clazz == Enum.class
 													|| clazz == HashSet.class || clazz == EnumMap.class
-													|| clazz == VirtualAxis.class || clazz == KeyStroke.class,
+													|| clazz == VirtualAxis.class || clazz == Keystroke.class,
 											Status.REJECTED));
 
 							if (newCounter > counter) {
@@ -329,19 +329,19 @@ public final class ClientRunMode extends OutputRunMode {
 								downUpMouseButtons.clear();
 								downUpMouseButtons.addAll((Set<Integer>) objectInputStream.readObject());
 
-								final var downKeyStrokes = (Set<KeyStroke>) objectInputStream.readObject();
-								final var inputDownModifiers = downKeyStrokes.stream().map(KeyStroke::getModifierCodes)
+								final var downKeystrokes = (Set<Keystroke>) objectInputStream.readObject();
+								final var inputDownModifiers = downKeystrokes.stream().map(Keystroke::getModifierCodes)
 										.flatMap(Stream::of).collect(Collectors.toSet());
 								updateOutputSets(inputDownModifiers, oldDownModifiers, newUpModifiers, newDownModifiers,
 										false);
 
-								final var inputDownNormalKeys = downKeyStrokes.stream().map(KeyStroke::getKeyCodes)
+								final var inputDownNormalKeys = downKeystrokes.stream().map(Keystroke::getKeyCodes)
 										.flatMap(Stream::of).collect(Collectors.toSet());
 								updateOutputSets(inputDownNormalKeys, oldDownNormalKeys, newUpNormalKeys,
 										newDownNormalKeys, true);
 
-								downUpKeyStrokes.clear();
-								downUpKeyStrokes.addAll((Set<KeyStroke>) objectInputStream.readObject());
+								downUpKeystrokes.clear();
+								downUpKeystrokes.addAll((Set<Keystroke>) objectInputStream.readObject());
 
 								scrollClicks = objectInputStream.readInt();
 

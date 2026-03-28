@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.KeyStroke;
+import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashSet;
@@ -50,16 +50,16 @@ class ToKeyActionTest {
 	class AlwaysTests {
 
 		@Test
-		@DisplayName("always adds to downUpKeyStrokes regardless of hot value")
+		@DisplayName("always adds to downUpKeystrokes regardless of hot value")
 		void alwaysAddsKeystroke() {
 			final var action = new ButtonToKeyAction();
 			action.setActivatable(Activatable.ALWAYS);
-			action.setKeystroke(new KeyStroke());
-			final var downUpKeyStrokes = new HashSet<KeyStroke>();
-			Mockito.when(mockInput.getDownUpKeyStrokes()).thenReturn(downUpKeyStrokes);
+			action.setKeystroke(new Keystroke());
+			final var downUpKeystrokes = new HashSet<Keystroke>();
+			Mockito.when(mockInput.getDownUpKeystrokes()).thenReturn(downUpKeystrokes);
 
 			action.handleAction(false, mockInput);
-			Assertions.assertEquals(1, downUpKeyStrokes.size());
+			Assertions.assertEquals(1, downUpKeystrokes.size());
 		}
 	}
 
@@ -69,24 +69,24 @@ class ToKeyActionTest {
 
 		private ButtonToKeyAction action;
 
-		private Set<KeyStroke> downUpKeyStrokes;
+		private Set<Keystroke> downUpKeystrokes;
 
 		@Test
 		@DisplayName("fires downUp keystroke on first press transition")
 		void firesOnFirstPress() {
 			action.handleAction(true, mockInput);
-			Assertions.assertEquals(1, downUpKeyStrokes.size());
+			Assertions.assertEquals(1, downUpKeystrokes.size());
 		}
 
 		@Test
 		@DisplayName("release re-arms for the next press")
 		void releaseRearms() {
 			action.handleAction(true, mockInput);
-			downUpKeyStrokes.clear();
+			downUpKeystrokes.clear();
 
 			action.handleAction(false, mockInput);
 			action.handleAction(true, mockInput);
-			Assertions.assertEquals(1, downUpKeyStrokes.size());
+			Assertions.assertEquals(1, downUpKeystrokes.size());
 		}
 
 		@BeforeEach
@@ -94,19 +94,19 @@ class ToKeyActionTest {
 			action = new ButtonToKeyAction();
 			action.setActivation(Activation.ON_PRESS);
 			action.setActivatable(Activatable.YES);
-			action.setKeystroke(new KeyStroke());
-			downUpKeyStrokes = new HashSet<>();
-			Mockito.when(mockInput.getDownUpKeyStrokes()).thenReturn(downUpKeyStrokes);
+			action.setKeystroke(new Keystroke());
+			downUpKeystrokes = new HashSet<>();
+			Mockito.when(mockInput.getDownUpKeystrokes()).thenReturn(downUpKeystrokes);
 		}
 
 		@Test
 		@DisplayName("sustained press does not fire again")
 		void sustainedPressDoesNotRepeat() {
 			action.handleAction(true, mockInput);
-			downUpKeyStrokes.clear();
+			downUpKeystrokes.clear();
 
 			action.handleAction(true, mockInput);
-			Assertions.assertTrue(downUpKeyStrokes.isEmpty());
+			Assertions.assertTrue(downUpKeystrokes.isEmpty());
 		}
 	}
 
@@ -116,7 +116,7 @@ class ToKeyActionTest {
 
 		private ButtonToKeyAction action;
 
-		private Set<KeyStroke> downUpKeyStrokes;
+		private Set<Keystroke> downUpKeystrokes;
 
 		@Test
 		@DisplayName("DENIED_BY_OTHER_ACTION transitions to NO, does not fire on release")
@@ -124,7 +124,7 @@ class ToKeyActionTest {
 			action.setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
 			action.handleAction(true, mockInput);
 			action.handleAction(false, mockInput);
-			Assertions.assertTrue(downUpKeyStrokes.isEmpty());
+			Assertions.assertTrue(downUpKeystrokes.isEmpty());
 		}
 
 		@Test
@@ -132,7 +132,7 @@ class ToKeyActionTest {
 		void firesOnRelease() {
 			action.handleAction(true, mockInput);
 			action.handleAction(false, mockInput);
-			Assertions.assertEquals(1, downUpKeyStrokes.size());
+			Assertions.assertEquals(1, downUpKeystrokes.size());
 		}
 
 		@BeforeEach
@@ -140,9 +140,9 @@ class ToKeyActionTest {
 			action = new ButtonToKeyAction();
 			action.setActivation(Activation.ON_RELEASE);
 			action.setActivatable(Activatable.NO);
-			action.setKeystroke(new KeyStroke());
-			downUpKeyStrokes = new HashSet<>();
-			Mockito.lenient().when(mockInput.getDownUpKeyStrokes()).thenReturn(downUpKeyStrokes);
+			action.setKeystroke(new Keystroke());
+			downUpKeystrokes = new HashSet<>();
+			Mockito.lenient().when(mockInput.getDownUpKeystrokes()).thenReturn(downUpKeystrokes);
 		}
 	}
 
@@ -152,30 +152,30 @@ class ToKeyActionTest {
 
 		private ButtonToKeyAction action;
 
-		private Set<KeyStroke> downKeyStrokes;
+		private Set<Keystroke> downKeystrokes;
 
 		@Test
-		@DisplayName("adds keystroke to downKeyStrokes while hot")
+		@DisplayName("adds keystroke to downKeystrokes while hot")
 		void addsKeystrokeWhileHot() {
 			action.handleAction(true, mockInput);
-			Assertions.assertTrue(downKeyStrokes.contains(action.getKeystroke()));
+			Assertions.assertTrue(downKeystrokes.contains(action.getKeystroke()));
 		}
 
 		@Test
 		@DisplayName("does not remove keystroke if it was never pressed")
 		void doesNotRemoveIfNeverPressed() {
 			action.handleAction(false, mockInput);
-			Assertions.assertTrue(downKeyStrokes.isEmpty());
+			Assertions.assertTrue(downKeystrokes.isEmpty());
 		}
 
 		@Test
-		@DisplayName("removes keystroke from downKeyStrokes when hot becomes false after being down")
+		@DisplayName("removes keystroke from downKeystrokes when hot becomes false after being down")
 		void removesKeystrokeOnRelease() {
 			action.handleAction(true, mockInput);
-			Assertions.assertTrue(downKeyStrokes.contains(action.getKeystroke()));
+			Assertions.assertTrue(downKeystrokes.contains(action.getKeystroke()));
 
 			action.handleAction(false, mockInput);
-			Assertions.assertFalse(downKeyStrokes.contains(action.getKeystroke()));
+			Assertions.assertFalse(downKeystrokes.contains(action.getKeystroke()));
 		}
 
 		@BeforeEach
@@ -183,9 +183,9 @@ class ToKeyActionTest {
 			action = new ButtonToKeyAction();
 			action.setActivation(Activation.WHILE_PRESSED);
 			action.setActivatable(Activatable.YES);
-			action.setKeystroke(new KeyStroke());
-			downKeyStrokes = new HashSet<>();
-			Mockito.lenient().when(mockInput.getDownKeyStrokes()).thenReturn(downKeyStrokes);
+			action.setKeystroke(new Keystroke());
+			downKeystrokes = new HashSet<>();
+			Mockito.lenient().when(mockInput.getDownKeystrokes()).thenReturn(downKeystrokes);
 		}
 	}
 }
