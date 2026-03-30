@@ -364,6 +364,9 @@
         </rules>
       </arrangement>
     </codeStyleSettings>
+    <codeStyleSettings language="Markdown">
+      <option name="RIGHT_MARGIN" value="1000" />
+    </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
