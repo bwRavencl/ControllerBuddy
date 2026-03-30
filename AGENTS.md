@@ -32,7 +32,7 @@ See @README for detailed project overview.
 
 ```sh
 ./gradlew build                                                             # Build the project
-./gradlew test                                                              # Run all tests (JUnit 5)
+./gradlew test                                                              # Run all tests
 ./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest' # Single test class
 ./gradlew test --tests '*.VersionUtilsTest.returnsEmptyForNull'             # Single test method
 ./gradlew spotlessApply                                                     # Apply code formatting
@@ -105,7 +105,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
 
 ## Test Conventions
 
-- JUnit 5 with `@DisplayName` for readable names, `@Nested` for grouping
+- JUnit 6 with `@DisplayName` for readable names, `@Nested` for grouping
 - Mockito with `@ExtendWith(MockitoExtension.class)`
 - Tests require `Main.STRINGS` initialization in `@BeforeAll`:
   ```java
