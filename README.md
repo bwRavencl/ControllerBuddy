@@ -53,50 +53,52 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ## ✨ Features
 
-- Map gamepad axes and buttons to highly customizable Actions:
-    - Virtual joystick axis movements (absolute and relative)
-    - Virtual joystick button presses
-    - Keyboard inputs
-    - Mouse inputs
-    - Cycles of Actions
-    - Mode switching
-    - etc.
-- Powerful user interface:
-    - Allows the creation of mapping profiles
-    - Configuration of settings
-    - Support for light and dark UI themes
-- In-game overlay:
-    - Displays currently active Mode
-    - Can show current position of virtual axes
-    - On-Screen-Keyboard that can be controlled by gamepad
-    - Customizable position and colors
-- Two modes of operation:
-    - Local
-    - Client-Server (experimental! use only in trusted networks!)
-- Supported gamepads:
-    - Xbox 360 Controller
-    - Xbox One Controller
-    - Xbox Series X|S Controller
-    - Dual Shock 3
-    - Dual Shock 4
-    - Dual Sense
-    - etc. (to check if your controller is supported please refer to the [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project)
-- Supported operating systems:
-    - Windows / Linux (local / client / server)
-    - macOS (server only - no binaries provided!)
-- Language support for:
-    - English
-    - German
+### 💡 Core Concepts
+
+ControllerBuddy maps physical inputs to **Actions**, such as moving a virtual joystick axis, triggering a keystroke, or moving the mouse cursor.  
+Mappings are organized into **Modes** - distinct functional layers activated or toggled at the press of a button.
+
+* **Mode Switching:** Swap entire mapping layouts dynamically on the fly using toggle or momentary buttons to multiply the total number of available functions on your controller.
+* **Virtual Joystick Control:** Map inputs to virtual buttons and axes, including the ability to reset axes to specific preconfigured positions.
+* **Relative Axis Mapping:** Solves the challenge of mapping persistent controls to self-centering sticks. A relative axis maintains its value even after the physical stick is released - ideal for stable control over **throttle** or **camera angles**.
+* **Keyboard & Mouse Emulation:** Full support for keystrokes (including modifiers), mouse buttons, cursor movement, and scrolling.
+* **Action Cycles:** Sequence multiple sub-actions that trigger one after another with each press.
+* **On-Screen Keyboard:** A gamepad-driven virtual keyboard that allows for the input of keystrokes and combinations without a requiring a physical keyboard.
+
+### 👤 User Experience
+
+* **Profile Management:** Create, save, and switch between custom mapping profiles for different games or apps.
+* **Powerful UI:** A fast, clean and intuitive interface with full support for **light and dark themes**.
+* **In-Game Overlay:**
+    * Monitor the currently active **Mode**.
+    * Visualize the current position of **virtual axes**.
+* **Localization:** Fully localized in **English** and **German**.
+
+### ⚙️ Modes of Operation
+
+ControllerBuddy can be used as a standalone local tool or distributed over a network:
+
+* **Local:** Standard low-latency operation on a single machine.
+* **Client-Server:** Send controller inputs across a network.
+
+### 🔌 Controller & OS Support
+
+* **Gamepad Compatibility:**
+    * **Xbox Series X|S**, **Xbox One**, and **Xbox 360 Controllers**
+    * **DualSense (PS5)** and **DualShock 3/4 (PS3/PS4)** controllers
+    * **Many more** via the [SDL GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB) project.
+* **Operating Systems:**
+    * **Windows & Linux:** Full support (Local, Client, and Server).
+    * **macOS:** Server-only support (no binaries provided).
 
 ## 🗃️ Profiles
 
 ### 🧩 Definitions
 
-**Profiles
-** are JSON-based configuration files that tailor ControllerBuddy to specific games. Once loaded, they can be edited and saved through the built-in interface.
+**Profiles** are JSON-based configuration files that tailor ControllerBuddy to specific games.
+Once loaded, they can be edited and saved through the built-in interface.
 
-To manage complex setups, Profiles organize your input mappings into **Modes
-**. Think of Modes as different layers or "shift-states" for your controller.
+To manage complex setups, Profiles organize your input mappings into **Modes**. Think of Modes as different **layers or "shift-states"** for your controller.
 
 Within each Mode, you can map an axis or button to one or more **Actions**.  
 By assigning different Actions to the same control across multiple Modes, you enable ControllerBuddy to instantly remap your controller as you switch between layers.
@@ -150,7 +152,8 @@ flowchart LR
 
 ### ⛓️ Mode Inheritance
 
-When switching between Modes, any axes or buttons not explicitly redefined will inherit their behavior from the previously active Mode. This inheritance persists across multiple Mode levels, as illustrated by the following example:
+When switching between Modes, **any axes or buttons not explicitly redefined will inherit their behavior from the previously active Mode**.  
+This inheritance persists across multiple Mode levels, as illustrated by the following example:
 
 **Default Mode** (Base) → **Mode A** (Layer 1) → **Mode B** (Layer 2)  
 *If an axis or button is not mapped in **Mode B**, ControllerBuddy checks **Mode A**, and finally the **Default Mode**.*
@@ -204,62 +207,57 @@ flowchart LR
 
 ## ⌨️ Command Line Parameters
 
-| Parameter           | Arguments               | Description                                                                                                | Available for scripting |
-|---------------------|-------------------------|------------------------------------------------------------------------------------------------------------|:-----------------------:|
-| ‑autostart          | local / client / server | starts the specified mode of operation after launch                                                        |           yes           |
-| ‑export             | file destination        | exports a visualization of the current profile to the specified path                                       |           yes           |
-| ‑gamecontrollerdb   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
-| ‑help               |                         | prints the help and exits                                                                                  |           no            |
-| -host               | hostname / IP address   | sets the host address for outgoing network connections                                                     |           yes           |
-| -password           | password                | sets the password for all network connections                                                              |           yes           |
-| -port               | port number             | sets the server port for all network connections                                                           |           yes           |
-| ‑profile            | file source             | loads the specified profile after launch                                                                   |           yes           |
-| ‑quit               |                         | quits the application                                                                                      |           yes           |
-| ‑save               | file destination        | save the current profile to the specified path                                                             |           yes           |
-| ‑skipMessageDialogs |                         | skips all message dialogs                                                                                  |           no            |
-| -timeout            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
-| ‑tray               |                         | launches the application to the system tray                                                                |           yes           |
-| ‑version            |                         | prints the version information and exits                                                                   |           no            |
+| Parameter             | Arguments               | Description                                                                                                | Available for scripting |
+|-----------------------|-------------------------|------------------------------------------------------------------------------------------------------------|:-----------------------:|
+| `‑autostart`          | local / client / server | starts the specified mode of operation after launch                                                        |           yes           |
+| `‑export`             | file destination        | exports a visualization of the current profile to the specified path                                       |           yes           |
+| `‑gamecontrollerdb`   | file source             | adds the SDL controller mappings from the specified [file](https://github.com/mdqinc/SDL_GameControllerDB) |           yes           |
+| `‑help`               |                         | prints the help and exits                                                                                  |           no            |
+| `-host`               | hostname / IP address   | sets the host address for outgoing network connections                                                     |           yes           |
+| `-password`           | password                | sets the password for all network connections                                                              |           yes           |
+| `-port`               | port number             | sets the server port for all network connections                                                           |           yes           |
+| `‑profile`            | file source             | loads the specified profile after launch                                                                   |           yes           |
+| `‑quit`               |                         | quits the application                                                                                      |           yes           |
+| `‑save`               | file destination        | save the current profile to the specified path                                                             |           yes           |
+| `‑skipMessageDialogs` |                         | skips all message dialogs                                                                                  |           no            |
+| `-timeout`            | timeout in milliseconds | sets the timeout in milliseconds for all network connections                                               |           yes           |
+| `‑tray`               |                         | launches the application to the system tray                                                                |           yes           |
+| `‑version`            |                         | prints the version information and exits                                                                   |           no            |
 
-If ControllerBuddy is already running, launching a second instance with any of the parameters marked as "available for scripting" will forward the specified action to the first instance and then exit immediately.
+If ControllerBuddy is already running, launching a **second instance** with any of the above parameters marked as *available for scripting* **will forward the specified action to the first instance** and then exit immediately.
 
-This mechanism allows seamless integration of ControllerBuddy into third-party applications.  
+This powerful mechanism allows seamless integration of ControllerBuddy into third-party applications.  
 For an example, see [ControllerBuddy-DCS-Integration](https://github.com/bwRavencl/ControllerBuddy-DCS-Integration), which demonstrates how ControllerBuddy can be integrated into [DCS World](https://www.digitalcombatsimulator.com).
 
 ## 🙏 Attribution
 
 ControllerBuddy makes use of these awesome software technologies and libraries:
 
-- [OpenJDK](https://openjdk.org)
-- [Apache Commons CLI](https://commons.apache.org/proper/commons-cli)
-- [ClassGraph](https://github.com/classgraph/classgraph)
-- [dbus-java](https://hypfvieh.github.io/dbus-java)
-- [Error Prone](https://errorprone.info)
-- [FlatLaf](https://www.formdev.com/flatlaf)
-- [Gson](https://github.com/google/gson)
-- [JSVG](https://github.com/weisJ/jsvg)
-- [LWJGL](https://www.lwjgl.org)
-- [JUnit](https://junit.org)
-- [Mockito](https://mockito.org)
-- [SDL](https://libsdl.org)
-- [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)
-- [SLF4J](https://www.slf4j.org)
+| Category             | Technologies                                                                                                                                                                                                                                           |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Runtime & Build**  | [Azul Zulu](https://www.azul.com), [Gradle](https://gradle.org)                                                                                                                                                                                        |
+| **Input & Hardware** | [LWJGL](https://www.lwjgl.org), [SDL](https://libsdl.org), [SDL\_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB)                                                                                                                     |
+| **UI & Graphics**    | [FlatLaf](https://www.formdev.com/flatlaf), [JSVG](https://github.com/weisJ/jsvg)                                                                                                                                                                      |
+| **Utilities**        | [Apache Commons CLI](https://commons.apache.org/proper/commons-cli), [ClassGraph](https://github.com/classgraph/classgraph), [dbus-java](https://hypfvieh.github.io/dbus-java), [Gson](https://github.com/google/gson), [SLF4J](https://www.slf4j.org) |
+| **Code Quality**     | [CleanThat](https://github.com/solven-eu/cleanthat), [Error Prone](https://errorprone.info), [Spotbugs](https://spotbugs.github.io)                                                                                                                    |
+| **Code Formatting**  | [Eclipse JDT](https://projects.eclipse.org/projects/eclipse.jdt), [Eclipse WTP](https://projects.eclipse.org/projects/webtools), [ktfmt](https://facebook.github.io/ktfmt), [Spotless](https://github.com/diffplug/spotless)                           |
+| **Testing**          | [JUnit](https://junit.org), [Mockito](https://mockito.org)                                                                                                                                                                                             |
 
 ## 🛠️ Building
 
 If you want to build ControllerBuddy from source, this section might be helpful to get you started.  
 ControllerBuddy uses the Gradle build system, the following Gradle tasks are supported:
 
-| Task                                   | Command                   |
-|----------------------------------------|---------------------------|
-| Generate version source file           | `gradlew generateVersion` |
-| Run all checks                         | `gradlew check`           |
-| Apply Spotless formatting              | `gradlew spotlessApply`   |
-| Run ControllerBuddy                    | `gradlew run`             |
-| Install a jpackage image               | `gradlew installDist`     |
-| Create a ZIP-compressed jpackage image | `gradlew distZip`         |
-| Create a TGZ-compressed jpackage image | `gradlew distTar`         |
-| Delete build and gen directories       | `gradlew clean`           |
+| Task                                   | Command                     |
+|----------------------------------------|-----------------------------|
+| Generate `Constants.java` source file  | `gradlew generateConstants` |
+| Run all checks                         | `gradlew check`             |
+| Apply Spotless formatting              | `gradlew spotlessApply`     |
+| Run ControllerBuddy                    | `gradlew run`               |
+| Install a jpackage image               | `gradlew installDist`       |
+| Create a ZIP-compressed jpackage image | `gradlew distZip`           |
+| Create a TGZ-compressed jpackage image | `gradlew distTar`           |
+| Delete build and gen directories       | `gradlew clean`             |
 
 ## ⚖️ License
 
