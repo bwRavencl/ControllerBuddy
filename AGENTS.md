@@ -8,6 +8,15 @@ ControllerBuddy - cross-platform advanced gamepad mapping software.
 Maps physical gamepad inputs through a profile-based action system to virtual devices (vJoy on Windows, uinput on Linux).
 See @README for detailed project overview.
 
+## Tech Stack
+- **Language:** Java 26
+- **Build Tool:** Gradle 9
+- **Input Handling:** LWJGL 3.4 (SDL3)
+- **Native Access:** FFM API (Project Panama)
+- **GUI:** Swing with FlatLaf
+- **Serialization:** Gson 2.13
+- **Testing:** JUnit 6, Mockito 5
+
 ## Environment Setup
 
 - **Java:** JDK (17+) must be installed to run the Gradle wrapper. The build then auto-provisions the required JDK distribution via Gradle's toolchain support for compilation and execution. The target Java version is defined in `build.gradle.kts` (`languageVersion` in `javaToolchainSpec`).
