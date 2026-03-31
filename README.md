@@ -53,7 +53,7 @@ Linux users may want to use the [ControllerBuddy-Flatpak](https://github.com/bwR
 
 ## ✨ Features
 
-### 💡 Core Concepts
+### 🧬 Core Capabilities
 
 ControllerBuddy maps physical inputs to **Actions**, such as moving a virtual joystick axis, triggering a keystroke, or moving the mouse cursor.  
 Mappings are organized into **Modes** - distinct functional layers activated or toggled at the press of a button.
