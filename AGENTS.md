@@ -9,6 +9,7 @@ Maps physical gamepad inputs through a profile-based action system to virtual de
 See @README for detailed project overview.
 
 ## Tech Stack
+
 - **Language:** Java 26
 - **Build Tool:** Gradle 9
 - **Input Handling:** LWJGL 3.4 (SDL3)
@@ -47,16 +48,16 @@ See @README for detailed project overview.
 - **Input Pipeline:** Physical gamepad → SDL/LWJGL polling (`Input.java`) → Profile-based action mapping → Virtual device output
 - **Profile System:** `Profile` contains a list of `Mode`s. Each `Mode` maps controller component IDs to lists of `IAction` implementations. Modes support inheritance/fallback chains. `ButtonToModeAction` handles mode switching. Profiles are JSON-serialized via Gson.
 - **Action System:** Pluggable actions discovered at runtime via ClassGraph scanning of `@Action` annotation.
-  - Base interface `IAction<V>` with specializations: `IInitializationAction`, `IDelayableAction`, `IActivatableAction`, `IResetableAction`.
-  - 40+ concrete implementations in `src/main/java/de/bwravencl/controllerbuddy/input/action/`.
-  - Properties exposed to GUI editors via `@ActionProperty` annotation.
+    - Base interface `IAction<V>` with specializations: `IInitializationAction`, `IDelayableAction`, `IActivatableAction`, `IResetableAction`.
+    - 40+ concrete implementations in `src/main/java/de/bwravencl/controllerbuddy/input/action/`.
+    - Properties exposed to GUI editors via `@ActionProperty` annotation.
 - **Key Packages:**
-  - `input/` - Core engine: `Input.java` (orchestrator), `Profile.java`, `Mode.java`
-  - `input/action/` - All action type implementations
-  - `gui/` - `Main.java` entry point, FlatLaf Swing UI
-  - `ffi/` - Foreign function interfaces (vJoy, uinput)
-  - `runmode/` - Local/Client/Server mode implementations
-  - `json/` - Gson type adapters for profile serialization
+    - `input/` - Core engine: `Input.java` (orchestrator), `Profile.java`, `Mode.java`
+    - `input/action/` - All action type implementations
+    - `gui/` - `Main.java` entry point, FlatLaf Swing UI
+    - `ffi/` - Foreign function interfaces (vJoy, uinput)
+    - `runmode/` - Local/Client/Server mode implementations
+    - `json/` - Gson type adapters for profile serialization
 
 ## Code Style
 
@@ -115,10 +116,10 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Annotate configurable fields with `@ActionProperty(title, description, editorBuilder, order)` - the `order` attribute controls GUI layout
 - The `editorBuilder` parameter specifies which `EditorBuilder` subclass renders the GUI editor for the field
   Use existing builders when possible:
-  - `NumberEditorBuilder` subclasses for numeric ranges
-  - `ArrayEditorBuilder` subclasses for enums
-  - `BooleanEditorBuilder` for booleans
-  - A custom `EditorBuilder` implementation is needed when the property requires non-standard UI
+    - `NumberEditorBuilder` subclasses for numeric ranges
+    - `ArrayEditorBuilder` subclasses for enums
+    - `BooleanEditorBuilder` for booleans
+    - A custom `EditorBuilder` implementation is needed when the property requires non-standard UI
 - Override `clone()` - use deep cloning for mutable fields (e.g. `KeyStroke`)
 - If the action implements `IInitializationAction`, ensure `init()` initializes transient fields to the same defaults as the field declarations
 
@@ -135,9 +136,11 @@ Format: `<prefix>: <lowercase description>` - no period at end, single line.
 
 Version is derived automatically from git tags at build time (see `versionProvider` in `build.gradle.kts`).  
 If a change affects the profile serialization format (i.e. what gets serialized/deserialized via Gson) the minor version must be bumped by creating an annotated tag:
+
 ```sh
 git tag -a "X.Y" -m "X.Y"
 ```
+
 The tag must be pushed before the `master` branch is pushed, so that CI derives the correct version number.
 
 ## CI
