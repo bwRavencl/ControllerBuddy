@@ -70,7 +70,7 @@ public class StringEditorBuilder extends EditorBuilder {
 	/// Listener that writes the current text field content to the action property
 	/// in response to document changes, action events, and focus-loss events.
 	///
-	/// When updating due to an action event or focus loss the text is also
+	/// When updating due to an action event or focus loss, the text is also
 	/// stripped of leading and trailing whitespace, and the field is updated
 	/// asynchronously on the event dispatch thread if the stripped value differs
 	/// from the original.
