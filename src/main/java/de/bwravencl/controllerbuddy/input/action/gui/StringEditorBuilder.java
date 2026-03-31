@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,12 +48,9 @@ public class StringEditorBuilder extends EditorBuilder {
 	/// @param action the action whose string property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	public StringEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final String fieldName, final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -149,7 +145,7 @@ public class StringEditorBuilder extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, text);
 				onNewValueSet();
-			} catch (final IllegalAccessException | InvocationTargetException e) {
+			} catch (final ReflectiveOperationException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}

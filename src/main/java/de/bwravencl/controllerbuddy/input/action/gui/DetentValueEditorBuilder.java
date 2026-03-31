@@ -21,7 +21,6 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -45,12 +44,9 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 	/// @param action the action whose detent value property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	public DetentValueEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final String fieldName, final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -87,7 +83,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 				try {
 					setterMethod.invoke(action, value);
-				} catch (final IllegalAccessException | InvocationTargetException e1) {
+				} catch (final ReflectiveOperationException e1) {
 					LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 

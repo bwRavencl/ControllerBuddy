@@ -22,7 +22,6 @@ import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
 
 /// Editor builder for mode selection properties, presenting a combo box
@@ -40,11 +39,9 @@ public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 	/// @param action the action whose mode property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	public ModeEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

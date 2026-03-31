@@ -57,7 +57,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -517,13 +516,9 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// @param actionClass the action class to instantiate; must implement [IAction]
 	/// @return the newly created and initialized action instance
-	/// @throws IllegalAccessException if the constructor is not accessible
-	/// @throws InstantiationException if the class represents an abstract class
-	/// @throws InvocationTargetException if the constructor throws an exception
-	/// @throws NoSuchMethodException if no no-arg constructor exists
+	/// @throws ReflectiveOperationException if reflection operations fail
 	@SuppressWarnings("EnumOrdinal")
-	private IAction<?> getActionClassInstance(final Class<?> actionClass)
-			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+	private IAction<?> getActionClassInstance(final Class<?> actionClass) throws ReflectiveOperationException {
 		if (!IAction.class.isAssignableFrom(actionClass)) {
 			throw new IllegalArgumentException(
 					"Class '" + actionClass.getName() + "' does not implement '" + IAction.class.getSimpleName() + "'");
@@ -1095,8 +1090,7 @@ public final class EditActionsDialog extends JDialog {
 							fieldType);
 
 					editorBuilder.buildEditor(propertyPanel);
-				} catch (final IllegalAccessException | InstantiationException | InvocationTargetException
-						| NoSuchMethodException e1) {
+				} catch (final ReflectiveOperationException e1) {
 					throw new RuntimeException(e1);
 				}
 			}
@@ -1286,8 +1280,7 @@ public final class EditActionsDialog extends JDialog {
 		public void actionPerformed(final ActionEvent e) {
 			try {
 				addAction(getActionClassInstance(selectedAvailableActionClass));
-			} catch (final InstantiationException | IllegalAccessException | InvocationTargetException
-					| NoSuchMethodException e1) {
+			} catch (final ReflectiveOperationException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

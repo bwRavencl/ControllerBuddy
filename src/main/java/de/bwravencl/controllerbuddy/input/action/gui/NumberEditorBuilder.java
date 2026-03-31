@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,11 +59,9 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// @param action the action whose numeric property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	NumberEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -163,7 +160,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 				}
 
 				numberEditorBuilder.onNewValueSet();
-			} catch (final IllegalAccessException | InvocationTargetException e1) {
+			} catch (final ReflectiveOperationException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

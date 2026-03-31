@@ -25,7 +25,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
@@ -60,12 +59,9 @@ public abstract class EditorBuilder {
 	/// @param action the action whose property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the getter or setter method is not
-	/// accessible
-	/// @throws InvocationTargetException if the getter method throws an exception
-	/// @throws NoSuchMethodException if the getter or setter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	EditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final Class<?> fieldType) throws ReflectiveOperationException {
 		this.editActionsDialog = editActionsDialog;
 		this.action = action;
 

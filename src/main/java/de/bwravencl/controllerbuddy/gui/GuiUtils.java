@@ -91,7 +91,7 @@ public final class GuiUtils {
 				final var wComponentPeerClass = Class.forName("sun.awt.windows.WComponentPeer");
 				HWND_FIELD = wComponentPeerClass.getDeclaredField("hwnd");
 				HWND_FIELD.setAccessible(true);
-			} catch (final ClassNotFoundException | NoSuchFieldException e) {
+			} catch (final ReflectiveOperationException e) {
 				throw new RuntimeException(e);
 			}
 		} else {

@@ -21,7 +21,6 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -49,12 +48,9 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	/// @param action the action whose property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the getter or setter method is not
-	/// accessible
-	/// @throws InvocationTargetException if the getter method throws an exception
-	/// @throws NoSuchMethodException if the getter or setter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	ArrayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action, final String fieldName,
-			final Class<?> fieldType) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
@@ -102,7 +98,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 			try {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
 				onNewValueSet();
-			} catch (final IllegalAccessException | InvocationTargetException e1) {
+			} catch (final ReflectiveOperationException e1) {
 				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}

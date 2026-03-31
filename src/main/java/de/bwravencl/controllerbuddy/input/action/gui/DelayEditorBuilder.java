@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
 
 /// Editor builder for delay properties, rendering a millisecond spinner with a
@@ -36,12 +35,9 @@ public final class DelayEditorBuilder extends NumberEditorBuilder<Long> {
 	/// @param action the action whose delay property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	public DelayEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final String fieldName, final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 

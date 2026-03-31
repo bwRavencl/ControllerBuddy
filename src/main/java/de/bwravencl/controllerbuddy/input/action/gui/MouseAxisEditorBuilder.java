@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
-import java.lang.reflect.InvocationTargetException;
 
 /// Editor builder for mouse axis properties, presenting a combo box of
 /// [MouseAxis] values (horizontal or vertical).
@@ -35,12 +34,9 @@ public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> 
 	/// @param action the action whose mouse axis property is being edited
 	/// @param fieldName the name of the property field
 	/// @param fieldType the type of the property field
-	/// @throws IllegalAccessException if the property cannot be accessed
-	/// @throws InvocationTargetException if the property getter throws an exception
-	/// @throws NoSuchMethodException if the property getter method is not found
+	/// @throws ReflectiveOperationException if reflection operations fail
 	public MouseAxisEditorBuilder(final EditActionsDialog editActionsDialog, final IAction<?> action,
-			final String fieldName, final Class<?> fieldType)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			final String fieldName, final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 	}
 
