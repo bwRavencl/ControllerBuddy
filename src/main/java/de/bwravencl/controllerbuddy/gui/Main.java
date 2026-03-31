@@ -5128,10 +5128,10 @@ public final class Main {
 		final var profile = input.getProfile();
 
 		final var keyRepeatIntervalSpinner = new JSpinner(
-				new SpinnerNumberModel((int) profile.getKeyRepeatInterval(), 0, 1000, 1));
+				new SpinnerNumberModel((Number) profile.getKeyRepeatInterval(), 0L, 1000L, 1L));
 		GuiUtils.makeMillisecondSpinner(keyRepeatIntervalSpinner);
 		keyRepeatIntervalSpinner.addChangeListener(event -> {
-			final var keyRepeatInterval = (int) ((JSpinner) event.getSource()).getValue();
+			final var keyRepeatInterval = (long) ((JSpinner) event.getSource()).getValue();
 			input.getProfile().setKeyRepeatInterval(keyRepeatInterval);
 			setUnsavedChanges(true);
 		});
