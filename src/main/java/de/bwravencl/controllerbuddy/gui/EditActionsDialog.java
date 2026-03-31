@@ -346,6 +346,25 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
+	/// Creates and adds a new button to the clipboard panel, with disabled state,
+	/// fixed square dimensions, and centered alignment.
+	///
+	/// @param clipboardPanel the parent panel to which the button is added
+	/// @param action the action associated with the button
+	/// @return the created button instance
+	private static JButton addClipboardButton(final JPanel clipboardPanel, final javax.swing.Action action) {
+		final var button = new JButton(action);
+		button.setEnabled(false);
+		button.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
+		button.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
+		button.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
+		button.setAlignmentX(CENTER_ALIGNMENT);
+		button.setAlignmentY(CENTER_ALIGNMENT);
+		clipboardPanel.add(button);
+
+		return button;
+	}
+
 	/// Applies the selection or default background and foreground colors from the
 	/// given [JList] to the specified component.
 	///
@@ -723,36 +742,11 @@ public final class EditActionsDialog extends JDialog {
 
 		clipboardPanel.add(Box.createHorizontalGlue());
 
-		final var cutActionButton = new JButton(new CutActionAction());
-		cutActionButton.setEnabled(false);
-		cutActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
-		cutActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
-		cutActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
-		cutActionButton.setAlignmentX(CENTER_ALIGNMENT);
-		cutActionButton.setAlignmentY(CENTER_ALIGNMENT);
-		clipboardPanel.add(cutActionButton);
-
+		final var cutActionButton = addClipboardButton(clipboardPanel, new CutActionAction());
 		clipboardPanel.add(Box.createHorizontalStrut(20));
-
-		final var copyActionButton = new JButton(new CopyActionAction());
-		copyActionButton.setEnabled(false);
-		copyActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
-		copyActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
-		copyActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
-		copyActionButton.setAlignmentX(CENTER_ALIGNMENT);
-		copyActionButton.setAlignmentY(CENTER_ALIGNMENT);
-		clipboardPanel.add(copyActionButton);
-
+		final var copyActionButton = addClipboardButton(clipboardPanel, new CopyActionAction());
 		clipboardPanel.add(Box.createHorizontalStrut(20));
-
-		pasteActionButton = new JButton(new PasteActionAction());
-		pasteActionButton.setEnabled(false);
-		pasteActionButton.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
-		pasteActionButton.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
-		pasteActionButton.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
-		pasteActionButton.setAlignmentX(CENTER_ALIGNMENT);
-		pasteActionButton.setAlignmentY(CENTER_ALIGNMENT);
-		clipboardPanel.add(pasteActionButton);
+		pasteActionButton = addClipboardButton(clipboardPanel, new PasteActionAction());
 
 		clipboardPanel.add(Box.createHorizontalGlue());
 
