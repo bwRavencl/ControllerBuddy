@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JPanel;
@@ -87,11 +88,10 @@ final class AssignmentsComponentTest {
 
 		@Test
 		@DisplayName("throws IllegalArgumentException when width and height differ")
-		void throwsForNonSquareDimension() throws ReflectiveOperationException {
-			final var method = AssignmentsComponent.class.getDeclaredMethod("checkDimensionIsSquare", Dimension.class);
-			method.setAccessible(true);
-			Assertions.assertThrows(java.lang.reflect.InvocationTargetException.class,
-					() -> method.invoke(null, new Dimension(50, 60)));
+		void throwsForNonSquareDimension() {
+			final var invocationTargetException = Assertions.assertThrows(InvocationTargetException.class,
+					() -> invokeCheckDimensionIsSquare(new Dimension(50, 60)));
+			Assertions.assertEquals(IllegalArgumentException.class, invocationTargetException.getCause().getClass());
 		}
 	}
 
