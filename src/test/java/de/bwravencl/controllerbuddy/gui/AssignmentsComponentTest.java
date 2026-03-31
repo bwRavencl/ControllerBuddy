@@ -45,9 +45,10 @@ class AssignmentsComponentTest {
 	@Mock
 	Main mockMain;
 
-	// Creates a CompoundButton (the only concrete subclass of the private-abstract
-	// CustomButton) via reflection, using the left-stick button component so the
-	// constructor follows the BUTTON/LEFT_STICK branch.
+	/// Creates a `CompoundButton` (the only concrete sub-final class of the
+	/// private-abstract `CustomButton`) via reflection, using the left-stick button
+	/// component so the constructor follows the
+	/// [ComponentType.BUTTON]/[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] branch.
 	private Object createCompoundButton() throws ReflectiveOperationException {
 		final var compoundButtonClass = Arrays.stream(AssignmentsComponent.class.getDeclaredClasses())
 				.filter(c -> "CompoundButton".equals(c.getSimpleName())).findFirst().orElseThrow();
@@ -57,8 +58,8 @@ class AssignmentsComponentTest {
 		return constructor.newInstance(mockMain, new JPanel(), component);
 	}
 
-	// Invokes CustomButton.paintText (declared on the superclass of CompoundButton)
-	// via reflection.
+	/// Invokes `CustomButton.paintText` (declared on the super-final class of
+	/// `CompoundButton`) via reflection.
 	private void invokePaintText(final Object button, final Graphics g, final Rectangle textRect, final String text)
 			throws ReflectiveOperationException {
 		final var customButtonClass = button.getClass().getSuperclass();
