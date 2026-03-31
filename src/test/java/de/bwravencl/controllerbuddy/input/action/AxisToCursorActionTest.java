@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AxisToCursorActionTest {
+final class AxisToCursorActionTest {
 
 	@Mock
 	Input mockInput;
@@ -43,7 +43,7 @@ class AxisToCursorActionTest {
 
 	@Nested
 	@DisplayName("doAction()")
-	class DoActionTests {
+	final class DoActionTests {
 
 		private AxisToCursorAction action;
 

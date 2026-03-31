@@ -31,39 +31,33 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RunModeTest {
-
-	@Mock
-	Main mockMain;
+final class RunModeTest {
 
 	@Mock
 	Input mockInput;
+
+	@Mock
+	Main mockMain;
 
 	private RunMode createRunMode() {
 		return new RunMode(mockMain, mockInput) {
 
 			@Override
-			public void run() {
+			Logger getLogger() {
+				return Logger.getLogger("test");
 			}
 
 			@Override
-			Logger getLogger() {
-				return Logger.getLogger("test");
+			public void run() {
 			}
 		};
 	}
 
 	@Nested
 	@DisplayName("controllerDisconnected()")
-	class ControllerDisconnectedTests {
+	final class ControllerDisconnectedTests {
 
 		private RunMode runMode;
-
-		@BeforeEach
-		void setUp() {
-			Mockito.when(mockMain.isSkipControllerDialogs()).thenReturn(true);
-			runMode = createRunMode();
-		}
 
 		@Test
 		@DisplayName("calls stopAll() on the first invocation")
@@ -91,6 +85,12 @@ class RunModeTest {
 			runMode.controllerDisconnected();
 			Mockito.verify(mockMain).isSkipControllerDialogs();
 			Assertions.assertDoesNotThrow(() -> runMode.controllerDisconnected());
+		}
+
+		@BeforeEach
+		void setUp() {
+			Mockito.when(mockMain.isSkipControllerDialogs()).thenReturn(true);
+			runMode = createRunMode();
 		}
 	}
 }

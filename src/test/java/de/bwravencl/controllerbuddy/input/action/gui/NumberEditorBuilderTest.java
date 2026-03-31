@@ -22,11 +22,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class NumberEditorBuilderTest {
+final class NumberEditorBuilderTest {
 
 	@Nested
 	@DisplayName("roundFloat()")
-	class RoundFloatTests {
+	final class RoundFloatTests {
 
 		@Test
 		@DisplayName("handles trailing floating point noise like 0.1 + 0.2")

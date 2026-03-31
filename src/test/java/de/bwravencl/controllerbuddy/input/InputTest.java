@@ -38,7 +38,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class InputTest {
+final class InputTest {
 
 	@Mock
 	Controller mockController;
@@ -61,7 +61,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("suspendAxis() / isAxisSuspended()")
-	class AxisSuspensionTests {
+	final class AxisSuspensionTests {
 
 		private Input input;
 
@@ -103,7 +103,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("Constructor")
-	class ConstructorTests {
+	final class ConstructorTests {
 
 		@Test
 		@DisplayName("initialises all VirtualAxis entries to 0 when no axes map is provided")
@@ -140,7 +140,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("deInit()")
-	class DeInitTests {
+	final class DeInitTests {
 
 		@Test
 		@DisplayName("does not invoke any SDL calls when selectedSdlGamepad is 0 and no gamepads are open")
@@ -155,7 +155,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("floatToIntAxisValue()")
-	class FloatToIntAxisValueTests {
+	final class FloatToIntAxisValueTests {
 
 		private Input input;
 
@@ -190,7 +190,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("initButtons()")
-	class InitButtonsTests {
+	final class InitButtonsTests {
 
 		private Input input;
 
@@ -222,7 +222,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("init()")
-	class InitTests {
+	final class InitTests {
 
 		@Test
 		@DisplayName("returns false and does not set initialized when the selected controller fails to open")
@@ -272,7 +272,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("moveAxis()")
-	class MoveAxisTests {
+	final class MoveAxisTests {
 
 		private Input input;
 
@@ -316,7 +316,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("normalize()")
-	class NormalizeTests {
+	final class NormalizeTests {
 
 		@Test
 		@DisplayName("extrapolates values outside input range without clamping")
@@ -375,7 +375,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("openController()")
-	class OpenControllerTests {
+	final class OpenControllerTests {
 
 		@Test
 		@DisplayName("returns false immediately when SDL_OpenGamepad returns 0 (device unavailable)")
@@ -393,7 +393,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("poll()")
-	class PollTests {
+	final class PollTests {
 
 		@Test
 		@DisplayName("removes expired axis suspensions on each poll")
@@ -455,7 +455,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("repeatModeActionWalk()")
-	class RepeatModeActionWalkTests {
+	final class RepeatModeActionWalkTests {
 
 		@Test
 		@DisplayName("reset() clears the repeatModeActionWalk flag set by repeatModeActionWalk()")
@@ -484,7 +484,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("reset()")
-	class ResetTests {
+	final class ResetTests {
 
 		private Input input;
 
@@ -563,7 +563,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("scheduleClearOnNextPoll()")
-	class ScheduleClearOnNextPollTests {
+	final class ScheduleClearOnNextPollTests {
 
 		@Test
 		@DisplayName("reset() clears the clearOnNextPoll flag set by scheduleClearOnNextPoll()")
@@ -591,7 +591,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("setAxis()")
-	class SetAxisTests {
+	final class SetAxisTests {
 
 		private Input input;
 
@@ -692,7 +692,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("setProfile()")
-	class SetProfileTests {
+	final class SetProfileTests {
 
 		private Input input;
 
@@ -734,7 +734,7 @@ class InputTest {
 
 	@Nested
 	@DisplayName("setProfile() - additional validation")
-	class SetProfileValidationTests {
+	final class SetProfileValidationTests {
 
 		private Input input;
 

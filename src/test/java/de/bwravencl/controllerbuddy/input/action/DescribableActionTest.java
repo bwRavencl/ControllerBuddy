@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class DescribableActionTest {
+final class DescribableActionTest {
 
 	@Mock
 	Input mockInput;
@@ -40,7 +40,7 @@ class DescribableActionTest {
 
 	@Nested
 	@DisplayName("getDescription()")
-	class GetDescriptionTests {
+	final class GetDescriptionTests {
 
 		@Test
 		@DisplayName("returns custom description when set")
@@ -73,7 +73,7 @@ class DescribableActionTest {
 
 	@Nested
 	@DisplayName("isDescriptionEmpty()")
-	class IsDescriptionEmptyTests {
+	final class IsDescriptionEmptyTests {
 
 		@Test
 		@DisplayName("returns false when description is non-empty")

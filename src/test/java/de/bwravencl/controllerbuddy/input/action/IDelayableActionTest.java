@@ -34,7 +34,7 @@ final class IDelayableActionTest {
 
 	@Nested
 	@DisplayName("isDelayed()")
-	class IsDelayedTests {
+	final class IsDelayedTests {
 
 		@Test
 		@DisplayName("returns false when delay is 0")

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class MainTest {
+final class MainTest {
 
 	private static PlainDocument createLimitedLengthPlainDocument(final int limit) throws ReflectiveOperationException {
 		final var clazz = Arrays.stream(Main.class.getDeclaredClasses())
@@ -70,7 +70,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("createVisualizationLegendHtml()")
-	class CreateVisualizationLegendHtmlTests {
+	final class CreateVisualizationLegendHtmlTests {
 
 		@Test
 		@DisplayName("ignores symbols not present in the known symbol-to-description map")
@@ -122,7 +122,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("getExtendedKeyCodeForMenu()")
-	class GetExtendedKeyCodeForMenuTests {
+	final class GetExtendedKeyCodeForMenuTests {
 
 		@Test
 		@DisplayName("adds the chosen key code to the already-assigned set as a side effect")
@@ -179,7 +179,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("HotSwappingButton.fromId()")
-	class HotSwappingButtonFromIdTests {
+	final class HotSwappingButtonFromIdTests {
 
 		@Test
 		@DisplayName("every enum constant round-trips through fromId")
@@ -216,7 +216,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("isValidHost()")
-	class IsValidHostTests {
+	final class IsValidHostTests {
 
 		@Test
 		@DisplayName("returns false for a blank string")
@@ -245,7 +245,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("isValidPassword()")
-	class IsValidPasswordTests {
+	final class IsValidPasswordTests {
 
 		@Test
 		@DisplayName("returns false for a blank string")
@@ -286,7 +286,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("LimitedLengthPlainDocument")
-	class LimitedLengthPlainDocumentTests {
+	final class LimitedLengthPlainDocumentTests {
 
 		@Test
 		@DisplayName("accepts an insertion that brings the document exactly to the limit")
@@ -334,7 +334,7 @@ class MainTest {
 
 	@Nested
 	@DisplayName("Theme.fromId()")
-	class ThemeFromIdTests {
+	final class ThemeFromIdTests {
 
 		@Test
 		@DisplayName("falls back to SYSTEM for an unknown id")

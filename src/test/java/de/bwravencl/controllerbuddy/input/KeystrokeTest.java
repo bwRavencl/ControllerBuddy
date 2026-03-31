@@ -23,7 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class KeystrokeTest {
+final class KeystrokeTest {
 
 	private static Keystroke createEmptyKeystroke() {
 		return new Keystroke();
@@ -35,7 +35,7 @@ class KeystrokeTest {
 
 	@Nested
 	@DisplayName("clone()")
-	class CloneTests {
+	final class CloneTests {
 
 		@Test
 		@DisplayName("keyCodes array in the clone is a distinct copy")
@@ -71,7 +71,7 @@ class KeystrokeTest {
 
 	@Nested
 	@DisplayName("equals() / hashCode()")
-	class EqualsHashCodeTests {
+	final class EqualsHashCodeTests {
 
 		@Test
 		@DisplayName("two Keystrokes with equal arrays are equal and share the same hash code")
@@ -116,7 +116,7 @@ class KeystrokeTest {
 
 	@Nested
 	@DisplayName("toString()")
-	class ToStringTests {
+	final class ToStringTests {
 
 		@Test
 		@DisplayName("joins modifier and key scancode names with ' + ' when both are present")

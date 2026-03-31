@@ -33,7 +33,7 @@ final class ActivationIntervalActionTest {
 
 	@Nested
 	@DisplayName("activationSupportsMaxInterval()")
-	class ActivationSupportsMaxIntervalTests {
+	final class ActivationSupportsMaxIntervalTests {
 
 		@Test
 		@DisplayName("returns false for ON_PRESS")
@@ -56,7 +56,7 @@ final class ActivationIntervalActionTest {
 
 	@Nested
 	@DisplayName("handleActivationInterval()")
-	class HandleActivationIntervalTests {
+	final class HandleActivationIntervalTests {
 
 		@Test
 		@DisplayName("holds activation for the minimum interval duration after release")
@@ -114,7 +114,7 @@ final class ActivationIntervalActionTest {
 
 	@Nested
 	@DisplayName("setActivation()")
-	class SetActivationTests {
+	final class SetActivationTests {
 
 		@Test
 		@DisplayName("clears maxActivationInterval when switching away from WHILE_PRESSED")

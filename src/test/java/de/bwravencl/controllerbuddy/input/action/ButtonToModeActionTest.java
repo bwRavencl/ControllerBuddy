@@ -32,7 +32,7 @@ final class ButtonToModeActionTest {
 
 	@Nested
 	@DisplayName("getSymbol()")
-	class GetSymbolTests {
+	final class GetSymbolTests {
 
 		@Test
 		@DisplayName("returns momentary symbol when toggle is false")

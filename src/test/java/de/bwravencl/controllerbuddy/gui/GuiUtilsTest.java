@@ -45,7 +45,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class GuiUtilsTest {
+final class GuiUtilsTest {
 
 	@Mock
 	JFrame mockFrame;
@@ -73,7 +73,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("createTextFieldWithMenu()")
-	class CreateTextFieldWithMenuTests {
+	final class CreateTextFieldWithMenuTests {
 
 		private static void triggerPopupShow(final JPopupMenu popup) {
 			try {
@@ -128,7 +128,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("FrameDragListener")
-	class FrameDragListenerTests {
+	final class FrameDragListenerTests {
 
 		private GuiUtils.FrameDragListener listener;
 
@@ -155,7 +155,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("getFrameLocationPreferencesKey()")
-	class GetFrameLocationPreferencesKeyTests {
+	final class GetFrameLocationPreferencesKeyTests {
 
 		@Test
 		@DisplayName("converts CamelCase to underscored lowercase and strips a leading underscore")
@@ -207,7 +207,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("invokeOnEventDispatchThreadIfRequired()")
-	class InvokeOnEventDispatchThreadIfRequiredTests {
+	final class InvokeOnEventDispatchThreadIfRequiredTests {
 
 		@Test
 		@DisplayName("queues the runnable for later execution when called off the EDT")
@@ -234,7 +234,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("loadFrameLocation()")
-	class LoadFrameLocationTests {
+	final class LoadFrameLocationTests {
 
 		private static final Rectangle BOUNDS = new Rectangle(0, 0, 1920, 1080);
 
@@ -323,7 +323,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("setBoundsWithMinimum()")
-	class SetBoundsWithMinimumTests {
+	final class SetBoundsWithMinimumTests {
 
 		@Test
 		@DisplayName("sets the component bounds and half-size minimum dimensions")
@@ -338,7 +338,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("setEnabledRecursive()")
-	class SetEnabledRecursiveTests {
+	final class SetEnabledRecursiveTests {
 
 		@Test
 		@DisplayName("disables a component that has no children")
@@ -415,7 +415,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("setFrameLocationRespectingBounds()")
-	class SetFrameLocationRespectingBoundsTests {
+	final class SetFrameLocationRespectingBoundsTests {
 
 		private static final Rectangle BOUNDS = new Rectangle(0, 0, 1920, 1080);
 
@@ -487,7 +487,7 @@ class GuiUtilsTest {
 
 	@Nested
 	@DisplayName("wrapComponentInScrollPane()")
-	class WrapComponentInScrollPaneTests {
+	final class WrapComponentInScrollPaneTests {
 
 		@Test
 		@DisplayName("preferred size is not explicitly set when null is passed")

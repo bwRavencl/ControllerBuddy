@@ -34,7 +34,7 @@ final class ActivationEditorBuilderTest {
 
 	@Nested
 	@DisplayName("getValues()")
-	class GetValuesTests {
+	final class GetValuesTests {
 
 		private ActivationEditorBuilder createBuilderWithAction(
 				final de.bwravencl.controllerbuddy.input.action.IAction<?> action) throws Exception {

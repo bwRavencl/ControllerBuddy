@@ -38,7 +38,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ProfileTest {
+final class ProfileTest {
 
 	@Mock
 	ButtonToModeAction mockButtonToModeAction;
@@ -55,7 +55,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("clone()")
-	class CloneTests {
+	final class CloneTests {
 
 		@Test
 		@DisplayName("deeply clones the buttonToModeActionsMap so mutation of the clone does not affect the original")
@@ -113,7 +113,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("Profile()")
-	class ConstructorTests {
+	final class ConstructorTests {
 
 		@Test
 		@DisplayName("adds the default mode to the modes list on construction")
@@ -135,7 +135,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("getModeByUuid()")
-	class GetModeByUuidTests {
+	final class GetModeByUuidTests {
 
 		@Test
 		@DisplayName("returns an empty Optional when no mode matches the given UUID")
@@ -161,7 +161,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("removeMode()")
-	class RemoveModeTests {
+	final class RemoveModeTests {
 
 		@Test
 		@DisplayName("removes the specified mode from the modes list")
@@ -218,7 +218,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("setActiveMode() - axis reset with runMode")
-	class SetActiveModeAxisResetTests {
+	final class SetActiveModeAxisResetTests {
 
 		@Mock
 		AxisToAxisAction mockAxisToAxisAction;
@@ -261,7 +261,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("setActiveMode(Input, int)")
-	class SetActiveModeByIndexTests {
+	final class SetActiveModeByIndexTests {
 
 		@Test
 		@DisplayName("does not change the active mode when the index is out of bounds")
@@ -291,7 +291,7 @@ class ProfileTest {
 
 	@Nested
 	@DisplayName("setActiveMode(Input, Mode)")
-	class SetActiveModeByModeTests {
+	final class SetActiveModeByModeTests {
 
 		@Test
 		@DisplayName("switches the active mode to the specified mode object when it is in the list")

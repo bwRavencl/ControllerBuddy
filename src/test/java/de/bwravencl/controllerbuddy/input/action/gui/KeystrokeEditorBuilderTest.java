@@ -43,7 +43,7 @@ final class KeystrokeEditorBuilderTest {
 
 	@Nested
 	@DisplayName("getListModelIndex()")
-	class GetListModelIndexTests {
+	final class GetListModelIndexTests {
 
 		@Test
 		@DisplayName("finds element in DefaultListModel by value")

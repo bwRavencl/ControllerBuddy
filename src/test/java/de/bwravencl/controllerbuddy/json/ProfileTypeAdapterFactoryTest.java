@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.sdl.SDLGamepad;
 
-class ProfileTypeAdapterFactoryTest {
+final class ProfileTypeAdapterFactoryTest {
 
 	private static com.google.gson.Gson createGson() {
 		return new GsonBuilder().registerTypeAdapterFactory(new ProfileTypeAdapterFactory())
@@ -44,7 +44,7 @@ class ProfileTypeAdapterFactoryTest {
 
 	@Nested
 	@DisplayName("create() - enum adapter for Activation")
-	class ActivationEnumAdapterTests {
+	final class ActivationEnumAdapterTests {
 
 		@Test
 		@DisplayName("reads a current Activation value by its enum name")
@@ -100,7 +100,7 @@ class ProfileTypeAdapterFactoryTest {
 
 	@Nested
 	@DisplayName("create() - IDelayableAction adapter")
-	class DelayableActionAdapterTests {
+	final class DelayableActionAdapterTests {
 
 		@Test
 		@DisplayName("does not set delay when 'longPress' is absent from the JSON")
@@ -129,7 +129,7 @@ class ProfileTypeAdapterFactoryTest {
 
 	@Nested
 	@DisplayName("create() - Mode post-processing")
-	class ModeAdapterTests {
+	final class ModeAdapterTests {
 
 		@Test
 		@DisplayName("clears the description from the JSON output when serializing DEFAULT_MODE")
@@ -179,7 +179,7 @@ class ProfileTypeAdapterFactoryTest {
 
 	@Nested
 	@DisplayName("create() - OverlayAxis post-processing")
-	class OverlayAxisAdapterTests {
+	final class OverlayAxisAdapterTests {
 
 		@Test
 		@DisplayName("does not override orientation when it is already set")
@@ -218,7 +218,7 @@ class ProfileTypeAdapterFactoryTest {
 
 	@Nested
 	@DisplayName("create() - Profile version migration")
-	class ProfileVersionMigrationTests {
+	final class ProfileVersionMigrationTests {
 
 		@Test
 		@DisplayName("does not migrate button indices for profiles with version >= 1.4")

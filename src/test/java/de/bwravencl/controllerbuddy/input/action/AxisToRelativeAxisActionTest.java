@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AxisToRelativeAxisActionTest {
+final class AxisToRelativeAxisActionTest {
 
 	@Mock
 	Input mockInput;
@@ -48,7 +48,7 @@ class AxisToRelativeAxisActionTest {
 
 	@Nested
 	@DisplayName("doAction()")
-	class DoActionTests {
+	final class DoActionTests {
 
 		private AxisToRelativeAxisAction action;
 

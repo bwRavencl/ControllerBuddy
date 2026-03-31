@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ToCursorActionTest {
+final class ToCursorActionTest {
 
 	@Mock
 	Input mockInput;
@@ -42,7 +42,7 @@ class ToCursorActionTest {
 
 	@Nested
 	@DisplayName("moveCursor()")
-	class MoveCursorTests {
+	final class MoveCursorTests {
 
 		private ButtonToCursorAction action;
 

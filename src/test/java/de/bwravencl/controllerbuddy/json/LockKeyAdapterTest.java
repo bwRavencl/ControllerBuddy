@@ -27,7 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class LockKeyAdapterTest {
+final class LockKeyAdapterTest {
 
 	private static LockKeyAdapter createAdapter() {
 		return new LockKeyAdapter();
@@ -35,7 +35,7 @@ class LockKeyAdapterTest {
 
 	@Nested
 	@DisplayName("deserialize()")
-	class DeserializeTests {
+	final class DeserializeTests {
 
 		@Test
 		@DisplayName("deserializes a JSON string by looking up the name in NAME_TO_LOCK_KEY_MAP")
@@ -88,7 +88,7 @@ class LockKeyAdapterTest {
 
 	@Nested
 	@DisplayName("serialize()")
-	class SerializeTests {
+	final class SerializeTests {
 
 		@Test
 		@DisplayName("returns a JsonPrimitive containing the lock key's name")

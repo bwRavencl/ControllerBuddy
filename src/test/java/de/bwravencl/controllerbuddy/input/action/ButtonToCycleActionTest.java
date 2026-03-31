@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ButtonToCycleActionTest {
+final class ButtonToCycleActionTest {
 
 	@Mock
 	Input mockInput;
@@ -67,7 +67,7 @@ class ButtonToCycleActionTest {
 
 	@Nested
 	@DisplayName("doAction() with ON_PRESS activation")
-	class OnPressTests {
+	final class OnPressTests {
 
 		private ButtonToCycleAction cycleAction;
 
@@ -120,7 +120,7 @@ class ButtonToCycleActionTest {
 
 	@Nested
 	@DisplayName("doAction() with ON_RELEASE activation")
-	class OnReleaseTests {
+	final class OnReleaseTests {
 
 		private ButtonToCycleAction cycleAction;
 
@@ -166,7 +166,7 @@ class ButtonToCycleActionTest {
 
 	@Nested
 	@DisplayName("reset()")
-	class ResetTests {
+	final class ResetTests {
 
 		@Test
 		@DisplayName("resets the cycle index to 0")
@@ -196,7 +196,7 @@ class ButtonToCycleActionTest {
 
 	@Nested
 	@DisplayName("doAction() with WHILE_PRESSED activation")
-	class WhilePressedTests {
+	final class WhilePressedTests {
 
 		@SuppressWarnings("unchecked")
 		@Test

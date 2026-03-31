@@ -25,11 +25,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ExponentEditorBuilderTest {
+final class ExponentEditorBuilderTest {
 
 	@Nested
 	@DisplayName("PowerFunctionPlotter.calculateY()")
-	class CalculateYTests {
+	final class CalculateYTests {
 
 		private Method calculateYMethod;
 

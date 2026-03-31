@@ -55,7 +55,7 @@ final class EditActionsDialogTest {
 
 	@Nested
 	@DisplayName("findFirstMissingOrNext()")
-	class FindFirstMissingOrNextTests {
+	final class FindFirstMissingOrNextTests {
 
 		@Test
 		@DisplayName("clamps the result to maxValue when the full range is occupied")
@@ -107,7 +107,7 @@ final class EditActionsDialogTest {
 
 	@Nested
 	@DisplayName("getFieldToActionPropertiesMap()")
-	class GetFieldToActionPropertiesMapTests {
+	final class GetFieldToActionPropertiesMapTests {
 
 		@Test
 		@DisplayName("returns the same cached map instance on repeated calls")
@@ -131,7 +131,7 @@ final class EditActionsDialogTest {
 		}
 
 		@Test
-		@DisplayName("returns an empty map for an action class with no @ActionProperty fields")
+		@DisplayName("returns an empty map for an action final class with no @ActionProperty fields")
 		void returnsEmptyMapForActionWithNoProperties() {
 			Assertions.assertTrue(EditActionsDialog.getFieldToActionPropertiesMap(NullAction.class).isEmpty());
 		}
@@ -146,7 +146,7 @@ final class EditActionsDialogTest {
 		}
 
 		@Test
-		@DisplayName("throws IllegalArgumentException for a class that does not implement IAction")
+		@DisplayName("throws IllegalArgumentException for a final class that does not implement IAction")
 		void throwsForNonIActionClass() {
 			Assertions.assertThrows(IllegalArgumentException.class,
 					() -> EditActionsDialog.getFieldToActionPropertiesMap(String.class));

@@ -34,7 +34,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ToMouseButtonActionTest {
+final class ToMouseButtonActionTest {
 
 	@Mock
 	Input mockInput;
@@ -46,7 +46,7 @@ class ToMouseButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ALWAYS activatable")
-	class AlwaysTests {
+	final class AlwaysTests {
 
 		@Test
 		@DisplayName("always adds to downUpMouseButtons regardless of hot")
@@ -64,7 +64,7 @@ class ToMouseButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_PRESS activation (no min interval)")
-	class OnPressTests {
+	final class OnPressTests {
 
 		private ButtonToMouseButtonAction action;
 
@@ -100,7 +100,7 @@ class ToMouseButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_RELEASE activation (no min interval)")
-	class OnReleaseTests {
+	final class OnReleaseTests {
 
 		private ButtonToMouseButtonAction action;
 
@@ -138,7 +138,7 @@ class ToMouseButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with WHILE_PRESSED activation")
-	class WhilePressedTests {
+	final class WhilePressedTests {
 
 		private ButtonToMouseButtonAction action;
 

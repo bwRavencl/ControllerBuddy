@@ -28,14 +28,62 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ServerRunModeTest {
+final class ServerRunModeTest {
 
 	@Mock
 	Main mockMain;
 
 	@Nested
+	@DisplayName("deriveKey()")
+	final class DeriveKeyTests {
+
+		@Test
+		@DisplayName("produces the same key for identical password and salt")
+		void producesDeterministicKey() {
+			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			final var key1 = ServerRunMode.deriveKey(mockMain, salt);
+			final var key2 = ServerRunMode.deriveKey(mockMain, salt);
+			Assertions.assertArrayEquals(key1.getEncoded(), key2.getEncoded());
+		}
+
+		@Test
+		@DisplayName("produces different keys for different passwords")
+		void producesDifferentKeysForDifferentPasswords() {
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			Mockito.when(mockMain.getPassword()).thenReturn("password-one");
+			final var key1 = ServerRunMode.deriveKey(mockMain, salt);
+			Mockito.when(mockMain.getPassword()).thenReturn("password-two");
+			final var key2 = ServerRunMode.deriveKey(mockMain, salt);
+			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+		}
+
+		@Test
+		@DisplayName("produces different keys for different salts")
+		void producesDifferentKeysForDifferentSalts() {
+			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
+			final var salt1 = new byte[ServerRunMode.SALT_LENGTH];
+			final var salt2 = new byte[ServerRunMode.SALT_LENGTH];
+			salt2[0] = 1;
+			final var key1 = ServerRunMode.deriveKey(mockMain, salt1);
+			final var key2 = ServerRunMode.deriveKey(mockMain, salt2);
+			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
+		}
+
+		@Test
+		@DisplayName("returns a non-null AES key for valid inputs")
+		void returnsNonNullAesKey() {
+			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
+			final var salt = new byte[ServerRunMode.SALT_LENGTH];
+			final var key = ServerRunMode.deriveKey(mockMain, salt);
+			Assertions.assertNotNull(key);
+			Assertions.assertEquals("AES", key.getAlgorithm());
+		}
+	}
+
+	@Nested
 	@DisplayName("MessageType.fromId()")
-	class MessageTypeFromIdTests {
+	final class MessageTypeFromIdTests {
 
 		@Test
 		@DisplayName("returns the correct enum constant for each known message type ID")
@@ -56,54 +104,6 @@ class ServerRunModeTest {
 		@DisplayName("returns null for an unknown message type ID")
 		void returnsNullForUnknownId() {
 			Assertions.assertNull(ServerRunMode.MessageType.fromId(-1));
-		}
-	}
-
-	@Nested
-	@DisplayName("deriveKey()")
-	class DeriveKeyTests {
-
-		@Test
-		@DisplayName("returns a non-null AES key for valid inputs")
-		void returnsNonNullAesKey() {
-			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			final var key = ServerRunMode.deriveKey(mockMain, salt);
-			Assertions.assertNotNull(key);
-			Assertions.assertEquals("AES", key.getAlgorithm());
-		}
-
-		@Test
-		@DisplayName("produces different keys for different salts")
-		void producesDifferentKeysForDifferentSalts() {
-			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
-			final var salt1 = new byte[ServerRunMode.SALT_LENGTH];
-			final var salt2 = new byte[ServerRunMode.SALT_LENGTH];
-			salt2[0] = 1;
-			final var key1 = ServerRunMode.deriveKey(mockMain, salt1);
-			final var key2 = ServerRunMode.deriveKey(mockMain, salt2);
-			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
-		}
-
-		@Test
-		@DisplayName("produces different keys for different passwords")
-		void producesDifferentKeysForDifferentPasswords() {
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			Mockito.when(mockMain.getPassword()).thenReturn("password-one");
-			final var key1 = ServerRunMode.deriveKey(mockMain, salt);
-			Mockito.when(mockMain.getPassword()).thenReturn("password-two");
-			final var key2 = ServerRunMode.deriveKey(mockMain, salt);
-			Assertions.assertFalse(java.util.Arrays.equals(key1.getEncoded(), key2.getEncoded()));
-		}
-
-		@Test
-		@DisplayName("produces the same key for identical password and salt")
-		void producesDeterministicKey() {
-			Mockito.when(mockMain.getPassword()).thenReturn("test-password");
-			final var salt = new byte[ServerRunMode.SALT_LENGTH];
-			final var key1 = ServerRunMode.deriveKey(mockMain, salt);
-			final var key2 = ServerRunMode.deriveKey(mockMain, salt);
-			Assertions.assertArrayEquals(key1.getEncoded(), key2.getEncoded());
 		}
 	}
 }

@@ -24,11 +24,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class VersionUtilsTest {
+final class VersionUtilsTest {
 
 	@Nested
 	@DisplayName("compareVersions()")
-	class CompareVersionsTests {
+	final class CompareVersionsTests {
 
 		@Test
 		@DisplayName("returns empty when all parts of the version string are non-numeric")
@@ -105,7 +105,7 @@ class VersionUtilsTest {
 
 	@Nested
 	@DisplayName("getMajorAndMinorVersion()")
-	class GetMajorAndMinorVersionTests {
+	final class GetMajorAndMinorVersionTests {
 
 		@Test
 		@DisplayName("returns the major and minor components of Constants.VERSION as major.minor")
@@ -131,7 +131,7 @@ class VersionUtilsTest {
 
 	@Nested
 	@DisplayName("getVersionIntegerParts()")
-	class GetVersionIntegerPartsTests {
+	final class GetVersionIntegerPartsTests {
 
 		@Test
 		@DisplayName("parses a plain three-part version string into an array of three integers")

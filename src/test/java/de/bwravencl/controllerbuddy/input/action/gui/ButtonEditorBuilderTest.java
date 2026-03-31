@@ -26,11 +26,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ButtonEditorBuilderTest {
+final class ButtonEditorBuilderTest {
 
 	@Nested
 	@DisplayName("ZeroBasedFormatter")
-	class ZeroBasedFormatterTests {
+	final class ZeroBasedFormatterTests {
 
 		private DefaultFormatter formatter;
 

@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AxisToAxisActionTest {
+final class AxisToAxisActionTest {
 
 	@Mock
 	Input mockInput;
@@ -44,7 +44,7 @@ class AxisToAxisActionTest {
 
 	@Nested
 	@DisplayName("doAction()")
-	class DoActionTests {
+	final class DoActionTests {
 
 		private AxisToAxisAction action;
 
@@ -125,7 +125,7 @@ class AxisToAxisActionTest {
 
 	@Nested
 	@DisplayName("init()")
-	class InitTests {
+	final class InitTests {
 
 		@Test
 		@DisplayName("initialValue is inverted when invert is true")

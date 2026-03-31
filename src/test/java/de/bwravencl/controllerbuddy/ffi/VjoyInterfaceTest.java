@@ -23,11 +23,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class VjoyInterfaceTest {
+final class VjoyInterfaceTest {
 
 	@Nested
 	@DisplayName("GetVJoyArchFolderName()")
-	class GetVJoyArchFolderNameTests {
+	final class GetVJoyArchFolderNameTests {
 
 		@Test
 		@DisplayName("returns the raw OS architecture string for non-amd64 architectures")
@@ -48,7 +48,7 @@ class VjoyInterfaceTest {
 
 	@Nested
 	@DisplayName("isInitialized()")
-	class IsInitializedTests {
+	final class IsInitializedTests {
 
 		@Test
 		@DisplayName("returns false before init() is called")

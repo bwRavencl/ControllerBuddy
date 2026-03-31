@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ToButtonActionTest {
+final class ToButtonActionTest {
 
 	@Mock
 	Input mockInput;
@@ -44,7 +44,7 @@ class ToButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ALWAYS activatable")
-	class AlwaysTests {
+	final class AlwaysTests {
 
 		@Test
 		@DisplayName("always sets button to true regardless of hot value")
@@ -62,7 +62,7 @@ class ToButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_PRESS activation")
-	class OnPressTests {
+	final class OnPressTests {
 
 		private ButtonToButtonAction action;
 
@@ -109,7 +109,7 @@ class ToButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_RELEASE activation")
-	class OnReleaseTests {
+	final class OnReleaseTests {
 
 		private ButtonToButtonAction action;
 
@@ -155,7 +155,7 @@ class ToButtonActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with WHILE_PRESSED activation")
-	class WhilePressedTests {
+	final class WhilePressedTests {
 
 		private ButtonToButtonAction action;
 

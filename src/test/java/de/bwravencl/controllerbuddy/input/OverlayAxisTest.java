@@ -26,11 +26,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class OverlayAxisTest {
+final class OverlayAxisTest {
 
 	@Nested
 	@DisplayName("clone()")
-	class CloneTests {
+	final class CloneTests {
 
 		@Test
 		@DisplayName("color in the clone is a distinct Color object with the same RGB value")
@@ -64,7 +64,7 @@ class OverlayAxisTest {
 
 	@Nested
 	@DisplayName("OverlayAxis(VirtualAxis)")
-	class ConstructorTests {
+	final class ConstructorTests {
 
 		@Test
 		@DisplayName("sets color to Color.BLACK")
@@ -99,7 +99,7 @@ class OverlayAxisTest {
 
 	@Nested
 	@DisplayName("OverlayAxisOrientation.toSwingConstant()")
-	class OverlayAxisOrientationToSwingConstantTests {
+	final class OverlayAxisOrientationToSwingConstantTests {
 
 		@Test
 		@DisplayName("HORIZONTAL maps to SwingConstants.HORIZONTAL")

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class OnScreenKeyboardTest {
+final class OnScreenKeyboardTest {
 
 	private static String invokeGetDefaultKeyDisplayName(final String name) throws ReflectiveOperationException {
 		final var method = OnScreenKeyboard.class.getDeclaredMethod("getDefaultKeyDisplayName", String.class);
@@ -46,7 +46,7 @@ class OnScreenKeyboardTest {
 
 	@Nested
 	@DisplayName("getDefaultKeyDisplayName()")
-	class GetDefaultKeyDisplayNameTests {
+	final class GetDefaultKeyDisplayNameTests {
 
 		@Test
 		@DisplayName("DIK_SYSRQ returns a multiline HTML display name")
@@ -117,7 +117,7 @@ class OnScreenKeyboardTest {
 
 	@Nested
 	@DisplayName("getLockKeyDisplayName()")
-	class GetLockKeyDisplayNameTests {
+	final class GetLockKeyDisplayNameTests {
 
 		@Test
 		@DisplayName("CAPS_LOCK name is returned as-is without HTML wrapping")
@@ -136,7 +136,7 @@ class OnScreenKeyboardTest {
 
 	@Nested
 	@DisplayName("multilineDisplayName()")
-	class MultilineDisplayNameTests {
+	final class MultilineDisplayNameTests {
 
 		@Test
 		@DisplayName("only the first space is replaced with <br>")

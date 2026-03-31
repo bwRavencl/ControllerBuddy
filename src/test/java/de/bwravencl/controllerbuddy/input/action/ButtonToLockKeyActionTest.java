@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ButtonToLockKeyActionTest {
+final class ButtonToLockKeyActionTest {
 
 	@Mock
 	Input mockInput;
@@ -44,7 +44,7 @@ class ButtonToLockKeyActionTest {
 
 	@Nested
 	@DisplayName("doAction() with on=false")
-	class DoActionOffTests {
+	final class DoActionOffTests {
 
 		private ButtonToLockKeyAction action;
 
@@ -79,7 +79,7 @@ class ButtonToLockKeyActionTest {
 
 	@Nested
 	@DisplayName("doAction() with on=true")
-	class DoActionOnTests {
+	final class DoActionOnTests {
 
 		private ButtonToLockKeyAction action;
 

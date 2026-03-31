@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ModeTest {
+final class ModeTest {
 
 	@Mock
 	IAction<Float> mockAxisAction;
@@ -52,7 +52,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("clone()")
-	class CloneTests {
+	final class CloneTests {
 
 		private Mode mode;
 
@@ -98,7 +98,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("Component.index() - swap disabled")
-	class ComponentIndexNoSwapTests {
+	final class ComponentIndexNoSwapTests {
 
 		@Test
 		@DisplayName("returns the original index unchanged for both AXIS and BUTTON types")
@@ -115,7 +115,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("Component.index() - swap enabled")
-	class ComponentIndexSwapTests {
+	final class ComponentIndexSwapTests {
 
 		@Test
 		@DisplayName("returns a non-stick axis index unchanged")
@@ -183,7 +183,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("Mode()")
-	class DefaultConstructorTests {
+	final class DefaultConstructorTests {
 
 		@Test
 		@DisplayName("sets description to the NEW_MODE_DESCRIPTION resource string")
@@ -201,7 +201,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("equals() / hashCode()")
-	class EqualsHashCodeTests {
+	final class EqualsHashCodeTests {
 
 		@Test
 		@DisplayName("two modes with the same UUID are equal and have the same hash code")
@@ -230,7 +230,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("getAllActions()")
-	class GetAllActionsTests {
+	final class GetAllActionsTests {
 
 		@Test
 		@DisplayName("returns actions from both the axis and button maps in a single set")
@@ -254,7 +254,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("getComponentToActionsMap()")
-	class GetComponentToActionsMapTests {
+	final class GetComponentToActionsMapTests {
 
 		@Test
 		@DisplayName("returns the axisToActionsMap when type is AXIS")
@@ -273,7 +273,7 @@ class ModeTest {
 
 	@Nested
 	@DisplayName("toString()")
-	class ToStringTests {
+	final class ToStringTests {
 
 		@Test
 		@DisplayName("returns the description field")

@@ -23,11 +23,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class LockKeyTest {
+final class LockKeyTest {
 
 	@Nested
 	@DisplayName("LOCK_KEYS")
-	class LockKeysTests {
+	final class LockKeysTests {
 
 		@Test
 		@DisplayName("contains CAPS_LOCK_LOCK_KEY, NUM_LOCK_LOCK_KEY, and SCROLL_LOCK_LOCK_KEY")
@@ -46,7 +46,7 @@ class LockKeyTest {
 
 	@Nested
 	@DisplayName("NAME_TO_LOCK_KEY_MAP")
-	class NameToLockKeyMapTests {
+	final class NameToLockKeyMapTests {
 
 		@Test
 		@DisplayName("is unmodifiable")
@@ -65,7 +65,7 @@ class LockKeyTest {
 
 	@Nested
 	@DisplayName("toString()")
-	class ToStringTests {
+	final class ToStringTests {
 
 		@Test
 		@DisplayName("returns the name field of the LockKey")
@@ -77,7 +77,7 @@ class LockKeyTest {
 
 	@Nested
 	@DisplayName("VIRTUAL_KEY_CODE_TO_LOCK_KEY_MAP")
-	class VirtualKeyCodeToLockKeyMapTests {
+	final class VirtualKeyCodeToLockKeyMapTests {
 
 		@Test
 		@DisplayName("is unmodifiable")

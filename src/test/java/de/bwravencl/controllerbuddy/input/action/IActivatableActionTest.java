@@ -30,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class IActivatableActionTest {
+final class IActivatableActionTest {
 
 	@Mock
 	Input mockInput;
@@ -42,7 +42,7 @@ class IActivatableActionTest {
 
 	@Nested
 	@DisplayName("Activation enum")
-	class ActivationEnumTests {
+	final class ActivationEnumTests {
 
 		@Test
 		@DisplayName("each activation has a distinct non-empty symbol")
@@ -60,7 +60,7 @@ class IActivatableActionTest {
 
 	@Nested
 	@DisplayName("init()")
-	class InitTests {
+	final class InitTests {
 
 		@Test
 		@DisplayName("sets activatable to NO for ON_RELEASE activation")

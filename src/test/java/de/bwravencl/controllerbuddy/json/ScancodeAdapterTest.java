@@ -26,7 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ScancodeAdapterTest {
+final class ScancodeAdapterTest {
 
 	private static ScancodeAdapter createAdapter() {
 		return new ScancodeAdapter();
@@ -34,7 +34,7 @@ class ScancodeAdapterTest {
 
 	@Nested
 	@DisplayName("deserialize()")
-	class DeserializeTests {
+	final class DeserializeTests {
 
 		@Test
 		@DisplayName("deserializes ESCAPE from its name string")
@@ -90,7 +90,7 @@ class ScancodeAdapterTest {
 
 	@Nested
 	@DisplayName("serialize()")
-	class SerializeTests {
+	final class SerializeTests {
 
 		@Test
 		@DisplayName("returns a JsonPrimitive containing the scancode's name")

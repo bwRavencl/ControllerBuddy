@@ -26,7 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ColorTypeAdapterTest {
+final class ColorTypeAdapterTest {
 
 	private static ColorTypeAdapter createAdapter() {
 		return new ColorTypeAdapter();
@@ -34,7 +34,7 @@ class ColorTypeAdapterTest {
 
 	@Nested
 	@DisplayName("deserialize()")
-	class DeserializeTests {
+	final class DeserializeTests {
 
 		@Test
 		@DisplayName("deserializes a JSON number as an RGBA integer")
@@ -94,7 +94,7 @@ class ColorTypeAdapterTest {
 
 	@Nested
 	@DisplayName("serialize()")
-	class SerializeTests {
+	final class SerializeTests {
 
 		@Test
 		@DisplayName("round-trips a color with alpha through serialize then deserialize")

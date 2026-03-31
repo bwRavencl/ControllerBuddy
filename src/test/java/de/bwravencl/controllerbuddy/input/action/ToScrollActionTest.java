@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ToScrollActionTest {
+final class ToScrollActionTest {
 
 	@Mock
 	Input mockInput;
@@ -42,7 +42,7 @@ class ToScrollActionTest {
 
 	@Nested
 	@DisplayName("scroll()")
-	class ScrollTests {
+	final class ScrollTests {
 
 		private ButtonToScrollAction action;
 

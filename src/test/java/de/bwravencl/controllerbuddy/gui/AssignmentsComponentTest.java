@@ -40,7 +40,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class AssignmentsComponentTest {
+final class AssignmentsComponentTest {
 
 	@Mock
 	Main mockMain;
@@ -71,7 +71,7 @@ class AssignmentsComponentTest {
 
 	@Nested
 	@DisplayName("checkDimensionIsSquare()")
-	class CheckDimensionIsSquareTests {
+	final class CheckDimensionIsSquareTests {
 
 		@Test
 		@DisplayName("does not throw for a square dimension")
@@ -97,7 +97,7 @@ class AssignmentsComponentTest {
 
 	@Nested
 	@DisplayName("CustomButton.paintText()")
-	class CustomButtonPaintTextTests {
+	final class CustomButtonPaintTextTests {
 
 		private Object button;
 

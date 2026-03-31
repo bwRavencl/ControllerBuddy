@@ -22,11 +22,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ScancodeTest {
+final class ScancodeTest {
 
 	@Nested
 	@DisplayName("EXTENDED_KEY_SCAN_CODES_SET")
-	class ExtendedKeyScancodesSetTests {
+	final class ExtendedKeyScancodesSetTests {
 
 		@Test
 		@DisplayName("contains the key codes of all extended keys")
@@ -82,7 +82,7 @@ class ScancodeTest {
 
 	@Nested
 	@DisplayName("KEY_CODE_TO_SCAN_CODE_MAP")
-	class KeyCodeToScancodeMapTests {
+	final class KeyCodeToScancodeMapTests {
 
 		@Test
 		@DisplayName("is unmodifiable")
@@ -104,7 +104,7 @@ class ScancodeTest {
 
 	@Nested
 	@DisplayName("NAME_TO_SCAN_CODE_MAP")
-	class NameToScancodeMapTests {
+	final class NameToScancodeMapTests {
 
 		@Test
 		@DisplayName("is unmodifiable")
@@ -126,7 +126,7 @@ class ScancodeTest {
 
 	@Nested
 	@DisplayName("toString()")
-	class ToStringTests {
+	final class ToStringTests {
 
 		@Test
 		@DisplayName("returns the name field of the Scancode")

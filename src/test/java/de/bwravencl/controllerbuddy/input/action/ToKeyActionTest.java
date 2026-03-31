@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ToKeyActionTest {
+final class ToKeyActionTest {
 
 	@Mock
 	Input mockInput;
@@ -47,7 +47,7 @@ class ToKeyActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ALWAYS activatable")
-	class AlwaysTests {
+	final class AlwaysTests {
 
 		@Test
 		@DisplayName("always adds to downUpKeystrokes regardless of hot value")
@@ -65,7 +65,7 @@ class ToKeyActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_PRESS activation (no min interval)")
-	class OnPressTests {
+	final class OnPressTests {
 
 		private ButtonToKeyAction action;
 
@@ -112,7 +112,7 @@ class ToKeyActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with ON_RELEASE activation (no min interval)")
-	class OnReleaseTests {
+	final class OnReleaseTests {
 
 		private ButtonToKeyAction action;
 
@@ -148,7 +148,7 @@ class ToKeyActionTest {
 
 	@Nested
 	@DisplayName("handleAction() with WHILE_PRESSED activation")
-	class WhilePressedTests {
+	final class WhilePressedTests {
 
 		private ButtonToKeyAction action;
 

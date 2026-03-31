@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ButtonToAxisResetActionTest {
+final class ButtonToAxisResetActionTest {
 
 	@Mock
 	Input mockInput;
@@ -44,7 +44,7 @@ class ButtonToAxisResetActionTest {
 
 	@Nested
 	@DisplayName("resetAxis() fluid vs immediate")
-	class FluidVsImmediateTests {
+	final class FluidVsImmediateTests {
 
 		private ButtonToAxisResetAction action;
 
@@ -74,7 +74,7 @@ class ButtonToAxisResetActionTest {
 
 	@Nested
 	@DisplayName("doAction() with ON_PRESS")
-	class OnPressTests {
+	final class OnPressTests {
 
 		private ButtonToAxisResetAction action;
 
@@ -107,9 +107,20 @@ class ButtonToAxisResetActionTest {
 
 	@Nested
 	@DisplayName("doAction() with ON_RELEASE")
-	class OnReleaseTests {
+	final class OnReleaseTests {
 
 		private ButtonToAxisResetAction action;
+
+		@Test
+		@DisplayName("DENIED_BY_OTHER_ACTION transitions to NO and does not fire on release")
+		void deniedDoesNotFire() {
+			action.setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
+
+			action.doAction(mockInput, 0, true);
+			action.doAction(mockInput, 0, false);
+			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
+					Mockito.any(), Mockito.any(), Mockito.any());
+		}
 
 		@Test
 		@DisplayName("resets axis on release after a press")
@@ -124,17 +135,6 @@ class ButtonToAxisResetActionTest {
 			Mockito.verify(mockInput).setAxis(VirtualAxis.Z, 0.25f, false, null, null, null);
 		}
 
-		@Test
-		@DisplayName("DENIED_BY_OTHER_ACTION transitions to NO and does not fire on release")
-		void deniedDoesNotFire() {
-			action.setActivatable(Activatable.DENIED_BY_OTHER_ACTION);
-
-			action.doAction(mockInput, 0, true);
-			action.doAction(mockInput, 0, false);
-			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
-					Mockito.any(), Mockito.any(), Mockito.any());
-		}
-
 		@BeforeEach
 		void setUp() {
 			action = new ButtonToAxisResetAction();
@@ -147,7 +147,7 @@ class ButtonToAxisResetActionTest {
 
 	@Nested
 	@DisplayName("doAction() with WHILE_PRESSED")
-	class WhilePressedTests {
+	final class WhilePressedTests {
 
 		private ButtonToAxisResetAction action;
 

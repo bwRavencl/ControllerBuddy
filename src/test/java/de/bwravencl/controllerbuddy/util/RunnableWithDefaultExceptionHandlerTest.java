@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RunnableWithDefaultExceptionHandlerTest {
+final class RunnableWithDefaultExceptionHandlerTest {
 
 	@Mock
 	Thread.UncaughtExceptionHandler mockExceptionHandler;
@@ -39,7 +39,7 @@ class RunnableWithDefaultExceptionHandlerTest {
 
 	@Nested
 	@DisplayName("run()")
-	class RunTests {
+	final class RunTests {
 
 		private Thread.UncaughtExceptionHandler originalHandler;
 

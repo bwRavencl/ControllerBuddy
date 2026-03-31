@@ -52,7 +52,7 @@ final class IButtonToDelayableActionTest {
 
 	@Nested
 	@DisplayName("handleDelay()")
-	class HandleDelayTests {
+	final class HandleDelayTests {
 
 		@BeforeEach
 		void clearStaticState() {
