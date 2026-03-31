@@ -1238,8 +1238,10 @@ public final class Main {
 		pollIntervalLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
 		pollIntervalPanel.add(pollIntervalLabel);
 
-		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel(getPollInterval(), 1, 100, 1));
+		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel((Number) getPollInterval(), 1L, 100L, 1L));
 		GuiUtils.makeMillisecondSpinner(pollIntervalSpinner);
+		pollIntervalSpinner.addChangeListener(event -> preferences.putLong(PREFERENCES_POLL_INTERVAL,
+				(long) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
 		final var physicalAxesPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
@@ -2892,8 +2894,8 @@ public final class Main {
 	/// Returns the configured input poll interval in milliseconds.
 	///
 	/// @return the poll interval in milliseconds
-	public int getPollInterval() {
-		return preferences.getInt(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
+	public long getPollInterval() {
+		return preferences.getLong(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
 	}
 
 	/// Returns the configured network port.

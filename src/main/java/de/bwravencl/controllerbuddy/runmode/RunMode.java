@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 public abstract class RunMode implements Runnable {
 
 	/// The default polling interval in milliseconds.
-	public static final int DEFAULT_POLL_INTERVAL = 1;
+	public static final long DEFAULT_POLL_INTERVAL = 1L;
 
 	private static final Logger LOGGER = Logger.getLogger(RunMode.class.getName());
 
