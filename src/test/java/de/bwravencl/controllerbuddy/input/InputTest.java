@@ -243,7 +243,7 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("returns true, sets initialized, and computes planckLength when no controllers are present")
+		@DisplayName("returns true, sets initialized, and computes minAxisStep when no controllers are present")
 		void returnsTrueAndSetsInitializedWithNoControllers() {
 			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
 			Mockito.when(mockMain.isMapCircularAxesToSquareAxes()).thenReturn(false);
@@ -255,7 +255,7 @@ final class InputTest {
 
 			Assertions.assertTrue(input.init());
 			Assertions.assertTrue(input.isInitialized());
-			Assertions.assertEquals(2f / (32_767 + 32_768), input.getPlanckLength(), 1e-10f);
+			Assertions.assertEquals(2f / (32_767 + 32_768), input.getMinAxisStep(), 1e-10f);
 		}
 
 		@Test

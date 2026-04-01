@@ -75,7 +75,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 				inMax, -maxRelativeSpeed, maxRelativeSpeed) * input.getRateMultiplier();
 		d += remainingD;
 
-		if (Math.abs(d) < input.getPlanckLength()) {
+		if (Math.abs(d) < input.getMinAxisStep()) {
 			remainingD = d;
 			return;
 		}

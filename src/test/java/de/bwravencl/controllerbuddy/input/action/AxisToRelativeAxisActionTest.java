@@ -55,25 +55,25 @@ final class AxisToRelativeAxisActionTest {
 		private EnumMap<VirtualAxis, Integer> axes;
 
 		@Test
-		@DisplayName("accumulates fractional movement in remainingD below planck length")
-		void accumulatesBelowPlanckLength() {
+		@DisplayName("accumulates fractional movement in remainingD below minimum axis step")
+		void accumulatesBelowMinAxisStep() {
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(0.001f);
-			Mockito.when(mockInput.getPlanckLength()).thenReturn(1.0f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(1.0f);
 
 			action.doAction(mockInput, 0, 0.2f);
 			Assertions.assertTrue(action.remainingD > 0f,
 					"remainingD (" + action.remainingD + ") should be positive for positive input");
 			Assertions.assertTrue(action.remainingD < 0.01f,
-					"remainingD (" + action.remainingD + ") should be a small value below planck length");
+					"remainingD (" + action.remainingD + ") should be a small value below minimum axis step");
 			Mockito.verify(mockInput, Mockito.never()).setAxis(Mockito.any(), Mockito.anyFloat(), Mockito.anyBoolean(),
 					Mockito.any(), Mockito.any(), Mockito.any());
 		}
 
 		@Test
-		@DisplayName("applies axis movement when delta exceeds planck length")
-		void appliesMovementAbovePlanckLength() {
+		@DisplayName("applies axis movement when delta exceeds minimum axis step")
+		void appliesMovementAboveMinAxisStep() {
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			Mockito.when(mockInput.getPlanckLength()).thenReturn(0.001f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
@@ -89,7 +89,7 @@ final class AxisToRelativeAxisActionTest {
 		@DisplayName("clamps output to maxValue")
 		void clampsToMaxValue() {
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			Mockito.when(mockInput.getPlanckLength()).thenReturn(0.001f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
@@ -127,7 +127,7 @@ final class AxisToRelativeAxisActionTest {
 		void invertsMovement() {
 			action.setInvert(true);
 			Mockito.when(mockInput.getRateMultiplier()).thenReturn(1.0f);
-			Mockito.when(mockInput.getPlanckLength()).thenReturn(0.001f);
+			Mockito.when(mockInput.getMinAxisStep()).thenReturn(0.001f);
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
 			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_767);
 			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);

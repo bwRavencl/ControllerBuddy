@@ -151,7 +151,7 @@ public final class Input {
 
 	/// The smallest representable axis step, computed from the run mode's axis
 	/// range.
-	private float planckLength;
+	private float minAxisStep;
 
 	/// The currently active input profile.
 	private Profile profile;
@@ -352,6 +352,14 @@ public final class Input {
 		return main;
 	}
 
+	/// Returns the smallest representable axis movement step size based on the run
+	/// mode's axis range.
+	///
+	/// @return the minimum axis step
+	public float getMinAxisStep() {
+		return minAxisStep;
+	}
+
 	/// Returns the set of lock keys to be turned off.
 	///
 	/// @return the set of lock keys to deactivate
@@ -364,13 +372,6 @@ public final class Input {
 	/// @return the set of lock keys to activate
 	public Set<LockKey> getOnLockKeys() {
 		return onLockKeys;
-	}
-
-	/// Returns the smallest representable axis movement step size.
-	///
-	/// @return the planck length for axis values
-	public float getPlanckLength() {
-		return planckLength;
 	}
 
 	/// Returns the current input profile.
@@ -410,7 +411,8 @@ public final class Input {
 	}
 
 	/// Initializes the input system by opening all controllers, computing the
-	/// planck length, and invoking initialization actions defined in the profile.
+	/// minimum axis step, and invoking initialization actions defined in the
+	/// profile.
 	///
 	/// @return `true` if initialization succeeded, `false` if the selected
 	/// controller could not be opened
@@ -432,7 +434,7 @@ public final class Input {
 			}
 		}
 
-		planckLength = 2f / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
+		minAxisStep = 2f / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
 
 		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
 			if (action instanceof final IInitializationAction<?> initializationAction) {
