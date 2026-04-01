@@ -46,6 +46,7 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
+import java.lang.constant.Constable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -238,6 +239,11 @@ final class InputPipelineTest {
 		return new boolean[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT + 1];
 	}
 
+	@SuppressWarnings("unchecked")
+	private static <T extends Constable> List<IAction<T>> nullActionList() {
+		return new ArrayList<>(List.of((IAction<T>) new NullAction()));
+	}
+
 	private static Scancode scancode(final String name) {
 		return Scancode.NAME_TO_SCAN_CODE_MAP.get(name);
 	}
@@ -254,6 +260,7 @@ final class InputPipelineTest {
 
 	@BeforeEach
 	void setUp() {
+		ButtonToModeAction.getButtonToModeActionStack().clear();
 		Profile.DEFAULT_MODE.getAxisToActionsMap().clear();
 		Profile.DEFAULT_MODE.getButtonToActionsMap().clear();
 		final var mockMain = Mockito.mock(Main.class);
@@ -697,6 +704,69 @@ final class InputPipelineTest {
 
 			Assertions.assertFalse(output.buttons()[0]);
 		}
+
+		@Test
+		@DisplayName("ON_PRESS activates button once on entering zone")
+		void onPressActivatesButtonOnceOnEnteringZone() {
+			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
+
+			final var output1 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertTrue(output1.buttons()[0], "Button fires on entering zone");
+
+			final var output2 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(output2.buttons()[0], "Button does not fire again while in zone");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE activates button once on leaving zone")
+		void onReleaseActivatesButtonOnceOnLeavingZone() {
+			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
+			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(outputPress.buttons()[0], "Button does not fire on entering zone");
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			Assertions.assertTrue(outputRelease.buttons()[0], "Button fires on leaving zone");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously activates button across multiple frames")
+		void whilePressedContinuouslyActivatesButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(axes, noButtons());
+				Assertions.assertTrue(output.buttons()[0], "Button active on frame " + i);
+			}
+		}
 	}
 
 	@Nested
@@ -709,7 +779,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500000, 0.05f))));
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500_000, 0.05f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -726,7 +796,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
-					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.Y, 500000, 0.05f))));
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.Y, 500_000, 0.05f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -743,7 +813,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
-					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500000, 0.1f))));
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500_000, 0.1f))));
 			setProfile(profile);
 
 			final var axes = noAxes();
@@ -819,6 +889,81 @@ final class InputPipelineTest {
 
 			Assertions.assertTrue(output.downKeystrokes().isEmpty());
 		}
+
+		@Test
+		@DisplayName("ON_PRESS fires down-up keystroke once on entering zone")
+		void onPressFiresDownUpKeystrokeOnceOnEnteringZone() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newAxisToKeyAction(0.5f, 1.0f, wScancode);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var output1 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertTrue(output1.downUpKeystrokes().contains(expectedKeystroke), "Fires on entering zone");
+
+			final var output2 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(output2.downUpKeystrokes().contains(expectedKeystroke),
+					"Does not fire again while in zone");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE fires down-up keystroke once on leaving zone")
+		void onReleaseFiresDownUpKeystrokeOnceOnLeavingZone() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newAxisToKeyAction(0.5f, 1.0f, wScancode);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(outputPress.downUpKeystrokes().contains(expectedKeystroke),
+					"Does not fire on entering zone");
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			Assertions.assertTrue(outputRelease.downUpKeystrokes().contains(expectedKeystroke),
+					"Fires on leaving zone");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple frames")
+		void whilePressedContinuouslyHoldsKeystroke() {
+			final var wScancode = scancode(Scancode.DIK_W);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(axes, noButtons());
+				Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke),
+						"Keystroke held on frame " + i);
+			}
+		}
 	}
 
 	@Nested
@@ -877,6 +1022,71 @@ final class InputPipelineTest {
 			final var output = pollWithFrame(axes, noButtons());
 
 			Assertions.assertFalse(output.downMouseButtons().contains(1));
+		}
+
+		@Test
+		@DisplayName("ON_PRESS fires down-up mouse button once on entering zone")
+		void onPressFiresDownUpMouseButtonOnceOnEnteringZone() {
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var output1 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertTrue(output1.downUpMouseButtons.contains(1), "Mouse button fires on entering zone");
+
+			final var output2 = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(output2.downUpMouseButtons.contains(1),
+					"Mouse button does not fire again while in zone");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE fires down-up mouse button once on leaving zone")
+		void onReleaseFiresDownUpMouseButtonOnceOnLeavingZone() {
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			Assertions.assertFalse(outputPress.downUpMouseButtons.contains(1),
+					"Mouse button does not fire on entering zone");
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			Assertions.assertTrue(outputRelease.downUpMouseButtons.contains(1), "Mouse button fires on leaving zone");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple frames")
+		void whilePressedContinuouslyHoldsMouseButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(axes, noButtons());
+				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on frame " + i);
+			}
 		}
 	}
 
@@ -1062,6 +1272,66 @@ final class InputPipelineTest {
 			Assertions.assertTrue(output.buttons()[1]);
 			Assertions.assertTrue(output.buttons()[2]);
 		}
+
+		@Test
+		@DisplayName("ON_PRESS activates button once on press")
+		void onPressActivatesButtonOnceOnPress() {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(output1.buttons()[0], "Button fires on press");
+
+			final var output2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(output2.buttons()[0], "Button does not fire again while held");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE activates button once on release")
+		void onReleaseActivatesButtonOnceOnRelease() {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var outputPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(outputPress.buttons()[0], "Button does not fire on press");
+
+			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(outputRelease.buttons()[0], "Button fires on release");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously activates button across multiple frames")
+		void whilePressedContinuouslyActivatesButton() {
+			setUpButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 0);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(noAxes(), buttons);
+				Assertions.assertTrue(output.buttons()[0], "Button active on frame " + i);
+			}
+		}
 	}
 
 	@Nested
@@ -1149,7 +1419,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
-					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500000))));
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500_000))));
 			setProfile(profile);
 
 			final var buttons = noButtons();
@@ -1166,7 +1436,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
-					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.Y, 500000))));
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.Y, 500_000))));
 			setProfile(profile);
 
 			final var buttons = noButtons();
@@ -1183,7 +1453,7 @@ final class InputPipelineTest {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
-					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500000))));
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500_000))));
 			setProfile(profile);
 
 			final var buttons = noButtons();
@@ -1290,6 +1560,43 @@ final class InputPipelineTest {
 			final var output = pollWithFrame(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE cycle advances on each release")
+		void onReleaseCycleAdvancesOnEachRelease() {
+			final var scancode1 = scancode(Scancode.DIK_1);
+			final var scancode2 = scancode(Scancode.DIK_2);
+
+			final var cycleAction = newButtonToCycleAction(Activation.ON_RELEASE,
+					List.of(newButtonToKeyAction(scancode1), newButtonToKeyAction(scancode2)));
+			cycleAction.init(input);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var outputPress = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertFalse(outputPress.downUpKeystrokes()
+					.contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])), "Does not fire on press");
+
+			final var outputRelease1 = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(
+					outputRelease1.downUpKeystrokes()
+							.contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])),
+					"First release fires first sub-action");
+
+			pollWithFrame(noAxes(), buttonsPressed);
+			final var outputRelease2 = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(
+					outputRelease2.downUpKeystrokes()
+							.contains(new Keystroke(new Scancode[] { scancode2 }, new Scancode[0])),
+					"Second release fires second sub-action");
 		}
 	}
 
@@ -1430,6 +1737,474 @@ final class InputPipelineTest {
 	}
 
 	@Nested
+	@DisplayName("Comprehensive multi-mode integration")
+	final class ComprehensiveMultiModeIntegrationTest {
+
+		@SuppressWarnings("MethodLength")
+		@Test
+		@DisplayName("all action types across five modes with stacking and replacement")
+		void allActionTypesAcrossFiveModesWithStackingAndReplacement() {
+			final var lShiftScancode = scancode(Scancode.DIK_LSHIFT);
+			final var eScancode = scancode(Scancode.DIK_E);
+			final var fScancode = scancode(Scancode.DIK_F);
+			final var scancode1 = scancode(Scancode.DIK_1);
+			final var scancode2 = scancode(Scancode.DIK_2);
+
+			// --- Build profile with 5 modes ---
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+
+			// Default mode: axes
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X), newAxisToButtonAction(0, 0.8f, 1.0f))));
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.Y))));
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.RX))));
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY,
+					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.Z, 100f, 0.05f))));
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER, new ArrayList<>(List
+					.of(newAxisToKeyAction(0.5f, 1.0f, lShiftScancode), newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+			final var btn2Action = newAxisToButtonAction(2, 0.5f, 1.0f);
+			btn2Action.setActivation(Activation.ON_RELEASE);
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER,
+					new ArrayList<>(List.of(btn2Action)));
+
+			// Default mode: buttons
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToButtonAction(1))));
+			final var eKeyAction = newButtonToKeyAction(eScancode);
+			eKeyAction.setActivation(Activation.ON_PRESS);
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
+					new ArrayList<>(List.of(eKeyAction)));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST,
+					new ArrayList<>(List.of(newButtonToLockKeyAction(LockKey.CAPS_LOCK_LOCK_KEY, true))));
+			final var mouseBtn2Action = newButtonToMouseButtonAction(2);
+			mouseBtn2Action.setActivation(Activation.ON_RELEASE);
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK,
+					new ArrayList<>(List.of(mouseBtn2Action)));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK,
+					new ArrayList<>(List.of(newButtonToButtonAction(3))));
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS,
+					List.of(newButtonToButtonAction(4), newButtonToKeyAction(scancode1)));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_START,
+					new ArrayList<>(List.of(cycleAction)));
+
+			// Mode 1: "Override Mode" (toggle via NORTH)
+			final var mode1 = new Mode();
+			mode1.setDescription("Override Mode");
+			mode1.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.RY, 100f, 0.05f))));
+			mode1.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX,
+					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.RZ, 100f, 0.05f))));
+			final var btn5Action = newButtonToButtonAction(5);
+			btn5Action.setActivation(Activation.ON_PRESS);
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(btn5Action)));
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
+					new ArrayList<>(List.of(newButtonToKeyAction(fScancode))));
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, nullActionList());
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, new ArrayList<>(
+					List.of(newButtonToAxisResetAction(VirtualAxis.RY, 0f, Activation.WHILE_PRESSED, false))));
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, new ArrayList<>(
+					List.of(newButtonToAxisResetAction(VirtualAxis.RZ, 0f, Activation.WHILE_PRESSED, false))));
+			profile.getModes().add(mode1);
+
+			// Mode 2: "Stack Test Mode" (momentary via BACK)
+			final var mode2 = new Mode();
+			mode2.setDescription("Stack Test Mode");
+			mode2.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X))));
+			mode2.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToKeyAction(scancode2))));
+			mode2.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, nullActionList());
+			profile.getModes().add(mode2);
+
+			// OSK Mode (momentary via GUIDE)
+			final var oskMode = new Mode();
+			oskMode.setDescription("OSK Mode");
+			oskMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToPressOnScreenKeyboardKeyAction(false))));
+			oskMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
+					new ArrayList<>(List.of(newButtonToSelectOnScreenKeyboardKeyAction(Direction.RIGHT))));
+			oskMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST,
+					new ArrayList<>(List.of(newButtonToSelectOnScreenKeyboardKeyAction(Direction.DOWN))));
+			oskMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_START,
+					new ArrayList<>(List.of(newButtonToReleaseAllOnScreenKeyboardKeysAction())));
+			profile.getModes().add(oskMode);
+
+			// Mouse Mode (momentary via DPAD_UP)
+			final var mouseMode = new Mode();
+			mouseMode.setDescription("Mouse Mode");
+			mouseMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500_000, 0.05f))));
+			mouseMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToScrollAction(5000, 0.05f))));
+			mouseMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.Y, 500_000))));
+			mouseMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
+					new ArrayList<>(List.of(newButtonToScrollAction(5000))));
+			profile.getModes().add(mouseMode);
+
+			// Mode switching
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH,
+					new ArrayList<>(List.of(newButtonToModeAction(mode1, true))));
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_BACK,
+					new ArrayList<>(List.of(newButtonToModeAction(mode2, false))));
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE,
+					new ArrayList<>(List.of(newButtonToModeAction(oskMode, false))));
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP,
+					new ArrayList<>(List.of(newButtonToModeAction(mouseMode, false))));
+
+			setProfile(profile);
+			cycleAction.init(input);
+			eKeyAction.init(input);
+			mouseBtn2Action.init(input);
+			btn2Action.init(input);
+			btn5Action.init(input);
+
+			// ========== Phase 1: Default mode - all base actions ==========
+
+			final var phase1Axes = noAxes();
+			phase1Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.9f;
+			phase1Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = -0.5f;
+			phase1Axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = 0.6f;
+			phase1Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = 0.7f;
+			phase1Axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER] = 0.8f;
+
+			final var phase1Buttons = noButtons();
+			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
+			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = true;
+
+			final var p1 = pollWithFrame(phase1Axes, phase1Buttons);
+
+			assertAxisEquals(input.floatToIntAxisValue(0.9f), p1.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(-0.5f), p1.axes().get(VirtualAxis.Y));
+			assertAxisEquals(input.floatToIntAxisValue(0.6f), p1.axes().get(VirtualAxis.RX));
+			// WHILE_PRESSED actions
+			Assertions.assertTrue(p1.buttons()[0], "AxisToButton WHILE_PRESSED: leftX=0.9 in [0.8,1.0]");
+			Assertions.assertTrue(p1.buttons()[1], "ButtonToButton WHILE_PRESSED: SOUTH -> btn 1");
+			final var lShiftKeystroke = new Keystroke(new Scancode[] { lShiftScancode }, new Scancode[0]);
+			Assertions.assertTrue(p1.downKeystrokes().contains(lShiftKeystroke),
+					"AxisToKey WHILE_PRESSED: leftTrigger");
+			Assertions.assertTrue(p1.downMouseButtons().contains(1), "AxisToMouseButton WHILE_PRESSED: leftTrigger");
+			Assertions.assertTrue(p1.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
+					"ButtonToLockKey: WEST -> CAPS_LOCK");
+
+			// ON_PRESS actions - fire on first frame only
+			final var eKeystroke = new Keystroke(new Scancode[] { eScancode }, new Scancode[0]);
+			Assertions.assertTrue(p1.downUpKeystrokes().contains(eKeystroke),
+					"ButtonToKey ON_PRESS: EAST -> E (fires downUpKeystrokes on first frame)");
+
+			// ON_RELEASE actions - do NOT fire while held
+			Assertions.assertFalse(p1.buttons()[2], "AxisToButton ON_RELEASE: rightTrigger in zone, does not fire yet");
+			Assertions.assertFalse(p1.downMouseButtons().contains(2),
+					"ButtonToMouseButton ON_RELEASE: LEFT_STICK pressed, does not fire yet");
+			Assertions.assertFalse(p1.downUpMouseButtons.contains(2),
+					"ButtonToMouseButton ON_RELEASE: LEFT_STICK pressed, does not fire yet");
+
+			// Verify WHILE_PRESSED holds across multiple frames
+			for (var i = 0; i < 4; i++) {
+				final var pHold = pollWithFrame(phase1Axes, phase1Buttons);
+				Assertions.assertTrue(pHold.buttons()[0], "AxisToButton WHILE_PRESSED: still held on frame " + (i + 2));
+				Assertions.assertTrue(pHold.buttons()[1],
+						"ButtonToButton WHILE_PRESSED: still held on frame " + (i + 2));
+				Assertions.assertTrue(pHold.downKeystrokes().contains(lShiftKeystroke),
+						"AxisToKey WHILE_PRESSED: still held on frame " + (i + 2));
+				Assertions.assertTrue(pHold.downMouseButtons().contains(1),
+						"AxisToMouseButton WHILE_PRESSED: still held on frame " + (i + 2));
+				// ON_PRESS should NOT fire again
+				Assertions.assertFalse(pHold.downUpKeystrokes().contains(eKeystroke),
+						"ButtonToKey ON_PRESS: does not repeat on frame " + (i + 2));
+			}
+
+			// Release LEFT_STICK -> ON_RELEASE fires mouseBtn 2
+			final var releaseStickButtons = noButtons();
+			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
+			final var pRelease = pollWithFrame(phase1Axes, releaseStickButtons);
+			Assertions.assertTrue(pRelease.downUpMouseButtons.contains(2),
+					"ButtonToMouseButton ON_RELEASE: fires on LEFT_STICK release");
+
+			// Move RIGHT_TRIGGER out of zone -> ON_RELEASE fires btn 2
+			final var exitZoneAxes = noAxes();
+			exitZoneAxes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.9f;
+			final var pExitZone = pollWithFrame(exitZoneAxes, noButtons());
+			Assertions.assertTrue(pExitZone.buttons()[2],
+					"AxisToButton ON_RELEASE: fires btn 2 when rightTrigger exits zone");
+
+			// RelativeAxis on RIGHTY: accumulate over frames
+			final var relAxes = noAxes();
+			relAxes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = 0.8f;
+			final var initialZ = input.getAxes().get(VirtualAxis.Z);
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(relAxes, noButtons());
+			}
+			Assertions.assertNotEquals(initialZ, input.getAxes().get(VirtualAxis.Z),
+					"AxisToRelativeAxis: RIGHTY accumulated on Z");
+
+			// ========== Phase 2: Default mode - cycle action ==========
+
+			pollWithFrame(noAxes(), noButtons());
+			final var startButtons = noButtons();
+			startButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = true;
+			final var pCycle1 = pollWithFrame(noAxes(), startButtons);
+			Assertions.assertTrue(pCycle1.buttons()[4], "Cycle 1st sub-action: ButtonToButton -> btn 4");
+
+			pollWithFrame(noAxes(), noButtons());
+			final var pCycle2 = pollWithFrame(noAxes(), startButtons);
+			final var keystroke1 = new Keystroke(new Scancode[] { scancode1 }, new Scancode[0]);
+			Assertions.assertTrue(pCycle2.downUpKeystrokes().contains(keystroke1),
+					"Cycle 2nd sub-action: ButtonToKey -> DIK_1");
+
+			// ========== Phase 3: Toggle Mode 1 ON - overrides + fallthrough ==========
+
+			pollWithFrame(noAxes(), noButtons());
+			final var toggleOnButtons = noButtons();
+			toggleOnButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			pollWithFrame(noAxes(), toggleOnButtons);
+			pollWithFrame(noAxes(), noButtons());
+
+			// Inject with Mode 1 active
+			final var phase3Axes = noAxes();
+			phase3Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			phase3Axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = 0.7f;
+			phase3Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = 0.7f;
+			phase3Axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER] = 0.8f;
+
+			final var phase3Buttons = noButtons();
+			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
+			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
+
+			final var initialRY = input.getAxes().get(VirtualAxis.RY);
+			final var initialRZ = input.getAxes().get(VirtualAxis.RZ);
+
+			// First frame: capture ON_PRESS btn 5 firing
+			final var p3First = pollWithFrame(phase3Axes, phase3Buttons);
+			Assertions.assertTrue(p3First.buttons()[5], "Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
+			Assertions.assertFalse(p3First.buttons()[1], "Mode 1 replaced default: btn 1 not set");
+
+			// Subsequent frames for RelativeAxis accumulation
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(phase3Axes, phase3Buttons);
+			}
+			final var p3 = pollWithFrame(phase3Axes, phase3Buttons);
+
+			// Mode 1 overrides
+			Assertions.assertNotEquals(initialRY, input.getAxes().get(VirtualAxis.RY),
+					"Mode 1 override: LEFTX -> RelativeAxis(RY)");
+			Assertions.assertNotEquals(initialRZ, input.getAxes().get(VirtualAxis.RZ),
+					"Mode 1 override: RIGHTX -> RelativeAxis(RZ)");
+			Assertions.assertFalse(p3.buttons()[5],
+					"Mode 1 ON_PRESS: SOUTH -> btn 5 does not repeat on subsequent frames");
+			final var fKeystroke = new Keystroke(new Scancode[] { fScancode }, new Scancode[0]);
+			Assertions.assertTrue(p3.downKeystrokes().contains(fKeystroke),
+					"Mode 1 WHILE_PRESSED: EAST -> DIK_F held across frames");
+			Assertions.assertFalse(p3.downKeystrokes().contains(eKeystroke), "Mode 1 replaced default: DIK_E not set");
+			Assertions.assertFalse(p3.downUpKeystrokes().contains(eKeystroke),
+					"Mode 1 replaced default: DIK_E not in downUp either");
+			Assertions.assertFalse(p3.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
+					"NullAction on WEST blocks default LockKey");
+
+			// Fallthrough to default (WHILE_PRESSED actions)
+			Assertions.assertTrue(p3.downKeystrokes().contains(lShiftKeystroke),
+					"Fallthrough WHILE_PRESSED: LEFT_TRIGGER -> AxisToKey");
+			Assertions.assertTrue(p3.downMouseButtons().contains(1),
+					"Fallthrough WHILE_PRESSED: LEFT_TRIGGER -> AxisToMouseButton");
+			Assertions.assertFalse(p3.buttons()[2],
+					"Fallthrough ON_RELEASE: RIGHT_TRIGGER in zone, btn 2 not fired yet");
+			Assertions.assertTrue(p3.buttons()[3], "Fallthrough WHILE_PRESSED: RIGHT_STICK -> ButtonToButton btn 3");
+
+			// ========== Phase 4: Mode 1 - axis reset ==========
+
+			final var resetButtons = noButtons();
+			resetButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER] = true;
+			pollWithFrame(phase3Axes, resetButtons);
+
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RY));
+
+			// Reset RZ via ButtonToAxisResetAction on RIGHT_SHOULDER (Phase 3 may have
+			// saturated it)
+			final var resetRZButtons = noButtons();
+			resetRZButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER] = true;
+			pollWithFrame(noAxes(), resetRZButtons);
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RZ));
+
+			// ========== Phase 5: Stack Mode 2 on Mode 1 (three-layer) ==========
+
+			pollWithFrame(noAxes(), noButtons());
+
+			// Hold BACK for momentary Mode 2; Mode 1 still toggled on
+			final var holdBackButtons = noButtons();
+			holdBackButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_BACK] = true;
+			pollWithFrame(noAxes(), holdBackButtons);
+
+			final var phase5Axes = noAxes();
+			phase5Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			phase5Axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = 0.6f;
+			phase5Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER] = 0.7f;
+
+			final var phase5Buttons = noButtons();
+			phase5Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_BACK] = true;
+			phase5Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase5Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			phase5Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
+			phase5Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
+
+			final var initialRZPhase5 = input.getAxes().get(VirtualAxis.RZ);
+
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(phase5Axes, phase5Buttons);
+			}
+			final var p5 = pollWithFrame(phase5Axes, phase5Buttons);
+
+			// Mode 2 top layer overrides
+			assertAxisEquals(input.floatToIntAxisValue(0.7f), p5.axes().get(VirtualAxis.X));
+			final var keystroke2 = new Keystroke(new Scancode[] { scancode2 }, new Scancode[0]);
+			Assertions.assertTrue(p5.downKeystrokes().contains(keystroke2), "Mode 2 override: SOUTH -> DIK_2");
+
+			// Mode 2 NullAction blocks both layers below for EAST
+			Assertions.assertFalse(p5.downKeystrokes().contains(fKeystroke),
+					"Mode 2 NullAction on EAST blocks Mode 1 DIK_F");
+			Assertions.assertFalse(p5.downKeystrokes().contains(eKeystroke),
+					"Mode 2 NullAction on EAST blocks default DIK_E");
+
+			// Falls through Mode 2 to Mode 1
+			Assertions.assertNotEquals(initialRZPhase5, input.getAxes().get(VirtualAxis.RZ),
+					"Fallthrough to Mode 1: RIGHTX -> RelativeAxis(RZ)");
+			Assertions.assertFalse(p5.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
+					"Fallthrough to Mode 1: NullAction on WEST still blocks LockKey");
+
+			// Falls through Mode 2 and Mode 1 to default
+			Assertions.assertTrue(p5.buttons()[3], "Three-layer fallthrough: RIGHT_STICK -> btn 3");
+			Assertions.assertTrue(p5.downKeystrokes().contains(lShiftKeystroke),
+					"Three-layer fallthrough: LEFT_TRIGGER -> AxisToKey");
+
+			// ========== Phase 6: Release Mode 2, still in Mode 1 ==========
+
+			pollWithFrame(noAxes(), noButtons());
+
+			final var phase6Buttons = noButtons();
+			phase6Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase6Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			final var p6 = pollWithFrame(noAxes(), phase6Buttons);
+
+			Assertions.assertTrue(p6.buttons()[5], "Back in Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
+			Assertions.assertTrue(p6.downKeystrokes().contains(fKeystroke), "Back in Mode 1: EAST -> DIK_F restored");
+
+			// ========== Phase 7: OSK Mode (stacked on Mode 1) ==========
+
+			pollWithFrame(noAxes(), noButtons());
+
+			final var holdGuideButtons = noButtons();
+			holdGuideButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			pollWithFrame(noAxes(), holdGuideButtons);
+
+			// OSK press
+			final var oskSouthButtons = noButtons();
+			oskSouthButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			oskSouthButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), oskSouthButtons);
+			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
+
+			// OSK select RIGHT
+			final var oskEastButtons = noButtons();
+			oskEastButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			oskEastButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			pollWithFrame(noAxes(), oskEastButtons);
+			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
+
+			// OSK select DOWN
+			final var oskWestButtons = noButtons();
+			oskWestButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			oskWestButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
+			pollWithFrame(noAxes(), oskWestButtons);
+			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.DOWN);
+
+			// OSK release all
+			final var oskStartButtons = noButtons();
+			oskStartButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			oskStartButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = true;
+			pollWithFrame(noAxes(), oskStartButtons);
+			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
+
+			// Fallthrough: RIGHT_STICK through OSK -> Mode 1 -> Default
+			final var oskFallthroughButtons = noButtons();
+			oskFallthroughButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
+			oskFallthroughButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
+			final var pOskFallthrough = pollWithFrame(noAxes(), oskFallthroughButtons);
+			Assertions.assertTrue(pOskFallthrough.buttons()[3], "OSK fallthrough: RIGHT_STICK -> btn 3");
+
+			// Release GUIDE
+			pollWithFrame(noAxes(), noButtons());
+
+			// ========== Phase 8: Mouse Mode (stacked on Mode 1) ==========
+
+			final var holdDpadUpButtons = noButtons();
+			holdDpadUpButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP] = true;
+			pollWithFrame(noAxes(), holdDpadUpButtons);
+
+			final var phase8Axes = noAxes();
+			phase8Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			phase8Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.8f;
+
+			final var phase8Buttons = noButtons();
+			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP] = true;
+			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
+
+			final var p8 = pollWithFrame(phase8Axes, phase8Buttons);
+
+			Assertions.assertNotEquals(0, p8.cursorDeltaX, "Mouse: AxisToCursor LEFTX -> cursorX");
+			Assertions.assertNotEquals(0, p8.scrollClicks(), "Mouse: AxisToScroll LEFTY + ButtonToScroll EAST");
+			Assertions.assertNotEquals(0, p8.cursorDeltaY, "Mouse: ButtonToCursor SOUTH -> cursorY");
+			Assertions.assertTrue(p8.buttons()[3], "Mouse fallthrough: RIGHT_STICK -> btn 3");
+
+			// Release DPAD_UP
+			pollWithFrame(noAxes(), noButtons());
+
+			// ========== Phase 9: Toggle Mode 1 OFF - return to default ==========
+
+			final var toggleOffButtons = noButtons();
+			toggleOffButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			pollWithFrame(noAxes(), toggleOffButtons);
+			pollWithFrame(noAxes(), noButtons());
+
+			final var phase9Axes = noAxes();
+			phase9Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
+
+			final var phase9Buttons = noButtons();
+			phase9Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			phase9Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
+			phase9Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = true;
+
+			final var p9 = pollWithFrame(phase9Axes, phase9Buttons);
+
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), p9.axes().get(VirtualAxis.X));
+			Assertions.assertTrue(p9.buttons()[1], "Back in default WHILE_PRESSED: SOUTH -> btn 1");
+			Assertions.assertFalse(p9.buttons()[5], "Mode 1 inactive: btn 5 not set");
+			Assertions.assertTrue(p9.downUpKeystrokes().contains(eKeystroke),
+					"Back in default ON_PRESS: EAST -> DIK_E fires on first frame");
+			Assertions.assertFalse(p9.downMouseButtons().contains(2),
+					"Back in default ON_RELEASE: LEFT_STICK pressed, mouseBtn 2 not fired yet");
+			Assertions.assertFalse(p9.downUpMouseButtons.contains(2),
+					"Back in default ON_RELEASE: LEFT_STICK pressed, mouseBtn 2 not fired yet");
+
+			// Release LEFT_STICK -> ON_RELEASE fires mouseBtn 2
+			final var p9Release = pollWithFrame(phase9Axes, noButtons());
+			Assertions.assertTrue(p9Release.downUpMouseButtons.contains(2),
+					"Back in default ON_RELEASE: LEFT_STICK release fires mouseBtn 2");
+		}
+	}
+
+	@Nested
 	@DisplayName("Keystroke mapping")
 	final class KeystrokeMappingTests {
 
@@ -1471,6 +2246,58 @@ final class InputPipelineTest {
 		}
 
 		@Test
+		@DisplayName("ON_PRESS fires down-up keystroke once on press")
+		void onPressFiresDownUpKeystrokeOnceOnPress() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var output1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(output1.downUpKeystrokes().contains(expectedKeystroke), "Fires on press");
+
+			final var output2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(output2.downUpKeystrokes().contains(expectedKeystroke),
+					"Does not fire again while held");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE fires down-up keystroke once on release")
+		void onReleaseFiresDownUpKeystrokeOnceOnRelease() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var outputPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(outputPress.downUpKeystrokes().contains(expectedKeystroke),
+					"Does not fire on press");
+
+			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(outputRelease.downUpKeystrokes().contains(expectedKeystroke), "Fires on release");
+		}
+
+		@Test
 		@DisplayName("releasing button clears keystroke")
 		void releasingButtonClearsKeystroke() {
 			final var wScancode = scancode(Scancode.DIK_W);
@@ -1483,6 +2310,23 @@ final class InputPipelineTest {
 			final var output = pollWithFrame(noAxes(), noButtons());
 
 			Assertions.assertTrue(output.downKeystrokes().isEmpty());
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple frames")
+		void whilePressedContinuouslyHoldsKeystroke() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			setUpButtonToKeyProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, wScancode);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(noAxes(), buttons);
+				Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke),
+						"Keystroke held on frame " + i);
+			}
 		}
 	}
 
@@ -1564,6 +2408,53 @@ final class InputPipelineTest {
 		}
 
 		@Test
+		@DisplayName("ON_PRESS fires down-up mouse button once on press")
+		void onPressFiresDownUpMouseButtonOnceOnPress() {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(output1.downUpMouseButtons.contains(1), "Mouse button fires on press");
+
+			final var output2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(output2.downUpMouseButtons.contains(1),
+					"Mouse button does not fire again while held");
+		}
+
+		@Test
+		@DisplayName("ON_RELEASE fires down-up mouse button once on release")
+		void onReleaseFiresDownUpMouseButtonOnceOnRelease() {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var outputPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(outputPress.downUpMouseButtons.contains(1), "Mouse button does not fire on press");
+
+			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(outputRelease.downUpMouseButtons.contains(1), "Mouse button fires on release");
+		}
+
+		@Test
 		@DisplayName("releasing button clears mouse button")
 		void releasingButtonClearsMouseButton() {
 			setUpButtonToMouseButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 1);
@@ -1575,6 +2466,20 @@ final class InputPipelineTest {
 			final var output = pollWithFrame(noAxes(), noButtons());
 
 			Assertions.assertFalse(output.downMouseButtons().contains(1));
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple frames")
+		void whilePressedContinuouslyHoldsMouseButton() {
+			setUpButtonToMouseButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 1);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			for (var i = 0; i < 5; i++) {
+				final var output = pollWithFrame(noAxes(), buttons);
+				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on frame " + i);
+			}
 		}
 	}
 
