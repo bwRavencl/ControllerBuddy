@@ -20,12 +20,31 @@ package de.bwravencl.controllerbuddy.input;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
+import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToButtonAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToCursorAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToKeyAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToMouseButtonAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToRelativeAxisAction;
+import de.bwravencl.controllerbuddy.input.action.AxisToScrollAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToAxisResetAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCursorAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToKeyAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToLockKeyAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToMouseButtonAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToPressOnScreenKeyboardKeyAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToReleaseAllOnScreenKeyboardKeysAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToScrollAction;
+import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction;
+import de.bwravencl.controllerbuddy.input.action.IAction;
+import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.NullAction;
+import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +73,8 @@ final class InputPipelineTest {
 
 	private Input input;
 
+	private OnScreenKeyboard mockOnScreenKeyboard;
+
 	private MockedStatic<SDLGamepad> sdlGamepadMock;
 
 	private static void assertAxisEquals(final int expected, final int actual) {
@@ -69,9 +90,86 @@ final class InputPipelineTest {
 		return action;
 	}
 
+	private static AxisToButtonAction newAxisToButtonAction(final int buttonId, final float minAxisValue,
+			final float maxAxisValue) {
+		final var action = new AxisToButtonAction();
+		action.setButtonId(buttonId);
+		action.setMinAxisValue(minAxisValue);
+		action.setMaxAxisValue(maxAxisValue);
+		return action;
+	}
+
+	private static AxisToCursorAction newAxisToCursorAction(final MouseAxis mouseAxis, final int sensitivity,
+			final float deadZone) {
+		final var action = new AxisToCursorAction();
+		action.setAxis(mouseAxis);
+		action.setCursorSensitivity(sensitivity);
+		action.setDeadZone(deadZone);
+		return action;
+	}
+
+	private static AxisToKeyAction newAxisToKeyAction(final float minAxisValue, final float maxAxisValue,
+			final Scancode... keyCodes) {
+		final var action = new AxisToKeyAction();
+		action.setMinAxisValue(minAxisValue);
+		action.setMaxAxisValue(maxAxisValue);
+		action.setKeystroke(new Keystroke(keyCodes, new Scancode[0]));
+		return action;
+	}
+
+	private static AxisToMouseButtonAction newAxisToMouseButtonAction(final int mouseButton, final float minAxisValue,
+			final float maxAxisValue) {
+		final var action = new AxisToMouseButtonAction();
+		action.setMouseButton(mouseButton);
+		action.setMinAxisValue(minAxisValue);
+		action.setMaxAxisValue(maxAxisValue);
+		return action;
+	}
+
+	private static AxisToRelativeAxisAction newAxisToRelativeAxisAction(final VirtualAxis virtualAxis,
+			final float maxRelativeSpeed, final float deadZone) {
+		final var action = new AxisToRelativeAxisAction();
+		action.setVirtualAxis(virtualAxis);
+		action.setMaxRelativeSpeed(maxRelativeSpeed);
+		action.setDeadZone(deadZone);
+		return action;
+	}
+
+	private static AxisToScrollAction newAxisToScrollAction(final int clicks, final float deadZone) {
+		final var action = new AxisToScrollAction();
+		action.setClicks(clicks);
+		action.setDeadZone(deadZone);
+		return action;
+	}
+
+	private static ButtonToAxisResetAction newButtonToAxisResetAction(final VirtualAxis virtualAxis,
+			final float resetValue, final Activation activation, final boolean fluid) {
+		final var action = new ButtonToAxisResetAction();
+		action.setVirtualAxis(virtualAxis);
+		action.setResetValue(resetValue);
+		action.setActivation(activation);
+		action.setFluid(fluid);
+		return action;
+	}
+
 	private static ButtonToButtonAction newButtonToButtonAction(final int buttonId) {
 		final var action = new ButtonToButtonAction();
 		action.setButtonId(buttonId);
+		return action;
+	}
+
+	private static ButtonToCursorAction newButtonToCursorAction(final MouseAxis mouseAxis, final int sensitivity) {
+		final var action = new ButtonToCursorAction();
+		action.setAxis(mouseAxis);
+		action.setCursorSensitivity(sensitivity);
+		return action;
+	}
+
+	private static ButtonToCycleAction newButtonToCycleAction(final Activation activation,
+			final List<IAction<Boolean>> subActions) {
+		final var action = new ButtonToCycleAction();
+		action.setActivation(activation);
+		action.setActions(new ArrayList<>(subActions));
 		return action;
 	}
 
@@ -88,6 +186,13 @@ final class InputPipelineTest {
 		return action;
 	}
 
+	private static ButtonToLockKeyAction newButtonToLockKeyAction(final LockKey lockKey, final boolean on) {
+		final var action = new ButtonToLockKeyAction();
+		action.setLockKey(lockKey);
+		action.setOn(on);
+		return action;
+	}
+
 	private static ButtonToModeAction newButtonToModeAction(final Mode mode, final boolean toggle) {
 		final var action = new ButtonToModeAction();
 		action.setMode(mode);
@@ -98,6 +203,30 @@ final class InputPipelineTest {
 	private static ButtonToMouseButtonAction newButtonToMouseButtonAction(final int mouseButton) {
 		final var action = new ButtonToMouseButtonAction();
 		action.setMouseButton(mouseButton);
+		return action;
+	}
+
+	private static ButtonToPressOnScreenKeyboardKeyAction newButtonToPressOnScreenKeyboardKeyAction(
+			final boolean lockKey) {
+		final var action = new ButtonToPressOnScreenKeyboardKeyAction();
+		action.setLockKey(lockKey);
+		return action;
+	}
+
+	private static ButtonToReleaseAllOnScreenKeyboardKeysAction newButtonToReleaseAllOnScreenKeyboardKeysAction() {
+		return new ButtonToReleaseAllOnScreenKeyboardKeysAction();
+	}
+
+	private static ButtonToScrollAction newButtonToScrollAction(final int clicks) {
+		final var action = new ButtonToScrollAction();
+		action.setClicks(clicks);
+		return action;
+	}
+
+	private static ButtonToSelectOnScreenKeyboardKeyAction newButtonToSelectOnScreenKeyboardKeyAction(
+			final Direction direction) {
+		final var action = new ButtonToSelectOnScreenKeyboardKeyAction();
+		action.setDirection(direction);
 		return action;
 	}
 
@@ -129,7 +258,7 @@ final class InputPipelineTest {
 		Profile.DEFAULT_MODE.getButtonToActionsMap().clear();
 		final var mockMain = Mockito.mock(Main.class);
 		final var mockController = Mockito.mock(Controller.class);
-		final var mockOnScreenKeyboard = Mockito.mock(OnScreenKeyboard.class);
+		mockOnScreenKeyboard = Mockito.mock(OnScreenKeyboard.class);
 		final var mockRunMode = Mockito.mock(RunMode.class);
 
 		Mockito.lenient().when(mockMain.getOnScreenKeyboard()).thenReturn(mockOnScreenKeyboard);
@@ -355,6 +484,10 @@ final class InputPipelineTest {
 			return downMouseButtons;
 		}
 
+		private Set<Keystroke> downUpKeystrokes() {
+			return downUpKeystrokes;
+		}
+
 		@Override
 		public boolean equals(final Object obj) {
 			if (obj == this) {
@@ -379,6 +512,18 @@ final class InputPipelineTest {
 					downUpMouseButtons, cursorDeltaX, cursorDeltaY, scrollClicks, onLockKeys, offLockKeys);
 		}
 
+		private Set<LockKey> offLockKeys() {
+			return offLockKeys;
+		}
+
+		private Set<LockKey> onLockKeys() {
+			return onLockKeys;
+		}
+
+		private int scrollClicks() {
+			return scrollClicks;
+		}
+
 		@Override
 		public String toString() {
 			return "OutputCapture[" + "axes=" + axes + ", " + "buttons=" + Arrays.toString(buttons) + ", "
@@ -392,6 +537,44 @@ final class InputPipelineTest {
 	@Nested
 	@DisplayName("Axis mapping")
 	final class AxisMappingTests {
+
+		@Test
+		@DisplayName("axis within dead zone produces center value")
+		void axisWithinDeadZoneProducesCenterValue() {
+			final var action = newAxisToAxisAction(VirtualAxis.X);
+			action.setDeadZone(0.2f);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.15f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+		}
+
+		@Test
+		@DisplayName("inverted axis reverses output")
+		void invertedAxisReversesOutput() {
+			final var action = newAxisToAxisAction(VirtualAxis.X);
+			action.setInvert(true);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			assertAxisEquals(input.floatToIntAxisValue(-0.5f), output.axes().get(VirtualAxis.X));
+		}
 
 		@Test
 		@DisplayName("maps SDL left stick X to virtual axis X")
@@ -458,6 +641,373 @@ final class InputPipelineTest {
 	}
 
 	@Nested
+	@DisplayName("Axis to button mapping")
+	final class AxisToButtonActionTests {
+
+		@Test
+		@DisplayName("axis in zone activates virtual button")
+		void axisInZoneActivatesButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertTrue(output.buttons()[0]);
+		}
+
+		@Test
+		@DisplayName("axis leaving zone deactivates virtual button")
+		void axisLeavingZoneDeactivatesButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
+			pollWithFrame(axesInZone, noButtons());
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var output = pollWithFrame(axesOutOfZone, noButtons());
+
+			Assertions.assertFalse(output.buttons()[0]);
+		}
+
+		@Test
+		@DisplayName("axis outside zone does not activate virtual button")
+		void axisOutsideZoneDoesNotActivateButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToButtonAction(0, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertFalse(output.buttons()[0]);
+		}
+	}
+
+	@Nested
+	@DisplayName("Axis to cursor mapping")
+	final class AxisToCursorActionTests {
+
+		@Test
+		@DisplayName("axis drives cursor X movement")
+		void axisDrivesCursorX() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500000, 0.05f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertNotEquals(0, output.cursorDeltaX);
+		}
+
+		@Test
+		@DisplayName("axis drives cursor Y movement")
+		void axisDrivesCursorY() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.Y, 500000, 0.05f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.8f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertNotEquals(0, output.cursorDeltaY);
+		}
+
+		@Test
+		@DisplayName("axis in dead zone produces no cursor movement")
+		void axisInDeadZoneProducesNoCursorMovement() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToCursorAction(MouseAxis.X, 500000, 0.1f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.05f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertEquals(0, output.cursorDeltaX);
+		}
+	}
+
+	@Nested
+	@DisplayName("Axis to key mapping")
+	final class AxisToKeyActionTests {
+
+		@Test
+		@DisplayName("axis in zone activates keystroke")
+		void axisInZoneActivatesKeystroke() {
+			final var wScancode = scancode(Scancode.DIK_W);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+			Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke));
+		}
+
+		@Test
+		@DisplayName("axis leaving zone deactivates keystroke")
+		void axisLeavingZoneDeactivatesKeystroke() {
+			final var wScancode = scancode(Scancode.DIK_W);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+			setProfile(profile);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			pollWithFrame(axesInZone, noButtons());
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var output = pollWithFrame(axesOutOfZone, noButtons());
+
+			Assertions.assertTrue(output.downKeystrokes().isEmpty());
+		}
+
+		@Test
+		@DisplayName("axis outside zone does not activate keystroke")
+		void axisOutsideZoneDoesNotActivateKeystroke() {
+			final var wScancode = scancode(Scancode.DIK_W);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToKeyAction(0.5f, 1.0f, wScancode))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertTrue(output.downKeystrokes().isEmpty());
+		}
+	}
+
+	@Nested
+	@DisplayName("Axis to mouse button mapping")
+	final class AxisToMouseButtonActionTests {
+
+		@Test
+		@DisplayName("axis in zone activates mouse button")
+		void axisInZoneActivatesMouseButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertTrue(output.downMouseButtons().contains(1));
+		}
+
+		@Test
+		@DisplayName("axis leaving zone deactivates mouse button")
+		void axisLeavingZoneDeactivatesMouseButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axesInZone = noAxes();
+			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			pollWithFrame(axesInZone, noButtons());
+
+			final var axesOutOfZone = noAxes();
+			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+			final var output = pollWithFrame(axesOutOfZone, noButtons());
+
+			Assertions.assertFalse(output.downMouseButtons().contains(1));
+		}
+
+		@Test
+		@DisplayName("axis outside zone does not activate mouse button")
+		void axisOutsideZoneDoesNotActivateMouseButton() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToMouseButtonAction(1, 0.5f, 1.0f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertFalse(output.downMouseButtons().contains(1));
+		}
+	}
+
+	@Nested
+	@DisplayName("Axis to relative axis mapping")
+	final class AxisToRelativeAxisActionTests {
+
+		@Test
+		@DisplayName("relative axis accumulates over multiple frames")
+		void relativeAxisAccumulatesOverFrames() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.RX, 100f, 0.05f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(axes, noButtons());
+			}
+
+			Assertions.assertNotEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
+		}
+
+		@Test
+		@DisplayName("relative axis in dead zone does not change value")
+		void relativeAxisDeadZoneIgnoresInput() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToRelativeAxisAction(VirtualAxis.RX, 100f, 0.3f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.2f;
+
+			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(axes, noButtons());
+			}
+
+			Assertions.assertEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
+		}
+
+		@Test
+		@DisplayName("inverted relative axis reverses direction")
+		void relativeAxisInvertReversesDirection() {
+			final var action = newAxisToRelativeAxisAction(VirtualAxis.RX, 100f, 0.05f);
+			action.setInvert(true);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(axes, noButtons());
+			}
+
+			Assertions.assertTrue(input.getAxes().get(VirtualAxis.RX) < initialValue);
+		}
+	}
+
+	@Nested
+	@DisplayName("Axis to scroll mapping")
+	final class AxisToScrollActionTests {
+
+		@Test
+		@DisplayName("axis drives scroll")
+		void axisDrivesScroll() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToScrollAction(5000, 0.05f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.9f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertNotEquals(0, output.scrollClicks());
+		}
+
+		@Test
+		@DisplayName("axis in dead zone produces no scroll")
+		void axisInDeadZoneProducesNoScroll() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToScrollAction(5000, 0.1f))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.05f;
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			Assertions.assertEquals(0, output.scrollClicks());
+		}
+
+		@Test
+		@DisplayName("axis returning to dead zone stops scroll")
+		void axisReturningToDeadZoneStopsScroll() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY,
+					new ArrayList<>(List.of(newAxisToScrollAction(5000, 0.05f))));
+			setProfile(profile);
+
+			final var axesActive = noAxes();
+			axesActive[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.9f;
+			pollWithFrame(axesActive, noButtons());
+
+			final var output = pollWithFrame(noAxes(), noButtons());
+
+			Assertions.assertEquals(0, output.scrollClicks());
+		}
+	}
+
+	@Nested
 	@DisplayName("Button mapping")
 	final class ButtonMappingTests {
 
@@ -511,6 +1061,371 @@ final class InputPipelineTest {
 			Assertions.assertTrue(output.buttons()[0]);
 			Assertions.assertTrue(output.buttons()[1]);
 			Assertions.assertTrue(output.buttons()[2]);
+		}
+	}
+
+	@Nested
+	@DisplayName("Button to axis reset mapping")
+	final class ButtonToAxisResetActionTests {
+
+		@Test
+		@DisplayName("axis reset with ON_PRESS resets axis on button press")
+		void axisResetOnPressResetsAxis() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X))));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, new ArrayList<>(
+					List.of(newButtonToAxisResetAction(VirtualAxis.X, 0f, Activation.ON_PRESS, false))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			pollWithFrame(axes, noButtons());
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var output = pollWithFrame(axes, buttonsPressed);
+
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+		}
+
+		@Test
+		@DisplayName("axis reset with ON_RELEASE resets axis on button release")
+		void axisResetOnReleaseFiresOnRelease() {
+			final var resetAction = newButtonToAxisResetAction(VirtualAxis.X, 0f, Activation.ON_RELEASE, false);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X))));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(resetAction)));
+			setProfile(profile);
+
+			resetAction.init(input);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(axes, buttonsPressed);
+
+			final var output = pollWithFrame(axes, noButtons());
+
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+		}
+
+		@Test
+		@DisplayName("axis reset with WHILE_PRESSED resets axis every frame while held")
+		void axisResetWhilePressedFiresEveryFrame() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X))));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, new ArrayList<>(
+					List.of(newButtonToAxisResetAction(VirtualAxis.X, 0f, Activation.WHILE_PRESSED, false))));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var output = pollWithFrame(axes, buttonsPressed);
+
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+		}
+	}
+
+	@Nested
+	@DisplayName("Button to cursor mapping")
+	final class ButtonToCursorActionTests {
+
+		@Test
+		@DisplayName("button drives cursor X movement")
+		void buttonDrivesCursorX() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500000))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+
+			Assertions.assertNotEquals(0, output.cursorDeltaX);
+		}
+
+		@Test
+		@DisplayName("button drives cursor Y movement")
+		void buttonDrivesCursorY() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.Y, 500000))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+
+			Assertions.assertNotEquals(0, output.cursorDeltaY);
+		}
+
+		@Test
+		@DisplayName("releasing button stops cursor movement")
+		void releaseStopsCursorMovement() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToCursorAction(MouseAxis.X, 500000))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+
+			final var output = pollWithFrame(noAxes(), noButtons());
+
+			Assertions.assertEquals(0, output.cursorDeltaX);
+		}
+	}
+
+	@Nested
+	@DisplayName("Button to cycle mapping")
+	final class ButtonToCycleActionTests {
+
+		@Test
+		@DisplayName("cycle advances to next sub-action on each press")
+		void cycleAdvancesOnEachPress() {
+			final var scancode1 = scancode(Scancode.DIK_1);
+			final var scancode2 = scancode(Scancode.DIK_2);
+			final var scancode3 = scancode(Scancode.DIK_3);
+
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS, List.of(newButtonToKeyAction(scancode1),
+					newButtonToKeyAction(scancode2), newButtonToKeyAction(scancode3)));
+			cycleAction.init(input);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output1 = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertTrue(
+					output1.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
+
+			pollWithFrame(noAxes(), noButtons());
+			final var output2 = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertTrue(
+					output2.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode2 }, new Scancode[0])));
+
+			pollWithFrame(noAxes(), noButtons());
+			final var output3 = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertTrue(
+					output3.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode3 }, new Scancode[0])));
+		}
+
+		@Test
+		@DisplayName("cycle reset returns to first sub-action")
+		void cycleResetReturnsToFirstAction() {
+			final var scancode1 = scancode(Scancode.DIK_1);
+			final var scancode2 = scancode(Scancode.DIK_2);
+
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS,
+					List.of(newButtonToKeyAction(scancode1), newButtonToKeyAction(scancode2)));
+			cycleAction.init(input);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttonsPressed);
+			pollWithFrame(noAxes(), noButtons());
+
+			cycleAction.reset(input);
+
+			final var output = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertTrue(
+					output.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
+		}
+
+		@Test
+		@DisplayName("cycle wraps back to first sub-action after last")
+		void cycleWrapsAfterLastAction() {
+			final var scancode1 = scancode(Scancode.DIK_1);
+			final var scancode2 = scancode(Scancode.DIK_2);
+
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS,
+					List.of(newButtonToKeyAction(scancode1), newButtonToKeyAction(scancode2)));
+			cycleAction.init(input);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+
+			final var buttonsPressed = noButtons();
+			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttonsPressed);
+			pollWithFrame(noAxes(), noButtons());
+			pollWithFrame(noAxes(), buttonsPressed);
+			pollWithFrame(noAxes(), noButtons());
+
+			final var output = pollWithFrame(noAxes(), buttonsPressed);
+			Assertions.assertTrue(
+					output.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
+		}
+	}
+
+	@Nested
+	@DisplayName("Button to lock key mapping")
+	final class ButtonToLockKeyActionTests {
+
+		@Test
+		@DisplayName("holding button does not repeat lock key toggle")
+		void holdDoesNotRepeatToggle() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToLockKeyAction(LockKey.CAPS_LOCK_LOCK_KEY, true))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(output1.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
+
+			final var output2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(output2.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
+		}
+
+		@Test
+		@DisplayName("lock key off adds to off lock keys set")
+		void lockKeyOffAddsToOffSet() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToLockKeyAction(LockKey.NUM_LOCK_LOCK_KEY, false))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+
+			Assertions.assertTrue(output.offLockKeys().contains(LockKey.NUM_LOCK_LOCK_KEY));
+		}
+
+		@Test
+		@DisplayName("pressing button toggles lock key on")
+		void pressTogglesLockKeyOn() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToLockKeyAction(LockKey.CAPS_LOCK_LOCK_KEY, true))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+
+			Assertions.assertTrue(output.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
+		}
+	}
+
+	@Nested
+	@DisplayName("Button to scroll mapping")
+	final class ButtonToScrollActionTests {
+
+		@Test
+		@DisplayName("button drives scroll")
+		void buttonDrivesScroll() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToScrollAction(5000))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+
+			Assertions.assertNotEquals(0, output.scrollClicks());
+		}
+
+		@Test
+		@DisplayName("inverted scroll reverses direction")
+		void invertReversesScrollDirection() {
+			final var normalAction = newButtonToScrollAction(5000);
+
+			final var invertedAction = newButtonToScrollAction(5000);
+			invertedAction.setInvert(true);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(normalAction)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var normalOutput = pollWithFrame(noAxes(), buttons);
+
+			input.reset();
+			sdlGamepadMock.close();
+			setUp();
+
+			final var invertedProfile = new Profile();
+			final var invertedDefaultMode = invertedProfile.getModes().getFirst();
+			invertedDefaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(invertedAction)));
+			setProfile(invertedProfile);
+
+			final var invertedButtons = noButtons();
+			invertedButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var invertedOutput = pollWithFrame(noAxes(), invertedButtons);
+
+			Assertions.assertNotEquals(0, normalOutput.scrollClicks());
+			Assertions.assertNotEquals(0, invertedOutput.scrollClicks());
+			Assertions.assertTrue((normalOutput.scrollClicks() > 0 && invertedOutput.scrollClicks() < 0)
+					|| (normalOutput.scrollClicks() < 0 && invertedOutput.scrollClicks() > 0));
+		}
+
+		@Test
+		@DisplayName("releasing button stops scroll")
+		void releaseStopsScroll() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToScrollAction(5000))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+
+			final var output = pollWithFrame(noAxes(), noButtons());
+
+			Assertions.assertEquals(0, output.scrollClicks());
 		}
 	}
 
@@ -734,6 +1649,78 @@ final class InputPipelineTest {
 
 			Assertions.assertTrue(output1.downKeystrokes().contains(expectedKeystroke));
 			Assertions.assertTrue(output2.downKeystrokes().contains(expectedKeystroke));
+		}
+	}
+
+	@Nested
+	@DisplayName("Null action")
+	final class NullActionTests {
+
+		@Test
+		@DisplayName("null action produces no output")
+		void nullActionProducesNoOutput() {
+			final var before = OutputCapture.captureAndReset(input);
+			new NullAction().doAction(input, 0, 0f);
+			final var after = OutputCapture.captureAndReset(input);
+
+			Assertions.assertEquals(before, after);
+		}
+	}
+
+	@Nested
+	@DisplayName("On-screen keyboard actions")
+	final class OnScreenKeyboardActionTests {
+
+		@Test
+		@DisplayName("press on-screen keyboard key and release on button release")
+		void pressOnScreenKeyboardKey() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToPressOnScreenKeyboardKeyAction(false))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+
+			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
+
+			pollWithFrame(noAxes(), noButtons());
+
+			Mockito.verify(mockOnScreenKeyboard).releaseSelectedButton();
+		}
+
+		@Test
+		@DisplayName("release all on-screen keyboard keys on button press")
+		void releaseAllOnScreenKeyboardKeys() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToReleaseAllOnScreenKeyboardKeysAction())));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+
+			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
+		}
+
+		@Test
+		@DisplayName("select on-screen keyboard key moves selector in configured direction")
+		void selectOnScreenKeyboardKey() {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToSelectOnScreenKeyboardKeyAction(Direction.RIGHT))));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+
+			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 		}
 	}
 
