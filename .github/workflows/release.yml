@@ -130,7 +130,7 @@ jobs:
         if: runner.os == 'Linux'
         run: ./gradlew distTar --info
       - name: Upload Build-Reports Artifact
-        if: ${{ (steps.build_zip.outcome == 'failure') || (steps.build_tgz.outcome == 'failure') }}
+        if: failure() && (steps.build_zip.outcome == 'failure' || steps.build_tgz.outcome == 'failure')
         uses: actions/upload-artifact@v7
         with:
           name: spotbugs-reports
