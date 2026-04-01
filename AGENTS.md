@@ -36,8 +36,9 @@ See @README for detailed project overview.
 ./gradlew test                                                              # Run all tests
 ./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest' # Single test class
 ./gradlew test --tests '*.VersionUtilsTest.returnsEmptyForNull'             # Single test method
+./gradlew jacocoTestReport                                                  # Run all tests and generate test coverage report
 ./gradlew spotlessApply                                                     # Apply code formatting
-./gradlew check                                                             # Run SpotBugs + Spotless checks
+./gradlew check                                                             # Run SpotBugs + Spotless + all tests
 ./gradlew run                                                               # Run the application
 ./gradlew generateConstants                                                 # Generate version/license constants
 ./gradlew generateModuleInfo                                                # Generate module-info.java

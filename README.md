@@ -254,6 +254,8 @@ ControllerBuddy uses the Gradle build system, the following Gradle tasks are sup
 | Run all checks                         | `gradlew check`             |
 | Apply Spotless formatting              | `gradlew spotlessApply`     |
 | Run ControllerBuddy                    | `gradlew run`               |
+| Run all tests                          | `gradlew test`              |
+| Generate test coverage report          | `gradlew jacocoTestReport`  |
 | Install a jpackage image               | `gradlew installDist`       |
 | Create a ZIP-compressed jpackage image | `gradlew distZip`           |
 | Create a TGZ-compressed jpackage image | `gradlew distTar`           |
