@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList
 
 plugins {
   application
+  jacoco
   id("com.diffplug.spotless") version "8.4.0"
   id("com.github.spotbugs") version "6.4.8"
   id("net.ltgt.errorprone") version "5.1.0"
@@ -792,6 +793,16 @@ tasks.named<Test>("test") {
 
   if (os.isWindows) {
     jvmArgs(windowsJvmArgs.map { it.replace(mainModule, "ALL-UNNAMED") })
+  }
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+  dependsOn("test")
+
+  reports {
+    html.required = true
+    xml.required = true
+    csv.required = true
   }
 }
 
