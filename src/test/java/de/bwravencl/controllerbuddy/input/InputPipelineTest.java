@@ -43,6 +43,8 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToScrollAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToSelectOnScreenKeyboardKeyAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import de.bwravencl.controllerbuddy.input.action.IAxisToDelayableAction;
+import de.bwravencl.controllerbuddy.input.action.IButtonToDelayableAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
@@ -261,6 +263,8 @@ final class InputPipelineTest {
 	@BeforeEach
 	void setUp() {
 		ButtonToModeAction.getButtonToModeActionStack().clear();
+		IAxisToDelayableAction.reset();
+		IButtonToDelayableAction.reset();
 		Profile.DEFAULT_MODE.getAxisToActionsMap().clear();
 		Profile.DEFAULT_MODE.getButtonToActionsMap().clear();
 		final var mockMain = Mockito.mock(Main.class);
@@ -1743,7 +1747,7 @@ final class InputPipelineTest {
 		@SuppressWarnings("MethodLength")
 		@Test
 		@DisplayName("all action types across five modes with stacking and replacement")
-		void allActionTypesAcrossFiveModesWithStackingAndReplacement() {
+		void allActionTypesAcrossFiveModesWithStackingAndReplacement() throws InterruptedException {
 			final var lShiftScancode = scancode(Scancode.DIK_LSHIFT);
 			final var eScancode = scancode(Scancode.DIK_E);
 			final var fScancode = scancode(Scancode.DIK_F);
@@ -1802,8 +1806,9 @@ final class InputPipelineTest {
 			btn5Action.setActivation(Activation.ON_PRESS);
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
 					new ArrayList<>(List.of(btn5Action)));
-			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
-					new ArrayList<>(List.of(newButtonToKeyAction(fScancode))));
+			final var fKeyAction = newButtonToKeyAction(fScancode);
+			fKeyAction.setDelay(1L);
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, new ArrayList<>(List.of(fKeyAction)));
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, nullActionList());
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, new ArrayList<>(
 					List.of(newButtonToAxisResetAction(VirtualAxis.RY, 0f, Activation.WHILE_PRESSED, false))));
@@ -1985,10 +1990,15 @@ final class InputPipelineTest {
 			final var initialRY = input.getAxes().get(VirtualAxis.RY);
 			final var initialRZ = input.getAxes().get(VirtualAxis.RZ);
 
-			// First frame: capture ON_PRESS btn 5 firing
+			// First frame: capture ON_PRESS btn 5 firing; DIK_F delayed
 			final var p3First = pollWithFrame(phase3Axes, phase3Buttons);
 			Assertions.assertTrue(p3First.buttons()[5], "Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
 			Assertions.assertFalse(p3First.buttons()[1], "Mode 1 replaced default: btn 1 not set");
+			Assertions.assertFalse(
+					p3First.downKeystrokes().contains(new Keystroke(new Scancode[] { fScancode }, new Scancode[0])),
+					"Mode 1 delayed: EAST -> DIK_F suppressed on first frame");
+
+			Thread.sleep(10);
 
 			// Subsequent frames for RelativeAxis accumulation
 			for (var i = 0; i < 10; i++) {
@@ -2005,7 +2015,7 @@ final class InputPipelineTest {
 					"Mode 1 ON_PRESS: SOUTH -> btn 5 does not repeat on subsequent frames");
 			final var fKeystroke = new Keystroke(new Scancode[] { fScancode }, new Scancode[0]);
 			Assertions.assertTrue(p3.downKeystrokes().contains(fKeystroke),
-					"Mode 1 WHILE_PRESSED: EAST -> DIK_F held across frames");
+					"Mode 1 WHILE_PRESSED delayed: EAST -> DIK_F fires after delay elapses");
 			Assertions.assertFalse(p3.downKeystrokes().contains(eKeystroke), "Mode 1 replaced default: DIK_E not set");
 			Assertions.assertFalse(p3.downUpKeystrokes().contains(eKeystroke),
 					"Mode 1 replaced default: DIK_E not in downUp either");
@@ -2096,7 +2106,13 @@ final class InputPipelineTest {
 			final var p6 = pollWithFrame(noAxes(), phase6Buttons);
 
 			Assertions.assertTrue(p6.buttons()[5], "Back in Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
-			Assertions.assertTrue(p6.downKeystrokes().contains(fKeystroke), "Back in Mode 1: EAST -> DIK_F restored");
+			Assertions.assertFalse(p6.downKeystrokes().contains(fKeystroke),
+					"Back in Mode 1 delayed: DIK_F suppressed on re-entry first frame");
+
+			Thread.sleep(10);
+			final var p6After = pollWithFrame(noAxes(), phase6Buttons);
+			Assertions.assertTrue(p6After.downKeystrokes().contains(fKeystroke),
+					"Back in Mode 1 delayed: DIK_F fires after delay elapses");
 
 			// ========== Phase 7: OSK Mode (stacked on Mode 1) ==========
 
@@ -2201,6 +2217,525 @@ final class InputPipelineTest {
 			final var p9Release = pollWithFrame(phase9Axes, noButtons());
 			Assertions.assertTrue(p9Release.downUpMouseButtons.contains(2),
 					"Back in default ON_RELEASE: LEFT_STICK release fires mouseBtn 2");
+		}
+	}
+
+	@Nested
+	@DisplayName("Delayable action behavior")
+	final class DelayableActionTests {
+
+		private static final long DELAY_WAIT_MS = 10L;
+
+		private static final long TEST_DELAY = 1L;
+
+		@Test
+		@DisplayName("axis delay tracking cleared on mode activation")
+		void axisDelayTrackingClearedOnModeActivation() {
+			final var delayedAction = newAxisToKeyAction(0.5f, 1.0f, scancode(Scancode.DIK_A));
+			delayedAction.setDelay(500L);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(delayedAction)));
+
+			final var mode1 = new Mode();
+			mode1.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.Y))));
+			profile.getModes().add(mode1);
+
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH,
+					new ArrayList<>(List.of(newButtonToModeAction(mode1, true))));
+
+			setProfile(profile);
+
+			// Axis in zone -> delay starts
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			pollWithFrame(axes, noButtons());
+			Assertions.assertFalse(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(), "Delay tracking started");
+
+			// Switch to Mode 1 -> onModeActivated clears tracking
+			final var toggleButtons = noButtons();
+			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			pollWithFrame(axes, toggleButtons);
+			Assertions.assertTrue(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
+					"Delay tracking cleared by onModeActivated");
+		}
+
+		@Test
+		@DisplayName("button delay tracking cleared on mode activation")
+		void buttonDelayTrackingClearedOnModeActivation() {
+			final var delayedAction = newButtonToKeyAction(scancode(Scancode.DIK_A));
+			delayedAction.setDelay(500L);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction)));
+
+			final var mode1 = new Mode();
+			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(newButtonToButtonAction(0))));
+			profile.getModes().add(mode1);
+
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH,
+					new ArrayList<>(List.of(newButtonToModeAction(mode1, true))));
+
+			setProfile(profile);
+
+			// Press SOUTH -> delay starts
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
+					"Delay tracking started");
+
+			// Switch to Mode 1 -> onModeActivated clears tracking
+			final var toggleButtons = noButtons();
+			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), toggleButtons);
+			Assertions.assertTrue(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
+					"Delay tracking cleared by onModeActivated");
+		}
+
+		@Test
+		@DisplayName("delayed axis action denies co-located undelayed ON_RELEASE action")
+		void delayedAxisActionDeniesColocatedOnReleaseAction() throws InterruptedException {
+			final var delayedAction = newAxisToKeyAction(0.5f, 1.0f, scancode(Scancode.DIK_A));
+			delayedAction.setDelay(TEST_DELAY);
+
+			final var onReleaseAction = newAxisToButtonAction(0, 0.5f, 1.0f);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+
+			// First frame: delayed action starts delay, ON_RELEASE arms
+			pollWithFrame(axes, noButtons());
+
+			// After delay: delayed action fires and denies ON_RELEASE action
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(axes, noButtons());
+
+			// Exit zone: ON_RELEASE would normally fire but is denied
+			final var exitOutput = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(exitOutput.buttons()[0], "ON_RELEASE action denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("delayed AxisToButtonAction suppresses then fires after delay")
+		void delayedAxisToButtonSuppressesThenFires() throws InterruptedException {
+			final var action = newAxisToButtonAction(0, 0.5f, 1.0f);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+
+			final var suppressed = pollWithFrame(axes, noButtons());
+			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed AxisToKeyAction suppresses then fires after delay")
+		void delayedAxisToKeySuppressesThenFires() throws InterruptedException {
+			final var aScancode = scancode(Scancode.DIK_A);
+			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
+
+			final var suppressed = pollWithFrame(axes, noButtons());
+			Assertions.assertFalse(suppressed.downKeystrokes().contains(expected), "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(fired.downKeystrokes().contains(expected), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed AxisToMouseButtonAction suppresses then fires after delay")
+		void delayedAxisToMouseButtonSuppressesThenFires() throws InterruptedException {
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+
+			final var suppressed = pollWithFrame(axes, noButtons());
+			Assertions.assertFalse(suppressed.downMouseButtons().contains(1), "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(fired.downMouseButtons().contains(1), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed button action denies co-located undelayed ON_RELEASE action")
+		void delayedButtonActionDeniesColocatedOnReleaseAction() throws InterruptedException {
+			final var delayedAction = newButtonToKeyAction(scancode(Scancode.DIK_A));
+			delayedAction.setDelay(TEST_DELAY);
+
+			final var onReleaseAction = newButtonToButtonAction(0);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// First frame: delayed action starts delay, ON_RELEASE arms
+			pollWithFrame(noAxes(), buttons);
+
+			// After delay: delayed action fires and denies ON_RELEASE action
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			// Release: ON_RELEASE would normally fire but is denied
+			final var releaseOutput = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(releaseOutput.buttons()[0], "ON_RELEASE action denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToAxisResetAction suppresses then resets after delay")
+		void delayedButtonToAxisResetSuppressesThenResets() throws InterruptedException {
+			final var relAction = newAxisToRelativeAxisAction(VirtualAxis.X, 100f, 0.05f);
+
+			final var resetAction = newButtonToAxisResetAction(VirtualAxis.X, 0f, Activation.WHILE_PRESSED, false);
+			resetAction.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(relAction)));
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(resetAction)));
+			setProfile(profile);
+
+			// Accumulate relative axis value
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+			for (var i = 0; i < 10; i++) {
+				pollWithFrame(axes, noButtons());
+			}
+			final var accumulated = input.getAxes().get(VirtualAxis.X);
+			Assertions.assertNotEquals(0, accumulated, "Axis accumulated value");
+
+			// Press reset - suppressed during delay
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			pollWithFrame(noAxes(), buttons);
+			Assertions.assertNotEquals(0, input.getAxes().get(VirtualAxis.X), "Reset suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.X));
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToButtonAction suppresses then fires after delay")
+		void delayedButtonToButtonSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToButtonAction(0);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToCursorAction suppresses then fires after delay")
+		void delayedButtonToCursorSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToCursorAction(MouseAxis.X, 500_000);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertEquals(0, suppressed.cursorDeltaX, "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertNotEquals(0, fired.cursorDeltaX, "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToCycleAction suppresses then fires after delay")
+		void delayedButtonToCycleSuppressesThenFires() throws InterruptedException {
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS, List.of(newButtonToButtonAction(0)));
+			cycleAction.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+			cycleAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToKeyAction suppresses then fires after delay")
+		void delayedButtonToKeySuppressesThenFires() throws InterruptedException {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(suppressed.downKeystrokes().contains(expected), "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(fired.downKeystrokes().contains(expected), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToLockKeyAction suppresses then fires after delay")
+		void delayedButtonToLockKeySuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToLockKeyAction(LockKey.CAPS_LOCK_LOCK_KEY, true);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(suppressed.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
+					"Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(fired.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToModeAction suppresses mode switch then fires after delay")
+		void delayedButtonToModeSuppressesModeSwitch() throws InterruptedException {
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.X))));
+
+			final var mode1 = new Mode();
+			mode1.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					new ArrayList<>(List.of(newAxisToAxisAction(VirtualAxis.Y))));
+			profile.getModes().add(mode1);
+
+			final var modeAction = newButtonToModeAction(mode1, true);
+			modeAction.setDelay(TEST_DELAY);
+			profile.getButtonToModeActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH,
+					new ArrayList<>(List.of(modeAction)));
+
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+
+			// First frame: mode switch suppressed - LEFTX still maps to X
+			final var suppressed = pollWithFrame(axes, buttons);
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), suppressed.axes().get(VirtualAxis.X));
+
+			// Second frame after delay: mode switch fires (takes effect next poll)
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(axes, buttons);
+
+			// Third frame: mode now active, LEFTX maps to Y
+			final var afterSwitch = pollWithFrame(axes, noButtons());
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), afterSwitch.axes().get(VirtualAxis.Y));
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToMouseButtonAction suppresses then fires after delay")
+		void delayedButtonToMouseButtonSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(suppressed.downMouseButtons().contains(1), "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(fired.downMouseButtons().contains(1), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToPressOSKAction suppresses then fires after delay")
+		void delayedButtonToPressOSKSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToPressOnScreenKeyboardKeyAction(false);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).pressSelectedButton();
+
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToReleaseAllOSKAction suppresses then fires after delay")
+		void delayedButtonToReleaseAllOSKSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToReleaseAllOnScreenKeyboardKeysAction();
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).releaseAllButtons();
+
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToScrollAction suppresses then fires after delay")
+		void delayedButtonToScrollSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToScrollAction(5000);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var suppressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertEquals(0, suppressed.scrollClicks(), "Suppressed during delay");
+
+			Thread.sleep(DELAY_WAIT_MS);
+			final var fired = pollWithFrame(noAxes(), buttons);
+			Assertions.assertNotEquals(0, fired.scrollClicks(), "Fires after delay elapses");
+		}
+
+		@Test
+		@DisplayName("delayed ButtonToSelectOSKAction suppresses then fires after delay")
+		void delayedButtonToSelectOSKSuppressesThenFires() throws InterruptedException {
+			final var action = newButtonToSelectOnScreenKeyboardKeyAction(Direction.RIGHT);
+			action.setDelay(TEST_DELAY);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).moveSelector(Direction.RIGHT);
+
+			Thread.sleep(DELAY_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 		}
 	}
 
