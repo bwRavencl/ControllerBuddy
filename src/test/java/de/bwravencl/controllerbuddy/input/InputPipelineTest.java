@@ -546,6 +546,830 @@ final class InputPipelineTest {
 	}
 
 	@Nested
+	@DisplayName("Activation interval and ALWAYS activatable behavior")
+	final class ActivationIntervalTests {
+
+		private static final long INTERVAL_WAIT_MS = 10L;
+
+		private static final int TEST_MIN_ACTIVATION_INTERVAL = 1;
+
+		@Test
+		@DisplayName("AxisToKeyAction ON_PRESS with minActivationInterval holds then releases keystroke")
+		void axisToKeyOnPressWithMinInterval() throws InterruptedException {
+			final var aScancode = scancode(Scancode.DIK_A);
+			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+			action.setActivation(Activation.ON_PRESS);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
+
+			// Enter zone: fires and holds
+			final var p1 = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires when entering zone");
+
+			// Still in zone immediately: held by min interval
+			final var p2 = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(p2.downKeystrokes().contains(expected), "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p3 = pollWithFrame(axes, noButtons());
+			Assertions.assertFalse(p3.downKeystrokes().contains(expected), "Released after min interval expires");
+		}
+
+		@Test
+		@DisplayName("AxisToMouseButtonAction ON_RELEASE with minActivationInterval holds then releases")
+		void axisToMouseButtonOnReleaseWithMinInterval() throws InterruptedException {
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+			action.setActivation(Activation.ON_RELEASE);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+
+			// Enter zone: arms
+			pollWithFrame(axes, noButtons());
+
+			// Exit zone: fires and holds
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.downMouseButtons().contains(1), "Fires on exit from zone");
+
+			// Still outside zone immediately: held by min interval
+			final var pHold = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pHold.downMouseButtons().contains(1), "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pExpired.downMouseButtons().contains(1), "Released after min interval expires");
+		}
+
+		@Test
+		@DisplayName("ButtonToButtonAction ON_PRESS with minActivationInterval holds then releases")
+		void buttonToButtonOnPressWithMinInterval() throws InterruptedException {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_PRESS);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: fires and holds
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.buttons()[0], "Fires on press");
+
+			// Still pressed immediately: held by min interval
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p2.buttons()[0], "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p3 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p3.buttons()[0], "Released after min interval expires");
+
+			// Release button: re-arms activatable
+			pollWithFrame(noAxes(), noButtons());
+
+			// Re-press: fires again
+			final var p5 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p5.buttons()[0], "Fires on re-press after release");
+		}
+
+		@Test
+		@DisplayName("ButtonToButtonAction ON_PRESS without minInterval fires once then stops")
+		void buttonToButtonOnPressWithoutMinIntervalFiresOnce() {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// First frame: fires
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.buttons()[0], "Fires on first press");
+
+			// Second frame still pressed: does not fire again
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.buttons()[0], "Does not fire while sustained");
+
+			// Release then re-press: fires again
+			pollWithFrame(noAxes(), noButtons());
+			final var p4 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p4.buttons()[0], "Fires on re-press");
+		}
+
+		@Test
+		@DisplayName("ButtonToButtonAction ON_RELEASE with minActivationInterval holds then releases")
+		void buttonToButtonOnReleaseWithMinInterval() throws InterruptedException {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_RELEASE);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: arms
+			final var pPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pPress.buttons()[0], "Does not fire on press");
+
+			// Release: fires and holds
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.buttons()[0], "Fires on release");
+
+			// Still released immediately: held by min interval
+			final var pHold = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pHold.buttons()[0], "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pExpired.buttons()[0], "Released after min interval expires");
+		}
+
+		@Test
+		@DisplayName("ButtonToButtonAction ON_RELEASE with minActivationInterval denied by delayed action")
+		void buttonToButtonOnReleaseWithMinIntervalDenied() throws InterruptedException {
+			final var delayedAction = newButtonToKeyAction(scancode(Scancode.DIK_A));
+			delayedAction.setDelay(1L);
+
+			final var onReleaseAction = newButtonToButtonAction(0);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+			onReleaseAction.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: delayed starts, ON_RELEASE arms
+			pollWithFrame(noAxes(), buttons);
+
+			// After delay: delayed fires and denies ON_RELEASE
+			Thread.sleep(INTERVAL_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			// Release: ON_RELEASE denied, does not fire
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pRelease.buttons()[0],
+					"ON_RELEASE with minActivationInterval denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("ButtonToButtonAction ON_RELEASE without minInterval fires once per release cycle")
+		void buttonToButtonOnReleaseWithoutMinIntervalCycle() {
+			final var action = newButtonToButtonAction(0);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: arms
+			final var pPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pPress.buttons()[0], "Does not fire on press");
+
+			// Sustained press: still nothing
+			final var pSustain = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pSustain.buttons()[0], "Does not fire while sustained");
+
+			// Release: fires
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.buttons()[0], "Fires on release");
+
+			// Already released: does not fire again
+			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pAfter.buttons()[0], "Does not fire again while released");
+
+			// Re-press and release: fires again
+			pollWithFrame(noAxes(), buttons);
+			final var pRelease2 = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease2.buttons()[0], "Fires on second release");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_PRESS with minActivationInterval holds then releases keystroke")
+		void buttonToKeyOnPressWithMinInterval() throws InterruptedException {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_PRESS);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			// Press: fires and holds in downKeystrokes
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires on press");
+
+			// Still pressed immediately: held by min interval
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p2.downKeystrokes().contains(expected), "Held during min interval");
+
+			// After interval expires: released from downKeystrokes
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p3 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p3.downKeystrokes().contains(expected), "Released after min interval expires");
+
+			// Release button: re-arms activatable
+			pollWithFrame(noAxes(), noButtons());
+
+			// Re-press: fires again
+			final var p5 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p5.downKeystrokes().contains(expected), "Fires on re-press after release");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_PRESS without minInterval fires once then stops")
+		void buttonToKeyOnPressWithoutMinIntervalFiresOnce() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			// First frame: fires via downUpKeystrokes
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downUpKeystrokes().contains(expected), "Fires on first press");
+
+			// Second frame still pressed: does not fire again
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.downUpKeystrokes().contains(expected), "Does not fire while sustained");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_RELEASE denied by co-located delayed action")
+		void buttonToKeyOnReleaseDenied() throws InterruptedException {
+			final var delayedAction = newButtonToButtonAction(0);
+			delayedAction.setDelay(1L);
+
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var onReleaseAction = newButtonToKeyAction(wScancode);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			pollWithFrame(noAxes(), buttons);
+			Thread.sleep(INTERVAL_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pRelease.downUpKeystrokes().contains(expected),
+					"ON_RELEASE keystroke denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_RELEASE with minActivationInterval holds then releases keystroke")
+		void buttonToKeyOnReleaseWithMinInterval() throws InterruptedException {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_RELEASE);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			// Press: arms
+			final var pPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pPress.downKeystrokes().contains(expected), "Does not fire on press");
+
+			// Release: fires and holds
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.downKeystrokes().contains(expected), "Fires on release");
+
+			// Still released immediately: held by min interval
+			final var pHold = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pHold.downKeystrokes().contains(expected), "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pExpired.downKeystrokes().contains(expected), "Released after min interval expires");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_RELEASE with minActivationInterval denied by delayed action")
+		void buttonToKeyOnReleaseWithMinIntervalDenied() throws InterruptedException {
+			final var delayedAction = newButtonToButtonAction(0);
+			delayedAction.setDelay(1L);
+
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var onReleaseAction = newButtonToKeyAction(wScancode);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+			onReleaseAction.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			pollWithFrame(noAxes(), buttons);
+			Thread.sleep(INTERVAL_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pRelease.downKeystrokes().contains(expected),
+					"ON_RELEASE keystroke with minInterval denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("ButtonToKeyAction ON_RELEASE without minInterval fires once per release cycle")
+		void buttonToKeyOnReleaseWithoutMinIntervalCycle() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			// Press: arms
+			pollWithFrame(noAxes(), buttons);
+
+			// Sustained press: still armed, hot is true so activatable goes YES
+			final var pSustain = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pSustain.downUpKeystrokes().contains(expected), "Does not fire while pressed");
+
+			// Release: fires
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.downUpKeystrokes().contains(expected), "Fires on release");
+
+			// Already released: does not fire again
+			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pAfter.downUpKeystrokes().contains(expected), "Does not fire again");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ALWAYS activatable fires unconditionally via cycle")
+		void buttonToMouseButtonAlwaysViaButtonToCycle() {
+			final var mouseButtonAction = newButtonToMouseButtonAction(3);
+
+			final var cycleAction = newButtonToCycleAction(Activation.ON_PRESS, List.of(mouseButtonAction));
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(cycleAction)));
+			setProfile(profile);
+			cycleAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var output = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(output.downUpMouseButtons.contains(3),
+					"MouseButton fires via ALWAYS activatable in cycle");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_PRESS with minActivationInterval holds then releases")
+		void buttonToMouseButtonOnPressWithMinInterval() throws InterruptedException {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_PRESS);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: fires and holds in downMouseButtons
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downMouseButtons().contains(1), "Fires on press");
+
+			// Still pressed immediately: held by min interval
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p2.downMouseButtons().contains(1), "Held during min interval");
+
+			// After interval expires: released from downMouseButtons
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p3 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p3.downMouseButtons().contains(1), "Released after min interval expires");
+
+			// Release button: re-arms activatable
+			pollWithFrame(noAxes(), noButtons());
+
+			// Re-press: fires again
+			final var p5 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p5.downMouseButtons().contains(1), "Fires on re-press after release");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_PRESS without minInterval fires once then stops")
+		void buttonToMouseButtonOnPressWithoutMinIntervalFiresOnce() {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_PRESS);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// First frame: fires via downUpMouseButtons
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downUpMouseButtons.contains(1), "Fires on first press");
+
+			// Second frame still pressed: does not fire again
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.downUpMouseButtons.contains(1), "Does not fire while sustained");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_RELEASE denied by co-located delayed action")
+		void buttonToMouseButtonOnReleaseDenied() throws InterruptedException {
+			final var delayedAction = newButtonToButtonAction(0);
+			delayedAction.setDelay(1L);
+
+			final var onReleaseAction = newButtonToMouseButtonAction(1);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttons);
+			Thread.sleep(INTERVAL_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pRelease.downUpMouseButtons.contains(1),
+					"ON_RELEASE mouse button denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_RELEASE with minActivationInterval holds then releases")
+		void buttonToMouseButtonOnReleaseWithMinInterval() throws InterruptedException {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_RELEASE);
+			action.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: arms
+			final var pPress = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(pPress.downMouseButtons().contains(1), "Does not fire on press");
+
+			// Release: fires and holds
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.downMouseButtons().contains(1), "Fires on release");
+
+			// Still released immediately: held by min interval
+			final var pHold = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pHold.downMouseButtons().contains(1), "Held during min interval");
+
+			// After interval expires: released
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pExpired.downMouseButtons().contains(1), "Released after min interval expires");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_RELEASE with minActivationInterval denied by delayed action")
+		void buttonToMouseButtonOnReleaseWithMinIntervalDenied() throws InterruptedException {
+			final var delayedAction = newButtonToButtonAction(0);
+			delayedAction.setDelay(1L);
+
+			final var onReleaseAction = newButtonToMouseButtonAction(1);
+			onReleaseAction.setActivation(Activation.ON_RELEASE);
+			onReleaseAction.setMinActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(delayedAction, onReleaseAction)));
+			setProfile(profile);
+			onReleaseAction.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			pollWithFrame(noAxes(), buttons);
+			Thread.sleep(INTERVAL_WAIT_MS);
+			pollWithFrame(noAxes(), buttons);
+
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pRelease.downMouseButtons().contains(1),
+					"ON_RELEASE mouse button with minInterval denied by delayed action");
+		}
+
+		@Test
+		@DisplayName("ButtonToMouseButtonAction ON_RELEASE without minInterval fires once per release cycle")
+		void buttonToMouseButtonOnReleaseWithoutMinIntervalCycle() {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setActivation(Activation.ON_RELEASE);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+			action.init(input);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: arms
+			pollWithFrame(noAxes(), buttons);
+
+			// Release: fires
+			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertTrue(pRelease.downUpMouseButtons.contains(1), "Fires on release");
+
+			// Already released: does not fire again
+			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pAfter.downUpMouseButtons.contains(1), "Does not fire again");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED axis keystroke removed when axis exits zone")
+		void whilePressedAxisKeystrokeRemovedOnExit() {
+			final var aScancode = scancode(Scancode.DIK_A);
+			final var action = newAxisToKeyAction(0.5f, 1.0f, aScancode);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
+
+			final var pInZone = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(pInZone.downKeystrokes().contains(expected), "Keystroke added in zone");
+
+			final var pOutZone = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pOutZone.downKeystrokes().contains(expected),
+					"Keystroke removed when axis exits zone");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED axis mouse button removed when axis exits zone")
+		void whilePressedAxisMouseButtonRemovedOnExit() {
+			final var action = newAxisToMouseButtonAction(1, 0.5f, 1.0f);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
+
+			final var pInZone = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(pInZone.downMouseButtons().contains(1), "Mouse button added in zone");
+
+			final var pOutZone = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pOutZone.downMouseButtons().contains(1),
+					"Mouse button removed when axis exits zone");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED ButtonToButtonAction with maxActivationInterval stops after timeout")
+		void whilePressedButtonMaxActivationInterval() throws InterruptedException {
+			final var action = newButtonToButtonAction(0);
+			action.setMaxActivationInterval(1);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: fires
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.buttons()[0], "Fires initially");
+
+			// After max interval: stops
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.buttons()[0], "Stops after max interval");
+
+			// Release and re-press: fires again
+			pollWithFrame(noAxes(), noButtons());
+			final var p4 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p4.buttons()[0], "Fires again after re-press");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED ButtonToKeyAction with maxActivationInterval stops after timeout")
+		void whilePressedKeyMaxActivationInterval() throws InterruptedException {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+			action.setMaxActivationInterval(1);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			// Press: fires
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires initially");
+
+			// After max interval: stops and removes
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.downKeystrokes().contains(expected), "Stops after max interval");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED keystroke removed from downKeystrokes on release")
+		void whilePressedKeystrokeRemovedOnRelease() {
+			final var wScancode = scancode(Scancode.DIK_W);
+			final var action = newButtonToKeyAction(wScancode);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
+
+			final var pPressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(pPressed.downKeystrokes().contains(expected), "Keystroke added on press");
+
+			final var pReleased = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pReleased.downKeystrokes().contains(expected),
+					"Keystroke removed from downKeystrokes on release");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED ButtonToMouseButtonAction with maxActivationInterval stops after timeout")
+		void whilePressedMouseButtonMaxActivationInterval() throws InterruptedException {
+			final var action = newButtonToMouseButtonAction(1);
+			action.setMaxActivationInterval(1);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			// Press: fires
+			final var p1 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(p1.downMouseButtons().contains(1), "Fires initially");
+
+			// After max interval: stops and removes
+			Thread.sleep(INTERVAL_WAIT_MS);
+			final var p2 = pollWithFrame(noAxes(), buttons);
+			Assertions.assertFalse(p2.downMouseButtons().contains(1), "Stops after max interval");
+		}
+
+		@Test
+		@DisplayName("WHILE_PRESSED mouse button removed from downMouseButtons on release")
+		void whilePressedMouseButtonRemovedOnRelease() {
+			final var action = newButtonToMouseButtonAction(1);
+
+			final var profile = new Profile();
+			final var defaultMode = profile.getModes().getFirst();
+			defaultMode.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					new ArrayList<>(List.of(action)));
+			setProfile(profile);
+
+			final var buttons = noButtons();
+			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
+
+			final var pPressed = pollWithFrame(noAxes(), buttons);
+			Assertions.assertTrue(pPressed.downMouseButtons().contains(1), "Mouse button added on press");
+
+			final var pReleased = pollWithFrame(noAxes(), noButtons());
+			Assertions.assertFalse(pReleased.downMouseButtons().contains(1),
+					"Mouse button removed from downMouseButtons on release");
+		}
+	}
+
+	@Nested
 	@DisplayName("Axis mapping")
 	final class AxisMappingTests {
 
