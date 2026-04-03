@@ -549,9 +549,9 @@ final class InputPipelineTest {
 	@DisplayName("Activation interval and ALWAYS activatable behavior")
 	final class ActivationIntervalTests {
 
-		private static final long INTERVAL_WAIT_MS = 10L;
+		private static final long INTERVAL_WAIT_MS = 100L;
 
-		private static final int TEST_MIN_ACTIVATION_INTERVAL = 1;
+		private static final int TEST_MIN_ACTIVATION_INTERVAL = 50;
 
 		@Test
 		@DisplayName("AxisToKeyAction ON_PRESS with minActivationInterval holds then releases keystroke")
@@ -725,7 +725,7 @@ final class InputPipelineTest {
 		@DisplayName("ButtonToButtonAction ON_RELEASE with minActivationInterval denied by delayed action")
 		void buttonToButtonOnReleaseWithMinIntervalDenied() throws InterruptedException {
 			final var delayedAction = newButtonToKeyAction(scancode(Scancode.DIK_A));
-			delayedAction.setDelay(1L);
+			delayedAction.setDelay(50L);
 
 			final var onReleaseAction = newButtonToButtonAction(0);
 			onReleaseAction.setActivation(Activation.ON_RELEASE);
@@ -863,7 +863,7 @@ final class InputPipelineTest {
 		@DisplayName("ButtonToKeyAction ON_RELEASE denied by co-located delayed action")
 		void buttonToKeyOnReleaseDenied() throws InterruptedException {
 			final var delayedAction = newButtonToButtonAction(0);
-			delayedAction.setDelay(1L);
+			delayedAction.setDelay(50L);
 
 			final var wScancode = scancode(Scancode.DIK_W);
 			final var onReleaseAction = newButtonToKeyAction(wScancode);
@@ -930,7 +930,7 @@ final class InputPipelineTest {
 		@DisplayName("ButtonToKeyAction ON_RELEASE with minActivationInterval denied by delayed action")
 		void buttonToKeyOnReleaseWithMinIntervalDenied() throws InterruptedException {
 			final var delayedAction = newButtonToButtonAction(0);
-			delayedAction.setDelay(1L);
+			delayedAction.setDelay(50L);
 
 			final var wScancode = scancode(Scancode.DIK_W);
 			final var onReleaseAction = newButtonToKeyAction(wScancode);
@@ -1080,7 +1080,7 @@ final class InputPipelineTest {
 		@DisplayName("ButtonToMouseButtonAction ON_RELEASE denied by co-located delayed action")
 		void buttonToMouseButtonOnReleaseDenied() throws InterruptedException {
 			final var delayedAction = newButtonToButtonAction(0);
-			delayedAction.setDelay(1L);
+			delayedAction.setDelay(50L);
 
 			final var onReleaseAction = newButtonToMouseButtonAction(1);
 			onReleaseAction.setActivation(Activation.ON_RELEASE);
@@ -1143,7 +1143,7 @@ final class InputPipelineTest {
 		@DisplayName("ButtonToMouseButtonAction ON_RELEASE with minActivationInterval denied by delayed action")
 		void buttonToMouseButtonOnReleaseWithMinIntervalDenied() throws InterruptedException {
 			final var delayedAction = newButtonToButtonAction(0);
-			delayedAction.setDelay(1L);
+			delayedAction.setDelay(50L);
 
 			final var onReleaseAction = newButtonToMouseButtonAction(1);
 			onReleaseAction.setActivation(Activation.ON_RELEASE);
@@ -1244,7 +1244,7 @@ final class InputPipelineTest {
 		@DisplayName("WHILE_PRESSED ButtonToButtonAction with maxActivationInterval stops after timeout")
 		void whilePressedButtonMaxActivationInterval() throws InterruptedException {
 			final var action = newButtonToButtonAction(0);
-			action.setMaxActivationInterval(1);
+			action.setMaxActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
 
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1275,7 +1275,7 @@ final class InputPipelineTest {
 		void whilePressedKeyMaxActivationInterval() throws InterruptedException {
 			final var wScancode = scancode(Scancode.DIK_W);
 			final var action = newButtonToKeyAction(wScancode);
-			action.setMaxActivationInterval(1);
+			action.setMaxActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
 
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1325,7 +1325,7 @@ final class InputPipelineTest {
 		@DisplayName("WHILE_PRESSED ButtonToMouseButtonAction with maxActivationInterval stops after timeout")
 		void whilePressedMouseButtonMaxActivationInterval() throws InterruptedException {
 			final var action = newButtonToMouseButtonAction(1);
-			action.setMaxActivationInterval(1);
+			action.setMaxActivationInterval(TEST_MIN_ACTIVATION_INTERVAL);
 
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -2631,7 +2631,7 @@ final class InputPipelineTest {
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
 					new ArrayList<>(List.of(btn5Action)));
 			final var fKeyAction = newButtonToKeyAction(fScancode);
-			fKeyAction.setDelay(1L);
+			fKeyAction.setDelay(50L);
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, new ArrayList<>(List.of(fKeyAction)));
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, nullActionList());
 			mode1.getButtonToActionsMap().put(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, new ArrayList<>(
@@ -2822,7 +2822,7 @@ final class InputPipelineTest {
 					p3First.downKeystrokes().contains(new Keystroke(new Scancode[] { fScancode }, new Scancode[0])),
 					"Mode 1 delayed: EAST -> DIK_F suppressed on first frame");
 
-			Thread.sleep(10);
+			Thread.sleep(100);
 
 			// Subsequent frames for RelativeAxis accumulation
 			for (var i = 0; i < 10; i++) {
@@ -2933,7 +2933,7 @@ final class InputPipelineTest {
 			Assertions.assertFalse(p6.downKeystrokes().contains(fKeystroke),
 					"Back in Mode 1 delayed: DIK_F suppressed on re-entry first frame");
 
-			Thread.sleep(10);
+			Thread.sleep(100);
 			final var p6After = pollWithFrame(noAxes(), phase6Buttons);
 			Assertions.assertTrue(p6After.downKeystrokes().contains(fKeystroke),
 					"Back in Mode 1 delayed: DIK_F fires after delay elapses");
@@ -3048,9 +3048,9 @@ final class InputPipelineTest {
 	@DisplayName("Delayable action behavior")
 	final class DelayableActionTests {
 
-		private static final long DELAY_WAIT_MS = 10L;
+		private static final long DELAY_WAIT_MS = 100L;
 
-		private static final long TEST_DELAY = 1L;
+		private static final long TEST_DELAY = 50L;
 
 		@Test
 		@DisplayName("axis delay tracking cleared on mode activation")
