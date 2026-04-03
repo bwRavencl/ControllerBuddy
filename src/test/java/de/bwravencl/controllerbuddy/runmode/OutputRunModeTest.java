@@ -112,21 +112,14 @@ final class OutputRunModeTest {
 		void returnsFalseWhenNumButtonsInsufficient() throws ReflectiveOperationException {
 			Assumptions.assumeFalse(Main.IS_MAC,
 					"Skipping: enoughButtons() throws UnsupportedOperationException on macOS");
-			final var skipDialogsField = Main.class.getDeclaredField("skipMessageDialogs");
-			skipDialogsField.setAccessible(true);
-			skipDialogsField.setBoolean(null, true);
-			try {
-				final var action = new ButtonToButtonAction();
-				action.setButtonId(5);
-				final var mode = new Mode();
-				mode.getButtonToActionsMap().put(0, List.of(action));
-				Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
+			final var action = new ButtonToButtonAction();
+			action.setButtonId(5);
+			final var mode = new Mode();
+			mode.getButtonToActionsMap().put(0, List.of(action));
+			Mockito.when(mockProfile.getModes()).thenReturn(List.of(mode));
 
-				// buttonId=5 means requiredButtons=6; only 5 available
-				Assertions.assertFalse(invokeEnoughButtons(5));
-			} finally {
-				skipDialogsField.setBoolean(null, false);
-			}
+			// buttonId=5 means requiredButtons=6; only 5 available
+			Assertions.assertFalse(invokeEnoughButtons(5));
 		}
 
 		@Test

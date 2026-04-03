@@ -219,7 +219,7 @@ spotless {
   val sdlGameControllerDBExclusion = "${removeProjectDirPrefix(sdlGameControllerDBDir)}/**"
 
   format("newlineAndTrailingWhitespace") {
-    target("**/*.properties", "**/*.yml")
+    target("**/*.properties", "**/*.yml", "src/**/resources/META-INF/services/*")
     targetExclude(sdlGameControllerDBExclusion)
     endWithNewline()
     trimTrailingWhitespace()
@@ -790,6 +790,9 @@ tasks.named<Test>("test") {
   jvmArgs(mockitoAgent.map { "-javaagent:${it.absolutePath}" })
   jvmArgs("--enable-native-access=ALL-UNNAMED")
   jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
+
+  systemProperty("java.awt.headless", "true")
+  systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
   if (os.isWindows) {
     jvmArgs(windowsJvmArgs.map { it.replace(mainModule, "ALL-UNNAMED") })
