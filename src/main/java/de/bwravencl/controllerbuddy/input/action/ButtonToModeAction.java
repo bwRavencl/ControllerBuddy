@@ -146,7 +146,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 
 	/// Pops this action from the mode stack and restores the previous mode.
 	///
-	/// If other mode actions are stacked above this one they are recursively
+	/// If other mode actions are stacked above this one, they are recursively
 	/// deactivated first. After popping, all activatable actions in the
 	/// previously active mode are re-initialized, overlapping axes are suspended,
 	/// and the on-screen keyboard is hidden if it was shown by this action.
