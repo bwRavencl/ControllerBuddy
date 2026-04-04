@@ -3694,6 +3694,51 @@ final class InputPipelineTest {
 	final class ModeSwitchingTests {
 
 		@Test
+		@DisplayName("deactivating mode suspends overlapping axes then clears on dead zone")
+		void deactivatingModeSuspendsOverlappingAxes() {
+			setUpMultiModeProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, true, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
+					VirtualAxis.X, VirtualAxis.Y);
+
+			final var axes = noAxes();
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
+
+			final var buttonsWithModeSwitch = noButtons();
+			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+
+			// Toggle mode 1 on
+			pollWithFrame(axes, buttonsWithModeSwitch);
+			pollWithFrame(axes, noButtons());
+
+			// Confirm mode 1 is active - LEFTX maps to Y
+			final var outputMode1 = pollWithFrame(axes, noButtons());
+			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().get(VirtualAxis.Y));
+
+			// Toggle mode 1 off - deactivateMode suspends LEFTX
+			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
+			pollWithFrame(axes, buttonsWithModeSwitch);
+			pollWithFrame(axes, noButtons());
+
+			// Axis is suspended - LEFTX should not produce output on X despite being
+			// non-zero
+			final var outputSuspended = pollWithFrame(axes, noButtons());
+			Assertions.assertTrue(input.isAxisSuspended(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
+					"LEFTX should be suspended after mode deactivation");
+			assertAxisEquals(0, outputSuspended.axes().get(VirtualAxis.X));
+
+			// Return axis to dead zone to clear suspension
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0f;
+			pollWithFrame(axes, noButtons());
+
+			Assertions.assertFalse(input.isAxisSuspended(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
+					"LEFTX suspension should clear when axis returns to dead zone");
+
+			// Now apply axis input again - should produce output normally
+			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.6f;
+			final var outputResumed = pollWithFrame(axes, noButtons());
+			assertAxisEquals(input.floatToIntAxisValue(0.6f), outputResumed.axes().get(VirtualAxis.X));
+		}
+
+		@Test
 		@DisplayName("momentary mode switch changes axis mapping while held")
 		void momentaryModeSwitchChangesMapping() {
 			setUpMultiModeProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, false, SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
