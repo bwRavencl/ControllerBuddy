@@ -108,7 +108,7 @@ repositories {
 java { toolchain(javaToolchainSpec) }
 
 dependencies {
-  errorprone("com.google.errorprone:error_prone_core:2.48.0")
+  errorprone("com.google.errorprone:error_prone_core:2.49.0")
   spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
   val dbusJavaVersion = "5.2.0"
