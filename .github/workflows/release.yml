@@ -205,7 +205,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.build.outputs.tag_name }}
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ControllerBuddy-${{ needs.build.outputs.tag_name }}
           tag_name: ${{ needs.build.outputs.tag_name }}
