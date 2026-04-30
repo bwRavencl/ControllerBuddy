@@ -594,7 +594,6 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 					filter();
 				}
 
-				/// Forwards the current text field content to the renderer as a filter.
 				private void filter() {
 					checkboxListCellRenderer.setFilter(getText());
 				}

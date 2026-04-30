@@ -1557,9 +1557,6 @@ public final class Main {
 				showPopup(e);
 			}
 
-			/// Shows the status-panel context menu if the event is a popup trigger.
-			///
-			/// @param e the mouse event to evaluate
 			private void showPopup(final MouseEvent e) {
 				if (e.isPopupTrigger()) {
 					toggleDonateCheckBoxMenuItem.setSelected(donateButton.isVisible());
@@ -3291,15 +3288,6 @@ public final class Main {
 
 				private static final Insets INSETS = new Insets(THICKNESS, THICKNESS, THICKNESS, THICKNESS);
 
-				/// Paints a segmented alternating-color line used for the overlay drag
-				/// border.
-				///
-				/// @param g2 the graphics context to paint into
-				/// @param x1 the start x coordinate
-				/// @param y1 the start y coordinate
-				/// @param x2 the end x coordinate
-				/// @param y2 the end y coordinate
-				/// @param horizontal `true` if the line is horizontal, `false` if vertical
 				private static void paintSegmentedLine(final Graphics2D g2, final int x1, final int y1, final int x2,
 						final int y2, final boolean horizontal) {
 					final var length = horizontal ? x2 - x1 : y2 - y1;

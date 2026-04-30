@@ -1044,10 +1044,6 @@ public final class EditActionsDialog extends JDialog {
 							setUnderlineEnabled(false);
 						}
 
-						/// Sets whether the property label is displayed with an underline font.
-						///
-						/// @param enabled `true` to apply underline, `false` to restore the original
-						/// font
 						private void setUnderlineEnabled(final boolean enabled) {
 							final Font newFont;
 							if (enabled) {

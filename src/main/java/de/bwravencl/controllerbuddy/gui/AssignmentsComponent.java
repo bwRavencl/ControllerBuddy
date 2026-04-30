@@ -200,10 +200,6 @@ final class AssignmentsComponent extends JScrollPane {
 					return Point2D.distance(x, y, getWidth() / 2d, getHeight() / 2d) < radius;
 				}
 
-				/// Returns the diameter of this round button, computed as the smaller of
-				/// its current width and height.
-				///
-				/// @return the diameter in pixels
 				private int getDiameter() {
 					return Math.min(getWidth(), getHeight());
 				}
@@ -424,15 +420,6 @@ final class AssignmentsComponent extends JScrollPane {
 					return preferredSize.width;
 				}
 
-				/// Returns the bounding rectangle for a line of text centered within
-				/// the icon bounds.
-				///
-				/// @param text the string to measure
-				/// @param g2d the graphics context used to get font metrics
-				/// @param x the x origin of the icon
-				/// @param y the y origin of the icon
-				/// @param line the zero-based line index for multi-line text layout
-				/// @return the bounding rectangle for the text
 				private Rectangle getTextRectangle(final String text, final Graphics2D g2d, final int x, final int y,
 						final int line) {
 					final var metrics = g2d.getFontMetrics(getFont());
