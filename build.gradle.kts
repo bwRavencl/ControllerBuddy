@@ -142,7 +142,7 @@ dependencies {
   implementation("com.github.hypfvieh:dbus-java-transport-native-unixsocket:$dbusJavaVersion") {
     exclude(group = "org.slf4j", module = "slf4j-api")
   }
-  implementation("com.github.weisj:jsvg:2.0.1-SNAPSHOT")
+  implementation("com.github.weisj:jsvg:2.1.1-SNAPSHOT")
   implementation("com.google.code.gson:gson:2.14.0")
   implementation("io.github.classgraph:classgraph:4.8.184")
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
