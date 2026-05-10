@@ -191,19 +191,26 @@ flowchart LR
 
 ## 🖼️ Screenshots
 
-![Modes Tab](screenshots/screenshot_1.png)
+![Modes Tab](screenshots/modes_tab.png)  
+*<small>Modes Tab</small>*
 
-![Assignments Tab](screenshots/screenshot_2.png)
+![Assignments Tab](screenshots/assignments_tab.png)  
+*<small>Assignments Tab</small>*
 
-![Component Editor - Button](screenshots/screenshot_3.png)
+![Component Editor (Button)](screenshots/component_editor_button.png)  
+*<small>Component Editor (Button)</small>*
 
-![Component Editor - Axis](screenshots/screenshot_4.png)
+![Component Editor (Axis)](screenshots/component_editor_axis.png)  
+*<small>Component Editor (Axis)</small>*
 
-![Dark Mode](screenshots/screenshot_5.png)
+![Overlay Tab (Dark Theme)](screenshots/overlay_tab_dark_theme.png)  
+*<small>Overlay Tab (Dark Theme)</small>*
 
-![Visualization Tab](screenshots/screenshot_6.png)
+![Visualization Tab](screenshots/visualization_tab.png)  
+*<small>Visualization Tab</small>*
 
-![Overlay](screenshots/screenshot_7.png)
+![Overlay and On-Screen Keyboard](screenshots/overlay_and_osk.png)  
+*<small>Overlay and On-Screen Keyboard</small>*
 
 ## ⌨️ Command Line Parameters
 
