@@ -418,15 +418,15 @@ public final class Linux {
 		/// Field name for the device name array.
 		private static final String NAME_NAME = "name";
 
-		/// Prevents instantiation.
-		private uinput_setup() {
-		}
-
 		/// Memory layout of the Linux `uinput_setup` struct.
 		public static final GroupLayout LAYOUT = MemoryLayout.structLayout(input_id.LAYOUT.withName(INPUT_ID_NAME),
 				MemoryLayout.sequenceLayout(UINPUT_MAX_NAME_SIZE, ValueLayout.JAVA_BYTE).withName(NAME_NAME)
 						.withName(NAME_NAME),
 				ValueLayout.JAVA_INT.withName(FF_EFFECTS_MAX_NAME));
+
+		/// Prevents instantiation.
+		private uinput_setup() {
+		}
 
 		/// Returns the `input_id` member slice from the given `uinput_setup` memory
 		/// segment.
