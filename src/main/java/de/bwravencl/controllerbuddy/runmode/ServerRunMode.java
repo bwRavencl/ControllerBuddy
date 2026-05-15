@@ -63,7 +63,7 @@ import javax.swing.JOptionPane;
 public final class ServerRunMode extends RunMode {
 
 	/// The default UDP port used for server communication.
-	public static final int DEFAULT_PORT = 28789;
+	public static final int DEFAULT_PORT = 28_789;
 
 	/// The default timeout in milliseconds for server operations.
 	public static final int DEFAULT_TIMEOUT = 100;
