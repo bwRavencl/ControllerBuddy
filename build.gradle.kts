@@ -171,6 +171,7 @@ spotless {
             project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString()
         )
         .addMutators(listOf("SafeButNotConsensual", "SafeButControversial"))
+        .excludeMutator("AvoidInlineConditionals")
     importOrderFile("spotless.importorder")
     removeUnusedImports()
     forbidWildcardImports()
