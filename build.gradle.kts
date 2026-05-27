@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList
 plugins {
   application
   jacoco
-  id("com.diffplug.spotless") version "8.5.1"
+  id("com.diffplug.spotless") version "8.6.0"
   id("com.github.spotbugs") version "6.5.5"
   id("net.ltgt.errorprone") version "5.1.0"
 }
