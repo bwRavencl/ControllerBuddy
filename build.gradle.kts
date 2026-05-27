@@ -151,9 +151,11 @@ dependencies {
   testImplementation(platform("org.junit:junit-bom:6.1.0"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-  testImplementation("org.mockito:mockito-core:$mockitoVersion")
-  testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+  @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
+  testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+  @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
   mockitoAgent("org.mockito:mockito-core:$mockitoVersion") { isTransitive = false }
+  testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
 }
 
 spotless {
