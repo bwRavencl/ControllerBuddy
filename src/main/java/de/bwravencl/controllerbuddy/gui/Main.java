@@ -524,6 +524,9 @@ public final class Main {
 	/// Preferences key for the vJoy installation directory path.
 	private static final String PREFERENCES_VJOY_DIRECTORY = "vjoy_directory";
 
+	/// Preferences key for the XInput setting.
+	private static final String PREFERENCES_XINPUT = "xinput";
+
 	/// File extension used for profile files.
 	private static final String PROFILE_FILE_EXTENSION = "json";
 
@@ -1345,6 +1348,41 @@ public final class Main {
 		autoRestartOutputPanel.add(autoRestartOutputCheckBox);
 
 		if (IS_WINDOWS) {
+			final var xinputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			inputSettingsPanel.add(xinputPanel, constraints);
+
+			final var leftXInputPanel = new JPanel();
+			leftXInputPanel.setLayout(new BoxLayout(leftXInputPanel, BoxLayout.Y_AXIS));
+			xinputPanel.add(leftXInputPanel);
+
+			final var xinputLabel = new JLabel(STRINGS.getString("XINPUT_LABEL"));
+			xinputLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+			leftXInputPanel.add(xinputLabel);
+
+			final var rightXInputPanel = new JPanel();
+			rightXInputPanel.setLayout(new BoxLayout(rightXInputPanel, BoxLayout.Y_AXIS));
+			xinputPanel.add(rightXInputPanel);
+
+			final var xinputCheckBox = new JCheckBox(STRINGS.getString("XINPUT_CHECK_BOX"));
+			xinputCheckBox.setSelected(isXInput());
+			xinputCheckBox.addActionListener(event -> {
+				final var xinput = ((JCheckBox) event.getSource()).isSelected();
+				preferences.putBoolean(PREFERENCES_XINPUT, xinput);
+				showRestartRequiredDialog();
+			});
+			rightXInputPanel.add(xinputCheckBox);
+
+			rightXInputPanel.add(Box.createVerticalStrut(DEFAULT_VGAP));
+
+			final var xinputHintLabel = new JLabel(STRINGS.getString("XINPUT_HINT"));
+			final var italicLabelFont = xinputHintLabel.getFont().deriveFont(Font.ITALIC);
+			xinputHintLabel.setFont(italicLabelFont);
+			xinputHintLabel.setBorder(BorderFactory.createEmptyBorder(0, xinputCheckBox.getInsets().left, 0, 0));
+			rightXInputPanel.add(xinputHintLabel);
+
+			leftXInputPanel.add(Box.createVerticalStrut(
+					rightXInputPanel.getPreferredSize().height - xinputLabel.getPreferredSize().height));
+
 			final var vJoySettingsPanel = new JPanel();
 			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.Y_AXIS));
 			vJoySettingsPanel
@@ -1635,6 +1673,8 @@ public final class Main {
 
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES, VJOY_DEVICE_VID_PID);
+
+			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_XINPUT_ENABLED, isXInput() ? "1" : "0");
 
 			SDLHints.SDL_SetHint(SDLHints.SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 			if (IS_X11_TOOLKIT) {
@@ -3531,6 +3571,26 @@ public final class Main {
 		return preferences.getBoolean(PREFERENCES_TOUCHPAD_ENABLED, true);
 	}
 
+	/// Returns whether XInput should be used for controller handling.
+	///
+	/// The default value is determined by the environment variable {@value
+	/// SDLHints#SDL_HINT_XINPUT_ENABLED}, if set. A value of `"0"` or `"false"`
+	/// (case-insensitive) disables XInput by default; any other value, or the
+	/// absence of the variable, enables it by default.
+	/// @return `true` if XInput should be used
+	private boolean isXInput() {
+		var environmentVariableValue = System.getenv(SDLHints.SDL_HINT_XINPUT_ENABLED);
+		if (environmentVariableValue != null) {
+			environmentVariableValue = environmentVariableValue.toLowerCase(Locale.ROOT);
+		}
+		final var def = switch (environmentVariableValue) {
+		case "0", "false" -> false;
+		case null, default -> true;
+		};
+
+		return preferences.getBoolean(PREFERENCES_XINPUT, def);
+	}
+
 	/// Loads a profile from the given file.
 	///
 	/// Stops any active run mode, deserializes the profile JSON, and applies
@@ -4396,6 +4456,18 @@ public final class Main {
 				MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
 						Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
 				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
+	}
+
+	/// Shows a message dialog explaining that a restart is required for changes to
+	/// take effect. If the user confirms, the application will quit after unsaved
+	/// profile changes are handled.
+	private void showRestartRequiredDialog() {
+		if (JOptionPane.showConfirmDialog(frame,
+				MessageFormat.format(STRINGS.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
+				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
+				&& handleUnsavedChanges()) {
+			quit();
+		}
 	}
 
 	/// Shows a one-time informational dialog explaining how to locate the system
@@ -6773,11 +6845,8 @@ public final class Main {
 			preferences.put(PREFERENCES_VJOY_DIRECTORY, newVjoyPath);
 			vJoyDirectoryLabel.setText(newVjoyPath);
 
-			if (VjoyInterface.isInitialized() && JOptionPane.showConfirmDialog(frame,
-					MessageFormat.format(STRINGS.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
-					STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
-					&& handleUnsavedChanges()) {
-				quit();
+			if (VjoyInterface.isInitialized()) {
+				showRestartRequiredDialog();
 			}
 		}
 	}
