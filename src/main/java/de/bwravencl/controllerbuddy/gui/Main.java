@@ -2810,8 +2810,8 @@ public final class Main {
 	///
 	/// @param document the document to search
 	/// @param id the element ID to look up
-	/// @return an [java.util.Optional] containing the matching element, or an
-	/// empty [java.util.Optional] if no element with that ID exists
+	/// @return an [Optional] containing the matching element, or an empty
+	/// [Optional] if no element with that ID exists
 	private Optional<Element> getDocumentElementById(final Document document, final String id) {
 		final var xpath = XPathFactory.newInstance().newXPath();
 		try {
@@ -3152,8 +3152,8 @@ public final class Main {
 
 	/// Initializes the XML document builder if not already initialized.
 	///
-	/// Configures a namespace-aware [javax.xml.parsers.DocumentBuilder] and
-	/// caches it for reuse by SVG generation and template loading.
+	/// Configures a namespace-aware [DocumentBuilder] and caches it for reuse by
+	/// SVG generation and template loading.
 	private void initDocumentBuilder() {
 		if (documentBuilder != null) {
 			return;
