@@ -267,7 +267,7 @@ tasks.register<Delete>("cleanModuleInfo") {
 
 tasks.register<Delete>("cleanTmpProjectDir") {
   group = BasePlugin.BUILD_GROUP
-  val tmpProjectFile = tmpDir.get().file(project.name)
+  val tmpProjectFile = tmpDir.get().file("${project.name}${if (os.isMacOsX) ".app" else ""}")
   description = "Removes the '${tmpProjectFile.asFile.relativeTo(projectDir)}' directory"
   delete(tmpProjectFile)
 }
