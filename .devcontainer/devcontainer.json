@@ -1,0 +1,22 @@
+{
+  "name": "ControllerBuddy Dev",
+  "image": "mcr.microsoft.com/devcontainers/java:25",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "26.0.1",
+      "jdkDistro": "zulu"
+    }
+  },
+  "runArgs": [
+    "--device=/dev/uinput"
+  ],
+  "postCreateCommand": "git submodule update --init --recursive",
+  "customizations": {
+    "jetbrains": {
+      "plugins": [
+        "EclipseCodeFormatter",
+        "com.facebook.ktfmt_idea_plugin"
+      ]
+    }
+  }
+}
