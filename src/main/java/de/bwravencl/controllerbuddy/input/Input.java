@@ -538,9 +538,11 @@ public final class Input {
 
 		axisToEndSuspensionTimestampMap.values().removeIf(timestamp -> timestamp < currentTime);
 
-		var elapsedTime = runMode.getPollInterval();
+		final long elapsedTime;
 		if (lastPollTime > 0L) {
 			elapsedTime = currentTime - lastPollTime;
+		} else {
+			elapsedTime = runMode.getPollInterval();
 		}
 		lastPollTime = currentTime;
 		rateMultiplier = (float) elapsedTime / 1000L;
