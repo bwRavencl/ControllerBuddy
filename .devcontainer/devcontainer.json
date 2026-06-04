@@ -1,6 +1,8 @@
 {
   "name": "ControllerBuddy Dev",
-  "image": "mcr.microsoft.com/devcontainers/java:25",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
       "version": "26.0.1",
@@ -8,9 +10,28 @@
     }
   },
   "runArgs": [
-    "--device=/dev/uinput"
+    "--net=host",
+    "--ipc=host",
+    "-v",
+    "/tmp/.X11-unix:/tmp/.X11-unix:ro",
+    "-v",
+    "${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY}:/tmp/wayland-0:ro",
+    "--device=/dev/uinput",
+    "-v",
+    "/dev/input:/dev/input",
+    "-v",
+    "${localEnv:HOME}/.Xauthority:/root/.Xauthority:ro"
   ],
-  "postCreateCommand": "git submodule update --init --recursive",
+  "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "XAUTHORITY": "${localEnv:XAUTHORITY}",
+    "WAYLAND_DISPLAY": "wayland-0",
+    "XDG_RUNTIME_DIR": "/tmp"
+  },
+    "postCreateCommand": {
+    "Initialize Submodules": "git submodule update --init --recursive",
+    "X11 Authorization": "xauth add $(xauth list | head -n 1) || true"  
+  },
   "customizations": {
     "jetbrains": {
       "plugins": [
