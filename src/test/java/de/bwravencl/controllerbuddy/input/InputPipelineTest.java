@@ -250,8 +250,8 @@ final class InputPipelineTest {
 		return Scancode.NAME_TO_SCAN_CODE_MAP.get(name);
 	}
 
-	private OutputCapture pollWithFrame(final float[] axes, final boolean[] buttons) {
-		injector.injectFrame(axes, buttons);
+	private OutputCapture pollWithState(final float[] axes, final boolean[] buttons) {
+		injector.injectState(axes, buttons);
 		input.poll();
 		return OutputCapture.captureAndReset(input);
 	}
@@ -381,7 +381,7 @@ final class InputPipelineTest {
 			return DUMMY_SDL_GAMEPAD_HANDLE;
 		}
 
-		private void injectFrame(final float[] axes, final boolean[] buttons) {
+		private void injectState(final float[] axes, final boolean[] buttons) {
 			for (var i = 0; i < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; i++) {
 				final var axis = i;
 				final var isTrigger = axis == SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER
@@ -391,16 +391,14 @@ final class InputPipelineTest {
 						.thenReturn(shortValue);
 			}
 
-			final var buttonIds = new int[] { SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, SDLGamepad.SDL_GAMEPAD_BUTTON_EAST,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_BACK, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_START, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT,
-					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT };
-
-			for (final var buttonId : buttonIds) {
+			for (final var buttonId : new int[] { SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, SDLGamepad.SDL_GAMEPAD_BUTTON_WEST,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE, SDLGamepad.SDL_GAMEPAD_BUTTON_START,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN,
+					SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT }) {
 				final var pressed = buttonId < buttons.length && buttons[buttonId];
 				sdlGamepadMock.when(() -> SDLGamepad.SDL_GetGamepadButton(DUMMY_SDL_GAMEPAD_HANDLE, buttonId))
 						.thenReturn(pressed);
@@ -572,16 +570,16 @@ final class InputPipelineTest {
 			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
 
 			// Enter zone: fires and holds
-			final var p1 = pollWithFrame(axes, noButtons());
+			final var p1 = pollWithState(axes, noButtons());
 			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires when entering zone");
 
 			// Still in zone immediately: held by min interval
-			final var p2 = pollWithFrame(axes, noButtons());
+			final var p2 = pollWithState(axes, noButtons());
 			Assertions.assertTrue(p2.downKeystrokes().contains(expected), "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p3 = pollWithFrame(axes, noButtons());
+			final var p3 = pollWithState(axes, noButtons());
 			Assertions.assertFalse(p3.downKeystrokes().contains(expected), "Released after min interval expires");
 		}
 
@@ -602,19 +600,19 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 
 			// Enter zone: arms
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 
 			// Exit zone: fires and holds
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.downMouseButtons().contains(1), "Fires on exit from zone");
 
 			// Still outside zone immediately: held by min interval
-			final var pHold = pollWithFrame(noAxes(), noButtons());
+			final var pHold = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pHold.downMouseButtons().contains(1), "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			final var pExpired = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pExpired.downMouseButtons().contains(1), "Released after min interval expires");
 		}
 
@@ -636,23 +634,23 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: fires and holds
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.buttons()[0], "Fires on press");
 
 			// Still pressed immediately: held by min interval
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p2.buttons()[0], "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p3 = pollWithFrame(noAxes(), buttons);
+			final var p3 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p3.buttons()[0], "Released after min interval expires");
 
 			// Release button: re-arms activatable
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// Re-press: fires again
-			final var p5 = pollWithFrame(noAxes(), buttons);
+			final var p5 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p5.buttons()[0], "Fires on re-press after release");
 		}
 
@@ -672,17 +670,17 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			// First frame: fires
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			// First poll: fires
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.buttons()[0], "Fires on first press");
 
-			// Second frame still pressed: does not fire again
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			// Second poll still pressed: does not fire again
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.buttons()[0], "Does not fire while sustained");
 
 			// Release then re-press: fires again
-			pollWithFrame(noAxes(), noButtons());
-			final var p4 = pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), noButtons());
+			final var p4 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p4.buttons()[0], "Fires on re-press");
 		}
 
@@ -704,20 +702,20 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: arms
-			final var pPress = pollWithFrame(noAxes(), buttons);
+			final var pPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pPress.buttons()[0], "Does not fire on press");
 
 			// Release: fires and holds
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.buttons()[0], "Fires on release");
 
 			// Still released immediately: held by min interval
-			final var pHold = pollWithFrame(noAxes(), noButtons());
+			final var pHold = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pHold.buttons()[0], "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			final var pExpired = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pExpired.buttons()[0], "Released after min interval expires");
 		}
 
@@ -742,14 +740,14 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: delayed starts, ON_RELEASE arms
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			// After delay: delayed fires and denies ON_RELEASE
 			Thread.sleep(INTERVAL_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			// Release: ON_RELEASE denied, does not fire
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pRelease.buttons()[0],
 					"ON_RELEASE with minActivationInterval denied by delayed action");
 		}
@@ -771,24 +769,24 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: arms
-			final var pPress = pollWithFrame(noAxes(), buttons);
+			final var pPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pPress.buttons()[0], "Does not fire on press");
 
 			// Sustained press: still nothing
-			final var pSustain = pollWithFrame(noAxes(), buttons);
+			final var pSustain = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pSustain.buttons()[0], "Does not fire while sustained");
 
 			// Release: fires
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.buttons()[0], "Fires on release");
 
 			// Already released: does not fire again
-			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			final var pAfter = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pAfter.buttons()[0], "Does not fire again while released");
 
 			// Re-press and release: fires again
-			pollWithFrame(noAxes(), buttons);
-			final var pRelease2 = pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), buttons);
+			final var pRelease2 = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease2.buttons()[0], "Fires on second release");
 		}
 
@@ -812,23 +810,23 @@ final class InputPipelineTest {
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			// Press: fires and holds in downKeystrokes
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires on press");
 
 			// Still pressed immediately: held by min interval
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p2.downKeystrokes().contains(expected), "Held during min interval");
 
 			// After interval expires: released from downKeystrokes
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p3 = pollWithFrame(noAxes(), buttons);
+			final var p3 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p3.downKeystrokes().contains(expected), "Released after min interval expires");
 
 			// Release button: re-arms activatable
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// Re-press: fires again
-			final var p5 = pollWithFrame(noAxes(), buttons);
+			final var p5 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p5.downKeystrokes().contains(expected), "Fires on re-press after release");
 		}
 
@@ -850,12 +848,12 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			// First frame: fires via downUpKeystrokes
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			// First poll: fires via downUpKeystrokes
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downUpKeystrokes().contains(expected), "Fires on first press");
 
-			// Second frame still pressed: does not fire again
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			// Second poll still pressed: does not fire again
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.downUpKeystrokes().contains(expected), "Does not fire while sustained");
 		}
 
@@ -880,11 +878,11 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Thread.sleep(INTERVAL_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pRelease.downUpKeystrokes().contains(expected),
 					"ON_RELEASE keystroke denied by delayed action");
 		}
@@ -909,20 +907,20 @@ final class InputPipelineTest {
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			// Press: arms
-			final var pPress = pollWithFrame(noAxes(), buttons);
+			final var pPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pPress.downKeystrokes().contains(expected), "Does not fire on press");
 
 			// Release: fires and holds
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.downKeystrokes().contains(expected), "Fires on release");
 
 			// Still released immediately: held by min interval
-			final var pHold = pollWithFrame(noAxes(), noButtons());
+			final var pHold = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pHold.downKeystrokes().contains(expected), "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			final var pExpired = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pExpired.downKeystrokes().contains(expected), "Released after min interval expires");
 		}
 
@@ -948,11 +946,11 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Thread.sleep(INTERVAL_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pRelease.downKeystrokes().contains(expected),
 					"ON_RELEASE keystroke with minInterval denied by delayed action");
 		}
@@ -976,18 +974,18 @@ final class InputPipelineTest {
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			// Press: arms
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			// Sustained press: still armed, hot is true so activatable goes YES
-			final var pSustain = pollWithFrame(noAxes(), buttons);
+			final var pSustain = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pSustain.downUpKeystrokes().contains(expected), "Does not fire while pressed");
 
 			// Release: fires
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.downUpKeystrokes().contains(expected), "Fires on release");
 
 			// Already released: does not fire again
-			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			final var pAfter = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pAfter.downUpKeystrokes().contains(expected), "Does not fire again");
 		}
 
@@ -1008,7 +1006,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(output.downUpMouseButtons.contains(3),
 					"MouseButton fires via ALWAYS activatable in cycle");
 		}
@@ -1031,23 +1029,23 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: fires and holds in downMouseButtons
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downMouseButtons().contains(1), "Fires on press");
 
 			// Still pressed immediately: held by min interval
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p2.downMouseButtons().contains(1), "Held during min interval");
 
 			// After interval expires: released from downMouseButtons
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p3 = pollWithFrame(noAxes(), buttons);
+			final var p3 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p3.downMouseButtons().contains(1), "Released after min interval expires");
 
 			// Release button: re-arms activatable
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// Re-press: fires again
-			final var p5 = pollWithFrame(noAxes(), buttons);
+			final var p5 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p5.downMouseButtons().contains(1), "Fires on re-press after release");
 		}
 
@@ -1067,12 +1065,12 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			// First frame: fires via downUpMouseButtons
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			// First poll: fires via downUpMouseButtons
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downUpMouseButtons.contains(1), "Fires on first press");
 
-			// Second frame still pressed: does not fire again
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			// Second poll still pressed: does not fire again
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.downUpMouseButtons.contains(1), "Does not fire while sustained");
 		}
 
@@ -1095,11 +1093,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Thread.sleep(INTERVAL_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pRelease.downUpMouseButtons.contains(1),
 					"ON_RELEASE mouse button denied by delayed action");
 		}
@@ -1122,20 +1120,20 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: arms
-			final var pPress = pollWithFrame(noAxes(), buttons);
+			final var pPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(pPress.downMouseButtons().contains(1), "Does not fire on press");
 
 			// Release: fires and holds
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.downMouseButtons().contains(1), "Fires on release");
 
 			// Still released immediately: held by min interval
-			final var pHold = pollWithFrame(noAxes(), noButtons());
+			final var pHold = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pHold.downMouseButtons().contains(1), "Held during min interval");
 
 			// After interval expires: released
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var pExpired = pollWithFrame(noAxes(), noButtons());
+			final var pExpired = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pExpired.downMouseButtons().contains(1), "Released after min interval expires");
 		}
 
@@ -1159,11 +1157,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Thread.sleep(INTERVAL_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pRelease.downMouseButtons().contains(1),
 					"ON_RELEASE mouse button with minInterval denied by delayed action");
 		}
@@ -1185,14 +1183,14 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: arms
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			// Release: fires
-			final var pRelease = pollWithFrame(noAxes(), noButtons());
+			final var pRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(pRelease.downUpMouseButtons.contains(1), "Fires on release");
 
 			// Already released: does not fire again
-			final var pAfter = pollWithFrame(noAxes(), noButtons());
+			final var pAfter = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pAfter.downUpMouseButtons.contains(1), "Does not fire again");
 		}
 
@@ -1211,10 +1209,10 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
 
-			final var pInZone = pollWithFrame(axes, noButtons());
+			final var pInZone = pollWithState(axes, noButtons());
 			Assertions.assertTrue(pInZone.downKeystrokes().contains(expected), "Keystroke added in zone");
 
-			final var pOutZone = pollWithFrame(noAxes(), noButtons());
+			final var pOutZone = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pOutZone.downKeystrokes().contains(expected),
 					"Keystroke removed when axis exits zone");
 		}
@@ -1232,10 +1230,10 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 
-			final var pInZone = pollWithFrame(axes, noButtons());
+			final var pInZone = pollWithState(axes, noButtons());
 			Assertions.assertTrue(pInZone.downMouseButtons().contains(1), "Mouse button added in zone");
 
-			final var pOutZone = pollWithFrame(noAxes(), noButtons());
+			final var pOutZone = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pOutZone.downMouseButtons().contains(1),
 					"Mouse button removed when axis exits zone");
 		}
@@ -1256,17 +1254,17 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: fires
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.buttons()[0], "Fires initially");
 
 			// After max interval: stops
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.buttons()[0], "Stops after max interval");
 
 			// Release and re-press: fires again
-			pollWithFrame(noAxes(), noButtons());
-			final var p4 = pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), noButtons());
+			final var p4 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p4.buttons()[0], "Fires again after re-press");
 		}
 
@@ -1288,12 +1286,12 @@ final class InputPipelineTest {
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			// Press: fires
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downKeystrokes().contains(expected), "Fires initially");
 
 			// After max interval: stops and removes
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.downKeystrokes().contains(expected), "Stops after max interval");
 		}
 
@@ -1313,10 +1311,10 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var pPressed = pollWithFrame(noAxes(), buttons);
+			final var pPressed = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(pPressed.downKeystrokes().contains(expected), "Keystroke added on press");
 
-			final var pReleased = pollWithFrame(noAxes(), noButtons());
+			final var pReleased = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pReleased.downKeystrokes().contains(expected),
 					"Keystroke removed from downKeystrokes on release");
 		}
@@ -1337,12 +1335,12 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			// Press: fires
-			final var p1 = pollWithFrame(noAxes(), buttons);
+			final var p1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(p1.downMouseButtons().contains(1), "Fires initially");
 
 			// After max interval: stops and removes
 			Thread.sleep(INTERVAL_WAIT_MS);
-			final var p2 = pollWithFrame(noAxes(), buttons);
+			final var p2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(p2.downMouseButtons().contains(1), "Stops after max interval");
 		}
 
@@ -1360,10 +1358,10 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var pPressed = pollWithFrame(noAxes(), buttons);
+			final var pPressed = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(pPressed.downMouseButtons().contains(1), "Mouse button added on press");
 
-			final var pReleased = pollWithFrame(noAxes(), noButtons());
+			final var pReleased = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(pReleased.downMouseButtons().contains(1),
 					"Mouse button removed from downMouseButtons on release");
 		}
@@ -1387,7 +1385,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.15f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
 		}
@@ -1406,7 +1404,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			assertAxisEquals(input.floatToIntAxisValue(-0.5f), output.axes().get(VirtualAxis.X));
 		}
@@ -1419,7 +1417,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			final var expectedValue = input.floatToIntAxisValue(0.75f);
 			assertAxisEquals(expectedValue, output.axes().get(VirtualAxis.X));
@@ -1443,7 +1441,7 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = -1.0f;
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX] = 0.5f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			assertAxisEquals(input.floatToIntAxisValue(1.0f), output.axes().get(VirtualAxis.X));
 			assertAxisEquals(input.floatToIntAxisValue(-1.0f), output.axes().get(VirtualAxis.Y));
@@ -1458,7 +1456,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = -0.5f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			final var expectedValue = input.floatToIntAxisValue(-0.5f);
 			assertAxisEquals(expectedValue, output.axes().get(VirtualAxis.RY));
@@ -1469,7 +1467,7 @@ final class InputPipelineTest {
 		void zeroAxisProducesCenterValue() {
 			setUpAxisProfile(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, VirtualAxis.X);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
 		}
@@ -1491,7 +1489,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertTrue(output.buttons()[0]);
 		}
@@ -1507,11 +1505,11 @@ final class InputPipelineTest {
 
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
-			pollWithFrame(axesInZone, noButtons());
+			pollWithState(axesInZone, noButtons());
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var output = pollWithFrame(axesOutOfZone, noButtons());
+			final var output = pollWithState(axesOutOfZone, noButtons());
 
 			Assertions.assertFalse(output.buttons()[0]);
 		}
@@ -1528,7 +1526,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertFalse(output.buttons()[0]);
 		}
@@ -1548,10 +1546,10 @@ final class InputPipelineTest {
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
 
-			final var output1 = pollWithFrame(axesInZone, noButtons());
+			final var output1 = pollWithState(axesInZone, noButtons());
 			Assertions.assertTrue(output1.buttons()[0], "Button fires on entering zone");
 
-			final var output2 = pollWithFrame(axesInZone, noButtons());
+			final var output2 = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(output2.buttons()[0], "Button does not fire again while in zone");
 		}
 
@@ -1569,17 +1567,17 @@ final class InputPipelineTest {
 
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
-			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			final var outputPress = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(outputPress.buttons()[0], "Button does not fire on entering zone");
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			final var outputRelease = pollWithState(axesOutOfZone, noButtons());
 			Assertions.assertTrue(outputRelease.buttons()[0], "Button fires on leaving zone");
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously activates button across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously activates button across multiple polls")
 		void whilePressedContinuouslyActivatesButton() {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1591,8 +1589,8 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.75f;
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(axes, noButtons());
-				Assertions.assertTrue(output.buttons()[0], "Button active on frame " + i);
+				final var output = pollWithState(axes, noButtons());
+				Assertions.assertTrue(output.buttons()[0], "Button active on poll " + i);
 			}
 		}
 	}
@@ -1613,7 +1611,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertNotEquals(0, output.cursorDeltaX);
 		}
@@ -1630,7 +1628,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.8f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertNotEquals(0, output.cursorDeltaY);
 		}
@@ -1647,7 +1645,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.05f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertEquals(0, output.cursorDeltaX);
 		}
@@ -1671,7 +1669,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 			Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke));
@@ -1690,11 +1688,11 @@ final class InputPipelineTest {
 
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
-			pollWithFrame(axesInZone, noButtons());
+			pollWithState(axesInZone, noButtons());
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var output = pollWithFrame(axesOutOfZone, noButtons());
+			final var output = pollWithState(axesOutOfZone, noButtons());
 
 			Assertions.assertTrue(output.downKeystrokes().isEmpty());
 		}
@@ -1713,7 +1711,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertTrue(output.downKeystrokes().isEmpty());
 		}
@@ -1735,10 +1733,10 @@ final class InputPipelineTest {
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var output1 = pollWithFrame(axesInZone, noButtons());
+			final var output1 = pollWithState(axesInZone, noButtons());
 			Assertions.assertTrue(output1.downUpKeystrokes().contains(expectedKeystroke), "Fires on entering zone");
 
-			final var output2 = pollWithFrame(axesInZone, noButtons());
+			final var output2 = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(output2.downUpKeystrokes().contains(expectedKeystroke),
 					"Does not fire again while in zone");
 		}
@@ -1760,19 +1758,19 @@ final class InputPipelineTest {
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			final var outputPress = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(outputPress.downUpKeystrokes().contains(expectedKeystroke),
 					"Does not fire on entering zone");
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			final var outputRelease = pollWithState(axesOutOfZone, noButtons());
 			Assertions.assertTrue(outputRelease.downUpKeystrokes().contains(expectedKeystroke),
 					"Fires on leaving zone");
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple polls")
 		void whilePressedContinuouslyHoldsKeystroke() {
 			final var wScancode = scancode(Scancode.DIK_W);
 
@@ -1787,9 +1785,9 @@ final class InputPipelineTest {
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(axes, noButtons());
+				final var output = pollWithState(axes, noButtons());
 				Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke),
-						"Keystroke held on frame " + i);
+						"Keystroke held on poll " + i);
 			}
 		}
 	}
@@ -1810,7 +1808,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertTrue(output.downMouseButtons().contains(1));
 		}
@@ -1826,11 +1824,11 @@ final class InputPipelineTest {
 
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
-			pollWithFrame(axesInZone, noButtons());
+			pollWithState(axesInZone, noButtons());
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var output = pollWithFrame(axesOutOfZone, noButtons());
+			final var output = pollWithState(axesOutOfZone, noButtons());
 
 			Assertions.assertFalse(output.downMouseButtons().contains(1));
 		}
@@ -1847,7 +1845,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertFalse(output.downMouseButtons().contains(1));
 		}
@@ -1867,10 +1865,10 @@ final class InputPipelineTest {
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var output1 = pollWithFrame(axesInZone, noButtons());
+			final var output1 = pollWithState(axesInZone, noButtons());
 			Assertions.assertTrue(output1.downUpMouseButtons.contains(1), "Mouse button fires on entering zone");
 
-			final var output2 = pollWithFrame(axesInZone, noButtons());
+			final var output2 = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(output2.downUpMouseButtons.contains(1),
 					"Mouse button does not fire again while in zone");
 		}
@@ -1889,18 +1887,18 @@ final class InputPipelineTest {
 
 			final var axesInZone = noAxes();
 			axesInZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
-			final var outputPress = pollWithFrame(axesInZone, noButtons());
+			final var outputPress = pollWithState(axesInZone, noButtons());
 			Assertions.assertFalse(outputPress.downUpMouseButtons.contains(1),
 					"Mouse button does not fire on entering zone");
 
 			final var axesOutOfZone = noAxes();
 			axesOutOfZone[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.3f;
-			final var outputRelease = pollWithFrame(axesOutOfZone, noButtons());
+			final var outputRelease = pollWithState(axesOutOfZone, noButtons());
 			Assertions.assertTrue(outputRelease.downUpMouseButtons.contains(1), "Mouse button fires on leaving zone");
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple polls")
 		void whilePressedContinuouslyHoldsMouseButton() {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -1912,8 +1910,8 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(axes, noButtons());
-				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on frame " + i);
+				final var output = pollWithState(axes, noButtons());
+				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on poll " + i);
 			}
 		}
 	}
@@ -1923,8 +1921,8 @@ final class InputPipelineTest {
 	final class AxisToRelativeAxisActionTests {
 
 		@Test
-		@DisplayName("relative axis accumulates over multiple frames")
-		void relativeAxisAccumulatesOverFrames() {
+		@DisplayName("relative axis accumulates over multiple polls")
+		void relativeAxisAccumulatesOverPolls() {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
@@ -1937,7 +1935,7 @@ final class InputPipelineTest {
 			final var initialValue = input.getAxes().get(VirtualAxis.RX);
 
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(axes, noButtons());
+				pollWithState(axes, noButtons());
 			}
 
 			Assertions.assertNotEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
@@ -1958,7 +1956,7 @@ final class InputPipelineTest {
 			final var initialValue = input.getAxes().get(VirtualAxis.RX);
 
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(axes, noButtons());
+				pollWithState(axes, noButtons());
 			}
 
 			Assertions.assertEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
@@ -1981,7 +1979,7 @@ final class InputPipelineTest {
 			final var initialValue = input.getAxes().get(VirtualAxis.RX);
 
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(axes, noButtons());
+				pollWithState(axes, noButtons());
 			}
 
 			Assertions.assertTrue(input.getAxes().get(VirtualAxis.RX) < initialValue);
@@ -2004,7 +2002,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.9f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertNotEquals(0, output.scrollClicks());
 		}
@@ -2021,7 +2019,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.05f;
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			Assertions.assertEquals(0, output.scrollClicks());
 		}
@@ -2037,9 +2035,9 @@ final class InputPipelineTest {
 
 			final var axesActive = noAxes();
 			axesActive[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY] = 0.9f;
-			pollWithFrame(axesActive, noButtons());
+			pollWithState(axesActive, noButtons());
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertEquals(0, output.scrollClicks());
 		}
@@ -2056,9 +2054,9 @@ final class InputPipelineTest {
 
 			final var pressedButtons = noButtons();
 			pressedButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), pressedButtons);
+			pollWithState(noAxes(), pressedButtons);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertFalse(output.buttons()[0]);
 		}
@@ -2071,7 +2069,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output.buttons()[0]);
 		}
@@ -2094,7 +2092,7 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output.buttons()[0]);
 			Assertions.assertTrue(output.buttons()[1]);
@@ -2117,10 +2115,10 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(output1.buttons()[0], "Button fires on press");
 
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(output2.buttons()[0], "Button does not fire again while held");
 		}
 
@@ -2140,15 +2138,15 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var outputPress = pollWithFrame(noAxes(), buttons);
+			final var outputPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(outputPress.buttons()[0], "Button does not fire on press");
 
-			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			final var outputRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(outputRelease.buttons()[0], "Button fires on release");
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously activates button across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously activates button across multiple polls")
 		void whilePressedContinuouslyActivatesButton() {
 			setUpButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 0);
 
@@ -2156,8 +2154,8 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(noAxes(), buttons);
-				Assertions.assertTrue(output.buttons()[0], "Button active on frame " + i);
+				final var output = pollWithState(noAxes(), buttons);
+				Assertions.assertTrue(output.buttons()[0], "Button active on poll " + i);
 			}
 		}
 	}
@@ -2179,11 +2177,11 @@ final class InputPipelineTest {
 
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			final var output = pollWithFrame(axes, buttonsPressed);
+			final var output = pollWithState(axes, buttonsPressed);
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
 		}
@@ -2208,16 +2206,16 @@ final class InputPipelineTest {
 
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(axes, buttonsPressed);
+			pollWithState(axes, buttonsPressed);
 
-			final var output = pollWithFrame(axes, noButtons());
+			final var output = pollWithState(axes, noButtons());
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
 		}
 
 		@Test
-		@DisplayName("axis reset with WHILE_PRESSED resets axis every frame while held")
-		void axisResetWhilePressedFiresEveryFrame() {
+		@DisplayName("axis reset with WHILE_PRESSED resets axis every poll while held")
+		void axisResetWhilePressedFiresEveryPoll() {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
 			defaultMode.getAxisToActionsMap().put(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX,
@@ -2231,7 +2229,7 @@ final class InputPipelineTest {
 
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			final var output = pollWithFrame(axes, buttonsPressed);
+			final var output = pollWithState(axes, buttonsPressed);
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
 		}
@@ -2253,7 +2251,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertNotEquals(0, output.cursorDeltaX);
 		}
@@ -2270,7 +2268,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertNotEquals(0, output.cursorDeltaY);
 		}
@@ -2286,9 +2284,9 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertEquals(0, output.cursorDeltaX);
 		}
@@ -2318,17 +2316,17 @@ final class InputPipelineTest {
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output1 = pollWithFrame(noAxes(), buttonsPressed);
+			final var output1 = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output1.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
 
-			pollWithFrame(noAxes(), noButtons());
-			final var output2 = pollWithFrame(noAxes(), buttonsPressed);
+			pollWithState(noAxes(), noButtons());
+			final var output2 = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output2.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode2 }, new Scancode[0])));
 
-			pollWithFrame(noAxes(), noButtons());
-			final var output3 = pollWithFrame(noAxes(), buttonsPressed);
+			pollWithState(noAxes(), noButtons());
+			final var output3 = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output3.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode3 }, new Scancode[0])));
 		}
@@ -2351,12 +2349,12 @@ final class InputPipelineTest {
 
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttonsPressed);
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), buttonsPressed);
+			pollWithState(noAxes(), noButtons());
 
 			cycleAction.reset(input);
 
-			final var output = pollWithFrame(noAxes(), buttonsPressed);
+			final var output = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
 		}
@@ -2380,12 +2378,12 @@ final class InputPipelineTest {
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttonsPressed);
-			pollWithFrame(noAxes(), noButtons());
-			pollWithFrame(noAxes(), buttonsPressed);
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), buttonsPressed);
+			pollWithState(noAxes(), noButtons());
+			pollWithState(noAxes(), buttonsPressed);
+			pollWithState(noAxes(), noButtons());
 
-			final var output = pollWithFrame(noAxes(), buttonsPressed);
+			final var output = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertTrue(
 					output.downUpKeystrokes().contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])));
 		}
@@ -2409,18 +2407,18 @@ final class InputPipelineTest {
 			final var buttonsPressed = noButtons();
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var outputPress = pollWithFrame(noAxes(), buttonsPressed);
+			final var outputPress = pollWithState(noAxes(), buttonsPressed);
 			Assertions.assertFalse(outputPress.downUpKeystrokes()
 					.contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])), "Does not fire on press");
 
-			final var outputRelease1 = pollWithFrame(noAxes(), noButtons());
+			final var outputRelease1 = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(
 					outputRelease1.downUpKeystrokes()
 							.contains(new Keystroke(new Scancode[] { scancode1 }, new Scancode[0])),
 					"First release fires first sub-action");
 
-			pollWithFrame(noAxes(), buttonsPressed);
-			final var outputRelease2 = pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), buttonsPressed);
+			final var outputRelease2 = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(
 					outputRelease2.downUpKeystrokes()
 							.contains(new Keystroke(new Scancode[] { scancode2 }, new Scancode[0])),
@@ -2444,10 +2442,10 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(output1.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
 
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(output2.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
 
@@ -2463,7 +2461,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output.offLockKeys().contains(LockKey.NUM_LOCK_LOCK_KEY));
 		}
@@ -2480,7 +2478,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY));
 		}
@@ -2502,7 +2500,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertNotEquals(0, output.scrollClicks());
 		}
@@ -2523,7 +2521,7 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			final var normalOutput = pollWithFrame(noAxes(), buttons);
+			final var normalOutput = pollWithState(noAxes(), buttons);
 
 			input.reset();
 			sdlGamepadMock.close();
@@ -2537,7 +2535,7 @@ final class InputPipelineTest {
 
 			final var invertedButtons = noButtons();
 			invertedButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			final var invertedOutput = pollWithFrame(noAxes(), invertedButtons);
+			final var invertedOutput = pollWithState(noAxes(), invertedButtons);
 
 			Assertions.assertNotEquals(0, normalOutput.scrollClicks());
 			Assertions.assertNotEquals(0, invertedOutput.scrollClicks());
@@ -2556,9 +2554,9 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertEquals(0, output.scrollClicks());
 		}
@@ -2708,7 +2706,7 @@ final class InputPipelineTest {
 			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
 			phase1Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = true;
 
-			final var p1 = pollWithFrame(phase1Axes, phase1Buttons);
+			final var p1 = pollWithState(phase1Axes, phase1Buttons);
 
 			assertAxisEquals(input.floatToIntAxisValue(0.9f), p1.axes().get(VirtualAxis.X));
 			assertAxisEquals(input.floatToIntAxisValue(-0.5f), p1.axes().get(VirtualAxis.Y));
@@ -2723,10 +2721,10 @@ final class InputPipelineTest {
 			Assertions.assertTrue(p1.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
 					"ButtonToLockKey: WEST -> CAPS_LOCK");
 
-			// ON_PRESS actions - fire on first frame only
+			// ON_PRESS actions - fire on first poll only
 			final var eKeystroke = new Keystroke(new Scancode[] { eScancode }, new Scancode[0]);
 			Assertions.assertTrue(p1.downUpKeystrokes().contains(eKeystroke),
-					"ButtonToKey ON_PRESS: EAST -> E (fires downUpKeystrokes on first frame)");
+					"ButtonToKey ON_PRESS: EAST -> E (fires downUpKeystrokes on first poll)");
 
 			// ON_RELEASE actions - do NOT fire while held
 			Assertions.assertFalse(p1.buttons()[2], "AxisToButton ON_RELEASE: rightTrigger in zone, does not fire yet");
@@ -2735,19 +2733,19 @@ final class InputPipelineTest {
 			Assertions.assertFalse(p1.downUpMouseButtons.contains(2),
 					"ButtonToMouseButton ON_RELEASE: LEFT_STICK pressed, does not fire yet");
 
-			// Verify WHILE_PRESSED holds across multiple frames
+			// Verify WHILE_PRESSED holds across multiple polls
 			for (var i = 0; i < 4; i++) {
-				final var pHold = pollWithFrame(phase1Axes, phase1Buttons);
-				Assertions.assertTrue(pHold.buttons()[0], "AxisToButton WHILE_PRESSED: still held on frame " + (i + 2));
+				final var pHold = pollWithState(phase1Axes, phase1Buttons);
+				Assertions.assertTrue(pHold.buttons()[0], "AxisToButton WHILE_PRESSED: still held on poll " + (i + 2));
 				Assertions.assertTrue(pHold.buttons()[1],
-						"ButtonToButton WHILE_PRESSED: still held on frame " + (i + 2));
+						"ButtonToButton WHILE_PRESSED: still held on poll " + (i + 2));
 				Assertions.assertTrue(pHold.downKeystrokes().contains(lShiftKeystroke),
-						"AxisToKey WHILE_PRESSED: still held on frame " + (i + 2));
+						"AxisToKey WHILE_PRESSED: still held on poll " + (i + 2));
 				Assertions.assertTrue(pHold.downMouseButtons().contains(1),
-						"AxisToMouseButton WHILE_PRESSED: still held on frame " + (i + 2));
+						"AxisToMouseButton WHILE_PRESSED: still held on poll " + (i + 2));
 				// ON_PRESS should NOT fire again
 				Assertions.assertFalse(pHold.downUpKeystrokes().contains(eKeystroke),
-						"ButtonToKey ON_PRESS: does not repeat on frame " + (i + 2));
+						"ButtonToKey ON_PRESS: does not repeat on poll " + (i + 2));
 			}
 
 			// Release LEFT_STICK -> ON_RELEASE fires mouseBtn 2
@@ -2755,48 +2753,48 @@ final class InputPipelineTest {
 			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
 			releaseStickButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
-			final var pRelease = pollWithFrame(phase1Axes, releaseStickButtons);
+			final var pRelease = pollWithState(phase1Axes, releaseStickButtons);
 			Assertions.assertTrue(pRelease.downUpMouseButtons.contains(2),
 					"ButtonToMouseButton ON_RELEASE: fires on LEFT_STICK release");
 
 			// Move RIGHT_TRIGGER out of zone -> ON_RELEASE fires btn 2
 			final var exitZoneAxes = noAxes();
 			exitZoneAxes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.9f;
-			final var pExitZone = pollWithFrame(exitZoneAxes, noButtons());
+			final var pExitZone = pollWithState(exitZoneAxes, noButtons());
 			Assertions.assertTrue(pExitZone.buttons()[2],
 					"AxisToButton ON_RELEASE: fires btn 2 when rightTrigger exits zone");
 
-			// RelativeAxis on RIGHTY: accumulate over frames
+			// RelativeAxis on RIGHTY: accumulate over polls
 			final var relAxes = noAxes();
 			relAxes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = 0.8f;
 			final var initialZ = input.getAxes().get(VirtualAxis.Z);
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(relAxes, noButtons());
+				pollWithState(relAxes, noButtons());
 			}
 			Assertions.assertNotEquals(initialZ, input.getAxes().get(VirtualAxis.Z),
 					"AxisToRelativeAxis: RIGHTY accumulated on Z");
 
 			// ========== Phase 2: Default mode - cycle action ==========
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 			final var startButtons = noButtons();
 			startButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = true;
-			final var pCycle1 = pollWithFrame(noAxes(), startButtons);
+			final var pCycle1 = pollWithState(noAxes(), startButtons);
 			Assertions.assertTrue(pCycle1.buttons()[4], "Cycle 1st sub-action: ButtonToButton -> btn 4");
 
-			pollWithFrame(noAxes(), noButtons());
-			final var pCycle2 = pollWithFrame(noAxes(), startButtons);
+			pollWithState(noAxes(), noButtons());
+			final var pCycle2 = pollWithState(noAxes(), startButtons);
 			final var keystroke1 = new Keystroke(new Scancode[] { scancode1 }, new Scancode[0]);
 			Assertions.assertTrue(pCycle2.downUpKeystrokes().contains(keystroke1),
 					"Cycle 2nd sub-action: ButtonToKey -> DIK_1");
 
 			// ========== Phase 3: Toggle Mode 1 ON - overrides + fallthrough ==========
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 			final var toggleOnButtons = noButtons();
 			toggleOnButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(noAxes(), toggleOnButtons);
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), toggleOnButtons);
+			pollWithState(noAxes(), noButtons());
 
 			// Inject with Mode 1 active
 			final var phase3Axes = noAxes();
@@ -2814,21 +2812,21 @@ final class InputPipelineTest {
 			final var initialRY = input.getAxes().get(VirtualAxis.RY);
 			final var initialRZ = input.getAxes().get(VirtualAxis.RZ);
 
-			// First frame: capture ON_PRESS btn 5 firing; DIK_F delayed
-			final var p3First = pollWithFrame(phase3Axes, phase3Buttons);
-			Assertions.assertTrue(p3First.buttons()[5], "Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
+			// First poll: capture ON_PRESS btn 5 firing; DIK_F delayed
+			final var p3First = pollWithState(phase3Axes, phase3Buttons);
+			Assertions.assertTrue(p3First.buttons()[5], "Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first poll");
 			Assertions.assertFalse(p3First.buttons()[1], "Mode 1 replaced default: btn 1 not set");
 			Assertions.assertFalse(
 					p3First.downKeystrokes().contains(new Keystroke(new Scancode[] { fScancode }, new Scancode[0])),
-					"Mode 1 delayed: EAST -> DIK_F suppressed on first frame");
+					"Mode 1 delayed: EAST -> DIK_F suppressed on first poll");
 
 			Thread.sleep(100);
 
-			// Subsequent frames for RelativeAxis accumulation
+			// Subsequent polls for RelativeAxis accumulation
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(phase3Axes, phase3Buttons);
+				pollWithState(phase3Axes, phase3Buttons);
 			}
-			final var p3 = pollWithFrame(phase3Axes, phase3Buttons);
+			final var p3 = pollWithState(phase3Axes, phase3Buttons);
 
 			// Mode 1 overrides
 			Assertions.assertNotEquals(initialRY, input.getAxes().get(VirtualAxis.RY),
@@ -2836,7 +2834,7 @@ final class InputPipelineTest {
 			Assertions.assertNotEquals(initialRZ, input.getAxes().get(VirtualAxis.RZ),
 					"Mode 1 override: RIGHTX -> RelativeAxis(RZ)");
 			Assertions.assertFalse(p3.buttons()[5],
-					"Mode 1 ON_PRESS: SOUTH -> btn 5 does not repeat on subsequent frames");
+					"Mode 1 ON_PRESS: SOUTH -> btn 5 does not repeat on subsequent polls");
 			final var fKeystroke = new Keystroke(new Scancode[] { fScancode }, new Scancode[0]);
 			Assertions.assertTrue(p3.downKeystrokes().contains(fKeystroke),
 					"Mode 1 WHILE_PRESSED delayed: EAST -> DIK_F fires after delay elapses");
@@ -2859,7 +2857,7 @@ final class InputPipelineTest {
 
 			final var resetButtons = noButtons();
 			resetButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER] = true;
-			pollWithFrame(phase3Axes, resetButtons);
+			pollWithState(phase3Axes, resetButtons);
 
 			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RY));
 
@@ -2867,17 +2865,17 @@ final class InputPipelineTest {
 			// saturated it)
 			final var resetRZButtons = noButtons();
 			resetRZButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER] = true;
-			pollWithFrame(noAxes(), resetRZButtons);
+			pollWithState(noAxes(), resetRZButtons);
 			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RZ));
 
 			// ========== Phase 5: Stack Mode 2 on Mode 1 (three-layer) ==========
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// Hold BACK for momentary Mode 2; Mode 1 still toggled on
 			final var holdBackButtons = noButtons();
 			holdBackButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_BACK] = true;
-			pollWithFrame(noAxes(), holdBackButtons);
+			pollWithState(noAxes(), holdBackButtons);
 
 			final var phase5Axes = noAxes();
 			phase5Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
@@ -2894,9 +2892,9 @@ final class InputPipelineTest {
 			final var initialRZPhase5 = input.getAxes().get(VirtualAxis.RZ);
 
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(phase5Axes, phase5Buttons);
+				pollWithState(phase5Axes, phase5Buttons);
 			}
-			final var p5 = pollWithFrame(phase5Axes, phase5Buttons);
+			final var p5 = pollWithState(phase5Axes, phase5Buttons);
 
 			// Mode 2 top layer overrides
 			assertAxisEquals(input.floatToIntAxisValue(0.7f), p5.axes().get(VirtualAxis.X));
@@ -2922,73 +2920,73 @@ final class InputPipelineTest {
 
 			// ========== Phase 6: Release Mode 2, still in Mode 1 ==========
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			final var phase6Buttons = noButtons();
 			phase6Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			phase6Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
-			final var p6 = pollWithFrame(noAxes(), phase6Buttons);
+			final var p6 = pollWithState(noAxes(), phase6Buttons);
 
-			Assertions.assertTrue(p6.buttons()[5], "Back in Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first frame");
+			Assertions.assertTrue(p6.buttons()[5], "Back in Mode 1 ON_PRESS: SOUTH -> btn 5 fires on first poll");
 			Assertions.assertFalse(p6.downKeystrokes().contains(fKeystroke),
-					"Back in Mode 1 delayed: DIK_F suppressed on re-entry first frame");
+					"Back in Mode 1 delayed: DIK_F suppressed on re-entry first poll");
 
 			Thread.sleep(100);
-			final var p6After = pollWithFrame(noAxes(), phase6Buttons);
+			final var p6After = pollWithState(noAxes(), phase6Buttons);
 			Assertions.assertTrue(p6After.downKeystrokes().contains(fKeystroke),
 					"Back in Mode 1 delayed: DIK_F fires after delay elapses");
 
 			// ========== Phase 7: OSK Mode (stacked on Mode 1) ==========
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			final var holdGuideButtons = noButtons();
 			holdGuideButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
-			pollWithFrame(noAxes(), holdGuideButtons);
+			pollWithState(noAxes(), holdGuideButtons);
 
 			// OSK press
 			final var oskSouthButtons = noButtons();
 			oskSouthButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
 			oskSouthButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), oskSouthButtons);
+			pollWithState(noAxes(), oskSouthButtons);
 			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
 
 			// OSK select RIGHT
 			final var oskEastButtons = noButtons();
 			oskEastButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
 			oskEastButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
-			pollWithFrame(noAxes(), oskEastButtons);
+			pollWithState(noAxes(), oskEastButtons);
 			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 
 			// OSK select DOWN
 			final var oskWestButtons = noButtons();
 			oskWestButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
 			oskWestButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
-			pollWithFrame(noAxes(), oskWestButtons);
+			pollWithState(noAxes(), oskWestButtons);
 			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.DOWN);
 
 			// OSK release all
 			final var oskStartButtons = noButtons();
 			oskStartButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
 			oskStartButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_START] = true;
-			pollWithFrame(noAxes(), oskStartButtons);
+			pollWithState(noAxes(), oskStartButtons);
 			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
 
 			// Fallthrough: RIGHT_STICK through OSK -> Mode 1 -> Default
 			final var oskFallthroughButtons = noButtons();
 			oskFallthroughButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE] = true;
 			oskFallthroughButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
-			final var pOskFallthrough = pollWithFrame(noAxes(), oskFallthroughButtons);
+			final var pOskFallthrough = pollWithState(noAxes(), oskFallthroughButtons);
 			Assertions.assertTrue(pOskFallthrough.buttons()[3], "OSK fallthrough: RIGHT_STICK -> btn 3");
 
 			// Release GUIDE
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// ========== Phase 8: Mouse Mode (stacked on Mode 1) ==========
 
 			final var holdDpadUpButtons = noButtons();
 			holdDpadUpButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP] = true;
-			pollWithFrame(noAxes(), holdDpadUpButtons);
+			pollWithState(noAxes(), holdDpadUpButtons);
 
 			final var phase8Axes = noAxes();
 			phase8Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
@@ -3000,7 +2998,7 @@ final class InputPipelineTest {
 			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
 			phase8Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
 
-			final var p8 = pollWithFrame(phase8Axes, phase8Buttons);
+			final var p8 = pollWithState(phase8Axes, phase8Buttons);
 
 			Assertions.assertNotEquals(0, p8.cursorDeltaX, "Mouse: AxisToCursor LEFTX -> cursorX");
 			Assertions.assertNotEquals(0, p8.scrollClicks(), "Mouse: AxisToScroll LEFTY + ButtonToScroll EAST");
@@ -3008,14 +3006,14 @@ final class InputPipelineTest {
 			Assertions.assertTrue(p8.buttons()[3], "Mouse fallthrough: RIGHT_STICK -> btn 3");
 
 			// Release DPAD_UP
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			// ========== Phase 9: Toggle Mode 1 OFF - return to default ==========
 
 			final var toggleOffButtons = noButtons();
 			toggleOffButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(noAxes(), toggleOffButtons);
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), toggleOffButtons);
+			pollWithState(noAxes(), noButtons());
 
 			final var phase9Axes = noAxes();
 			phase9Axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
@@ -3025,20 +3023,20 @@ final class InputPipelineTest {
 			phase9Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_EAST] = true;
 			phase9Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] = true;
 
-			final var p9 = pollWithFrame(phase9Axes, phase9Buttons);
+			final var p9 = pollWithState(phase9Axes, phase9Buttons);
 
 			assertAxisEquals(input.floatToIntAxisValue(0.5f), p9.axes().get(VirtualAxis.X));
 			Assertions.assertTrue(p9.buttons()[1], "Back in default WHILE_PRESSED: SOUTH -> btn 1");
 			Assertions.assertFalse(p9.buttons()[5], "Mode 1 inactive: btn 5 not set");
 			Assertions.assertTrue(p9.downUpKeystrokes().contains(eKeystroke),
-					"Back in default ON_PRESS: EAST -> DIK_E fires on first frame");
+					"Back in default ON_PRESS: EAST -> DIK_E fires on first poll");
 			Assertions.assertFalse(p9.downMouseButtons().contains(2),
 					"Back in default ON_RELEASE: LEFT_STICK pressed, mouseBtn 2 not fired yet");
 			Assertions.assertFalse(p9.downUpMouseButtons.contains(2),
 					"Back in default ON_RELEASE: LEFT_STICK pressed, mouseBtn 2 not fired yet");
 
 			// Release LEFT_STICK -> ON_RELEASE fires mouseBtn 2
-			final var p9Release = pollWithFrame(phase9Axes, noButtons());
+			final var p9Release = pollWithState(phase9Axes, noButtons());
 			Assertions.assertTrue(p9Release.downUpMouseButtons.contains(2),
 					"Back in default ON_RELEASE: LEFT_STICK release fires mouseBtn 2");
 		}
@@ -3076,13 +3074,13 @@ final class InputPipelineTest {
 			// Axis in zone -> delay starts
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 			Assertions.assertFalse(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(), "Delay tracking started");
 
 			// Switch to Mode 1 -> onModeActivated clears tracking
 			final var toggleButtons = noButtons();
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(axes, toggleButtons);
+			pollWithState(axes, toggleButtons);
 			Assertions.assertTrue(IAxisToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
 					"Delay tracking cleared by onModeActivated");
 		}
@@ -3111,7 +3109,7 @@ final class InputPipelineTest {
 			// Press SOUTH -> delay starts
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
 					"Delay tracking started");
 
@@ -3119,7 +3117,7 @@ final class InputPipelineTest {
 			final var toggleButtons = noButtons();
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 			toggleButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), toggleButtons);
+			pollWithState(noAxes(), toggleButtons);
 			Assertions.assertTrue(IButtonToDelayableAction.ACTION_TO_DOWN_SINCE_MAP.isEmpty(),
 					"Delay tracking cleared by onModeActivated");
 		}
@@ -3143,15 +3141,15 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 
-			// First frame: delayed action starts delay, ON_RELEASE arms
-			pollWithFrame(axes, noButtons());
+			// First poll: delayed action starts delay, ON_RELEASE arms
+			pollWithState(axes, noButtons());
 
 			// After delay: delayed action fires and denies ON_RELEASE action
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 
 			// Exit zone: ON_RELEASE would normally fire but is denied
-			final var exitOutput = pollWithFrame(noAxes(), noButtons());
+			final var exitOutput = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(exitOutput.buttons()[0], "ON_RELEASE action denied by delayed action");
 		}
 
@@ -3169,11 +3167,11 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 
-			final var suppressed = pollWithFrame(axes, noButtons());
+			final var suppressed = pollWithState(axes, noButtons());
 			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(axes, noButtons());
+			final var fired = pollWithState(axes, noButtons());
 			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
 		}
 
@@ -3193,11 +3191,11 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 			final var expected = new Keystroke(new Scancode[] { aScancode }, new Scancode[0]);
 
-			final var suppressed = pollWithFrame(axes, noButtons());
+			final var suppressed = pollWithState(axes, noButtons());
 			Assertions.assertFalse(suppressed.downKeystrokes().contains(expected), "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(axes, noButtons());
+			final var fired = pollWithState(axes, noButtons());
 			Assertions.assertTrue(fired.downKeystrokes().contains(expected), "Fires after delay elapses");
 		}
 
@@ -3215,11 +3213,11 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.7f;
 
-			final var suppressed = pollWithFrame(axes, noButtons());
+			final var suppressed = pollWithState(axes, noButtons());
 			Assertions.assertFalse(suppressed.downMouseButtons().contains(1), "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(axes, noButtons());
+			final var fired = pollWithState(axes, noButtons());
 			Assertions.assertTrue(fired.downMouseButtons().contains(1), "Fires after delay elapses");
 		}
 
@@ -3242,15 +3240,15 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			// First frame: delayed action starts delay, ON_RELEASE arms
-			pollWithFrame(noAxes(), buttons);
+			// First poll: delayed action starts delay, ON_RELEASE arms
+			pollWithState(noAxes(), buttons);
 
 			// After delay: delayed action fires and denies ON_RELEASE action
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			// Release: ON_RELEASE would normally fire but is denied
-			final var releaseOutput = pollWithFrame(noAxes(), noButtons());
+			final var releaseOutput = pollWithState(noAxes(), noButtons());
 			Assertions.assertFalse(releaseOutput.buttons()[0], "ON_RELEASE action denied by delayed action");
 		}
 
@@ -3274,7 +3272,7 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 			for (var i = 0; i < 10; i++) {
-				pollWithFrame(axes, noButtons());
+				pollWithState(axes, noButtons());
 			}
 			final var accumulated = input.getAxes().get(VirtualAxis.X);
 			Assertions.assertNotEquals(0, accumulated, "Axis accumulated value");
@@ -3282,11 +3280,11 @@ final class InputPipelineTest {
 			// Press reset - suppressed during delay
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Assertions.assertNotEquals(0, input.getAxes().get(VirtualAxis.X), "Reset suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.X));
 		}
 
@@ -3305,11 +3303,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
 		}
 
@@ -3328,11 +3326,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertEquals(0, suppressed.cursorDeltaX, "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertNotEquals(0, fired.cursorDeltaX, "Fires after delay elapses");
 		}
 
@@ -3352,11 +3350,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(suppressed.buttons()[0], "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(fired.buttons()[0], "Fires after delay elapses");
 		}
 
@@ -3377,11 +3375,11 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expected = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(suppressed.downKeystrokes().contains(expected), "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(fired.downKeystrokes().contains(expected), "Fires after delay elapses");
 		}
 
@@ -3400,12 +3398,12 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(suppressed.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY),
 					"Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(fired.onLockKeys().contains(LockKey.CAPS_LOCK_LOCK_KEY), "Fires after delay elapses");
 		}
 
@@ -3434,16 +3432,16 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 
-			// First frame: mode switch suppressed - LEFTX still maps to X
-			final var suppressed = pollWithFrame(axes, buttons);
+			// First poll: mode switch suppressed - LEFTX still maps to X
+			final var suppressed = pollWithState(axes, buttons);
 			assertAxisEquals(input.floatToIntAxisValue(0.5f), suppressed.axes().get(VirtualAxis.X));
 
-			// Second frame after delay: mode switch fires (takes effect next poll)
+			// Second poll after delay: mode switch fires (takes effect next poll)
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(axes, buttons);
+			pollWithState(axes, buttons);
 
-			// Third frame: mode now active, LEFTX maps to Y
-			final var afterSwitch = pollWithFrame(axes, noButtons());
+			// Third poll: mode now active, LEFTX maps to Y
+			final var afterSwitch = pollWithState(axes, noButtons());
 			assertAxisEquals(input.floatToIntAxisValue(0.5f), afterSwitch.axes().get(VirtualAxis.Y));
 		}
 
@@ -3462,11 +3460,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(suppressed.downMouseButtons().contains(1), "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(fired.downMouseButtons().contains(1), "Fires after delay elapses");
 		}
 
@@ -3485,11 +3483,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).pressSelectedButton();
 
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
 		}
 
@@ -3508,11 +3506,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).releaseAllButtons();
 
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
 		}
 
@@ -3531,11 +3529,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var suppressed = pollWithFrame(noAxes(), buttons);
+			final var suppressed = pollWithState(noAxes(), buttons);
 			Assertions.assertEquals(0, suppressed.scrollClicks(), "Suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
-			final var fired = pollWithFrame(noAxes(), buttons);
+			final var fired = pollWithState(noAxes(), buttons);
 			Assertions.assertNotEquals(0, fired.scrollClicks(), "Fires after delay elapses");
 		}
 
@@ -3554,11 +3552,11 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard, Mockito.never()).moveSelector(Direction.RIGHT);
 
 			Thread.sleep(DELAY_WAIT_MS);
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 		}
 	}
@@ -3576,7 +3574,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 			Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke));
@@ -3598,7 +3596,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			final var expectedKeystroke = new Keystroke(new Scancode[] { aScancode }, new Scancode[] { lCtrlScancode });
 			Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke));
@@ -3622,10 +3620,10 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(output1.downUpKeystrokes().contains(expectedKeystroke), "Fires on press");
 
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(output2.downUpKeystrokes().contains(expectedKeystroke),
 					"Does not fire again while held");
 		}
@@ -3648,11 +3646,11 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
-			final var outputPress = pollWithFrame(noAxes(), buttons);
+			final var outputPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(outputPress.downUpKeystrokes().contains(expectedKeystroke),
 					"Does not fire on press");
 
-			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			final var outputRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(outputRelease.downUpKeystrokes().contains(expectedKeystroke), "Fires on release");
 		}
 
@@ -3664,15 +3662,15 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertTrue(output.downKeystrokes().isEmpty());
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously holds keystroke across multiple polls")
 		void whilePressedContinuouslyHoldsKeystroke() {
 			final var wScancode = scancode(Scancode.DIK_W);
 			setUpButtonToKeyProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, wScancode);
@@ -3682,9 +3680,9 @@ final class InputPipelineTest {
 			final var expectedKeystroke = new Keystroke(new Scancode[] { wScancode }, new Scancode[0]);
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(noAxes(), buttons);
+				final var output = pollWithState(noAxes(), buttons);
 				Assertions.assertTrue(output.downKeystrokes().contains(expectedKeystroke),
-						"Keystroke held on frame " + i);
+						"Keystroke held on poll " + i);
 			}
 		}
 	}
@@ -3706,35 +3704,35 @@ final class InputPipelineTest {
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 
 			// Toggle mode 1 on
-			pollWithFrame(axes, buttonsWithModeSwitch);
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, buttonsWithModeSwitch);
+			pollWithState(axes, noButtons());
 
 			// Confirm mode 1 is active - LEFTX maps to Y
-			final var outputMode1 = pollWithFrame(axes, noButtons());
+			final var outputMode1 = pollWithState(axes, noButtons());
 			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().get(VirtualAxis.Y));
 
 			// Toggle mode 1 off - deactivateMode suspends LEFTX
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(axes, buttonsWithModeSwitch);
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, buttonsWithModeSwitch);
+			pollWithState(axes, noButtons());
 
 			// Axis is suspended - LEFTX should not produce output on X despite being
 			// non-zero
-			final var outputSuspended = pollWithFrame(axes, noButtons());
+			final var outputSuspended = pollWithState(axes, noButtons());
 			Assertions.assertTrue(input.isAxisSuspended(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
 					"LEFTX should be suspended after mode deactivation");
 			assertAxisEquals(0, outputSuspended.axes().get(VirtualAxis.X));
 
 			// Return axis to dead zone to clear suspension
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0f;
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 
 			Assertions.assertFalse(input.isAxisSuspended(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
 					"LEFTX suspension should clear when axis returns to dead zone");
 
 			// Now apply axis input again - should produce output normally
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.6f;
-			final var outputResumed = pollWithFrame(axes, noButtons());
+			final var outputResumed = pollWithState(axes, noButtons());
 			assertAxisEquals(input.floatToIntAxisValue(0.6f), outputResumed.axes().get(VirtualAxis.X));
 		}
 
@@ -3747,14 +3745,14 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var outputMode0 = pollWithFrame(axes, noButtons());
+			final var outputMode0 = pollWithState(axes, noButtons());
 			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode0.axes().get(VirtualAxis.X));
 
 			final var buttonsWithModeSwitch = noButtons();
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(axes, buttonsWithModeSwitch);
+			pollWithState(axes, buttonsWithModeSwitch);
 
-			final var outputMode1 = pollWithFrame(axes, buttonsWithModeSwitch);
+			final var outputMode1 = pollWithState(axes, buttonsWithModeSwitch);
 			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().get(VirtualAxis.Y));
 		}
 
@@ -3769,9 +3767,9 @@ final class InputPipelineTest {
 
 			final var buttonsWithModeSwitch = noButtons();
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(axes, buttonsWithModeSwitch);
+			pollWithState(axes, buttonsWithModeSwitch);
 
-			pollWithFrame(axes, noButtons());
+			pollWithState(axes, noButtons());
 
 			Assertions.assertEquals(Profile.DEFAULT_MODE, profile.getActiveMode());
 		}
@@ -3787,9 +3785,9 @@ final class InputPipelineTest {
 
 			final var buttonsWithModeSwitch = noButtons();
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
-			pollWithFrame(axes, buttonsWithModeSwitch);
+			pollWithState(axes, buttonsWithModeSwitch);
 
-			final var outputAfterRelease = pollWithFrame(axes, noButtons());
+			final var outputAfterRelease = pollWithState(axes, noButtons());
 			assertAxisEquals(input.floatToIntAxisValue(0.7f), outputAfterRelease.axes().get(VirtualAxis.Y));
 		}
 	}
@@ -3806,7 +3804,7 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(noAxes(), buttons);
+			final var output = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output.downMouseButtons().contains(1));
 		}
@@ -3827,10 +3825,10 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
 			Assertions.assertTrue(output1.downUpMouseButtons.contains(1), "Mouse button fires on press");
 
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(output2.downUpMouseButtons.contains(1),
 					"Mouse button does not fire again while held");
 		}
@@ -3851,10 +3849,10 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var outputPress = pollWithFrame(noAxes(), buttons);
+			final var outputPress = pollWithState(noAxes(), buttons);
 			Assertions.assertFalse(outputPress.downUpMouseButtons.contains(1), "Mouse button does not fire on press");
 
-			final var outputRelease = pollWithFrame(noAxes(), noButtons());
+			final var outputRelease = pollWithState(noAxes(), noButtons());
 			Assertions.assertTrue(outputRelease.downUpMouseButtons.contains(1), "Mouse button fires on release");
 		}
 
@@ -3865,15 +3863,15 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
-			final var output = pollWithFrame(noAxes(), noButtons());
+			final var output = pollWithState(noAxes(), noButtons());
 
 			Assertions.assertFalse(output.downMouseButtons().contains(1));
 		}
 
 		@Test
-		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple frames")
+		@DisplayName("WHILE_PRESSED continuously holds mouse button across multiple polls")
 		void whilePressedContinuouslyHoldsMouseButton() {
 			setUpButtonToMouseButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 1);
 
@@ -3881,18 +3879,18 @@ final class InputPipelineTest {
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
 			for (var i = 0; i < 5; i++) {
-				final var output = pollWithFrame(noAxes(), buttons);
-				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on frame " + i);
+				final var output = pollWithState(noAxes(), buttons);
+				Assertions.assertTrue(output.downMouseButtons().contains(1), "Mouse button held on poll " + i);
 			}
 		}
 	}
 
 	@Nested
-	@DisplayName("Multi-frame sequences")
-	final class MultiFrameTests {
+	@DisplayName("Multi-poll sequences")
+	final class MultiPollTests {
 
 		@Test
-		@DisplayName("axis and button combined in same frame")
+		@DisplayName("axis and button combined in same poll")
 		void axisAndButtonCombined() {
 			final var profile = new Profile();
 			final var defaultMode = profile.getModes().getFirst();
@@ -3907,44 +3905,44 @@ final class InputPipelineTest {
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output = pollWithFrame(axes, buttons);
+			final var output = pollWithState(axes, buttons);
 
 			assertAxisEquals(input.floatToIntAxisValue(-0.3f), output.axes().get(VirtualAxis.X));
 			Assertions.assertTrue(output.buttons()[0]);
 		}
 
 		@Test
-		@DisplayName("axis value persists across multiple frames")
-		void axisValuePersistsAcrossFrames() {
+		@DisplayName("axis value persists across multiple polls")
+		void axisValuePersistsAcrossPolls() {
 			setUpAxisProfile(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX, VirtualAxis.X);
 
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.5f;
 
-			final var output1 = pollWithFrame(axes, noButtons());
-			final var output2 = pollWithFrame(axes, noButtons());
+			final var output1 = pollWithState(axes, noButtons());
+			final var output2 = pollWithState(axes, noButtons());
 
 			Assertions.assertEquals(output1.axes().get(VirtualAxis.X), output2.axes().get(VirtualAxis.X));
 		}
 
 		@Test
-		@DisplayName("button held across multiple frames stays pressed")
-		void buttonHeldAcrossFramesStaysPressed() {
+		@DisplayName("button held across multiple polls stays pressed")
+		void buttonHeldAcrossPollsStaysPressed() {
 			setUpButtonProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, 0);
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output1.buttons()[0]);
 			Assertions.assertTrue(output2.buttons()[0]);
 		}
 
 		@Test
-		@DisplayName("keystroke held across multiple frames stays in downKeystrokes")
-		void keystrokeHeldAcrossFrames() {
+		@DisplayName("keystroke held across multiple polls stays in downKeystrokes")
+		void keystrokeHeldAcrossPolls() {
 			final var sScancode = scancode(Scancode.DIK_S);
 			setUpButtonToKeyProfile(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, sScancode);
 
@@ -3953,8 +3951,8 @@ final class InputPipelineTest {
 
 			final var expectedKeystroke = new Keystroke(new Scancode[] { sScancode }, new Scancode[0]);
 
-			final var output1 = pollWithFrame(noAxes(), buttons);
-			final var output2 = pollWithFrame(noAxes(), buttons);
+			final var output1 = pollWithState(noAxes(), buttons);
+			final var output2 = pollWithState(noAxes(), buttons);
 
 			Assertions.assertTrue(output1.downKeystrokes().contains(expectedKeystroke));
 			Assertions.assertTrue(output2.downKeystrokes().contains(expectedKeystroke));
@@ -3991,11 +3989,11 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			Mockito.verify(mockOnScreenKeyboard).pressSelectedButton();
 
-			pollWithFrame(noAxes(), noButtons());
+			pollWithState(noAxes(), noButtons());
 
 			Mockito.verify(mockOnScreenKeyboard).releaseSelectedButton();
 		}
@@ -4011,7 +4009,7 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			Mockito.verify(mockOnScreenKeyboard).releaseAllButtons();
 		}
@@ -4027,7 +4025,7 @@ final class InputPipelineTest {
 
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
-			pollWithFrame(noAxes(), buttons);
+			pollWithState(noAxes(), buttons);
 
 			Mockito.verify(mockOnScreenKeyboard).moveSelector(Direction.RIGHT);
 		}
