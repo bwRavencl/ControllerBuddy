@@ -76,6 +76,8 @@ final class InputPipelineTest {
 
 	private Input input;
 
+	private long lastPollTime;
+
 	private OnScreenKeyboard mockOnScreenKeyboard;
 
 	private MockedStatic<SDLGamepad> sdlGamepadMock;
@@ -251,8 +253,18 @@ final class InputPipelineTest {
 	}
 
 	private OutputCapture pollWithState(final float[] axes, final boolean[] buttons) {
+		if (lastPollTime > 0L && System.currentTimeMillis() - lastPollTime < RunMode.DEFAULT_POLL_INTERVAL + 1L) {
+			try {
+				Thread.sleep(RunMode.DEFAULT_POLL_INTERVAL);
+			} catch (final InterruptedException _) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		lastPollTime = System.currentTimeMillis();
+
 		injector.injectState(axes, buttons);
 		input.poll();
+
 		return OutputCapture.captureAndReset(input);
 	}
 
