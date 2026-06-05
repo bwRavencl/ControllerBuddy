@@ -78,10 +78,14 @@ val commonJvmArgs =
         "-XX:+UseCompactObjectHeaders",
         "-XX:TieredStopAtLevel=1",
         "-XX:ReservedCodeCacheSize=32m",
-        "--add-exports=org.lwjgl/org.lwjgl.system.ffm=org.lwjgl.sdl",
-        "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
-        "--illegal-final-field-mutation=deny",
     )
+val runJvmArgs =
+    commonJvmArgs +
+        listOf(
+            "--add-exports=org.lwjgl/org.lwjgl.system.ffm=org.lwjgl.sdl",
+            "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
+            "--illegal-final-field-mutation=deny",
+        )
 val windowsJvmArgs =
     listOf(
         "--add-opens=java.desktop/java.awt=$mainModule",
@@ -617,7 +621,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.named<JavaExec>("run") {
-  jvmArgs(commonJvmArgs)
+  jvmArgs(runJvmArgs)
 
   if (os.isWindows) {
     jvmArgs(windowsJvmArgs)
@@ -790,6 +794,7 @@ tasks.named<Test>("test") {
   useJUnitPlatform()
 
   jvmArgs(mockitoAgent.map { "-javaagent:${it.absolutePath}" })
+  jvmArgs(commonJvmArgs)
   jvmArgs("--enable-native-access=ALL-UNNAMED")
   jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
 
@@ -847,7 +852,7 @@ tasks.register<Exec>("jpackage") {
           "--verbose",
       )
 
-  var jvmArgs = commonJvmArgs.toMutableList()
+  var jvmArgs = runJvmArgs.toMutableList()
   if (os.isWindows) {
     jvmArgs += windowsJvmArgs
   } else if (os.isLinux) {
