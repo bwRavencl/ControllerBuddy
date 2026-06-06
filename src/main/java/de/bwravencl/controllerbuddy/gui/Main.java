@@ -94,6 +94,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -6503,6 +6504,9 @@ public final class Main {
 		/// Cursor shown when the panel is in pan mode (zoomed in).
 		private static final Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
+		/// Zoom factor multiplier applied per click.
+		private static final float ZOOM_CLICK_FACTOR = 1.3f;
+
 		/// Cursor shown when the panel is in zoom mode.
 		private static final Cursor ZOOM_CURSOR;
 
@@ -6518,11 +6522,8 @@ public final class Main {
 		/// Exponent controlling how fast the view re-centers when zooming out.
 		private static final double ZOOM_OUT_RETURN_TO_CENTER_EXPONENT = 2.0;
 
-		/// Zoom factor multiplier applied per click.
-		private static final float ZOOM_STEP_CLICK = 1.3f;
-
-		/// Zoom factor multiplier applied per mouse-wheel notch.
-		private static final float ZOOM_STEP_WHEEL = 1.1f;
+		/// Base zoom factor per unit of scroll input
+		private static final float ZOOM_SCROLL_BASE = 1.05f;
 
 		@Serial
 		private static final long serialVersionUID = 3771880542091875983L;
@@ -6570,8 +6571,8 @@ public final class Main {
 
 					final float zoomRatio;
 					switch (e.getButton()) {
-					case MouseEvent.BUTTON1 -> zoomRatio = ZOOM_STEP_CLICK;
-					case MouseEvent.BUTTON3 -> zoomRatio = 1f / ZOOM_STEP_CLICK;
+					case MouseEvent.BUTTON1 -> zoomRatio = ZOOM_CLICK_FACTOR;
+					case MouseEvent.BUTTON3 -> zoomRatio = 1f / ZOOM_CLICK_FACTOR;
 					default -> {
 						return;
 					}
@@ -6634,9 +6635,17 @@ public final class Main {
 			addMouseMotionListener(mouseAdapter);
 
 			addMouseWheelListener(e -> {
-				final var wheelRotation = e.getWheelRotation();
+				if (e.getScrollType() == MouseWheelEvent.WHEEL_BLOCK_SCROLL) {
+					return;
+				}
 
-				final var zoomRatio = (wheelRotation < 0 ? ZOOM_STEP_WHEEL : 1f / ZOOM_STEP_WHEEL);
+				final var preciseWheelRotation = e.getPreciseWheelRotation();
+				if (Math.abs(preciseWheelRotation) < 0.1) {
+					return;
+				}
+
+				final var zoomRatio = (float) Math.pow(ZOOM_SCROLL_BASE, -preciseWheelRotation);
+
 				handleZoom(zoomRatio, e.getX(), e.getY());
 			});
 		}
