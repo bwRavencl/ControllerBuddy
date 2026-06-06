@@ -3578,6 +3578,7 @@ public final class Main {
 	/// SDLHints#SDL_HINT_XINPUT_ENABLED}, if set. A value of `"0"` or `"false"`
 	/// (case-insensitive) disables XInput by default; any other value, or the
 	/// absence of the variable, enables it by default.
+	///
 	/// @return `true` if XInput should be used
 	private boolean isXInput() {
 		var environmentVariableValue = System.getenv(SDLHints.SDL_HINT_XINPUT_ENABLED);
