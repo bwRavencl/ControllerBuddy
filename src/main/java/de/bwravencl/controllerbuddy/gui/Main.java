@@ -158,8 +158,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -739,9 +737,6 @@ public final class Main {
 
 	/// Label displaying the overlay legend for action symbols.
 	private final JLabel legendLabel = new JLabel();
-
-	/// Lock that serializes concurrent profile load operations.
-	private final Lock loadProfileLock = new ReentrantLock();
 
 	/// Reference to the SDL main loop used for SDL thread dispatch.
 	private final MainLoop mainLoop;
@@ -3304,7 +3299,7 @@ public final class Main {
 					case VERTICAL -> verticalIndicatorPanel;
 					};
 
-					final var indicatorProgressBar = new IndicatorProgressBar(overlayAxis, detentValues);
+					final var indicatorProgressBar = new IndicatorProgressBar(this, overlayAxis, detentValues);
 					indicatorPanel.add(indicatorProgressBar);
 					virtualAxisToProgressBarMap.put(virtualAxis, indicatorProgressBar);
 				}
@@ -3609,131 +3604,106 @@ public final class Main {
 	/// application startup
 	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
 			final CommandLine commandLine, final boolean initialLaunch) {
-		loadProfileLock.lock();
+		final var wasRunning = isRunning();
+		stopAll(true, false, performGarbageCollection);
+
+		LOGGER.info("Loading profile: " + file.getAbsolutePath());
+
+		var profileLoaded = false;
+
 		try {
-			final var wasRunning = isRunning();
-			stopAll(true, false, performGarbageCollection);
+			final var jsonString = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+			final var jsonContext = JsonContext.create();
 
-			EventQueue.invokeLater(() -> {
-				try {
-					LOGGER.info("Loading profile: " + file.getAbsolutePath());
+			try {
+				final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
+				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
+				if (versionsComparisonResult.isEmpty()) {
+					LOGGER.warning("Trying to load a profile without version information");
 
-					var profileLoaded = false;
-
-					try {
-						final var jsonString = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-						final var jsonContext = JsonContext.create();
-
-						try {
-							final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
-							final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
-							if (versionsComparisonResult.isEmpty()) {
-								LOGGER.warning("Trying to load a profile without version information");
-
-								if (!skipMessageDialogs) {
-									GuiUtils.showMessageDialog(main, frame, MessageFormat.format(
-											STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"), file.getName(),
-											STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
-											STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-								}
-							} else {
-								final int v = versionsComparisonResult.get();
-								if (v < 0) {
-									LOGGER.warning("Trying to load a profile for an older release");
-
-									if (!skipMessageDialogs) {
-										GuiUtils.showMessageDialog(main, frame,
-												MessageFormat.format(
-														STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-														file.getName(), STRINGS.getString("AN_OLDER"),
-														Constants.APPLICATION_NAME),
-												STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-									}
-								} else if (v > 0) {
-									LOGGER.warning("Trying to load a profile for a newer release");
-
-									if (!skipMessageDialogs) {
-										GuiUtils.showMessageDialog(main, frame,
-												MessageFormat.format(
-														STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-														file.getName(), STRINGS.getString("A_NEWER"),
-														Constants.APPLICATION_NAME),
-												STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-									}
-								}
-							}
-
-							final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
-							if (!unknownActionClasses.isEmpty()) {
-								LOGGER.warning("Encountered the unknown actions while loading profile:"
-										+ String.join(", ", unknownActionClasses));
-
-								if (!skipMessageDialogs) {
-									GuiUtils.showMessageDialog(main, frame,
-											MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
-													String.join("\n", unknownActionClasses)),
-											STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
-								}
-							}
-
-							profileLoaded = input.setProfile(profile);
-							if (profileLoaded) {
-								saveLastProfile(file);
-								updateModesPanel(false);
-								updateVisualizationPanel();
-								updateOverlayPanel();
-								updateProfileSettingsPanel();
-								updatePanelAccess();
-								loadedProfile = file.getName();
-								setUnsavedChanges(false);
-								setStatusBarText(MessageFormat.format(STRINGS.getString("STATUS_PROFILE_LOADED"),
-										file.getAbsolutePath()));
-								scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
-								profileFileChooser.setSelectedFile(file);
-
-								if (wasRunning) {
-									restartLast();
-								}
-							}
-						} catch (final JsonParseException e) {
-							LOGGER.log(Level.SEVERE, e.getMessage(), e);
-						}
-					} catch (final NoSuchFileException | InvalidPathException e) {
-						LOGGER.log(Level.FINE, e.getMessage(), e);
-					} catch (final IOException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					if (!skipMessageDialogs) {
+						GuiUtils.showMessageDialog(main, frame,
+								MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										file.getName(), STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
+								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					}
-
-					if (!profileLoaded) {
-						LOGGER.severe("Could not load profile");
+				} else {
+					final int v = versionsComparisonResult.get();
+					if (v < 0) {
+						LOGGER.warning("Trying to load a profile for an older release");
 
 						if (!skipMessageDialogs) {
 							GuiUtils.showMessageDialog(main, frame,
-									MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
-											Constants.APPLICATION_NAME),
-									STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											file.getName(), STRINGS.getString("AN_OLDER"), Constants.APPLICATION_NAME),
+									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+						}
+					} else if (v > 0) {
+						LOGGER.warning("Trying to load a profile for a newer release");
+
+						if (!skipMessageDialogs) {
+							GuiUtils.showMessageDialog(main, frame,
+									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											file.getName(), STRINGS.getString("A_NEWER"), Constants.APPLICATION_NAME),
+									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 						}
 					}
-
-					if (commandLine != null) {
-						EventQueue.invokeLater(() -> {
-							try {
-								main.handleRemainingCommandLine(commandLine, initialLaunch);
-							} finally {
-								loadProfileLock.unlock();
-							}
-						});
-					} else {
-						loadProfileLock.unlock();
-					}
-				} catch (final Throwable t) {
-					loadProfileLock.unlock();
-					throw t;
 				}
-			});
-		} catch (final Throwable t) {
-			loadProfileLock.unlock();
-			throw t;
+
+				final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
+				if (!unknownActionClasses.isEmpty()) {
+					LOGGER.warning("Encountered the unknown actions while loading profile:"
+							+ String.join(", ", unknownActionClasses));
+
+					if (!skipMessageDialogs) {
+						GuiUtils.showMessageDialog(main, frame,
+								MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+										String.join("\n", unknownActionClasses)),
+								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+					}
+				}
+
+				profileLoaded = input.setProfile(profile);
+				if (profileLoaded) {
+					saveLastProfile(file);
+					updateModesPanel(false);
+					updateVisualizationPanel();
+					updateOverlayPanel();
+					updateProfileSettingsPanel();
+					updatePanelAccess();
+					loadedProfile = file.getName();
+					setUnsavedChanges(false);
+					setStatusBarText(
+							MessageFormat.format(STRINGS.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
+					scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
+					profileFileChooser.setSelectedFile(file);
+
+					if (wasRunning) {
+						restartLast();
+					}
+				}
+			} catch (final JsonParseException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+		} catch (final NoSuchFileException | InvalidPathException e) {
+			LOGGER.log(Level.FINE, e.getMessage(), e);
+		} catch (final IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+
+		if (!profileLoaded) {
+			LOGGER.severe("Could not load profile");
+
+			if (!skipMessageDialogs) {
+				GuiUtils.showMessageDialog(main, frame,
+						MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+								Constants.APPLICATION_NAME),
+						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		if (commandLine != null) {
+			handleRemainingCommandLine(commandLine, initialLaunch);
 		}
 	}
 
@@ -3742,8 +3712,7 @@ public final class Main {
 	///
 	/// @param args the command-line arguments received from the other instance
 	public void newActivation(final String[] args) {
-		loadProfileLock.lock();
-		try {
+		EventQueue.invokeLater(() -> {
 			LOGGER.info("New activation with arguments: " + String.join(" ", args));
 
 			if (args.length > 0) {
@@ -3752,29 +3721,25 @@ public final class Main {
 					final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 					final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
-					EventQueue.invokeLater(() -> {
-						if (gameControllerDbPath != null) {
-							updateGameControllerMappingsFromFile(gameControllerDbPath);
-						}
+					if (gameControllerDbPath != null) {
+						updateGameControllerMappingsFromFile(gameControllerDbPath);
+					}
 
-						if (cmdProfilePath != null && handleUnsavedChanges()) {
-							loadProfile(new File(cmdProfilePath), false, true, commandLine, false);
-						} else {
-							EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, false));
-						}
-					});
+					if (cmdProfilePath != null && handleUnsavedChanges()) {
+						loadProfile(new File(cmdProfilePath), false, true, commandLine, false);
+					} else {
+						handleRemainingCommandLine(commandLine, false);
+					}
 				} catch (final ParseException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 			} else {
-				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, frame,
+				GuiUtils.showMessageDialog(main, frame,
 						MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
-		} finally {
-			loadProfileLock.unlock();
-		}
+		});
 	}
 
 	/// Resets the application to an empty profile state.
@@ -5911,11 +5876,12 @@ public final class Main {
 		/// Configures the orientation, dimensions, inversion, border, and foreground
 		/// color from the [OverlayAxis] and the current overlay scaling factor.
 		///
+		/// @param main the main application instance
 		/// @param overlayAxis the overlay axis configuration defining orientation,
 		/// style, color, and inversion
 		/// @param detentValues the set of normalized axis values at which detent tick
 		/// marks should be drawn
-		private IndicatorProgressBar(final OverlayAxis overlayAxis, final Set<Float> detentValues) {
+		private IndicatorProgressBar(final Main main, final OverlayAxis overlayAxis, final Set<Float> detentValues) {
 			final var overlayAxisOrientation = overlayAxis.getOrientation();
 			super(overlayAxisOrientation.toSwingConstant());
 
