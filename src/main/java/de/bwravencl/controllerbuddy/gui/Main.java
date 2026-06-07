@@ -2676,7 +2676,7 @@ public final class Main {
 			}
 		} catch (final DOMException | IOException | SAXException | TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(main, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+			GuiUtils.showMessageDialog(this, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -3432,7 +3432,7 @@ public final class Main {
 				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
 		} else {
-			EventQueue.invokeLater(() -> main.handleRemainingCommandLine(commandLine, true));
+			EventQueue.invokeLater(() -> handleRemainingCommandLine(commandLine, true));
 		}
 	}
 
@@ -3622,7 +3622,7 @@ public final class Main {
 					LOGGER.warning("Trying to load a profile without version information");
 
 					if (!skipMessageDialogs) {
-						GuiUtils.showMessageDialog(main, frame,
+						GuiUtils.showMessageDialog(this, frame,
 								MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										file.getName(), STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
 								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3633,7 +3633,7 @@ public final class Main {
 						LOGGER.warning("Trying to load a profile for an older release");
 
 						if (!skipMessageDialogs) {
-							GuiUtils.showMessageDialog(main, frame,
+							GuiUtils.showMessageDialog(this, frame,
 									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 											file.getName(), STRINGS.getString("AN_OLDER"), Constants.APPLICATION_NAME),
 									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3642,7 +3642,7 @@ public final class Main {
 						LOGGER.warning("Trying to load a profile for a newer release");
 
 						if (!skipMessageDialogs) {
-							GuiUtils.showMessageDialog(main, frame,
+							GuiUtils.showMessageDialog(this, frame,
 									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 											file.getName(), STRINGS.getString("A_NEWER"), Constants.APPLICATION_NAME),
 									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3656,7 +3656,7 @@ public final class Main {
 							+ String.join(", ", unknownActionClasses));
 
 					if (!skipMessageDialogs) {
-						GuiUtils.showMessageDialog(main, frame,
+						GuiUtils.showMessageDialog(this, frame,
 								MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 										String.join("\n", unknownActionClasses)),
 								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3695,7 +3695,7 @@ public final class Main {
 			LOGGER.severe("Could not load profile");
 
 			if (!skipMessageDialogs) {
-				GuiUtils.showMessageDialog(main, frame,
+				GuiUtils.showMessageDialog(this, frame,
 						MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -3734,7 +3734,7 @@ public final class Main {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 			} else {
-				GuiUtils.showMessageDialog(main, frame,
+				GuiUtils.showMessageDialog(this, frame,
 						MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -4245,7 +4245,7 @@ public final class Main {
 			scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(main, frame, STRINGS.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
+			GuiUtils.showMessageDialog(this, frame, STRINGS.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -4419,7 +4419,7 @@ public final class Main {
 
 		final var buildYear = String.valueOf(buildDateTime.getYear());
 
-		GuiUtils.showMessageDialog(main, frame,
+		GuiUtils.showMessageDialog(this, frame,
 				MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
 						Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
 				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
@@ -4712,13 +4712,13 @@ public final class Main {
 		} catch (final Throwable t) {
 			LOGGER.warning("Could not read external game controller mappings file: " + path);
 
-			GuiUtils.showMessageDialog(main, frame, MessageFormat
+			GuiUtils.showMessageDialog(this, frame, MessageFormat
 					.format(STRINGS.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
 		if (errorDetails != null && !errorDetails.isBlank()) {
-			GuiUtils.showMessageDialog(main, frame,
+			GuiUtils.showMessageDialog(this, frame,
 					MessageFormat.format(
 							STRINGS.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
 							errorDetails),
