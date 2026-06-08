@@ -139,7 +139,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		}
 
 		@Override
-		public void paintComponent(final Graphics g) {
+		protected void paintComponent(final Graphics g) {
 			super.paintComponent(g);
 
 			final var insets = getInsets();

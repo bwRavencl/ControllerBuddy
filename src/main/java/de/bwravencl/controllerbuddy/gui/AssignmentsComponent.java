@@ -219,7 +219,7 @@ final class AssignmentsComponent extends JScrollPane {
 				}
 
 				@Override
-				public void paintComponent(final Graphics g) {
+				protected void paintComponent(final Graphics g) {
 					final var diameter = getDiameter() - 3;
 					final var radius = diameter / 2;
 

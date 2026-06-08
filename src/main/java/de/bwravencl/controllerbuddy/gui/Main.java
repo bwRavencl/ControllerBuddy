@@ -7086,7 +7086,7 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction() {
+		void doAction() {
 			newProfile(true);
 		}
 	}
@@ -7135,7 +7135,7 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction() {
+		void doAction() {
 			executeWhileVisible(() -> {
 				if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
 					loadProfile(profileFileChooser.getSelectedFile(), false, true, null, false);
@@ -7213,7 +7213,7 @@ public final class Main {
 		}
 
 		@Override
-		protected void doAction() {
+		void doAction() {
 			quit();
 		}
 	}
