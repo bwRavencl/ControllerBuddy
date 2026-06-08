@@ -112,7 +112,7 @@ java { toolchain(javaToolchainSpec) }
 
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.49.0")
-  spotbugs("com.github.spotbugs:spotbugs:4.9.8")
+  spotbugs("com.github.spotbugs:spotbugs:4.10.1")
 
   val dbusJavaVersion = "5.2.0"
   val lwjglVersion = "3.4.1"
