@@ -1176,11 +1176,11 @@ public final class Main {
 		tabbedPane.addTab(STRINGS.getString("VISUALIZATION_TAB"), visualizationPanel);
 
 		tabbedPane.addChangeListener(e -> {
-			if (e.getSource() != tabbedPane) {
+			if (!e.getSource().equals(tabbedPane)) {
 				return;
 			}
 
-			if (tabbedPane.getSelectedComponent() == visualizationPanel) {
+			if (visualizationPanel.equals(tabbedPane.getSelectedComponent())) {
 				if (svgPanel == null) {
 					svgPanel = new SVGPanel();
 					svgPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
@@ -6432,7 +6432,7 @@ public final class Main {
 		/// called from the main loop thread.
 		@SuppressWarnings("NamedLikeContextualKeyword")
 		public void yield() {
-			if (Thread.currentThread() != thread) {
+			if (!Thread.currentThread().equals(thread)) {
 				throw new RuntimeException("yield() can only be called on " + thread.getName());
 			}
 
@@ -6566,7 +6566,7 @@ public final class Main {
 
 					repaint();
 
-					if (getCursor() != MOVE_CURSOR) {
+					if (!MOVE_CURSOR.equals(getCursor())) {
 						setCursor(MOVE_CURSOR);
 					}
 				}
@@ -6592,7 +6592,7 @@ public final class Main {
 
 					lastMouseLocation = null;
 
-					if (getCursor() != ZOOM_CURSOR) {
+					if (!ZOOM_CURSOR.equals(getCursor())) {
 						setCursor(ZOOM_CURSOR);
 					}
 				}

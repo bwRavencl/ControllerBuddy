@@ -104,7 +104,7 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 
 					if (actions != null && actions.contains(this)) {
 						for (final IAction<?> action : actions) {
-							if (action == this) {
+							if (action.equals(this)) {
 								continue;
 							}
 
