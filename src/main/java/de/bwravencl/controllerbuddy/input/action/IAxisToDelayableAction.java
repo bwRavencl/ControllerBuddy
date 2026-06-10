@@ -124,18 +124,24 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final AxisToButtonAction axisToButtonAction) {
+								switch (action) {
+								case final AxisToButtonAction axisToButtonAction -> {
 									if (!axisToButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToButtonAction);
 									}
-								} else if (action instanceof final AxisToKeyAction axisToKeyAction) {
+								}
+								case final AxisToKeyAction axisToKeyAction -> {
 									if (!axisToKeyAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToKeyAction);
 									}
-								} else if (action instanceof final AxisToMouseButtonAction axisToMouseButtonAction) {
+								}
+								case final AxisToMouseButtonAction axisToMouseButtonAction -> {
 									if (!axisToMouseButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(axisToMouseButtonAction);
 									}
+								}
+								default -> {
+								}
 								}
 
 								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);

@@ -113,22 +113,29 @@ public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 							if (isUndelayedOnReleaseAction == null) {
 								isUndelayedOnReleaseAction = false;
 
-								if (action instanceof final ButtonToButtonAction buttonToButtonAction) {
+								switch (action) {
+								case final ButtonToButtonAction buttonToButtonAction -> {
 									if (!buttonToButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToButtonAction);
 									}
-								} else if (action instanceof final ButtonToKeyAction buttonToKeyAction) {
+								}
+								case final ButtonToKeyAction buttonToKeyAction -> {
 									if (!buttonToKeyAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToKeyAction);
 									}
-								} else if (action instanceof final ButtonToMouseButtonAction buttonToMouseButtonAction) {
+								}
+								case final ButtonToMouseButtonAction buttonToMouseButtonAction -> {
 									if (!buttonToMouseButtonAction.isDelayed()) {
 										isUndelayedOnReleaseAction = isOnReleaseAction(buttonToMouseButtonAction);
 									}
-								} else if (action instanceof final ButtonToCycleAction buttonToCycleAction) {
+								}
+								case final ButtonToCycleAction buttonToCycleAction -> {
 									if (!buttonToCycleAction.isDelayed()) {
 										isUndelayedOnReleaseAction = true;
 									}
+								}
+								default -> {
+								}
 								}
 
 								ACTION_TO_MUST_DENY_ACTIVATION_MAP.put(action, isUndelayedOnReleaseAction);
