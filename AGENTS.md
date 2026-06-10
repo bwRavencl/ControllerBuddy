@@ -93,6 +93,7 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Localization: user-facing strings go in resource bundles (`strings.properties`, `strings_de_DE.properties`), not hardcoded.
 - Module system: packages that need Gson serialization require an `opens ... to com.google.gson` directive. These are defined in the `generateModuleInfo` task in `build.gradle.kts` - not in `module-info.java` directly, as that file is generated.
 - Documentation comments: follow the rules below for all Javadoc comments.
+    - **Language** use American English, not British English.
     - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.
     - **Coverage:** all `public`, `protected`, package-private, and `private` classes, interfaces, records, enums, enum constants, fields, constructors, and methods must have a doc comment. The only exceptions are `serialVersionUID` fields and `Logger` fields named `LOGGER`, which must not be documented.
     - **Summary line:** starts with a third-person verb (e.g. "Returns", "Sets", "Creates"). Use "Returns the/whether..." for getters and "Sets the/whether..." for setters.

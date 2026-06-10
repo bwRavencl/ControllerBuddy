@@ -777,7 +777,7 @@ public final class Main {
 	/// Menu providing run-mode actions in the menu bar.
 	private final JMenu runMenu = new JMenu(STRINGS.getString("RUN_MENU"));
 
-	/// Whether SDL video subsystem was successfully initialised.
+	/// Whether SDL video subsystem was successfully initialized.
 	private final boolean sdlVideoInitialized;
 
 	/// Action that starts client run mode.
@@ -804,7 +804,7 @@ public final class Main {
 	/// Menu item that triggers stopping the active run mode.
 	private final JMenuItem stopMenuItem;
 
-	/// Tabbed pane that organises the main settings panels.
+	/// Tabbed pane that organizes the main settings panels.
 	private final JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
 	/// Check-box menu item that toggles the donate button visibility.
@@ -3162,7 +3162,7 @@ public final class Main {
 	///
 	/// Shows a save-changes dialog if there are unsaved changes. Returns `true`
 	/// if it is safe to proceed (no unsaved changes, or the user chose to save
-	/// or discard), or `false` if the user cancelled.
+	/// or discard), or `false` if the user canceled.
 	///
 	/// @return `true` if the caller may proceed, `false` if the user cancelled
 	private boolean handleUnsavedChanges() {
