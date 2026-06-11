@@ -31,9 +31,12 @@ import de.bwravencl.controllerbuddy.input.action.ToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
+import de.bwravencl.controllerbuddy.input.action.gui.EditorBuilder;
+import de.bwravencl.controllerbuddy.input.action.gui.IUpdatableEditorComponent;
 import io.github.classgraph.ClassGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -768,7 +771,114 @@ public final class EditActionsDialog extends JDialog {
 			cutActionButton.setEnabled(notNull);
 			copyActionButton.setEnabled(notNull);
 
-			updateProperties();
+			if (propertiesPanel != null) {
+				propertiesPanel.removeAll();
+				propertiesPanel = null;
+			}
+
+			if (selectedAssignedAction != null) {
+				final var actionClass = selectedAssignedAction.getClass();
+				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
+				final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
+					final var action1 = entry1.getValue();
+					final var action2 = entry2.getValue();
+
+					return action1.order() - action2.order();
+				}).toList();
+
+				for (final var entry : sortedEntries) {
+					final var field = entry.getKey();
+					final var annotation = entry.getValue();
+
+					if (propertiesPanel == null) {
+						propertiesPanel = new JPanel(new GridBagLayout());
+					}
+
+					final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+					propertiesPanel.add(propertyPanel,
+							new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
+									GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+									new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 10));
+
+					final var propertyIcon = annotation.icon();
+					final var propertyTitle = Main.STRINGS.getString(annotation.title());
+					final var propertyDescriptionLabel = annotation.description();
+
+					final var propertyNameLabel = new JLabel(propertyTitle);
+					propertyNameLabel.setPreferredSize(new Dimension(155, 15));
+					if (propertyDescriptionLabel != null && !propertyDescriptionLabel.isBlank()) {
+						propertyNameLabel.setCursor(HELP_CURSOR);
+						propertyNameLabel.addMouseListener(new MouseAdapter() {
+
+							private final Font originalFont = propertyNameLabel.getFont();
+
+							@Override
+							public void mouseClicked(final MouseEvent e) {
+								updateHelp(propertyIcon + " " + propertyTitle, propertyDescriptionLabel);
+							}
+
+							@Override
+							public void mouseEntered(final MouseEvent e) {
+								setUnderlineEnabled(true);
+							}
+
+							@Override
+							public void mouseExited(final MouseEvent e) {
+								setUnderlineEnabled(false);
+							}
+
+							private void setUnderlineEnabled(final boolean enabled) {
+								final Font newFont;
+								if (enabled) {
+									final var newAttributes = new HashMap<TextAttribute, Object>(
+											originalFont.getAttributes());
+									newAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+									newFont = originalFont.deriveFont(newAttributes);
+								} else {
+									newFont = originalFont;
+								}
+
+								propertyNameLabel.setFont(newFont);
+							}
+						});
+					}
+					propertyPanel.add(new IconLabel(propertyIcon, propertyTitle, propertyNameLabel));
+
+					try {
+						final var editorBuilderClass = annotation.editorBuilder();
+
+						var fieldName = annotation.overrideFieldName();
+						if (fieldName.isEmpty()) {
+							fieldName = field.getName();
+						}
+
+						var fieldType = annotation.overrideFieldType();
+						if (fieldType == Void.class) {
+							fieldType = field.getType();
+						}
+
+						final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
+								IAction.class, String.class, Class.class);
+						final var editorBuilder = constructor.newInstance(this, selectedAssignedAction, fieldName,
+								fieldType);
+
+						editorBuilder.buildEditor(propertyPanel);
+					} catch (final ReflectiveOperationException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+
+			final var anyPropertiesFound = propertiesPanel != null;
+			if (anyPropertiesFound) {
+				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d,
+						1d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+
+				propertiesScrollPane.setViewportView(propertiesPanel);
+			}
+			propertiesLabel.setVisible(anyPropertiesFound);
+			propertiesScrollPane.setVisible(anyPropertiesFound);
+
 			updateHelp(notNull ? selectedAssignedAction.getClass() : null);
 		});
 
@@ -913,6 +1023,61 @@ public final class EditActionsDialog extends JDialog {
 		updatePasteButton();
 	}
 
+	/// Updates all [IUpdatableEditorComponent]'s nested within the
+	/// [#propertiesPanel] that fulfill the following conditions:
+	/// 1. `editorBuilderClass` is `null` or the component's editor builder class is
+	/// assignable from `editorBuilderClass`.
+	/// 2. `propertyTitle` is `null` or the component's property title matches
+	/// `propertyTitle`.
+	///
+	/// If both parameters are null, all [IUpdatableEditorComponent]s are updated.
+	///
+	/// Delegates to [#updateEditorComponentsRecursively] to handle arbitrarily deep
+	/// component hierarchies.
+	///
+	/// @param editorBuilderClass the editor builder class to match against
+	/// @param propertyTitle the title of the property to match against
+	/// @see IUpdatableEditorComponent
+	public void updateEditorComponents(final Class<? extends EditorBuilder> editorBuilderClass,
+			final String propertyTitle) {
+		updateEditorComponentsRecursively(propertiesPanel, editorBuilderClass, propertyTitle);
+	}
+
+	/// Recursively traverses the component hierarchy of the given [Container],
+	/// calling [IUpdatableEditorComponent#onUpdate] on any
+	/// [IUpdatableEditorComponent] that fulfills the following conditions:
+	/// 1. `editorBuilderClass` is `null` or the component's editor builder class is
+	/// assignable from `editorBuilderClass`.
+	/// 2. `propertyTitle` is `null` or the component's property title matches
+	/// `propertyTitle`.
+	///
+	/// If both parameters are null, all [IUpdatableEditorComponent]s are updated.
+	///
+	/// A component implementing [IUpdatableEditorComponent] that is also a
+	/// [Container] will be both updated and descended into.
+	///
+	/// @param container the container to traverse
+	/// @param editorBuilderClass the editor builder class to match against, or
+	/// `null` to match any
+	/// @param propertyTitle the title of the property to match against, or `null`
+	/// to match any
+	/// @see IUpdatableEditorComponent
+	private void updateEditorComponentsRecursively(final Container container,
+			final Class<? extends EditorBuilder> editorBuilderClass, final String propertyTitle) {
+		for (final var component : container.getComponents()) {
+			if (component instanceof final IUpdatableEditorComponent updatableEditorComponent
+					&& (editorBuilderClass == null
+							|| updatableEditorComponent.getEditorBuilderClass().isAssignableFrom(editorBuilderClass))
+					&& (propertyTitle == null || updatableEditorComponent.getPropertyTitle().equals(propertyTitle))) {
+				updatableEditorComponent.onUpdate();
+			}
+
+			if (component instanceof final Container childContainer) {
+				updateEditorComponentsRecursively(childContainer, editorBuilderClass, propertyTitle);
+			}
+		}
+	}
+
 	/// Updates the help panel to show the title and description for the given
 	/// action class, or a default "no selection" message if `actionClass` is
 	/// `null`.
@@ -979,123 +1144,6 @@ public final class EditActionsDialog extends JDialog {
 				&& getAllowedActionClasses().contains(clipboardAction.getClass());
 
 		pasteActionButton.setEnabled(pasteAllowed);
-	}
-
-	/// Updates the properties panel to reflect the currently selected assigned
-	/// action. Rebuilds the property editors for each annotated field of the
-	/// selected action or hides the panel if no action is selected.
-	public void updateProperties() {
-		Objects.requireNonNull(propertiesLabel, "Field propertiesLabel must not be null");
-		Objects.requireNonNull(propertiesScrollPane, "Field propertiesScrollPane must not be null");
-
-		if (propertiesPanel != null) {
-			propertiesPanel.removeAll();
-			propertiesPanel = null;
-		}
-
-		if (selectedAssignedAction != null) {
-			final var actionClass = selectedAssignedAction.getClass();
-			final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
-			final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
-				final var action1 = entry1.getValue();
-				final var action2 = entry2.getValue();
-
-				return action1.order() - action2.order();
-			}).toList();
-
-			for (final var entry : sortedEntries) {
-				final var field = entry.getKey();
-				final var annotation = entry.getValue();
-
-				if (propertiesPanel == null) {
-					propertiesPanel = new JPanel(new GridBagLayout());
-				}
-
-				final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-				propertiesPanel.add(propertyPanel,
-						new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-								GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
-								new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 10));
-
-				final var propertyIcon = annotation.icon();
-				final var propertyTitle = Main.STRINGS.getString(annotation.title());
-				final var propertyDescriptionLabel = annotation.description();
-
-				final var propertyNameLabel = new JLabel(propertyTitle);
-				propertyNameLabel.setPreferredSize(new Dimension(155, 15));
-				if (propertyDescriptionLabel != null && !propertyDescriptionLabel.isBlank()) {
-					propertyNameLabel.setCursor(HELP_CURSOR);
-					propertyNameLabel.addMouseListener(new MouseAdapter() {
-
-						private final Font originalFont = propertyNameLabel.getFont();
-
-						@Override
-						public void mouseClicked(final MouseEvent e) {
-							updateHelp(propertyIcon + " " + propertyTitle, propertyDescriptionLabel);
-						}
-
-						@Override
-						public void mouseEntered(final MouseEvent e) {
-							setUnderlineEnabled(true);
-						}
-
-						@Override
-						public void mouseExited(final MouseEvent e) {
-							setUnderlineEnabled(false);
-						}
-
-						private void setUnderlineEnabled(final boolean enabled) {
-							final Font newFont;
-							if (enabled) {
-								final var newAttributes = new HashMap<TextAttribute, Object>(
-										originalFont.getAttributes());
-								newAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-								newFont = originalFont.deriveFont(newAttributes);
-							} else {
-								newFont = originalFont;
-							}
-
-							propertyNameLabel.setFont(newFont);
-						}
-					});
-				}
-				propertyPanel.add(new IconLabel(propertyIcon, propertyTitle, propertyNameLabel));
-
-				try {
-					final var editorBuilderClass = annotation.editorBuilder();
-
-					var fieldName = annotation.overrideFieldName();
-					if (fieldName.isEmpty()) {
-						fieldName = field.getName();
-					}
-
-					var fieldType = annotation.overrideFieldType();
-					if (fieldType == Void.class) {
-						fieldType = field.getType();
-					}
-
-					final var constructor = editorBuilderClass.getDeclaredConstructor(EditActionsDialog.class,
-							IAction.class, String.class, Class.class);
-					final var editorBuilder = constructor.newInstance(this, selectedAssignedAction, fieldName,
-							fieldType);
-
-					editorBuilder.buildEditor(propertyPanel);
-				} catch (final ReflectiveOperationException e1) {
-					throw new RuntimeException(e1);
-				}
-			}
-		}
-
-		final var anyPropertiesFound = propertiesPanel != null;
-		if (anyPropertiesFound) {
-			propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-
-			propertiesScrollPane.setViewportView(propertiesPanel);
-		}
-		propertiesLabel.setVisible(anyPropertiesFound);
-		propertiesScrollPane.setVisible(anyPropertiesFound);
-		revalidate();
 	}
 
 	/// Prevents serialization.

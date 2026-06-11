@@ -77,7 +77,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
-		spinner = new JSpinner(model);
+		spinner = createSpinner(model);
 
 		final var editor = spinner.getEditor();
 		textField = ((JSpinner.DefaultEditor) editor).getTextField();
@@ -89,6 +89,14 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
 
 		parentPanel.add(spinner);
+	}
+
+	/// Creates the spinner instance assigned to [#spinner].
+	///
+	/// @param model a model for the new spinner
+	/// @return the spinner instance
+	JSpinner createSpinner(final SpinnerNumberModel model) {
+		return new JSpinner(model);
 	}
 
 	/// Returns the maximum value for the spinner model.

@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
+import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
@@ -81,7 +82,8 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 			return;
 		}
 
-		editActionsDialog.updateProperties();
+		editActionsDialog.updateEditorComponents(ActivationIntervalEditorBuilder.class,
+				ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_TITLE);
 		editActionsDialog.revalidate();
 	}
 }

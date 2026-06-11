@@ -22,7 +22,11 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
+import java.io.Serial;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 
 /// Editor builder for activation interval properties, rendering a millisecond
 /// spinner with a range of 0 to 10,000 ms.
@@ -31,9 +35,8 @@ import javax.swing.JPanel;
 /// maximum interval or when editing inside a cycle editor.
 public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	/// Whether the spinner should be disabled because the current activation mode
-	/// does not support an interval.
-	private final boolean disable;
+	/// The title of the property this editor builder handles.
+	private final String propertyTitle;
 
 	/// Constructs an activation interval editor builder for the specified action
 	/// property.
@@ -47,34 +50,23 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 			final String fieldName, final Class<?> fieldType) throws ReflectiveOperationException {
 		super(editActionsDialog, action, fieldName, fieldType);
 
-		if (editActionsDialog.isCycleEditor()) {
-			disable = true;
-		} else if (action instanceof final IActivatableAction<?> activatableAction
-				&& !ActivationIntervalAction.activationSupportsMaxInterval(activatableAction.getActivation())) {
-			final var fieldToActionPropertyMap = EditActionsDialog
-					.getFieldToActionPropertiesMap(ActivationIntervalAction.class);
-			disable = fieldToActionPropertyMap.entrySet().stream().filter(e -> fieldName.equals(e.getKey().getName()))
-					.findFirst()
-					.map(e -> ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_TITLE.equals(e.getValue().title()))
-					.orElse(false);
-		} else {
-			disable = false;
-		}
+		final var fieldToActionPropertyMap = EditActionsDialog
+				.getFieldToActionPropertiesMap(ActivationIntervalAction.class);
+		propertyTitle = fieldToActionPropertyMap.entrySet().stream().filter(e -> fieldName.equals(e.getKey().getName()))
+				.findFirst().map(e -> e.getValue().title()).orElseThrow();
 	}
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
-		if (disable) {
-			initialValue = 0;
-		}
-
 		super.buildEditor(parentPanel);
 
 		GuiUtils.makeMillisecondSpinner(spinner, 6);
+		((IUpdatableEditorComponent) spinner).onUpdate();
+	}
 
-		if (disable) {
-			spinner.setEnabled(false);
-		}
+	@Override
+	JSpinner createSpinner(final SpinnerNumberModel model) {
+		return new ActivationIntervalJSpinner(model);
 	}
 
 	@Override
@@ -90,5 +82,53 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 	@Override
 	Number getStepSize() {
 		return 10;
+	}
+
+	/// A [JSpinner] that updates its enabled state based on the current
+	/// [IActivatableAction]'s [IActivatableAction.Activation] and the active editor
+	/// context.
+	///
+	/// The spinner is disabled in the following cases:
+	///
+	/// - The parent [#editActionsDialog] is a cycle editor.
+	/// - The selected [IActivatableAction.Activation] does not support a maximum
+	/// activation interval.
+	///
+	/// When disabled, the spinner's value is reset to `0`.
+	private final class ActivationIntervalJSpinner extends JSpinner implements IUpdatableEditorComponent {
+
+		@Serial
+		private static final long serialVersionUID = -2748747027292654756L;
+
+		/// Constructs a new activation spinner for the given model.
+		///
+		/// @param model a model for the new spinner
+		private ActivationIntervalJSpinner(final SpinnerModel model) {
+			super(model);
+		}
+
+		@Override
+		public Class<? extends EditorBuilder> getEditorBuilderClass() {
+			return ActivationIntervalEditorBuilder.class;
+		}
+
+		@Override
+		public String getPropertyTitle() {
+			return propertyTitle;
+		}
+
+		@Override
+		public void onUpdate() {
+			final var disabled = editActionsDialog.isCycleEditor()
+					|| (ActivationIntervalAction.MAX_ACTIVATION_INTERVAL_TITLE.equals(propertyTitle)
+							&& (action instanceof final IActivatableAction<?> activatableAction
+									&& !ActivationIntervalAction
+											.activationSupportsMaxInterval(activatableAction.getActivation())));
+
+			setEnabled(!disabled);
+			if (disabled) {
+				setValue(0);
+			}
+		}
 	}
 }
