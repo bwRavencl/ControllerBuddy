@@ -35,8 +35,8 @@ import org.mockito.Mockito;
 final class EditActionsDialogTest {
 
 	/// [EditActionsDialog]'s static initializer calls [Toolkit#createCustomCursor],
-	/// which throws [java.awt.HeadlessException] in headless mode. We mock
-	/// [Toolkit#getDefaultToolkit] in @[BeforeAll] so the mock is active when the
+	/// which throws [HeadlessException] in headless mode. We mock
+	/// [Toolkit#getDefaultToolkit] in [BeforeAll] so the mock is active when the
 	/// final class initializer first runs (triggered by the first reference to
 	/// [EditActionsDialog] inside a test method body).
 	private static MockedStatic<Toolkit> toolkitMock;

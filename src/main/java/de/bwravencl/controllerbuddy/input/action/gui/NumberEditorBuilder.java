@@ -106,7 +106,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// @return the step size
 	abstract Number getStepSize();
 
-	/// Change listener that applies the current [JSpinner] value to the action
+	/// [ChangeListener] that applies the current [JSpinner] value to the action
 	/// property and optionally forwards it to a registered value consumer.
 	///
 	/// Float values are rounded to a fixed number of decimal places before being
