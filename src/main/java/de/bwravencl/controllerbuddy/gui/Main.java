@@ -558,10 +558,10 @@ public final class Main {
 	private static final File SINGLE_INSTANCE_LOCK_FILE;
 
 	/// SVG path fill color used when the dark theme is active.
-	private static final String SVG_DARK_THEME_PATH_COLOR = "#AAA";
+	private static final String SVG_DARK_THEME_PATH_COLOR = "#aaa";
 
 	/// SVG text fill color used when the dark theme is active.
-	private static final String SVG_DARK_THEME_TEXT_COLOR = "#FFFFFF";
+	private static final String SVG_DARK_THEME_TEXT_COLOR = "#ffffff";
 
 	/// SVG element ID for the A button.
 	private static final String SVG_ID_A = "a";
@@ -5797,7 +5797,7 @@ public final class Main {
 		/// Creates a new [DonateAction] and initializes its name and description.
 		private DonateAction() {
 			putValue(NAME, "<html><span style='text-decoration:underline'>" + STRINGS.getString("DONATE_ACTION_NAME")
-					+ "</span> <span style='color:#D10000'>❤</span></html>");
+					+ "</span> <span style='color:#d10000'>❤</span></html>");
 			putValue(SHORT_DESCRIPTION,
 					MessageFormat.format(STRINGS.getString("DONATE_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
 		}
