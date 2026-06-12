@@ -112,45 +112,45 @@ The general structure of a Profile looks as follows:
 
 ```mermaid
 flowchart LR
-    Profile[("Profile (.json file)")] ---- DefaultMode
-    Profile --- BButton(B Button) & XButton(X Button)
-    BButton --> BButtonModeAction[/Mode Action/] -. switch to .-> ModeA
-    XButton --> XButtonModeAction[/Mode Action/] -. switch to .-> ModeB
-    subgraph DefaultMode[Default Mode]
+    profile[("Profile (.json file)")] ---- defaultMode
+    profile --- bButton(B Button) & xButton(X Button)
+    bButton --> bButtonModeAction[/Mode Action/] -. switch to .-> modeA
+    xButton --> xButtonModeAction[/Mode Action/] -. switch to .-> modeB
+    subgraph defaultMode[Default Mode]
         direction LR
-        DefaultModeXAxis(X Axis) --> DefaultModeXAxisAction1[/Action 1/] & DefaultModeXAxisAction2[/Action 2/]
-        DefaultModeYAxis(Y Axis) --> DefaultModeYAxisAction[/Action/]
-        DefaultModeAButton(A Button) --> DefaultModeAButtonAction1[/Action 1/] & DefaultModeAButtonAction2[/Action 2/]
-        DefaultModeYButton(Y Button) --> CycleAction[/Cycle Action/] -. perform next .-> CycleActions
-        DefaultModeXAxis ~~~ CycleAction
-        DefaultModeYAxis ~~~ CycleAction
-        DefaultModeAButton ~~~ CycleAction
-        DefaultModeYButton ~~~ CycleAction
-        subgraph CycleActions[Cycle]
-            CycleAction1[/Action 1/] --> CycleAction2[/Action 2/] --> CycleAction3[/Action 3/] --> CycleAction1
+        defaultModeXAxis(X Axis) --> defaultModeXAxisAction1[/Action 1/] & defaultModeXAxisAction2[/Action 2/]
+        defaultModeYAxis(Y Axis) --> defaultModeYAxisAction[/Action/]
+        defaultModeAButton(A Button) --> defaultModeAButtonAction1[/Action 1/] & defaultModeAButtonAction2[/Action 2/]
+        defaultModeYButton(Y Button) --> cycleAction[/Cycle Action/] -. perform next .-> cycleActions
+        defaultModeXAxis ~~~ cycleAction
+        defaultModeYAxis ~~~ cycleAction
+        defaultModeAButton ~~~ cycleAction
+        defaultModeYButton ~~~ cycleAction
+        subgraph cycleActions[Cycle]
+            cycleAction1[/Action 1/] --> cycleAction2[/Action 2/] --> cycleAction3[/Action 3/] --> cycleAction1
         end
     end
-    subgraph ModeA[Mode A]
+    subgraph modeA[Mode A]
         direction LR
-        ModeAXAxis(X Axis) --> ModeAXAxisAction[/Action/]
-        ModeAAButton(A Button) --> ModeAAButtonAction[/Action/]
+        modeAXAxis(X Axis) --> modeAXAxisAction[/Action/]
+        modeAAButton(A Button) --> modeAAButtonAction[/Action/]
     end
-    subgraph ModeB[Mode B]
+    subgraph modeB[Mode B]
         direction LR
-        ModeBXAxis(X Axis) --> ModeBXAxisAction1[/Action 1/] & ModeBXAxisAction2[/Action 2/]
+        modeBXAxis(X Axis) --> modeBXAxisAction1[/Action 1/] & modeBXAxisAction2[/Action 2/]
     end
-    classDef xAxis fill:#d5000055
-    classDef aButton fill:#ffd60055
-    classDef yAxis fill:#2962ff55
-    classDef bButton fill:#aa00ff55
-    classDef xButton fill:#ff6d0055
-    classDef yButton fill:#00c85355
-    class DefaultModeXAxis,ModeAXAxis,ModeBXAxis xAxis
-    class DefaultModeAButton,ModeAAButton aButton
-    class DefaultModeYAxis yAxis
-    class BButton bButton
-    class XButton xButton
-    class DefaultModeYButton yButton
+    classDef x-axis fill:#d5000055
+    classDef a-button fill:#ffd60055
+    classDef y-axis fill:#2962ff55
+    classDef b-button fill:#aa00ff55
+    classDef x-button fill:#ff6d0055
+    classDef y-button fill:#00c85355
+    class defaultModeXAxis,modeAXAxis,modeBXAxis x-axis
+    class defaultModeAButton,modeAAButton a-button
+    class defaultModeYAxis y-axis
+    class bButton b-button
+    class xButton x-button
+    class defaultModeYButton y-button
 ```
 
 ### ⛓️ Mode Inheritance
@@ -174,30 +174,30 @@ Two different switching behaviors can be configured:
 
 ```mermaid
 flowchart
-    subgraph Local[Local]
-        PhysicalController[Physical Controller] --> ControllerBuddy[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
+    subgraph local[Local]
+        physicalController[Physical Controller] --> controllerBuddy[ControllerBuddy] --> vJoy[vJoy + Win32 / uinput] --> targetApplication[Target Application]
     end
     classDef bold font-weight:bold
     classDef highlight fill:#448ade80
     class local bold
-    class ControllerBuddy highlight
+    class controllerBuddy highlight
 ```
 
 ### 🌐 Client-Server Mode
 
 ```mermaid
 flowchart LR
-    subgraph Server[Server]
-        PhysicalController[Physical Controller] --> ControllerBuddyServer[ControllerBuddy]
+    subgraph server[Server]
+        physicalController[Physical Controller] --> controllerBuddyServer[ControllerBuddy]
     end
-    ControllerBuddyServer -. UDP .-> ControllerBuddyClient
-    subgraph Client[Client]
-        ControllerBuddyClient[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
+    controllerBuddyServer -. UDP .-> controllerBuddyClient
+    subgraph client[Client]
+        controllerBuddyClient[ControllerBuddy] --> vJoy[vJoy + Win32 / uinput] --> targetApplication[Target Application]
     end
     classDef bold font-weight:bold
     classDef highlight fill:#448ade80
-    class Server,Client bold
-    class ControllerBuddyServer,ControllerBuddyClient highlight
+    class server,client bold
+    class controllerBuddyServer,controllerBuddyClient highlight
 ```
 
 ## 🖼️ Screenshots
