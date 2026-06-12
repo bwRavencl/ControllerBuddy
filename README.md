@@ -139,15 +139,18 @@ flowchart LR
         direction LR
         ModeBXAxis(X Axis) --> ModeBXAxisAction1[/Action 1/] & ModeBXAxisAction2[/Action 2/]
     end
-    style DefaultModeXAxis fill:#d5000055
-    style ModeAXAxis fill:#d5000055
-    style ModeBXAxis fill:#d5000055
-    style DefaultModeAButton fill:#ffd60055
-    style ModeAAButton fill:#ffd60055
-    style DefaultModeYAxis fill:#2962ff55
-    style BButton fill:#aa00ff55
-    style XButton fill:#ff6d0055
-    style DefaultModeYButton fill:#00c85355
+    classDef xAxis fill:#d5000055
+    classDef aButton fill:#ffd60055
+    classDef yAxis fill:#2962ff55
+    classDef bButton fill:#aa00ff55
+    classDef xButton fill:#ff6d0055
+    classDef yButton fill:#00c85355
+    class DefaultModeXAxis,ModeAXAxis,ModeBXAxis xAxis
+    class DefaultModeAButton,ModeAAButton aButton
+    class DefaultModeYAxis yAxis
+    class BButton bButton
+    class XButton xButton
+    class DefaultModeYButton yButton
 ```
 
 ### ⛓️ Mode Inheritance
