@@ -174,6 +174,10 @@ flowchart
     subgraph Local[Local]
         PhysicalController[Physical Controller] --> ControllerBuddy[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
     end
+    classDef bold font-weight:bold
+    classDef highlight fill:#448ade80
+    class local bold
+    class ControllerBuddy highlight
 ```
 
 ### 🌐 Client-Server Mode
@@ -187,6 +191,10 @@ flowchart LR
     subgraph Client[Client]
         ControllerBuddyClient[ControllerBuddy] --> VJoy[vJoy + Win32 / uinput] --> TargetApplication[Target Application]
     end
+    classDef bold font-weight:bold
+    classDef highlight fill:#448ade80
+    class Server,Client bold
+    class ControllerBuddyServer,ControllerBuddyClient highlight
 ```
 
 ## 🖼️ Screenshots
