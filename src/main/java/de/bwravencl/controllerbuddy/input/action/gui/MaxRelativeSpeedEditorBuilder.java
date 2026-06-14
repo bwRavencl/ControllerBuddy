@@ -21,7 +21,7 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
 /// Editor builder for maximum relative speed properties, providing a spinner
-/// with a range of 0.1 to 100.0 and a step size of 0.01.
+/// with a range of 0.1 to 100.0 and a step size of 0.1.
 ///
 /// Controls the upper bound of the relative speed at which axis-driven actions
 /// (such as cursor movement) are applied.
@@ -53,6 +53,6 @@ public final class MaxRelativeSpeedEditorBuilder extends NumberEditorBuilder<Flo
 
 	@Override
 	Number getStepSize() {
-		return 0.01f;
+		return 0.1f;
 	}
 }
