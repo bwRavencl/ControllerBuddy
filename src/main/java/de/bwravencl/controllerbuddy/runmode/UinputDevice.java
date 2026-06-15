@@ -84,6 +84,8 @@ public final class UinputDevice implements Closeable {
 	/// Human-readable name of this virtual device.
 	private final String name;
 
+	/// Constructs a [UinputDevice] instance.
+	///
 	/// Opens the `/dev/uinput` device, configures the supported event codes, and
 	/// creates the virtual input device for the given device type.
 	///
@@ -263,7 +265,7 @@ public final class UinputDevice implements Closeable {
 		/// Set of events this device type registers with the uinput kernel interface.
 		private final Set<Event> supportedEvents;
 
-		/// Constructs a device type, deriving the human-readable device name from the
+		/// Constructs a [DeviceType], deriving the human-readable device name from the
 		/// application name and the enum constant name.
 		///
 		/// @param supportedEvents the events that the device registers with the kernel
@@ -843,7 +845,7 @@ public final class UinputDevice implements Closeable {
 		/// Linux input event type (e.g. `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`).
 		private final short type;
 
-		/// Constructs an event constant with its Linux input subsystem code and type.
+		/// Constructs an [Event] constant with its Linux input subsystem code and type.
 		///
 		/// @param code the event code (e.g. key code or axis index)
 		/// @param type the event type (e.g. `EV_KEY`, `EV_ABS`, `EV_REL`, `EV_SYN`)

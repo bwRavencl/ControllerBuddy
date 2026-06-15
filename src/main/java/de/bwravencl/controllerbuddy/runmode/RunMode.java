@@ -61,7 +61,7 @@ public abstract class RunMode implements Runnable {
 	/// Flag set when the run mode is in the process of stopping.
 	private boolean stopping;
 
-	/// Constructs a run mode, storing references to the main application and input
+	/// Constructs a [RunMode], storing references to the main application and input
 	/// instance and registering this run mode with the input.
 	///
 	/// @param main the main application instance

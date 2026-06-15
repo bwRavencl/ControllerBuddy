@@ -124,7 +124,7 @@ public final class OnScreenKeyboard extends JFrame {
 	/// Row index of the currently selected keyboard button.
 	private volatile int selectedRow;
 
-	/// Creates the on-screen keyboard and lays out all key rows.
+	/// Constructs an [OnScreenKeyboard] and lays out all key rows.
 	///
 	/// @param main the main application instance
 	OnScreenKeyboard(final Main main) {
@@ -601,7 +601,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Localized display label for this direction.
 		private final String label;
 
-		/// Creates a [Direction] constant with the given localization key.
+		/// Constructs a [Direction] constant with the given localization key.
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		Direction(final String labelKey) {
@@ -658,7 +658,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Whether this button is currently in a pressed state.
 		private volatile boolean pressed;
 
-		/// Creates an [AbstractKeyboardButton] with the given label text.
+		/// Constructs an [AbstractKeyboardButton] with the given label text.
 		///
 		/// @param text the button label
 		private AbstractKeyboardButton(final String text) {
@@ -764,7 +764,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -43249779147068577L;
 
-		/// Creates an [AlphabeticKeyboardButton] for the key identified by the given
+		/// Constructs an [AlphabeticKeyboardButton] for the key identified by the given
 		/// DirectInput key code name.
 		///
 		/// @param directInputKeyCodeName the DirectInput key code name
@@ -784,7 +784,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = 6891401614243607392L;
 
-		/// Creates a [CapsLockKeyButton].
+		/// Constructs a [CapsLockKeyButton].
 		private CapsLockKeyButton() {
 			super(LockKey.CAPS_LOCK_LOCK_KEY);
 		}
@@ -835,7 +835,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Whether the mouse button is currently held down over this button.
 		private volatile boolean mouseDown;
 
-		/// Creates a [DefaultKeyboardButton] for the key identified by the given
+		/// Constructs a [DefaultKeyboardButton] for the key identified by the given
 		/// DirectInput key code name.
 		///
 		/// @param directInputKeyCodeName the DirectInput key code name
@@ -1014,7 +1014,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Default label shown in the normal (unshifted) keyboard state.
 		String defaultKeyName;
 
-		/// Creates a [DualPurposeKeyboardButton] with a default and an alternative
+		/// Constructs a [DualPurposeKeyboardButton] with a default and an alternative
 		/// label.
 		///
 		/// @param directInputKeyCodeName the DirectInput key code name used for the
@@ -1059,7 +1059,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Whether the button was in the up (unpressed) state during the previous poll.
 		private volatile boolean wasUp = true;
 
-		/// Creates a [LockKeyButton] for the given lock key.
+		/// Constructs a [LockKeyButton] for the given lock key.
 		///
 		/// @param lockKey the lock key represented by this button
 		private LockKeyButton(final LockKey lockKey) {
@@ -1140,7 +1140,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = 296846375213986255L;
 
-		/// Creates a [NumLockKeyButton].
+		/// Constructs a [NumLockKeyButton].
 		private NumLockKeyButton() {
 			super(LockKey.NUM_LOCK_LOCK_KEY);
 		}
@@ -1170,7 +1170,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -460568797568937461L;
 
-		/// Creates a [NumPadKeyboardButton] for the given numpad key.
+		/// Constructs a [NumPadKeyboardButton] for the given numpad key.
 		///
 		/// The default label shows the navigation symbol (Num Lock off) and the
 		/// alternative label shows the digit (Num Lock on).
@@ -1202,7 +1202,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -1789796245988164919L;
 
-		/// Creates a [ShiftKeyboardButton] for the given Shift key type.
+		/// Constructs a [ShiftKeyboardButton] for the given Shift key type.
 		///
 		/// @param type the type identifying whether this is the left or right Shift key
 		private ShiftKeyboardButton(final ShiftKeyboardButtonType type) {
@@ -1245,7 +1245,7 @@ public final class OnScreenKeyboard extends JFrame {
 			/// DirectInput key code name for this Shift key.
 			private final String directInputKeyCodeName;
 
-			/// Creates a [ShiftKeyboardButtonType] constant with the given DirectInput
+			/// Constructs a [ShiftKeyboardButtonType] constant with the given DirectInput
 			/// key code name.
 			///
 			/// @param directInputKeyCodeName the DirectInput key code name for this
@@ -1267,7 +1267,7 @@ public final class OnScreenKeyboard extends JFrame {
 		@Serial
 		private static final long serialVersionUID = -106361505843077547L;
 
-		/// Creates a [ShiftableKeyboardButton] with a default and a shifted label.
+		/// Constructs a [ShiftableKeyboardButton] with a default and a shifted label.
 		///
 		/// @param directInputKeyCodeName the DirectInput key code name used for the
 		/// default (unshifted) label

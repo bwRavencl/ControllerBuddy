@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// triggering an action.
 public final class DeadZoneEditorBuilder extends NumberEditorBuilder<Float> {
 
-	/// Constructs a dead zone editor builder for the specified action property.
+	/// Constructs a [DeadZoneEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose dead zone property is being edited

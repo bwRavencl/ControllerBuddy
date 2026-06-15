@@ -41,8 +41,8 @@ public final class OverlayAxis implements Cloneable {
 	/// Rendering style of the axis indicator on the overlay.
 	private OverlayAxisStyle style;
 
-	/// Creates an overlay axis with default settings derived from the given virtual
-	/// axis.
+	/// Constructs an [OverlayAxis] with default settings derived from the given
+	/// virtual axis.
 	///
 	/// @param virtualAxis the virtual axis whose default orientation and style are
 	/// used
@@ -50,8 +50,8 @@ public final class OverlayAxis implements Cloneable {
 		this(Color.BLACK, virtualAxis.getDefaultOrientation(), virtualAxis.getDefaultStyle(), false);
 	}
 
-	/// Creates an overlay axis with the specified color, orientation, style, and
-	/// inversion flag.
+	/// Constructs an [OverlayAxis] with the specified color, orientation, style,
+	/// and inversion flag.
 	///
 	/// @param color the color used to render the axis indicator
 	/// @param orientation the orientation of the axis indicator
@@ -65,7 +65,7 @@ public final class OverlayAxis implements Cloneable {
 		this.inverted = inverted;
 	}
 
-	/// Creates a deep copy of this overlay axis, including a copy of the color.
+	/// Constructs a deep copy of this overlay axis, including a copy of the color.
 	///
 	/// @return a new [OverlayAxis] with the same configuration
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
@@ -144,8 +144,8 @@ public final class OverlayAxis implements Cloneable {
 		/// Localized display label for this orientation.
 		private final String label;
 
-		/// Creates an orientation constant with the localized label resolved from
-		/// the given resource bundle key.
+		/// Constructs an [OverlayAxisOrientation] constant with the localized label
+		/// resolved from the given resource bundle key.
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		OverlayAxisOrientation(final String labelKey) {
@@ -182,8 +182,8 @@ public final class OverlayAxis implements Cloneable {
 		/// Localized display label for this style.
 		private final String label;
 
-		/// Creates a style constant with the localized label resolved from the given
-		/// resource bundle key.
+		/// Constructs an [OverlayAxisStyle] constant with the localized label resolved
+		/// from the given resource bundle key.
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		OverlayAxisStyle(final String labelKey) {

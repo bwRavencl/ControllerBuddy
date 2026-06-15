@@ -107,8 +107,7 @@ public final class ClientRunMode extends OutputRunMode {
 	/// Resolved network address of the remote server host.
 	private InetAddress hostAddress;
 
-	/// Creates a new client run mode that will connect to the configured remote
-	/// server.
+	/// Creates a [ClientRunMode] that will connect to the configured remote server.
 	///
 	/// @param main the main application instance providing host, port, timeout,
 	/// and encryption settings

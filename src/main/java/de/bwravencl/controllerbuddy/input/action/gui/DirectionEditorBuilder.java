@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// when the associated action fires.
 public final class DirectionEditorBuilder extends ArrayEditorBuilder<Direction> {
 
-	/// Constructs a direction editor builder for the specified action property.
+	/// Constructs a [DirectionEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose direction property is being edited

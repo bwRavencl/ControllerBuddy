@@ -53,7 +53,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// The text field component inside the spinner editor.
 	JFormattedTextField textField;
 
-	/// Constructs a number editor builder for the specified action property.
+	/// Constructs a [NumberEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose numeric property is being edited
@@ -130,7 +130,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		/// Optional consumer notified with each new value after it is applied.
 		private Consumer<Object> valueConsumer;
 
-		/// Constructs the change listener with the target action and setter method.
+		/// Constructs [JSpinnerSetPropertyChangeListener] with the target action and
+		/// setter method.
 		///
 		/// @param action the action whose property is updated on spinner change
 		/// @param setterMethod the setter method to invoke with the new value

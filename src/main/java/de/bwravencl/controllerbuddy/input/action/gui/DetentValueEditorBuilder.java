@@ -38,7 +38,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 	private static final Logger LOGGER = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
-	/// Constructs a detent value editor builder for the specified action property.
+	/// Constructs a [DetentValueEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose detent value property is being edited

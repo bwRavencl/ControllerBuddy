@@ -467,7 +467,7 @@ public final class Main {
 	/// Preferences key for the hot-swapping button assignment.
 	private static final String PREFERENCES_HOT_SWAPPING_BUTTON = "hot_swapping_button";
 
-	/// Preferences key for the last used controller identifier.
+	/// Preferences key for the last used controller ID.
 	private static final String PREFERENCES_LAST_CONTROLLER = "last_controller";
 
 	/// Preferences key for the last loaded profile path.
@@ -949,7 +949,7 @@ public final class Main {
 	/// Label displaying the currently configured vJoy installation directory.
 	private JLabel vJoyDirectoryLabel;
 
-	/// Creates the main application window and initializes all subsystems.
+	/// Constructs the [Main] application window and initializes all subsystems.
 	///
 	/// Sets up the single-instance server socket, preferences, the Swing frame,
 	/// menus, toolbars, overlays, the on-screen keyboard, the system tray, and the
@@ -1853,7 +1853,7 @@ public final class Main {
 		}
 	}
 
-	/// Creates a one-pixel border styled with the current UI theme's component
+	/// Constructs a one-pixel border styled with the current UI theme's component
 	/// border color, used for overlays.
 	///
 	/// @return a new [LineBorder] instance
@@ -1861,7 +1861,7 @@ public final class Main {
 		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
-	/// Creates an HTML snippet for the visualization legend showing only the
+	/// Constructs an HTML snippet for the visualization legend showing only the
 	/// symbols that are actually used.
 	///
 	/// @param usedSymbols the set of symbol strings present in the current
@@ -3209,7 +3209,7 @@ public final class Main {
 
 	/// Initializes and displays the overlay frame for the current profile.
 	///
-	/// Creates a transparent always-on-top window showing the current mode
+	/// Constructs a transparent always-on-top window showing the current mode
 	/// label and virtual axis progress bars. Does nothing if the profile has
 	/// overlay disabled or if neither multiple modes nor overlay axes are
 	/// configured.
@@ -5542,9 +5542,8 @@ public final class Main {
 	/// Enumeration of gamepad buttons that can be assigned as the hot-swapping
 	/// trigger.
 	///
-	/// Each constant maps a human-readable label to its corresponding SDL gamepad
-	/// button identifier. [#NONE] represents the unassigned state with an id of
-	/// `-1`.
+	/// Each constant maps a human-readable label to its corresponding SDL button
+	/// ID. [#NONE] represents the unassigned state with an ID of `-1`.
 	public enum HotSwappingButton {
 
 		/// No button assigned for hot-swapping.
@@ -5595,16 +5594,16 @@ public final class Main {
 		/// The D-pad left gamepad button.
 		DPAD_LEFT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
 
-		/// The SDL button identifier, or `-1` for [#NONE].
+		/// The SDL button ID, or `-1` for [#NONE].
 		public final int id;
 
 		/// Localized display label for this button constant.
 		private final String label;
 
-		/// Creates a new [HotSwappingButton] constant with the given SDL button id
-		/// and localization key.
+		/// Constructs a [HotSwappingButton] constant with the given SDL button ID and
+		/// localization key.
 		///
-		/// @param id the SDL button identifier, or `-1` for [#NONE]
+		/// @param id the SDL button ID, or `-1` for [#NONE]
 		/// @param labelKey the resource-bundle key for the localized display label
 		HotSwappingButton(final int id, final String labelKey) {
 			this.id = id;
@@ -5612,9 +5611,9 @@ public final class Main {
 		}
 
 		/// Returns the [HotSwappingButton] constant whose id matches the given
-		/// SDL button id, or [#NONE] if no match is found.
+		/// SDL button ID, or [#NONE] if no match is found.
 		///
-		/// @param id the SDL button id to look up
+		/// @param id the SDL button ID to look up
 		/// @return the matching [HotSwappingButton] constant, or [#NONE] as default
 		private static HotSwappingButton fromId(final int id) {
 			return EnumSet.allOf(HotSwappingButton.class).stream()
@@ -5645,7 +5644,7 @@ public final class Main {
 
 	/// Enumeration of available UI themes: system-detected, light, and dark.
 	///
-	/// Each constant stores a numeric id and a localized label. The id is persisted
+	/// Each constant stores a numeric ID and a localized label. The ID is persisted
 	/// in the user preferences and used to restore the selected theme on next
 	/// launch. [#SYSTEM] applies the theme that matches the platform's current
 	/// light/dark appearance setting.
@@ -5658,23 +5657,23 @@ public final class Main {
 		/// Dark theme.
 		DARK(2, "THEME_DARK");
 
-		/// Numeric identifier persisted in user preferences.
+		/// Numeric ID persisted in user preferences.
 		private final int id;
 
 		/// Localized display label for this theme constant.
 		private final String label;
 
-		/// Creates a new [Theme] constant with the given numeric id and
-		/// localization key.
+		/// Constructs a [Theme] constant with the given numeric ID and localization
+		/// key.
 		///
-		/// @param id the numeric identifier persisted in user preferences
+		/// @param id the numeric ID persisted in user preferences
 		/// @param labelKey the resource-bundle key for the localized display label
 		Theme(final int id, final String labelKey) {
 			this.id = id;
 			label = STRINGS.getString(labelKey);
 		}
 
-		/// Returns the [Theme] constant whose id matches the given value, or
+		/// Returns the [Theme] constant whose ID matches the given value, or
 		/// [#SYSTEM] if no match is found.
 		///
 		/// @param id the numeric theme id to look up
@@ -5721,7 +5720,8 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
-		/// Creates a new file chooser with the given file filter applied.
+		/// Constructs an [AbstractProfileFileChooser] with the given file filter
+		/// applied.
 		///
 		/// @param fileFilter the file filter to restrict the file chooser display
 		private AbstractProfileFileChooser(final FileFilter fileFilter) {
@@ -5758,11 +5758,11 @@ public final class Main {
 	///
 	/// @param instanceId the SDL instance ID of the controller
 	/// @param name the human-readable name of the controller
-	/// @param guid the globally unique identifier string for the controller
+	/// @param guid the globally unique ID string for the controller
 	public record Controller(int instanceId, String name, String guid) {
 
-		/// Creates a new [Controller] by resolving the name and GUID from the given
-		/// SDL instance ID.
+		/// Constructs a [Controller] by resolving the name and GUID from the given SDL
+		/// instance ID.
 		///
 		/// @param instanceId the SDL instance ID of the controller
 		private Controller(final int instanceId) {
@@ -5804,7 +5804,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -9029607010261185834L;
 
-		/// Creates a new [DonateAction] and initializes its name and description.
+		/// Constructs a [DonateAction] and initializes its name and description.
 		private DonateAction() {
 			putValue(NAME, "<html><span style='text-decoration:underline'>" + STRINGS.getString("DONATE_ACTION_NAME")
 					+ "</span> <span style='color:#d10000'>❤</span></html>");
@@ -5828,7 +5828,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -1707951153902772391L;
 
-		/// Creates a new [HtmlFileChooser] for the given profile file.
+		/// Constructs an [HtmlFileChooser] for the given profile file.
 		///
 		/// Pre-fills the selected file name with the profile file's base name and
 		/// the `.html` suffix. If `profileFile` is `null`, uses the localized
@@ -5880,7 +5880,7 @@ public final class Main {
 		/// Scale factor applied to subdivisions based on overlay scaling.
 		private final int subdivisionScale;
 
-		/// Creates a new [IndicatorProgressBar] for the given overlay axis and detent
+		/// Constructs an [IndicatorProgressBar] for the given overlay axis and detent
 		/// values.
 		///
 		/// Configures the orientation, dimensions, inversion, border, and foreground
@@ -6099,7 +6099,7 @@ public final class Main {
 	private record JsonContext(@SuppressWarnings("unused") Gson gson,
 			@SuppressWarnings("unused") ActionTypeAdapter actionTypeAdapter) {
 
-		/// Creates a new [JsonContext] with all required type adapters registered.
+		/// Constructs a [JsonContext] with all required type adapters registered.
 		///
 		/// Registers adapters for [Color], [IAction], [LockKey], and [Scancode],
 		/// and enables pretty printing.
@@ -6127,11 +6127,11 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -2004524201953374585L;
 
-		/// Creates a new [LargeFileChooser] with the default starting directory.
+		/// Constructs a [LargeFileChooser] with the default starting directory.
 		private LargeFileChooser() {
 		}
 
-		/// Creates a new [LargeFileChooser] with the given starting directory.
+		/// Constructs a [LargeFileChooser] with the given starting directory.
 		///
 		/// @param currentDirectory the path of the directory to display initially
 		private LargeFileChooser(final String currentDirectory) {
@@ -6160,8 +6160,8 @@ public final class Main {
 		/// Maximum number of characters the document may contain.
 		private final int limit;
 
-		/// Creates a new [LimitedLengthPlainDocument] that rejects insertions
-		/// exceeding the given character limit.
+		/// Constructs a [LimitedLengthPlainDocument] that rejects insertions exceeding
+		/// the given character limit.
 		///
 		/// @param limit the maximum number of characters the document may contain
 		private LimitedLengthPlainDocument(final int limit) {
@@ -6202,7 +6202,7 @@ public final class Main {
 		/// Whether the loop is in the process of shutting down.
 		private volatile boolean shuttingDown;
 
-		/// Prevents instantiation by clients outside of [Main].
+		/// Prevents instantiation by clients outside [Main].
 		private MainLoop() {
 		}
 
@@ -6534,7 +6534,7 @@ public final class Main {
 		/// Current zoom factor applied to the SVG rendering.
 		private float zoomFactor = 1f;
 
-		/// Creates a new [SVGPanel] with zoom and pan mouse listeners registered.
+		/// Constructs an [SVGPanel] with zoom and pan mouse listeners registered.
 		private SVGPanel() {
 			setCursor(ZOOM_CURSOR);
 
@@ -6747,8 +6747,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -9029607010261185834L;
 
-		/// Creates a new [ShowWebsiteAction] and initializes its name and
-		/// description.
+		/// Constructs a [ShowWebsiteAction] and initializes its name and description.
 		private ShowWebsiteAction() {
 			putValue(NAME, STRINGS.getString("SHOW_WEBSITE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, MessageFormat.format(STRINGS.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"),
@@ -6794,7 +6793,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -7672382299595684105L;
 
-		/// Creates a new [ChangeVJoyDirectoryAction] and initializes its name and
+		/// Constructs a [ChangeVJoyDirectoryAction] and initializes its name and
 		/// description.
 		private ChangeVJoyDirectoryAction() {
 			putValue(NAME, "...");
@@ -6851,7 +6850,7 @@ public final class Main {
 		/// Whether to show the host address field for client connections.
 		private final boolean withHost;
 
-		/// Creates a new [ConnectAction] configured with or without a host field.
+		/// Cosntructs a [ConnectAction] configured with or without a host field.
 		///
 		/// @param withHost `true` to show the host address field in the connection
 		/// settings dialog (used for client connections)
@@ -6923,7 +6922,7 @@ public final class Main {
 		/// Text field for entering the remote host address.
 		private JTextField hostTextField;
 
-		/// Creates a new [ConnectionSettingsPanel] with or without a host field.
+		/// Constructs a [ConnectionSettingsPanel] with or without a host field.
 		///
 		/// Pre-populates all fields from the current user preferences.
 		///
@@ -7027,7 +7026,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -6582801831348704984L;
 
-		/// Creates a new [ExportAction] and initializes its name and description.
+		/// Constructs an [ExportAction] and initializes its name and description.
 		private ExportAction() {
 			putValue(NAME, STRINGS.getString("EXPORT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("EXPORT_ACTION_DESCRIPTION"));
@@ -7058,7 +7057,7 @@ public final class Main {
 		/// The virtual axis whose indicator inversion state this action controls.
 		private final VirtualAxis virtualAxis;
 
-		/// Creates a new [InvertIndicatorAction] for the given virtual axis.
+		/// Constructs an [InvertIndicatorAction] for the given virtual axis.
 		///
 		/// @param virtualAxis the virtual axis whose indicator inversion state is
 		/// controlled by this action
@@ -7079,7 +7078,7 @@ public final class Main {
 		}
 	}
 
-	/// Action that creates a new empty profile, prompting to save unsaved changes
+	/// Action that Constructs an empty profile, prompting to save unsaved changes
 	/// first.
 	///
 	/// Extends [UnsavedChangesAwareAction] so that any in-progress edits are
@@ -7089,7 +7088,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 5703987691203427504L;
 
-		/// Creates a new [NewAction] and initializes its name and description.
+		/// Constructs a [NewAction] and initializes its name and description.
 		private NewAction() {
 			putValue(NAME, STRINGS.getString("NEW_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_ACTION_DESCRIPTION"));
@@ -7103,7 +7102,7 @@ public final class Main {
 
 	/// Action that adds a new mode to the current profile.
 	///
-	/// Creates a default [Mode] instance, appends it to the profile's mode list,
+	/// Constructs a default [Mode] instance, appends it to the profile's mode list,
 	/// marks the profile as having unsaved changes, and refreshes the modes panel
 	/// to show the new entry.
 	private final class NewModeAction extends AbstractAction {
@@ -7111,7 +7110,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -4881923833724315489L;
 
-		/// Creates a new [NewModeAction] and initializes its name and description.
+		/// Constructs a [NewModeAction] and initializes its name and description.
 		private NewModeAction() {
 			putValue(NAME, STRINGS.getString("NEW_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_MODE_ACTION_DESCRIPTION"));
@@ -7138,7 +7137,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -8932510785275935297L;
 
-		/// Creates a new [OpenAction] and initializes its name and description.
+		/// Constructs an [OpenAction] and initializes its name and description.
 		private OpenAction() {
 			putValue(NAME, STRINGS.getString("OPEN_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("OPEN_ACTION_DESCRIPTION"));
@@ -7164,7 +7163,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -4669170626378955605L;
 
-		/// Creates a new [ProfileFileChooser] with the profile file filter applied.
+		/// Constructs a [ProfileFileChooser] with the profile file filter applied.
 		///
 		/// Sets the initial directory to the location of the most recently opened
 		/// profile, or to the directory specified by the
@@ -7215,7 +7214,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 8952460723177800923L;
 
-		/// Creates a new [QuitAction] and initializes its name and description.
+		/// Constructs a [QuitAction] and initializes its name and description.
 		private QuitAction() {
 			putValue(NAME, STRINGS.getString("QUIT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
@@ -7242,7 +7241,7 @@ public final class Main {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Mode mode;
 
-		/// Creates a new [RemoveModeAction] for the given mode.
+		/// Constructs a [RemoveModeAction] for the given mode.
 		///
 		/// @param mode the mode to be removed when the action is triggered
 		private RemoveModeAction(final Mode mode) {
@@ -7291,7 +7290,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
-		/// Creates a new [SaveAction] and initializes its name and description.
+		/// Constructs a [SaveAction] and initializes its name and description.
 		private SaveAction() {
 			putValue(NAME, STRINGS.getString("SAVE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_ACTION_DESCRIPTION"));
@@ -7314,7 +7313,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -8469921697479550983L;
 
-		/// Creates a new [SaveAsAction] and initializes its name and description.
+		/// Constructs a [SaveAsAction] and initializes its name and description.
 		private SaveAsAction() {
 			putValue(NAME, STRINGS.getString("SAVE_AS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_AS_ACTION_DESCRIPTION"));
@@ -7340,7 +7339,7 @@ public final class Main {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Controller controller;
 
-		/// Creates a new [SelectControllerAction] for the given controller.
+		/// Constructs a [SelectControllerAction] for the given controller.
 		///
 		/// @param controller the controller that will become selected when the
 		/// action is triggered
@@ -7399,7 +7398,7 @@ public final class Main {
 		/// The virtual axis whose indicator color is changed by this action.
 		private final VirtualAxis virtualAxis;
 
-		/// Creates a new [SelectIndicatorColorAction] for the given virtual axis.
+		/// Constructs a [SelectIndicatorColorAction] for the given virtual axis.
 		///
 		/// @param virtualAxis the virtual axis whose indicator color is changed
 		/// by this action
@@ -7435,7 +7434,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 3316770144012465987L;
 
-		/// Creates a new [SelectLedColorAction] and initializes its name and
+		/// Constructs a [SelectLedColorAction] and initializes its name and
 		/// description.
 		private SelectLedColorAction() {
 			putValue(NAME, "🎨");
@@ -7459,7 +7458,7 @@ public final class Main {
 	/// selection changes.
 	///
 	/// Reads the selected [HotSwappingButton] from the triggering combo box and
-	/// persists its SDL button id to user preferences so it is restored on the next
+	/// persists its SDL button ID to user preferences so it is restored on the next
 	/// application launch.
 	private final class SetHotSwapButtonAction extends AbstractAction {
 
@@ -7493,7 +7492,7 @@ public final class Main {
 		/// The text field that provides the new mode description value.
 		private final JTextField modeDescriptionTextField;
 
-		/// Creates a new [SetModeDescriptionAction] bound to the given mode and
+		/// Constructs a [SetModeDescriptionAction] bound to the given mode and
 		/// text field.
 		///
 		/// @param mode the mode whose description is managed by this action
@@ -7576,8 +7575,7 @@ public final class Main {
 		/// The virtual axis whose indicator orientation this action controls.
 		private final VirtualAxis virtualAxis;
 
-		/// Creates a new [SetOverlayAxisOrientationAction] for the given virtual
-		/// axis.
+		/// Constructs a [SetOverlayAxisOrientationAction] for the given virtual axis.
 		///
 		/// @param virtualAxis the virtual axis whose indicator orientation is
 		/// controlled by this action
@@ -7615,7 +7613,7 @@ public final class Main {
 		/// The virtual axis whose indicator style this action controls.
 		private final VirtualAxis virtualAxis;
 
-		/// Creates a new [SetOverlayAxisStyleAction] for the given virtual axis.
+		/// Constructs a [SetOverlayAxisStyleAction] for the given virtual axis.
 		///
 		/// @param virtualAxis the virtual axis whose indicator style is controlled
 		/// by this action
@@ -7670,7 +7668,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -2578971543384483382L;
 
-		/// Creates a new [ShowAboutDialogAction] and initializes its name and
+		/// Constructs a [ShowAboutDialogAction] and initializes its name and
 		/// description.
 		private ShowAboutDialogAction() {
 			putValue(NAME, STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
@@ -7696,7 +7694,7 @@ public final class Main {
 		/// The virtual axis whose indicator visibility is toggled by this action.
 		private final VirtualAxis virtualAxis;
 
-		/// Creates a new [ShowIndicatorAction] for the given virtual axis.
+		/// Constructs a [ShowIndicatorAction] for the given virtual axis.
 		///
 		/// @param virtualAxis the virtual axis whose indicator visibility is
 		/// toggled by this action
@@ -7731,8 +7729,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 2471952794110895043L;
 
-		/// Creates a new [ShowLicensesAction] and initializes its name and
-		/// description.
+		/// Constructs a [ShowLicensesAction] and initializes its name and description.
 		private ShowLicensesAction() {
 			putValue(NAME, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
@@ -7780,8 +7777,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 3975574941559749481L;
 
-		/// Creates a new [StartClientAction] and initializes its name and
-		/// description.
+		/// Constructs a [StartClientAction] and initializes its name and description.
 		private StartClientAction() {
 			super(true);
 
@@ -7804,8 +7800,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -2003502124995392039L;
 
-		/// Creates a new [StartLocalAction] and initializes its name and
-		/// description.
+		/// Constructs a [StartLocalAction] and initializes its name and description.
 		private StartLocalAction() {
 			putValue(NAME, STRINGS.getString("START_LOCAL_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("START_LOCAL_ACTION_DESCRIPTION"));
@@ -7827,8 +7822,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = 1758447420975631146L;
 
-		/// Creates a new [StartServerAction] and initializes its name and
-		/// description.
+		/// Constructs a [StartServerAction] and initializes its name and description.
 		private StartServerAction() {
 			super(false);
 
@@ -7852,7 +7846,7 @@ public final class Main {
 		@Serial
 		private static final long serialVersionUID = -2863419586328503426L;
 
-		/// Creates a new [StopAction] and initializes its name and description.
+		/// Constructs a [StopAction] and initializes its name and description.
 		private StopAction() {
 			putValue(NAME, STRINGS.getString("STOP_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, STRINGS.getString("STOP_ACTION_DESCRIPTION"));

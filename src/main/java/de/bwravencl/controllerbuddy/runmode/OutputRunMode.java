@@ -188,7 +188,7 @@ public abstract class OutputRunMode extends RunMode {
 	/// vJoy device index used on Windows.
 	private int vJoyDevice;
 
-	/// Constructs an output run mode, initializing the vJoy device index on
+	/// Constructs an [OutputRunMode], initializing the vJoy device index on
 	/// Windows.
 	///
 	/// @param main the main application instance

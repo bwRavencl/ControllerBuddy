@@ -543,7 +543,7 @@ public final class GuiUtils {
 		/// dragging.
 		private Point mouseDownLocation = null;
 
-		/// Creates a new [FrameDragListener] for the given main window and frame.
+		/// Constructs a [FrameDragListener] for the given main window and frame.
 		///
 		/// @param main the main application instance used to access display bounds
 		/// and preferences

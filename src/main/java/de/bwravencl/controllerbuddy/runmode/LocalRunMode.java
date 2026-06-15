@@ -40,7 +40,7 @@ public final class LocalRunMode extends OutputRunMode {
 	/// Set of modifier scancodes active in the current output cycle.
 	private final HashSet<Scancode> sourceModifiersCodes = new HashSet<>();
 
-	/// Creates a new local run mode.
+	/// Constructs a [LocalRunMode].
 	///
 	/// @param main the main application instance
 	/// @param input the input instance for controller state

@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// slider) is written to when the associated action fires.
 public final class VirtualAxisEditorBuilder extends ArrayEditorBuilder<VirtualAxis> {
 
-	/// Constructs a virtual axis editor builder for the specified action property.
+	/// Constructs a [VirtualAxisEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose virtual axis property is being edited

@@ -28,8 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// range.
 public final class MaxAxisValueEditorBuilder extends AxisValueEditorBuilder {
 
-	/// Constructs a maximum axis value editor builder for the specified action
-	/// property.
+	/// Constructs a [MaxAxisValueEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose maximum axis value property is being edited

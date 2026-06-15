@@ -115,7 +115,7 @@ public final class ServerRunMode extends RunMode {
 	/// UDP socket used to communicate with the client.
 	private DatagramSocket serverSocket;
 
-	/// Creates a new server run mode.
+	/// Constructs a [ServerRunMode].
 	///
 	/// @param main the main application instance providing port, timeout, and
 	/// encryption settings
@@ -422,7 +422,7 @@ public final class ServerRunMode extends RunMode {
 		/// Numeric identifier written into UDP packet headers.
 		private final int id;
 
-		/// Constructs a message type with the given numeric identifier.
+		/// Constructs a [MessageType] with the given numeric identifier.
 		///
 		/// @param id the numeric ID written into UDP packets
 		MessageType(final int id) {

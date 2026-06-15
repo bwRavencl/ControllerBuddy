@@ -53,13 +53,13 @@ public final class Mode implements Cloneable {
 	@SuppressWarnings({ "CanBeFinal", "FieldMayBeFinal" })
 	private UUID uuid;
 
-	/// Constructs a new mode with a random UUID and default description.
+	/// Constructs a [Mode] with a random UUID and default description.
 	public Mode() {
 		uuid = UUID.randomUUID();
 		description = Main.STRINGS.getString("NEW_MODE_DESCRIPTION");
 	}
 
-	/// Constructs a mode with the specified UUID.
+	/// Constructs a [Mode] with the specified UUID.
 	///
 	/// @param uuid the unique identifier for this mode
 	public Mode(final UUID uuid) {

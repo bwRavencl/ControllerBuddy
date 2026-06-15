@@ -38,7 +38,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 	/// The title of the property this editor builder handles.
 	private final String propertyTitle;
 
-	/// Constructs an activation interval editor builder for the specified action
+	/// Constructs an [ActivationIntervalEditorBuilder] for the specified action
 	/// property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
@@ -100,7 +100,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 		@Serial
 		private static final long serialVersionUID = -2748747027292654756L;
 
-		/// Constructs a new activation spinner for the given model.
+		/// Constructs an [ActivationIntervalJSpinner] for the given model.
 		///
 		/// @param model a model for the new spinner
 		private ActivationIntervalJSpinner(final SpinnerModel model) {

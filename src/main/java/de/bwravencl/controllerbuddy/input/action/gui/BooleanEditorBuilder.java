@@ -39,7 +39,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	/// The checkbox rendered by this editor.
 	JCheckBox checkBox;
 
-	/// Constructs a boolean editor builder for the specified action property.
+	/// Constructs a [BooleanEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose boolean property is being edited
@@ -68,7 +68,8 @@ public class BooleanEditorBuilder extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = -33052386834598414L;
 
-		/// Constructs the action with the target action and its property setter method.
+		/// Constructs a [JCheckBoxSetPropertyAction] with the target action and its
+		/// property setter method.
 		///
 		/// @param action the action whose boolean property is toggled
 		/// @param setterMethod the setter method to invoke with the checkbox state

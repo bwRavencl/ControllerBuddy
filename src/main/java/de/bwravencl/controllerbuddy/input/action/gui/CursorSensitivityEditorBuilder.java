@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// lower values produce finer-grained movement.
 public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	/// Constructs a cursor sensitivity editor builder for the specified action
+	/// Constructs a [CursorSensitivityEditorBuilder] for the specified action
 	/// property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor

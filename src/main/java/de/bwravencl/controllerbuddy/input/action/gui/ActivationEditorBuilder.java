@@ -36,7 +36,7 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 	/// [#onNewValueSet()].
 	private boolean initialized;
 
-	/// Constructs an activation editor builder for the specified action property.
+	/// Constructs an [ActivationEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose activation property is being edited

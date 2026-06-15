@@ -28,8 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// range.
 public final class MinAxisValueEditorBuilder extends AxisValueEditorBuilder {
 
-	/// Constructs a minimum axis value editor builder for the specified action
-	/// property.
+	/// Constructs a [MinAxisValueEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose minimum axis value property is being edited

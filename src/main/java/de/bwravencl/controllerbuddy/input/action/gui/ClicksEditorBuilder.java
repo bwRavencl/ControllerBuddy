@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// associated action fires.
 public final class ClicksEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	/// Constructs a clicks editor builder for the specified action property.
+	/// Constructs a [ClicksEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose click count property is being edited

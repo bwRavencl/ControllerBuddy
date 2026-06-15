@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// (such as cursor movement) are applied.
 public final class MaxRelativeSpeedEditorBuilder extends NumberEditorBuilder<Float> {
 
-	/// Constructs a maximum relative speed editor builder for the specified action
+	/// Constructs a [MaxRelativeSpeedEditorBuilder] for the specified action
 	/// property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor

@@ -95,7 +95,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// List of selectable modifier scancodes.
 	private CheckboxJList<?> modifierList;
 
-	/// Constructs a keystroke editor builder for the specified action property.
+	/// Constructs a [KeystrokeEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose keystroke property is being edited
@@ -324,7 +324,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = 5413881551745215922L;
 
-		/// Constructs a checkbox list populated with the given items and installs a
+		/// Constructs a [CheckboxJList] populated with the given items and installs a
 		/// toggle-select model.
 		///
 		/// @param listData the initial items to display in the list
@@ -381,8 +381,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// The current filter string applied when rendering cells.
 		private String filter;
 
-		/// Constructs a renderer that tracks the given list for orientation, font,
-		/// and color settings.
+		/// Constructs a [CheckboxListCellRenderer] that tracks the given list for
+		/// orientation, font, and color settings.
 		///
 		/// @param list the list this renderer is attached to
 		private CheckboxListCellRenderer(final JList<? extends E> list) {
@@ -461,8 +461,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// The text field whose content is cleared when this action is performed.
 		private final FilterTextField filterTextField;
 
-		/// Constructs the action, wires up a document listener to keep the clear
-		/// button visibility in sync with the filter text field content.
+		/// Constructs a [ClearFilterAction], wires up a document listener to keep the
+		/// clear button visibility in sync with the filter text field content.
 		///
 		/// @param clearFilterButton the button whose visibility this action controls
 		/// @param filterTextField the text field whose content is cleared when the
@@ -523,8 +523,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final ListSelectionModel listSelectionModel;
 
-		/// Constructs the action, registers a selection listener to keep the enabled
-		/// state in sync, and performs an initial state update.
+		/// Constructs a [DeselectAllAction], registers a selection listener to keep the
+		/// enabled state in sync, and performs an initial state update.
 		///
 		/// @param listSelectionModel the selection model to clear when the action is
 		/// performed
@@ -578,8 +578,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = -7998118986240546988L;
 
-		/// Constructs the text field and registers a document listener that forwards
-		/// each text change to the given renderer as a filter.
+		/// Constructs a [FilterTextField] and registers a document listener that
+		/// forwards each text change to the given renderer as a filter.
 		///
 		/// @param checkboxListCellRenderer the renderer whose filter is updated on
 		/// every
@@ -653,8 +653,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// The setter method to invoke with the updated keystroke.
 		private final Method setterMethod;
 
-		/// Constructs the listener with the setter method, keystroke, and scancode
-		/// consumer.
+		/// Constructs a [JListSetPropertyListSelectionListener] with the setter method,
+		/// keystroke, and scancode consumer.
 		///
 		/// @param setterMethod the setter method to invoke with the updated keystroke
 		/// @param keystroke the keystroke object that is updated and passed to the

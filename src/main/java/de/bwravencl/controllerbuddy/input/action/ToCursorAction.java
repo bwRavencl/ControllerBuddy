@@ -131,7 +131,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 		/// Localized display label for this mouse axis.
 		private final String label;
 
-		/// Creates a `MouseAxis` constant with a localized label.
+		/// Constructs a [MouseAxis] constant with a localized label.
 		///
 		/// @param labelKey the resource bundle key used to look up the localized label
 		MouseAxis(final String labelKey) {

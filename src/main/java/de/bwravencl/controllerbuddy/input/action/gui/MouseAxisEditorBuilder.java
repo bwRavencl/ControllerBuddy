@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
 /// associated action.
 public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> {
 
-	/// Constructs a mouse axis editor builder for the specified action property.
+	/// Constructs a [MouseAxisEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose mouse axis property is being edited

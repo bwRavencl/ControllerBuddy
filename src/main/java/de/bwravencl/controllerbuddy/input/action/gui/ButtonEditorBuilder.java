@@ -37,7 +37,7 @@ import javax.swing.text.DefaultFormatterFactory;
 /// of buttons reported by the connected controller.
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	/// Constructs a button editor builder for the specified action property.
+	/// Constructs a [ButtonEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose button index property is being edited

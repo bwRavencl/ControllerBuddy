@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 /// per-action delay configuration is not applicable in that context.
 public final class DelayEditorBuilder extends NumberEditorBuilder<Long> {
 
-	/// Constructs a delay editor builder for the specified action property.
+	/// Constructs a [DelayEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose delay property is being edited

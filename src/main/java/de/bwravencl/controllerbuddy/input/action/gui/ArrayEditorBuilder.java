@@ -42,7 +42,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	/// The combo box component populated with selectable values.
 	JComboBox<T> comboBox;
 
-	/// Constructs an array editor builder for the specified action property.
+	/// Constructs an [ArrayEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose property is being edited
@@ -85,7 +85,8 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = 1938012378184518954L;
 
-		/// Constructs the action with the target action and its property setter method.
+		/// Constructs an [JComboBoxSetPropertyAction] with the target action and its
+		/// property setter method.
 		///
 		/// @param action the action whose property is updated on selection
 		/// @param setterMethod the setter method to invoke with the selected value

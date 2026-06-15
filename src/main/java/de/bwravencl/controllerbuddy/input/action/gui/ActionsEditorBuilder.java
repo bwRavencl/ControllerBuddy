@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 /// sub-actions of a cycle action.
 public final class ActionsEditorBuilder extends EditorBuilder {
 
-	/// Constructs an actions editor builder for the specified action property.
+	/// Constructs an [ActionsEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose sub-actions property is being edited
@@ -66,7 +66,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 		@Serial
 		private static final long serialVersionUID = -6538021954760621595L;
 
-		/// Constructs the action, setting its display name and tooltip description.
+		/// Constructs an [EditActionsAction].
 		private EditActionsAction() {
 			putValue(NAME, Main.STRINGS.getString("EDIT_ACTIONS_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),

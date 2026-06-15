@@ -77,13 +77,13 @@ public final class Profile implements Cloneable {
 	/// Maps virtual axes to their overlay axis display configurations.
 	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new EnumMap<>(VirtualAxis.class);
 
-	/// Creates a new profile pre-populated with the default mode.
+	/// Constructs a [Profile] pre-populated with the default mode.
 	Profile() {
 		modes.add(DEFAULT_MODE);
 	}
 
-	/// Creates a deep copy of this profile, including all modes, button-to-mode
-	/// actions, and overlay axis mappings.
+	/// Constructs a deep copy of this [Profile], including all modes,
+	/// button-to-mode actions, and overlay axis mappings.
 	///
 	/// @return a new [Profile] with cloned contents
 	/// @throws CloneNotSupportedException if cloning of a contained object fails

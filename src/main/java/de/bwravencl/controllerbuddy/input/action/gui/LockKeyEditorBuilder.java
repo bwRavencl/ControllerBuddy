@@ -28,7 +28,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// associated action fires.
 public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 
-	/// Constructs a lock key editor builder for the specified action property.
+	/// Constructs a [LockKeyEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose lock key property is being edited

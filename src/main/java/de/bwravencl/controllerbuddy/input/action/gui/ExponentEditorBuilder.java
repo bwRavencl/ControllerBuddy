@@ -39,7 +39,7 @@ import javax.swing.UIManager;
 /// different response curves on axis input.
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
-	/// Constructs an exponent editor builder for the specified action property.
+	/// Constructs a [ExponentEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose exponent property is being edited
@@ -103,7 +103,7 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 		/// The current exponent value for the power function curve.
 		private float power;
 
-		/// Constructs a plotter with the given initial exponent value.
+		/// Constructs a [PowerFunctionPlotter] with the given initial exponent value.
 		///
 		/// @param power the initial exponent to use when drawing the curve
 		private PowerFunctionPlotter(final float power) {

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /// at runtime.
 public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 
-	/// Constructs a mode editor builder for the specified action property.
+	/// Constructs a [ModeEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose mode property is being edited

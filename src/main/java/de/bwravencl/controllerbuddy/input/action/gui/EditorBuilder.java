@@ -52,7 +52,7 @@ public abstract class EditorBuilder {
 	/// time.
 	protected Object initialValue;
 
-	/// Constructs an editor builder by resolving the getter and setter methods for
+	/// Constructs an [EditorBuilder] by resolving the getter and setter methods for
 	/// the given field via reflection and reading the initial property value.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
@@ -110,7 +110,7 @@ public abstract class EditorBuilder {
 		/// The setter method to invoke when the property changes.
 		final Method setterMethod;
 
-		/// Constructs a property setter holding references to the action and its
+		/// Constructs a [PropertySetter] holding references to the action and its
 		/// setter.
 		///
 		/// @param action the action whose property is being set
@@ -139,7 +139,7 @@ public abstract class EditorBuilder {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		final Method setterMethod;
 
-		/// Constructs a property setter action holding references to the action and its
+		/// Constructs a [PropertySetterAction] holding references to the action and its
 		/// setter.
 		///
 		/// @param action the action whose property is being set

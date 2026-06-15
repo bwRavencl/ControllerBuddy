@@ -42,7 +42,7 @@ public class StringEditorBuilder extends EditorBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
 
-	/// Constructs a string editor builder for the specified action property.
+	/// Constructs a [StringEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose string property is being edited
@@ -80,7 +80,8 @@ public class StringEditorBuilder extends EditorBuilder {
 		/// Text field whose content is read and written on each change event.
 		private final JTextField textField;
 
-		/// Constructs the setter holding the text field, action, and setter method.
+		/// Constructs a [TextFieldPropertySetter] holding a text field, action, and
+		/// setter method.
 		///
 		/// @param textField the text field whose content is read on each change
 		/// @param action the action whose string property is updated

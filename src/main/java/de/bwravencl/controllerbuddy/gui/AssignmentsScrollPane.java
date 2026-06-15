@@ -84,7 +84,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
 
-	/// Creates a new assignments scroll pane with buttons arranged in a grid to
+	/// Creates an [AssignmentsScrollPane] with buttons arranged in a grid to
 	/// resemble a gamepad layout.
 	///
 	/// @param main the main application instance
@@ -421,7 +421,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// The theme background color used when the button is pressed.
 		private Color pressedBackground;
 
-		/// Creates a custom button with no associated action.
+		/// Constructs an [AssignmentsButton] with no associated action.
 		///
 		/// @param main the main application instance
 		private AssignmentsButton(final Main main) {
@@ -429,7 +429,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 			super();
 		}
 
-		/// Creates a custom button with the given action.
+		/// Constructs an [AssignmentsButton] with the given action.
 		///
 		/// @param main the main application instance
 		/// @param action the action to associate with this button
@@ -633,7 +633,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// The display text rendered via the icon painter.
 		private String text;
 
-		/// Creates a center [CompoundButton] for the stick-press component.
+		/// Constructs a center [CompoundButton] for the stick-press component.
 		///
 		/// @param main the main application instance
 		/// @param parentPanel the parent panel whose preferred size governs this
@@ -643,7 +643,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 			this(main, parentPanel, component, CompoundButtonLocation.CENTER, null);
 		}
 
-		/// Creates a [CompoundButton] at the specified location, optionally sharing
+		/// Constructs a [CompoundButton] at the specified location, optionally sharing
 		/// its button model with a peer button representing the opposite end of
 		/// the same axis.
 		///
@@ -918,7 +918,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 			/// The arc start angle in degrees for this location's pie-shaped segment.
 			final float startAngle;
 
-			/// Creates a location constant with the given arc start angle.
+			/// Constructs a [CompoundButtonLocation] constant with the given arc start
+			/// angle.
 			///
 			/// @param startAngle the start angle in degrees for the pie-arc segment
 			CompoundButtonLocation(final float startAngle) {
@@ -948,8 +949,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// The localized display name of the component.
 		private final String name;
 
-		/// Creates an action that will open the assignment editor for the given
-		/// component.
+		/// Constructs an [EditComponentAction] that will open the assignment editor for
+		/// the given component.
 		///
 		/// @param main the main application instance
 		/// @param name the localized display name of the component
@@ -1002,8 +1003,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 		@Serial
 		private static final long serialVersionUID = -5178710302755638535L;
 
-		/// Creates a four-way cross-panel with buttons for the up, left, right, and
-		/// down directions.
+		/// Constructs a [FourWay] with buttons for the up, left, right, and down
+		/// directions.
 		///
 		/// @param assignmentsScrollPane the parent assignments scroll pane
 		/// @param upTitle the localized label for the up button
@@ -1053,7 +1054,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		@Serial
 		private static final long serialVersionUID = -8389190445101809929L;
 
-		/// Creates a stick panel for the given stick type, adding compound buttons for
+		/// Constructs a [Stick] for the given stick type, adding compound buttons for
 		/// the stick press and the four axis directions.
 		///
 		/// @param main the main application instance

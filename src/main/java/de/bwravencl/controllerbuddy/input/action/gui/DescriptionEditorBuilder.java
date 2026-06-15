@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// sync with the edited text.
 public final class DescriptionEditorBuilder extends StringEditorBuilder {
 
-	/// Constructs a string editor builder for the specified action property.
+	/// Constructs a [DescriptionEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose string property is being edited

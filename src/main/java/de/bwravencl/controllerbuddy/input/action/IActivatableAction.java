@@ -100,7 +100,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 		/// The symbolic character representing this activation mode in the UI.
 		private final String symbol;
 
-		/// Creates an `Activation` constant with a localized label and a display
+		/// Constructs an [Activation] constant with a localized label and a display
 		/// symbol.
 		///
 		/// @param labelKey the resource bundle key used to look up the localized label

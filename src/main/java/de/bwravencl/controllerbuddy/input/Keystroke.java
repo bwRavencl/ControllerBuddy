@@ -48,12 +48,12 @@ public final class Keystroke implements Cloneable, Serializable {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Scancode[] modifierCodes;
 
-	/// Constructs an empty keystroke with no key codes or modifier codes.
+	/// Constructs an empty [Keystroke] with no key codes or modifier codes.
 	public Keystroke() {
 		this(new Scancode[0], new Scancode[0]);
 	}
 
-	/// Constructs a keystroke with the specified key codes and modifier codes.
+	/// Constructs a [Keystroke] with the specified key codes and modifier codes.
 	///
 	/// @param keyCodes the primary scancodes for this keystroke
 	/// @param modifierCodes the modifier scancodes (e.g., Shift, Ctrl) for this

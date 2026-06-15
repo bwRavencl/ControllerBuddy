@@ -277,7 +277,7 @@ public final class EditActionsDialog extends JDialog {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Mode selectedMode;
 
-	/// Creates a cycle editor dialog for editing the sub-actions of a
+	/// Constructs an [EditActionsDialog] for editing the sub-actions of a
 	/// [ButtonToCycleAction].
 	///
 	/// @param parentDialog the parent [EditActionsDialog] that owns this cycle
@@ -308,7 +308,7 @@ public final class EditActionsDialog extends JDialog {
 		init();
 	}
 
-	/// Creates a component editor dialog for editing the actions assigned to a
+	/// Constructs an [EditActionsDialog] for editing the actions assigned to a
 	/// specific controller component within a profile.
 	///
 	/// @param main the main application instance owning this dialog
@@ -1218,7 +1218,7 @@ public final class EditActionsDialog extends JDialog {
 		/// The label displaying the title text.
 		private final JLabel titleLabel;
 
-		/// Creates a new [IconLabel] with the specified icon, title, and optional title
+		/// Constructs a [IconLabel] with the specified icon, title, and optional title
 		/// label.
 		///
 		/// If `titleLabel` is `null`, a new [JLabel] is created. The panel uses a
@@ -1251,7 +1251,7 @@ public final class EditActionsDialog extends JDialog {
 			add(this.titleLabel);
 		}
 
-		/// Creates a new [IconLabel] from an action class annotation, styled for list
+		/// Constructs an [IconLabel] from an action class annotation, styled for list
 		/// rendering.
 		///
 		/// Extracts the icon and title from the [Action] annotation on the given class
@@ -1308,7 +1308,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -7713175853948284887L;
 
-		/// Creates a new [AddActionAction] and initializes its name and description.
+		/// Constructs an [AddActionAction] and initializes its name and description.
 		private AddActionAction() {
 			putValue(NAME, Main.STRINGS.getString("ADD_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("ADD_ACTION_ACTION_DESCRIPTION"));
@@ -1333,7 +1333,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = 8086810563127997199L;
 
-		/// Creates a new [CancelAction] and initializes its name and description.
+		/// Constructs a [CancelAction] and initializes its name and description.
 		private CancelAction() {
 			putValue(NAME, UIManager.getString("OptionPane.cancelButtonText"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CANCEL_ACTION_DESCRIPTION"));
@@ -1355,7 +1355,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
 
-		/// Creates a new [CopyActionAction] and initializes its name and description.
+		/// Constructs a [CopyActionAction] and initializes its name and description.
 		private CopyActionAction() {
 			putValue(NAME, "🗐");
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("COPY_ACTION_ACTION_DESCRIPTION"));
@@ -1383,7 +1383,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
 
-		/// Creates a new [CutActionAction] and initializes its name and description.
+		/// Constructs a [CutActionAction] and initializes its name and description.
 		private CutActionAction() {
 			putValue(NAME, "✂");
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CUT_ACTION_ACTION_DESCRIPTION"));
@@ -1407,7 +1407,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -6947022759101822700L;
 
-		/// Creates a new [OKAction] and initializes its name and description.
+		/// Constructs an [OKAction] and initializes its name and description.
 		private OKAction() {
 			putValue(NAME, UIManager.getString("OptionPane.okButtonText"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("OK_ACTION_DESCRIPTION"));
@@ -1457,7 +1457,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -6630683334825900710L;
 
-		/// Creates a new [PasteActionAction] and initializes its name and description.
+		/// Constructs a [PasteActionAction] and initializes its name and description.
 		private PasteActionAction() {
 			putValue(NAME, "📋");
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("PASTE_ACTION_ACTION_DESCRIPTION"));
@@ -1482,7 +1482,7 @@ public final class EditActionsDialog extends JDialog {
 		@Serial
 		private static final long serialVersionUID = -5681740772832902238L;
 
-		/// Creates a new [RemoveActionAction] and initializes its name and description.
+		/// Constructs a [RemoveActionAction] and initializes its name and description.
 		private RemoveActionAction() {
 			putValue(NAME, Main.STRINGS.getString("REMOVE_ACTION_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));

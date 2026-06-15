@@ -27,7 +27,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 /// or extra) is pressed when the associated action fires.
 public final class MouseButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
-	/// Constructs a mouse button editor builder for the specified action property.
+	/// Constructs a [MouseButtonEditorBuilder] for the specified action property.
 	///
 	/// @param editActionsDialog the parent dialog hosting the editor
 	/// @param action the action whose mouse button property is being edited

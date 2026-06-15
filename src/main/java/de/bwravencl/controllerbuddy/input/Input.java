@@ -183,7 +183,7 @@ public final class Input {
 	/// Whether the left and right sticks should be swapped during input processing.
 	private boolean swapLeftAndRightSticks;
 
-	/// Constructs a new Input instance for the given controller.
+	/// Constructs an [Input] for the given controller.
 	///
 	/// @param main the main application instance
 	/// @param selectedController the controller selected for input
@@ -980,7 +980,8 @@ public final class Input {
 		/// Low-frequency (heavy) motor intensity.
 		private final short lowFrequencyRumble;
 
-		/// Creates a rumble effect with the specified motor intensities and duration.
+		/// Constructs a [RumbleEffect] with the specified motor intensities and
+		/// duration.
 		///
 		/// @param lowFrequencyRumble the low-frequency (heavy) motor intensity
 		/// @param highFrequencyRumble the high-frequency (light) motor intensity
@@ -1023,8 +1024,8 @@ public final class Input {
 		/// The default overlay rendering style for this virtual axis.
 		private final OverlayAxisStyle defaultOverlayAxisStyle;
 
-		/// Creates a virtual axis constant with the given default overlay orientation
-		/// and rendering style.
+		/// Constructs a [VirtualAxis] constant with the given default overlay
+		/// orientation and rendering style.
 		///
 		/// @param defaultOverlayAxisOrientation the default overlay orientation for
 		/// this axis
@@ -1069,7 +1070,7 @@ public final class Input {
 		/// The SDL gamepad handle associated with this state.
 		private final long sdlGamepad;
 
-		/// Creates a gamepad state for the given SDL gamepad handle.
+		/// Constructs a [GamepadState] for the given SDL gamepad handle.
 		///
 		/// @param sdlGamepad the native SDL gamepad handle
 		private GamepadState(final long sdlGamepad) {
