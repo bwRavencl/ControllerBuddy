@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -33,6 +32,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
@@ -52,7 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
-import javax.swing.plaf.UIResource;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// A scroll pane that displays a visual representation of a gamepad's controls
@@ -62,7 +61,11 @@ import org.lwjgl.sdl.SDLGamepad;
 /// direction) and opens an assignment editor dialog when clicked. The layout
 /// mimics a physical gamepad, with sticks, triggers, bumpers, and face
 /// buttons placed in their conventional positions.
-final class AssignmentsComponent extends JScrollPane {
+final class AssignmentsScrollPane extends JScrollPane {
+
+	/// Stroke used for drawing the border of the controller shape and component
+	/// buttons.
+	private static final Stroke BORDER_STROKE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
 	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
@@ -77,11 +80,17 @@ final class AssignmentsComponent extends JScrollPane {
 	/// The panel that holds the arranged gamepad component buttons.
 	private final JPanel assignmentsPanel = new JPanel();
 
-	/// Creates a new assignments component with buttons arranged in a grid to
+	/// The main application instance.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private final Main main;
+
+	/// Creates a new assignments scroll pane with buttons arranged in a grid to
 	/// resemble a gamepad layout.
 	///
 	/// @param main the main application instance
-	AssignmentsComponent(final Main main) {
+	AssignmentsScrollPane(final Main main) {
+		this.main = main;
+
 		assignmentsPanel.setLayout(new GridBagLayout());
 		assignmentsPanel.setOpaque(false);
 
@@ -93,33 +102,33 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		assignmentsPanel.add(
-				createComponentButton(main, Main.STRINGS.getString("LEFT_TRIGGER"),
+				createComponentButton(Main.STRINGS.getString("LEFT_TRIGGER"),
 						new Component(main, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER)),
 				constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
 		assignmentsPanel.add(
-				createComponentButton(main, Main.STRINGS.getString("RIGHT_TRIGGER"),
+				createComponentButton(Main.STRINGS.getString("RIGHT_TRIGGER"),
 						new Component(main, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)),
 				constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		assignmentsPanel.add(
-				createComponentButton(main, Main.STRINGS.getString("LEFT_SHOULDER"),
+				createComponentButton(Main.STRINGS.getString("LEFT_SHOULDER"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER)),
 				constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createComponentButton(main, Main.STRINGS.getString("GUIDE_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("GUIDE_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
 		assignmentsPanel.add(
-				createComponentButton(main, Main.STRINGS.getString("RIGHT_SHOULDER"),
+				createComponentButton(Main.STRINGS.getString("RIGHT_SHOULDER"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER)),
 				constraints);
 
@@ -129,17 +138,17 @@ final class AssignmentsComponent extends JScrollPane {
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(main, Main.STRINGS.getString("BACK_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("BACK_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(main, Main.STRINGS.getString("START_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("START_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 2;
-		assignmentsPanel.add(new FourWay(main, Main.STRINGS.getString("Y_BUTTON"),
+		assignmentsPanel.add(new FourWay(this, Main.STRINGS.getString("Y_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH),
 				Main.STRINGS.getString("X_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_WEST),
@@ -151,7 +160,7 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		assignmentsPanel.add(
-				new FourWay(main, Main.STRINGS.getString("DPAD_UP"),
+				new FourWay(this, Main.STRINGS.getString("DPAD_UP"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP),
 						Main.STRINGS.getString("DPAD_LEFT"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT),
@@ -196,8 +205,8 @@ final class AssignmentsComponent extends JScrollPane {
 					path.curveTo(-0.49 * w, -0.42 * h, -0.42 * w, -0.4704 * h, -0.28 * w, -0.42 * h);
 					path.closePath();
 
-					g2.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-					g2.setColor(Color.BLACK);
+					g2.setStroke(BORDER_STROKE);
+					g2.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
 					g2.draw(path);
 
 					g2.setColor(CONTROLLER_SHAPE_COLOR);
@@ -221,14 +230,14 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
-	/// Creates a [JButton] for a gamepad component, using a round [CustomButton]
+	/// Creates a [JButton] for a gamepad component, using a round
+	/// [AssignmentsButton]
 	/// for face and guide buttons and a standard [JButton] for all others.
 	///
-	/// @param main the main application instance
 	/// @param name the localized display name of the component
 	/// @param component the gamepad component this button represents
 	/// @return the configured button
-	private static JButton createComponentButton(final Main main, final String name, final Component component) {
+	private JButton createComponentButton(final String name, final Component component) {
 		final boolean round;
 		final JButton button;
 		if (component.type() == ComponentType.BUTTON && (component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH
@@ -239,7 +248,7 @@ final class AssignmentsComponent extends JScrollPane {
 				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_START
 				|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)) {
 			round = true;
-			button = new CustomButton(new EditComponentAction(main, name, component)) {
+			button = new AssignmentsButton(main, new EditComponentAction(main, name, component)) {
 
 				@Serial
 				private static final long serialVersionUID = 8467379031897370934L;
@@ -252,6 +261,11 @@ final class AssignmentsComponent extends JScrollPane {
 
 				private int getDiameter() {
 					return Math.min(getWidth(), getHeight());
+				}
+
+				@Override
+				public boolean isContentAreaFilled() {
+					return false;
 				}
 
 				@Override
@@ -278,7 +292,7 @@ final class AssignmentsComponent extends JScrollPane {
 
 					final var g2d = (Graphics2D) g;
 
-					if (contentAreaFilled && isEnabled()) {
+					if (contentAreaFilled) {
 						beginBackground(g2d);
 
 						final var ovalWidth = width % 2 != 0 ? width + 1 : width;
@@ -323,7 +337,7 @@ final class AssignmentsComponent extends JScrollPane {
 			};
 		} else {
 			round = false;
-			button = new JButton(new EditComponentAction(main, name, component));
+			button = new AssignmentsButton(main, new EditComponentAction(main, name, component));
 		}
 
 		if (component.type() == ComponentType.BUTTON
@@ -340,10 +354,249 @@ final class AssignmentsComponent extends JScrollPane {
 		return button;
 	}
 
+	/// Prevents deserialization.
+	///
+	/// @param ignoredStream unused
+	/// @throws NotSerializableException always
+	@Serial
+	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+		throw new NotSerializableException(AssignmentsScrollPane.class.getName());
+	}
+
 	/// Enables or disables all child components recursively.
 	@Override
 	public void setEnabled(final boolean enabled) {
 		GuiUtils.setEnabledRecursive(assignmentsPanel, enabled);
+	}
+
+	/// Prevents serialization.
+	///
+	/// @param ignoredStream unused
+	/// @throws NotSerializableException always
+	@Serial
+	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+		throw new NotSerializableException(AssignmentsScrollPane.class.getName());
+	}
+
+	/// The base class for all buttons in [AssignmentsScrollPane].
+	///
+	/// Handles theme-aware rendering using FlatLaf UI colors and supports round
+	/// or shaped button painting with anti-aliased graphics.
+	private static class AssignmentsButton extends JButton {
+
+		@Serial
+		private static final long serialVersionUID = 5458020346838696827L;
+
+		/// The main application instance.
+		@SuppressWarnings({ "serial", "RedundantSuppression" })
+		private final Main main;
+
+		/// Whether the content area of this button should be painted.
+		boolean contentAreaFilled = true;
+
+		/// The color used for disabled button text.
+		Color disabledText;
+
+		/// The theme color used for the button border in its normal state.
+		private Color borderColor;
+
+		/// The theme background color used when the button is disabled.
+		private Color disabledBackground;
+
+		/// The theme border color used when the button is disabled.
+		private Color disabledBorderColor;
+
+		/// The theme background color used when the button is focused.
+		private Color focusedBackground;
+
+		/// The theme border color used when the button is focused.
+		private Color focusedBorderColor;
+
+		/// The theme background color used when the button is hovered.
+		private Color hoverBackground;
+
+		/// The theme border color used when the button is hovered.
+		private Color hoverBorderColor;
+
+		/// The theme background color used when the button is pressed.
+		private Color pressedBackground;
+
+		/// Creates a custom button with no associated action.
+		///
+		/// @param main the main application instance
+		private AssignmentsButton(final Main main) {
+			this.main = main;
+			super();
+		}
+
+		/// Creates a custom button with the given action.
+		///
+		/// @param main the main application instance
+		/// @param action the action to associate with this button
+		private AssignmentsButton(final Main main, final Action action) {
+			this.main = main;
+			super(action);
+		}
+
+		/// Configures the graphics context for painting the button's background by
+		/// enabling antialiasing and setting the state-dependent background color.
+		///
+		/// @param g2d the graphics context to configure
+		void beginBackground(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			final var background = FlatButtonUI.buttonStateColor(this, getBackground(), disabledBackground,
+					focusedBackground, hoverBackground, pressedBackground);
+
+			g2d.setColor(FlatUIUtils.deriveColor(background, getBackground()));
+		}
+
+		/// Configures the graphics context for painting the button's border by
+		/// enabling antialiasing and setting the state-dependent border color.
+		///
+		/// @param g2d the graphics context to configure
+		void beginBorder(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setStroke(BORDER_STROKE);
+
+			final var color = FlatButtonUI.buttonStateColor(this, borderColor, disabledBorderColor, focusedBorderColor,
+					hoverBorderColor, null);
+			g2d.setColor(color);
+		}
+
+		/// Configures the graphics context for painting the button's foreground
+		/// (text and icons) by setting the state-dependent foreground color.
+		///
+		/// @param g2d the graphics context to configure
+		void beginForeground(final Graphics2D g2d) {
+			g2d.setColor(getForeground());
+		}
+
+		@Override
+		protected void paintBorder(final Graphics g) {
+			if (!isBorderPainted()) {
+				return;
+			}
+
+			final var g2d = (Graphics2D) g;
+			beginBorder(g2d);
+
+			final int lineWidth;
+			if (!(g2d.getStroke() instanceof final BasicStroke basicStroke)) {
+				throw new UnsupportedOperationException();
+			}
+			lineWidth = Math.round(basicStroke.getLineWidth());
+			final var halfLineWidth = lineWidth / 2;
+
+			// noinspection SuspiciousNameCombination
+			g2d.drawRect(halfLineWidth, halfLineWidth, getWidth() - lineWidth, getHeight() - lineWidth);
+		}
+
+		/// Paints the given text within the specified rectangle, wrapping it onto
+		/// two lines at the centermost space when the text contains spaces.
+		///
+		/// @param g the graphics context
+		/// @param textRect the bounding rectangle in which to paint the text
+		/// @param text the text to paint
+		void paintText(final Graphics g, final Rectangle textRect, final String text) {
+			final var foreground = isEnabled() ? getForeground() : disabledText;
+
+			if (text.length() > 1) {
+				final var center = text.length() / 2;
+				var centermostSpaceIndex = -1;
+				var minDistance = Integer.MAX_VALUE;
+
+				for (var i = 0; i < text.length(); i++) {
+					if (text.charAt(i) == ' ') {
+						final var distance = Math.abs(i - center);
+						if (distance < minDistance) {
+							minDistance = distance;
+							centermostSpaceIndex = i;
+						}
+					}
+				}
+
+				if (centermostSpaceIndex != -1) {
+					final var firstLine = text.substring(0, centermostSpaceIndex);
+					final var secondLine = text.substring(centermostSpaceIndex + 1);
+
+					final var metrics = getFontMetrics(g.getFont());
+					final var firstLineWidth = metrics.stringWidth(firstLine);
+					final var secondLineWidth = metrics.stringWidth(secondLine);
+					final var textHeight = metrics.getHeight();
+
+					final var firstLineRect = new Rectangle(textRect.x + (textRect.width - firstLineWidth) / 2,
+							textRect.y + (textRect.height - 2 * textHeight) / 2, firstLineWidth, textHeight);
+					final var secondLineRect = new Rectangle(textRect.x + (textRect.width - secondLineWidth) / 2,
+							textRect.y + (textRect.height - 2 * textHeight) / 2 + textHeight, secondLineWidth,
+							textHeight);
+
+					FlatButtonUI.paintText(g, this, firstLineRect, firstLine, foreground);
+					FlatButtonUI.paintText(g, this, secondLineRect, secondLine, foreground);
+					return;
+				}
+			}
+
+			FlatButtonUI.paintText(g, this, textRect, text, foreground);
+		}
+
+		/// Prevents deserialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
+		@Serial
+		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(AssignmentsButton.class.getName());
+		}
+
+		/// Stores the content area filled flag without delegating to the superclass,
+		/// since custom painting is handled manually.
+		@Override
+		public void setContentAreaFilled(final boolean b) {
+			contentAreaFilled = b;
+		}
+
+		/// Refreshes all cached theme colors from the current [UIManager] look-and-feel
+		/// settings.
+		private void updateTheme() {
+			focusedBackground = UIManager.getColor("Button.focusedBackground");
+			hoverBackground = UIManager.getColor("Button.hoverBackground");
+			pressedBackground = UIManager.getColor("Button.pressedBackground");
+			disabledBackground = UIManager.getColor("Button.disabledBackground");
+			disabledBorderColor = UIManager.getColor("Button.disabledBorderColor");
+			disabledText = UIManager.getColor("Button.disabledText");
+
+			focusedBorderColor = Main.LIGHT_BLUE_COLOR.brighter();
+
+			if (main.isDarkLookAndFeel()) {
+				borderColor = Color.LIGHT_GRAY;
+				hoverBorderColor = Color.WHITE;
+			} else {
+				borderColor = Color.BLACK;
+				hoverBorderColor = Color.GRAY;
+			}
+		}
+
+		/// Updates the UI delegate and refreshes theme colors.
+		@Override
+		public void updateUI() {
+			super.updateUI();
+
+			updateTheme();
+
+			final var background = FlatButtonUI.buttonStateColor(this, getBackground(), null, focusedBackground,
+					hoverBackground, pressedBackground);
+			setBackground(background);
+		}
+
+		/// Prevents serialization.
+		///
+		/// @param ignoredStream unused
+		/// @throws NotSerializableException always
+		@Serial
+		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+			throw new NotSerializableException(AssignmentsButton.class.getName());
+		}
 	}
 
 	/// A custom button used to represent compound stick controls, supporting
@@ -354,7 +607,7 @@ final class AssignmentsComponent extends JScrollPane {
 	/// the same axis, so that hover and press state is synchronized. The
 	/// button's hit area and painted shape are determined by its
 	/// [CompoundButtonLocation].
-	private static final class CompoundButton extends CustomButton {
+	private static final class CompoundButton extends AssignmentsButton {
 
 		@Serial
 		private static final long serialVersionUID = 5560396295119690740L;
@@ -369,10 +622,6 @@ final class AssignmentsComponent extends JScrollPane {
 		/// recomputed.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private Shape base;
-
-		/// The opposing axis button that shares this button's model, or `null` if there
-		/// is none.
-		private CompoundButton peer;
 
 		/// The cached hit and paint shape for this button.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -408,11 +657,11 @@ final class AssignmentsComponent extends JScrollPane {
 		/// `null` if there is no peer
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
 				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
+			super(main);
+
 			preferredSize = parentPanel.getPreferredSize();
 			this.buttonLocation = buttonLocation;
-			this.peer = peer;
 			if (peer != null) {
-				peer.setPeer(this);
 				setModel(peer.getModel());
 				model.removeActionListener(actionListener);
 			}
@@ -485,12 +734,9 @@ final class AssignmentsComponent extends JScrollPane {
 
 				@Override
 				public void paintIcon(final java.awt.Component c, final Graphics g, final int x, final int y) {
-					final var model = getModel();
-					final var peerModel = CompoundButton.this.peer != null ? CompoundButton.this.peer.getModel() : null;
-
 					final var g2d = (Graphics2D) g;
 
-					if (contentAreaFilled && (model.isEnabled() || (peerModel != null && peerModel.isEnabled()))) {
+					if (contentAreaFilled) {
 						beginBackground(g2d);
 
 						if (shape == null) {
@@ -565,7 +811,7 @@ final class AssignmentsComponent extends JScrollPane {
 		/// @return the preferred size
 		@Override
 		public Dimension getPreferredSize() {
-			return preferredSize;
+			return new Dimension(preferredSize);
 		}
 
 		@Override
@@ -599,6 +845,11 @@ final class AssignmentsComponent extends JScrollPane {
 			}
 		}
 
+		@Override
+		public boolean isContentAreaFilled() {
+			return false;
+		}
+
 		/// Paints the border by drawing the outline of this button's shape.
 		@Override
 		protected void paintBorder(final Graphics g) {
@@ -630,13 +881,6 @@ final class AssignmentsComponent extends JScrollPane {
 		@Serial
 		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
 			throw new NotSerializableException(CompoundButton.class.getName());
-		}
-
-		/// Sets the peer button that represents the opposite end of the same axis.
-		///
-		/// @param peer the opposing [CompoundButton]
-		private void setPeer(final CompoundButton peer) {
-			this.peer = peer;
 		}
 
 		@Override
@@ -680,228 +924,6 @@ final class AssignmentsComponent extends JScrollPane {
 			CompoundButtonLocation(final float startAngle) {
 				this.startAngle = startAngle;
 			}
-		}
-	}
-
-	/// Abstract base class for buttons with custom-painted backgrounds, borders,
-	/// and foregrounds.
-	///
-	/// Handles theme-aware rendering using FlatLaf UI colors and supports round
-	/// or shaped button painting with anti-aliased graphics.
-	private abstract static class CustomButton extends JButton {
-
-		@Serial
-		private static final long serialVersionUID = 5458020346838696827L;
-
-		/// The main application instance.
-		private final Main main;
-
-		/// Whether the content area of this button should be painted.
-		boolean contentAreaFilled = true;
-
-		/// The color used for disabled button text.
-		Color disabledText;
-
-		/// The theme color used for the button border in its normal state.
-		private Color borderColor;
-
-		/// The theme background color for default buttons.
-		private Color defaultBackground;
-
-		/// Whether default buttons should render their label in bold.
-		private boolean defaultBoldText;
-
-		/// The theme border color for default buttons.
-		private Color defaultBorderColor;
-
-		/// The theme background color for focused default buttons.
-		private Color defaultFocusedBackground;
-
-		/// The theme border color for focused default buttons.
-		private Color defaultFocusedBorderColor;
-
-		/// The theme foreground color for default buttons.
-		private Color defaultForeground;
-
-		/// The theme background color for hovered default buttons.
-		private Color defaultHoverBackground;
-
-		/// The theme border color for hovered default buttons.
-		private Color defaultHoverBorderColor;
-
-		/// The theme background color for pressed default buttons.
-		private Color defaultPressedBackground;
-
-		/// The theme border color used when the button is disabled.
-		private Color disabledBorderColor;
-
-		/// The theme background color used when the button is focused.
-		private Color focusedBackground;
-
-		/// The theme border color used when the button is focused.
-		private Color focusedBorderColor;
-
-		/// The theme background color used when the button is hovered.
-		private Color hoverBackground;
-
-		/// The theme border color used when the button is hovered.
-		private Color hoverBorderColor;
-
-		/// The theme background color used when the button is pressed.
-		private Color pressedBackground;
-
-		/// Creates a custom button with no associated action.
-		private CustomButton() {
-			updateTheme();
-			super.setContentAreaFilled(false);
-		}
-
-		/// Creates a custom button with the given action.
-		///
-		/// @param action the action to associate with this button
-		private CustomButton(final Action action) {
-			super(action);
-			updateTheme();
-			super.setContentAreaFilled(false);
-		}
-
-		/// Configures the graphics context for painting the button's background by
-		/// enabling anti-aliasing and setting the state-dependent background color.
-		///
-		/// @param g2d the graphics context to configure
-		void beginBackground(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			final var def = isDefaultButton();
-			final var background = FlatButtonUI.buttonStateColor(this, def ? defaultBackground : getBackground(), null,
-					def ? defaultFocusedBackground : focusedBackground, def ? defaultHoverBackground : hoverBackground,
-					def ? defaultPressedBackground : pressedBackground);
-
-			g2d.setColor(FlatUIUtils.deriveColor(background, def ? defaultBackground : getBackground()));
-		}
-
-		/// Configures the graphics context for painting the button's border by
-		/// enabling anti-aliasing and setting the state-dependent border color.
-		///
-		/// @param g2d the graphics context to configure
-		void beginBorder(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			final var def = isDefaultButton();
-			final var color = FlatButtonUI.buttonStateColor(this, def ? defaultBorderColor : borderColor,
-					disabledBorderColor, def ? defaultFocusedBorderColor : focusedBorderColor,
-					def ? defaultHoverBorderColor : hoverBorderColor, null);
-
-			g2d.setColor(color);
-		}
-
-		/// Configures the graphics context for painting the button's foreground
-		/// (text and icons) by setting the state-dependent foreground color.
-		///
-		/// @param g2d the graphics context to configure
-		void beginForeground(final Graphics2D g2d) {
-			final var color = isDefaultButton() ? defaultForeground : getForeground();
-			g2d.setColor(color);
-		}
-
-		@Override
-		public boolean isContentAreaFilled() {
-			return false;
-		}
-
-		/// Paints the given text within the specified rectangle, wrapping it onto
-		/// two lines at the centermost space when the text contains spaces.
-		///
-		/// @param g the graphics context
-		/// @param textRect the bounding rectangle in which to paint the text
-		/// @param text the text to paint
-		void paintText(final Graphics g, final Rectangle textRect, final String text) {
-			if (defaultBoldText && isDefaultButton() && getFont() instanceof UIResource) {
-				final var boldFont = g.getFont().deriveFont(Font.BOLD);
-				g.setFont(boldFont);
-
-				final var boldWidth = getFontMetrics(boldFont).stringWidth(text);
-				if (boldWidth > textRect.width) {
-					textRect.x -= (boldWidth - textRect.width) / 2;
-					textRect.width = boldWidth;
-				}
-			}
-
-			final var foreground = isEnabled() ? getForeground() : disabledText;
-
-			if (text.length() > 1) {
-				final var center = text.length() / 2;
-				var centermostSpaceIndex = -1;
-				var minDistance = Integer.MAX_VALUE;
-
-				for (var i = 0; i < text.length(); i++) {
-					if (text.charAt(i) == ' ') {
-						final var distance = Math.abs(i - center);
-						if (distance < minDistance) {
-							minDistance = distance;
-							centermostSpaceIndex = i;
-						}
-					}
-				}
-
-				if (centermostSpaceIndex != -1) {
-					final var firstLine = text.substring(0, centermostSpaceIndex);
-					final var secondLine = text.substring(centermostSpaceIndex + 1);
-
-					final var metrics = getFontMetrics(g.getFont());
-					final var firstLineWidth = metrics.stringWidth(firstLine);
-					final var secondLineWidth = metrics.stringWidth(secondLine);
-					final var textHeight = metrics.getHeight();
-
-					final var firstLineRect = new Rectangle(textRect.x + (textRect.width - firstLineWidth) / 2,
-							textRect.y + (textRect.height - 2 * textHeight) / 2, firstLineWidth, textHeight);
-					final var secondLineRect = new Rectangle(textRect.x + (textRect.width - secondLineWidth) / 2,
-							textRect.y + (textRect.height - 2 * textHeight) / 2 + textHeight, secondLineWidth,
-							textHeight);
-
-					FlatButtonUI.paintText(g, this, firstLineRect, firstLine, foreground);
-					FlatButtonUI.paintText(g, this, secondLineRect, secondLine, foreground);
-					return;
-				}
-			}
-
-			FlatButtonUI.paintText(g, this, textRect, text, foreground);
-		}
-
-		/// Stores the content area filled flag without delegating to the superclass,
-		/// since custom painting is handled manually.
-		@Override
-		public void setContentAreaFilled(final boolean b) {
-			contentAreaFilled = b;
-		}
-
-		/// Refreshes all cached theme colors from the current [UIManager] look-and-feel
-		/// settings.
-		private void updateTheme() {
-			defaultForeground = UIManager.getColor("Button.default.foreground");
-			defaultBackground = UIManager.getColor("Button.default.background");
-			focusedBackground = UIManager.getColor("Button.focusedBackground");
-			hoverBackground = UIManager.getColor("Button.hoverBackground");
-			pressedBackground = UIManager.getColor("Button.pressedBackground");
-			defaultFocusedBackground = UIManager.getColor("Button.default.focusedBackground");
-			defaultHoverBackground = UIManager.getColor("Button.default.hoverBackground");
-			defaultPressedBackground = UIManager.getColor("Button.default.pressedBackground");
-			borderColor = UIManager.getColor("Button.borderColor");
-			disabledBorderColor = UIManager.getColor("Button.disabledBorderColor");
-			focusedBorderColor = UIManager.getColor("Button.focusedBorderColor");
-			hoverBorderColor = UIManager.getColor("Button.hoverBorderColor");
-			defaultBorderColor = UIManager.getColor("Button.default.borderColor");
-			defaultHoverBorderColor = UIManager.getColor("Button.default.hoverBorderColor");
-			defaultFocusedBorderColor = UIManager.getColor("Button.default.focusedBorderColor");
-			disabledText = UIManager.getColor("Button.disabledText");
-			defaultBoldText = UIManager.getBoolean("Button.default.boldText");
-		}
-
-		/// Updates the UI delegate and refreshes theme colors.
-		@Override
-		public void updateUI() {
-			super.updateUI();
-			updateTheme();
 		}
 	}
 
@@ -972,7 +994,7 @@ final class AssignmentsComponent extends JScrollPane {
 	/// D-pad and the face button cluster (A, B, X, Y).
 	///
 	/// Each arm of the cross is a separate component button created via
-	/// [AssignmentsComponent#createComponentButton], laid out in a
+	/// [AssignmentsScrollPane#createComponentButton], laid out in a
 	/// [java.awt.GridBagLayout] with the up button at row 0, left and right at
 	/// row 1, and down at row 2.
 	private static final class FourWay extends JPanel {
@@ -983,7 +1005,7 @@ final class AssignmentsComponent extends JScrollPane {
 		/// Creates a four-way cross-panel with buttons for the up, left, right, and
 		/// down directions.
 		///
-		/// @param main the main application instance
+		/// @param assignmentsScrollPane the parent assignments scroll pane
 		/// @param upTitle the localized label for the up button
 		/// @param upComponent the gamepad component for the up direction
 		/// @param leftTitle the localized label for the left button
@@ -992,9 +1014,10 @@ final class AssignmentsComponent extends JScrollPane {
 		/// @param rightComponent the gamepad component for the right direction
 		/// @param downTitle the localized label for the down button
 		/// @param downComponent the gamepad component for the down direction
-		private FourWay(final Main main, final String upTitle, final Component upComponent, final String leftTitle,
-				final Component leftComponent, final String rightTitle, final Component rightComponent,
-				final String downTitle, final Component downComponent) {
+		private FourWay(final AssignmentsScrollPane assignmentsScrollPane, final String upTitle,
+				final Component upComponent, final String leftTitle, final Component leftComponent,
+				final String rightTitle, final Component rightComponent, final String downTitle,
+				final Component downComponent) {
 			super(new GridBagLayout());
 
 			setOpaque(false);
@@ -1006,16 +1029,16 @@ final class AssignmentsComponent extends JScrollPane {
 
 			constraints.gridx = 1;
 			constraints.gridy = 0;
-			add(createComponentButton(main, upTitle, upComponent), constraints);
+			add(assignmentsScrollPane.createComponentButton(upTitle, upComponent), constraints);
 			constraints.gridx = 0;
 			constraints.gridy = 1;
-			add(createComponentButton(main, leftTitle, leftComponent), constraints);
+			add(assignmentsScrollPane.createComponentButton(leftTitle, leftComponent), constraints);
 			constraints.gridx = 2;
 			constraints.gridy = 1;
-			add(createComponentButton(main, rightTitle, rightComponent), constraints);
+			add(assignmentsScrollPane.createComponentButton(rightTitle, rightComponent), constraints);
 			constraints.gridx = 1;
 			constraints.gridy = 2;
-			add(createComponentButton(main, downTitle, downComponent), constraints);
+			add(assignmentsScrollPane.createComponentButton(downTitle, downComponent), constraints);
 		}
 	}
 

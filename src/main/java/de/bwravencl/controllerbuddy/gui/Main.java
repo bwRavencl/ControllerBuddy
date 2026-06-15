@@ -202,6 +202,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -712,7 +713,7 @@ public final class Main {
 	}
 
 	/// Component that displays the current mode's button-to-action assignments.
-	private final AssignmentsComponent assignmentsComponent;
+	private final AssignmentsScrollPane assignmentsScrollPane;
 
 	/// Set of currently connected controllers discovered via SDL.
 	private final Set<Controller> controllers = new HashSet<>();
@@ -1160,8 +1161,8 @@ public final class Main {
 		newModePanel.add(newModeButton);
 		modesPanel.add(newModePanel, BorderLayout.SOUTH);
 
-		assignmentsComponent = new AssignmentsComponent(this);
-		tabbedPane.addTab(STRINGS.getString("ASSIGNMENTS_TAB"), assignmentsComponent);
+		assignmentsScrollPane = new AssignmentsScrollPane(this);
+		tabbedPane.addTab(STRINGS.getString("ASSIGNMENTS_TAB"), assignmentsScrollPane);
 
 		final var overlayPanel = new JPanel(new BorderLayout());
 		tabbedPane.addTab(STRINGS.getString("OVERLAY_TAB"), overlayPanel);
@@ -2700,7 +2701,7 @@ public final class Main {
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
-		final var darkTheme = !export && lookAndFeel != null && lookAndFeel.isDark();
+		final var darkTheme = !export && isDarkLookAndFeel();
 
 		final var workingCopySvgDocument = documentBuilder.newDocument();
 		final var copiedNode = workingCopySvgDocument.importNode(templateSvgDocument.getDocumentElement(), true);
@@ -3483,6 +3484,13 @@ public final class Main {
 	/// @return `true` if a client run mode is currently active
 	private boolean isClientRunning() {
 		return mainLoop.isTaskOfTypeRunning(ClientRunMode.class);
+	}
+
+	/// Returns whether the current look and feel is dark.
+	///
+	/// @return `true` if the look and feel is dark
+	boolean isDarkLookAndFeel() {
+		return lookAndFeel != null && lookAndFeel.isDark();
 	}
 
 	/// Returns whether haptic feedback is enabled.
@@ -5091,7 +5099,7 @@ public final class Main {
 	/// Updates the enabled state of all editor panels according to the given
 	/// running state.
 	///
-	/// Disables the modes list, new-mode panel, assignments component,
+	/// Disables the modes list, new-mode panel, assignments scroll pane,
 	/// indicators list, profile settings panel, and global settings panel while
 	/// a run mode is active. Re-enables and refreshes them when the run mode
 	/// stops.
@@ -5102,8 +5110,8 @@ public final class Main {
 		GuiUtils.setEnabledRecursive(modesListPanel, !running);
 		GuiUtils.setEnabledRecursive(newModePanel, !running);
 
-		if (assignmentsComponent != null) {
-			assignmentsComponent.setEnabled(!running);
+		if (assignmentsScrollPane != null) {
+			assignmentsScrollPane.setEnabled(!running);
 		}
 
 		if (running || (input != null && !input.getProfile().isShowOverlay())) {
@@ -5386,6 +5394,8 @@ public final class Main {
 		profileFileChooser.updateUI();
 		statusPanelPopupMenu.updateUI();
 		toggleDonateCheckBoxMenuItem.updateUI();
+
+		SwingUtilities.updateComponentTreeUI(assignmentsScrollPane);
 
 		updateVisualizationPanel();
 	}

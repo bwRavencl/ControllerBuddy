@@ -41,7 +41,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-final class AssignmentsComponentTest {
+final class AssignmentsScrollPaneTest {
 
 	@Mock
 	Main mockMain;
@@ -51,7 +51,7 @@ final class AssignmentsComponentTest {
 	/// component so the constructor follows the
 	/// [ComponentType.BUTTON]/[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK] branch.
 	private Object createCompoundButton() throws ReflectiveOperationException {
-		final var compoundButtonClass = Arrays.stream(AssignmentsComponent.class.getDeclaredClasses())
+		final var compoundButtonClass = Arrays.stream(AssignmentsScrollPane.class.getDeclaredClasses())
 				.filter(c -> "CompoundButton".equals(c.getSimpleName())).findFirst().orElseThrow();
 		final var constructor = compoundButtonClass.getDeclaredConstructor(Main.class, JPanel.class, Component.class);
 		constructor.setAccessible(true);
@@ -71,33 +71,8 @@ final class AssignmentsComponentTest {
 	}
 
 	@Nested
-	@DisplayName("checkDimensionIsSquare()")
-	final class CheckDimensionIsSquareTests {
-
-		@Test
-		@DisplayName("does not throw for a square dimension")
-		void doesNotThrowForSquareDimension() throws ReflectiveOperationException {
-			invokeCheckDimensionIsSquare(new Dimension(50, 50));
-		}
-
-		private void invokeCheckDimensionIsSquare(final Dimension dimension) throws ReflectiveOperationException {
-			final var method = AssignmentsComponent.class.getDeclaredMethod("checkDimensionIsSquare", Dimension.class);
-			method.setAccessible(true);
-			method.invoke(null, dimension);
-		}
-
-		@Test
-		@DisplayName("throws IllegalArgumentException when width and height differ")
-		void throwsForNonSquareDimension() {
-			final var invocationTargetException = Assertions.assertThrows(InvocationTargetException.class,
-					() -> invokeCheckDimensionIsSquare(new Dimension(50, 60)));
-			Assertions.assertEquals(IllegalArgumentException.class, invocationTargetException.getCause().getClass());
-		}
-	}
-
-	@Nested
 	@DisplayName("CustomButton.paintText()")
-	final class CustomButtonPaintTextTests {
+	final class AssignmentsButtonPaintTextTests {
 
 		private Object button;
 
@@ -109,10 +84,10 @@ final class AssignmentsComponentTest {
 			// "A BC DEF": spaces at indices 1 and 4, length=8, centre=4.
 			// Space at 4 has distance 0; space at 1 has distance 3 → split at 4.
 			// First line: "A BC", second line: "DEF".
-			try (final var flatMock = Mockito.mockStatic(FlatButtonUI.class)) {
+			try (final var flatButtonUiMock = Mockito.mockStatic(FlatButtonUI.class)) {
 				final var textCaptor = ArgumentCaptor.forClass(String.class);
 				invokePaintText(button, graphics, new Rectangle(0, 0, 200, 50), "A BC DEF");
-				flatMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
+				flatButtonUiMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
 						textCaptor.capture(), Mockito.any()), Mockito.times(2));
 				Assertions.assertEquals(List.of("A BC", "DEF"), textCaptor.getAllValues());
 			}
@@ -125,10 +100,10 @@ final class AssignmentsComponentTest {
 			// Space at 3 (dist 1) and space at 5 (dist 1) are equidistant.
 			// The algorithm keeps the first one it finds with strictly less distance,
 			// so index 3 wins → first line: "A B", second line: "C D E".
-			try (final var flatMock = Mockito.mockStatic(FlatButtonUI.class)) {
+			try (final var flatButtonUiMock = Mockito.mockStatic(FlatButtonUI.class)) {
 				final var textCaptor = ArgumentCaptor.forClass(String.class);
 				invokePaintText(button, graphics, new Rectangle(0, 0, 200, 50), "A B C D E");
-				flatMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
+				flatButtonUiMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
 						textCaptor.capture(), Mockito.any()), Mockito.times(2));
 				Assertions.assertEquals(List.of("A B", "C D E"), textCaptor.getAllValues());
 			}
@@ -136,6 +111,7 @@ final class AssignmentsComponentTest {
 
 		@BeforeEach
 		void setUp() throws ReflectiveOperationException {
+			Mockito.when(mockMain.isDarkLookAndFeel()).thenReturn(false);
 			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
 			button = createCompoundButton();
 			final var image = new BufferedImage(200, 50, BufferedImage.TYPE_INT_ARGB);
@@ -145,10 +121,10 @@ final class AssignmentsComponentTest {
 		@Test
 		@DisplayName("text with a space is split into two lines at that space")
 		void textWithOneSpaceIsSplitIntoTwoLines() throws ReflectiveOperationException {
-			try (final var flatMock = Mockito.mockStatic(FlatButtonUI.class)) {
+			try (final var flatButtonUiMock = Mockito.mockStatic(FlatButtonUI.class)) {
 				final var textCaptor = ArgumentCaptor.forClass(String.class);
 				invokePaintText(button, graphics, new Rectangle(0, 0, 200, 50), "hello world");
-				flatMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
+				flatButtonUiMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
 						textCaptor.capture(), Mockito.any()), Mockito.times(2));
 				Assertions.assertEquals(List.of("hello", "world"), textCaptor.getAllValues());
 			}
@@ -157,11 +133,36 @@ final class AssignmentsComponentTest {
 		@Test
 		@DisplayName("text without spaces renders as a single line")
 		void textWithoutSpaceTakesSingleLinePath() throws ReflectiveOperationException {
-			try (final var flatMock = Mockito.mockStatic(FlatButtonUI.class)) {
+			try (final var flatButtonUiMock = Mockito.mockStatic(FlatButtonUI.class)) {
 				invokePaintText(button, graphics, new Rectangle(0, 0, 200, 50), "NoSpaces");
-				flatMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-						Mockito.any()), Mockito.times(1));
+				flatButtonUiMock.verify(() -> FlatButtonUI.paintText(Mockito.any(), Mockito.any(), Mockito.any(),
+						Mockito.any(), Mockito.any()), Mockito.times(1));
 			}
+		}
+	}
+
+	@Nested
+	@DisplayName("checkDimensionIsSquare()")
+	final class CheckDimensionIsSquareTests {
+
+		@Test
+		@DisplayName("does not throw for a square dimension")
+		void doesNotThrowForSquareDimension() throws ReflectiveOperationException {
+			invokeCheckDimensionIsSquare(new Dimension(50, 50));
+		}
+
+		private void invokeCheckDimensionIsSquare(final Dimension dimension) throws ReflectiveOperationException {
+			final var method = AssignmentsScrollPane.class.getDeclaredMethod("checkDimensionIsSquare", Dimension.class);
+			method.setAccessible(true);
+			method.invoke(null, dimension);
+		}
+
+		@Test
+		@DisplayName("throws IllegalArgumentException when width and height differ")
+		void throwsForNonSquareDimension() {
+			final var invocationTargetException = Assertions.assertThrows(InvocationTargetException.class,
+					() -> invokeCheckDimensionIsSquare(new Dimension(50, 60)));
+			Assertions.assertEquals(IllegalArgumentException.class, invocationTargetException.getCause().getClass());
 		}
 	}
 }
