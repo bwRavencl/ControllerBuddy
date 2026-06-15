@@ -536,7 +536,7 @@ public final class GuiUtils {
 		/// The frame being dragged.
 		private final JFrame frame;
 
-		/// The main application instance used to access preferences and display bounds.
+		/// The main application instance.
 		private final Main main;
 
 		/// The mouse position at the start of the current drag, or `null` if not

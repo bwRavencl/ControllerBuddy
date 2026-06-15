@@ -693,6 +693,9 @@ final class AssignmentsComponent extends JScrollPane {
 		@Serial
 		private static final long serialVersionUID = 5458020346838696827L;
 
+		/// The main application instance.
+		private final Main main;
+
 		/// Whether the content area of this button should be painted.
 		boolean contentAreaFilled = true;
 
@@ -916,7 +919,7 @@ final class AssignmentsComponent extends JScrollPane {
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Component component;
 
-		/// The main application instance used to open the edit dialog.
+		/// The main application instance.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
 		private final Main main;
 
@@ -965,7 +968,7 @@ final class AssignmentsComponent extends JScrollPane {
 		}
 	}
 
-	/// A panel containing four buttons arranged in a cross pattern, used for the
+	/// A panel containing four buttons arranged in a cross-pattern, used for the
 	/// D-pad and the face button cluster (A, B, X, Y).
 	///
 	/// Each arm of the cross is a separate component button created via
@@ -977,7 +980,7 @@ final class AssignmentsComponent extends JScrollPane {
 		@Serial
 		private static final long serialVersionUID = -5178710302755638535L;
 
-		/// Creates a four-way cross panel with buttons for the up, left, right, and
+		/// Creates a four-way cross-panel with buttons for the up, left, right, and
 		/// down directions.
 		///
 		/// @param main the main application instance
