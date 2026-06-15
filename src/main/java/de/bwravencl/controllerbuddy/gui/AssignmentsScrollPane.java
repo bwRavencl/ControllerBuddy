@@ -666,6 +666,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 				model.removeActionListener(actionListener);
 			}
 
+			model.addChangeListener(_ -> {
+				if (model.isRollover()) {
+					getParent().setComponentZOrder(this, 0);
+				}
+			});
+
 			final var componentType = component.type();
 			final var componentIndex = component.index();
 			final var swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
