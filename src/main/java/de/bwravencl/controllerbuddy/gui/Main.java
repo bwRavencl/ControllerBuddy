@@ -328,6 +328,9 @@ public final class Main {
 	/// Default overlay scaling factor applied when no preference is stored.
 	static final int DEFAULT_OVERLAY_SCALING = 1;
 
+	/// Signature light blue color.
+	static final Color LIGHT_BLUE_COLOR = new Color(68, 138, 222);
+
 	/// Filename of the controller SVG resource used in the visualization overlay.
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
 
@@ -335,7 +338,7 @@ public final class Main {
 	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
 
 	/// Default height in pixels for the main dialog window.
-	private static final int DIALOG_BOUNDS_HEIGHT = 710;
+	private static final int DIALOG_BOUNDS_HEIGHT = 760;
 
 	/// Default width in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_WIDTH = 1020;
@@ -634,9 +637,6 @@ public final class Main {
 
 	/// Map from SDL symbol strings to human-readable button descriptions.
 	private static final Map<String, String> SYMBOL_TO_DESCRIPTION_MAP;
-
-	/// Foreground color used for the tab labels in the tabbed settings pane.
-	private static final Color TABBED_PANE_FOREGROUND_COLOR = new Color(68, 138, 222);
 
 	/// Classpath resource path for the tray icon hint image.
 	private static final String TRAY_ICON_HINT_IMAGE_RESOURCE_PATH = "/tray_icon_hint.png";
@@ -1141,7 +1141,7 @@ public final class Main {
 		}
 
 		tabbedPane.setFont(tabbedPane.getFont().deriveFont(16f).deriveFont(Font.BOLD));
-		tabbedPane.setForeground(TABBED_PANE_FOREGROUND_COLOR);
+		tabbedPane.setForeground(LIGHT_BLUE_COLOR);
 		frame.getContentPane().add(tabbedPane);
 
 		final var modesPanel = new JPanel(new BorderLayout());

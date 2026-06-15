@@ -21,6 +21,7 @@ import com.formdev.flatlaf.ui.FlatButtonUI;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -65,6 +67,10 @@ final class AssignmentsComponent extends JScrollPane {
 	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
 
+	/// Color used for filling the controller shape.
+	private static final Color CONTROLLER_SHAPE_COLOR = new Color(Main.LIGHT_BLUE_COLOR.getRed(),
+			Main.LIGHT_BLUE_COLOR.getGreen(), Main.LIGHT_BLUE_COLOR.getBlue(), 128);
+
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
 
@@ -77,9 +83,10 @@ final class AssignmentsComponent extends JScrollPane {
 	/// @param main the main application instance
 	AssignmentsComponent(final Main main) {
 		assignmentsPanel.setLayout(new GridBagLayout());
+		assignmentsPanel.setOpaque(false);
 
 		final var constraints = new GridBagConstraints();
-		constraints.insets = new Insets(8, 8, 8, 8);
+		constraints.insets = new Insets(16, 16, 16, 16);
 		constraints.weightx = 1d;
 		constraints.weighty = 1d;
 
@@ -158,7 +165,50 @@ final class AssignmentsComponent extends JScrollPane {
 		constraints.gridy = 3;
 		assignmentsPanel.add(new Stick(main, Stick.StickType.RIGHT), constraints);
 
-		setViewportView(assignmentsPanel);
+		final var centeringPanel = new JPanel(new GridBagLayout()) {
+
+			@Serial
+			private static final long serialVersionUID = -3144368069964550322L;
+
+			@Override
+			protected void paintComponent(final Graphics g) {
+				super.paintComponent(g);
+
+				final var g2 = (Graphics2D) g.create();
+				try {
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+					final var bounds = assignmentsPanel.getBounds();
+					g2.translate(bounds.getCenterX(), bounds.getCenterY() - 72);
+
+					final var w = bounds.getWidth();
+					final var h = bounds.getHeight();
+
+					final var path = new Path2D.Float();
+					path.moveTo(-0.28 * w, -0.42 * h);
+					path.quadTo(0.0, -0.3696 * h, 0.28 * w, -0.42 * h);
+					path.curveTo(0.42 * w, -0.4704 * h, 0.49 * w, -0.42 * h, 0.56 * w, -0.168 * h);
+					path.curveTo(0.665 * w, 0.168 * h, 0.735 * w, 0.504 * h, 0.665 * w, 0.7056 * h);
+					path.curveTo(0.63 * w, 0.8736 * h, 0.42 * w, 0.8736 * h, 0.315 * w, 0.672 * h);
+					path.quadTo(0.0, 0.5544 * h, -0.315 * w, 0.672 * h);
+					path.curveTo(-0.42 * w, 0.8736 * h, -0.63 * w, 0.8736 * h, -0.665 * w, 0.7056 * h);
+					path.curveTo(-0.735 * w, 0.504 * h, -0.665 * w, 0.168 * h, -0.56 * w, -0.168 * h);
+					path.curveTo(-0.49 * w, -0.42 * h, -0.42 * w, -0.4704 * h, -0.28 * w, -0.42 * h);
+					path.closePath();
+
+					g2.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+					g2.setColor(Color.BLACK);
+					g2.draw(path);
+
+					g2.setColor(CONTROLLER_SHAPE_COLOR);
+					g2.fill(path);
+				} finally {
+					g2.dispose();
+				}
+			}
+		};
+		centeringPanel.add(assignmentsPanel);
+		setViewportView(centeringPanel);
 	}
 
 	/// Throws an exception if the given dimension is not square (width != height).
@@ -944,6 +994,8 @@ final class AssignmentsComponent extends JScrollPane {
 				final String downTitle, final Component downComponent) {
 			super(new GridBagLayout());
 
+			setOpaque(false);
+
 			final var constraints = new GridBagConstraints();
 			constraints.insets = new Insets(2, 2, 2, 2);
 			constraints.weightx = 1d;
@@ -985,6 +1037,7 @@ final class AssignmentsComponent extends JScrollPane {
 			setPreferredSize(preferredSize);
 
 			setLayout(new OverlayLayout(this));
+			setOpaque(false);
 
 			final var left = type == StickType.LEFT;
 
