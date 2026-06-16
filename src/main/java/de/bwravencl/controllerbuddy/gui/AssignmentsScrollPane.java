@@ -66,15 +66,14 @@ import org.lwjgl.sdl.SDLGamepad;
 /// buttons placed in their conventional positions.
 final class AssignmentsScrollPane extends JScrollPane {
 
-	/// Stroke used for drawing the border of the controller shape and component
-	/// buttons.
-	private static final Stroke BORDER_STROKE = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
 	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
 
+	/// Stroke used for drawing the controller outline.
+	private static final Stroke CONTROLLER_STROKE = new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
 	/// Texture used for filling the controller shape.
-	private static final TexturePaint CONTROLLER_SHAPE_TEXTURE;
+	private static final TexturePaint CONTROLLER_TEXTURE;
 
 	/// Texture tile size in pixels.
 	private static final int TEXTURE_TILE_SIZE = 8;
@@ -100,7 +99,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		g2d.dispose();
 
-		CONTROLLER_SHAPE_TEXTURE = new TexturePaint(textureImage,
+		CONTROLLER_TEXTURE = new TexturePaint(textureImage,
 				new Rectangle2D.Float(0f, 0f, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE));
 	}
 
@@ -213,6 +212,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 				final var g2d = (Graphics2D) g.create();
 				try {
 					g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+					g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+							RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
 					final var bounds = assignmentsPanel.getBounds();
 					g2d.translate(bounds.getCenterX(), bounds.getCenterY() - 72);
@@ -232,11 +233,11 @@ final class AssignmentsScrollPane extends JScrollPane {
 					path.curveTo(-0.49 * w, -0.42 * h, -0.42 * w, -0.4704 * h, -0.28 * w, -0.42 * h);
 					path.closePath();
 
-					g2d.setStroke(BORDER_STROKE);
+					g2d.setStroke(CONTROLLER_STROKE);
 					g2d.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
 					g2d.draw(path);
 
-					g2d.setPaint(CONTROLLER_SHAPE_TEXTURE);
+					g2d.setPaint(CONTROLLER_TEXTURE);
 
 					g2d.fill(path);
 				} finally {
@@ -289,6 +290,11 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 				private int getDiameter() {
 					return Math.min(getWidth(), getHeight());
+				}
+
+				@Override
+				boolean isBorderAntialiasingNeeded() {
+					return true;
 				}
 
 				@Override
@@ -412,6 +418,9 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// or shaped button painting with anti-aliased graphics.
 	private static class AssignmentsButton extends JButton {
 
+		/// Stroke used for drawing the border of the button.
+		private static final Stroke BORDER_STROKE = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+
 		@Serial
 		private static final long serialVersionUID = 5458020346838696827L;
 
@@ -480,11 +489,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 		}
 
 		/// Configures the graphics context for painting the button's border by
-		/// enabling antialiasing and setting the state-dependent border color.
+		/// enabling antialiasing if needed and setting the state-dependent border
+		/// color.
 		///
 		/// @param g2d the graphics context to configure
+		/// @see #isBorderAntialiasingNeeded()
 		void beginBorder(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					isBorderAntialiasingNeeded() ? RenderingHints.VALUE_ANTIALIAS_ON
+							: RenderingHints.VALUE_ANTIALIAS_OFF);
+
 			g2d.setStroke(BORDER_STROKE);
 
 			final var color = FlatButtonUI.buttonStateColor(this, borderColor, disabledBorderColor, focusedBorderColor,
@@ -498,6 +512,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// @param g2d the graphics context to configure
 		void beginForeground(final Graphics2D g2d) {
 			g2d.setColor(getForeground());
+		}
+
+		/// Returns whether antialiasing is needed for painting the button's border. By
+		/// default, this returns `false`, but round buttons should override it to
+		/// enable smoother edges.
+		///
+		/// @return `true` if antialiasing is needed for painting the border, `false`
+		/// otherwise
+		boolean isBorderAntialiasingNeeded() {
+			return false;
 		}
 
 		@Override
@@ -877,6 +901,11 @@ final class AssignmentsScrollPane extends JScrollPane {
 					shape = outerArea;
 				}
 			}
+		}
+
+		@Override
+		boolean isBorderAntialiasingNeeded() {
+			return true;
 		}
 
 		@Override
