@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.gui;
 
+import de.bwravencl.controllerbuddy.input.HotSwappingButton;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -184,33 +185,33 @@ final class MainTest {
 		@Test
 		@DisplayName("every enum constant round-trips through fromId")
 		void allConstantsRoundTrip() throws ReflectiveOperationException {
-			for (final var button : EnumSet.allOf(Main.HotSwappingButton.class)) {
+			for (final var button : EnumSet.allOf(HotSwappingButton.class)) {
 				Assertions.assertEquals(button, invokeFromId(button.id));
 			}
 		}
 
-		private Main.HotSwappingButton invokeFromId(final int id) throws ReflectiveOperationException {
-			final var method = Main.HotSwappingButton.class.getDeclaredMethod("fromId", int.class);
+		private HotSwappingButton invokeFromId(final int id) throws ReflectiveOperationException {
+			final var method = HotSwappingButton.class.getDeclaredMethod("fromId", int.class);
 			method.setAccessible(true);
-			return (Main.HotSwappingButton) method.invoke(null, id);
+			return (HotSwappingButton) method.invoke(null, id);
 		}
 
 		@Test
 		@DisplayName("returns the correct enum constant for a known button id")
 		void returnsCorrectConstantForKnownId() throws ReflectiveOperationException {
-			Assertions.assertEquals(Main.HotSwappingButton.A, invokeFromId(Main.HotSwappingButton.A.id));
+			Assertions.assertEquals(HotSwappingButton.A, invokeFromId(HotSwappingButton.A.id));
 		}
 
 		@Test
 		@DisplayName("returns NONE for its own id (-1)")
 		void returnsNoneForNoneId() throws ReflectiveOperationException {
-			Assertions.assertEquals(Main.HotSwappingButton.NONE, invokeFromId(-1));
+			Assertions.assertEquals(HotSwappingButton.NONE, invokeFromId(-1));
 		}
 
 		@Test
 		@DisplayName("returns NONE for an id that does not match any enum constant")
 		void returnsNoneForUnknownId() throws ReflectiveOperationException {
-			Assertions.assertEquals(Main.HotSwappingButton.NONE, invokeFromId(Integer.MIN_VALUE));
+			Assertions.assertEquals(HotSwappingButton.NONE, invokeFromId(Integer.MIN_VALUE));
 		}
 	}
 

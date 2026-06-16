@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.Controller;
-import de.bwravencl.controllerbuddy.gui.Main.HotSwappingButton;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;

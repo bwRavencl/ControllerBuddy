@@ -20,16 +20,15 @@ package de.bwravencl.controllerbuddy.gui;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.parser.LoaderContext;
 import com.github.weisj.jsvg.parser.SVGLoader;
-import com.github.weisj.jsvg.view.ViewBox;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
+import de.bwravencl.controllerbuddy.input.HotSwappingButton;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -60,6 +59,7 @@ import de.bwravencl.controllerbuddy.runmode.OutputRunMode;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode;
 import de.bwravencl.controllerbuddy.runmode.UinputDevice;
+import de.bwravencl.controllerbuddy.util.MainLoop;
 import de.bwravencl.controllerbuddy.util.RunnableWithDefaultExceptionHandler;
 import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.awt.BasicStroke;
@@ -84,7 +84,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -94,7 +93,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -150,12 +148,8 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -164,7 +158,6 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -437,12 +430,6 @@ public final class Main {
 	/// CLI option name for printing the application version.
 	private static final String OPTION_VERSION = "version";
 
-	/// Long dimension in pixels of the overlay progress indicator bar.
-	private static final int OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION = 150;
-
-	/// Short dimension in pixels of the overlay progress indicator bar.
-	private static final int OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION = 20;
-
 	/// Maximum width in pixels of the overlay mode label.
 	private static final int OVERLAY_MODE_LABEL_MAX_WIDTH = 200;
 
@@ -648,11 +635,11 @@ public final class Main {
 	/// XML namespace URI for XLink attributes used in SVG documents.
 	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
-	/// The singleton `Main` application instance.
-	static volatile Main main;
-
 	/// Whether message dialogs should be suppressed during automated runs.
 	static boolean skipMessageDialogs;
+
+	/// The singleton `Main` application instance.
+	private static Main main;
 
 	/// Whether the application has received a termination signal.
 	private static volatile boolean terminated;
@@ -965,6 +952,7 @@ public final class Main {
 		}, "Shutdown Hook"));
 
 		this.mainLoop = mainLoop;
+		mainLoop.setMain(this);
 
 		try {
 			random = SecureRandom.getInstanceStrong();
@@ -1851,14 +1839,6 @@ public final class Main {
 		if (!SDLInit.SDL_IsMainThread()) {
 			throw new RuntimeException("Not on SDL main thread");
 		}
-	}
-
-	/// Constructs a one-pixel border styled with the current UI theme's component
-	/// border color, used for overlays.
-	///
-	/// @return a new [LineBorder] instance
-	private static LineBorder createOverlayBorder() {
-		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
 	/// Constructs an HTML snippet for the visualization legend showing only the
@@ -2895,6 +2875,7 @@ public final class Main {
 	/// Returns the main loop used for SDL thread task scheduling.
 	///
 	/// @return the main loop
+	@SuppressWarnings("exports")
 	public MainLoop getMainLoop() {
 		return mainLoop;
 	}
@@ -3251,7 +3232,7 @@ public final class Main {
 			final var innerBorderThickness = Math.round(2 * overlayScaling);
 			currentModeLabelInnerBorder = (EmptyBorder) BorderFactory.createEmptyBorder(0, innerBorderThickness, 0,
 					innerBorderThickness);
-			currentModeLabelOuterBorder = createOverlayBorder();
+			currentModeLabelOuterBorder = GuiUtils.createOverlayBorder();
 			final var border = BorderFactory.createCompoundBorder(currentModeLabelOuterBorder,
 					currentModeLabelInnerBorder);
 			currentModeLabel.setBorder(border);
@@ -5539,93 +5520,6 @@ public final class Main {
 		svgPanel.setBackground(UIManager.getColor("Panel.background"));
 	}
 
-	/// Enumeration of gamepad buttons that can be assigned as the hot-swapping
-	/// trigger.
-	///
-	/// Each constant maps a human-readable label to its corresponding SDL button
-	/// ID. [#NONE] represents the unassigned state with an ID of `-1`.
-	public enum HotSwappingButton {
-
-		/// No button assigned for hot-swapping.
-		NONE(-1, "NONE"),
-
-		/// The A (south) gamepad button.
-		A(SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH, "A_BUTTON"),
-
-		/// The B (east) gamepad button.
-		B(SDLGamepad.SDL_GAMEPAD_BUTTON_EAST, "B_BUTTON"),
-
-		/// The X (west) gamepad button.
-		X(SDLGamepad.SDL_GAMEPAD_BUTTON_WEST, "X_BUTTON"),
-
-		/// The Y (north) gamepad button.
-		Y(SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH, "Y_BUTTON"),
-
-		/// The left shoulder gamepad button.
-		LEFT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, "LEFT_SHOULDER"),
-
-		/// The right shoulder gamepad button.
-		RIGHT_SHOULDER(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, "RIGHT_SHOULDER"),
-
-		/// The back gamepad button.
-		BACK(SDLGamepad.SDL_GAMEPAD_BUTTON_BACK, "BACK_BUTTON"),
-
-		/// The start gamepad button.
-		START(SDLGamepad.SDL_GAMEPAD_BUTTON_START, "START_BUTTON"),
-
-		/// The guide gamepad button.
-		GUIDE(SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE, "GUIDE_BUTTON"),
-
-		/// The left stick press gamepad button.
-		LEFT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK, "LEFT_STICK"),
-
-		/// The right stick press gamepad button.
-		RIGHT_STICK(SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK, "RIGHT_STICK"),
-
-		/// The D-pad up gamepad button.
-		DPAD_UP(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP, "DPAD_UP"),
-
-		/// The D-pad right gamepad button.
-		DPAD_RIGHT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT, "DPAD_RIGHT"),
-
-		/// The D-pad down gamepad button.
-		DPAD_DOWN(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN, "DPAD_DOWN"),
-
-		/// The D-pad left gamepad button.
-		DPAD_LEFT(SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT, "DPAD_LEFT");
-
-		/// The SDL button ID, or `-1` for [#NONE].
-		public final int id;
-
-		/// Localized display label for this button constant.
-		private final String label;
-
-		/// Constructs a [HotSwappingButton] constant with the given SDL button ID and
-		/// localization key.
-		///
-		/// @param id the SDL button ID, or `-1` for [#NONE]
-		/// @param labelKey the resource-bundle key for the localized display label
-		HotSwappingButton(final int id, final String labelKey) {
-			this.id = id;
-			label = STRINGS.getString(labelKey);
-		}
-
-		/// Returns the [HotSwappingButton] constant whose id matches the given
-		/// SDL button ID, or [#NONE] if no match is found.
-		///
-		/// @param id the SDL button ID to look up
-		/// @return the matching [HotSwappingButton] constant, or [#NONE] as default
-		private static HotSwappingButton fromId(final int id) {
-			return EnumSet.allOf(HotSwappingButton.class).stream()
-					.filter(hotSwappingButton -> hotSwappingButton.id == id).findFirst().orElse(NONE);
-		}
-
-		@Override
-		public String toString() {
-			return label;
-		}
-	}
-
 	/// Internal enumeration of the available run mode types.
 	///
 	/// Used to track which run mode was most recently started so the application
@@ -5851,240 +5745,6 @@ public final class Main {
 		}
 	}
 
-	/// Custom progress bar used as an overlay axis indicator, supporting solid and
-	/// line styles, orientation, inversion, detent markers, and overlay scaling.
-	///
-	/// Renders the current virtual axis value as a colored bar or line drawn
-	/// directly in the component's `paintComponent` method. Detent positions are
-	/// shown as tick marks, and the bar dimensions are scaled by the configured
-	/// overlay scaling factor.
-	private static final class IndicatorProgressBar extends JProgressBar {
-
-		/// Number of subdivisions used to compute detent tick-mark positions.
-		private static final int SUBDIVISIONS = 3;
-
-		@Serial
-		private static final long serialVersionUID = 8167193907929992395L;
-
-		/// Set of normalized axis values at which detent tick marks are drawn.
-		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final Set<Float> detentValues;
-
-		/// Whether axis values should be inverted before rendering.
-		private final boolean inverted;
-
-		/// Overlay axis configuration used to derive rendering parameters.
-		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private final OverlayAxis overlayAxis;
-
-		/// Scale factor applied to subdivisions based on overlay scaling.
-		private final int subdivisionScale;
-
-		/// Constructs an [IndicatorProgressBar] for the given overlay axis and detent
-		/// values.
-		///
-		/// Configures the orientation, dimensions, inversion, border, and foreground
-		/// color from the [OverlayAxis] and the current overlay scaling factor.
-		///
-		/// @param main the main application instance
-		/// @param overlayAxis the overlay axis configuration defining orientation,
-		/// style, color, and inversion
-		/// @param detentValues the set of normalized axis values at which detent tick
-		/// marks should be drawn
-		private IndicatorProgressBar(final Main main, final OverlayAxis overlayAxis, final Set<Float> detentValues) {
-			final var overlayAxisOrientation = overlayAxis.getOrientation();
-			super(overlayAxisOrientation.toSwingConstant());
-
-			this.overlayAxis = overlayAxis;
-			this.detentValues = detentValues;
-
-			final var overlayScaling = main.getOverlayScaling();
-			subdivisionScale = Math.round(overlayScaling);
-
-			setBorder(createOverlayBorder());
-
-			final int width;
-			final int height;
-			switch (overlayAxisOrientation) {
-			case HORIZONTAL -> {
-				width = OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION;
-				height = OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION;
-
-				inverted = !overlayAxis.isInverted();
-			}
-			case VERTICAL -> {
-				width = OVERLAY_INDICATOR_PROGRESS_SHORT_DIMENSION;
-				height = OVERLAY_INDICATOR_PROGRESS_LONG_DIMENSION;
-
-				inverted = overlayAxis.isInverted();
-			}
-			default -> throw new IllegalArgumentException("Unsupported orientation: " + orientation);
-			}
-
-			setPreferredSize(new Dimension(Math.round(width * overlayScaling), Math.round(height * overlayScaling)));
-			setForeground(overlayAxis.getColor());
-		}
-
-		/// Calculates the x-coordinate of the left edge of a centered vertical line
-		/// at the given position.
-		///
-		/// @param pos the center position in pixels
-		/// @param lineThickness the thickness of the line in pixels
-		/// @return the left x-coordinate for the line rectangle
-		private static int calculateLineX(final int pos, final int lineThickness) {
-			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
-		}
-
-		/// Calculates the y-coordinate of the top edge of a centered horizontal line
-		/// at the given position.
-		///
-		/// @param pos the center position in pixels
-		/// @param lineThickness the thickness of the line in pixels
-		/// @return the top y-coordinate for the line rectangle
-		private static int calculateLineY(final int pos, final int lineThickness) {
-			return pos - lineThickness / 2 + ((pos % 2 == 0) ? 0 : -1);
-		}
-
-		/// Draws a subdivision tick mark or detent marker at the given position.
-		///
-		/// For horizontal orientation the tick is a vertical rectangle; for
-		/// vertical orientation it is a horizontal rectangle. The width of the
-		/// rectangle is scaled by the `subdivisionScale` factor.
-		///
-		/// @param g the graphics context to draw into
-		/// @param pos the pixel position along the progress bar's major axis
-		/// @param width the current component width in pixels
-		/// @param height the current component height in pixels
-		private void drawDivider(final Graphics g, final int pos, final int width, final int height) {
-			final var halfScale = subdivisionScale / 2;
-
-			switch (overlayAxis.getOrientation()) {
-			case HORIZONTAL -> {
-				final var x = calculateLineX(pos, 1) - halfScale;
-				g.fillRect(x, 0, subdivisionScale, height);
-			}
-			case VERTICAL -> {
-				final var y = calculateLineY(pos, 1) - halfScale;
-				g.fillRect(0, y, width, subdivisionScale);
-			}
-			}
-		}
-
-		@Override
-		public int getMaximum() {
-			return inverted ? -super.getMinimum() : super.getMaximum();
-		}
-
-		@Override
-		public int getMinimum() {
-			return inverted ? -super.getMaximum() : super.getMinimum();
-		}
-
-		@Override
-		public int getValue() {
-			return inverted ? -super.getValue() : super.getValue();
-		}
-
-		@Override
-		protected void paintComponent(final Graphics g) {
-			final var overlayAxisOrientation = overlayAxis.getOrientation();
-			final var width = getWidth();
-			final var height = getHeight();
-
-			final var size = switch (overlayAxisOrientation) {
-			case HORIZONTAL -> width;
-			case VERTICAL -> height;
-			};
-
-			switch (overlayAxis.getStyle()) {
-			case SOLID -> super.paintComponent(g);
-			case LINE -> {
-				final var g2d = (Graphics2D) g.create();
-
-				g2d.setColor(getBackground());
-				g2d.fillRect(0, 0, width, height);
-				g2d.setColor(getForeground());
-
-				final var percent = (float) getPercentComplete();
-
-				switch (overlayAxisOrientation) {
-				case HORIZONTAL -> {
-					final var lineThickness = width / 10;
-					final var progressWidth = Math.round(percent * width);
-					final var x = calculateLineX(progressWidth, lineThickness);
-					final var w = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
-
-					g2d.fillRect(x, 0, w, height);
-				}
-				case VERTICAL -> {
-					final var lineThickness = height / 10;
-					final var progressHeight = Math.round(percent * height);
-					final var y = height - calculateLineY(progressHeight, lineThickness);
-					final var h = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
-
-					g2d.fillRect(0, y, width, h);
-				}
-				}
-
-				g2d.dispose();
-			}
-			}
-
-			g.setColor(Color.WHITE);
-			for (var i = 1; i <= SUBDIVISIONS; i++) {
-				final var pos = i * (size / (SUBDIVISIONS + 1));
-				drawDivider(g, pos, width, height);
-			}
-
-			g.setColor(Color.RED);
-			for (final var detentValue : detentValues) {
-				final var pos = (int) Input.normalize(detentValue, -1f, 1f, 0, size);
-				drawDivider(g, pos, width, height);
-			}
-		}
-
-		/// Prevents deserialization.
-		///
-		/// @param ignoredStream unused stream parameter
-		/// @throws NotSerializableException always
-		@Serial
-		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
-			throw new NotSerializableException(IndicatorProgressBar.class.getName());
-		}
-
-		@Override
-		public void setMaximum(final int n) {
-			if (inverted) {
-				super.setMinimum(-n);
-			} else {
-				super.setMaximum(n);
-			}
-		}
-
-		@Override
-		public void setMinimum(final int n) {
-			if (inverted) {
-				super.setMaximum(-n);
-			} else {
-				super.setMinimum(n);
-			}
-		}
-
-		@Override
-		public void setValue(final int n) {
-			super.setValue(inverted ? -n : n);
-		}
-
-		/// Prevents serialization.
-		///
-		/// @param ignoredStream unused stream parameter
-		/// @throws NotSerializableException always
-		@Serial
-		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
-			throw new NotSerializableException(IndicatorProgressBar.class.getName());
-		}
-	}
-
 	/// Record holding a configured Gson instance and its associated
 	/// ActionTypeAdapter for profile serialization.
 	///
@@ -6177,563 +5837,6 @@ public final class Main {
 			if ((getLength() + str.length()) <= limit) {
 				super.insertString(offs, str, a);
 			}
-		}
-	}
-
-	/// The SDL main-thread event loop and task scheduler.
-	///
-	/// All SDL API calls must be executed on this loop's thread. Tasks can be
-	/// submitted synchronously (blocking the caller) or asynchronously. The loop
-	/// also polls SDL events when SDL event polling is active.
-	public static final class MainLoop {
-
-		/// Queue of pending tasks to be executed on the SDL main thread.
-		private final BlockingQueue<TaskQueueEntry> taskQueue = new LinkedBlockingDeque<>();
-
-		/// The SDL main thread that runs this loop.
-		private final Thread thread = Thread.currentThread();
-
-		/// The task currently being executed, or `null` if idle.
-		private volatile TaskQueueEntry currentTaskQueueEntry;
-
-		/// Whether the loop should poll SDL events on each iteration.
-		private volatile boolean pollSdlEvents;
-
-		/// Whether the loop is in the process of shutting down.
-		private volatile boolean shuttingDown;
-
-		/// Prevents instantiation by clients outside [Main].
-		private MainLoop() {
-		}
-
-		/// Enqueues a task entry and wakes the main loop thread.
-		///
-		/// @param taskQueueEntry the entry to enqueue
-		/// @throws IllegalStateException if the main loop thread is no longer alive
-		/// or is shutting down
-		private void addTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
-			if (!thread.isAlive()) {
-				throw new IllegalStateException("Main loop thread is not alive");
-			}
-
-			if (shuttingDown) {
-				throw new IllegalStateException("Main loop is shutting down");
-			}
-
-			synchronized (this) {
-				taskQueue.add(taskQueueEntry);
-				notifyAll();
-			}
-		}
-
-		/// Runs the main loop, processing tasks and polling SDL events until
-		/// interrupted.
-		///
-		/// Continuously dequeues and executes [TaskQueueEntry] instances. When no
-		/// tasks are pending and SDL event polling is not active, the thread waits.
-		/// If an uncaught exception escapes a task, all remaining queued tasks are
-		/// completed exceptionally and the exception is re-thrown. On exit, SDL is
-		/// shut down via `SDL_Quit`.
-		private void enterLoop() {
-			LOGGER.info("Entering main loop");
-			try {
-				while (!Thread.interrupted()) {
-					currentTaskQueueEntry = taskQueue.poll();
-					if (currentTaskQueueEntry != null) {
-						try {
-							executeTaskQueueEntry(currentTaskQueueEntry);
-						} finally {
-							currentTaskQueueEntry = null;
-						}
-					} else if (pollSdlEvents) {
-						main.pollSdlEvents();
-
-						try {
-							// noinspection BusyWait
-							Thread.sleep(10L);
-						} catch (final InterruptedException _) {
-							return;
-						}
-					} else {
-						try {
-							synchronized (this) {
-								if ( taskQueue.isEmpty() && !pollSdlEvents) {
-									wait();
-								}
-							}
-						} catch (final InterruptedException _) {
-							return;
-						}
-					}
-				}
-			} catch (final Throwable t) {
-				synchronized (this) {
-					while (!taskQueue.isEmpty()) {
-						final var taskQueueEntry = taskQueue.poll();
-						if (taskQueueEntry.futureResult != null) {
-							taskQueueEntry.futureResult.completeExceptionally(
-									new Exception("Task aborted due to uncaught exception in previous task", t));
-						}
-					}
-				}
-
-				throw t;
-			} finally {
-				shuttingDown = true;
-
-				try {
-					SDLInit.SDL_Quit();
-				} catch (final Throwable t) {
-					LOGGER.log(Level.SEVERE, t.getMessage(), t);
-				}
-
-				LOGGER.info("Exiting main loop");
-			}
-		}
-
-		/// Executes a single queued task entry on the main loop thread.
-		///
-		/// Calls [Callable#call] or [Runnable#run] depending on the task type and
-		/// completes the associated [CompletableFuture] with the result. On
-		/// failure, completes the future exceptionally when one is present, or
-		/// sets the shutting-down flag and re-throws wrapped in a
-		/// [RuntimeException] otherwise.
-		///
-		/// @param taskQueueEntry the entry to execute
-		private void executeTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
-			try {
-				if (taskQueueEntry.task instanceof final Callable<?> callable) {
-					final var result = callable.call();
-					taskQueueEntry.futureResult.complete(result);
-				} else if (taskQueueEntry.task instanceof final Runnable runnable) {
-					runnable.run();
-					if (taskQueueEntry.futureResult != null) {
-						taskQueueEntry.futureResult.complete(null);
-					}
-				}
-			} catch (final Throwable t) {
-				if (taskQueueEntry.futureResult != null) {
-					taskQueueEntry.futureResult.completeExceptionally(t);
-				} else {
-					shuttingDown = true;
-					throw new RuntimeException(t);
-				}
-			}
-		}
-
-		/// Returns whether the main loop is available to accept new tasks.
-		///
-		/// @return `true` if the loop thread is alive and not shutting down
-		private boolean isAvailable() {
-			return thread.isAlive() && !shuttingDown;
-		}
-
-		/// Returns whether the currently executing task is an instance of the
-		/// given class.
-		///
-		/// @param clazz the class to check against the current task
-		/// @return `true` if a task is running and its type is assignable from
-		/// `clazz`
-		private boolean isTaskOfTypeRunning(final Class<?> clazz) {
-			if (currentTaskQueueEntry == null) {
-				return false;
-			}
-
-			return clazz.isAssignableFrom(currentTaskQueueEntry.task.getClass());
-		}
-
-		/// Submits a [Runnable] task for asynchronous execution on the main loop
-		/// thread.
-		///
-		/// Returns immediately without waiting for the task to complete.
-		///
-		/// @param runnable the task to execute
-		private void runAsync(final Runnable runnable) {
-			addTaskQueueEntry(new TaskQueueEntry(runnable, null));
-		}
-
-		/// Submits a [Runnable] task for synchronous execution on the main loop
-		/// thread and blocks until it completes.
-		///
-		/// @param runnable the task to execute
-		/// @throws RuntimeException if the task throws an exception
-		private void runSync(final Runnable runnable) {
-			final var futureResult = new CompletableFuture<>();
-			addTaskQueueEntry(new TaskQueueEntry(runnable, futureResult));
-
-			try {
-				futureResult.get();
-			} catch (final ExecutionException e) {
-				throw new RuntimeException(e);
-			} catch (final InterruptedException _) {
-				Thread.currentThread().interrupt();
-			}
-		}
-
-		/// Submits a [Callable] task for synchronous execution on the main loop
-		/// thread and blocks until it completes.
-		///
-		/// @param <V> the return type of the callable
-		/// @param callable the task to execute
-		/// @return an [Optional] containing the task result, or empty if the
-		/// calling thread was interrupted
-		/// @throws RuntimeException if the task throws an exception
-		@SuppressWarnings("unchecked")
-		private <V> Optional<V> runSync(final Callable<V> callable) {
-			final var futureResult = new CompletableFuture<>();
-			addTaskQueueEntry(new TaskQueueEntry(callable, futureResult));
-
-			try {
-				return Optional.ofNullable((V) futureResult.get());
-			} catch (final ExecutionException e) {
-				throw new RuntimeException(e);
-			} catch (final InterruptedException _) {
-				Thread.currentThread().interrupt();
-			}
-
-			return Optional.empty();
-		}
-
-		/// Shuts down the main loop by interrupting its thread and waiting for it
-		/// to terminate.
-		///
-		/// Disables SDL event polling, interrupts the loop thread, and spins until
-		/// the thread has fully stopped.
-		private void shutdown() {
-			pollSdlEvents = false;
-
-			thread.interrupt();
-
-			while (thread.isAlive()) {
-				try {
-					// noinspection BusyWait
-					Thread.sleep(10L);
-				} catch (final InterruptedException _) {
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-
-		/// Enables SDL event polling in the main loop and wakes the loop thread.
-		///
-		/// Once enabled, each loop iteration calls `pollSdlEvents` after
-		/// processing the task queue.
-		private void startSdlEventPolling() {
-			synchronized (this) {
-				pollSdlEvents = true;
-				notifyAll();
-			}
-		}
-
-		/// Blocks the calling thread until all queued tasks and the currently
-		/// executing task have completed.
-		private void waitForTask() {
-			while (currentTaskQueueEntry != null || !taskQueue.isEmpty()) {
-				try {
-					// noinspection BusyWait
-					Thread.sleep(10L);
-				} catch (final InterruptedException _) {
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-
-		/// Drains and executes all pending tasks in the queue, then returns. Must be
-		/// called from the main loop thread.
-		@SuppressWarnings("NamedLikeContextualKeyword")
-		public void yield() {
-			if (!Thread.currentThread().equals(thread)) {
-				throw new RuntimeException("yield() can only be called on " + thread.getName());
-			}
-
-			for (;;) {
-				final var taskQueueEntry = taskQueue.poll();
-				if (taskQueueEntry == null) {
-					break;
-				}
-				executeTaskQueueEntry(taskQueueEntry);
-			}
-		}
-
-		/// Internal record pairing a task ([Runnable] or [Callable]) with its
-		/// [CompletableFuture] result.
-		///
-		/// The `futureResult` is completed by the main loop thread once the task
-		/// finishes, allowing synchronous callers to block until the result is
-		/// available.
-		///
-		/// @param task the task to execute, either a [Runnable] or a [Callable]
-		/// @param futureResult the future that is completed with the task's result
-		private record TaskQueueEntry(Object task, CompletableFuture<Object> futureResult) {
-		}
-	}
-
-	/// Panel that renders an [SVGDocument] with interactive zoom and pan support.
-	///
-	/// Left-clicking zooms in and right-clicking zooms out at the cursor position.
-	/// When zoomed in, the user can pan by dragging the panel. The mouse wheel also
-	/// adjusts the zoom level incrementally.
-	private static final class SVGPanel extends JPanel {
-
-		/// Maximum zoom factor the panel allows.
-		private static final float MAX_ZOOM_FACTOR = 5f;
-
-		/// Cursor shown when the panel is in pan mode (zoomed in).
-		private static final Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-
-		/// Zoom factor multiplier applied per click.
-		private static final float ZOOM_CLICK_FACTOR = 1.3f;
-
-		/// Cursor shown when the panel is in zoom mode.
-		private static final Cursor ZOOM_CURSOR;
-
-		/// Hot-spot point within the zoom cursor image.
-		private static final Point ZOOM_CURSOR_HOT_SPOT = new Point(11, 11);
-
-		/// Classpath resource path for the zoom cursor GIF image.
-		private static final String ZOOM_GIF_RESOURCE_PATH = "/zoom.gif";
-
-		/// Panning weight applied when zooming in via click.
-		private static final float ZOOM_IN_PANNING_FACTOR = 1.5f;
-
-		/// Exponent controlling how fast the view re-centers when zooming out.
-		private static final double ZOOM_OUT_RETURN_TO_CENTER_EXPONENT = 2.0;
-
-		/// Base zoom factor per unit of scroll input
-		private static final float ZOOM_SCROLL_BASE = 1.05f;
-
-		@Serial
-		private static final long serialVersionUID = 3771880542091875983L;
-
-		static {
-			final var inputStream = SVGPanel.class.getResourceAsStream(ZOOM_GIF_RESOURCE_PATH);
-			if (inputStream == null) {
-				throw new RuntimeException("Resource not found: " + ZOOM_GIF_RESOURCE_PATH);
-			}
-
-			try {
-				final var bufferedImage = ImageIO.read(inputStream);
-
-				ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, ZOOM_CURSOR_HOT_SPOT,
-						"zoom");
-			} catch (final IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		/// Current horizontal pan offset in panel coordinates.
-		private float offsetX = 0f;
-
-		/// Current vertical pan offset in panel coordinates.
-		private float offsetY = 0f;
-
-		/// The SVG document currently rendered by this panel.
-		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private SVGDocument svgDocument;
-
-		/// Current zoom factor applied to the SVG rendering.
-		private float zoomFactor = 1f;
-
-		/// Constructs an [SVGPanel] with zoom and pan mouse listeners registered.
-		private SVGPanel() {
-			setCursor(ZOOM_CURSOR);
-
-			final var mouseAdapter = new MouseAdapter() {
-
-				private Point lastMouseLocation;
-
-				@Override
-				public void mouseClicked(final MouseEvent e) {
-					super.mouseClicked(e);
-
-					final float zoomRatio;
-					switch (e.getButton()) {
-					case MouseEvent.BUTTON1 -> zoomRatio = ZOOM_CLICK_FACTOR;
-					case MouseEvent.BUTTON3 -> zoomRatio = 1f / ZOOM_CLICK_FACTOR;
-					default -> {
-						return;
-					}
-					}
-
-					handleZoom(zoomRatio, e.getX(), e.getY());
-				}
-
-				@Override
-				public void mouseDragged(final MouseEvent e) {
-					super.mouseDragged(e);
-
-					if (zoomFactor <= 1f || lastMouseLocation == null) {
-						return;
-					}
-
-					final var maxOffsetX = (getZoomedWidth() - getWidth()) / 2f;
-					final var maxOffsetY = (getZoomedHeight() - getHeight()) / 2f;
-
-					offsetX = Math.clamp(offsetX + e.getX() - lastMouseLocation.x, -maxOffsetX, maxOffsetX);
-					offsetY = Math.clamp(offsetY + e.getY() - lastMouseLocation.y, -maxOffsetY, maxOffsetY);
-
-					lastMouseLocation = e.getPoint();
-
-					repaint();
-
-					if (!MOVE_CURSOR.equals(getCursor())) {
-						setCursor(MOVE_CURSOR);
-					}
-				}
-
-				@Override
-				public void mousePressed(final MouseEvent e) {
-					super.mousePressed(e);
-
-					if (e.getButton() != MouseEvent.BUTTON1 || zoomFactor <= 1f) {
-						return;
-					}
-
-					lastMouseLocation = e.getPoint();
-				}
-
-				@Override
-				public void mouseReleased(final MouseEvent e) {
-					super.mouseReleased(e);
-
-					if (e.getButton() != MouseEvent.BUTTON1) {
-						return;
-					}
-
-					lastMouseLocation = null;
-
-					if (!ZOOM_CURSOR.equals(getCursor())) {
-						setCursor(ZOOM_CURSOR);
-					}
-				}
-			};
-
-			addMouseListener(mouseAdapter);
-			addMouseMotionListener(mouseAdapter);
-
-			addMouseWheelListener(e -> {
-				if (e.getScrollType() == MouseWheelEvent.WHEEL_BLOCK_SCROLL) {
-					return;
-				}
-
-				final var preciseWheelRotation = e.getPreciseWheelRotation();
-				if (Math.abs(preciseWheelRotation) < 0.1) {
-					return;
-				}
-
-				final var zoomRatio = (float) Math.pow(ZOOM_SCROLL_BASE, -preciseWheelRotation);
-
-				handleZoom(zoomRatio, e.getX(), e.getY());
-			});
-		}
-
-		/// Returns the component height scaled by the current zoom factor.
-		///
-		/// @return the zoomed height in pixels
-		private int getZoomedHeight() {
-			return Math.round(getHeight() * zoomFactor);
-		}
-
-		/// Returns the component width scaled by the current zoom factor.
-		///
-		/// @return the zoomed width in pixels
-		private int getZoomedWidth() {
-			return Math.round(getWidth() * zoomFactor);
-		}
-
-		/// Applies a zoom ratio relative to the given mouse cursor position and
-		/// repaints the panel.
-		///
-		/// Clamps the resulting zoom factor between `1.0` and [#MAX_ZOOM_FACTOR].
-		/// When zooming in, the pan offset is adjusted so the area under the
-		/// cursor stays centered. When zooming out, the offset is reduced toward
-		/// zero to smoothly return the view to the center.
-		///
-		/// @param zoomRatio the multiplicative factor to apply to the current zoom
-		/// @param mouseX the x-coordinate of the zoom focus point in component space
-		/// @param mouseY the y-coordinate of the zoom focus point in component space
-		private void handleZoom(final float zoomRatio, final int mouseX, final int mouseY) {
-			zoomFactor = Math.clamp(zoomFactor * zoomRatio, 1f, MAX_ZOOM_FACTOR);
-
-			if (zoomFactor >= MAX_ZOOM_FACTOR) {
-				return;
-			}
-
-			if (zoomFactor == 1f) {
-				offsetX = 0;
-				offsetY = 0;
-			} else {
-				if (zoomRatio >= 1f) {
-					final var x = (mouseX - getWidth() / 2f) * ZOOM_IN_PANNING_FACTOR;
-					final var y = (mouseY - getHeight() / 2f) * ZOOM_IN_PANNING_FACTOR;
-
-					offsetX -= (x - offsetX) * (1f - 1f / zoomRatio);
-					offsetY -= (y - offsetY) * (1f - 1f / zoomRatio);
-				} else {
-					final var factor = (float) Math.pow(zoomRatio, ZOOM_OUT_RETURN_TO_CENTER_EXPONENT);
-
-					offsetX *= factor;
-					offsetY *= factor;
-				}
-			}
-
-			repaint();
-		}
-
-		@Override
-		protected void paintComponent(final Graphics g) {
-			super.paintComponent(g);
-
-			if (svgDocument == null) {
-				return;
-			}
-
-			final var g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-
-			final var width = getWidth();
-			final var height = getHeight();
-
-			final var zoomedWidth = getZoomedWidth();
-			final var zoomedHeight = getZoomedHeight();
-
-			svgDocument.render(this, g2d, new ViewBox(-(zoomedWidth - width) / 2f + offsetX,
-					-(zoomedHeight - height) / 2f + offsetY, zoomedWidth, zoomedHeight));
-		}
-
-		/// Prevents deserialization.
-		///
-		/// @param ignoredStream unused stream parameter
-		/// @throws NotSerializableException always
-		@Serial
-		private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
-			throw new NotSerializableException(SVGPanel.class.getName());
-		}
-
-		/// Sets the SVG document to render and resets the zoom and pan state.
-		///
-		/// After updating the document the panel is repainted to display the new
-		/// content.
-		///
-		/// @param svgDocument the SVG document to display, or `null` to clear the
-		/// panel
-		private void setSvgDocument(final SVGDocument svgDocument) {
-			this.svgDocument = svgDocument;
-			zoomFactor = 1f;
-			offsetX = 0f;
-			offsetY = 0f;
-
-			repaint();
-		}
-
-		/// Prevents serialization.
-		///
-		/// @param ignoredStream unused stream parameter
-		/// @throws NotSerializableException always
-		@Serial
-		private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
-			throw new NotSerializableException(SVGPanel.class.getName());
 		}
 	}
 

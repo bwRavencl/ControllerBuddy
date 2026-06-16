@@ -59,6 +59,8 @@ import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
@@ -137,6 +139,14 @@ public final class GuiUtils {
 		editorPane.setCaretColor(editorPane.getBackground());
 
 		return editorPane;
+	}
+
+	/// Constructs a one-pixel border styled with the current UI theme's component
+	/// border color, used for overlays.
+	///
+	/// @return a new [LineBorder] instance
+	static LineBorder createOverlayBorder() {
+		return new LineBorder(UIManager.getColor("Component.borderColor"), 1);
 	}
 
 	/// Creates a text field with a right-click context menu providing undo, cut,
