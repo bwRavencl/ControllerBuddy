@@ -183,12 +183,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 			protected void paintComponent(final Graphics g) {
 				super.paintComponent(g);
 
-				final var g2 = (Graphics2D) g.create();
+				final var g2d = (Graphics2D) g.create();
 				try {
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+					g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 					final var bounds = assignmentsPanel.getBounds();
-					g2.translate(bounds.getCenterX(), bounds.getCenterY() - 72);
+					g2d.translate(bounds.getCenterX(), bounds.getCenterY() - 72);
 
 					final var w = bounds.getWidth();
 					final var h = bounds.getHeight();
@@ -205,14 +205,14 @@ final class AssignmentsScrollPane extends JScrollPane {
 					path.curveTo(-0.49 * w, -0.42 * h, -0.42 * w, -0.4704 * h, -0.28 * w, -0.42 * h);
 					path.closePath();
 
-					g2.setStroke(BORDER_STROKE);
-					g2.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
-					g2.draw(path);
+					g2d.setStroke(BORDER_STROKE);
+					g2d.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
+					g2d.draw(path);
 
-					g2.setColor(CONTROLLER_SHAPE_COLOR);
-					g2.fill(path);
+					g2d.setColor(CONTROLLER_SHAPE_COLOR);
+					g2d.fill(path);
 				} finally {
-					g2.dispose();
+					g2d.dispose();
 				}
 			}
 		};

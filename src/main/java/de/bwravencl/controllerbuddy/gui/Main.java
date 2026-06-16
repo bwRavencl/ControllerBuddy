@@ -3356,15 +3356,15 @@ public final class Main {
 				@Override
 				public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width,
 						final int height) {
-					final var g2 = (Graphics2D) g.create();
-					g2.setStroke(new BasicStroke(THICKNESS));
+					final var g2d = (Graphics2D) g.create();
+					g2d.setStroke(new BasicStroke(THICKNESS));
 
-					paintSegmentedLine(g2, x, y, x + width, y, true);
-					paintSegmentedLine(g2, x, y + height - THICKNESS, x + width, y + height - THICKNESS, true);
-					paintSegmentedLine(g2, x, y, x, y + height, false);
-					paintSegmentedLine(g2, x + width - THICKNESS, y, x + width - THICKNESS, y + height, false);
+					paintSegmentedLine(g2d, x, y, x + width, y, true);
+					paintSegmentedLine(g2d, x, y + height - THICKNESS, x + width, y + height - THICKNESS, true);
+					paintSegmentedLine(g2d, x, y, x, y + height, false);
+					paintSegmentedLine(g2d, x + width - THICKNESS, y, x + width - THICKNESS, y + height, false);
 
-					g2.dispose();
+					g2d.dispose();
 				}
 			};
 
@@ -5999,11 +5999,11 @@ public final class Main {
 			switch (overlayAxis.getStyle()) {
 			case SOLID -> super.paintComponent(g);
 			case LINE -> {
-				final var g2 = (Graphics2D) g.create();
+				final var g2d = (Graphics2D) g.create();
 
-				g2.setColor(getBackground());
-				g2.fillRect(0, 0, width, height);
-				g2.setColor(getForeground());
+				g2d.setColor(getBackground());
+				g2d.fillRect(0, 0, width, height);
+				g2d.setColor(getForeground());
 
 				final var percent = (float) getPercentComplete();
 
@@ -6014,7 +6014,7 @@ public final class Main {
 					final var x = calculateLineX(progressWidth, lineThickness);
 					final var w = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
 
-					g2.fillRect(x, 0, w, height);
+					g2d.fillRect(x, 0, w, height);
 				}
 				case VERTICAL -> {
 					final var lineThickness = height / 10;
@@ -6022,11 +6022,11 @@ public final class Main {
 					final var y = height - calculateLineY(progressHeight, lineThickness);
 					final var h = lineThickness + ((lineThickness % 2 == 0) ? 1 : 0);
 
-					g2.fillRect(0, y, width, h);
+					g2d.fillRect(0, y, width, h);
 				}
 				}
 
-				g2.dispose();
+				g2d.dispose();
 			}
 			}
 
