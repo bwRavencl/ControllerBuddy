@@ -33,12 +33,15 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -70,12 +73,36 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// Height in pixels used for all component buttons.
 	private static final int BUTTON_HEIGHT = 50;
 
-	/// Color used for filling the controller shape.
-	private static final Color CONTROLLER_SHAPE_COLOR = new Color(Main.LIGHT_BLUE_COLOR.getRed(),
-			Main.LIGHT_BLUE_COLOR.getGreen(), Main.LIGHT_BLUE_COLOR.getBlue(), 128);
+	/// Texture used for filling the controller shape.
+	private static final TexturePaint CONTROLLER_SHAPE_TEXTURE;
+
+	/// Texture tile size in pixels.
+	private static final int TEXTURE_TILE_SIZE = 8;
 
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
+
+	static {
+		final var textureImage = new BufferedImage(TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
+		final var g2d = textureImage.createGraphics();
+
+		final var backgroundColor = new Color(Main.LIGHT_BLUE_COLOR.getRed(), Main.LIGHT_BLUE_COLOR.getGreen(),
+				Main.LIGHT_BLUE_COLOR.getBlue(), 128);
+		g2d.setColor(backgroundColor);
+		g2d.fillRect(0, 0, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE);
+
+		final var patternColor = new Color(48, 48, 48, 32);
+		g2d.setColor(patternColor);
+		g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4,
+				TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4);
+		g2d.drawLine(TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4,
+				TEXTURE_TILE_SIZE / 2 + TEXTURE_TILE_SIZE / 4, TEXTURE_TILE_SIZE / 4);
+
+		g2d.dispose();
+
+		CONTROLLER_SHAPE_TEXTURE = new TexturePaint(textureImage,
+				new Rectangle2D.Float(0f, 0f, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE));
+	}
 
 	/// The panel that holds the arranged gamepad component buttons.
 	private final JPanel assignmentsPanel = new JPanel();
@@ -209,7 +236,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 					g2d.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
 					g2d.draw(path);
 
-					g2d.setColor(CONTROLLER_SHAPE_COLOR);
+					g2d.setPaint(CONTROLLER_SHAPE_TEXTURE);
+
 					g2d.fill(path);
 				} finally {
 					g2d.dispose();
