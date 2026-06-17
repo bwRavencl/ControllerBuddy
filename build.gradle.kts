@@ -225,14 +225,26 @@ spotless {
   val sdlGameControllerDBExclusion = "${removeProjectDirPrefix(sdlGameControllerDBDir)}/**"
 
   format("newlineAndTrailingWhitespace") {
-    target("**/*.properties", "**/*.yml", "src/**/resources/META-INF/services/*")
+    target(
+        "spotless.eclipseformat.xml",
+        "**/*.properties",
+        "**/*.yml",
+        "src/**/resources/META-INF/services/*",
+    )
     targetExclude(sdlGameControllerDBExclusion)
     endWithNewline()
     trimTrailingWhitespace()
   }
 
   format("onlyNewline") {
-    target("LICENSE", "**/*.gitignore", "**/*.md", "**/*.txt")
+    target(
+        "LICENSE",
+        "spotbugs-baseline.xml",
+        "spotless.importorder",
+        "**/*.gitignore",
+        "**/*.md",
+        "**/*.txt",
+    )
     targetExclude(removeProjectDirPrefix(gamecontrollerdbResFile), sdlGameControllerDBExclusion)
     endWithNewline()
   }
