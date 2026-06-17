@@ -217,7 +217,7 @@ spotless {
   }
 
   format("xml") {
-    target("**/*.svg")
+    target("spotbugs-exclude.xml", "**/*.svg")
     eclipseWtp(EclipseWtpFormatterStep.XML)
     endWithNewline()
   }
@@ -240,6 +240,7 @@ spotless {
 
 spotbugs {
   baselineFile = file("spotbugs-baseline.xml")
+  excludeFilter = file("spotbugs-exclude.xml")
   effort = Effort.valueOf("MAX")
   extraArgs = listOf("-maxRank", "20")
   onlyAnalyze = listOf("de.bwravencl.-")
