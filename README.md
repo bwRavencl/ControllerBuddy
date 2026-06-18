@@ -14,7 +14,7 @@ ControllerBuddy is an advanced gamepad mapping software that supports the creati
 
 In addition to the simple mapping of buttons and axes of a physical game controller to keyboard and mouse input, ControllerBuddy also supports feeding input commands to a virtual joystick device (vJoy/uinput).
 
-The goal of ControllerBuddy is to allow the user to control target applications exclusively with a gamepad without ever having to reach for a keyboard or mouse.
+ControllerBuddy eliminates the need for an expensive HOTAS setup to enjoy your favorite simulators. It gives you full control using just a gamepad - without even needing a keyboard or mouse.
 
 ## ⬇️ Download and Installation
 
