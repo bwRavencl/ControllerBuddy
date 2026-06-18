@@ -124,11 +124,11 @@ jobs:
       - name: Build ZIP
         id: build_zip
         if: runner.os == 'Windows'
-        run: ./gradlew distZip --info
+        run: ./gradlew distZip --info --non-interactive
       - name: Build TGZ
         id: build_tgz
         if: runner.os == 'Linux'
-        run: ./gradlew distTar --info
+        run: ./gradlew distTar --info --non-interactive
       - name: Upload Build-Reports Artifact
         if: failure() && (steps.build_zip.outcome == 'failure' || steps.build_tgz.outcome == 'failure')
         uses: actions/upload-artifact@v7

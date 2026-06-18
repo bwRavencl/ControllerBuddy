@@ -32,16 +32,16 @@ See @README for detailed project overview.
 ## Build Commands
 
 ```sh
-./gradlew build                                                             # Build the project
-./gradlew test                                                              # Run all tests
-./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest' # Single test class
-./gradlew test --tests '*.VersionUtilsTest.returnsEmptyForNull'             # Single test method
-./gradlew jacocoTestReport                                                  # Run all tests and generate test coverage report
-./gradlew spotlessApply                                                     # Apply code formatting
-./gradlew check                                                             # Run SpotBugs + Spotless + all tests
-./gradlew run                                                               # Run the application
-./gradlew generateConstants                                                 # Generate version/license constants
-./gradlew generateModuleInfo                                                # Generate module-info.java
+./gradlew build --non-interactive                                                             # Build the project
+./gradlew test --non-interactive                                                              # Run all tests
+./gradlew test --tests 'de.bwravencl.controllerbuddy.util.VersionUtilsTest --non-interactive' # Single test class
+./gradlew test --tests '*.VersionUtilsTest.returnsEmptyForNull' --non-interactive             # Single test method
+./gradlew jacocoTestReport                                                                    # Run all tests and generate test coverage report
+./gradlew spotlessApply                                                                       # Apply code formatting
+./gradlew check                                                                               # Run SpotBugs + Spotless + all tests
+./gradlew run                                                                                 # Run the application
+./gradlew generateConstants                                                                   # Generate version/license constants
+./gradlew generateModuleInfo                                                                  # Generate module-info.java
 ```
 
 ## Architecture
