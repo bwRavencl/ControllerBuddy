@@ -503,7 +503,7 @@ public final class GuiUtils {
 		}
 
 		if (main != null) {
-			main.show();
+			main.setVisible(true);
 		}
 
 		// noinspection MagicConstant

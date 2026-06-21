@@ -73,7 +73,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -199,7 +198,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -260,12 +258,12 @@ import org.xml.sax.SAXException;
 
 /// Main application class for ControllerBuddy.
 ///
-/// Manages the primary GUI frame, system tray integration, SDL gamepad event
+/// Manages the primary GUI this, system tray integration, SDL gamepad event
 /// handling, profile loading/saving, overlay rendering, and all run modes
 /// (local, client, server).
 /// This class is a singleton; the static `main` field holds the active
 /// instance.
-public final class Main {
+public final class Main extends JFrame {
 
 	/// Default horizontal gap in pixels used for layout spacing.
 	public static final int DEFAULT_HGAP = 10;
@@ -635,10 +633,13 @@ public final class Main {
 	/// XML namespace URI for XLink attributes used in SVG documents.
 	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
+	@Serial
+	private static final long serialVersionUID = -8324052344437031941L;
+
 	/// Whether message dialogs should be suppressed during automated runs.
 	static boolean skipMessageDialogs;
 
-	/// The singleton `Main` application instance.
+	/// The singleton [Main] instance.
 	private static Main main;
 
 	/// Whether the application has received a termination signal.
@@ -681,7 +682,7 @@ public final class Main {
 		modifiableSymbolToDescriptionMap.put(SWAPPED_SYMBOL, STRINGS.getString("LEGEND_SWAPPED"));
 		SYMBOL_TO_DESCRIPTION_MAP = Collections.unmodifiableMap(modifiableSymbolToDescriptionMap);
 
-		JFrame.setDefaultLookAndFeelDecorated(true);
+		setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
 		IS_X11_TOOLKIT = IS_LINUX && "sun.awt.X11.XToolkit".equals(Toolkit.getDefaultToolkit().getClass().getName());
@@ -703,13 +704,11 @@ public final class Main {
 	private final AssignmentsScrollPane assignmentsScrollPane;
 
 	/// Set of currently connected controllers discovered via SDL.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Set<Controller> controllers = new HashSet<>();
 
 	/// Menu providing device-specific actions in the menu bar.
 	private final JMenu deviceMenu = new JMenu(STRINGS.getString("DEVICE_MENU"));
-
-	/// The main application window frame.
-	private final JFrame frame;
 
 	/// Panel containing global (cross-profile) settings controls.
 	private final JPanel globalSettingsPanel;
@@ -727,6 +726,7 @@ public final class Main {
 	private final JLabel legendLabel = new JLabel();
 
 	/// Reference to the SDL main loop used for SDL thread dispatch.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final MainLoop mainLoop;
 
 	/// The application menu bar.
@@ -748,6 +748,7 @@ public final class Main {
 	private final OpenAction openAction = new OpenAction();
 
 	/// Persistent user preferences store for this application.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Preferences preferences;
 
 	/// File chooser pre-configured for profile JSON files.
@@ -805,6 +806,7 @@ public final class Main {
 	private final JPanel touchpadScrollSensitivityPanel;
 
 	/// Map from each virtual axis to its corresponding progress bar indicator.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Map<VirtualAxis, JProgressBar> virtualAxisToProgressBarMap = new EnumMap<>(VirtualAxis.class);
 
 	/// Panel displaying the controller visualization SVG overlay.
@@ -820,6 +822,7 @@ public final class Main {
 	private Float cachedTouchpadScrollSensitivity;
 
 	/// Action currently held on the internal clipboard for paste operations.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private IAction<?> clipboardAction;
 
 	/// The currently open profile file, or `null` if none is open.
@@ -838,6 +841,7 @@ public final class Main {
 	private JPanel currentModePanel;
 
 	/// DOM document builder used to parse and clone SVG documents.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private DocumentBuilder documentBuilder;
 
 	/// Whether a system tray is available on the current platform.
@@ -847,6 +851,7 @@ public final class Main {
 	private JPanel horizontalIndicatorPanel;
 
 	/// The active input handler, driving controller polling and action dispatch.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Input input;
 
 	/// The run mode type that was active during the previous cycle.
@@ -862,12 +867,14 @@ public final class Main {
 	private JComboBox<Mode> modeComboBox;
 
 	/// Executor that schedules periodic overlay position update tasks.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private ScheduledExecutorService overlayExecutorService;
 
 	/// The floating overlay window shown during an active run mode.
 	private volatile JFrame overlayFrame;
 
 	/// Drag listener that allows the overlay window to be repositioned.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private FrameDragListener overlayFrameDragListener;
 
 	/// X coordinate of the first touch finger from the previous SDL event.
@@ -883,12 +890,14 @@ public final class Main {
 	private Rectangle prevTotalDisplayBounds;
 
 	/// The currently active run mode, or `null` when stopped.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private volatile RunMode runMode;
 
 	/// Whether an on-screen keyboard mode switch has been scheduled.
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 
 	/// The controller currently selected for input, or `null` if none.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private volatile Controller selectedController;
 
 	/// SDL tray entry handle for the show/hide window action.
@@ -916,6 +925,7 @@ public final class Main {
 	private SVGPanel svgPanel;
 
 	/// Parsed DOM document of the template controller SVG resource.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private Document templateSvgDocument;
 
 	/// ViewBox rectangle extracted from the template SVG document.
@@ -938,7 +948,7 @@ public final class Main {
 
 	/// Constructs the [Main] application window and initializes all subsystems.
 	///
-	/// Sets up the single-instance server socket, preferences, the Swing frame,
+	/// Sets up the single-instance server socket, preferences, the Swing this,
 	/// menus, toolbars, overlays, the on-screen keyboard, the system tray, and the
 	/// initial controller/profile state.
 	///
@@ -1029,9 +1039,7 @@ public final class Main {
 
 		preferences = Preferences.userRoot().node("/" + applicationId.replace('.', '/'));
 
-		frame = new JFrame();
-
-		frame.addWindowListener(new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(final WindowEvent e) {
@@ -1073,7 +1081,7 @@ public final class Main {
 			}
 		});
 
-		GuiUtils.setBoundsWithMinimum(frame,
+		GuiUtils.setBoundsWithMinimum(this,
 				new Rectangle(DIALOG_BOUNDS_X, DIALOG_BOUNDS_Y, DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT));
 
 		final var icons = new ArrayList<Image>();
@@ -1081,9 +1089,9 @@ public final class Main {
 			final var icon = new ImageIcon(getResourceLocation(path));
 			icons.add(icon.getImage());
 		}
-		frame.setIconImages(icons);
+		setIconImages(icons);
 
-		frame.setJMenuBar(menuBar);
+		setJMenuBar(menuBar);
 
 		final var fileMenu = new JMenu(STRINGS.getString("FILE_MENU"));
 		fileMenu.add(new NewAction());
@@ -1131,7 +1139,7 @@ public final class Main {
 
 		tabbedPane.setFont(tabbedPane.getFont().deriveFont(16f).deriveFont(Font.BOLD));
 		tabbedPane.setForeground(LIGHT_BLUE_COLOR);
-		frame.getContentPane().add(tabbedPane);
+		getContentPane().add(tabbedPane);
 
 		final var modesPanel = new JPanel(new BorderLayout());
 		final var globalSettingsScrollPane = new JScrollPane();
@@ -1189,12 +1197,12 @@ public final class Main {
 				LOWER_BUTTONS_VGAP, LOWER_BUTTONS_HGAP));
 
 		legendLabel.setMinimumSize(new Dimension(0, 0));
-		legendLabel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		legendLabel.setAlignmentY(BOTTOM_ALIGNMENT);
 		exportPanel.add(legendLabel);
 
 		final var exportButton = new JButton(new ExportAction());
 		exportButton.setPreferredSize(BUTTON_DIMENSION);
-		exportButton.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		exportButton.setAlignmentY(BOTTOM_ALIGNMENT);
 		exportPanel.add(exportButton);
 		visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
 
@@ -1603,7 +1611,7 @@ public final class Main {
 		});
 		statusPanel.add(donateButton, BorderLayout.EAST);
 
-		frame.add(statusPanel, BorderLayout.SOUTH);
+		add(statusPanel, BorderLayout.SOUTH);
 
 		onScreenKeyboard = new OnScreenKeyboard(this);
 
@@ -1689,12 +1697,12 @@ public final class Main {
 			}
 
 			if (IS_WINDOWS || IS_LINUX) {
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(STRINGS.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME, errorDetails),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(this, frame, MessageFormat
+				GuiUtils.showMessageDialog(this, this, MessageFormat
 						.format(STRINGS.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT_MAC"), errorDetails),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
@@ -1726,7 +1734,7 @@ public final class Main {
 		}
 
 		if (errorDetails != null && !errorDetails.isBlank()) {
-			GuiUtils.showMessageDialog(this, frame,
+			GuiUtils.showMessageDialog(this, this,
 					MessageFormat.format(
 							STRINGS.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_INTERNAL_FILE_DIALOG_TEXT"),
 							Constants.APPLICATION_NAME, errorDetails),
@@ -1775,12 +1783,12 @@ public final class Main {
 
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (IS_WINDOWS || IS_LINUX) {
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(STRINGS.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
 						STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(this, frame, STRINGS.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
+				GuiUtils.showMessageDialog(this, this, STRINGS.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
 						STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
@@ -2008,7 +2016,7 @@ public final class Main {
 	/// @return `true` if at least one visible modal [Dialog] exists, `false`
 	/// otherwise
 	private static boolean isModalDialogShowing() {
-		final var windows = Window.getWindows();
+		final var windows = getWindows();
 		if (windows != null) {
 			for (final var window : windows) {
 				if (window.isShowing() && window instanceof final Dialog dialog && dialog.isModal()) {
@@ -2071,7 +2079,7 @@ public final class Main {
 
 			Thread.setDefaultUncaughtExceptionHandler(null);
 
-			if (!GraphicsEnvironment.isHeadless() && main != null && main.frame != null) {
+			if (!GraphicsEnvironment.isHeadless() && main != null) {
 				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
 					final var stringWriter = new StringWriter();
 					e.printStackTrace(new PrintWriter(stringWriter));
@@ -2085,7 +2093,7 @@ public final class Main {
 					final var scrollPane = new JScrollPane(textArea);
 					scrollPane.setPreferredSize(new Dimension(600, 400));
 					panel.add(scrollPane, BorderLayout.CENTER);
-					GuiUtils.showMessageDialog(main, main.frame, panel, STRINGS.getString("ERROR_DIALOG_TITLE"),
+					GuiUtils.showMessageDialog(main, main, panel, STRINGS.getString("ERROR_DIALOG_TITLE"),
 							JOptionPane.ERROR_MESSAGE);
 
 					if (main.unsavedChanges) {
@@ -2410,7 +2418,7 @@ public final class Main {
 		}
 
 		final var font = new Font(fontFamily, Font.PLAIN, fontSizePt);
-		final var fontMetrics = frame.getFontMetrics(font);
+		final var fontMetrics = getFontMetrics(font);
 
 		final var extensionWidth = fontMetrics.stringWidth(textContent);
 		for (var node = parentNode; node != null; node = node.getParentNode()) {
@@ -2494,21 +2502,21 @@ public final class Main {
 	/// @param <T> the return type of the callable
 	/// @return the result of the callable
 	public <T> T executeWhileVisible(final Callable<T> callable) {
-		final var wasInvisible = !frame.isVisible();
-		final var wasIconified = frame.getState() == Frame.ICONIFIED;
+		final var wasInvisible = !isVisible();
+		final var wasIconified = getState() == ICONIFIED;
 
-		show();
+		setVisible(true);
 
 		try {
 			final var result = callable.call();
 
 			if (wasInvisible) {
-				frame.setVisible(false);
+				setVisible(false);
 				updateShowTrayEntry();
 			}
 
 			if (wasIconified) {
-				frame.setState(Frame.ICONIFIED);
+				setState(ICONIFIED);
 			}
 
 			return result;
@@ -2657,7 +2665,7 @@ public final class Main {
 			}
 		} catch (final DOMException | IOException | SAXException | TransformerException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(this, frame, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+			GuiUtils.showMessageDialog(this, this, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -2843,14 +2851,6 @@ public final class Main {
 		return Optional.empty();
 	}
 
-	/// Returns the main application frame.
-	///
-	/// @return the main application frame
-	@SuppressWarnings("exports")
-	public JFrame getFrame() {
-		return frame;
-	}
-
 	/// Returns the configured host address for network connections.
 	///
 	/// @return the configured host address
@@ -3009,7 +3009,7 @@ public final class Main {
 			host = host.strip();
 			if (!isValidHost(host)) {
 				valid = false;
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
 								STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_HOST_DIALOG_TEXT"),
 								OPTION_HOST, host),
@@ -3024,7 +3024,7 @@ public final class Main {
 				preferences.putInt(PREFERENCES_PORT, Integer.parseInt(port));
 			} catch (final NumberFormatException _) {
 				valid = false;
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
 								STRINGS.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
 								OPTION_PORT, port),
@@ -3038,7 +3038,7 @@ public final class Main {
 				preferences.putInt(PREFERENCES_TIMEOUT, Integer.parseInt(timeout));
 			} catch (final NumberFormatException _) {
 				valid = false;
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
 								STRINGS.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
 								OPTION_TIMEOUT, timeout),
@@ -3050,7 +3050,7 @@ public final class Main {
 		if (password != null) {
 			if (!isValidPassword(password)) {
 				valid = false;
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
 								STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_PASSWORD_DIALOG_TEXT"),
 								OPTION_PASSWORD, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH),
@@ -3087,7 +3087,7 @@ public final class Main {
 	/// @param commandLine the parsed command line to process
 	/// @param initialLaunch `true` if this is the first invocation at startup
 	private void handleRemainingCommandLine(final CommandLine commandLine, final boolean initialLaunch) {
-		if (frame != null && (initialLaunch || (frame.isVisible() && frame.getExtendedState() != Frame.ICONIFIED))) {
+		if ((initialLaunch || (isVisible() && getExtendedState() != ICONIFIED))) {
 			final var hasTrayOption = commandLine.hasOption(OPTION_TRAY);
 
 			var visible = !hasTrayOption || isModalDialogShowing();
@@ -3096,7 +3096,7 @@ public final class Main {
 				visible = true;
 			}
 
-			frame.setVisible(visible);
+			setVisible(visible);
 			updateShowTrayEntry();
 
 			if (!visible) {
@@ -3114,7 +3114,7 @@ public final class Main {
 				} else if (OPTION_AUTOSTART_VALUE_SERVER.equals(autostartOptionValue)) {
 					startServer();
 				} else {
-					GuiUtils.showMessageDialog(this, frame,
+					GuiUtils.showMessageDialog(this, this,
 							MessageFormat.format(
 									STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
 									OPTION_AUTOSTART, autostartOptionValue,
@@ -3154,7 +3154,7 @@ public final class Main {
 
 		final var path = currentFile != null ? currentFile.getAbsolutePath() : STRINGS.getString("UNTITLED");
 
-		final var selectedOption = JOptionPane.showConfirmDialog(frame,
+		final var selectedOption = JOptionPane.showConfirmDialog(this,
 				MessageFormat.format(STRINGS.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
 				STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 
@@ -3218,7 +3218,7 @@ public final class Main {
 		overlayFrame.setFocusableWindowState(false);
 		overlayFrame.setBackground(TRANSPARENT);
 		overlayFrame.setAlwaysOnTop(true);
-		overlayFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		overlayFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		if (multipleModes) {
 			currentModePanel = new JPanel();
@@ -3611,7 +3611,7 @@ public final class Main {
 					LOGGER.warning("Trying to load a profile without version information");
 
 					if (!skipMessageDialogs) {
-						GuiUtils.showMessageDialog(this, frame,
+						GuiUtils.showMessageDialog(this, this,
 								MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 										file.getName(), STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
 								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3622,7 +3622,7 @@ public final class Main {
 						LOGGER.warning("Trying to load a profile for an older release");
 
 						if (!skipMessageDialogs) {
-							GuiUtils.showMessageDialog(this, frame,
+							GuiUtils.showMessageDialog(this, this,
 									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 											file.getName(), STRINGS.getString("AN_OLDER"), Constants.APPLICATION_NAME),
 									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3631,7 +3631,7 @@ public final class Main {
 						LOGGER.warning("Trying to load a profile for a newer release");
 
 						if (!skipMessageDialogs) {
-							GuiUtils.showMessageDialog(this, frame,
+							GuiUtils.showMessageDialog(this, this,
 									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
 											file.getName(), STRINGS.getString("A_NEWER"), Constants.APPLICATION_NAME),
 									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3645,7 +3645,7 @@ public final class Main {
 							+ String.join(", ", unknownActionClasses));
 
 					if (!skipMessageDialogs) {
-						GuiUtils.showMessageDialog(this, frame,
+						GuiUtils.showMessageDialog(this, this,
 								MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 										String.join("\n", unknownActionClasses)),
 								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
@@ -3684,7 +3684,7 @@ public final class Main {
 			LOGGER.severe("Could not load profile");
 
 			if (!skipMessageDialogs) {
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -3723,7 +3723,7 @@ public final class Main {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 			} else {
-				GuiUtils.showMessageDialog(this, frame,
+				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -3787,8 +3787,7 @@ public final class Main {
 		if (hasSystemTray) {
 			final var trayCreated = mainLoop.runSync(() -> {
 				if (tray == 0L) {
-					final var iconImage = frame.getIconImages().stream()
-							.max(Comparator.comparingInt(o -> o.getWidth(null)))
+					final var iconImage = getIconImages().stream().max(Comparator.comparingInt(o -> o.getWidth(null)))
 							.orElseThrow(() -> new RuntimeException("No icon set for frame"));
 					final var width = iconImage.getWidth(null);
 					final var height = iconImage.getHeight(null);
@@ -3858,12 +3857,12 @@ public final class Main {
 
 				showTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, STRINGS.getString("SHOW_TRAY_ENTRY_LABEL"),
 						SDLTray.SDL_TRAYENTRY_BUTTON);
-				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, !frame.isVisible());
+				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, !isVisible());
 				SDLTray.SDL_SetTrayEntryCallback(showTrayEntry, (_, _) -> EventQueue.invokeLater(() -> {
-					final var openEvent = new WindowEvent(frame, WindowEvent.WINDOW_OPENED);
+					final var openEvent = new WindowEvent(this, WindowEvent.WINDOW_OPENED);
 					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(openEvent);
-					frame.setVisible(true);
-					frame.setExtendedState(Frame.NORMAL);
+					setVisible(true);
+					setExtendedState(NORMAL);
 				}), 0x0);
 
 				SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, (ByteBuffer) null, 0x0);
@@ -3903,7 +3902,7 @@ public final class Main {
 			if (trayCreated) {
 				updateTrayEntriesEnabled();
 				updateTitleAndTooltip();
-				frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+				setDefaultCloseOperation(HIDE_ON_CLOSE);
 			}
 		}
 
@@ -4151,6 +4150,15 @@ public final class Main {
 		terminate(0, this);
 	}
 
+	/// Prevents deserialization.
+	///
+	/// @param ignoredStream unused stream parameter
+	/// @throws NotSerializableException always
+	@Serial
+	private void readObject(final ObjectInputStream ignoredStream) throws NotSerializableException {
+		throw new NotSerializableException(IndicatorProgressBar.class.getName());
+	}
+
 	/// Repaints the on-screen keyboard and, on Windows, the overlay frame if they
 	/// are currently visible.
 	private void repaintOnScreenKeyboardAndOverlay() {
@@ -4234,7 +4242,7 @@ public final class Main {
 			scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
 		} catch (final IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(this, frame, STRINGS.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
+			GuiUtils.showMessageDialog(this, this, STRINGS.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -4249,7 +4257,7 @@ public final class Main {
 		profileFileChooser.setSelectedFile(
 				currentFile != null ? currentFile : new File(STRINGS.getString("UNTITLED") + PROFILE_FILE_SUFFIX));
 
-		if (profileFileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+		if (profileFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			saveProfile(profileFileChooser.getSelectedFile(), true);
 		}
 	}
@@ -4381,13 +4389,9 @@ public final class Main {
 		updateTitleAndTooltip();
 	}
 
-	/// Makes the main frame visible and updates the system tray show/hide entry.
-	void show() {
-		if (frame == null) {
-			return;
-		}
-
-		frame.setVisible(true);
+	@Override
+	public void setVisible(final boolean b) {
+		super.setVisible(b);
 
 		updateShowTrayEntry();
 	}
@@ -4408,7 +4412,7 @@ public final class Main {
 
 		final var buildYear = String.valueOf(buildDateTime.getYear());
 
-		GuiUtils.showMessageDialog(this, frame,
+		GuiUtils.showMessageDialog(this, this,
 				MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
 						Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
 				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
@@ -4418,7 +4422,7 @@ public final class Main {
 	/// take effect. If the user confirms, the application will quit after unsaved
 	/// profile changes are handled.
 	private void showRestartRequiredDialog() {
-		if (JOptionPane.showConfirmDialog(frame,
+		if (JOptionPane.showConfirmDialog(this,
 				MessageFormat.format(STRINGS.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
 				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
 				&& handleUnsavedChanges()) {
@@ -4440,7 +4444,7 @@ public final class Main {
 
 		final var doNotShowMessageAgainCheckbox = new JCheckBox(STRINGS.getString("DO_NOT_SHOW_MESSAGE_AGAIN"));
 
-		GuiUtils.showMessageDialog(null, frame,
+		GuiUtils.showMessageDialog(null, this,
 				new Object[] { MessageFormat.format(STRINGS.getString("TRAY_ICON_HINT_DIALOG_TEXT"),
 						Constants.APPLICATION_NAME), imageLabel, doNotShowMessageAgainCheckbox },
 				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
@@ -4701,13 +4705,13 @@ public final class Main {
 		} catch (final Throwable t) {
 			LOGGER.warning("Could not read external game controller mappings file: " + path);
 
-			GuiUtils.showMessageDialog(this, frame, MessageFormat
+			GuiUtils.showMessageDialog(this, this, MessageFormat
 					.format(STRINGS.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
 					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
 		if (errorDetails != null && !errorDetails.isBlank()) {
-			GuiUtils.showMessageDialog(this, frame,
+			GuiUtils.showMessageDialog(this, this,
 					MessageFormat.format(
 							STRINGS.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
 							errorDetails),
@@ -5190,7 +5194,7 @@ public final class Main {
 			return;
 		}
 
-		final var enabled = !frame.isVisible();
+		final var enabled = !isVisible();
 		mainLoop.runSync(() -> SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, enabled));
 	}
 
@@ -5389,7 +5393,7 @@ public final class Main {
 				+ (loadedProfile != null ? loadedProfile : STRINGS.getString("UNTITLED"));
 		title = MessageFormat.format(STRINGS.getString("MAIN_FRAME_TITLE"), profileTitle, Constants.APPLICATION_NAME);
 
-		frame.setTitle(title);
+		setTitle(title);
 		if (IS_LINUX) {
 			final var toolkit = Toolkit.getDefaultToolkit();
 			if (IS_X11_TOOLKIT) {
@@ -5464,7 +5468,7 @@ public final class Main {
 			return;
 		}
 
-		var tooltip = frame.getTitle();
+		var tooltip = getTitle();
 		if (batteryPercent >= 0 && batteryPercent <= 100) {
 			tooltip = MessageFormat.format(STRINGS.getString("BATTERY_TOOLTIP_PERCENT"), tooltip, batteryPercent);
 		}
@@ -5518,6 +5522,15 @@ public final class Main {
 		modeComboBox.setSelectedIndex(model.getSize() > 0 ? 0 : -1);
 
 		svgPanel.setBackground(UIManager.getColor("Panel.background"));
+	}
+
+	/// Prevents serialization.
+	///
+	/// @param ignoredStream unused stream parameter
+	/// @throws NotSerializableException always
+	@Serial
+	private void writeObject(final ObjectOutputStream ignoredStream) throws NotSerializableException {
+		throw new NotSerializableException(IndicatorProgressBar.class.getName());
 	}
 
 	/// Internal enumeration of the available run mode types.
@@ -5708,7 +5721,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			openWebsite(main.frame, "/donate");
+			openWebsite(main, "/donate");
 		}
 	}
 
@@ -5859,7 +5872,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			openWebsite(main.frame, null);
+			openWebsite(main, null);
 		}
 	}
 
@@ -5908,7 +5921,7 @@ public final class Main {
 			final var vJoyDirectoryFileChooser = new LargeFileChooser(getVJoyDirectory());
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-			if (vJoyDirectoryFileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) {
+			if (vJoyDirectoryFileChooser.showOpenDialog(Main.this) != JFileChooser.APPROVE_OPTION) {
 				return;
 			}
 
@@ -5916,7 +5929,7 @@ public final class Main {
 			final var dllFile = new File(vjoyDirectory,
 					VjoyInterface.GetVJoyArchFolderName() + File.separator + VjoyInterface.VJOY_LIBRARY_FILENAME);
 			if (!dllFile.exists()) {
-				GuiUtils.showMessageDialog(main, frame,
+				GuiUtils.showMessageDialog(Main.this, Main.this,
 						MessageFormat.format(STRINGS.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
 								getDefaultVJoyPath()),
 						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -5981,7 +5994,7 @@ public final class Main {
 			final var connectionSettingsPanel = new ConnectionSettingsPanel(withHost);
 
 			executeWhileVisible(() -> {
-				if (JOptionPane.showConfirmDialog(frame, connectionSettingsPanel,
+				if (JOptionPane.showConfirmDialog(Main.this, connectionSettingsPanel,
 						STRINGS.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
 					final var errorMessage = connectionSettingsPanel.saveSettings();
@@ -5989,8 +6002,8 @@ public final class Main {
 					if (errorMessage == null) {
 						proceed();
 					} else {
-						GuiUtils.showMessageDialog(main, frame, errorMessage, STRINGS.getString("ERROR_DIALOG_TITLE"),
-								JOptionPane.ERROR_MESSAGE);
+						GuiUtils.showMessageDialog(Main.this, Main.this, errorMessage,
+								STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						showConnectDialog();
 					}
 				}
@@ -6139,7 +6152,7 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var htmlFileChooser = new HtmlFileChooser(currentFile);
 
-			if (htmlFileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION) {
+			if (htmlFileChooser.showSaveDialog(Main.this) != JFileChooser.APPROVE_OPTION) {
 				return;
 			}
 
@@ -6249,7 +6262,7 @@ public final class Main {
 		@Override
 		void doAction() {
 			executeWhileVisible(() -> {
-				if (profileFileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				if (profileFileChooser.showOpenDialog(Main.this) == JFileChooser.APPROVE_OPTION) {
 					loadProfile(profileFileChooser.getSelectedFile(), false, true, null, false);
 				}
 			});
@@ -6516,7 +6529,7 @@ public final class Main {
 		public void actionPerformed(final ActionEvent e) {
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
 
-			final var color = JColorChooser.showDialog(frame, STRINGS.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
+			final var color = JColorChooser.showDialog(Main.this, STRINGS.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
 					overlayAxis.getColor());
 			if (color != null) {
 				overlayAxis.setColor(color);
@@ -6546,7 +6559,7 @@ public final class Main {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var color = JColorChooser.showDialog(frame, STRINGS.getString("LED_COLOR_CHOOSER_TITLE"),
+			final var color = JColorChooser.showDialog(Main.this, STRINGS.getString("LED_COLOR_CHOOSER_TITLE"),
 					getLedColor());
 			if (color == null) {
 				return;
@@ -6866,7 +6879,8 @@ public final class Main {
 			editorPane.setText(Constants.LICENSES_HTML);
 			editorPane.setCaretPosition(0);
 
-			GuiUtils.showMessageDialog(main, frame, scrollPane, (String) getValue(NAME), JOptionPane.DEFAULT_OPTION);
+			GuiUtils.showMessageDialog(Main.this, Main.this, scrollPane, (String) getValue(NAME),
+					JOptionPane.DEFAULT_OPTION);
 		}
 	}
 

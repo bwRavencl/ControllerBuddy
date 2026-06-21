@@ -315,7 +315,7 @@ public final class EditActionsDialog extends JDialog {
 	/// @param component the controller component whose actions are to be edited
 	/// @param name the display name of the component, used in the dialog title
 	EditActionsDialog(final Main main, final Component component, final String name) {
-		super(main.getFrame());
+		super(main);
 
 		this.main = main;
 		this.component = component;
@@ -327,7 +327,7 @@ public final class EditActionsDialog extends JDialog {
 			throw new RuntimeException(e);
 		}
 
-		preInit(main.getFrame());
+		preInit(main);
 		setTitle(MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 		final var modes = unsavedProfile.getModes();

@@ -91,7 +91,7 @@ public abstract class RunMode implements Runnable {
 		}
 
 		if (!main.isSkipControllerDialogs()) {
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 					Main.STRINGS.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
 					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		}

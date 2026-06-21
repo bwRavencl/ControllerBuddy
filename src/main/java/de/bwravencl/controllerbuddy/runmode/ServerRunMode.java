@@ -333,14 +333,14 @@ public final class ServerRunMode extends RunMode {
 			}
 		} catch (final BindException e) {
 			LOGGER.warning("Could not bind socket on port " + port);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 					MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
 					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
 			LOGGER.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main.getFrame(),
+			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 					Main.STRINGS.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
 					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final InterruptedException _) {
