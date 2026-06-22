@@ -2181,22 +2181,33 @@ public final class Main extends JFrame {
 					}
 				}
 
-				if (continueLaunch) {
-					final var taskRunner = new MainLoop();
-
-					EventQueue.invokeLater(() -> {
-						skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
-
-						main = new Main(taskRunner, commandLine);
-
-						taskRunner.startSdlEventPolling();
-					});
-
-					taskRunner.enterLoop();
-				} else {
+				if (!continueLaunch) {
 					LOGGER.info("Another " + Constants.APPLICATION_NAME + " instance is already running");
 					terminate(0, null);
+
+					return;
 				}
+
+				if (GraphicsEnvironment.isHeadless()) {
+					LOGGER.severe("Headless environment detected - aborting launch");
+					System.err.println(
+							"Error: A graphical environment is required to run " + Constants.APPLICATION_NAME + ".");
+					terminate(1, null);
+
+					return;
+				}
+
+				final var taskRunner = new MainLoop();
+
+				EventQueue.invokeLater(() -> {
+					skipMessageDialogs = commandLine.hasOption(OPTION_SKIP_MESSAGE_DIALOGS);
+
+					main = new Main(taskRunner, commandLine);
+
+					taskRunner.startSdlEventPolling();
+				});
+
+				taskRunner.enterLoop();
 
 				return;
 			}
