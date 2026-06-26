@@ -35,8 +35,8 @@ import org.lwjgl.sdl.SDLGamepad;
 /// mappings, overlay axis configurations, and key repeat settings.
 ///
 /// A profile contains one or more [Mode] instances. The first mode is always
-/// the [default Mode][#defaultMode]. Profiles are cloneable for use in the
-/// profile editor.
+/// the [default Mode][#defaultMode].
+/// Profiles are cloneable for use in the profile editor.
 public final class Profile implements Cloneable {
 
 	/// The default mode that is always present as the first mode in a profile.
