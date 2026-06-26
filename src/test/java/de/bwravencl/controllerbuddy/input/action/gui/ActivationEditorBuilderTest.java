@@ -29,7 +29,7 @@ final class ActivationEditorBuilderTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var ignored = de.bwravencl.controllerbuddy.gui.Main.STRINGS;
+		final var ignored = de.bwravencl.controllerbuddy.gui.Main.strings;
 	}
 
 	@Nested

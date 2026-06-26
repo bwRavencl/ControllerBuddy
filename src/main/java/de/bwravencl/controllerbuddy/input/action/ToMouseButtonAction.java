@@ -67,7 +67,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("MOUSE_BUTTON_NO"), mouseButton);
+		return MessageFormat.format(Main.strings.getString("MOUSE_BUTTON_NO"), mouseButton);
 	}
 
 	/// Returns the mouse button number produced by this action.

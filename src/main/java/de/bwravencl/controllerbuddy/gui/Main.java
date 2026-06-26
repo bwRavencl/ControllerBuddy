@@ -292,9 +292,6 @@ public final class Main extends JFrame {
 	/// Minimum allowed length for network passwords.
 	public static final int PASSWORD_MIN_LENGTH = 6;
 
-	/// Resource bundle containing localized UI strings.
-	public static final ResourceBundle STRINGS = ResourceBundle.getBundle("strings");
-
 	/// Unicode symbol used to indicate swapped axes.
 	public static final String SWAPPED_SYMBOL = "⇆";
 
@@ -305,16 +302,19 @@ public final class Main extends JFrame {
 	/// Number of legend items displayed per row in the visualization overlay.
 	public static final int VISUALIZATION_LEGEND_ITEMS_PER_ROW = 6;
 
+	/// Resource bundle containing localized UI strings.
+	public static final ResourceBundle strings = ResourceBundle.getBundle("strings");
+
 	/// Height in pixels of standard UI buttons.
 	static final int BUTTON_DIMENSION_HEIGHT = 25;
 
 	/// Standard dimension for rectangular UI buttons.
 	@SuppressWarnings("exports")
-	public static final Dimension BUTTON_DIMENSION = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
+	public static final Dimension buttonDimension = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
 
 	/// Standard dimension for square UI buttons.
 	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
-	public static final Dimension SQUARE_BUTTON_DIMENSION = new Dimension(BUTTON_DIMENSION_HEIGHT,
+	public static final Dimension squareButtonDimension = new Dimension(BUTTON_DIMENSION_HEIGHT,
 			BUTTON_DIMENSION_HEIGHT);
 
 	/// Default overlay scaling factor applied when no preference is stored.
@@ -325,9 +325,6 @@ public final class Main extends JFrame {
 
 	/// Filename of the controller SVG resource used in the visualization overlay.
 	private static final String CONTROLLER_SVG_FILENAME = "controller.svg";
-
-	/// Default left-aligned flow layout used for panels with standard gaps.
-	private static final FlowLayout DEFAULT_FLOW_LAYOUT = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
 
 	/// Default height in pixels for the main dialog window.
 	private static final int DIALOG_BOUNDS_HEIGHT = 760;
@@ -343,9 +340,6 @@ public final class Main extends JFrame {
 
 	/// Filename of the SDL game controller database resource.
 	private static final String GAME_CONTROLLER_DATABASE_FILENAME = "gamecontrollerdb.txt";
-
-	/// Insets applied to items laid out with `GridBagLayout`.
-	private static final Insets GRID_BAG_ITEM_INSETS = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
 
 	/// Accepted file extensions for HTML files used in profile export.
 	private static final String[] HTML_FILE_EXTENSIONS = { "html", "htm" };
@@ -363,19 +357,11 @@ public final class Main extends JFrame {
 	/// Border used around items in list panels.
 	private static final Border LIST_ITEM_BORDER = BorderFactory.createEtchedBorder();
 
-	/// Insets applied inside list item borders.
-	private static final Insets LIST_ITEM_INNER_INSETS = new Insets(4, 4, 4, 4);
-
-	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
-
 	/// Horizontal gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_HGAP = DEFAULT_HGAP + 2;
 
 	/// Vertical gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_VGAP = 5;
-
-	/// Apache Commons CLI options descriptor for the application's command line.
-	private static final Options OPTIONS = new Options();
 
 	/// CLI option name for the autostart mode selection.
 	private static final String OPTION_AUTOSTART = "autostart";
@@ -524,16 +510,6 @@ public final class Main extends JFrame {
 	/// Height in pixels shared by all settings label dimensions.
 	private static final int SETTINGS_LABEL_DIMENSION_HEIGHT = 15;
 
-	/// Dimension for long settings labels in the settings panels.
-	private static final Dimension LONG_SETTINGS_LABEL_DIMENSION = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
-
-	/// Dimension for medium-width settings labels in the settings panels.
-	private static final Dimension MEDIUM_SETTINGS_LABEL_DIMENSION = new Dimension(100,
-			SETTINGS_LABEL_DIMENSION_HEIGHT);
-
-	/// Dimension for short settings labels in the settings panels.
-	private static final Dimension SHORT_SETTINGS_LABEL_DIMENSION = new Dimension(80, SETTINGS_LABEL_DIMENSION_HEIGHT);
-
 	/// Acknowledgement token exchanged in the single-instance IPC protocol.
 	private static final String SINGLE_INSTANCE_ACK = "ACK";
 
@@ -633,8 +609,31 @@ public final class Main extends JFrame {
 	/// XML namespace URI for XLink attributes used in SVG documents.
 	private static final String XLINK_NAMESPACE_URI = "http://www.w3.org/1999/xlink";
 
+	/// Default left-aligned flow layout used for panels with standard gaps.
+	private static final FlowLayout defaultFlowLayout = new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, DEFAULT_VGAP);
+
+	/// Insets applied to items laid out with `GridBagLayout`.
+	private static final Insets gridBagItemInsets = new Insets(8, DEFAULT_HGAP, 8, DEFAULT_HGAP);
+
+	/// Insets applied inside list item borders.
+	private static final Insets listItemInnerInsets = new Insets(4, 4, 4, 4);
+
+	private static final Logger logger = Logger.getLogger(Main.class.getName());
+
+	/// Dimension for long settings labels in the settings panels.
+	private static final Dimension longSettingsLabelDimension = new Dimension(160, SETTINGS_LABEL_DIMENSION_HEIGHT);
+
+	/// Dimension for medium-width settings labels in the settings panels.
+	private static final Dimension mediumSettingsLabelDimension = new Dimension(100, SETTINGS_LABEL_DIMENSION_HEIGHT);
+
+	/// Apache Commons CLI options descriptor for the application's command line.
+	private static final Options options = new Options();
+
 	@Serial
 	private static final long serialVersionUID = -8324052344437031941L;
+
+	/// Dimension for short settings labels in the settings panels.
+	private static final Dimension shortSettingsLabelDimension = new Dimension(80, SETTINGS_LABEL_DIMENSION_HEIGHT);
 
 	/// Whether message dialogs should be suppressed during automated runs.
 	static boolean skipMessageDialogs;
@@ -646,24 +645,24 @@ public final class Main extends JFrame {
 	private static volatile boolean terminated;
 
 	static {
-		OPTIONS.addOption(OPTION_AUTOSTART, true,
-				MessageFormat.format(STRINGS.getString("AUTOSTART_OPTION_DESCRIPTION"),
-						IS_WINDOWS || IS_LINUX ? STRINGS.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-								: STRINGS.getString("SERVER")));
-		OPTIONS.addOption(OPTION_PROFILE, true, STRINGS.getString("PROFILE_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_HOST, true, STRINGS.getString("HOST_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_PORT, true, STRINGS.getString("PORT_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_TIMEOUT, true, STRINGS.getString("TIMEOUT_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_PASSWORD, true, STRINGS.getString("PASSWORD_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_GAME_CONTROLLER_DB, true, STRINGS.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_TRAY, false, STRINGS.getString("TRAY_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_SAVE, true, STRINGS.getString("SAVE_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_EXPORT, true, STRINGS.getString("EXPORT_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_SKIP_MESSAGE_DIALOGS, false,
-				STRINGS.getString("SKIP_MESSAGE_DIALOGS_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_QUIT, false, STRINGS.getString("QUIT_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_VERSION, false, STRINGS.getString("VERSION_OPTION_DESCRIPTION"));
-		OPTIONS.addOption(OPTION_HELP, false, STRINGS.getString("HELP_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_AUTOSTART, true,
+				MessageFormat.format(strings.getString("AUTOSTART_OPTION_DESCRIPTION"),
+						IS_WINDOWS || IS_LINUX ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+								: strings.getString("SERVER")));
+		options.addOption(OPTION_PROFILE, true, strings.getString("PROFILE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_HOST, true, strings.getString("HOST_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_PORT, true, strings.getString("PORT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_TIMEOUT, true, strings.getString("TIMEOUT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_PASSWORD, true, strings.getString("PASSWORD_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_GAME_CONTROLLER_DB, true, strings.getString("GAME_CONTROLLER_DB_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_TRAY, false, strings.getString("TRAY_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_SAVE, true, strings.getString("SAVE_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_EXPORT, true, strings.getString("EXPORT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_SKIP_MESSAGE_DIALOGS, false,
+				strings.getString("SKIP_MESSAGE_DIALOGS_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_QUIT, false, strings.getString("QUIT_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_VERSION, false, strings.getString("VERSION_OPTION_DESCRIPTION"));
+		options.addOption(OPTION_HELP, false, strings.getString("HELP_OPTION_DESCRIPTION"));
 
 		SINGLE_INSTANCE_LOCK_FILE = new File(
 				System.getProperty("java.io.tmpdir") + File.separator + Constants.APPLICATION_NAME + ".lock");
@@ -673,13 +672,13 @@ public final class Main extends JFrame {
 		modifiableSymbolToDescriptionMap.put(Activation.WHILE_PRESSED.getSymbol(), Activation.WHILE_PRESSED.toString());
 		modifiableSymbolToDescriptionMap.put(Activation.ON_RELEASE.getSymbol(), Activation.ON_RELEASE.toString());
 		modifiableSymbolToDescriptionMap.put(ButtonToCycleAction.CYCLE_SYMBOL,
-				STRINGS.getString("BUTTON_TO_CYCLE_ACTION_TITLE"));
-		modifiableSymbolToDescriptionMap.put(IDelayableAction.INSTANT_SYMBOL, STRINGS.getString("LEGEND_INSTANT"));
-		modifiableSymbolToDescriptionMap.put(IDelayableAction.DELAYED_SYMBOL, STRINGS.getString("LEGEND_DELAYED"));
-		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.TOGGLE_SYMBOL, STRINGS.getString("LEGEND_TOGGLE"));
+				strings.getString("BUTTON_TO_CYCLE_ACTION_TITLE"));
+		modifiableSymbolToDescriptionMap.put(IDelayableAction.INSTANT_SYMBOL, strings.getString("LEGEND_INSTANT"));
+		modifiableSymbolToDescriptionMap.put(IDelayableAction.DELAYED_SYMBOL, strings.getString("LEGEND_DELAYED"));
+		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.TOGGLE_SYMBOL, strings.getString("LEGEND_TOGGLE"));
 		modifiableSymbolToDescriptionMap.put(ButtonToModeAction.MOMENTARY_SYMBOL,
-				STRINGS.getString("LEGEND_MOMENTARY"));
-		modifiableSymbolToDescriptionMap.put(SWAPPED_SYMBOL, STRINGS.getString("LEGEND_SWAPPED"));
+				strings.getString("LEGEND_MOMENTARY"));
+		modifiableSymbolToDescriptionMap.put(SWAPPED_SYMBOL, strings.getString("LEGEND_SWAPPED"));
 		SYMBOL_TO_DESCRIPTION_MAP = Collections.unmodifiableMap(modifiableSymbolToDescriptionMap);
 
 		setDefaultLookAndFeelDecorated(true);
@@ -708,7 +707,7 @@ public final class Main extends JFrame {
 	private final Set<Controller> controllers = new HashSet<>();
 
 	/// Menu providing device-specific actions in the menu bar.
-	private final JMenu deviceMenu = new JMenu(STRINGS.getString("DEVICE_MENU"));
+	private final JMenu deviceMenu = new JMenu(strings.getString("DEVICE_MENU"));
 
 	/// Panel containing global (cross-profile) settings controls.
 	private final JPanel globalSettingsPanel;
@@ -764,7 +763,7 @@ public final class Main extends JFrame {
 	private final Random random;
 
 	/// Menu providing run-mode actions in the menu bar.
-	private final JMenu runMenu = new JMenu(STRINGS.getString("RUN_MENU"));
+	private final JMenu runMenu = new JMenu(strings.getString("RUN_MENU"));
 
 	/// Whether SDL video subsystem was successfully initialized.
 	private final boolean sdlVideoInitialized;
@@ -782,7 +781,7 @@ public final class Main extends JFrame {
 	private final JMenuItem startServerMenuItem;
 
 	/// Status bar label displaying the current application status text.
-	private final JLabel statusLabel = new JLabel(STRINGS.getString("STATUS_READY"));
+	private final JLabel statusLabel = new JLabel(strings.getString("STATUS_READY"));
 
 	/// Popup menu shown on the status bar for additional actions.
 	private final JPopupMenu statusPanelPopupMenu;
@@ -980,7 +979,7 @@ public final class Main extends JFrame {
 					Files.writeString(SINGLE_INSTANCE_LOCK_FILE.toPath(),
 							singleInstanceServerSocket.getLocalPort() + "\n" + randomNumber, StandardCharsets.UTF_8);
 				} catch (final IOException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					logger.log(Level.SEVERE, e.getMessage(), e);
 				}
 
 				for (;;) {
@@ -991,7 +990,7 @@ public final class Main extends JFrame {
 									new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
 						line = bufferedReader.readLine();
 						if (!String.valueOf(randomNumber).equals(line)) {
-							LOGGER.warning(
+							logger.warning(
 									"Received unexpected value for random number on single instance socket: " + line);
 							continue;
 						}
@@ -1008,12 +1007,12 @@ public final class Main extends JFrame {
 									}
 									receivedArgs.add(line);
 								} catch (final IOException e) {
-									LOGGER.log(Level.SEVERE, e.getMessage(), e);
+									logger.log(Level.SEVERE, e.getMessage(), e);
 								}
 							}
 							arguments = receivedArgs.toArray(String[]::new);
 						} else {
-							LOGGER.warning("Received unexpected line on single instance socket: " + line);
+							logger.warning("Received unexpected line on single instance socket: " + line);
 						}
 
 						if (arguments != null) {
@@ -1026,7 +1025,7 @@ public final class Main extends JFrame {
 							}
 						}
 					} catch (final IOException e) {
-						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						logger.log(Level.SEVERE, e.getMessage(), e);
 					}
 				}
 			} catch (final IOException e) {
@@ -1093,7 +1092,7 @@ public final class Main extends JFrame {
 
 		setJMenuBar(menuBar);
 
-		final var fileMenu = new JMenu(STRINGS.getString("FILE_MENU"));
+		final var fileMenu = new JMenu(strings.getString("FILE_MENU"));
 		fileMenu.add(new NewAction());
 		fileMenu.add(openAction);
 		fileMenu.add(new SaveAction());
@@ -1126,7 +1125,7 @@ public final class Main extends JFrame {
 
 		menuBar.add(runMenu);
 
-		final var helpMenu = new JMenu(STRINGS.getString("HELP_MENU"));
+		final var helpMenu = new JMenu(strings.getString("HELP_MENU"));
 		menuBar.add(helpMenu);
 		helpMenu.add(new ShowLicensesAction());
 		helpMenu.add(new ShowWebsiteAction());
@@ -1143,7 +1142,7 @@ public final class Main extends JFrame {
 
 		final var modesPanel = new JPanel(new BorderLayout());
 		final var globalSettingsScrollPane = new JScrollPane();
-		tabbedPane.addTab(STRINGS.getString("MODES_TAB"), modesPanel);
+		tabbedPane.addTab(strings.getString("MODES_TAB"), modesPanel);
 
 		modesListPanel = new JPanel();
 		modesListPanel.setLayout(new GridBagLayout());
@@ -1153,15 +1152,15 @@ public final class Main extends JFrame {
 
 		newModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, LOWER_BUTTONS_HGAP, LOWER_BUTTONS_VGAP));
 		final var newModeButton = new JButton(new NewModeAction());
-		newModeButton.setPreferredSize(BUTTON_DIMENSION);
+		newModeButton.setPreferredSize(buttonDimension);
 		newModePanel.add(newModeButton);
 		modesPanel.add(newModePanel, BorderLayout.SOUTH);
 
 		assignmentsScrollPane = new AssignmentsScrollPane(this);
-		tabbedPane.addTab(STRINGS.getString("ASSIGNMENTS_TAB"), assignmentsScrollPane);
+		tabbedPane.addTab(strings.getString("ASSIGNMENTS_TAB"), assignmentsScrollPane);
 
 		final var overlayPanel = new JPanel(new BorderLayout());
-		tabbedPane.addTab(STRINGS.getString("OVERLAY_TAB"), overlayPanel);
+		tabbedPane.addTab(strings.getString("OVERLAY_TAB"), overlayPanel);
 
 		indicatorsListPanel = new JPanel();
 		indicatorsListPanel.setLayout(new GridBagLayout());
@@ -1170,7 +1169,7 @@ public final class Main extends JFrame {
 		overlayPanel.add(indicatorsScrollPane, BorderLayout.CENTER);
 
 		visualizationPanel = new JPanel(new BorderLayout());
-		tabbedPane.addTab(STRINGS.getString("VISUALIZATION_TAB"), visualizationPanel);
+		tabbedPane.addTab(strings.getString("VISUALIZATION_TAB"), visualizationPanel);
 
 		tabbedPane.addChangeListener(e -> {
 			if (!e.getSource().equals(tabbedPane)) {
@@ -1201,7 +1200,7 @@ public final class Main extends JFrame {
 		exportPanel.add(legendLabel);
 
 		final var exportButton = new JButton(new ExportAction());
-		exportButton.setPreferredSize(BUTTON_DIMENSION);
+		exportButton.setPreferredSize(buttonDimension);
 		exportButton.setAlignmentY(BOTTOM_ALIGNMENT);
 		exportPanel.add(exportButton);
 		visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
@@ -1210,28 +1209,28 @@ public final class Main extends JFrame {
 		profileSettingsPanel.setLayout(new GridBagLayout());
 
 		final var profileSettingsScrollPane = new JScrollPane(profileSettingsPanel);
-		tabbedPane.addTab(STRINGS.getString("PROFILE_SETTINGS_TAB"), profileSettingsScrollPane);
+		tabbedPane.addTab(strings.getString("PROFILE_SETTINGS_TAB"), profileSettingsScrollPane);
 
 		globalSettingsPanel = new JPanel();
 		globalSettingsPanel.setLayout(new GridBagLayout());
 
 		globalSettingsScrollPane.setViewportView(globalSettingsPanel);
-		tabbedPane.addTab(STRINGS.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
+		tabbedPane.addTab(strings.getString("GLOBAL_SETTINGS_TAB"), null, globalSettingsScrollPane);
 
 		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, gridBagItemInsets, 0, 5);
 
 		final var inputSettingsPanel = new JPanel();
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var pollIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var pollIntervalPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(pollIntervalPanel);
 
-		final var pollIntervalLabel = new JLabel(STRINGS.getString("POLL_INTERVAL_LABEL"));
-		pollIntervalLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
+		pollIntervalLabel.setPreferredSize(longSettingsLabelDimension);
 		pollIntervalPanel.add(pollIntervalLabel);
 
 		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel((Number) getPollInterval(), 1L, 100L, 1L));
@@ -1240,15 +1239,15 @@ public final class Main extends JFrame {
 				(long) ((JSpinner) event.getSource()).getValue()));
 		pollIntervalPanel.add(pollIntervalSpinner);
 
-		final var physicalAxesPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(physicalAxesPanel, constraints);
 
 		final var leftPhysicalAxesPanel = new JPanel();
 		leftPhysicalAxesPanel.setLayout(new BoxLayout(leftPhysicalAxesPanel, BoxLayout.Y_AXIS));
 		physicalAxesPanel.add(leftPhysicalAxesPanel);
 
-		final var physicalAxesPanelLabel = new JLabel(STRINGS.getString("PHYSICAL_AXES_LABEL"));
-		physicalAxesPanelLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var physicalAxesPanelLabel = new JLabel(strings.getString("PHYSICAL_AXES_LABEL"));
+		physicalAxesPanelLabel.setPreferredSize(longSettingsLabelDimension);
 		leftPhysicalAxesPanel.add(physicalAxesPanelLabel);
 
 		final var rightPhysicalAxesPanel = new JPanel();
@@ -1256,7 +1255,7 @@ public final class Main extends JFrame {
 		physicalAxesPanel.add(rightPhysicalAxesPanel);
 
 		final var mapCircularAxesToSquareCheckBox = new JCheckBox(
-				STRINGS.getString("MAP_CIRCULAR_AXES_TO_SQUARE_CHECK_BOX"));
+				strings.getString("MAP_CIRCULAR_AXES_TO_SQUARE_CHECK_BOX"));
 		mapCircularAxesToSquareCheckBox.setSelected(isMapCircularAxesToSquareAxes());
 		mapCircularAxesToSquareCheckBox.addActionListener(event -> {
 			final var mapCircularAxesToSquare = ((JCheckBox) event.getSource()).isSelected();
@@ -1267,7 +1266,7 @@ public final class Main extends JFrame {
 		rightPhysicalAxesPanel.add(Box.createVerticalStrut(DEFAULT_VGAP));
 
 		final var swapLeftAndRightSticksCheckBox = new JCheckBox(
-				STRINGS.getString("SWAP_LEFT_AND_RIGHT_STICKS_CHECK_BOX"));
+				strings.getString("SWAP_LEFT_AND_RIGHT_STICKS_CHECK_BOX"));
 		swapLeftAndRightSticksCheckBox.setSelected(isSwapLeftAndRightSticks());
 		swapLeftAndRightSticksCheckBox.addActionListener(event -> {
 			final var swapLeftAndRightStick = ((JCheckBox) event.getSource()).isSelected();
@@ -1279,14 +1278,14 @@ public final class Main extends JFrame {
 		leftPhysicalAxesPanel.add(Box.createVerticalStrut(
 				rightPhysicalAxesPanel.getPreferredSize().height - physicalAxesPanelLabel.getPreferredSize().height));
 
-		final var hapticFeedbackPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var hapticFeedbackPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(hapticFeedbackPanel, constraints);
 
-		final var hapticFeedbackLabel = new JLabel(STRINGS.getString("HAPTIC_FEEDBACK_LABEL"));
-		hapticFeedbackLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var hapticFeedbackLabel = new JLabel(strings.getString("HAPTIC_FEEDBACK_LABEL"));
+		hapticFeedbackLabel.setPreferredSize(longSettingsLabelDimension);
 		hapticFeedbackPanel.add(hapticFeedbackLabel);
 
-		final var hapticFeedbackCheckBox = new JCheckBox(STRINGS.getString("HAPTIC_FEEDBACK_CHECK_BOX"));
+		final var hapticFeedbackCheckBox = new JCheckBox(strings.getString("HAPTIC_FEEDBACK_CHECK_BOX"));
 		hapticFeedbackCheckBox.setSelected(isHapticFeedback());
 		hapticFeedbackCheckBox.addActionListener(event -> {
 			final var hapticFeedback = ((JCheckBox) event.getSource()).isSelected();
@@ -1294,14 +1293,14 @@ public final class Main extends JFrame {
 		});
 		hapticFeedbackPanel.add(hapticFeedbackCheckBox);
 
-		final var hotSwapPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var hotSwapPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(hotSwapPanel, constraints);
 
-		final var hotSwappingLabel = new JLabel(STRINGS.getString("HOT_SWAPPING_LABEL"));
-		hotSwappingLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var hotSwappingLabel = new JLabel(strings.getString("HOT_SWAPPING_LABEL"));
+		hotSwappingLabel.setPreferredSize(longSettingsLabelDimension);
 		hotSwapPanel.add(hotSwappingLabel);
 
-		final var hotSwappingButtonLabel = new JLabel(STRINGS.getString("HOT_SWAPPING_BUTTON_LABEL"));
+		final var hotSwappingButtonLabel = new JLabel(strings.getString("HOT_SWAPPING_BUTTON_LABEL"));
 		hotSwapPanel.add(hotSwappingButtonLabel);
 
 		final var hotSwapButtonComboBox = new JComboBox<>(HotSwappingButton.values());
@@ -1310,14 +1309,14 @@ public final class Main extends JFrame {
 		hotSwapPanel.add(hotSwapButtonComboBox);
 		hotSwapButtonComboBox.setAction(new SetHotSwapButtonAction());
 
-		final var noControllerDialogsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var noControllerDialogsPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(noControllerDialogsPanel, constraints);
 
-		final var noControllerDialogsLabel = new JLabel(STRINGS.getString("SKIP_CONTROLLER_DIALOGS_LABEL"));
-		noControllerDialogsLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var noControllerDialogsLabel = new JLabel(strings.getString("SKIP_CONTROLLER_DIALOGS_LABEL"));
+		noControllerDialogsLabel.setPreferredSize(longSettingsLabelDimension);
 		noControllerDialogsPanel.add(noControllerDialogsLabel);
 
-		final var noControllerDialogsCheckBox = new JCheckBox(STRINGS.getString("SKIP_CONTROLLER_DIALOGS_CHECK_BOX"));
+		final var noControllerDialogsCheckBox = new JCheckBox(strings.getString("SKIP_CONTROLLER_DIALOGS_CHECK_BOX"));
 		noControllerDialogsCheckBox.setSelected(isSkipControllerDialogs());
 		noControllerDialogsCheckBox.addActionListener(event -> {
 			final var noControllerDialogs = ((JCheckBox) event.getSource()).isSelected();
@@ -1325,14 +1324,14 @@ public final class Main extends JFrame {
 		});
 		noControllerDialogsPanel.add(noControllerDialogsCheckBox);
 
-		final var autoRestartOutputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var autoRestartOutputPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(autoRestartOutputPanel, constraints);
 
-		final var autoRestartOutputLabel = new JLabel(STRINGS.getString("AUTO_RESTART_OUTPUT_LABEL"));
-		autoRestartOutputLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var autoRestartOutputLabel = new JLabel(strings.getString("AUTO_RESTART_OUTPUT_LABEL"));
+		autoRestartOutputLabel.setPreferredSize(longSettingsLabelDimension);
 		autoRestartOutputPanel.add(autoRestartOutputLabel);
 
-		final var autoRestartOutputCheckBox = new JCheckBox(STRINGS.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
+		final var autoRestartOutputCheckBox = new JCheckBox(strings.getString("AUTO_RESTART_OUTPUT_CHECK_BOX"));
 		autoRestartOutputCheckBox.setSelected(isAutoRestartOutput());
 		autoRestartOutputCheckBox.addActionListener(event -> {
 			final var autoRestartOutput = ((JCheckBox) event.getSource()).isSelected();
@@ -1341,22 +1340,22 @@ public final class Main extends JFrame {
 		autoRestartOutputPanel.add(autoRestartOutputCheckBox);
 
 		if (IS_WINDOWS) {
-			final var xinputPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var xinputPanel = new JPanel(defaultFlowLayout);
 			inputSettingsPanel.add(xinputPanel, constraints);
 
 			final var leftXInputPanel = new JPanel();
 			leftXInputPanel.setLayout(new BoxLayout(leftXInputPanel, BoxLayout.Y_AXIS));
 			xinputPanel.add(leftXInputPanel);
 
-			final var xinputLabel = new JLabel(STRINGS.getString("XINPUT_LABEL"));
-			xinputLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+			final var xinputLabel = new JLabel(strings.getString("XINPUT_LABEL"));
+			xinputLabel.setPreferredSize(longSettingsLabelDimension);
 			leftXInputPanel.add(xinputLabel);
 
 			final var rightXInputPanel = new JPanel();
 			rightXInputPanel.setLayout(new BoxLayout(rightXInputPanel, BoxLayout.Y_AXIS));
 			xinputPanel.add(rightXInputPanel);
 
-			final var xinputCheckBox = new JCheckBox(STRINGS.getString("XINPUT_CHECK_BOX"));
+			final var xinputCheckBox = new JCheckBox(strings.getString("XINPUT_CHECK_BOX"));
 			xinputCheckBox.setSelected(isXInput());
 			xinputCheckBox.addActionListener(event -> {
 				final var xinput = ((JCheckBox) event.getSource()).isSelected();
@@ -1367,7 +1366,7 @@ public final class Main extends JFrame {
 
 			rightXInputPanel.add(Box.createVerticalStrut(DEFAULT_VGAP));
 
-			final var xinputHintLabel = new JLabel(STRINGS.getString("XINPUT_HINT"));
+			final var xinputHintLabel = new JLabel(strings.getString("XINPUT_HINT"));
 			final var italicLabelFont = xinputHintLabel.getFont().deriveFont(Font.ITALIC);
 			xinputHintLabel.setFont(italicLabelFont);
 			xinputHintLabel.setBorder(BorderFactory.createEmptyBorder(0, xinputCheckBox.getInsets().left, 0, 0));
@@ -1379,14 +1378,14 @@ public final class Main extends JFrame {
 			final var vJoySettingsPanel = new JPanel();
 			vJoySettingsPanel.setLayout(new BoxLayout(vJoySettingsPanel, BoxLayout.Y_AXIS));
 			vJoySettingsPanel
-					.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("VJOY_SETTINGS_BORDER_TITLE")));
+					.setBorder(BorderFactory.createTitledBorder(strings.getString("VJOY_SETTINGS_BORDER_TITLE")));
 			globalSettingsPanel.add(vJoySettingsPanel, constraints);
 
-			final var vJoyDirectoryPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var vJoyDirectoryPanel = new JPanel(defaultFlowLayout);
 			vJoySettingsPanel.add(vJoyDirectoryPanel);
 
-			final var vJoyDirectoryLabel = new JLabel(STRINGS.getString("VJOY_DIRECTORY_LABEL"));
-			vJoyDirectoryLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+			final var vJoyDirectoryLabel = new JLabel(strings.getString("VJOY_DIRECTORY_LABEL"));
+			vJoyDirectoryLabel.setPreferredSize(longSettingsLabelDimension);
 			vJoyDirectoryPanel.add(vJoyDirectoryLabel);
 
 			this.vJoyDirectoryLabel = new JLabel(getVJoyDirectory());
@@ -1395,11 +1394,11 @@ public final class Main extends JFrame {
 			final var vJoyDirectoryButton = new JButton(new ChangeVJoyDirectoryAction());
 			vJoyDirectoryPanel.add(vJoyDirectoryButton);
 
-			final var vJoyDevicePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var vJoyDevicePanel = new JPanel(defaultFlowLayout);
 			vJoySettingsPanel.add(vJoyDevicePanel);
 
-			final var vJoyDeviceLabel = new JLabel(STRINGS.getString("VJOY_DEVICE_LABEL"));
-			vJoyDeviceLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+			final var vJoyDeviceLabel = new JLabel(strings.getString("VJOY_DEVICE_LABEL"));
+			vJoyDeviceLabel.setPreferredSize(longSettingsLabelDimension);
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
 			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(getVJoyDevice(), 1, 16, 1));
@@ -1414,15 +1413,15 @@ public final class Main extends JFrame {
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.Y_AXIS));
 		appearanceSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
 		globalSettingsPanel.add(appearanceSettingsPanel, constraints);
 
-		final var themePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var themePanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(themePanel);
 
-		final var themeLabel = new JLabel(STRINGS.getString("THEME_LABEL"));
-		themeLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var themeLabel = new JLabel(strings.getString("THEME_LABEL"));
+		themeLabel.setPreferredSize(longSettingsLabelDimension);
 		themePanel.add(themeLabel);
 
 		final var themeComboBox = new JComboBox<>(Theme.values());
@@ -1430,11 +1429,11 @@ public final class Main extends JFrame {
 		themePanel.add(themeComboBox);
 		themeComboBox.setAction(new SetThemeAction());
 
-		final var overlayScalingPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var overlayScalingPanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(overlayScalingPanel);
 
-		final var overlayScalingLabel = new JLabel(STRINGS.getString("OVERLAY_SCALING_LABEL"));
-		overlayScalingLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var overlayScalingLabel = new JLabel(strings.getString("OVERLAY_SCALING_LABEL"));
+		overlayScalingLabel.setPreferredSize(longSettingsLabelDimension);
 		overlayScalingPanel.add(overlayScalingLabel);
 
 		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), 0.5, 6d, 0.25));
@@ -1449,15 +1448,15 @@ public final class Main extends JFrame {
 		overlayScalingPanel.add(overlayScalingSpinner);
 
 		if (!IS_MAC) {
-			final var preventPowerSaveModeSettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var preventPowerSaveModeSettingsPanel = new JPanel(defaultFlowLayout);
 			appearanceSettingsPanel.add(preventPowerSaveModeSettingsPanel, constraints);
 
-			final var preventPowerSaveModeLabel = new JLabel(STRINGS.getString("POWER_SAVE_MODE_LABEL"));
-			preventPowerSaveModeLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+			final var preventPowerSaveModeLabel = new JLabel(strings.getString("POWER_SAVE_MODE_LABEL"));
+			preventPowerSaveModeLabel.setPreferredSize(longSettingsLabelDimension);
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeLabel);
 
 			final var preventPowerSaveModeCheckBox = new JCheckBox(
-					STRINGS.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
+					strings.getString("PREVENT_POWER_SAVE_MODE_CHECK_BOX"));
 			preventPowerSaveModeCheckBox.setSelected(isPreventPowerSaveMode());
 			preventPowerSaveModeCheckBox.addActionListener(event -> {
 				final var preventPowerSaveMode = ((JCheckBox) event.getSource()).isSelected();
@@ -1466,15 +1465,15 @@ public final class Main extends JFrame {
 			preventPowerSaveModeSettingsPanel.add(preventPowerSaveModeCheckBox);
 		}
 
-		final var ledColorPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var ledColorPanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(ledColorPanel);
 
-		final var ledColorLabel = new JLabel(STRINGS.getString("LED_COLOR_LABEL"));
-		ledColorLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var ledColorLabel = new JLabel(strings.getString("LED_COLOR_LABEL"));
+		ledColorLabel.setPreferredSize(longSettingsLabelDimension);
 		ledColorPanel.add(ledColorLabel);
 
 		final var ledColorButton = new JButton(new SelectLedColorAction());
-		ledColorButton.setPreferredSize(SQUARE_BUTTON_DIMENSION);
+		ledColorButton.setPreferredSize(squareButtonDimension);
 
 		ledPreviewLabel = new JLabel();
 		final var ledColorButtonHeight = ledColorButton.getPreferredSize().height;
@@ -1488,21 +1487,21 @@ public final class Main extends JFrame {
 		final var touchpadSettingsPanel = new JPanel();
 		touchpadSettingsPanel.setLayout(new BoxLayout(touchpadSettingsPanel, BoxLayout.Y_AXIS));
 		touchpadSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("TOUCHPAD_SETTINGS_BORDER_TITLE")));
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("TOUCHPAD_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(touchpadSettingsPanel, constraints);
 
-		final var touchpadPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var touchpadPanel = new JPanel(defaultFlowLayout);
 		touchpadSettingsPanel.add(touchpadPanel);
 
-		final var enableTouchpadLabel = new JLabel(STRINGS.getString("TOUCHPAD_LABEL"));
-		enableTouchpadLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var enableTouchpadLabel = new JLabel(strings.getString("TOUCHPAD_LABEL"));
+		enableTouchpadLabel.setPreferredSize(longSettingsLabelDimension);
 		touchpadPanel.add(enableTouchpadLabel);
 
-		touchpadCursorSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadCursorSensitivityPanel = new JPanel(defaultFlowLayout);
 		touchpadSettingsPanel.add(touchpadCursorSensitivityPanel);
 
-		final var touchpadCursorSensitivityLabel = new JLabel(STRINGS.getString("TOUCHPAD_CURSOR_SENSITIVITY"));
-		touchpadCursorSensitivityLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var touchpadCursorSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_CURSOR_SENSITIVITY"));
+		touchpadCursorSensitivityLabel.setPreferredSize(longSettingsLabelDimension);
 		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
@@ -1516,11 +1515,11 @@ public final class Main extends JFrame {
 		});
 		touchpadCursorSensitivityPanel.add(cursorSensitivitySpinner);
 
-		touchpadScrollSensitivityPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		touchpadScrollSensitivityPanel = new JPanel(defaultFlowLayout);
 		touchpadSettingsPanel.add(touchpadScrollSensitivityPanel);
 
-		final var touchpadScrollSensitivityLabel = new JLabel(STRINGS.getString("TOUCHPAD_SCROLL_SENSITIVITY"));
-		touchpadScrollSensitivityLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var touchpadScrollSensitivityLabel = new JLabel(strings.getString("TOUCHPAD_SCROLL_SENSITIVITY"));
+		touchpadScrollSensitivityLabel.setPreferredSize(longSettingsLabelDimension);
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
 
 		final var touchpadScrollSensitivitySpinner = new JSpinner(
@@ -1534,7 +1533,7 @@ public final class Main extends JFrame {
 		});
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivitySpinner);
 
-		final var touchpadEnabledCheckBox = new JCheckBox(STRINGS.getString("TOUCHPAD_ENABLED_CHECK_BOX"));
+		final var touchpadEnabledCheckBox = new JCheckBox(strings.getString("TOUCHPAD_ENABLED_CHECK_BOX"));
 		touchpadEnabledCheckBox.setSelected(isTouchpadEnabled());
 		touchpadEnabledCheckBox.addActionListener(event -> {
 			final var enableTouchpad = ((JCheckBox) event.getSource()).isSelected();
@@ -1565,7 +1564,7 @@ public final class Main extends JFrame {
 		donateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		donateButton.setVisible(showDonateButton);
 
-		toggleDonateCheckBoxMenuItem = new JCheckBoxMenuItem(STRINGS.getString("SHOW_DONATE_BUTTON"), showDonateButton);
+		toggleDonateCheckBoxMenuItem = new JCheckBoxMenuItem(strings.getString("SHOW_DONATE_BUTTON"), showDonateButton);
 		toggleDonateCheckBoxMenuItem.addActionListener(_ -> {
 			final var showDonateButton1 = toggleDonateCheckBoxMenuItem.isSelected();
 			preferences.putBoolean(PREFERENCES_SHOW_DONATE_BUTTON, showDonateButton1);
@@ -1654,7 +1653,7 @@ public final class Main extends JFrame {
 						}
 					}
 				} catch (final Throwable t) {
-					LOGGER.log(Level.SEVERE, t.getMessage(), t);
+					logger.log(Level.SEVERE, t.getMessage(), t);
 				}
 			}
 		}
@@ -1690,21 +1689,21 @@ public final class Main extends JFrame {
 			var errorDetails = SDLError.SDL_GetError();
 
 			final var hasErrorDetails = errorDetails != null && !errorDetails.isBlank();
-			LOGGER.severe("Could not initialize SDL" + (hasErrorDetails ? ": " + errorDetails : ""));
+			logger.severe("Could not initialize SDL" + (hasErrorDetails ? ": " + errorDetails : ""));
 
 			if (!hasErrorDetails) {
-				errorDetails = STRINGS.getString("NO_ERROR_DETAILS");
+				errorDetails = strings.getString("NO_ERROR_DETAILS");
 			}
 
 			if (IS_WINDOWS || IS_LINUX) {
 				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(STRINGS.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME, errorDetails),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			} else {
 				GuiUtils.showMessageDialog(this, this, MessageFormat
-						.format(STRINGS.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT_MAC"), errorDetails),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						.format(strings.getString("COULD_NOT_INITIALIZE_SDL_DIALOG_TEXT_MAC"), errorDetails),
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				quit();
 			}
 
@@ -1729,16 +1728,16 @@ public final class Main extends JFrame {
 				Files.delete(tempFilePath);
 			}
 		} catch (final Throwable t) {
-			LOGGER.log(Level.SEVERE, t.getMessage(), t);
-			errorDetails = STRINGS.getString("NO_ERROR_DETAILS");
+			logger.log(Level.SEVERE, t.getMessage(), t);
+			errorDetails = strings.getString("NO_ERROR_DETAILS");
 		}
 
 		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(this, this,
 					MessageFormat.format(
-							STRINGS.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_INTERNAL_FILE_DIALOG_TEXT"),
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_INTERNAL_FILE_DIALOG_TEXT"),
 							Constants.APPLICATION_NAME, errorDetails),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
 		final var cmdGameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
@@ -1759,7 +1758,7 @@ public final class Main extends JFrame {
 		});
 
 		if (!controllers.isEmpty()) {
-			LOGGER.info("Present controllers:"
+			logger.info("Present controllers:"
 					+ controllers.stream().map(controller -> assembleControllerLoggingMessage("\n\t", controller))
 							.collect(Collectors.joining()));
 
@@ -1767,11 +1766,11 @@ public final class Main extends JFrame {
 			if (lastControllerGuid != null) {
 				controllers.stream().filter(controller -> lastControllerGuid.equals(controller.guid)).findFirst()
 						.ifPresentOrElse(controller -> {
-							LOGGER.info(
+							logger.info(
 									assembleControllerLoggingMessage("Found previously used controller ", controller));
 							setSelectedController(controller);
 						}, () -> {
-							LOGGER.info("Previously used controller is not present");
+							logger.info("Previously used controller is not present");
 							setSelectedController(controllers.stream().findFirst().orElse(null));
 						});
 			}
@@ -1784,12 +1783,12 @@ public final class Main extends JFrame {
 		if (noControllerConnected && !isSkipControllerDialogs()) {
 			if (IS_WINDOWS || IS_LINUX) {
 				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(STRINGS.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
-						STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				GuiUtils.showMessageDialog(this, this, STRINGS.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
-						STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				GuiUtils.showMessageDialog(this, this, strings.getString("NO_CONTROLLER_CONNECTED_DIALOG_TEXT_MAC"),
+						strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 
@@ -1861,7 +1860,7 @@ public final class Main extends JFrame {
 
 		if (!usedSymbols.isEmpty()) {
 			stringBuilder.append("<style>.description-cell{padding-right:10px}</style>").append("<b>")
-					.append(STRINGS.getString("LEGEND_TITLE")).append("</b><table>");
+					.append(strings.getString("LEGEND_TITLE")).append("</b><table>");
 
 			final var symbolToDescriptionMap = SYMBOL_TO_DESCRIPTION_MAP.entrySet().stream()
 					.filter(entry -> usedSymbols.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey,
@@ -1895,7 +1894,7 @@ public final class Main extends JFrame {
 	/// Deletes the single-instance lock file and logs a warning if deletion fails.
 	private static void deleteSingleInstanceLockFile() {
 		if (!SINGLE_INSTANCE_LOCK_FILE.delete()) {
-			LOGGER.warning("Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
+			logger.warning("Could not delete single instance lock file " + SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath());
 		}
 	}
 
@@ -2059,7 +2058,7 @@ public final class Main extends JFrame {
 	/// @return the SDL error detail string, or `null` if unavailable
 	public static String logSdlError(final String message) {
 		final var errorDetails = SDLError.SDL_GetError();
-		LOGGER.warning(message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
+		logger.warning(message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
 
 		return errorDetails;
 	}
@@ -2070,12 +2069,12 @@ public final class Main extends JFrame {
 	///
 	/// @param args command-line arguments
 	static void main(final String[] args) {
-		LOGGER.info("Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
-		LOGGER.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
+		logger.info("Launching " + Constants.APPLICATION_NAME + " " + Constants.VERSION);
+		logger.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
 				+ OS_ARCH);
 
 		Thread.setDefaultUncaughtExceptionHandler((_, e) -> {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 
 			Thread.setDefaultUncaughtExceptionHandler(null);
 
@@ -2086,14 +2085,14 @@ public final class Main extends JFrame {
 
 					final var panel = new JPanel();
 					panel.setLayout(new BorderLayout(5, 5));
-					panel.add(new JLabel(MessageFormat.format(STRINGS.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
+					panel.add(new JLabel(MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
 							Constants.APPLICATION_NAME)), BorderLayout.NORTH);
 					final var textArea = new JTextArea(stringWriter.toString());
 					textArea.setEditable(false);
 					final var scrollPane = new JScrollPane(textArea);
 					scrollPane.setPreferredSize(new Dimension(600, 400));
 					panel.add(scrollPane, BorderLayout.CENTER);
-					GuiUtils.showMessageDialog(main, main, panel, STRINGS.getString("ERROR_DIALOG_TITLE"),
+					GuiUtils.showMessageDialog(main, main, panel, strings.getString("ERROR_DIALOG_TITLE"),
 							JOptionPane.ERROR_MESSAGE);
 
 					if (main.unsavedChanges) {
@@ -2106,7 +2105,7 @@ public final class Main extends JFrame {
 								main.saveProfile(file, false);
 							}
 						} catch (final Throwable t) {
-							LOGGER.log(Level.SEVERE, t.getMessage(), t);
+							logger.log(Level.SEVERE, t.getMessage(), t);
 						}
 					}
 
@@ -2118,7 +2117,7 @@ public final class Main extends JFrame {
 		});
 
 		try {
-			final var commandLine = new DefaultParser().parse(OPTIONS, args);
+			final var commandLine = new DefaultParser().parse(options, args);
 			if (commandLine.hasOption(OPTION_VERSION)) {
 				printCommandLineMessage(Constants.APPLICATION_NAME + " " + Constants.VERSION);
 
@@ -2171,25 +2170,25 @@ public final class Main extends JFrame {
 							}
 
 							if (continueLaunch) {
-								LOGGER.warning("Other " + Constants.APPLICATION_NAME
+								logger.warning("Other " + Constants.APPLICATION_NAME
 										+ " instance did not acknowledge invocation");
 							}
 						}
 					} catch (final IOException | NumberFormatException e) {
-						LOGGER.log(Level.WARNING, e.getMessage(), e);
+						logger.log(Level.WARNING, e.getMessage(), e);
 						deleteSingleInstanceLockFile();
 					}
 				}
 
 				if (!continueLaunch) {
-					LOGGER.info("Another " + Constants.APPLICATION_NAME + " instance is already running");
+					logger.info("Another " + Constants.APPLICATION_NAME + " instance is already running");
 					terminate(0, null);
 
 					return;
 				}
 
 				if (GraphicsEnvironment.isHeadless()) {
-					LOGGER.severe("Headless environment detected - aborting launch");
+					logger.severe("Headless environment detected - aborting launch");
 					System.err.println(
 							"Error: A graphical environment is required to run " + Constants.APPLICATION_NAME + ".");
 					terminate(1, null);
@@ -2219,7 +2218,7 @@ public final class Main extends JFrame {
 		try (final var printWriter = new PrintWriter(stringWriter)) {
 			final var helpFormatter = HelpFormatter.builder().setHelpAppendable(new TextHelpAppendable(printWriter))
 					.setShowSince(false).get();
-			helpFormatter.printHelp(Constants.APPLICATION_NAME, null, OPTIONS, null, true);
+			helpFormatter.printHelp(Constants.APPLICATION_NAME, null, options, null, true);
 			printWriter.flush();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
@@ -2245,7 +2244,7 @@ public final class Main extends JFrame {
 					desktop.browse(uri);
 					return;
 				} catch (final Throwable t) {
-					LOGGER.log(Level.WARNING, t.getMessage(), t);
+					logger.log(Level.WARNING, t.getMessage(), t);
 				}
 			}
 		}
@@ -2300,8 +2299,8 @@ public final class Main extends JFrame {
 	/// @param uri the URI to display in the dialog message
 	private static void showPleaseVisitDialog(final Component parentComponent, final URI uri) {
 		JOptionPane.showMessageDialog(parentComponent,
-				MessageFormat.format(STRINGS.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
-				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				MessageFormat.format(strings.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
+				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/// Shuts down the application cleanly and exits the JVM with the given status
@@ -2326,7 +2325,7 @@ public final class Main extends JFrame {
 			main.mainLoop.shutdown();
 		}
 
-		LOGGER.info("Terminated (" + status + ")");
+		logger.info("Terminated (" + status + ")");
 
 		terminated = true;
 
@@ -2597,7 +2596,7 @@ public final class Main extends JFrame {
 			headElement.appendChild(styleElement);
 
 			final var titleElement = htmlDocument.createElementNS(XLINK_NAMESPACE_URI, "title");
-			final var title = currentFile != null ? currentFile.getName() : STRINGS.getString("UNTITLED");
+			final var title = currentFile != null ? currentFile.getName() : strings.getString("UNTITLED");
 			titleElement.setTextContent(title);
 			headElement.appendChild(titleElement);
 
@@ -2635,8 +2634,7 @@ public final class Main extends JFrame {
 
 				svgDivElement.setAttribute("id", svgDivElementId);
 				svgDivElement.setAttribute("class", "svg-div");
-				svgDivElement.setAttribute("style",
-						"display:" + (Profile.DEFAULT_MODE.equals(mode) ? "block" : "none"));
+				svgDivElement.setAttribute("style", "display:" + (Profile.defaultMode.equals(mode) ? "block" : "none"));
 				bodyElement.appendChild(svgDivElement);
 
 				final var svgDocument = generateSvgDocument(mode, true, usedSymbols);
@@ -2672,12 +2670,12 @@ public final class Main extends JFrame {
 
 			try (final var fileOutputStream = new FileOutputStream(file)) {
 				transformer.transform(new DOMSource(htmlDocument), new StreamResult(fileOutputStream));
-				LOGGER.info("Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
+				logger.info("Exported visualization of profile " + title + " to: " + file.getAbsolutePath());
 			}
 		} catch (final DOMException | IOException | SAXException | TransformerException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(this, this, STRINGS.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			logger.log(Level.SEVERE, e.getMessage(), e);
+			GuiUtils.showMessageDialog(this, this, strings.getString("COULD_NOT_EXPORT_VISUALIZATION_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2783,7 +2781,7 @@ public final class Main extends JFrame {
 				combinedActions.addAll(normalActions);
 			}
 
-			if (Profile.DEFAULT_MODE.equals(mode)) {
+			if (Profile.defaultMode.equals(mode)) {
 				final var modeActions = input.getProfile().getButtonToModeActionsMap().get(button);
 				if (modeActions != null) {
 					combinedActions.addAll(modeActions);
@@ -3022,9 +3020,9 @@ public final class Main extends JFrame {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
-								STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_HOST_DIALOG_TEXT"),
+								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_HOST_DIALOG_TEXT"),
 								OPTION_HOST, host),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 			preferences.put(PREFERENCES_HOST, host);
 		}
@@ -3037,9 +3035,9 @@ public final class Main extends JFrame {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
-								STRINGS.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
+								strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
 								OPTION_PORT, port),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -3051,9 +3049,9 @@ public final class Main extends JFrame {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
-								STRINGS.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
+								strings.getString("INVALID_VALUE_FOR_INTEGER_COMMAND_LINE_OPTION_DIALOG_TEXT"),
 								OPTION_TIMEOUT, timeout),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -3063,9 +3061,9 @@ public final class Main extends JFrame {
 				valid = false;
 				GuiUtils.showMessageDialog(this, this,
 						MessageFormat.format(
-								STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_PASSWORD_DIALOG_TEXT"),
+								strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_PASSWORD_DIALOG_TEXT"),
 								OPTION_PASSWORD, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 			preferences.put(PREFERENCES_PASSWORD, password);
 		}
@@ -3079,7 +3077,7 @@ public final class Main extends JFrame {
 		if (scheduleOnScreenKeyboardModeSwitch) {
 			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
 				for (final var buttonToModeAction : buttonToModeActions) {
-					if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(buttonToModeAction.getMode(input))) {
+					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
 						buttonToModeAction.doAction(input, -1, true);
 						break;
 					}
@@ -3103,7 +3101,7 @@ public final class Main extends JFrame {
 
 			var visible = !hasTrayOption || isModalDialogShowing();
 			if (tray == 0L && hasTrayOption) {
-				LOGGER.warning("System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
+				logger.warning("System Tray is not supported - ignoring '-" + OPTION_TRAY + "' command-line option");
 				visible = true;
 			}
 
@@ -3127,11 +3125,11 @@ public final class Main extends JFrame {
 				} else {
 					GuiUtils.showMessageDialog(this, this,
 							MessageFormat.format(
-									STRINGS.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
+									strings.getString("INVALID_VALUE_FOR_COMMAND_LINE_OPTION_AUTOSTART_DIALOG_TEXT"),
 									OPTION_AUTOSTART, autostartOptionValue,
-									IS_WINDOWS || IS_LINUX ? STRINGS.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
-											: STRINGS.getString("SERVER")),
-							STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+									IS_WINDOWS || IS_LINUX ? strings.getString("LOCAL_FEEDER_OR_CLIENT_OR_SERVER")
+											: strings.getString("SERVER")),
+							strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -3163,11 +3161,11 @@ public final class Main extends JFrame {
 			return true;
 		}
 
-		final var path = currentFile != null ? currentFile.getAbsolutePath() : STRINGS.getString("UNTITLED");
+		final var path = currentFile != null ? currentFile.getAbsolutePath() : strings.getString("UNTITLED");
 
 		final var selectedOption = JOptionPane.showConfirmDialog(this,
-				MessageFormat.format(STRINGS.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
-				STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+				MessageFormat.format(strings.getString("SAVE_CHANGES_DIALOG_TEXT"), path),
+				strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 
 		return switch (selectedOption) {
 		case JOptionPane.YES_OPTION -> {
@@ -3315,7 +3313,7 @@ public final class Main extends JFrame {
 
 				private static final int THICKNESS = 1;
 
-				private static final Insets INSETS = new Insets(THICKNESS, THICKNESS, THICKNESS, THICKNESS);
+				private static final Insets insets = new Insets(THICKNESS, THICKNESS, THICKNESS, THICKNESS);
 
 				private static void paintSegmentedLine(final Graphics2D g2, final int x1, final int y1, final int x2,
 						final int y2, final boolean horizontal) {
@@ -3337,7 +3335,7 @@ public final class Main extends JFrame {
 
 				@Override
 				public Insets getBorderInsets(final Component c) {
-					return INSETS;
+					return insets;
 				}
 
 				@Override
@@ -3421,7 +3419,7 @@ public final class Main extends JFrame {
 		if (profilePath != null) {
 			loadProfile(new File(profilePath), noControllerConnected, false, commandLine, true);
 			if (loadedProfile == null && cmdProfilePath == null) {
-				LOGGER.info("Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
+				logger.info("Removing " + PREFERENCES_LAST_PROFILE + " from preferences");
 				preferences.remove(PREFERENCES_LAST_PROFILE);
 			}
 		} else {
@@ -3607,7 +3605,7 @@ public final class Main extends JFrame {
 		final var wasRunning = isRunning();
 		stopAll(true, false, performGarbageCollection);
 
-		LOGGER.info("Loading profile: " + file.getAbsolutePath());
+		logger.info("Loading profile: " + file.getAbsolutePath());
 
 		var profileLoaded = false;
 
@@ -3619,47 +3617,47 @@ public final class Main extends JFrame {
 				final var profile = jsonContext.gson.fromJson(jsonString, Profile.class);
 				final var versionsComparisonResult = VersionUtils.compareVersions(profile.getVersion());
 				if (versionsComparisonResult.isEmpty()) {
-					LOGGER.warning("Trying to load a profile without version information");
+					logger.warning("Trying to load a profile without version information");
 
 					if (!skipMessageDialogs) {
 						GuiUtils.showMessageDialog(this, this,
-								MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-										file.getName(), STRINGS.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
-								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+										file.getName(), strings.getString("AN_UNKNOWN"), Constants.APPLICATION_NAME),
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					}
 				} else {
 					final int v = versionsComparisonResult.get();
 					if (v < 0) {
-						LOGGER.warning("Trying to load a profile for an older release");
+						logger.warning("Trying to load a profile for an older release");
 
 						if (!skipMessageDialogs) {
 							GuiUtils.showMessageDialog(this, this,
-									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-											file.getName(), STRINGS.getString("AN_OLDER"), Constants.APPLICATION_NAME),
-									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+									MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											file.getName(), strings.getString("AN_OLDER"), Constants.APPLICATION_NAME),
+									strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 						}
 					} else if (v > 0) {
-						LOGGER.warning("Trying to load a profile for a newer release");
+						logger.warning("Trying to load a profile for a newer release");
 
 						if (!skipMessageDialogs) {
 							GuiUtils.showMessageDialog(this, this,
-									MessageFormat.format(STRINGS.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
-											file.getName(), STRINGS.getString("A_NEWER"), Constants.APPLICATION_NAME),
-									STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+									MessageFormat.format(strings.getString("PROFILE_VERSION_MISMATCH_DIALOG_TEXT"),
+											file.getName(), strings.getString("A_NEWER"), Constants.APPLICATION_NAME),
+									strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				}
 
 				final var unknownActionClasses = jsonContext.actionTypeAdapter.getUnknownActionClasses();
 				if (!unknownActionClasses.isEmpty()) {
-					LOGGER.warning("Encountered the unknown actions while loading profile:"
+					logger.warning("Encountered the unknown actions while loading profile:"
 							+ String.join(", ", unknownActionClasses));
 
 					if (!skipMessageDialogs) {
 						GuiUtils.showMessageDialog(this, this,
-								MessageFormat.format(STRINGS.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
+								MessageFormat.format(strings.getString("UNKNOWN_ACTION_TYPES_DIALOG_TEXT"),
 										String.join("\n", unknownActionClasses)),
-								STRINGS.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
+								strings.getString("WARNING_DIALOG_TITLE"), JOptionPane.WARNING_MESSAGE);
 					}
 				}
 
@@ -3674,8 +3672,8 @@ public final class Main extends JFrame {
 					loadedProfile = file.getName();
 					setUnsavedChanges(false);
 					setStatusBarText(
-							MessageFormat.format(STRINGS.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
-					scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
+							MessageFormat.format(strings.getString("STATUS_PROFILE_LOADED"), file.getAbsolutePath()));
+					scheduleStatusBarText(strings.getString("STATUS_READY"));
 					profileFileChooser.setSelectedFile(file);
 
 					if (wasRunning) {
@@ -3683,22 +3681,22 @@ public final class Main extends JFrame {
 					}
 				}
 			} catch (final JsonParseException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				logger.log(Level.SEVERE, e.getMessage(), e);
 			}
 		} catch (final NoSuchFileException | InvalidPathException e) {
-			LOGGER.log(Level.FINE, e.getMessage(), e);
+			logger.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 		}
 
 		if (!profileLoaded) {
-			LOGGER.severe("Could not load profile");
+			logger.severe("Could not load profile");
 
 			if (!skipMessageDialogs) {
 				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(STRINGS.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("COULD_NOT_LOAD_PROFILE_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
@@ -3713,11 +3711,11 @@ public final class Main extends JFrame {
 	/// @param args the command-line arguments received from the other instance
 	public void newActivation(final String[] args) {
 		EventQueue.invokeLater(() -> {
-			LOGGER.info("New activation with arguments: " + String.join(" ", args));
+			logger.info("New activation with arguments: " + String.join(" ", args));
 
 			if (args.length > 0) {
 				try {
-					final var commandLine = new DefaultParser().parse(OPTIONS, args);
+					final var commandLine = new DefaultParser().parse(options, args);
 					final var cmdProfilePath = commandLine.getOptionValue(OPTION_PROFILE);
 					final var gameControllerDbPath = commandLine.getOptionValue(OPTION_GAME_CONTROLLER_DB);
 
@@ -3731,13 +3729,13 @@ public final class Main extends JFrame {
 						handleRemainingCommandLine(commandLine, false);
 					}
 				} catch (final ParseException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					logger.log(Level.SEVERE, e.getMessage(), e);
 				}
 			} else {
 				GuiUtils.showMessageDialog(this, this,
-						MessageFormat.format(STRINGS.getString("ALREADY_RUNNING_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("ALREADY_RUNNING_DIALOG_TEXT"),
 								Constants.APPLICATION_NAME),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 			}
 		});
 	}
@@ -3768,7 +3766,7 @@ public final class Main extends JFrame {
 		updateVisualizationPanel();
 		updateOverlayPanel();
 		updateProfileSettingsPanel();
-		setStatusBarText(STRINGS.getString("STATUS_READY"));
+		setStatusBarText(strings.getString("STATUS_READY"));
 	}
 
 	/// Handles a change in the set of connected controllers.
@@ -3866,7 +3864,7 @@ public final class Main extends JFrame {
 					stopTrayEntry = 0L;
 				}
 
-				showTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, STRINGS.getString("SHOW_TRAY_ENTRY_LABEL"),
+				showTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1, strings.getString("SHOW_TRAY_ENTRY_LABEL"),
 						SDLTray.SDL_TRAYENTRY_BUTTON);
 				SDLTray.SDL_SetTrayEntryEnabled(showTrayEntry, !isVisible());
 				SDLTray.SDL_SetTrayEntryCallback(showTrayEntry, (_, _) -> EventQueue.invokeLater(() -> {
@@ -3882,7 +3880,7 @@ public final class Main extends JFrame {
 
 				if (runMenuVisible) {
 					final var runMenuTrayEntry = SDLTray.SDL_InsertTrayEntryAt(trayMenu, -1,
-							STRINGS.getString("RUN_MENU"), SDLTray.SDL_TRAYENTRY_SUBMENU);
+							strings.getString("RUN_MENU"), SDLTray.SDL_TRAYENTRY_SUBMENU);
 
 					final var runSubMenu = SDLTray.SDL_CreateTraySubmenu(runMenuTrayEntry);
 
@@ -3951,7 +3949,7 @@ public final class Main extends JFrame {
 			});
 			menuBar.add(deviceMenu, 1);
 		} else {
-			LOGGER.info("No controllers connected");
+			logger.info("No controllers connected");
 		}
 
 		updateDeviceMenuSelection();
@@ -4019,7 +4017,7 @@ public final class Main extends JFrame {
 
 					final var controller = new Controller(instanceId);
 					if (controllers.add(controller)) {
-						LOGGER.info(assembleControllerLoggingMessage("Connected controller ", controller));
+						logger.info(assembleControllerLoggingMessage("Connected controller ", controller));
 
 						if (input.isInitialized()) {
 							input.openController(controller);
@@ -4034,7 +4032,7 @@ public final class Main extends JFrame {
 					controllers.stream().filter(controller -> controller.instanceId == instanceId).findFirst()
 							.ifPresent(controller -> {
 								controllers.remove(controller);
-								LOGGER.info(assembleControllerLoggingMessage("Disconnected controller ", controller));
+								logger.info(assembleControllerLoggingMessage("Disconnected controller ", controller));
 
 								if (selectedController != null && selectedController.instanceId == instanceId) {
 									selectedController = null;
@@ -4234,7 +4232,7 @@ public final class Main extends JFrame {
 			profileFileChooser.setSelectedFile(file);
 		}
 
-		LOGGER.info("Saving profile: " + file.getAbsolutePath());
+		logger.info("Saving profile: " + file.getAbsolutePath());
 
 		final var profile = input.getProfile();
 		profile.setVersion(VersionUtils.getMajorAndMinorVersion());
@@ -4249,12 +4247,12 @@ public final class Main extends JFrame {
 
 			loadedProfile = file.getName();
 			setUnsavedChanges(false);
-			setStatusBarText(MessageFormat.format(STRINGS.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
-			scheduleStatusBarText(STRINGS.getString("STATUS_READY"));
+			setStatusBarText(MessageFormat.format(strings.getString("STATUS_PROFILE_SAVED"), file.getAbsolutePath()));
+			scheduleStatusBarText(strings.getString("STATUS_READY"));
 		} catch (final IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			GuiUtils.showMessageDialog(this, this, STRINGS.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+			logger.log(Level.SEVERE, e.getMessage(), e);
+			GuiUtils.showMessageDialog(this, this, strings.getString("COULD_NOT_SAVE_PROFILE_DIALOG_TEXT"),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -4266,7 +4264,7 @@ public final class Main extends JFrame {
 	/// dialog, delegates to [#saveProfile(File,boolean)].
 	private void saveProfileAs() {
 		profileFileChooser.setSelectedFile(
-				currentFile != null ? currentFile : new File(STRINGS.getString("UNTITLED") + PROFILE_FILE_SUFFIX));
+				currentFile != null ? currentFile : new File(strings.getString("UNTITLED") + PROFILE_FILE_SUFFIX));
 
 		if (profileFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			saveProfile(profileFileChooser.getSelectedFile(), true);
@@ -4346,7 +4344,7 @@ public final class Main extends JFrame {
 		selectedController = controller;
 
 		if (controller != null) {
-			LOGGER.info(assembleControllerLoggingMessage("Selected controller ", controller));
+			logger.info(assembleControllerLoggingMessage("Selected controller ", controller));
 
 			if (controller.guid != null) {
 				preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
@@ -4415,18 +4413,18 @@ public final class Main extends JFrame {
 		final var buildDateTime = Instant.ofEpochMilli(Constants.BUILD_TIMESTAMP).atZone(ZoneId.systemDefault());
 
 		final var defaultLocale = Locale.getDefault();
-		final var buildTimeLocale = Locale.ROOT.equals(STRINGS.getLocale())
+		final var buildTimeLocale = Locale.ROOT.equals(strings.getLocale())
 				? (defaultLocale.getLanguage().equals(Locale.ENGLISH.getLanguage()) ? defaultLocale : Locale.US)
-				: STRINGS.getLocale();
+				: strings.getLocale();
 		final var buildTimeString = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
 				.withLocale(buildTimeLocale).format(buildDateTime);
 
 		final var buildYear = String.valueOf(buildDateTime.getYear());
 
 		GuiUtils.showMessageDialog(this, this,
-				MessageFormat.format(STRINGS.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
+				MessageFormat.format(strings.getString("ABOUT_DIALOG_TEXT"), Constants.APPLICATION_NAME,
 						Constants.VERSION, OS_NAME, OS_ARCH, buildTimeString, buildYear),
-				STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
+				strings.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"), JOptionPane.INFORMATION_MESSAGE, imageIcon);
 	}
 
 	/// Shows a message dialog explaining that a restart is required for changes to
@@ -4434,8 +4432,8 @@ public final class Main extends JFrame {
 	/// profile changes are handled.
 	private void showRestartRequiredDialog() {
 		if (JOptionPane.showConfirmDialog(this,
-				MessageFormat.format(STRINGS.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
-				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
+				MessageFormat.format(strings.getString("RESTART_REQUIRED_DIALOG_TEXT"), Constants.APPLICATION_NAME),
+				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION
 				&& handleUnsavedChanges()) {
 			quit();
 		}
@@ -4453,12 +4451,12 @@ public final class Main extends JFrame {
 		imageLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 0, 25, 10),
 				BorderFactory.createLoweredBevelBorder()));
 
-		final var doNotShowMessageAgainCheckbox = new JCheckBox(STRINGS.getString("DO_NOT_SHOW_MESSAGE_AGAIN"));
+		final var doNotShowMessageAgainCheckbox = new JCheckBox(strings.getString("DO_NOT_SHOW_MESSAGE_AGAIN"));
 
 		GuiUtils.showMessageDialog(null, this,
-				new Object[] { MessageFormat.format(STRINGS.getString("TRAY_ICON_HINT_DIALOG_TEXT"),
+				new Object[] { MessageFormat.format(strings.getString("TRAY_ICON_HINT_DIALOG_TEXT"),
 						Constants.APPLICATION_NAME), imageLabel, doNotShowMessageAgainCheckbox },
-				STRINGS.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
 
 		if (doNotShowMessageAgainCheckbox.isSelected()) {
 			preferences.putBoolean(PREFERENCES_SKIP_TRAY_ICON_HINT, true);
@@ -4692,7 +4690,7 @@ public final class Main extends JFrame {
 				return logSdlError("Failed to update game controller mappings from " + sourceName);
 			}
 
-			LOGGER.info("Added " + numMappingsAdded + " game controller mappings from " + sourceName);
+			logger.info("Added " + numMappingsAdded + " game controller mappings from " + sourceName);
 
 			return null;
 		}).orElse(null);
@@ -4714,19 +4712,19 @@ public final class Main extends JFrame {
 		try {
 			errorDetails = updateGameControllerMappings(path, "external file: " + path);
 		} catch (final Throwable t) {
-			LOGGER.warning("Could not read external game controller mappings file: " + path);
+			logger.warning("Could not read external game controller mappings file: " + path);
 
 			GuiUtils.showMessageDialog(this, this, MessageFormat
-					.format(STRINGS.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					.format(strings.getString("COULD_NOT_READ_GAME_CONTROLLER_MAPPINGS_FILE_DIALOG_TEXT"), path),
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 
 		if (errorDetails != null && !errorDetails.isBlank()) {
 			GuiUtils.showMessageDialog(this, this,
 					MessageFormat.format(
-							STRINGS.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
+							strings.getString("ERROR_UPDATING_GAME_CONTROLLER_DB_FROM_EXTERNAL_FILE_DIALOG_TEXT"), path,
 							errorDetails),
-					STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+					strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -4775,7 +4773,7 @@ public final class Main extends JFrame {
 		}
 
 		final var buttonGridBagConstraints = new GridBagConstraints(4, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-				GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0);
+				GridBagConstraints.CENTER, GridBagConstraints.NONE, listItemInnerInsets, 0, 0);
 
 		final var modes = input.getProfile().getModes();
 		final var numModes = modes.size();
@@ -4785,19 +4783,19 @@ public final class Main extends JFrame {
 			final var modePanel = new JPanel(new GridBagLayout());
 			modePanel.setBorder(LIST_ITEM_BORDER);
 			modesListPanel.add(modePanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, gridBagItemInsets, 0, 0));
 
-			final var modeNoLabel = new JLabel(MessageFormat.format(STRINGS.getString("MODE_LABEL_NO"), i + 1));
-			modeNoLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
+			final var modeNoLabel = new JLabel(MessageFormat.format(strings.getString("MODE_LABEL_NO"), i + 1));
+			modeNoLabel.setPreferredSize(mediumSettingsLabelDimension);
 			modePanel.add(modeNoLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(1, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			final var descriptionTextField = GuiUtils.createTextFieldWithMenu(mode.getDescription(), 35);
 			modePanel.add(descriptionTextField, new GridBagConstraints(2, 0, 1, 1, 1d, 1d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 			if (newModeAdded && i == numModes - 1) {
 				descriptionTextField.grabFocus();
 				descriptionTextField.selectAll();
@@ -4811,15 +4809,15 @@ public final class Main extends JFrame {
 			descriptionTextField.getDocument().addDocumentListener(setModeDescriptionAction);
 
 			modePanel.add(Box.createGlue(), new GridBagConstraints(3, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
-			if (Profile.DEFAULT_MODE.equals(mode) || OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode)) {
+			if (Profile.defaultMode.equals(mode) || OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
 				descriptionTextField.setEditable(false);
 				descriptionTextField.setFocusable(false);
-				modePanel.add(Box.createHorizontalStrut(BUTTON_DIMENSION.width), buttonGridBagConstraints);
+				modePanel.add(Box.createHorizontalStrut(buttonDimension.width), buttonGridBagConstraints);
 			} else {
 				final var deleteButton = new JButton(new RemoveModeAction(mode));
-				deleteButton.setPreferredSize(BUTTON_DIMENSION);
+				deleteButton.setPreferredSize(buttonDimension);
 				modePanel.add(deleteButton, buttonGridBagConstraints);
 			}
 		}
@@ -4951,13 +4949,13 @@ public final class Main extends JFrame {
 			final var indicatorPanel = new JPanel(new GridBagLayout());
 			indicatorPanel.setBorder(LIST_ITEM_BORDER);
 			indicatorsListPanel.add(indicatorPanel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, GRID_BAG_ITEM_INSETS, 0, 0));
+					GridBagConstraints.FIRST_LINE_START, GridBagConstraints.HORIZONTAL, gridBagItemInsets, 0, 0));
 
 			final var virtualAxisLabel = new JLabel(
-					MessageFormat.format(STRINGS.getString("AXIS_LABEL"), virtualAxis.toString()));
-			virtualAxisLabel.setPreferredSize(MEDIUM_SETTINGS_LABEL_DIMENSION);
+					MessageFormat.format(strings.getString("AXIS_LABEL"), virtualAxis.toString()));
+			virtualAxisLabel.setPreferredSize(mediumSettingsLabelDimension);
 			indicatorPanel.add(virtualAxisLabel, new GridBagConstraints(0, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			final var descriptionText = virtualAxisToDescriptionMap.computeIfAbsent(virtualAxis, _ -> "");
 			final var descriptionLabel = new JLabel(descriptionText);
@@ -4966,7 +4964,7 @@ public final class Main extends JFrame {
 			}
 			descriptionLabel.setPreferredSize(descriptionLabelDimension);
 			indicatorPanel.add(descriptionLabel, new GridBagConstraints(1, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			final var virtualAxisToOverlayAxisMap = input.getProfile().getVirtualAxisToOverlayAxisMap();
 			final var overlayAxis = virtualAxisToOverlayAxisMap.get(virtualAxis);
@@ -4974,7 +4972,7 @@ public final class Main extends JFrame {
 
 			final var colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, DEFAULT_HGAP, 0));
 			indicatorPanel.add(colorPanel, new GridBagConstraints(2, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			final var colorLabel = new JLabel();
 			if (enabled) {
@@ -4986,19 +4984,19 @@ public final class Main extends JFrame {
 			colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			colorPanel.add(colorLabel);
 
-			colorLabel.setPreferredSize(SQUARE_BUTTON_DIMENSION);
+			colorLabel.setPreferredSize(squareButtonDimension);
 			colorLabel.setBorder(BorderFactory.createLineBorder(borderColor));
 
 			final var colorButton = new JButton(new SelectIndicatorColorAction(virtualAxis));
-			colorButton.setPreferredSize(SQUARE_BUTTON_DIMENSION);
+			colorButton.setPreferredSize(squareButtonDimension);
 			colorButton.setEnabled(enabled);
 			colorPanel.add(colorButton);
 
-			final var orientationPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var orientationPanel = new JPanel(defaultFlowLayout);
 			indicatorPanel.add(orientationPanel, new GridBagConstraints(3, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
-			final var orientationLabel = new JLabel(STRINGS.getString("ORIENTATION_LABEL"));
+			final var orientationLabel = new JLabel(strings.getString("ORIENTATION_LABEL"));
 			orientationPanel.add(orientationLabel);
 
 			final var orientationComboBox = new JComboBox<>(OverlayAxisOrientation.values());
@@ -5009,11 +5007,11 @@ public final class Main extends JFrame {
 			orientationComboBox.setEnabled(enabled);
 			orientationPanel.add(orientationComboBox);
 
-			final var stylePanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var stylePanel = new JPanel(defaultFlowLayout);
 			indicatorPanel.add(stylePanel, new GridBagConstraints(4, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
-			final var styleLabel = new JLabel(STRINGS.getString("STYLE_LABEL"));
+			final var styleLabel = new JLabel(strings.getString("STYLE_LABEL"));
 			stylePanel.add(styleLabel);
 
 			final var styleComboBox = new JComboBox<>(OverlayAxisStyle.values());
@@ -5027,12 +5025,12 @@ public final class Main extends JFrame {
 			invertCheckBox.setSelected(enabled && overlayAxis.isInverted());
 			invertCheckBox.setEnabled(enabled);
 			indicatorPanel.add(invertCheckBox, new GridBagConstraints(5, 0, 1, 1, 0.2, 0d, GridBagConstraints.CENTER,
-					GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 
 			final var showCheckBox = new JCheckBox(new ShowIndicatorAction(virtualAxis));
 			showCheckBox.setSelected(enabled);
 			indicatorPanel.add(showCheckBox, new GridBagConstraints(6, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-					GridBagConstraints.CENTER, GridBagConstraints.NONE, LIST_ITEM_INNER_INSETS, 0, 0));
+					GridBagConstraints.CENTER, GridBagConstraints.NONE, listItemInnerInsets, 0, 0));
 		});
 
 		indicatorsListPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d, 1d,
@@ -5141,19 +5139,19 @@ public final class Main extends JFrame {
 		}
 
 		final var constraints = new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0d, 0d,
-				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, GRID_BAG_ITEM_INSETS, 0, 5);
+				GridBagConstraints.FIRST_LINE_START, GridBagConstraints.BOTH, gridBagItemInsets, 0, 5);
 
 		final var inputSettingsPanel = new JPanel();
 		inputSettingsPanel.setLayout(new BoxLayout(inputSettingsPanel, BoxLayout.Y_AXIS));
 		inputSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		profileSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var keyRepeatIntervalPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var keyRepeatIntervalPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(keyRepeatIntervalPanel, constraints);
 
-		final var keyRepeatIntervalLabel = new JLabel(STRINGS.getString("KEY_REPEAT_INTERVAL_LABEL"));
-		keyRepeatIntervalLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
+		keyRepeatIntervalLabel.setPreferredSize(longSettingsLabelDimension);
 		keyRepeatIntervalPanel.add(keyRepeatIntervalLabel);
 
 		final var profile = input.getProfile();
@@ -5171,18 +5169,18 @@ public final class Main extends JFrame {
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.Y_AXIS));
 		appearanceSettingsPanel
-				.setBorder(BorderFactory.createTitledBorder(STRINGS.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
+				.setBorder(BorderFactory.createTitledBorder(strings.getString("APPEARANCE_SETTINGS_BORDER_TITLE")));
 		constraints.gridx = 1;
 		profileSettingsPanel.add(appearanceSettingsPanel, constraints);
 
-		final var overlaySettingsPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+		final var overlaySettingsPanel = new JPanel(defaultFlowLayout);
 		appearanceSettingsPanel.add(overlaySettingsPanel, constraints);
 
-		final var overlayLabel = new JLabel(STRINGS.getString("OVERLAY_LABEL"));
-		overlayLabel.setPreferredSize(LONG_SETTINGS_LABEL_DIMENSION);
+		final var overlayLabel = new JLabel(strings.getString("OVERLAY_LABEL"));
+		overlayLabel.setPreferredSize(longSettingsLabelDimension);
 		overlaySettingsPanel.add(overlayLabel);
 
-		final var showOverlayCheckBox = new JCheckBox(STRINGS.getString("SHOW_OVERLAY_CHECK_BOX"));
+		final var showOverlayCheckBox = new JCheckBox(strings.getString("SHOW_OVERLAY_CHECK_BOX"));
 		showOverlayCheckBox.setSelected(profile.isShowOverlay());
 		showOverlayCheckBox.addActionListener(event -> {
 			profile.setShowOverlay(((JCheckBox) event.getSource()).isSelected());
@@ -5401,8 +5399,8 @@ public final class Main extends JFrame {
 	public void updateTitle() {
 		final String title;
 		final var profileTitle = (unsavedChanges ? "*" : "")
-				+ (loadedProfile != null ? loadedProfile : STRINGS.getString("UNTITLED"));
-		title = MessageFormat.format(STRINGS.getString("MAIN_FRAME_TITLE"), profileTitle, Constants.APPLICATION_NAME);
+				+ (loadedProfile != null ? loadedProfile : strings.getString("UNTITLED"));
+		title = MessageFormat.format(strings.getString("MAIN_FRAME_TITLE"), profileTitle, Constants.APPLICATION_NAME);
 
 		setTitle(title);
 		if (IS_LINUX) {
@@ -5414,7 +5412,7 @@ public final class Main extends JFrame {
 					awtAppClassName.setAccessible(true);
 					awtAppClassName.set(null, title);
 				} catch (final ReflectiveOperationException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					logger.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 		}
@@ -5481,7 +5479,7 @@ public final class Main extends JFrame {
 
 		var tooltip = getTitle();
 		if (batteryPercent >= 0 && batteryPercent <= 100) {
-			tooltip = MessageFormat.format(STRINGS.getString("BATTERY_TOOLTIP_PERCENT"), tooltip, batteryPercent);
+			tooltip = MessageFormat.format(strings.getString("BATTERY_TOOLTIP_PERCENT"), tooltip, batteryPercent);
 		}
 
 		SDLTray.SDL_SetTrayTooltip(tray, tooltip);
@@ -5588,7 +5586,7 @@ public final class Main extends JFrame {
 		/// @param labelKey the resource-bundle key for the localized display label
 		Theme(final int id, final String labelKey) {
 			this.id = id;
-			label = STRINGS.getString(labelKey);
+			label = strings.getString(labelKey);
 		}
 
 		/// Returns the [Theme] constant whose ID matches the given value, or
@@ -5652,8 +5650,8 @@ public final class Main extends JFrame {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final var selectedOption = JOptionPane.showConfirmDialog(this,
-						MessageFormat.format(file.getName(), STRINGS.getString("FILE_EXISTS_DIALOG_TEXT")),
-						STRINGS.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
+						MessageFormat.format(file.getName(), strings.getString("FILE_EXISTS_DIALOG_TEXT")),
+						strings.getString("FILE_EXISTS_DIALOG_TITLE"), JOptionPane.YES_NO_CANCEL_OPTION);
 				switch (selectedOption) {
 				case JOptionPane.CANCEL_OPTION:
 					cancelSelection();
@@ -5724,10 +5722,10 @@ public final class Main extends JFrame {
 
 		/// Constructs a [DonateAction] and initializes its name and description.
 		private DonateAction() {
-			putValue(NAME, "<html><span style='text-decoration:underline'>" + STRINGS.getString("DONATE_ACTION_NAME")
+			putValue(NAME, "<html><span style='text-decoration:underline'>" + strings.getString("DONATE_ACTION_NAME")
 					+ "</span> <span style='color:#d10000'>❤</span></html>");
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(STRINGS.getString("DONATE_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
+					MessageFormat.format(strings.getString("DONATE_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
 		}
 
 		@Override
@@ -5755,14 +5753,14 @@ public final class Main extends JFrame {
 		/// @param profileFile the currently open profile file, or `null` if no
 		/// profile is loaded
 		private HtmlFileChooser(final File profileFile) {
-			super(new FileNameExtensionFilter(STRINGS.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
+			super(new FileNameExtensionFilter(strings.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
 
 			String filename;
 			if (profileFile != null) {
 				filename = profileFile.getName();
 				filename = filename.substring(0, filename.lastIndexOf('.'));
 			} else {
-				filename = STRINGS.getString("UNTITLED");
+				filename = strings.getString("UNTITLED");
 			}
 
 			setSelectedFile(new File(filename + HTML_FILE_SUFFIX));
@@ -5876,8 +5874,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [ShowWebsiteAction] and initializes its name and description.
 		private ShowWebsiteAction() {
-			putValue(NAME, STRINGS.getString("SHOW_WEBSITE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(STRINGS.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"),
+			putValue(NAME, strings.getString("SHOW_WEBSITE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(strings.getString("SHOW_WEBSITE_ACTION_DESCRIPTION"),
 					Constants.APPLICATION_NAME));
 		}
 
@@ -5924,7 +5922,7 @@ public final class Main extends JFrame {
 		/// description.
 		private ChangeVJoyDirectoryAction() {
 			putValue(NAME, "...");
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_VJOY_DIRECTORY_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -5941,9 +5939,9 @@ public final class Main extends JFrame {
 					VjoyInterface.GetVJoyArchFolderName() + File.separator + VjoyInterface.VJOY_LIBRARY_FILENAME);
 			if (!dllFile.exists()) {
 				GuiUtils.showMessageDialog(Main.this, Main.this,
-						MessageFormat.format(STRINGS.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
+						MessageFormat.format(strings.getString("INVALID_VJOY_DIRECTORY_DIALOG_TEXT"),
 								getDefaultVJoyPath()),
-						STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+						strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -6006,7 +6004,7 @@ public final class Main extends JFrame {
 
 			executeWhileVisible(() -> {
 				if (JOptionPane.showConfirmDialog(Main.this, connectionSettingsPanel,
-						STRINGS.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
+						strings.getString("CONNECT_DIALOG_TITLE"), JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
 					final var errorMessage = connectionSettingsPanel.saveSettings();
 
@@ -6014,7 +6012,7 @@ public final class Main extends JFrame {
 						proceed();
 					} else {
 						GuiUtils.showMessageDialog(Main.this, Main.this, errorMessage,
-								STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
+								strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE);
 						showConnectDialog();
 					}
 				}
@@ -6058,11 +6056,11 @@ public final class Main extends JFrame {
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 			if (withHost) {
-				final var hostPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+				final var hostPanel = new JPanel(defaultFlowLayout);
 				add(hostPanel);
 
-				final var hostLabel = new JLabel(STRINGS.getString("HOST_LABEL"));
-				hostLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
+				final var hostLabel = new JLabel(strings.getString("HOST_LABEL"));
+				hostLabel.setPreferredSize(shortSettingsLabelDimension);
 				hostPanel.add(hostLabel);
 
 				final var host = getHost();
@@ -6076,11 +6074,11 @@ public final class Main extends JFrame {
 				}
 			}
 
-			final var portPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var portPanel = new JPanel(defaultFlowLayout);
 			add(portPanel);
 
-			final var portLabel = new JLabel(STRINGS.getString("PORT_LABEL"));
-			portLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
+			final var portLabel = new JLabel(strings.getString("PORT_LABEL"));
+			portLabel.setPreferredSize(shortSettingsLabelDimension);
 			portPanel.add(portLabel);
 
 			portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
@@ -6089,22 +6087,22 @@ public final class Main extends JFrame {
 			portSpinner.setEditor(portSpinnerEditor);
 			portPanel.add(portSpinner);
 
-			final var timeoutPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var timeoutPanel = new JPanel(defaultFlowLayout);
 			add(timeoutPanel);
 
-			final var timeoutLabel = new JLabel(STRINGS.getString("TIMEOUT_LABEL"));
-			timeoutLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
+			final var timeoutLabel = new JLabel(strings.getString("TIMEOUT_LABEL"));
+			timeoutLabel.setPreferredSize(shortSettingsLabelDimension);
 			timeoutPanel.add(timeoutLabel);
 
 			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
 			GuiUtils.makeMillisecondSpinner(timeoutSpinner);
 			timeoutPanel.add(timeoutSpinner);
 
-			final var passwordPanel = new JPanel(DEFAULT_FLOW_LAYOUT);
+			final var passwordPanel = new JPanel(defaultFlowLayout);
 			add(passwordPanel);
 
-			final var passwordLabel = new JLabel(STRINGS.getString("PASSWORD_LABEL"));
-			passwordLabel.setPreferredSize(SHORT_SETTINGS_LABEL_DIMENSION);
+			final var passwordLabel = new JLabel(strings.getString("PASSWORD_LABEL"));
+			passwordLabel.setPreferredSize(shortSettingsLabelDimension);
 			passwordPanel.add(passwordLabel);
 
 			final var password = getPassword();
@@ -6124,7 +6122,7 @@ public final class Main extends JFrame {
 			if (hostTextField != null) {
 				final var host = hostTextField.getText().strip();
 				if (!isValidHost(host)) {
-					return STRINGS.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT");
+					return strings.getString("NO_HOST_ADDRESS_ERROR_DIALOG_TEXT");
 				}
 				preferences.put(PREFERENCES_HOST, host);
 			}
@@ -6134,7 +6132,7 @@ public final class Main extends JFrame {
 
 			final var password = new String(passwordPasswordField.getPassword());
 			if (!isValidPassword(password)) {
-				return MessageFormat.format(STRINGS.getString("INVALID_PASSWORD_ERROR_DIALOG_TEXT"),
+				return MessageFormat.format(strings.getString("INVALID_PASSWORD_ERROR_DIALOG_TEXT"),
 						PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
 			}
 			preferences.put(PREFERENCES_PASSWORD, password);
@@ -6155,8 +6153,8 @@ public final class Main extends JFrame {
 
 		/// Constructs an [ExportAction] and initializes its name and description.
 		private ExportAction() {
-			putValue(NAME, STRINGS.getString("EXPORT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("EXPORT_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("EXPORT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("EXPORT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6191,8 +6189,8 @@ public final class Main extends JFrame {
 		private InvertIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, STRINGS.getString("INVERT_INDICATOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("INVERT_INDICATOR_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("INVERT_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("INVERT_INDICATOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6217,8 +6215,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [NewAction] and initializes its name and description.
 		private NewAction() {
-			putValue(NAME, STRINGS.getString("NEW_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("NEW_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("NEW_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6239,8 +6237,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [NewModeAction] and initializes its name and description.
 		private NewModeAction() {
-			putValue(NAME, STRINGS.getString("NEW_MODE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("NEW_MODE_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("NEW_MODE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("NEW_MODE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6266,8 +6264,8 @@ public final class Main extends JFrame {
 
 		/// Constructs an [OpenAction] and initializes its name and description.
 		private OpenAction() {
-			putValue(NAME, STRINGS.getString("OPEN_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("OPEN_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("OPEN_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("OPEN_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6297,7 +6295,7 @@ public final class Main extends JFrame {
 		/// `CONTROLLER_BUDDY_PROFILES_DIR` environment variable if set.
 		private ProfileFileChooser() {
 			super(new FileNameExtensionFilter(
-					MessageFormat.format(STRINGS.getString("PROFILE_FILE_DESCRIPTION"), Constants.APPLICATION_NAME),
+					MessageFormat.format(strings.getString("PROFILE_FILE_DESCRIPTION"), Constants.APPLICATION_NAME),
 					PROFILE_FILE_EXTENSION));
 
 			resetSelectedFile();
@@ -6343,9 +6341,9 @@ public final class Main extends JFrame {
 
 		/// Constructs a [QuitAction] and initializes its name and description.
 		private QuitAction() {
-			putValue(NAME, STRINGS.getString("QUIT_ACTION_NAME"));
+			putValue(NAME, strings.getString("QUIT_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(STRINGS.getString("QUIT_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
+					MessageFormat.format(strings.getString("QUIT_ACTION_DESCRIPTION"), Constants.APPLICATION_NAME));
 		}
 
 		@Override
@@ -6374,9 +6372,9 @@ public final class Main extends JFrame {
 		private RemoveModeAction(final Mode mode) {
 			this.mode = mode;
 
-			putValue(NAME, STRINGS.getString("REMOVE_MODE_ACTION_NAME"));
+			putValue(NAME, strings.getString("REMOVE_MODE_ACTION_NAME"));
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(STRINGS.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
+					MessageFormat.format(strings.getString("REMOVE_MODE_ACTION_DESCRIPTION"), mode.getDescription()));
 		}
 
 		@Override
@@ -6419,8 +6417,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [SaveAction] and initializes its name and description.
 		private SaveAction() {
-			putValue(NAME, STRINGS.getString("SAVE_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SAVE_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SAVE_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6442,8 +6440,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [SaveAsAction] and initializes its name and description.
 		private SaveAsAction() {
-			putValue(NAME, STRINGS.getString("SAVE_AS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("SAVE_AS_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SAVE_AS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SAVE_AS_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6475,7 +6473,7 @@ public final class Main extends JFrame {
 
 			putValue(NAME, controller.name);
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(STRINGS.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), controller.name));
+					MessageFormat.format(strings.getString("SELECT_CONTROLLER_ACTION_DESCRIPTION"), controller.name));
 		}
 
 		@Override
@@ -6533,14 +6531,14 @@ public final class Main extends JFrame {
 			this.virtualAxis = virtualAxis;
 
 			putValue(NAME, "🎨");
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_INDICATOR_COLOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
 
-			final var color = JColorChooser.showDialog(Main.this, STRINGS.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
+			final var color = JColorChooser.showDialog(Main.this, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
 					overlayAxis.getColor());
 			if (color != null) {
 				overlayAxis.setColor(color);
@@ -6565,12 +6563,12 @@ public final class Main extends JFrame {
 		/// description.
 		private SelectLedColorAction() {
 			putValue(NAME, "🎨");
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("CHANGE_LED_COLOR_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, strings.getString("CHANGE_LED_COLOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final var color = JColorChooser.showDialog(Main.this, STRINGS.getString("LED_COLOR_CHOOSER_TITLE"),
+			final var color = JColorChooser.showDialog(Main.this, strings.getString("LED_COLOR_CHOOSER_TITLE"),
 					getLedColor());
 			if (color == null) {
 				return;
@@ -6798,8 +6796,8 @@ public final class Main extends JFrame {
 		/// Constructs a [ShowAboutDialogAction] and initializes its name and
 		/// description.
 		private ShowAboutDialogAction() {
-			putValue(NAME, STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_ABOUT_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_ABOUT_DIALOG_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6828,8 +6826,8 @@ public final class Main extends JFrame {
 		private ShowIndicatorAction(final VirtualAxis virtualAxis) {
 			this.virtualAxis = virtualAxis;
 
-			putValue(NAME, STRINGS.getString("SHOW_INDICATOR_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_INDICATOR_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_INDICATOR_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_INDICATOR_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6858,8 +6856,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [ShowLicensesAction] and initializes its name and description.
 		private ShowLicensesAction() {
-			putValue(NAME, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("SHOW_LICENSES_DIALOG_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("SHOW_LICENSES_DIALOG_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6909,8 +6907,8 @@ public final class Main extends JFrame {
 		private StartClientAction() {
 			super(true);
 
-			putValue(NAME, STRINGS.getString("START_CLIENT_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("START_CLIENT_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_CLIENT_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_CLIENT_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6930,8 +6928,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [StartLocalAction] and initializes its name and description.
 		private StartLocalAction() {
-			putValue(NAME, STRINGS.getString("START_LOCAL_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("START_LOCAL_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_LOCAL_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_LOCAL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6954,8 +6952,8 @@ public final class Main extends JFrame {
 		private StartServerAction() {
 			super(false);
 
-			putValue(NAME, STRINGS.getString("START_SERVER_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("START_SERVER_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("START_SERVER_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("START_SERVER_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -6976,8 +6974,8 @@ public final class Main extends JFrame {
 
 		/// Constructs a [StopAction] and initializes its name and description.
 		private StopAction() {
-			putValue(NAME, STRINGS.getString("STOP_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, STRINGS.getString("STOP_ACTION_DESCRIPTION"));
+			putValue(NAME, strings.getString("STOP_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, strings.getString("STOP_ACTION_DESCRIPTION"));
 		}
 
 		@Override

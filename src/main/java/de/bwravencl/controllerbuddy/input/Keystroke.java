@@ -152,7 +152,7 @@ public final class Keystroke implements Cloneable, Serializable {
 		final var collectedKeyCodes = new ArrayList<>(Arrays.asList(modifierCodes));
 		collectedKeyCodes.addAll(Arrays.asList(keyCodes));
 		if (collectedKeyCodes.isEmpty()) {
-			return Main.STRINGS.getString("NOTHING");
+			return Main.strings.getString("NOTHING");
 		}
 
 		return collectedKeyCodes.stream().map(Scancode::name).collect(Collectors.joining(" + "));

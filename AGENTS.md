@@ -74,7 +74,9 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Use `var` for local variables.
 - Use `_` for unused local variables and patterns.
 - Use `this.` only for disambiguation (e.g. in constructors and setters), not for field reads.
-- Constant naming: `SCREAMING_SNAKE_CASE`. Use semantic prefixes like `DEFAULT_` and `INITIAL_` for related groups of constants.
+- Constants are static final fields with deeply immutable contents and side-effect-free methods - if any observable state can change, it's not a constant.
+- Constant naming: `UPPER_SNAKE_CASE`. Use semantic prefixes like `DEFAULT_` and `INITIAL_` for related groups of constants.
+- Non-constant naming: `lowerCamelCase`
 - Class layout and ordering: use the following group sequence. If multiple members exist within the same group, sort them **alphabetically by name**.
     1. **Static Constants (final):** `public` → `protected` → `package` → `private`
     2. **Static Fields (non-final):** `public` → `protected` → `package` → `private`

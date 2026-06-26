@@ -35,7 +35,7 @@ public abstract class RunMode implements Runnable {
 	/// The default polling interval in milliseconds.
 	public static final long DEFAULT_POLL_INTERVAL = 1L;
 
-	private static final Logger LOGGER = Logger.getLogger(RunMode.class.getName());
+	private static final Logger logger = Logger.getLogger(RunMode.class.getName());
 
 	/// The input instance providing controller state to this run mode.
 	final Input input;
@@ -87,13 +87,13 @@ public abstract class RunMode implements Runnable {
 
 		final var controller = input.getSelectedController();
 		if (controller != null) {
-			LOGGER.warning(Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
+			logger.warning(Main.assembleControllerLoggingMessage("Could not read from controller ", controller));
 		}
 
 		if (!main.isSkipControllerDialogs()) {
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-					Main.STRINGS.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
-					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("COULD_NOT_READ_FROM_CONTROLLER_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		}
 
 		stopping = true;

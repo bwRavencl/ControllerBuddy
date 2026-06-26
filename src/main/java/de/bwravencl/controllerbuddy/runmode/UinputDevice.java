@@ -52,9 +52,6 @@ public final class UinputDevice implements Closeable {
 	/// USB bus type identifier used when registering the virtual device.
 	private static final short BUS_USB = 0x3;
 
-	/// Cache of open uinput devices keyed by device type.
-	private static final Map<DeviceType, UinputDevice> DEVICE_MAP = new EnumMap<>(DeviceType.class);
-
 	/// Path to the uinput kernel interface device node.
 	private static final Path DEVICE_PATH = Paths.get("/dev", "uinput");
 
@@ -70,13 +67,16 @@ public final class UinputDevice implements Closeable {
 	/// Linux event type constant for synchronization events.
 	private static final short EV_SYN = 0;
 
-	private static final Logger LOGGER = Logger.getLogger(UinputDevice.class.getName());
-
 	/// USB product code reported by the virtual device.
 	private static final short PRODUCT_CODE = 0x5678;
 
 	/// USB vendor code reported by the virtual device.
 	private static final short VENDOR_CODE = 0x1234;
+
+	/// Cache of open uinput devices keyed by device type.
+	private static final Map<DeviceType, UinputDevice> deviceMap = new EnumMap<>(DeviceType.class);
+
+	private static final Logger logger = Logger.getLogger(UinputDevice.class.getName());
 
 	/// File descriptor for the open uinput device node.
 	private final int fd;
@@ -147,12 +147,12 @@ public final class UinputDevice implements Closeable {
 	/// @return the open [UinputDevice] instance
 	/// @throws IOException if the device needs to be created but creation fails
 	static UinputDevice openUinputDevice(final DeviceType deviceType) throws IOException {
-		var uinputDevice = DEVICE_MAP.get(deviceType);
+		var uinputDevice = deviceMap.get(deviceType);
 		if (uinputDevice == null) {
 			uinputDevice = new UinputDevice(deviceType);
-			DEVICE_MAP.put(deviceType, uinputDevice);
+			deviceMap.put(deviceType, uinputDevice);
 
-			LOGGER.info("Opened uinput device: " + uinputDevice);
+			logger.info("Opened uinput device: " + uinputDevice);
 		}
 
 		return uinputDevice;
@@ -160,11 +160,11 @@ public final class UinputDevice implements Closeable {
 
 	/// Closes and removes all currently open uinput devices.
 	public static void shutdown() {
-		DEVICE_MAP.values().removeIf(uinputDevice -> {
+		deviceMap.values().removeIf(uinputDevice -> {
 			try {
 				uinputDevice.close();
 			} catch (final IOException e) {
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 
 			return true;
@@ -182,7 +182,7 @@ public final class UinputDevice implements Closeable {
 			throw new IOException("Could not close: " + DEVICE_PATH);
 		}
 
-		LOGGER.info("Closed uinput device: " + this);
+		logger.info("Closed uinput device: " + this);
 	}
 
 	/// Writes a single input event to the uinput device, optionally followed by a
@@ -251,13 +251,13 @@ public final class UinputDevice implements Closeable {
 
 		/// A virtual joystick/gamepad device that supports absolute axes and joystick
 		/// buttons
-		JOYSTICK(Event.JOYSTICK_EVENTS),
+		JOYSTICK(Event.joystickEvents),
 
 		/// A virtual keyboard device that supports key events
-		KEYBOARD(Event.KEYBOARD_EVENTS),
+		KEYBOARD(Event.keyboardEvents),
 
 		/// A virtual mouse device that supports relative axes and mouse buttons
-		MOUSE(Event.MOUSE_EVENTS);
+		MOUSE(Event.mouseEvents);
 
 		/// Human-readable name of the virtual device derived from the enum constant.
 		private final String name;
@@ -812,31 +812,30 @@ public final class UinputDevice implements Closeable {
 		REL_WHEEL((short) 0x8, EV_REL);
 
 		/// All joystick button events registered for a virtual joystick device.
-		static final Event[] JOYSTICK_BUTTON_EVENTS = { BTN_TRIGGER, BTN_THUMB, BTN_THUMB2, BTN_TOP, BTN_TOP2,
-				BTN_PINKIE, BTN_BASE, BTN_BASE2, BTN_BASE3, BTN_BASE4, BTN_BASE5, BTN_BASE6, BTN_DEAD,
-				BTN_TRIGGER_HAPPY1, BTN_TRIGGER_HAPPY2, BTN_TRIGGER_HAPPY3, BTN_TRIGGER_HAPPY4, BTN_TRIGGER_HAPPY5,
-				BTN_TRIGGER_HAPPY6, BTN_TRIGGER_HAPPY7, BTN_TRIGGER_HAPPY8, BTN_TRIGGER_HAPPY9, BTN_TRIGGER_HAPPY10,
-				BTN_TRIGGER_HAPPY11, BTN_TRIGGER_HAPPY12, BTN_TRIGGER_HAPPY13, BTN_TRIGGER_HAPPY14, BTN_TRIGGER_HAPPY15,
-				BTN_TRIGGER_HAPPY16, BTN_TRIGGER_HAPPY17, BTN_TRIGGER_HAPPY18, BTN_TRIGGER_HAPPY19, BTN_TRIGGER_HAPPY20,
-				BTN_TRIGGER_HAPPY21, BTN_TRIGGER_HAPPY22, BTN_TRIGGER_HAPPY23, BTN_TRIGGER_HAPPY24, BTN_TRIGGER_HAPPY25,
-				BTN_TRIGGER_HAPPY26, BTN_TRIGGER_HAPPY27, BTN_TRIGGER_HAPPY28, BTN_TRIGGER_HAPPY29, BTN_TRIGGER_HAPPY30,
-				BTN_TRIGGER_HAPPY31, BTN_TRIGGER_HAPPY32, BTN_TRIGGER_HAPPY33, BTN_TRIGGER_HAPPY34, BTN_TRIGGER_HAPPY35,
-				BTN_TRIGGER_HAPPY36, BTN_TRIGGER_HAPPY37, BTN_TRIGGER_HAPPY38, BTN_TRIGGER_HAPPY39,
-				BTN_TRIGGER_HAPPY40 };
+		static final Event[] joystickButtonEvents = { BTN_TRIGGER, BTN_THUMB, BTN_THUMB2, BTN_TOP, BTN_TOP2, BTN_PINKIE,
+				BTN_BASE, BTN_BASE2, BTN_BASE3, BTN_BASE4, BTN_BASE5, BTN_BASE6, BTN_DEAD, BTN_TRIGGER_HAPPY1,
+				BTN_TRIGGER_HAPPY2, BTN_TRIGGER_HAPPY3, BTN_TRIGGER_HAPPY4, BTN_TRIGGER_HAPPY5, BTN_TRIGGER_HAPPY6,
+				BTN_TRIGGER_HAPPY7, BTN_TRIGGER_HAPPY8, BTN_TRIGGER_HAPPY9, BTN_TRIGGER_HAPPY10, BTN_TRIGGER_HAPPY11,
+				BTN_TRIGGER_HAPPY12, BTN_TRIGGER_HAPPY13, BTN_TRIGGER_HAPPY14, BTN_TRIGGER_HAPPY15, BTN_TRIGGER_HAPPY16,
+				BTN_TRIGGER_HAPPY17, BTN_TRIGGER_HAPPY18, BTN_TRIGGER_HAPPY19, BTN_TRIGGER_HAPPY20, BTN_TRIGGER_HAPPY21,
+				BTN_TRIGGER_HAPPY22, BTN_TRIGGER_HAPPY23, BTN_TRIGGER_HAPPY24, BTN_TRIGGER_HAPPY25, BTN_TRIGGER_HAPPY26,
+				BTN_TRIGGER_HAPPY27, BTN_TRIGGER_HAPPY28, BTN_TRIGGER_HAPPY29, BTN_TRIGGER_HAPPY30, BTN_TRIGGER_HAPPY31,
+				BTN_TRIGGER_HAPPY32, BTN_TRIGGER_HAPPY33, BTN_TRIGGER_HAPPY34, BTN_TRIGGER_HAPPY35, BTN_TRIGGER_HAPPY36,
+				BTN_TRIGGER_HAPPY37, BTN_TRIGGER_HAPPY38, BTN_TRIGGER_HAPPY39, BTN_TRIGGER_HAPPY40 };
 
 		/// All events registered for a virtual joystick device, combining buttons and
 		/// absolute axes.
-		static final Event[] JOYSTICK_EVENTS = Stream
-				.concat(Arrays.stream(JOYSTICK_BUTTON_EVENTS),
+		static final Event[] joystickEvents = Stream
+				.concat(Arrays.stream(joystickButtonEvents),
 						Stream.of(ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ, ABS_THROTTLE, ABS_RUDDER))
 				.toArray(Event[]::new);
 
 		/// All key events registered for a virtual keyboard device.
-		static final Event[] KEYBOARD_EVENTS = Arrays.stream(values()).filter(event -> event.name().startsWith("KEY_"))
+		static final Event[] keyboardEvents = Arrays.stream(values()).filter(event -> event.name().startsWith("KEY_"))
 				.toArray(Event[]::new);
 
 		/// All events registered for a virtual mouse device.
-		static final Event[] MOUSE_EVENTS = { BTN_LEFT, BTN_RIGHT, BTN_MIDDLE, BTN_SIDE, BTN_EXTRA, REL_X, REL_Y,
+		static final Event[] mouseEvents = { BTN_LEFT, BTN_RIGHT, BTN_MIDDLE, BTN_SIDE, BTN_EXTRA, REL_X, REL_Y,
 				REL_WHEEL };
 
 		/// Linux input event code identifying this event within its type.

@@ -69,7 +69,7 @@ public final class VjoyInterface {
 	/// Native linker used to bind to vJoy library functions.
 	static final Linker LINKER = Linker.nativeLinker();
 
-	private static final Logger LOGGER = Logger.getLogger(VjoyInterface.class.getName());
+	private static final Logger logger = Logger.getLogger(VjoyInterface.class.getName());
 
 	/// Method handle for the `AcquireVJD` native function.
 	private static MethodHandle AcquireVJDMethodHandle;
@@ -292,7 +292,7 @@ public final class VjoyInterface {
 		final var vJoyPath = main.getVJoyDirectory();
 		final var libraryPathFile = new File(vJoyPath, GetVJoyArchFolderName());
 
-		LOGGER.info("Using vJoy library path: " + libraryPathFile.getAbsolutePath());
+		logger.info("Using vJoy library path: " + libraryPathFile.getAbsolutePath());
 
 		final var symbolLookup = SymbolLookup.libraryLookup(libraryPathFile.toPath().resolve(VJOY_LIBRARY_FILENAME),
 				Arena.global());

@@ -55,9 +55,6 @@ final class SVGPanel extends JPanel {
 	/// Cursor shown when the panel is in zoom mode.
 	private static final Cursor ZOOM_CURSOR;
 
-	/// Hot-spot point within the zoom cursor image.
-	private static final Point ZOOM_CURSOR_HOT_SPOT = new Point(11, 11);
-
 	/// Classpath resource path for the zoom cursor GIF image.
 	private static final String ZOOM_GIF_RESOURCE_PATH = "/zoom.gif";
 
@@ -73,6 +70,9 @@ final class SVGPanel extends JPanel {
 	@Serial
 	private static final long serialVersionUID = 3771880542091875983L;
 
+	/// Hot-spot point within the zoom cursor image.
+	private static final Point zoomCursorHotSpot = new Point(11, 11);
+
 	static {
 		final var inputStream = SVGPanel.class.getResourceAsStream(ZOOM_GIF_RESOURCE_PATH);
 		if (inputStream == null) {
@@ -82,7 +82,7 @@ final class SVGPanel extends JPanel {
 		try {
 			final var bufferedImage = ImageIO.read(inputStream);
 
-			ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, ZOOM_CURSOR_HOT_SPOT, "zoom");
+			ZOOM_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, zoomCursorHotSpot, "zoom");
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

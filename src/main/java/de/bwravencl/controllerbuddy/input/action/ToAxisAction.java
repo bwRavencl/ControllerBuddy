@@ -48,7 +48,7 @@ public abstract class ToAxisAction<V extends Constable> extends InvertableAction
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("JOYSTICK_AXIS_NAME"), virtualAxis);
+		return MessageFormat.format(Main.strings.getString("JOYSTICK_AXIS_NAME"), virtualAxis);
 	}
 
 	/// Returns the target virtual axis.

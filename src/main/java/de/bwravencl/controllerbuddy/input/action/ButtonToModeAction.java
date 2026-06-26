@@ -218,13 +218,13 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 			if (up) {
 				if (BUTTON_TO_MODE_ACTION_STACK.peek() == this) {
 					deactivateMode(input, profile);
-				} else if (Profile.DEFAULT_MODE.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
+				} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 					activateMode(input, profile);
 				}
 
 				up = false;
 			}
-		} else if (Profile.DEFAULT_MODE.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
+		} else if (Profile.defaultMode.equals(profile.getActiveMode()) || buttonNotUsedByActiveModes(input)) {
 			activateMode(input, profile);
 		}
 	}
@@ -242,7 +242,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 			return null;
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("MODE_NAME"), mode.getDescription());
+		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
 	}
 
 	/// Returns the target [Mode], falling back to the on-screen keyboard mode or
@@ -257,11 +257,11 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 			}
 		}
 
-		if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.getUuid().equals(modeUuid)) {
-			return OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE;
+		if (OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid)) {
+			return OnScreenKeyboard.onScreenKeyboardMode;
 		}
 
-		return Profile.DEFAULT_MODE;
+		return Profile.defaultMode;
 	}
 
 	/// Returns the UI symbol representing the activation type (momentary or
@@ -317,6 +317,6 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	///
 	/// @return `true` if targeting the on-screen keyboard mode
 	public boolean targetsOnScreenKeyboardMode() {
-		return OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.getUuid().equals(modeUuid);
+		return OnScreenKeyboard.onScreenKeyboardMode.getUuid().equals(modeUuid);
 	}
 }

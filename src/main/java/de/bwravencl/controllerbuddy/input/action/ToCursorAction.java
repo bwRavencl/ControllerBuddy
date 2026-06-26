@@ -72,7 +72,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("MOUSE_AXIS_DIR"), axis.toString());
+		return MessageFormat.format(Main.strings.getString("MOUSE_AXIS_DIR"), axis.toString());
 	}
 
 	/// Moves the mouse cursor by the given delta along the configured axis.
@@ -135,7 +135,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 		///
 		/// @param labelKey the resource bundle key used to look up the localized label
 		MouseAxis(final String labelKey) {
-			label = Main.STRINGS.getString(labelKey);
+			label = Main.strings.getString(labelKey);
 		}
 
 		/// Returns the localized label for this mouse axis.

@@ -55,7 +55,7 @@ public interface IAction<V extends Constable> extends Cloneable {
 					actionClass.getName() + ": missing " + Action.class.getSimpleName() + " annotation");
 		}
 
-		return Main.STRINGS.getString(annotation.title());
+		return Main.strings.getString(annotation.title());
 	}
 
 	/// Creates and returns a copy of this action.

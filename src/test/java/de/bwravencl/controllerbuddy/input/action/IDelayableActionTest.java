@@ -27,9 +27,9 @@ final class IDelayableActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		// Main.STRINGS must be loaded before Activation enum to avoid circular
+		// Main.strings must be loaded before Activation enum to avoid circular
 		// static initialization
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.STRINGS;
+		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
 	}
 
 	@Nested

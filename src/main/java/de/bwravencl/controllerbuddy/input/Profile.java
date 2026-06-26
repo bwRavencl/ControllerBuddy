@@ -35,12 +35,12 @@ import org.lwjgl.sdl.SDLGamepad;
 /// mappings, overlay axis configurations, and key repeat settings.
 ///
 /// A profile contains one or more [Mode] instances. The first mode is always
-/// the [default mode][#DEFAULT_MODE]. Profiles are cloneable for use in the
+/// the [default Mode][#defaultMode]. Profiles are cloneable for use in the
 /// profile editor.
 public final class Profile implements Cloneable {
 
 	/// The default mode that is always present as the first mode in a profile.
-	public static final Mode DEFAULT_MODE;
+	public static final Mode defaultMode;
 
 	/// Default key repeat interval in milliseconds.
 	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
@@ -52,8 +52,8 @@ public final class Profile implements Cloneable {
 	private static final boolean DEFAULT_SHOW_OVERLAY = true;
 
 	static {
-		DEFAULT_MODE = new Mode(DEFAULT_MODE_UUID);
-		DEFAULT_MODE.setDescription(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"));
+		defaultMode = new Mode(DEFAULT_MODE_UUID);
+		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	/// Index of the currently active mode within [#modes].
@@ -79,7 +79,7 @@ public final class Profile implements Cloneable {
 
 	/// Constructs a [Profile] pre-populated with the default mode.
 	Profile() {
-		modes.add(DEFAULT_MODE);
+		modes.add(defaultMode);
 	}
 
 	/// Constructs a deep copy of this [Profile], including all modes,

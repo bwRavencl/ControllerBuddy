@@ -236,7 +236,7 @@ final class GuiUtilsTest {
 	@DisplayName("loadFrameLocation()")
 	final class LoadFrameLocationTests {
 
-		private static final Rectangle BOUNDS = new Rectangle(0, 0, 1920, 1080);
+		private static final Rectangle bounds = new Rectangle(0, 0, 1920, 1080);
 
 		@Test
 		@DisplayName("computes position from normalised coordinates stored in preferences")
@@ -245,7 +245,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockFrame.getTitle()).thenReturn("Main");
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("0.5,0.5");
 
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, new Point(0, 0), BOUNDS);
+			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, new Point(0, 0), bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -261,7 +261,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("not,numbers");
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, BOUNDS);
+			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -276,7 +276,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn("singlevalue");
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, BOUNDS);
+			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -291,7 +291,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockPreferences.get("main_location", null)).thenReturn(null);
 
 			final var defaultLocation = new Point(100, 200);
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, BOUNDS);
+			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -312,7 +312,7 @@ final class GuiUtilsTest {
 			Mockito.when(mockFrame.getTitle()).thenReturn(null);
 			final var defaultLocation = new Point(100, 200);
 
-			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, BOUNDS);
+			GuiUtils.loadFrameLocation(mockPreferences, mockFrame, defaultLocation, bounds);
 
 			final var captor = ArgumentCaptor.forClass(Point.class);
 			Mockito.verify(mockFrame).setLocation(captor.capture());
@@ -417,13 +417,13 @@ final class GuiUtilsTest {
 	@DisplayName("setFrameLocationRespectingBounds()")
 	final class SetFrameLocationRespectingBoundsTests {
 
-		private static final Rectangle BOUNDS = new Rectangle(0, 0, 1920, 1080);
+		private static final Rectangle bounds = new Rectangle(0, 0, 1920, 1080);
 
 		@Test
 		@DisplayName("clamps x to the left edge when the location is too far left")
 		void clampsXToLeftEdge() throws ReflectiveOperationException {
 			final var location = new Point(-50, 400);
-			invokeSetFrameLocationRespectingBounds(mockFrame, location, BOUNDS);
+			invokeSetFrameLocationRespectingBounds(mockFrame, location, bounds);
 			// max(0, min(1720, -50)) = 0
 			Assertions.assertEquals(0, location.x);
 		}
@@ -432,7 +432,7 @@ final class GuiUtilsTest {
 		@DisplayName("clamps x to the right edge when the location is too far right")
 		void clampsXToRightEdge() throws ReflectiveOperationException {
 			final var location = new Point(2000, 400);
-			invokeSetFrameLocationRespectingBounds(mockFrame, location, BOUNDS);
+			invokeSetFrameLocationRespectingBounds(mockFrame, location, bounds);
 			// max(0, min(1720, 2000)) = 1720
 			Assertions.assertEquals(1720, location.x);
 		}
@@ -441,7 +441,7 @@ final class GuiUtilsTest {
 		@DisplayName("clamps y to the bottom edge when the location is too far down")
 		void clampsYToBottomEdge() throws ReflectiveOperationException {
 			final var location = new Point(500, 2000);
-			invokeSetFrameLocationRespectingBounds(mockFrame, location, BOUNDS);
+			invokeSetFrameLocationRespectingBounds(mockFrame, location, bounds);
 			// max(0, min(980, 2000)) = 980
 			Assertions.assertEquals(980, location.y);
 		}
@@ -450,7 +450,7 @@ final class GuiUtilsTest {
 		@DisplayName("clamps y to the top edge when the location is above the bounds")
 		void clampsYToTopEdge() throws ReflectiveOperationException {
 			final var location = new Point(500, -50);
-			invokeSetFrameLocationRespectingBounds(mockFrame, location, BOUNDS);
+			invokeSetFrameLocationRespectingBounds(mockFrame, location, bounds);
 			// max(0, min(980, -50)) = 0
 			Assertions.assertEquals(0, location.y);
 		}
@@ -459,7 +459,7 @@ final class GuiUtilsTest {
 		@DisplayName("leaves a location that is already within bounds unchanged")
 		void leavesInBoundsLocationUnchanged() throws ReflectiveOperationException {
 			final var location = new Point(500, 400);
-			invokeSetFrameLocationRespectingBounds(mockFrame, location, BOUNDS);
+			invokeSetFrameLocationRespectingBounds(mockFrame, location, bounds);
 			// max(0, min(1920-200, 500)) = 500; max(0, min(1080-100, 400)) = 400
 			Assertions.assertEquals(500, location.x);
 			Assertions.assertEquals(400, location.y);

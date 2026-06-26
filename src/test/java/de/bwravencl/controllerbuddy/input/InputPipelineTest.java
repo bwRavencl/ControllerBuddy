@@ -277,8 +277,8 @@ final class InputPipelineTest {
 		ButtonToModeAction.getButtonToModeActionStack().clear();
 		IAxisToDelayableAction.reset();
 		IButtonToDelayableAction.reset();
-		Profile.DEFAULT_MODE.getAxisToActionsMap().clear();
-		Profile.DEFAULT_MODE.getButtonToActionsMap().clear();
+		Profile.defaultMode.getAxisToActionsMap().clear();
+		Profile.defaultMode.getButtonToActionsMap().clear();
 		final var mockMain = Mockito.mock(Main.class);
 		final var mockController = Mockito.mock(Controller.class);
 		mockOnScreenKeyboard = Mockito.mock(OnScreenKeyboard.class);
@@ -3783,7 +3783,7 @@ final class InputPipelineTest {
 
 			pollWithState(axes, noButtons());
 
-			Assertions.assertEquals(Profile.DEFAULT_MODE, profile.getActiveMode());
+			Assertions.assertEquals(Profile.defaultMode, profile.getActiveMode());
 		}
 
 		@Test

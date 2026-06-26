@@ -40,7 +40,7 @@ import javax.swing.event.DocumentListener;
 /// regardless of how the user commits the input.
 public class StringEditorBuilder extends EditorBuilder {
 
-	private static final Logger LOGGER = Logger.getLogger(StringEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(StringEditorBuilder.class.getName());
 
 	/// Constructs a [StringEditorBuilder] for the specified action property.
 	///
@@ -147,7 +147,7 @@ public class StringEditorBuilder extends EditorBuilder {
 				setterMethod.invoke(action, text);
 				onNewValueSet();
 			} catch (final ReflectiveOperationException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				logger.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 	}

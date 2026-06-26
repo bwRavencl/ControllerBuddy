@@ -89,7 +89,7 @@ public enum HotSwappingButton {
 	/// @param labelKey the resource-bundle key for the localized display label
 	HotSwappingButton(final int id, final String labelKey) {
 		this.id = id;
-		label = Main.STRINGS.getString(labelKey);
+		label = Main.strings.getString(labelKey);
 	}
 
 	/// Returns the [HotSwappingButton] constant whose id matches the given

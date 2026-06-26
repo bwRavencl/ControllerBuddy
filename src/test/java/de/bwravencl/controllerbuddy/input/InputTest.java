@@ -801,7 +801,7 @@ final class InputTest {
 
 			input.setProfile(profile);
 
-			Assertions.assertEquals(Profile.DEFAULT_MODE, profile.getModes().getFirst());
+			Assertions.assertEquals(Profile.defaultMode, profile.getModes().getFirst());
 		}
 	}
 }

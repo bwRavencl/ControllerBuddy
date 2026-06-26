@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /// output device.
 public final class LocalRunMode extends OutputRunMode {
 
-	private static final Logger LOGGER = Logger.getLogger(LocalRunMode.class.getName());
+	private static final Logger logger = Logger.getLogger(LocalRunMode.class.getName());
 
 	/// Set of normal (non-modifier) scancodes active in the current output cycle.
 	private final HashSet<Scancode> sourceKeyCodes = new HashSet<>();
@@ -50,7 +50,7 @@ public final class LocalRunMode extends OutputRunMode {
 
 	@Override
 	Logger getLogger() {
-		return LOGGER;
+		return logger;
 	}
 
 	@Override

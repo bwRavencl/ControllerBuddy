@@ -59,7 +59,7 @@ public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButt
 	/// Returns a localized description of this action.
 	@Override
 	public String getDescription(final Input input) {
-		return Main.STRINGS.getString("BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE");
+		return Main.strings.getString("BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE");
 	}
 
 	@Override

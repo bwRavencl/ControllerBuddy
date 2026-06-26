@@ -135,7 +135,7 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("clears the description from the JSON output when serializing DEFAULT_MODE")
 		void clearsDescriptionInJsonWhenSerializingDefaultMode() {
 			final var gson = createGson();
-			final var json = gson.toJson(Profile.DEFAULT_MODE, Mode.class);
+			final var json = gson.toJson(Profile.defaultMode, Mode.class);
 			final var jsonObject = JsonParser.parseString(json).getAsJsonObject();
 			Assertions.assertFalse(jsonObject.has("description"));
 		}
@@ -152,27 +152,27 @@ final class ProfileTypeAdapterFactoryTest {
 		@DisplayName("restores the description on DEFAULT_MODE after serialization")
 		void restoresDescriptionAfterSerializingDefaultMode() {
 			final var gson = createGson();
-			var _ = gson.toJson(Profile.DEFAULT_MODE, Mode.class);
-			Assertions.assertEquals(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"),
-					Profile.DEFAULT_MODE.getDescription());
+			var _ = gson.toJson(Profile.defaultMode, Mode.class);
+			Assertions.assertEquals(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"),
+					Profile.defaultMode.getDescription());
 		}
 
 		@Test
 		@DisplayName("sets the DEFAULT_MODE_DESCRIPTION on a Mode whose UUID matches DEFAULT_MODE")
 		void setsDefaultModeDescription() {
 			final var gson = createGson();
-			final var uuid = Profile.DEFAULT_MODE.getUuid();
+			final var uuid = Profile.defaultMode.getUuid();
 			final var mode = gson.fromJson("{\"uuid\": \"" + uuid + "\"}", Mode.class);
-			Assertions.assertEquals(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"), mode.getDescription());
+			Assertions.assertEquals(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"), mode.getDescription());
 		}
 
 		@Test
 		@DisplayName("sets the ON_SCREEN_KEYBOARD_MODE_DESCRIPTION on a Mode matching ON_SCREEN_KEYBOARD_MODE")
 		void setsOnScreenKeyboardModeDescription() {
 			final var gson = createGson();
-			final var uuid = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.getUuid();
+			final var uuid = OnScreenKeyboard.onScreenKeyboardMode.getUuid();
 			final var mode = gson.fromJson("{\"uuid\": \"" + uuid + "\"}", Mode.class);
-			Assertions.assertEquals(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"),
+			Assertions.assertEquals(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"),
 					mode.getDescription());
 		}
 	}

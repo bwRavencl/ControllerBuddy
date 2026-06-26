@@ -216,10 +216,10 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 					}
 				}
 				case final Mode mode -> {
-					if (Profile.DEFAULT_MODE.equals(mode)) {
-						mode.setDescription(Main.STRINGS.getString("DEFAULT_MODE_DESCRIPTION"));
-					} else if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode)) {
-						mode.setDescription(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+					if (Profile.defaultMode.equals(mode)) {
+						mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+					} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
+						mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 					}
 				}
 				case final OverlayAxis overlayAxis -> {
@@ -243,8 +243,8 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 
 				String prevDescription = null;
 				try {
-					if (value instanceof final Mode mode && (Profile.DEFAULT_MODE.equals(value)
-							|| OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(value))) {
+					if (value instanceof final Mode mode && (Profile.defaultMode.equals(value)
+							|| OnScreenKeyboard.onScreenKeyboardMode.equals(value))) {
 						prevDescription = mode.getDescription();
 						mode.setDescription(null);
 					}

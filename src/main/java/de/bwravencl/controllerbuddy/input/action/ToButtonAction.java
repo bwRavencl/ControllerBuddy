@@ -76,7 +76,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("JOYSTICK_BUTTON_NO"), buttonId + 1);
+		return MessageFormat.format(Main.strings.getString("JOYSTICK_BUTTON_NO"), buttonId + 1);
 	}
 
 	/// Handles a button press or release by updating the target virtual button

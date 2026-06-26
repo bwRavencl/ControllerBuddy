@@ -45,7 +45,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	/// Number of decimal places to which float spinner values are rounded.
 	private static final int FLOAT_ROUNDING_DECIMALS = 3;
 
-	private static final Logger LOGGER = Logger.getLogger(NumberEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(NumberEditorBuilder.class.getName());
 
 	/// The spinner component used to display and edit the numeric value.
 	JSpinner spinner;
@@ -170,7 +170,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 				numberEditorBuilder.onNewValueSet();
 			} catch (final ReflectiveOperationException e1) {
-				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

@@ -79,9 +79,9 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	private static final int KEY_LIST_SCROLL_PANE_WIDTH = 120;
 
 	/// Preferred size for key list scroll panes.
-	private static final Dimension KEY_LIST_SCROLL_PANE_DIMENSION = new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, 200);
+	private static final Dimension keyListScrollPaneDimension = new Dimension(KEY_LIST_SCROLL_PANE_WIDTH, 200);
 
-	private static final Logger LOGGER = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(KeystrokeEditorBuilder.class.getName());
 
 	/// Label showing the `+` separator between modifier and key lists.
 	private final JLabel plusLabel = new JLabel("+");
@@ -188,7 +188,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(borderColor),
 				BorderFactory.createEmptyBorder(2, 0, 0, 0)));
 
-		final var label = new JLabel(Main.STRINGS.getString(labelKey));
+		final var label = new JLabel(Main.strings.getString(labelKey));
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		listPanel.add(label);
@@ -223,7 +223,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 		listPanel.add(Box.createVerticalStrut(5));
 
-		final var scrollPane = GuiUtils.wrapComponentInScrollPane(checkboxList, KEY_LIST_SCROLL_PANE_DIMENSION);
+		final var scrollPane = GuiUtils.wrapComponentInScrollPane(checkboxList, keyListScrollPaneDimension);
 		scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, borderColor));
 		listPanel.add(scrollPane);
 
@@ -472,7 +472,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			this.filterTextField = filterTextField;
 
 			putValue(NAME, "⨯");
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CLEAR_FILTER_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("CLEAR_FILTER_ACTION_DESCRIPTION"));
 
 			filterTextField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -532,7 +532,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			this.listSelectionModel = listSelectionModel;
 
 			putValue(NAME, "⛶");
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("DESELECT_ALL_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("DESELECT_ALL_ACTION_DESCRIPTION"));
 
 			listSelectionModel.addListSelectionListener((_) -> updateState());
 			updateState();
@@ -630,7 +630,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(getDisabledTextColor());
 			g.setFont(g.getFont().deriveFont(Font.ITALIC));
-			g.drawString(Main.STRINGS.getString("FILTER_PLACEHOLDER"), getInsets().left,
+			g.drawString(Main.strings.getString("FILTER_PLACEHOLDER"), getInsets().left,
 					g.getFontMetrics().getMaxAscent() + getInsets().top);
 		}
 	}
@@ -685,7 +685,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 				updateUpdateKeystrokeVisualization();
 				onNewValueSet();
 			} catch (final ReflectiveOperationException e1) {
-				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

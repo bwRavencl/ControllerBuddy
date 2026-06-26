@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 /// detent point on the axis.
 public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
-	private static final Logger LOGGER = Logger.getLogger(DetentValueEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(DetentValueEditorBuilder.class.getName());
 
 	/// Constructs a [DetentValueEditorBuilder] for the specified action property.
 	///
@@ -84,7 +84,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 				try {
 					setterMethod.invoke(action, value);
 				} catch (final ReflectiveOperationException e1) {
-					LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+					logger.log(Level.SEVERE, e1.getMessage(), e1);
 				}
 
 				spinner.setEnabled(selected);

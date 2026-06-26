@@ -49,11 +49,11 @@ public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 	Mode[] getValues() {
 		final var profile = editActionsDialog.getInput().getProfile();
 
-		final var modes = profile.getModes().stream().filter(m -> !Profile.DEFAULT_MODE.equals(m))
+		final var modes = profile.getModes().stream().filter(m -> !Profile.defaultMode.equals(m))
 				.collect(Collectors.toList());
 
-		if (!profile.getModes().contains(OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE)) {
-			modes.add(OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE);
+		if (!profile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
+			modes.add(OnScreenKeyboard.onScreenKeyboardMode);
 		}
 
 		return modes.toArray(Mode[]::new);

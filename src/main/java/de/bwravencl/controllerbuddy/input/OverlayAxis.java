@@ -149,7 +149,7 @@ public final class OverlayAxis implements Cloneable {
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		OverlayAxisOrientation(final String labelKey) {
-			label = Main.STRINGS.getString(labelKey);
+			label = Main.strings.getString(labelKey);
 		}
 
 		@Override
@@ -187,7 +187,7 @@ public final class OverlayAxis implements Cloneable {
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		OverlayAxisStyle(final String labelKey) {
-			label = Main.STRINGS.getString(labelKey);
+			label = Main.strings.getString(labelKey);
 		}
 
 		@Override

@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 /// @param <T> the element type of the selectable values
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
-	private static final Logger LOGGER = Logger.getLogger(ArrayEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(ArrayEditorBuilder.class.getName());
 
 	/// The combo box component populated with selectable values.
 	JComboBox<T> comboBox;
@@ -100,7 +100,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 				setterMethod.invoke(action, ((JComboBox<?>) e.getSource()).getSelectedItem());
 				onNewValueSet();
 			} catch (final ReflectiveOperationException e1) {
-				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

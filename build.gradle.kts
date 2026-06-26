@@ -721,7 +721,7 @@ tasks.register<Javadoc>("checkJavadoc") {
       }
 
   doFirst {
-    val ignoredFields = listOf("long serialVersionUID", "Logger LOGGER")
+    val ignoredFields = listOf("long serialVersionUID", "Logger logger")
     var currentProblem: StringBuilder? = null
     var isError = false
 

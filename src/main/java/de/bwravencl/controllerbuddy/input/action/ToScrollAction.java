@@ -56,8 +56,8 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("SCROLL_DIRECTION"),
-				Main.STRINGS.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
+		return MessageFormat.format(Main.strings.getString("SCROLL_DIRECTION"),
+				Main.strings.getString(invert ? "DIRECTION_DOWN" : "DIRECTION_UP").toLowerCase(Locale.ROOT));
 	}
 
 	/// Scrolls the mouse wheel by the given delta.

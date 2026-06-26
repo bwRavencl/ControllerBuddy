@@ -52,7 +52,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var editActionsButton = new JButton(new EditActionsAction());
-		editActionsButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		editActionsButton.setPreferredSize(Main.buttonDimension);
 		parentPanel.add(editActionsButton);
 	}
 
@@ -68,8 +68,8 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 
 		/// Constructs an [EditActionsAction].
 		private EditActionsAction() {
-			putValue(NAME, Main.STRINGS.getString("EDIT_ACTIONS_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
+			putValue(NAME, Main.strings.getString("EDIT_ACTIONS_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_ACTION_DESCRIPTION"),
 					IAction.getLabel(action.getClass())));
 		}
 

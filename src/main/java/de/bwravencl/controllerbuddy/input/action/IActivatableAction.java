@@ -106,7 +106,7 @@ public interface IActivatableAction<V extends Constable> extends IInitialization
 		/// @param labelKey the resource bundle key used to look up the localized label
 		/// @param symbol the symbolic character representing this activation mode
 		Activation(final String labelKey, final String symbol) {
-			label = Main.STRINGS.getString(labelKey);
+			label = Main.strings.getString(labelKey);
 			this.symbol = symbol;
 		}
 

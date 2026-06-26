@@ -99,7 +99,7 @@ public final class ButtonToSelectOnScreenKeyboardKeyAction
 
 	@Override
 	public String getDescription(final Input input) {
-		return MessageFormat.format(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
+		return MessageFormat.format(Main.strings.getString("ON_SCREEN_KEYBOARD_KEY_SELECTOR"),
 				direction.toString().toLowerCase(Locale.ROOT));
 	}
 

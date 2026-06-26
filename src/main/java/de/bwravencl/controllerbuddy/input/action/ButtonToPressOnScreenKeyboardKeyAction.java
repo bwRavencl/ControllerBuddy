@@ -95,7 +95,7 @@ public final class ButtonToPressOnScreenKeyboardKeyAction
 	/// Returns a localized description indicating press or lock mode.
 	@Override
 	public String getDescription(final Input input) {
-		return Main.STRINGS
+		return Main.strings
 				.getString(lockKey ? "LOCK_SELECTED_ON_SCREEN_KEYBOARD_KEY" : "PRESS_SELECTED_ON_SCREEN_KEYBOARD_KEY");
 	}
 

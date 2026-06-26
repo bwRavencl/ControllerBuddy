@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 /// updates the action property immediately when toggled.
 public class BooleanEditorBuilder extends EditorBuilder {
 
-	private static final Logger LOGGER = Logger.getLogger(BooleanEditorBuilder.class.getName());
+	private static final Logger logger = Logger.getLogger(BooleanEditorBuilder.class.getName());
 
 	/// The checkbox rendered by this editor.
 	JCheckBox checkBox;
@@ -84,7 +84,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 				setterMethod.invoke(action, selected);
 				onNewValueSet();
 			} catch (final ReflectiveOperationException e1) {
-				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}

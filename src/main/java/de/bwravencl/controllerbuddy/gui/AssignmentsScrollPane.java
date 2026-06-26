@@ -72,11 +72,11 @@ final class AssignmentsScrollPane extends JScrollPane {
 	/// Stroke used for drawing the controller outline.
 	private static final Stroke CONTROLLER_STROKE = new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-	/// Texture used for filling the controller shape.
-	private static final TexturePaint CONTROLLER_TEXTURE;
-
 	/// Texture tile size in pixels.
 	private static final int TEXTURE_TILE_SIZE = 8;
+
+	/// Texture used for filling the controller shape.
+	private static final TexturePaint controllerTexture;
 
 	@Serial
 	private static final long serialVersionUID = -4096911611882875787L;
@@ -99,7 +99,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		g2d.dispose();
 
-		CONTROLLER_TEXTURE = new TexturePaint(textureImage,
+		controllerTexture = new TexturePaint(textureImage,
 				new Rectangle2D.Float(0f, 0f, TEXTURE_TILE_SIZE, TEXTURE_TILE_SIZE));
 	}
 
@@ -128,33 +128,33 @@ final class AssignmentsScrollPane extends JScrollPane {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		assignmentsPanel.add(
-				createComponentButton(Main.STRINGS.getString("LEFT_TRIGGER"),
+				createComponentButton(Main.strings.getString("LEFT_TRIGGER"),
 						new Component(main, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER)),
 				constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 0;
 		assignmentsPanel.add(
-				createComponentButton(Main.STRINGS.getString("RIGHT_TRIGGER"),
+				createComponentButton(Main.strings.getString("RIGHT_TRIGGER"),
 						new Component(main, ComponentType.AXIS, SDLGamepad.SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)),
 				constraints);
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		assignmentsPanel.add(
-				createComponentButton(Main.STRINGS.getString("LEFT_SHOULDER"),
+				createComponentButton(Main.strings.getString("LEFT_SHOULDER"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER)),
 				constraints);
 
 		constraints.gridx = 2;
 		constraints.gridy = 1;
-		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("GUIDE_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.strings.getString("GUIDE_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 1;
 		assignmentsPanel.add(
-				createComponentButton(Main.STRINGS.getString("RIGHT_SHOULDER"),
+				createComponentButton(Main.strings.getString("RIGHT_SHOULDER"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER)),
 				constraints);
 
@@ -164,35 +164,35 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		constraints.gridx = 1;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("BACK_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.strings.getString("BACK_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_BACK)), constraints);
 
 		constraints.gridx = 3;
 		constraints.gridy = 2;
-		assignmentsPanel.add(createComponentButton(Main.STRINGS.getString("START_BUTTON"),
+		assignmentsPanel.add(createComponentButton(Main.strings.getString("START_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_START)), constraints);
 
 		constraints.gridx = 4;
 		constraints.gridy = 2;
-		assignmentsPanel.add(new FourWay(this, Main.STRINGS.getString("Y_BUTTON"),
+		assignmentsPanel.add(new FourWay(this, Main.strings.getString("Y_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH),
-				Main.STRINGS.getString("X_BUTTON"),
+				Main.strings.getString("X_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_WEST),
-				Main.STRINGS.getString("B_BUTTON"),
+				Main.strings.getString("B_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_EAST),
-				Main.STRINGS.getString("A_BUTTON"),
+				Main.strings.getString("A_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH)), constraints);
 
 		constraints.gridx = 1;
 		constraints.gridy = 3;
 		assignmentsPanel.add(
-				new FourWay(this, Main.STRINGS.getString("DPAD_UP"),
+				new FourWay(this, Main.strings.getString("DPAD_UP"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP),
-						Main.STRINGS.getString("DPAD_LEFT"),
+						Main.strings.getString("DPAD_LEFT"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT),
-						Main.STRINGS.getString("DPAD_RIGHT"),
+						Main.strings.getString("DPAD_RIGHT"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT),
-						Main.STRINGS.getString("DPAD_DOWN"),
+						Main.strings.getString("DPAD_DOWN"),
 						new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN)),
 				constraints);
 
@@ -237,7 +237,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 					g2d.setColor(main.isDarkLookAndFeel() ? Color.LIGHT_GRAY : Color.BLACK);
 					g2d.draw(path);
 
-					g2d.setPaint(CONTROLLER_TEXTURE);
+					g2d.setPaint(controllerTexture);
 
 					g2d.fill(path);
 				} finally {
@@ -732,16 +732,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 				switch (componentIndex) {
 				case SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_STICK -> {
 					setAction(new EditComponentAction(main,
-							Main.STRINGS.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK"), component));
+							Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK"), component));
 
-					text = Main.STRINGS.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK");
+					text = Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK" : "LEFT_STICK");
 
 					swapTextPossible = true;
 				}
 				case SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK -> {
 					setAction(new EditComponentAction(main,
-							Main.STRINGS.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK"), component));
-					text = Main.STRINGS.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
+							Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK"), component));
+					text = Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK" : "RIGHT_STICK");
 
 					swapTextPossible = true;
 				}
@@ -750,16 +750,16 @@ final class AssignmentsScrollPane extends JScrollPane {
 			} else {
 				switch (componentIndex) {
 				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX -> setAction(new EditComponentAction(main,
-						Main.STRINGS.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
+						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_X_AXIS" : "LEFT_STICK_X_AXIS"),
 						component));
 				case SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY -> setAction(new EditComponentAction(main,
-						Main.STRINGS.getString(swapLeftAndRightSticks ? "RIGHT_STICK_Y_AXIS" : "LEFT_STICK_Y_AXIS"),
+						Main.strings.getString(swapLeftAndRightSticks ? "RIGHT_STICK_Y_AXIS" : "LEFT_STICK_Y_AXIS"),
 						component));
 				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTX -> setAction(new EditComponentAction(main,
-						Main.STRINGS.getString(swapLeftAndRightSticks ? "LEFT_STICK_X_AXIS" : "RIGHT_STICK_X_AXIS"),
+						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_X_AXIS" : "RIGHT_STICK_X_AXIS"),
 						component));
 				case SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY -> setAction(new EditComponentAction(main,
-						Main.STRINGS.getString(swapLeftAndRightSticks ? "LEFT_STICK_Y_AXIS" : "RIGHT_STICK_Y_AXIS"),
+						Main.strings.getString(swapLeftAndRightSticks ? "LEFT_STICK_Y_AXIS" : "RIGHT_STICK_Y_AXIS"),
 						component));
 				default -> throw buildInvalidComponentIndexException(componentType, componentIndex);
 				}
@@ -1025,7 +1025,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			putValue(NAME, name);
 			putValue(SHORT_DESCRIPTION,
-					MessageFormat.format(Main.STRINGS.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
+					MessageFormat.format(Main.strings.getString("EDIT_COMPONENT_ACTION_DESCRIPTION"), name));
 		}
 
 		/// Opens the edit dialog for the associated component.

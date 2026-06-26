@@ -28,7 +28,7 @@ final class ActivationIntervalActionTest {
 
 	@BeforeAll
 	static void ensureMainInitialized() {
-		final var _ = de.bwravencl.controllerbuddy.gui.Main.STRINGS;
+		final var _ = de.bwravencl.controllerbuddy.gui.Main.strings;
 	}
 
 	@Nested

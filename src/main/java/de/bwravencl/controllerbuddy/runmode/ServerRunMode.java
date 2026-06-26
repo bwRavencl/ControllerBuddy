@@ -83,13 +83,13 @@ public final class ServerRunMode extends RunMode {
 	/// AES-GCM authentication tag length in bits.
 	static final int TAG_LENGTH = 128;
 
-	private static final Logger LOGGER = Logger.getLogger(ServerRunMode.class.getName());
-
 	/// Number of keep-alive request retries before considering the client lost.
 	private static final int NUM_REQUEST_ALIVE_RETRIES = 10;
 
 	/// Interval in milliseconds between consecutive keep-alive requests.
 	private static final int REQUEST_ALIVE_INTERVAL = 100;
+
+	private static final Logger logger = Logger.getLogger(ServerRunMode.class.getName());
 
 	/// AES-GCM cipher instance used to encrypt outgoing packets.
 	private final Cipher cipher;
@@ -154,7 +154,7 @@ public final class ServerRunMode extends RunMode {
 
 	@Override
 	Logger getLogger() {
-		return LOGGER;
+		return logger;
 	}
 
 	/// Requests this server run mode to stop by closing the UDP socket.
@@ -185,7 +185,7 @@ public final class ServerRunMode extends RunMode {
 			final var receiveBuf = new byte[1024];
 
 			EventQueue.invokeLater(() -> main
-					.setStatusBarText(MessageFormat.format(Main.STRINGS.getString("STATUS_LISTENING"), port)));
+					.setStatusBarText(MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port)));
 
 			for (;;) {
 				process();
@@ -234,7 +234,7 @@ public final class ServerRunMode extends RunMode {
 								return;
 							}
 							EventQueue.invokeLater(() -> main.setStatusBarText(
-									MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO"),
+									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
 											clientAddress.getCanonicalHostName(), clientPort)));
 						}
 					}
@@ -321,9 +321,9 @@ public final class ServerRunMode extends RunMode {
 							input.reset();
 							input.deInit();
 
-							main.setStatusBarText(Main.STRINGS.getString("STATUS_TIMEOUT"));
+							main.setStatusBarText(Main.strings.getString("STATUS_TIMEOUT"));
 							main.scheduleStatusBarText(
-									MessageFormat.format(Main.STRINGS.getString("STATUS_LISTENING"), port));
+									MessageFormat.format(Main.strings.getString("STATUS_LISTENING"), port));
 
 							serverState = ServerState.LISTENING;
 						}
@@ -332,17 +332,17 @@ public final class ServerRunMode extends RunMode {
 				}
 			}
 		} catch (final BindException e) {
-			LOGGER.warning("Could not bind socket on port " + port);
+			logger.warning("Could not bind socket on port " + port);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-					MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
-					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					MessageFormat.format(Main.strings.getString("COULD_NOT_OPEN_SOCKET_DIALOG_TEXT"), port),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final SocketException e) {
-			LOGGER.log(Level.FINE, e.getMessage(), e);
+			logger.log(Level.FINE, e.getMessage(), e);
 		} catch (final IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-					Main.STRINGS.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-					Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+					Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+					Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 		} catch (final InterruptedException _) {
 			Thread.currentThread().interrupt();
 		} finally {
@@ -353,7 +353,7 @@ public final class ServerRunMode extends RunMode {
 			}
 
 			EventQueue.invokeLater(() -> {
-				main.setStatusBarText(Main.STRINGS.getString("STATUS_SOCKET_CLOSED"));
+				main.setStatusBarText(Main.strings.getString("STATUS_SOCKET_CLOSED"));
 				main.stopAll(false, false, true);
 			});
 		}

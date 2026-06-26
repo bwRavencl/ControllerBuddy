@@ -68,10 +68,10 @@ public final class Input {
 	/// Interval in milliseconds between hot-swap button polls.
 	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
 
-	private static final Logger LOGGER = Logger.getLogger(Input.class.getName());
-
 	/// Duration in milliseconds for which axis suspension is held.
 	private static final long SUSPENSION_TIME = 500L;
+
+	private static final Logger logger = Logger.getLogger(Input.class.getName());
 
 	/// Current integer values for all virtual axes.
 	private final Map<VirtualAxis, Integer> axes;
@@ -571,7 +571,7 @@ public final class Input {
 						if (optionalController.isPresent()) {
 							final var controller = optionalController.get();
 
-							LOGGER.info(Main.assembleControllerLoggingMessage("Initiating hot swap to controller ",
+							logger.info(Main.assembleControllerLoggingMessage("Initiating hot swap to controller ",
 									controller));
 
 							hotSwappingButtonId = HotSwappingButton.NONE.id;
@@ -853,8 +853,8 @@ public final class Input {
 
 		final var modes = profile.getModes();
 		modes.sort((mode1, mode2) -> {
-			final var mode1IsDefaultMode = Profile.DEFAULT_MODE.equals(mode1);
-			final var mode2IsDefaultMode = Profile.DEFAULT_MODE.equals(mode2);
+			final var mode1IsDefaultMode = Profile.defaultMode.equals(mode1);
+			final var mode2IsDefaultMode = Profile.defaultMode.equals(mode2);
 
 			if (mode1IsDefaultMode && mode2IsDefaultMode) {
 				return 0;
@@ -868,8 +868,8 @@ public final class Input {
 				return 1;
 			}
 
-			final var mode1IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode1);
-			final var mode2IsOnScreenKeyboardMode = OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(mode2);
+			final var mode1IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(mode1);
+			final var mode2IsOnScreenKeyboardMode = OnScreenKeyboard.onScreenKeyboardMode.equals(mode2);
 
 			if (mode1IsOnScreenKeyboardMode && mode2IsOnScreenKeyboardMode) {
 				return 0;

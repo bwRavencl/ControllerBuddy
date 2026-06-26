@@ -68,7 +68,7 @@ import javax.swing.border.Border;
 public final class OnScreenKeyboard extends JFrame {
 
 	/// The mode associated with the on-screen keyboard.
-	public static final Mode ON_SCREEN_KEYBOARD_MODE;
+	public static final Mode onScreenKeyboardMode;
 
 	/// Background color used for held keyboard buttons.
 	private static final Color KEYBOARD_BUTTON_HELD_BACKGROUND = new Color(128, 128, 128);
@@ -86,8 +86,8 @@ public final class OnScreenKeyboard extends JFrame {
 	private static final long serialVersionUID = -5061347351151925461L;
 
 	static {
-		ON_SCREEN_KEYBOARD_MODE = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		ON_SCREEN_KEYBOARD_MODE.setDescription(Main.STRINGS.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
+		onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	/// The Caps Lock key button on this keyboard.
@@ -605,7 +605,7 @@ public final class OnScreenKeyboard extends JFrame {
 		///
 		/// @param labelKey the resource bundle key used to look up the display label
 		Direction(final String labelKey) {
-			label = Main.STRINGS.getString(labelKey);
+			label = Main.strings.getString(labelKey);
 		}
 
 		/// Returns the localized label for this direction.

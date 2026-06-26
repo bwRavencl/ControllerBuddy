@@ -135,22 +135,22 @@ public final class EditActionsDialog extends JDialog {
 	/// Custom cursor shown when hovering over a property label that has help text.
 	private static final Cursor HELP_CURSOR;
 
-	/// Hot-spot point for the custom help cursor image.
-	private static final Point HELP_CURSOR_HOT_SPOT = new Point(0, 0);
-
 	/// Classpath resource path for the help cursor GIF image.
 	private static final String HELP_GIF_RESOURCE_PATH = "/help.gif";
-
-	/// Dimension for icon labels.
-	private static final Dimension ICON_LABEL_DIMENSION = new Dimension(24, 24);
-
-	private static final Logger LOGGER = Logger.getLogger(EditActionsDialog.class.getName());
 
 	/// Action classes available for on-screen keyboard mode components.
 	private static final List<Class<?>> ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 
 	/// Action classes available for trigger (half-axis) components.
 	private static final List<Class<?>> TRIGGER_ACTION_CLASSES;
+
+	/// Hot-spot point for the custom help cursor image.
+	private static final Point helpCursorHotSpot = new Point(0, 0);
+
+	/// Dimension for icon labels.
+	private static final Dimension iconLabelDimension = new Dimension(24, 24);
+
+	private static final Logger logger = Logger.getLogger(EditActionsDialog.class.getName());
 
 	@Serial
 	private static final long serialVersionUID = 5007388251349678609L;
@@ -211,7 +211,7 @@ public final class EditActionsDialog extends JDialog {
 		try {
 			final var bufferedImage = ImageIO.read(inputStream);
 
-			HELP_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, HELP_CURSOR_HOT_SPOT, "help");
+			HELP_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(bufferedImage, helpCursorHotSpot, "help");
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -302,7 +302,7 @@ public final class EditActionsDialog extends JDialog {
 		unsavedProfile = parentDialog.unsavedProfile;
 
 		preInit(parentDialog);
-		setTitle(MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
+		setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_CYCLE_ACTION_EDITOR"),
 				IAction.getLabel(cycleAction.getClass())));
 
 		init();
@@ -328,7 +328,7 @@ public final class EditActionsDialog extends JDialog {
 		}
 
 		preInit(main);
-		setTitle(MessageFormat.format(Main.STRINGS.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
+		setTitle(MessageFormat.format(Main.strings.getString("EDIT_ACTIONS_DIALOG_TITLE_COMPONENT_EDITOR"), name));
 
 		final var modes = unsavedProfile.getModes();
 		selectedMode = modes.getFirst();
@@ -358,9 +358,9 @@ public final class EditActionsDialog extends JDialog {
 	private static JButton addClipboardButton(final JPanel clipboardPanel, final javax.swing.Action action) {
 		final var button = new JButton(action);
 		button.setEnabled(false);
-		button.setPreferredSize(Main.SQUARE_BUTTON_DIMENSION);
-		button.setMinimumSize(Main.SQUARE_BUTTON_DIMENSION);
-		button.setMaximumSize(Main.SQUARE_BUTTON_DIMENSION);
+		button.setPreferredSize(Main.squareButtonDimension);
+		button.setMinimumSize(Main.squareButtonDimension);
+		button.setMaximumSize(Main.squareButtonDimension);
 		button.setAlignmentX(CENTER_ALIGNMENT);
 		button.setAlignmentY(CENTER_ALIGNMENT);
 		clipboardPanel.add(button);
@@ -551,7 +551,7 @@ public final class EditActionsDialog extends JDialog {
 		switch (action) {
 		case final ButtonToModeAction buttonToModeAction -> {
 			final var modes = input.getProfile().getModes();
-			final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE;
+			final var defaultMode = modes.size() > 1 ? modes.get(1) : OnScreenKeyboard.onScreenKeyboardMode;
 			buttonToModeAction.setMode(defaultMode);
 		}
 		case final ToAxisAction<?> toAxisAction -> {
@@ -607,7 +607,7 @@ public final class EditActionsDialog extends JDialog {
 	private List<Class<?>> getAllowedActionClasses() {
 		if (isCycleEditor()) {
 			return CYCLE_ACTION_CLASSES;
-		} else if (OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE.equals(selectedMode)) {
+		} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(selectedMode)) {
 			return ON_SCREEN_KEYBOARD_ACTION_CLASSES;
 		} else if (component.type() == ComponentType.AXIS) {
 			final var componentIndex = component.index();
@@ -616,7 +616,7 @@ public final class EditActionsDialog extends JDialog {
 				return TRIGGER_ACTION_CLASSES;
 			}
 			return AXIS_ACTION_CLASSES;
-		} else if (Profile.DEFAULT_MODE.equals(selectedMode)) {
+		} else if (Profile.defaultMode.equals(selectedMode)) {
 			return BUTTON_ACTION_CLASSES;
 		}
 
@@ -647,7 +647,7 @@ public final class EditActionsDialog extends JDialog {
 			}
 		}
 
-		if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.DEFAULT_MODE.equals(selectedMode)) {
+		if (!cycleEditor && component.type() == ComponentType.BUTTON && Profile.defaultMode.equals(selectedMode)) {
 			final var buttonToModeActions = unsavedProfile.getButtonToModeActionsMap().get(component.index());
 			if (buttonToModeActions != null) {
 				assignedActions.addAll(buttonToModeActions);
@@ -675,7 +675,7 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET));
 		getContentPane().add(actionsPanel, BorderLayout.CENTER);
 
-		actionsPanel.add(new JLabel(Main.STRINGS.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
+		actionsPanel.add(new JLabel(Main.strings.getString("AVAILABLE_ACTIONS_LABEL")), new GridBagConstraints(0, 0, 1,
 				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, BASE_INSET, 0), 0, 0));
 
 		availableActionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -691,8 +691,8 @@ public final class EditActionsDialog extends JDialog {
 						GridBagConstraints.BOTH, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var addActionButton = new JButton(new AddActionAction());
-		addActionButton.setMinimumSize(Main.BUTTON_DIMENSION);
-		addActionButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		addActionButton.setMinimumSize(Main.buttonDimension);
+		addActionButton.setPreferredSize(Main.buttonDimension);
 		addActionButton.setEnabled(false);
 		actionsPanel.add(addActionButton, new GridBagConstraints(0, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -716,7 +716,7 @@ public final class EditActionsDialog extends JDialog {
 			if (!Objects.equals(iconLabel.getTitle(), description)) {
 				final var descriptionLabel = new JLabel(description);
 				descriptionLabel.setBorder(BorderFactory.createEmptyBorder(0,
-						ICON_LABEL_DIMENSION.width + IconLabel.ICON_LABEL_SPACING, 0, 0));
+						iconLabelDimension.width + IconLabel.ICON_LABEL_SPACING, 0, 0));
 				applyListColors(descriptionLabel, list, isSelected);
 				final var defaultForegroundColor = descriptionLabel.getForeground();
 				final var dimmedForegroundColor = new Color(defaultForegroundColor.getRed(),
@@ -732,12 +732,12 @@ public final class EditActionsDialog extends JDialog {
 				new GridBagConstraints(1, 1, 1, 1, ACTIONS_LIST_WEIGHT_X, 1d, GridBagConstraints.CENTER,
 						GridBagConstraints.BOTH, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
-		actionsPanel.add(new JLabel(Main.STRINGS.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(1, 0, 1,
+		actionsPanel.add(new JLabel(Main.strings.getString("ASSIGNED_ACTIONS_LABEL")), new GridBagConstraints(1, 0, 1,
 				1, 0d, 0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, BASE_INSET, 0), 0, 0));
 
 		final var clipboardPanel = new JPanel();
 		clipboardPanel.setLayout(new BoxLayout(clipboardPanel, BoxLayout.X_AXIS));
-		final var titledBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("CLIPBOARD_BORDER_TITLE"));
+		final var titledBorder = BorderFactory.createTitledBorder(Main.strings.getString("CLIPBOARD_BORDER_TITLE"));
 		final var emptyBorder = (EmptyBorder) BorderFactory.createEmptyBorder(BASE_INSET, BASE_INSET, BASE_INSET,
 				BASE_INSET);
 		final var border = BorderFactory.createCompoundBorder(titledBorder, emptyBorder);
@@ -757,8 +757,8 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.HORIZONTAL, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var removeActionButton = new JButton(new RemoveActionAction());
-		removeActionButton.setMinimumSize(Main.BUTTON_DIMENSION);
-		removeActionButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		removeActionButton.setMinimumSize(Main.buttonDimension);
+		removeActionButton.setPreferredSize(Main.buttonDimension);
 		removeActionButton.setEnabled(false);
 		actionsPanel.add(removeActionButton, new GridBagConstraints(1, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -801,7 +801,7 @@ public final class EditActionsDialog extends JDialog {
 									new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 10));
 
 					final var propertyIcon = annotation.icon();
-					final var propertyTitle = Main.STRINGS.getString(annotation.title());
+					final var propertyTitle = Main.strings.getString(annotation.title());
 					final var propertyDescriptionLabel = annotation.description();
 
 					final var propertyNameLabel = new JLabel(propertyTitle);
@@ -886,11 +886,11 @@ public final class EditActionsDialog extends JDialog {
 		actionsPanel.add(helpScrollPane, new GridBagConstraints(0, 4, 2, 1, 0d, 0.55, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(BASE_INSET * 3, 0, 0, 0), 0, 0));
 
-		final var helpScrollPaneBorder = BorderFactory.createTitledBorder(Main.STRINGS.getString("HELP_BORDER_TITLE"));
+		final var helpScrollPaneBorder = BorderFactory.createTitledBorder(Main.strings.getString("HELP_BORDER_TITLE"));
 		helpScrollPane.setBorder(helpScrollPaneBorder);
 		final var helpScrollPaneBorderInsets = helpScrollPaneBorder.getBorder().getBorderInsets(helpScrollPane);
 
-		propertiesLabel = new JLabel(Main.STRINGS.getString("PROPERTIES_LABEL"));
+		propertiesLabel = new JLabel(Main.strings.getString("PROPERTIES_LABEL"));
 		propertiesLabel.setVisible(false);
 		actionsPanel.add(propertiesLabel, new GridBagConstraints(2, 0, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(0, 0, BASE_INSET, 0), 0, 0));
@@ -905,12 +905,12 @@ public final class EditActionsDialog extends JDialog {
 		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		final var okButton = new JButton(new OKAction());
-		okButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		okButton.setPreferredSize(Main.buttonDimension);
 		okCancelButtonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
 		final var cancelButton = new JButton(new CancelAction());
-		cancelButton.setPreferredSize(Main.BUTTON_DIMENSION);
+		cancelButton.setPreferredSize(Main.buttonDimension);
 		okCancelButtonPanel.add(cancelButton);
 
 		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
@@ -1015,7 +1015,7 @@ public final class EditActionsDialog extends JDialog {
 
 		final var availableActions = getAllowedActionClasses().stream()
 				.filter(actionClass -> !ButtonToModeAction.class.equals(actionClass)
-						|| Profile.DEFAULT_MODE.equals(selectedMode))
+						|| Profile.defaultMode.equals(selectedMode))
 				.toArray(Class<?>[]::new);
 
 		availableActionsList.setListData(availableActions);
@@ -1095,7 +1095,7 @@ public final class EditActionsDialog extends JDialog {
 				descriptionLabel = actionAnnotation.description();
 			}
 		} else {
-			title = Main.STRINGS.getString("NO_SELECTION_HELP_TITLE");
+			title = Main.strings.getString("NO_SELECTION_HELP_TITLE");
 			descriptionLabel = "NO_SELECTION_HELP_DESCRIPTION";
 		}
 
@@ -1116,14 +1116,14 @@ public final class EditActionsDialog extends JDialog {
 		String description = null;
 		if (descriptionLabel != null && !descriptionLabel.isBlank()) {
 			try {
-				description = Main.STRINGS.getString(descriptionLabel);
+				description = Main.strings.getString(descriptionLabel);
 			} catch (final MissingResourceException _) {
 				// handled below
 			}
 		}
 
 		if ( description == null || description.isBlank()) {
-			description = Main.STRINGS.getString("NO_HELP_AVAILABLE_HELP_DESCRIPTION");
+			description = Main.strings.getString("NO_HELP_AVAILABLE_HELP_DESCRIPTION");
 		}
 
 		helpEditorPane.setText(
@@ -1183,7 +1183,7 @@ public final class EditActionsDialog extends JDialog {
 				g2d.setColor(UIManager.getColor("Label.disabledForeground"));
 
 				final var fontMetrics = g2d.getFontMetrics();
-				final var text = Main.STRINGS.getString("NO_ASSIGNED_ACTIONS_PLACEHOLDER");
+				final var text = Main.strings.getString("NO_ASSIGNED_ACTIONS_PLACEHOLDER");
 
 				if (fontMetrics.stringWidth(text) > getWidth() - PLACEHOLDER_MESSAGE_MARGIN * 2) {
 					return;
@@ -1222,7 +1222,7 @@ public final class EditActionsDialog extends JDialog {
 		/// label.
 		///
 		/// If `titleLabel` is `null`, a new [JLabel] is created. The panel uses a
-		/// horizontal [BoxLayout] with the icon sized to [#ICON_LABEL_DIMENSION],
+		/// horizontal [BoxLayout] with the icon sized to [#iconLabelDimension],
 		/// followed by a small strut and the title label.
 		///
 		/// @param icon the icon text to display
@@ -1238,9 +1238,9 @@ public final class EditActionsDialog extends JDialog {
 			setOpaque(true);
 
 			iconLabel = new JLabel(icon);
-			iconLabel.setPreferredSize(ICON_LABEL_DIMENSION);
-			iconLabel.setMinimumSize(ICON_LABEL_DIMENSION);
-			iconLabel.setMaximumSize(ICON_LABEL_DIMENSION);
+			iconLabel.setPreferredSize(iconLabelDimension);
+			iconLabel.setMinimumSize(iconLabelDimension);
+			iconLabel.setMaximumSize(iconLabelDimension);
 			iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			add(iconLabel);
 
@@ -1264,7 +1264,7 @@ public final class EditActionsDialog extends JDialog {
 		/// @param isSelected whether the item is currently selected in the list
 		private IconLabel(final Class<?> actionClass, final JList<?> list, final boolean isSelected) {
 			final var annotation = actionClass.getAnnotation(Action.class);
-			this(annotation.icon(), Main.STRINGS.getString(annotation.title()), null);
+			this(annotation.icon(), Main.strings.getString(annotation.title()), null);
 
 			applyListColors(this, list, isSelected);
 		}
@@ -1310,8 +1310,8 @@ public final class EditActionsDialog extends JDialog {
 
 		/// Constructs an [AddActionAction] and initializes its name and description.
 		private AddActionAction() {
-			putValue(NAME, Main.STRINGS.getString("ADD_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("ADD_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, Main.strings.getString("ADD_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("ADD_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1319,7 +1319,7 @@ public final class EditActionsDialog extends JDialog {
 			try {
 				addAction(getActionClassInstance(selectedAvailableActionClass));
 			} catch (final ReflectiveOperationException e1) {
-				LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+				logger.log(Level.SEVERE, e1.getMessage(), e1);
 			}
 		}
 	}
@@ -1336,7 +1336,7 @@ public final class EditActionsDialog extends JDialog {
 		/// Constructs a [CancelAction] and initializes its name and description.
 		private CancelAction() {
 			putValue(NAME, UIManager.getString("OptionPane.cancelButtonText"));
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CANCEL_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("CANCEL_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1358,7 +1358,7 @@ public final class EditActionsDialog extends JDialog {
 		/// Constructs a [CopyActionAction] and initializes its name and description.
 		private CopyActionAction() {
 			putValue(NAME, "🗐");
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("COPY_ACTION_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("COPY_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1386,7 +1386,7 @@ public final class EditActionsDialog extends JDialog {
 		/// Constructs a [CutActionAction] and initializes its name and description.
 		private CutActionAction() {
 			putValue(NAME, "✂");
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("CUT_ACTION_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("CUT_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1410,7 +1410,7 @@ public final class EditActionsDialog extends JDialog {
 		/// Constructs an [OKAction] and initializes its name and description.
 		private OKAction() {
 			putValue(NAME, UIManager.getString("OptionPane.okButtonText"));
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("OK_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("OK_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1429,10 +1429,10 @@ public final class EditActionsDialog extends JDialog {
 				}
 
 				if (requiresOnScreenKeyboardMode
-						&& !unsavedProfile.getModes().contains(OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE)) {
-					unsavedProfile.getModes().add(OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE);
+						&& !unsavedProfile.getModes().contains(OnScreenKeyboard.onScreenKeyboardMode)) {
+					unsavedProfile.getModes().add(OnScreenKeyboard.onScreenKeyboardMode);
 				} else if (!requiresOnScreenKeyboardMode) {
-					unsavedProfile.getModes().remove(OnScreenKeyboard.ON_SCREEN_KEYBOARD_MODE);
+					unsavedProfile.getModes().remove(OnScreenKeyboard.onScreenKeyboardMode);
 				}
 
 				input.setProfile(unsavedProfile);
@@ -1460,7 +1460,7 @@ public final class EditActionsDialog extends JDialog {
 		/// Constructs a [PasteActionAction] and initializes its name and description.
 		private PasteActionAction() {
 			putValue(NAME, "📋");
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("PASTE_ACTION_ACTION_DESCRIPTION"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("PASTE_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override
@@ -1484,8 +1484,8 @@ public final class EditActionsDialog extends JDialog {
 
 		/// Constructs a [RemoveActionAction] and initializes its name and description.
 		private RemoveActionAction() {
-			putValue(NAME, Main.STRINGS.getString("REMOVE_ACTION_ACTION_NAME"));
-			putValue(SHORT_DESCRIPTION, Main.STRINGS.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
+			putValue(NAME, Main.strings.getString("REMOVE_ACTION_ACTION_NAME"));
+			putValue(SHORT_DESCRIPTION, Main.strings.getString("REMOVE_ACTION_ACTION_DESCRIPTION"));
 		}
 
 		@Override

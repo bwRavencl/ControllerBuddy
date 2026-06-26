@@ -126,7 +126,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString("RESET_JOYSTICK_AXIS_NAME"), virtualAxis);
+		return MessageFormat.format(Main.strings.getString("RESET_JOYSTICK_AXIS_NAME"), virtualAxis);
 	}
 
 	/// Returns the value to which the virtual axis is reset when this action fires.

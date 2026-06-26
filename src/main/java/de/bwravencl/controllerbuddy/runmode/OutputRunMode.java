@@ -68,8 +68,6 @@ public abstract class OutputRunMode extends RunMode {
 	/// The default vJoy device index.
 	public static final int VJOY_DEFAULT_DEVICE = 1;
 
-	private static final Logger LOGGER = Logger.getLogger(OutputRunMode.class.getName());
-
 	/// Filename of the sysfs brightness file for keyboard LEDs.
 	private static final String SYSFS_BRIGHTNESS_FILENAME = "brightness";
 
@@ -82,6 +80,8 @@ public abstract class OutputRunMode extends RunMode {
 
 	/// The scroll wheel delta value used per scroll click on Windows.
 	private static final int WHEEL_DELTA = 120;
+
+	private static final Logger logger = Logger.getLogger(OutputRunMode.class.getName());
 
 	/// Keystrokes that should be pressed and immediately released this cycle.
 	final Set<Keystroke> downUpKeystrokes = new HashSet<>();
@@ -292,7 +292,7 @@ public abstract class OutputRunMode extends RunMode {
 			try {
 				doMouseButtonInput(mouseButton, false);
 			} catch (final IOException e) {
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 
@@ -300,7 +300,7 @@ public abstract class OutputRunMode extends RunMode {
 			try {
 				doKeyboardInput(scancode, false);
 			} catch (final IOException e) {
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 
@@ -308,7 +308,7 @@ public abstract class OutputRunMode extends RunMode {
 			try {
 				doKeyboardInput(scancode, false);
 			} catch (final IOException e) {
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
+				logger.log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 
@@ -320,18 +320,18 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			EventQueue.invokeLater(() -> main.setStatusBarText(
-					MessageFormat.format(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice)));
+					MessageFormat.format(Main.strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
-			for (final var event : Event.JOYSTICK_EVENTS) {
+			for (final var event : Event.joystickEvents) {
 				try {
 					joystickUinputDevice.emit(event, 0, true);
 				} catch (final IOException e) {
-					LOGGER.log(Level.WARNING, e.getMessage(), e);
+					logger.log(Level.WARNING, e.getMessage(), e);
 				}
 			}
 
 			EventQueue.invokeLater(
-					() -> main.setStatusBarText(Main.STRINGS.getString("STATUS_DISCONNECTED_FROM_UINPUT_DEVICES")));
+					() -> main.setStatusBarText(Main.strings.getString("STATUS_DISCONNECTED_FROM_UINPUT_DEVICES")));
 		}
 
 		if (lockKeyToBrightnessFileChannelMap != null) {
@@ -340,7 +340,7 @@ public abstract class OutputRunMode extends RunMode {
 						try {
 							channel.close();
 						} catch (final IOException e) {
-							LOGGER.log(Level.WARNING, e.getMessage(), e);
+							logger.log(Level.WARNING, e.getMessage(), e);
 						}
 					});
 			lockKeyToBrightnessFileChannelMap = null;
@@ -469,17 +469,17 @@ public abstract class OutputRunMode extends RunMode {
 
 		if (numButtons < requiredButtons) {
 			if (Main.IS_WINDOWS) {
-				LOGGER.warning("vJoy device has not enough buttons");
+				logger.warning("vJoy device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						MessageFormat.format(Main.STRINGS.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"), vJoyDevice,
+						MessageFormat.format(Main.strings.getString("TOO_FEW_VJOY_BUTTONS_DIALOG_TEXT"), vJoyDevice,
 								numButtons, requiredButtons),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else if (Main.IS_LINUX) {
-				LOGGER.warning("uinput device has not enough buttons");
+				logger.warning("uinput device has not enough buttons");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						MessageFormat.format(Main.STRINGS.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
+						MessageFormat.format(Main.strings.getString("TOO_FEW_UINPUT_BUTTONS_DIALOG_TEXT"), numButtons,
 								requiredButtons),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 			} else {
 				throw buildNotImplementedException();
 			}
@@ -497,10 +497,10 @@ public abstract class OutputRunMode extends RunMode {
 	final void handleIOException(final IOException e) {
 		forceStop = true;
 
-		LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		logger.log(Level.SEVERE, e.getMessage(), e);
 		EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-				Main.STRINGS.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
-				Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+				Main.strings.getString("GENERAL_INPUT_OUTPUT_ERROR_DIALOG_TEXT"),
+				Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 	}
 
 	/// Initializes the virtual output device, validates device capabilities against
@@ -514,19 +514,19 @@ public abstract class OutputRunMode extends RunMode {
 			try {
 				VjoyInterface.init(main);
 			} catch (final Throwable t) {
-				LOGGER.log(Level.SEVERE, t.getMessage(), t);
+				logger.log(Level.SEVERE, t.getMessage(), t);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						Main.STRINGS.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 
 				return false;
 			}
 
 			if (!VjoyInterface.vJoyEnabled()) {
-				LOGGER.warning("vJoy driver is not enabled");
+				logger.warning("vJoy driver is not enabled");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						Main.STRINGS.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("VJOY_DRIVER_NOT_ENABLED_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
@@ -534,25 +534,25 @@ public abstract class OutputRunMode extends RunMode {
 				final var dllVersion = arena.allocate(Short.BYTES);
 				final var drvVersion = arena.allocate(Short.BYTES);
 				if (!VjoyInterface.DriverMatch(dllVersion, drvVersion)) {
-					LOGGER.warning("vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
+					logger.warning("vJoy DLL version " + dllVersion + " does not match driver version " + drvVersion);
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-							MessageFormat.format(Main.STRINGS.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
+							MessageFormat.format(Main.strings.getString("VJOY_VERSION_MISMATCH_DIALOG_TEXT"),
 									dllVersion.get(ValueLayout.JAVA_SHORT, 0L),
 									drvVersion.get(ValueLayout.JAVA_SHORT, 0L)),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 					return false;
 				}
 			}
 
-			LOGGER.info("Using vJoy device: " + vJoyDevice);
+			logger.info("Using vJoy device: " + vJoyDevice);
 
 			if (VjoyInterface.GetVJDStatus(vJoyDevice) != VjoyInterface.VJD_STAT_FREE) {
-				LOGGER.warning("vJoy device is not available");
+				logger.warning("vJoy device is not available");
 				EventQueue
 						.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-								MessageFormat.format(Main.STRINGS.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
+								MessageFormat.format(Main.strings.getString("INVALID_VJOY_DEVICE_STATUS_DIALOG_TEXT"),
 										vJoyDevice),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
@@ -593,50 +593,50 @@ public abstract class OutputRunMode extends RunMode {
 				}
 
 				final var missingAxesString = String.join(", ", missingAxes);
-				LOGGER.warning("vJoy device is missing the following axes: " + missingAxesString);
+				logger.warning("vJoy device is missing the following axes: " + missingAxesString);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						MessageFormat.format(Main.STRINGS.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice,
+						MessageFormat.format(Main.strings.getString("MISSING_AXES_DIALOG_TEXT"), vJoyDevice,
 								missingAxesString),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
 			if (!VjoyInterface.AcquireVJD(vJoyDevice)) {
-				LOGGER.warning("Could not acquire vJoy device");
+				logger.warning("Could not acquire vJoy device");
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main, MessageFormat
-						.format(Main.STRINGS.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						.format(Main.strings.getString("COULD_NOT_ACQUIRE_VJOY_DEVICE_DIALOG_TEXT"), vJoyDevice),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
 			if (!VjoyInterface.ResetVJD(vJoyDevice)) {
-				LOGGER.warning("Could not reset vJoy device");
+				logger.warning("Could not reset vJoy device");
 				EventQueue
 						.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-								MessageFormat.format(Main.STRINGS.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
+								MessageFormat.format(Main.strings.getString("COULD_NOT_RESET_VJOY_DEVICE_DIALOG_TEXT"),
 										vJoyDevice),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
 			try (final var arena = Arena.ofConfined()) {
 				final var min = arena.allocate(Integer.SIZE);
 				if (!VjoyInterface.GetVJDAxisMin(vJoyDevice, VjoyInterface.HID_USAGE_X, min)) {
-					LOGGER.warning("Could not determine minimum axis value of vJoy device");
+					logger.warning("Could not determine minimum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
+							MessageFormat.format(Main.strings.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				}
 				minAxisValue = min.get(ValueLayout.JAVA_INT, 0L);
 
 				final var max = arena.allocate(Integer.SIZE);
 				if (!VjoyInterface.GetVJDAxisMax(vJoyDevice, VjoyInterface.HID_USAGE_X, max)) {
-					LOGGER.warning("Could not determine maximum axis value of vJoy device");
+					logger.warning("Could not determine maximum axis value of vJoy device");
 					EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-							MessageFormat.format(Main.STRINGS.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
+							MessageFormat.format(Main.strings.getString("COULD_NOT_OBTAIN_VJOY_AXIS_RANGE_DIALOG_TEXT"),
 									vJoyDevice),
-							Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+							Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				}
 				maxAxisValue = max.get(ValueLayout.JAVA_INT, 0L);
 			}
@@ -647,9 +647,9 @@ public abstract class OutputRunMode extends RunMode {
 			}
 
 			EventQueue.invokeLater(() -> main.setStatusBarText(
-					MessageFormat.format(Main.STRINGS.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
+					MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
-			numButtons = Event.JOYSTICK_BUTTON_EVENTS.length;
+			numButtons = Event.joystickButtonEvents.length;
 			if (!enoughButtons(numButtons)) {
 				return false;
 			}
@@ -662,13 +662,13 @@ public abstract class OutputRunMode extends RunMode {
 				keyboardUinputDevice = UinputDevice.openUinputDevice(DeviceType.KEYBOARD);
 
 				EventQueue.invokeLater(
-						() -> main.setStatusBarText(Main.STRINGS.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
+						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
 			} catch (final Throwable t) {
-				LOGGER.log(Level.WARNING, t.getMessage(), t);
+				logger.log(Level.WARNING, t.getMessage(), t);
 
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						Main.STRINGS.getString("COULD_NOT_OPEN_UINPUT_DEVICE_DIALOG_TEXT"),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("COULD_NOT_OPEN_UINPUT_DEVICE_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
@@ -695,11 +695,11 @@ public abstract class OutputRunMode extends RunMode {
 							}
 						}));
 			} catch (final Throwable t) {
-				LOGGER.log(Level.WARNING, t.getMessage(), t);
+				logger.log(Level.WARNING, t.getMessage(), t);
 
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
-						Main.STRINGS.getString("CANNOT_READ_LED_STATUS_DIALOG_TEXT"),
-						Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
+						Main.strings.getString("CANNOT_READ_LED_STATUS_DIALOG_TEXT"),
+						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 				return false;
 			}
 
@@ -913,7 +913,7 @@ public abstract class OutputRunMode extends RunMode {
 					if (Main.IS_WINDOWS) {
 						writeSucessful &= VjoyInterface.SetBtn(buttons[i].get() != 0, vJoyDevice, (byte) (i + 1));
 					} else if (Main.IS_LINUX) {
-						joystickUinputDevice.emit(Event.JOYSTICK_BUTTON_EVENTS[i], buttons[i].get(), true);
+						joystickUinputDevice.emit(Event.joystickButtonEvents[i], buttons[i].get(), true);
 					} else {
 						throw buildNotImplementedException();
 					}
@@ -1024,7 +1024,7 @@ public abstract class OutputRunMode extends RunMode {
 				}
 			}
 		} catch (final IOException e) {
-			LOGGER.log(Level.WARNING, e.getMessage(), e);
+			logger.log(Level.WARNING, e.getMessage(), e);
 			writeSucessful = false;
 		}
 
@@ -1040,8 +1040,8 @@ public abstract class OutputRunMode extends RunMode {
 				}
 
 				return main
-						.executeWhileVisible(() -> JOptionPane.showConfirmDialog(main, Main.STRINGS.getString(message),
-								Main.STRINGS.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
+						.executeWhileVisible(() -> JOptionPane.showConfirmDialog(main, Main.strings.getString(message),
+								Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.YES_NO_OPTION));
 			});
 			EventQueue.invokeLater(confirmDialogTask);
 			try {

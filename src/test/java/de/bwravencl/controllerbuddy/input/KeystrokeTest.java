@@ -140,7 +140,7 @@ final class KeystrokeTest {
 		@Test
 		@DisplayName("returns the NOTHING resource string when both keyCodes and modifierCodes are empty")
 		void returnsNothingStringWhenBothArraysAreEmpty() {
-			Assertions.assertEquals(Main.STRINGS.getString("NOTHING"), createEmptyKeystroke().toString());
+			Assertions.assertEquals(Main.strings.getString("NOTHING"), createEmptyKeystroke().toString());
 		}
 	}
 }

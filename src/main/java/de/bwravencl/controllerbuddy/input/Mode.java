@@ -56,7 +56,7 @@ public final class Mode implements Cloneable {
 	/// Constructs a [Mode] with a random UUID and default description.
 	public Mode() {
 		uuid = UUID.randomUUID();
-		description = Main.STRINGS.getString("NEW_MODE_DESCRIPTION");
+		description = Main.strings.getString("NEW_MODE_DESCRIPTION");
 	}
 
 	/// Constructs a [Mode] with the specified UUID.

@@ -189,7 +189,7 @@ final class ModeTest {
 		@DisplayName("sets description to the NEW_MODE_DESCRIPTION resource string")
 		void setsDescriptionFromResourceBundle() {
 			final var mode = new Mode();
-			Assertions.assertEquals(Main.STRINGS.getString("NEW_MODE_DESCRIPTION"), mode.getDescription());
+			Assertions.assertEquals(Main.strings.getString("NEW_MODE_DESCRIPTION"), mode.getDescription());
 		}
 
 		@Test

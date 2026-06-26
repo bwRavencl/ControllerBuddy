@@ -35,7 +35,7 @@ import org.lwjgl.sdl.SDLInit;
 /// also polls SDL events when SDL event polling is active.
 public final class MainLoop {
 
-	private static final Logger LOGGER = Logger.getLogger(MainLoop.class.getName());
+	private static final Logger logger = Logger.getLogger(MainLoop.class.getName());
 
 	/// Queue of pending tasks to be executed on the SDL main thread.
 	private final BlockingQueue<TaskQueueEntry> taskQueue = new LinkedBlockingDeque<>();
@@ -84,7 +84,7 @@ public final class MainLoop {
 	/// completed exceptionally and the exception is re-thrown. On exit, SDL is
 	/// shut down via `SDL_Quit`.
 	public void enterLoop() {
-		LOGGER.info("Entering main loop");
+		logger.info("Entering main loop");
 		try {
 			while (!Thread.interrupted()) {
 				currentTaskQueueEntry = taskQueue.poll();
@@ -133,10 +133,10 @@ public final class MainLoop {
 			try {
 				SDLInit.SDL_Quit();
 			} catch (final Throwable t) {
-				LOGGER.log(Level.SEVERE, t.getMessage(), t);
+				logger.log(Level.SEVERE, t.getMessage(), t);
 			}
 
-			LOGGER.info("Exiting main loop");
+			logger.info("Exiting main loop");
 		}
 	}
 

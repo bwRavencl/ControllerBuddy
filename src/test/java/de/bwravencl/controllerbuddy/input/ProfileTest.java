@@ -121,7 +121,7 @@ final class ProfileTest {
 			final var profile = createProfile();
 
 			Assertions.assertEquals(1, profile.getModes().size());
-			Assertions.assertSame(Profile.DEFAULT_MODE, profile.getModes().getFirst());
+			Assertions.assertSame(Profile.defaultMode, profile.getModes().getFirst());
 		}
 
 		@Test
@@ -129,7 +129,7 @@ final class ProfileTest {
 		void setsActiveModeToDefaultModeOnConstruction() {
 			final var profile = createProfile();
 
-			Assertions.assertSame(Profile.DEFAULT_MODE, profile.getActiveMode());
+			Assertions.assertSame(Profile.defaultMode, profile.getActiveMode());
 		}
 	}
 
@@ -152,10 +152,10 @@ final class ProfileTest {
 		void returnsModeWhenUuidMatches() {
 			final var profile = createProfile();
 
-			final var result = profile.getModeByUuid(Profile.DEFAULT_MODE.getUuid());
+			final var result = profile.getModeByUuid(Profile.defaultMode.getUuid());
 
 			Assertions.assertTrue(result.isPresent());
-			Assertions.assertSame(Profile.DEFAULT_MODE, result.get());
+			Assertions.assertSame(Profile.defaultMode, result.get());
 		}
 	}
 
@@ -241,7 +241,7 @@ final class ProfileTest {
 			// The current (default) mode also handles the same axis
 			final var currentAxisActions = new ArrayList<IAction<Float>>();
 			currentAxisActions.add(mockAxisToAxisAction);
-			Profile.DEFAULT_MODE.getAxisToActionsMap().put(0, currentAxisActions);
+			Profile.defaultMode.getAxisToActionsMap().put(0, currentAxisActions);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(mockRunMode);
 			Mockito.when(mockInput.getMain()).thenReturn(mockMain);
@@ -255,7 +255,7 @@ final class ProfileTest {
 					Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
 
 			// Clean up shared DEFAULT_MODE state modified by this test
-			Profile.DEFAULT_MODE.getAxisToActionsMap().remove(0);
+			Profile.defaultMode.getAxisToActionsMap().remove(0);
 		}
 	}
 
@@ -270,7 +270,7 @@ final class ProfileTest {
 
 			profile.setActiveMode(mockInput, 99);
 
-			Assertions.assertSame(Profile.DEFAULT_MODE, profile.getActiveMode());
+			Assertions.assertSame(Profile.defaultMode, profile.getActiveMode());
 		}
 
 		@Test

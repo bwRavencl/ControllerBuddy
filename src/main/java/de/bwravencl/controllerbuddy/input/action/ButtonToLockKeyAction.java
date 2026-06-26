@@ -80,7 +80,7 @@ public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 			return super.getDescription(input);
 		}
 
-		return MessageFormat.format(Main.STRINGS.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
+		return MessageFormat.format(Main.strings.getString(on ? "LOCK_KEY_ON" : "LOCK_KEY_OFF"), getLockKey());
 	}
 
 	/// Returns the lock key targeted by this action.
