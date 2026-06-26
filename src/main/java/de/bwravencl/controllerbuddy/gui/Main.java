@@ -310,7 +310,7 @@ public final class Main extends JFrame {
 
 	/// Standard dimension for rectangular UI buttons.
 	@SuppressWarnings("exports")
-	public static final Dimension buttonDimension = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
+	public static final Dimension rectButtonDimension = new Dimension(115, BUTTON_DIMENSION_HEIGHT);
 
 	/// Standard dimension for square UI buttons.
 	@SuppressWarnings({ "exports", "SuspiciousNameCombination" })
@@ -1152,7 +1152,7 @@ public final class Main extends JFrame {
 
 		newModePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, LOWER_BUTTONS_HGAP, LOWER_BUTTONS_VGAP));
 		final var newModeButton = new JButton(new NewModeAction());
-		newModeButton.setPreferredSize(buttonDimension);
+		newModeButton.setPreferredSize(rectButtonDimension);
 		newModePanel.add(newModeButton);
 		modesPanel.add(newModePanel, BorderLayout.SOUTH);
 
@@ -1200,7 +1200,7 @@ public final class Main extends JFrame {
 		exportPanel.add(legendLabel);
 
 		final var exportButton = new JButton(new ExportAction());
-		exportButton.setPreferredSize(buttonDimension);
+		exportButton.setPreferredSize(rectButtonDimension);
 		exportButton.setAlignmentY(BOTTOM_ALIGNMENT);
 		exportPanel.add(exportButton);
 		visualizationPanel.add(exportPanel, BorderLayout.SOUTH);
@@ -4814,10 +4814,10 @@ public final class Main extends JFrame {
 			if (Profile.defaultMode.equals(mode) || OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
 				descriptionTextField.setEditable(false);
 				descriptionTextField.setFocusable(false);
-				modePanel.add(Box.createHorizontalStrut(buttonDimension.width), buttonGridBagConstraints);
+				modePanel.add(Box.createHorizontalStrut(rectButtonDimension.width), buttonGridBagConstraints);
 			} else {
 				final var deleteButton = new JButton(new RemoveModeAction(mode));
-				deleteButton.setPreferredSize(buttonDimension);
+				deleteButton.setPreferredSize(rectButtonDimension);
 				modePanel.add(deleteButton, buttonGridBagConstraints);
 			}
 		}

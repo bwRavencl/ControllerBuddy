@@ -52,7 +52,7 @@ public final class ActionsEditorBuilder extends EditorBuilder {
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		final var editActionsButton = new JButton(new EditActionsAction());
-		editActionsButton.setPreferredSize(Main.buttonDimension);
+		editActionsButton.setPreferredSize(Main.rectButtonDimension);
 		parentPanel.add(editActionsButton);
 	}
 

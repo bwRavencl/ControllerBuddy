@@ -691,8 +691,8 @@ public final class EditActionsDialog extends JDialog {
 						GridBagConstraints.BOTH, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var addActionButton = new JButton(new AddActionAction());
-		addActionButton.setMinimumSize(Main.buttonDimension);
-		addActionButton.setPreferredSize(Main.buttonDimension);
+		addActionButton.setMinimumSize(Main.rectButtonDimension);
+		addActionButton.setPreferredSize(Main.rectButtonDimension);
 		addActionButton.setEnabled(false);
 		actionsPanel.add(addActionButton, new GridBagConstraints(0, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -757,8 +757,8 @@ public final class EditActionsDialog extends JDialog {
 				GridBagConstraints.HORIZONTAL, new Insets(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET), 0, 0));
 
 		final var removeActionButton = new JButton(new RemoveActionAction());
-		removeActionButton.setMinimumSize(Main.buttonDimension);
-		removeActionButton.setPreferredSize(Main.buttonDimension);
+		removeActionButton.setMinimumSize(Main.rectButtonDimension);
+		removeActionButton.setPreferredSize(Main.rectButtonDimension);
 		removeActionButton.setEnabled(false);
 		actionsPanel.add(removeActionButton, new GridBagConstraints(1, 3, 1, 1, 0d, 0d, GridBagConstraints.CENTER,
 				GridBagConstraints.NONE, new Insets(BASE_INSET, 0, BASE_INSET, 0), 0, 0));
@@ -905,12 +905,12 @@ public final class EditActionsDialog extends JDialog {
 		okCancelButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		final var okButton = new JButton(new OKAction());
-		okButton.setPreferredSize(Main.buttonDimension);
+		okButton.setPreferredSize(Main.rectButtonDimension);
 		okCancelButtonPanel.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 
 		final var cancelButton = new JButton(new CancelAction());
-		cancelButton.setPreferredSize(Main.buttonDimension);
+		cancelButton.setPreferredSize(Main.rectButtonDimension);
 		okCancelButtonPanel.add(cancelButton);
 
 		getContentPane().add(okCancelButtonPanel, BorderLayout.SOUTH);
