@@ -67,7 +67,7 @@ public final class VjoyInterface {
 	public static final String VJOY_LIBRARY_FILENAME = "vJoyInterface.dll";
 
 	/// Native linker used to bind to vJoy library functions.
-	static final Linker LINKER = Linker.nativeLinker();
+	private static final Linker LINKER = Linker.nativeLinker();
 
 	private static final Logger logger = Logger.getLogger(VjoyInterface.class.getName());
 
