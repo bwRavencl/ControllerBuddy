@@ -24,12 +24,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
 
 /// Run mode for local input processing on the same machine.
 ///
 /// Polls a locally connected controller for input and writes the
 /// resulting axis, button, key, and mouse state to the virtual
 /// output device.
+@NullMarked
 public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger logger = Logger.getLogger(LocalRunMode.class.getName());
@@ -43,9 +45,8 @@ public final class LocalRunMode extends OutputRunMode {
 	/// Constructs a [LocalRunMode].
 	///
 	/// @param main the main application instance
-	/// @param input the input instance for controller state
-	public LocalRunMode(final Main main, final Input input) {
-		super(main, input);
+	public LocalRunMode(final Main main) {
+		super(main);
 	}
 
 	@Override
@@ -65,28 +66,28 @@ public final class LocalRunMode extends OutputRunMode {
 
 		final var inputAxes = input.getAxes();
 
-		final var inputAxisX = inputAxes.get(Input.VirtualAxis.X);
+		final var inputAxisX = inputAxes.getOrDefault(Input.VirtualAxis.X, 0);
 		axisX.set(inputAxisX);
 
-		final var inputAxisY = inputAxes.get(Input.VirtualAxis.Y);
+		final var inputAxisY = inputAxes.getOrDefault(Input.VirtualAxis.Y, 0);
 		axisY.set(inputAxisY);
 
-		final var inputAxisZ = inputAxes.get(Input.VirtualAxis.Z);
+		final var inputAxisZ = inputAxes.getOrDefault(Input.VirtualAxis.Z, 0);
 		axisZ.set(inputAxisZ);
 
-		final var inputAxisRX = inputAxes.get(Input.VirtualAxis.RX);
+		final var inputAxisRX = inputAxes.getOrDefault(Input.VirtualAxis.RX, 0);
 		axisRX.set(inputAxisRX);
 
-		final var inputAxisRY = inputAxes.get(Input.VirtualAxis.RY);
+		final var inputAxisRY = inputAxes.getOrDefault(Input.VirtualAxis.RY, 0);
 		axisRY.set(inputAxisRY);
 
-		final var inputAxisRZ = inputAxes.get(Input.VirtualAxis.RZ);
+		final var inputAxisRZ = inputAxes.getOrDefault(Input.VirtualAxis.RZ, 0);
 		axisRZ.set(inputAxisRZ);
 
-		final var inputAxisS0 = inputAxes.get(Input.VirtualAxis.S0);
+		final var inputAxisS0 = inputAxes.getOrDefault(Input.VirtualAxis.S0, 0);
 		axisS0.set(inputAxisS0);
 
-		final var inputAxisS1 = inputAxes.get(Input.VirtualAxis.S1);
+		final var inputAxisS1 = inputAxes.getOrDefault(Input.VirtualAxis.S1, 0);
 		axisS1.set(inputAxisS1);
 
 		final var inputButtons = input.getButtons();

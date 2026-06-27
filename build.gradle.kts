@@ -112,6 +112,7 @@ java { toolchain(javaToolchainSpec) }
 
 dependencies {
   errorprone("com.google.errorprone:error_prone_core:2.50.0")
+  errorprone("com.uber.nullaway:nullaway:0.13.7")
   spotbugs("com.github.spotbugs:spotbugs:4.10.2")
 
   val dbusJavaVersion = "5.2.0"
@@ -148,6 +149,7 @@ dependencies {
   implementation("com.github.weisj:jsvg:2.1.0")
   implementation("com.google.code.gson:gson:2.14.0")
   implementation("io.github.classgraph:classgraph:4.8.184")
+  implementation("org.jspecify:jspecify:1.0.0")
   implementation("org.lwjgl:lwjgl:$lwjglVersion")
   implementation("org.lwjgl:lwjgl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion")
@@ -173,7 +175,6 @@ spotless {
     target("src/**/java/de/bwravencl/**/*.java")
     targetExclude(removeProjectDirPrefix(moduleInfoFile), removeProjectDirPrefix(constantsFile))
     eclipse("4.33").configFile("spotless.eclipseformat.xml")
-    formatAnnotations()
     cleanthat()
         .sourceCompatibility(
             project.extensions.getByType(JavaPluginExtension::class).sourceCompatibility.toString()
@@ -539,11 +540,14 @@ tasks.register("generateConstants") {
         """
             package de.bwravencl.controllerbuddy.constants;
 
+            import org.jspecify.annotations.NullMarked;
+
             /// Build-time generated constants for the application.
             ///
             /// Contains the application name, version string, build timestamp, and
             /// aggregated license HTML that are populated at compile time by the Gradle
             /// build.
+            @NullMarked
             public final class Constants {
 
             	/// Prevents instantiation.
@@ -603,6 +607,7 @@ tasks.register("generateModuleInfo") {
         	requires java.prefs;
         	requires org.apache.commons.cli;
         	requires org.freedesktop.dbus;
+            requires transitive org.jspecify;
         	requires org.lwjgl;
         	requires org.lwjgl.natives;
         	requires org.lwjgl.sdl;
@@ -626,7 +631,13 @@ tasks.withType<JavaCompile>().configureEach {
     if (allTasks.any { it.name == "jpackage" }) {
       options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-preview", "-Werror"))
       options.isDeprecation = true
-      options.errorprone.error("MissingBraces")
+
+      options.errorprone {
+        error("MissingBraces")
+
+        option("NullAway:OnlyNullMarked", true)
+        option("NullAway:JSpecifyMode", true)
+      }
     } else {
       options.errorprone.enabled = false
     }

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class ProfileTest {
 
@@ -77,7 +79,7 @@ final class ProfileTest {
 		@DisplayName("deeply clones the modes list so mutation of the clone does not affect the original")
 		void deeplyClonesModesList() throws CloneNotSupportedException {
 			final var profile = createProfile();
-			final var extraMode = new Mode(UUID.randomUUID());
+			final var extraMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(extraMode);
 
 			final var clone = (Profile) profile.clone();
@@ -167,7 +169,7 @@ final class ProfileTest {
 		@DisplayName("removes the specified mode from the modes list")
 		void removesModeFromList() {
 			final var profile = createProfile();
-			final var extraMode = new Mode(UUID.randomUUID());
+			final var extraMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(extraMode);
 
 			profile.removeMode(mockInput, extraMode);
@@ -179,7 +181,7 @@ final class ProfileTest {
 		@DisplayName("removes buttonToModeActions entries that reference the removed mode")
 		void removesRelatedButtonToModeActions() {
 			final var profile = createProfile();
-			final var modeToRemove = new Mode(UUID.randomUUID());
+			final var modeToRemove = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(modeToRemove);
 
 			Mockito.when(mockButtonToModeAction.getMode(mockInput)).thenReturn(modeToRemove);
@@ -198,8 +200,8 @@ final class ProfileTest {
 		@DisplayName("retains buttonToModeActions entries that do not reference the removed mode")
 		void retainsUnrelatedButtonToModeActions() {
 			final var profile = createProfile();
-			final var modeToRemove = new Mode(UUID.randomUUID());
-			final var otherMode = new Mode(UUID.randomUUID());
+			final var modeToRemove = new Mode(UUID.randomUUID(), null);
+			final var otherMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(modeToRemove);
 			profile.getModes().add(otherMode);
 
@@ -230,7 +232,7 @@ final class ProfileTest {
 		@DisplayName("resets AxisToAxisAction virtual axes when switching modes with runMode active")
 		void resetsAxisToAxisActionsOnModeSwitch() {
 			final var profile = createProfile();
-			final var secondMode = new Mode(UUID.randomUUID());
+			final var secondMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(secondMode);
 
 			// The second mode has an axis action on axis 0
@@ -277,7 +279,7 @@ final class ProfileTest {
 		@DisplayName("switches to the mode at the given index when the index is valid and runMode is null")
 		void switchesToModeAtValidIndexWhenRunModeIsNull() {
 			final var profile = createProfile();
-			final var secondMode = new Mode(UUID.randomUUID());
+			final var secondMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(secondMode);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(null);
@@ -297,7 +299,7 @@ final class ProfileTest {
 		@DisplayName("switches the active mode to the specified mode object when it is in the list")
 		void switchesToSpecifiedMode() {
 			final var profile = createProfile();
-			final var secondMode = new Mode(UUID.randomUUID());
+			final var secondMode = new Mode(UUID.randomUUID(), null);
 			profile.getModes().add(secondMode);
 
 			Mockito.when(mockInput.getRunMode()).thenReturn(null);

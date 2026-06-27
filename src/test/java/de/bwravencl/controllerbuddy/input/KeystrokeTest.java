@@ -18,11 +18,13 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class KeystrokeTest {
 
 	private static Keystroke createEmptyKeystroke() {

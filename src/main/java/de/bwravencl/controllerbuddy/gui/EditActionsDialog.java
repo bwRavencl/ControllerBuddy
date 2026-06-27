@@ -91,6 +91,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// A modal dialog for editing the actions assigned to a controller component
@@ -103,6 +105,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// within a profile.
 /// - **Cycle editor**: edits the sub-actions within a [ButtonToCycleAction].
 @SuppressWarnings("exports")
+@NullMarked
 public final class EditActionsDialog extends JDialog {
 
 	/// Horizontal weight for the actions list columns in the grid layout.
@@ -230,9 +233,16 @@ public final class EditActionsDialog extends JDialog {
 	/// The editor pane used to display help text for the selected action.
 	private final JEditorPane helpEditorPane = GuiUtils.createHtmlViewerEditorPane();
 
+	/// The input instance associated with the current editing session.
+	@SuppressWarnings({ "serial", "RedundantSuppression" })
+	private final Input input;
+
 	/// The main application instance.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final Main main;
+
+	/// The panel containing property editors for the selected action.
+	private final JPanel propertiesPanel = new JPanel(new GridBagLayout());
 
 	/// A working copy of the profile modified by this dialog before saving.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
@@ -241,16 +251,12 @@ public final class EditActionsDialog extends JDialog {
 	/// The controller component whose actions are being edited, or `null` in
 	/// cycle-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Component component;
+	private @Nullable Component component;
 
 	/// The cycle action whose sub-actions are being edited, or `null` in
 	/// component-editor mode.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private ButtonToCycleAction cycleAction;
-
-	/// The input instance associated with the current editing session.
-	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Input input;
+	private @Nullable ButtonToCycleAction cycleAction;
 
 	/// The paste button, enabled only when the clipboard holds a compatible action.
 	private JButton pasteActionButton;
@@ -259,23 +265,20 @@ public final class EditActionsDialog extends JDialog {
 	/// visible.
 	private JLabel propertiesLabel;
 
-	/// The panel containing property editors for the selected action.
-	private JPanel propertiesPanel;
-
 	/// The scroll pane wrapping the properties panel.
 	private JScrollPane propertiesScrollPane;
 
 	/// The action currently selected in the assigned-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private IAction<?> selectedAssignedAction;
+	private @Nullable IAction<?> selectedAssignedAction;
 
 	/// The action type currently selected in the available-actions list.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Class<?> selectedAvailableActionClass;
+	private @Nullable Class<?> selectedAvailableActionClass;
 
 	/// The mode currently selected in the mode combo box.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Mode selectedMode;
+	private @Nullable Mode selectedMode;
 
 	/// Constructs an [EditActionsDialog] for editing the sub-actions of a
 	/// [ButtonToCycleAction].
@@ -289,6 +292,7 @@ public final class EditActionsDialog extends JDialog {
 		super(parentDialog);
 
 		main = parentDialog.main;
+		input = parentDialog.input;
 		this.cycleAction = cycleAction;
 
 		try {
@@ -319,7 +323,8 @@ public final class EditActionsDialog extends JDialog {
 
 		this.main = main;
 		this.component = component;
-		input = main.getInput();
+
+		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
 
 		try {
 			unsavedProfile = (Profile) input.getProfile().clone();
@@ -487,26 +492,18 @@ public final class EditActionsDialog extends JDialog {
 	/// selected in the assigned-actions list.
 	///
 	/// @param action the action instance to add
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "NullAway" })
 	private void addAction(final IAction<?> action) {
-		if (action instanceof final ButtonToModeAction buttonToModeAction) {
-			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
-			if (!buttonToModeActionsMap.containsKey(component.index())) {
-				buttonToModeActionsMap.put(component.index(), new ArrayList<>());
-			}
-
-			buttonToModeActionsMap.get(component.index()).add(buttonToModeAction);
-		} else if (isCycleEditor()) {
+		if (isCycleEditor()) {
 			cycleActions.add((IAction<Boolean>) action);
+		} else if (action instanceof final ButtonToModeAction buttonToModeAction) {
+			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
+			buttonToModeActionsMap.computeIfAbsent(component.index(), _ -> new ArrayList<>()).add(buttonToModeAction);
 		} else {
+			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
 			final var componentToActionMap = (Map<Integer, List<IAction<?>>>) selectedMode
 					.getComponentToActionsMap(component.type());
-
-			if (!componentToActionMap.containsKey(component.index())) {
-				componentToActionMap.put(component.index(), new ArrayList<>());
-			}
-
-			componentToActionMap.get(component.index()).add(action);
+			componentToActionMap.computeIfAbsent(component.index(), _ -> new ArrayList<>()).add(action);
 		}
 
 		updateAvailableActions();
@@ -604,6 +601,7 @@ public final class EditActionsDialog extends JDialog {
 	/// other modes exclude [ButtonToModeAction].
 	///
 	/// @return the list of allowed action classes for the current context
+	@SuppressWarnings("NullAway")
 	private List<Class<?>> getAllowedActionClasses() {
 		if (isCycleEditor()) {
 			return CYCLE_ACTION_CLASSES;
@@ -632,15 +630,15 @@ public final class EditActionsDialog extends JDialog {
 	/// also includes any [ButtonToModeAction] entries from the profile.
 	///
 	/// @return an array of assigned actions
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "NullAway" })
 	private IAction<?>[] getAssignedActions() {
 		final var assignedActions = new ArrayList<IAction<?>>();
-
 		final var cycleEditor = isCycleEditor();
 
-		if (cycleEditor && cycleActions != null) {
+		if (cycleEditor) {
 			assignedActions.addAll(cycleActions);
-		} else if (component != null) {
+		} else {
+			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
 			final var componentActions = selectedMode.getComponentToActionsMap(component.type()).get(component.index());
 			if (componentActions != null) {
 				assignedActions.addAll(((Collection<? extends IAction<?>>) componentActions));
@@ -659,7 +657,7 @@ public final class EditActionsDialog extends JDialog {
 
 	/// Returns the [Input] instance associated with this dialog.
 	///
-	/// @return the input instance, or `null` if this is a cycle editor
+	/// @return the input instance
 	@SuppressWarnings("exports")
 	public Input getInput() {
 		return input;
@@ -670,6 +668,7 @@ public final class EditActionsDialog extends JDialog {
 	/// controls, properties panel, help panel, OK, and Cancel buttons.
 	///
 	/// This method must be called after [#preInit].
+	@SuppressWarnings("ConstantValue")
 	private void init() {
 		final var actionsPanel = new JPanel(new GridBagLayout());
 		actionsPanel.setBorder(BorderFactory.createEmptyBorder(BASE_INSET, BASE_INSET, BASE_INSET, BASE_INSET));
@@ -771,12 +770,10 @@ public final class EditActionsDialog extends JDialog {
 			cutActionButton.setEnabled(notNull);
 			copyActionButton.setEnabled(notNull);
 
-			if (propertiesPanel != null) {
-				propertiesPanel.removeAll();
-				propertiesPanel = null;
-			}
+			propertiesPanel.removeAll();
+			propertiesScrollPane.setViewportView(null);
 
-			if (selectedAssignedAction != null) {
+			if (notNull) {
 				final var actionClass = selectedAssignedAction.getClass();
 				final var fieldToActionPropertyMap = getFieldToActionPropertiesMap(actionClass);
 				final var sortedEntries = fieldToActionPropertyMap.entrySet().stream().sorted((entry1, entry2) -> {
@@ -789,10 +786,6 @@ public final class EditActionsDialog extends JDialog {
 				for (final var entry : sortedEntries) {
 					final var field = entry.getKey();
 					final var annotation = entry.getValue();
-
-					if (propertiesPanel == null) {
-						propertiesPanel = new JPanel(new GridBagLayout());
-					}
 
 					final var propertyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 					propertiesPanel.add(propertyPanel,
@@ -869,7 +862,7 @@ public final class EditActionsDialog extends JDialog {
 				}
 			}
 
-			final var anyPropertiesFound = propertiesPanel != null;
+			final var anyPropertiesFound = propertiesPanel.getComponents().length > 0;
 			if (anyPropertiesFound) {
 				propertiesPanel.add(Box.createGlue(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1d,
 						1d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -964,16 +957,18 @@ public final class EditActionsDialog extends JDialog {
 	/// [ButtonToModeAction] instances, the cycle sub-action list in cycle-editor
 	/// mode, or the component-to-actions map in component-editor mode. After
 	/// removal, it refreshes both the available- and assigned-actions lists.
+	@SuppressWarnings("NullAway")
 	private void removeAction() {
-		if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
+		if (isCycleEditor()) {
+			cycleActions.remove(selectedAssignedAction);
+		} else if (selectedAssignedAction instanceof final ButtonToModeAction buttonToModeAction) {
 			final var buttonToModeActionsMap = unsavedProfile.getButtonToModeActionsMap();
 			buttonToModeActionsMap.get(component.index()).remove(buttonToModeAction);
 			if (buttonToModeActionsMap.get(component.index()).isEmpty()) {
 				buttonToModeActionsMap.remove(component.index());
 			}
-		} else if (isCycleEditor()) {
-			cycleActions.remove(selectedAssignedAction);
 		} else {
+			Objects.requireNonNull(selectedMode, "Field selectedMode must not be null");
 			final var componentToActionMap = selectedMode.getComponentToActionsMap(component.type());
 			@SuppressWarnings("unchecked")
 			final var actions = (List<IAction<?>>) componentToActionMap.get(component.index());
@@ -1063,7 +1058,7 @@ public final class EditActionsDialog extends JDialog {
 	/// to match any
 	/// @see IUpdatableEditorComponent
 	private void updateEditorComponentsRecursively(final Container container,
-			final Class<? extends EditorBuilder> editorBuilderClass, final String propertyTitle) {
+			final @Nullable Class<? extends EditorBuilder> editorBuilderClass, final @Nullable String propertyTitle) {
 		for (final var component : container.getComponents()) {
 			if (component instanceof final IUpdatableEditorComponent updatableEditorComponent
 					&& (editorBuilderClass == null
@@ -1084,7 +1079,7 @@ public final class EditActionsDialog extends JDialog {
 	///
 	/// @param actionClass the action class whose help text is displayed, or `null`
 	/// to show the default help text
-	private void updateHelp(final Class<?> actionClass) {
+	private void updateHelp(final @Nullable Class<?> actionClass) {
 		final String title;
 		String descriptionLabel = null;
 
@@ -1112,7 +1107,7 @@ public final class EditActionsDialog extends JDialog {
 	/// @param title the heading text displayed in the help panel
 	/// @param descriptionLabel the resource bundle key for the description text, or
 	/// `null` to use the fallback
-	private void updateHelp(final String title, final String descriptionLabel) {
+	private void updateHelp(final @Nullable String title, final @Nullable String descriptionLabel) {
 		String description = null;
 		if (descriptionLabel != null && !descriptionLabel.isBlank()) {
 			try {
@@ -1229,7 +1224,7 @@ public final class EditActionsDialog extends JDialog {
 		/// @param title the title text to display
 		/// @param titleLabel an existing label to reuse for the title, or `null` to
 		/// create a new one
-		private IconLabel(final String icon, final String title, JLabel titleLabel) {
+		private IconLabel(final String icon, final String title, @Nullable JLabel titleLabel) {
 			if (titleLabel == null) {
 				titleLabel = new JLabel();
 			}
@@ -1287,10 +1282,12 @@ public final class EditActionsDialog extends JDialog {
 		public void setForeground(final Color fg) {
 			super.setForeground(fg);
 
+			// noinspection ConstantValue
 			if (iconLabel != null) {
 				iconLabel.setForeground(fg);
 			}
 
+			// noinspection ConstantValue
 			if (titleLabel != null) {
 				titleLabel.setForeground(fg);
 			}
@@ -1316,6 +1313,10 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			if (selectedAvailableActionClass == null) {
+				return;
+			}
+
 			try {
 				addAction(getActionClassInstance(selectedAvailableActionClass));
 			} catch (final ReflectiveOperationException e1) {
@@ -1363,6 +1364,10 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			if (selectedAssignedAction == null) {
+				return;
+			}
+
 			try {
 				main.setClipboardAction((IAction<?>) selectedAssignedAction.clone());
 				updatePasteButton();
@@ -1416,6 +1421,7 @@ public final class EditActionsDialog extends JDialog {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
 			if (isCycleEditor()) {
+				Objects.requireNonNull(cycleAction, "Field cycleAction must not be null");
 				cycleAction.setActions(cycleActions);
 			} else {
 				var requiresOnScreenKeyboardMode = false;
@@ -1465,8 +1471,13 @@ public final class EditActionsDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			final var clipboardAction = main.getClipboardAction();
+			if (clipboardAction == null) {
+				return;
+			}
+
 			try {
-				addAction((IAction<?>) main.getClipboardAction().clone());
+				addAction((IAction<?>) clipboardAction.clone());
 			} catch (final CloneNotSupportedException e1) {
 				throw new RuntimeException(e1);
 			}

@@ -18,19 +18,25 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class KeystrokeEditorBuilderTest {
 
-	private static Method getListModelIndexMethod;
+	private static @Nullable Method getListModelIndexMethod;
 
-	private static int getListModelIndex(final ListModel<?> model, final Object value) throws Exception {
+	private static int getListModelIndex(final ListModel<?> model, final @Nullable Object value) throws Exception {
+		Objects.requireNonNull(getListModelIndexMethod, "Field getListModelIndexMethod must not be null");
+
 		return (int) getListModelIndexMethod.invoke(null, model, value);
 	}
 

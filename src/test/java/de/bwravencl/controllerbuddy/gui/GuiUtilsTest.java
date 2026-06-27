@@ -32,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class GuiUtilsTest {
 
@@ -350,12 +352,6 @@ final class GuiUtilsTest {
 			label.setEnabled(true);
 			GuiUtils.setEnabledRecursive(label, false);
 			Assertions.assertFalse(label.isEnabled());
-		}
-
-		@Test
-		@DisplayName("does not throw when called with a null component")
-		void doesNotThrowForNullComponent() {
-			Assertions.assertDoesNotThrow(() -> GuiUtils.setEnabledRecursive(null, false));
 		}
 
 		@Test

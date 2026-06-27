@@ -27,11 +27,14 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class MainTest {
 
 	private static PlainDocument createLimitedLengthPlainDocument(final int limit) throws ReflectiveOperationException {
@@ -57,13 +60,13 @@ final class MainTest {
 		return (int) method.invoke(null, button, alreadyAssigned);
 	}
 
-	private static boolean invokeIsValidHost(final String host) throws ReflectiveOperationException {
+	private static boolean invokeIsValidHost(final @Nullable String host) throws ReflectiveOperationException {
 		final var method = Main.class.getDeclaredMethod("isValidHost", String.class);
 		method.setAccessible(true);
 		return (boolean) method.invoke(null, host);
 	}
 
-	private static boolean invokeIsValidPassword(final String password) throws ReflectiveOperationException {
+	private static boolean invokeIsValidPassword(final @Nullable String password) throws ReflectiveOperationException {
 		final var method = Main.class.getDeclaredMethod("isValidPassword", String.class);
 		method.setAccessible(true);
 		return (boolean) method.invoke(null, password);

@@ -17,6 +17,8 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import org.jspecify.annotations.NullMarked;
+
 /// Interface for editor components that need to support updating if certain
 /// conditions change.
 ///
@@ -27,6 +29,7 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 /// If the supplied class is assignable from the editor builder class
 /// returned by [#getEditorBuilderClass], the [#onUpdate] method will be called.
 /// Within [#onUpdate], the editor component can then adapt to the new state.
+@NullMarked
 public interface IUpdatableEditorComponent {
 
 	/// Returns the class of the editor builder that created this editor component.

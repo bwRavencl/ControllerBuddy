@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps a button press to cursor (mouse pointer) movement.
 ///
@@ -29,6 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 /// direction at a rate determined by cursor sensitivity and the current rate
 /// multiplier. Supports configurable activation delay.
 @Action(icon = "➚", title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 125)
+@NullMarked
 public final class ButtonToCursorAction extends ToCursorAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.

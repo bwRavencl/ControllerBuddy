@@ -25,11 +25,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.Serial;
+import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for exponent (response curve) properties, providing a spinner
 /// with a range of 0.1 to 10.0 alongside a live power-function plot.
@@ -37,6 +39,7 @@ import javax.swing.UIManager;
 /// The plot visualizes the current curve shape in real time as the user
 /// adjusts the exponent value, making it easier to understand the effect of
 /// different response curves on axis input.
+@NullMarked
 public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 	/// Constructs a [ExponentEditorBuilder] for the specified action property.
@@ -53,7 +56,10 @@ public final class ExponentEditorBuilder extends NumberEditorBuilder<Float> {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
+
 		super.buildEditor(parentPanel);
+		Objects.requireNonNull(spinner, "Field spinner must not be null");
 
 		parentPanel.add(Box.createHorizontalStrut(Main.DEFAULT_HGAP));
 

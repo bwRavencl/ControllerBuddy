@@ -22,12 +22,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.jspecify.annotations.NullMarked;
 
 /// Annotation that marks a field as a configurable property of an action.
 ///
 /// Applied to fields within action classes to expose them as editable
 /// properties in the UI, specifying their title, description, editor, and
 /// ordering.
+@NullMarked
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ActionProperty {

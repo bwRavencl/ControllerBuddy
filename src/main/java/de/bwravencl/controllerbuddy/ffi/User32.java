@@ -28,12 +28,14 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
+import org.jspecify.annotations.NullMarked;
 
 /// Provides Java bindings to the Windows User32 native library.
 ///
 /// Uses the Foreign Function and Memory API to expose functions for keyboard
 /// and mouse input simulation, key state retrieval, and window positioning.
 @SuppressWarnings({ "exports", "restricted", "UnusedReturnValue" })
+@NullMarked
 public final class User32 {
 
 	/// Windows `HWND_TOPMOST` constant for placing a window at the top of the Z

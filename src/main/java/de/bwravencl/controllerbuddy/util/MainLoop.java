@@ -18,6 +18,7 @@
 package de.bwravencl.controllerbuddy.util;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -26,6 +27,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLInit;
 
 /// The SDL main-thread event loop and task scheduler.
@@ -33,6 +36,7 @@ import org.lwjgl.sdl.SDLInit;
 /// All SDL API calls must be executed on this loop's thread. Tasks can be
 /// submitted synchronously (blocking the caller) or asynchronously. The loop
 /// also polls SDL events when SDL event polling is active.
+@NullMarked
 public final class MainLoop {
 
 	private static final Logger logger = Logger.getLogger(MainLoop.class.getName());
@@ -44,10 +48,10 @@ public final class MainLoop {
 	private final Thread thread = Thread.currentThread();
 
 	/// The task currently being executed, or `null` if idle.
-	private volatile TaskQueueEntry currentTaskQueueEntry;
+	private volatile @Nullable TaskQueueEntry currentTaskQueueEntry;
 
 	/// The main application instance.
-	private volatile Main main;
+	private volatile @Nullable Main main;
 
 	/// Whether the loop should poll SDL events on each iteration.
 	private volatile boolean pollSdlEvents;
@@ -88,11 +92,13 @@ public final class MainLoop {
 		try {
 			while (!Thread.interrupted()) {
 				currentTaskQueueEntry = taskQueue.poll();
+				final var currentTaskQueueEntry = this.currentTaskQueueEntry;
+				final var main = this.main;
 				if (currentTaskQueueEntry != null) {
 					try {
 						executeTaskQueueEntry(currentTaskQueueEntry);
 					} finally {
-						currentTaskQueueEntry = null;
+						this.currentTaskQueueEntry = null;
 					}
 				} else if (pollSdlEvents && main != null) {
 					main.pollSdlEvents();
@@ -119,8 +125,8 @@ public final class MainLoop {
 			synchronized (this) {
 				while (!taskQueue.isEmpty()) {
 					final var taskQueueEntry = taskQueue.poll();
-					if (taskQueueEntry.futureResult != null) {
-						taskQueueEntry.futureResult.completeExceptionally(
+					if (taskQueueEntry.resultFuture != null) {
+						taskQueueEntry.resultFuture.completeExceptionally(
 								new Exception("Task aborted due to uncaught exception in previous task", t));
 					}
 				}
@@ -152,17 +158,19 @@ public final class MainLoop {
 	private void executeTaskQueueEntry(final TaskQueueEntry taskQueueEntry) {
 		try {
 			if (taskQueueEntry.task instanceof final Callable<?> callable) {
+				Objects.requireNonNull(taskQueueEntry.resultFuture, "Field resultFuture must not be null");
+
 				final var result = callable.call();
-				taskQueueEntry.futureResult.complete(result);
+				taskQueueEntry.resultFuture.complete(result);
 			} else if (taskQueueEntry.task instanceof final Runnable runnable) {
 				runnable.run();
-				if (taskQueueEntry.futureResult != null) {
-					taskQueueEntry.futureResult.complete(null);
+				if (taskQueueEntry.resultFuture != null) {
+					taskQueueEntry.resultFuture.complete(null);
 				}
 			}
 		} catch (final Throwable t) {
-			if (taskQueueEntry.futureResult != null) {
-				taskQueueEntry.futureResult.completeExceptionally(t);
+			if (taskQueueEntry.resultFuture != null) {
+				taskQueueEntry.resultFuture.completeExceptionally(t);
 			} else {
 				shuttingDown = true;
 				throw new RuntimeException(t);
@@ -184,6 +192,7 @@ public final class MainLoop {
 	/// @return `true` if a task is running and its type is assignable from
 	/// `clazz`
 	public boolean isTaskOfTypeRunning(final Class<?> clazz) {
+		final var currentTaskQueueEntry = this.currentTaskQueueEntry;
 		if (currentTaskQueueEntry == null) {
 			return false;
 		}
@@ -207,11 +216,11 @@ public final class MainLoop {
 	/// @param runnable the task to execute
 	/// @throws RuntimeException if the task throws an exception
 	public void runSync(final Runnable runnable) {
-		final var futureResult = new CompletableFuture<>();
-		addTaskQueueEntry(new TaskQueueEntry(runnable, futureResult));
+		final var resultFuture = new CompletableFuture<@Nullable Object>();
+		addTaskQueueEntry(new TaskQueueEntry(runnable, resultFuture));
 
 		try {
-			futureResult.get();
+			resultFuture.get();
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
 		} catch (final InterruptedException _) {
@@ -228,12 +237,12 @@ public final class MainLoop {
 	/// calling thread was interrupted
 	/// @throws RuntimeException if the task throws an exception
 	@SuppressWarnings("unchecked")
-	public <V> Optional<V> runSync(final Callable<V> callable) {
-		final var futureResult = new CompletableFuture<>();
-		addTaskQueueEntry(new TaskQueueEntry(callable, futureResult));
+	public <V> Optional<V> runSync(final Callable<@Nullable V> callable) {
+		final var resultFuture = new CompletableFuture<@Nullable Object>();
+		addTaskQueueEntry(new TaskQueueEntry(callable, resultFuture));
 
 		try {
-			return Optional.ofNullable((V) futureResult.get());
+			return Optional.ofNullable((V) resultFuture.get());
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
 		} catch (final InterruptedException _) {
@@ -316,12 +325,13 @@ public final class MainLoop {
 	/// Internal record pairing a task ([Runnable] or [Callable]) with its
 	/// [CompletableFuture] result.
 	///
-	/// The `futureResult` is completed by the main loop thread once the task
+	/// The `resultFuture` is completed by the main loop thread once the task
 	/// finishes, allowing synchronous callers to block until the result is
 	/// available.
 	///
 	/// @param task the task to execute, either a [Runnable] or a [Callable]
-	/// @param futureResult the future that is completed with the task's result
-	private record TaskQueueEntry(Object task, CompletableFuture<Object> futureResult) {
+	/// @param resultFuture the [CompletableFuture] that is completed with the
+	/// task's result
+	private record TaskQueueEntry(Object task, @Nullable CompletableFuture<@Nullable Object> resultFuture) {
 	}
 }

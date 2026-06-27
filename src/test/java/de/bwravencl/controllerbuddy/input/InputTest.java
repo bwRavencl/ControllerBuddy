@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class InputTest {
 
@@ -516,8 +518,8 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("nullifies the buttons array that was allocated before the reset")
-		void nullifiesButtonsArray() throws Exception {
+		@DisplayName("resets the buttons array that was allocated before the reset")
+		void resetsButtonsArray() throws Exception {
 			// Inject a non-null buttons array directly via reflection to avoid
 			// needing a RunMode stub just for this state-reset assertion
 			final var field = Input.class.getDeclaredField("buttons");
@@ -527,7 +529,7 @@ final class InputTest {
 
 			input.reset();
 
-			Assertions.assertNull(input.getButtons());
+			Assertions.assertEquals(0, input.getButtons().length);
 		}
 
 		@Test
@@ -725,9 +727,11 @@ final class InputTest {
 			input = createInput();
 		}
 
+		@SuppressWarnings("NullAway")
 		@Test
 		@DisplayName("throws NullPointerException when called with null")
 		void throwsOnNullProfile() {
+			// noinspection DataFlowIssue
 			Assertions.assertThrows(NullPointerException.class, () -> input.setProfile(null));
 		}
 	}

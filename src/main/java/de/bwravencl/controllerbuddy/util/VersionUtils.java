@@ -20,12 +20,15 @@ package de.bwravencl.controllerbuddy.util;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import java.util.Arrays;
 import java.util.Optional;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Utilities for parsing and comparing version strings.
 ///
 /// Provides methods to split a version string into integer parts, get the
 /// major and minor versions of the running application, and compare an
 /// arbitrary version string against the current application version.
+@NullMarked
 public final class VersionUtils {
 
 	/// Prevents instantiation.
@@ -40,7 +43,8 @@ public final class VersionUtils {
 	/// @return `-1` if older, `0` if equal, `1` if newer, or empty if the version
 	/// is invalid
 	/// @throws IllegalArgumentException if the version string cannot be parsed
-	public static Optional<Integer> compareVersions(final String otherVersion) throws IllegalArgumentException {
+	public static Optional<Integer> compareVersions(final @Nullable String otherVersion)
+			throws IllegalArgumentException {
 		if (otherVersion == null) {
 			return Optional.empty();
 		}

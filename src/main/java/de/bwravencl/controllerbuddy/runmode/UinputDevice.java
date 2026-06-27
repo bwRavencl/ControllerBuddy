@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.jspecify.annotations.NullMarked;
 
 /// Manages a Linux uinput virtual input device.
 ///
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
 /// uinput kernel interface, emitting input events, and tearing down
 /// the device on close. Device instances are cached per [DeviceType]
 /// and shared across callers.
+@NullMarked
 public final class UinputDevice implements Closeable {
 
 	/// USB bus type identifier used when registering the virtual device.

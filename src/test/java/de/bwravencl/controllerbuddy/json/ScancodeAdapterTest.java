@@ -21,11 +21,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import de.bwravencl.controllerbuddy.input.Scancode;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class ScancodeAdapterTest {
 
 	private static ScancodeAdapter createAdapter() {
@@ -50,6 +52,7 @@ final class ScancodeAdapterTest {
 		void deserializesFromKeyCode() {
 			final var adapter = createAdapter();
 			final var expected = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			Assertions.assertNotNull(expected);
 			final var result = adapter.deserialize(new JsonPrimitive(expected.keyCode()), Scancode.class, null);
 			Assertions.assertSame(expected, result);
 		}
@@ -59,6 +62,7 @@ final class ScancodeAdapterTest {
 		void deserializesFromStringName() {
 			final var adapter = createAdapter();
 			final var expected = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			Assertions.assertNotNull(expected);
 			final var result = adapter.deserialize(new JsonPrimitive(Scancode.DIK_A), Scancode.class, null);
 			Assertions.assertSame(expected, result);
 		}
@@ -97,6 +101,7 @@ final class ScancodeAdapterTest {
 		void serializesAsName() {
 			final var adapter = createAdapter();
 			final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_A);
+			Assertions.assertNotNull(scancode);
 			final var result = adapter.serialize(scancode, Scancode.class, null);
 			Assertions.assertInstanceOf(JsonPrimitive.class, result);
 			Assertions.assertEquals(Scancode.DIK_A, result.getAsString());
@@ -107,6 +112,7 @@ final class ScancodeAdapterTest {
 		void serializesEscapeAsName() {
 			final var adapter = createAdapter();
 			final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(Scancode.DIK_ESCAPE);
+			Assertions.assertNotNull(scancode);
 			final var result = adapter.serialize(scancode, Scancode.class, null);
 			Assertions.assertEquals(Scancode.DIK_ESCAPE, result.getAsString());
 		}

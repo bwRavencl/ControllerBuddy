@@ -20,12 +20,14 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps a gamepad button press to a virtual mouse button click.
 ///
 /// Delegates to [ToMouseButtonAction] for the actual mouse button press/release
 /// handling, with support for configurable activation delay.
 @Action(icon = "🖱️", title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 120)
+@NullMarked
 public final class ButtonToMouseButtonAction extends ToMouseButtonAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Processes the button input, applying delay handling before delegating the

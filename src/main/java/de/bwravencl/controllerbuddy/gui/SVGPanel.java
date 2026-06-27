@@ -35,12 +35,15 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Panel that renders an [SVGDocument] with interactive zoom and pan support.
 ///
 /// Left-clicking zooms in and right-clicking zooms out at the cursor position.
 /// When zoomed in, the user can pan by dragging the panel. The mouse wheel also
 /// adjusts the zoom level incrementally.
+@NullMarked
 final class SVGPanel extends JPanel {
 
 	/// Maximum zoom factor the panel allows.
@@ -96,7 +99,7 @@ final class SVGPanel extends JPanel {
 
 	/// The SVG document currently rendered by this panel.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private SVGDocument svgDocument;
+	private @Nullable SVGDocument svgDocument;
 
 	/// Current zoom factor applied to the SVG rendering.
 	private float zoomFactor = 1f;
@@ -107,7 +110,7 @@ final class SVGPanel extends JPanel {
 
 		final var mouseAdapter = new MouseAdapter() {
 
-			private Point lastMouseLocation;
+			private @Nullable Point lastMouseLocation;
 
 			@Override
 			public void mouseClicked(final MouseEvent e) {
@@ -280,12 +283,12 @@ final class SVGPanel extends JPanel {
 
 	/// Sets the SVG document to render and resets the zoom and pan state.
 	///
-	/// After updating the document the panel is repainted to display the new
+	/// After updating the document, the panel is repainted to display the new
 	/// content.
 	///
 	/// @param svgDocument the SVG document to display, or `null` to clear the
 	/// panel
-	void setSvgDocument(final SVGDocument svgDocument) {
+	void setSvgDocument(final @Nullable SVGDocument svgDocument) {
 		this.svgDocument = svgDocument;
 		zoomFactor = 1f;
 		offsetX = 0f;

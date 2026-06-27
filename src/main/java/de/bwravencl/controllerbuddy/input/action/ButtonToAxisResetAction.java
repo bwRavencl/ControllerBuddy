@@ -29,6 +29,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.text.MessageFormat;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a button press to resetting a virtual axis to a configurable value.
 ///
@@ -36,6 +38,7 @@ import java.text.MessageFormat;
 /// enabled) to the configured reset value. Supports configurable activation
 /// modes and delay.
 @Action(icon = "🕹", title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
+@NullMarked
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IActivatableAction<Boolean> {
 
@@ -46,7 +49,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	private static final float DEFAULT_RESET_VALUE = 0f;
 
 	/// Transient activatable state used for edge-triggered activation modes.
-	private transient Activatable activatable;
+	private transient @Nullable Activatable activatable;
 
 	/// Activation mode that determines when the axis reset fires.
 	@ActionProperty(icon = "⚡", title = "ACTIVATION_TITLE", description = "ACTIVATION_DESCRIPTION", editorBuilder = ActivationEditorBuilder.class, order = 40)
@@ -104,7 +107,7 @@ public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 	}
 
 	@Override
-	public Activatable getActivatable() {
+	public @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 

@@ -44,7 +44,6 @@ import java.io.Serial;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -57,6 +56,7 @@ import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import org.jspecify.annotations.NullMarked;
 
 /// An on-screen virtual keyboard displayed as a translucent, always-on-top
 /// popup window.
@@ -65,6 +65,7 @@ import javax.swing.border.Border;
 /// hold, and lock operations. It renders a standard QWERTY layout with function
 /// keys, numpad, and modifier keys.
 @SuppressWarnings("exports")
+@NullMarked
 public final class OnScreenKeyboard extends JFrame {
 
 	/// The mode associated with the on-screen keyboard.
@@ -86,8 +87,8 @@ public final class OnScreenKeyboard extends JFrame {
 	private static final long serialVersionUID = -5061347351151925461L;
 
 	static {
-		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID);
-		onScreenKeyboardMode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+		onScreenKeyboardMode = new Mode(ON_SCREEN_KEYBOARD_MODE_UUID,
+				Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
 	}
 
 	/// The Caps Lock key button on this keyboard.
@@ -309,28 +310,25 @@ public final class OnScreenKeyboard extends JFrame {
 		return "<html><center>" + displayName.replaceFirst(" ", "<br>") + "</center></html>";
 	}
 
-	/// Deselects the currently selected button by releasing it if pressed and
+	/// Deselects the currently selected button, releasing it if pressed, and
 	/// removing its focus highlight.
 	///
-	/// @return an optional containing the button that was deselected or empty if
-	/// no button was selected
-	private Optional<AbstractKeyboardButton> deselectButton() {
-		final var optionalSelectedButton = getSelectedButton();
+	/// @return the button that was deselected
+	private AbstractKeyboardButton deselectButton() {
+		final var selectedButton = getSelectedButton();
 
-		optionalSelectedButton.ifPresent(selectedButton -> {
-			if (selectedButton.pressed) {
-				selectedButton.release();
-			}
+		if (selectedButton.pressed) {
+			selectedButton.release();
+		}
 
-			selectedButton.setFocus(false);
-		});
+		selectedButton.setFocus(false);
 
-		return optionalSelectedButton;
+		return selectedButton;
 	}
 
 	/// Applies the focus highlight to the currently selected button.
 	private void focusSelectedButton() {
-		getSelectedButton().ifPresent(selectedButton -> selectedButton.setFocus(true));
+		getSelectedButton().setFocus(true);
 	}
 
 	/// Marks all non-lock key buttons as changed, forcing them to be repolled on
@@ -351,14 +349,9 @@ public final class OnScreenKeyboard extends JFrame {
 
 	/// Returns the currently selected keyboard button.
 	///
-	/// @return an optional containing the selected button, or empty if the keyboard
-	/// grid has not yet been initialized
-	private Optional<AbstractKeyboardButton> getSelectedButton() {
-		if (keyboardButtons == null) {
-			return Optional.empty();
-		}
-
-		return Optional.of(keyboardButtons[selectedRow][selectedColumn]);
+	/// @return the selected button
+	private AbstractKeyboardButton getSelectedButton() {
+		return keyboardButtons[selectedRow][selectedColumn];
 	}
 
 	/// Returns whether the keyboard is currently in a shifted state.
@@ -375,7 +368,7 @@ public final class OnScreenKeyboard extends JFrame {
 	@SuppressWarnings({ "NonAtomicOperationOnVolatileField", "NonAtomicVolatileUpdate" })
 	public void moveSelector(final Direction direction) {
 		EventQueue.invokeLater(() -> {
-			final var optionalPreviousButton = deselectButton();
+			final var previousButton = deselectButton();
 
 			switch (direction) {
 			case UP -> {
@@ -385,7 +378,7 @@ public final class OnScreenKeyboard extends JFrame {
 					selectedRow = keyboardButtons.length - 1;
 				}
 
-				optionalPreviousButton.ifPresent(this::updateSelectedColumn);
+				updateSelectedColumn(previousButton);
 			}
 			case DOWN -> {
 				if (selectedRow < keyboardButtons.length - 1) {
@@ -394,7 +387,7 @@ public final class OnScreenKeyboard extends JFrame {
 					selectedRow = 0;
 				}
 
-				optionalPreviousButton.ifPresent(this::updateSelectedColumn);
+				updateSelectedColumn(previousButton);
 			}
 			case LEFT -> {
 				if (selectedColumn > 0) {
@@ -436,7 +429,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	/// Presses the currently selected keyboard button.
 	public void pressSelectedButton() {
-		getSelectedButton().ifPresent(selectedButton -> selectedButton.press(false));
+		getSelectedButton().press(false);
 	}
 
 	/// Prevents deserialization.
@@ -459,7 +452,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	/// Releases the currently selected keyboard button.
 	public void releaseSelectedButton() {
-		getSelectedButton().ifPresent(AbstractKeyboardButton::release);
+		getSelectedButton().release();
 	}
 
 	/// Shows or hides the on-screen keyboard. When showing, updates scaling and
@@ -489,7 +482,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 	/// Toggles the lock state of the currently selected keyboard button.
 	public void toggleLock() {
-		getSelectedButton().ifPresent(AbstractKeyboardButton::toggleLock);
+		getSelectedButton().toggleLock();
 	}
 
 	/// Updates the on-screen keyboard's position. Packs the window to its preferred
@@ -732,7 +725,8 @@ public final class OnScreenKeyboard extends JFrame {
 					BorderFactory.createLineBorder(Color.RED,
 							Math.round(FOCUSED_BUTTON_BORDER_THICKNESS * main.getOverlayScaling())));
 
-			if (equals(getSelectedButton().orElse(null))) {
+			// noinspection ConstantValue
+			if (keyboardButtons != null && equals(getSelectedButton())) {
 				setFocus(true);
 			}
 		}
@@ -903,7 +897,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// (e.g., greater width for Space, Backspace, Shift).
 		///
 		/// @return the preferred size
-		@SuppressWarnings({ "NarrowingCompoundAssignment", "lossy-conversions" })
+		@SuppressWarnings({ "lossy-conversions", "NarrowingCompoundAssignment" })
 		@Override
 		public Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();

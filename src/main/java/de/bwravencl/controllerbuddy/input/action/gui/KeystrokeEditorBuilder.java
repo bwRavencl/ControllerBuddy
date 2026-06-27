@@ -66,6 +66,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Editor builder for keystroke properties, rendering two filterable checkbox
 /// lists for selecting modifier and key scancodes.
@@ -73,6 +75,7 @@ import javax.swing.event.ListSelectionListener;
 /// Displays a visualization of the resulting key combination that updates
 /// in real time as the user selects or deselects scancodes. Both lists
 /// support prefix and wildcard filtering to quickly locate specific keys.
+@NullMarked
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	/// Width in pixels of the key list scroll pane.
@@ -90,10 +93,10 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	private final JPanel visualizationPanel = new JPanel();
 
 	/// List of selectable normal (non-modifier) key scancodes.
-	private CheckboxJList<?> keyList;
+	private @Nullable CheckboxJList<?> keyList;
 
 	/// List of selectable modifier scancodes.
-	private CheckboxJList<?> modifierList;
+	private @Nullable CheckboxJList<?> modifierList;
 
 	/// Constructs a [KeystrokeEditorBuilder] for the specified action property.
 	///
@@ -138,7 +141,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 	/// @param model the list model to search
 	/// @param value the value to locate in the model
 	/// @return the zero-based index of the value, or -1 if not found
-	private static int getListModelIndex(final ListModel<?> model, final Object value) {
+	private static int getListModelIndex(final ListModel<?> model, final @Nullable Object value) {
 		if (value == null) {
 			return -1;
 		}
@@ -234,6 +237,8 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
+
 		final var keystrokePanel = new JPanel(new BorderLayout(5, 5));
 		parentPanel.add(keystrokePanel);
 
@@ -379,7 +384,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		private final JList<? extends E> list;
 
 		/// The current filter string applied when rendering cells.
-		private String filter;
+		private @Nullable String filter;
 
 		/// Constructs a [CheckboxListCellRenderer] that tracks the given list for
 		/// orientation, font, and color settings.
@@ -430,7 +435,7 @@ public final class KeystrokeEditorBuilder extends EditorBuilder {
 		/// is updated, and a property change is fired on the list to trigger a repaint.
 		///
 		/// @param text the filter string, or `null` to clear the filter
-		private void setFilter(String text) {
+		private void setFilter(@Nullable String text) {
 			if (text != null) {
 				text = text.toLowerCase(Locale.ROOT);
 			}

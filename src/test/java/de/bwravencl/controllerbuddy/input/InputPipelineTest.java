@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,6 +69,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 @SuppressWarnings("SameParameterValue")
+@NullMarked
 final class InputPipelineTest {
 
 	private GamepadStateInjector injector;
@@ -246,7 +249,10 @@ final class InputPipelineTest {
 	}
 
 	private static Scancode scancode(final String name) {
-		return Scancode.NAME_TO_SCAN_CODE_MAP.get(name);
+		final var scancode = Scancode.NAME_TO_SCAN_CODE_MAP.get(name);
+		Assertions.assertNotNull(scancode);
+
+		return scancode;
 	}
 
 	private OutputCapture pollWithState(final float[] axes, final boolean[] buttons) {
@@ -355,13 +361,8 @@ final class InputPipelineTest {
 
 	@AfterEach
 	void tearDown() {
-		if (input != null) {
-			input.reset();
-		}
-
-		if (sdlGamepadMock != null) {
-			sdlGamepadMock.close();
-		}
+		input.reset();
+		sdlGamepadMock.close();
 	}
 
 	private static final class GamepadStateInjector {
@@ -507,7 +508,7 @@ final class InputPipelineTest {
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public boolean equals(final @Nullable Object obj) {
 			if (obj == this) {
 				return true;
 			}
@@ -1396,7 +1397,7 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(axes, noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -1415,7 +1416,7 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(axes, noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(-0.5f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(-0.5f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -1429,7 +1430,7 @@ final class InputPipelineTest {
 			final var output = pollWithState(axes, noButtons());
 
 			final var expectedValue = input.floatToIntAxisValue(0.75f);
-			assertAxisEquals(expectedValue, output.axes().get(VirtualAxis.X));
+			assertAxisEquals(expectedValue, output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -1452,9 +1453,9 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(axes, noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(1.0f), output.axes().get(VirtualAxis.X));
-			assertAxisEquals(input.floatToIntAxisValue(-1.0f), output.axes().get(VirtualAxis.Y));
-			assertAxisEquals(input.floatToIntAxisValue(0.5f), output.axes().get(VirtualAxis.RX));
+			assertAxisEquals(input.floatToIntAxisValue(1.0f), output.axes().getOrDefault(VirtualAxis.X, 0));
+			assertAxisEquals(input.floatToIntAxisValue(-1.0f), output.axes().getOrDefault(VirtualAxis.Y, 0));
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), output.axes().getOrDefault(VirtualAxis.RX, 0));
 		}
 
 		@Test
@@ -1468,7 +1469,7 @@ final class InputPipelineTest {
 			final var output = pollWithState(axes, noButtons());
 
 			final var expectedValue = input.floatToIntAxisValue(-0.5f);
-			assertAxisEquals(expectedValue, output.axes().get(VirtualAxis.RY));
+			assertAxisEquals(expectedValue, output.axes().getOrDefault(VirtualAxis.RY, 0));
 		}
 
 		@Test
@@ -1478,7 +1479,7 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(noAxes(), noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 	}
 
@@ -1941,13 +1942,13 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+			final var initialValue = input.getAxes().getOrDefault(VirtualAxis.RX, 0);
 
 			for (var i = 0; i < 10; i++) {
 				pollWithState(axes, noButtons());
 			}
 
-			Assertions.assertNotEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
+			Assertions.assertNotEquals(initialValue, input.getAxes().getOrDefault(VirtualAxis.RX, 0));
 		}
 
 		@Test
@@ -1962,13 +1963,13 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.2f;
 
-			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+			final var initialValue = input.getAxes().getOrDefault(VirtualAxis.RX, 0);
 
 			for (var i = 0; i < 10; i++) {
 				pollWithState(axes, noButtons());
 			}
 
-			Assertions.assertEquals(initialValue, input.getAxes().get(VirtualAxis.RX));
+			Assertions.assertEquals(initialValue, input.getAxes().getOrDefault(VirtualAxis.RX, 0));
 		}
 
 		@Test
@@ -1985,13 +1986,13 @@ final class InputPipelineTest {
 			final var axes = noAxes();
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
-			final var initialValue = input.getAxes().get(VirtualAxis.RX);
+			final var initialValue = input.getAxes().getOrDefault(VirtualAxis.RX, 0);
 
 			for (var i = 0; i < 10; i++) {
 				pollWithState(axes, noButtons());
 			}
 
-			Assertions.assertTrue(input.getAxes().get(VirtualAxis.RX) < initialValue);
+			Assertions.assertTrue(input.getAxes().getOrDefault(VirtualAxis.RX, 0) < initialValue);
 		}
 	}
 
@@ -2192,7 +2193,7 @@ final class InputPipelineTest {
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var output = pollWithState(axes, buttonsPressed);
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -2219,7 +2220,7 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(axes, noButtons());
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -2240,7 +2241,7 @@ final class InputPipelineTest {
 			buttonsPressed[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			final var output = pollWithState(axes, buttonsPressed);
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), output.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 	}
 
@@ -2717,9 +2718,9 @@ final class InputPipelineTest {
 
 			final var p1 = pollWithState(phase1Axes, phase1Buttons);
 
-			assertAxisEquals(input.floatToIntAxisValue(0.9f), p1.axes().get(VirtualAxis.X));
-			assertAxisEquals(input.floatToIntAxisValue(-0.5f), p1.axes().get(VirtualAxis.Y));
-			assertAxisEquals(input.floatToIntAxisValue(0.6f), p1.axes().get(VirtualAxis.RX));
+			assertAxisEquals(input.floatToIntAxisValue(0.9f), p1.axes().getOrDefault(VirtualAxis.X, 0));
+			assertAxisEquals(input.floatToIntAxisValue(-0.5f), p1.axes().getOrDefault(VirtualAxis.Y, 0));
+			assertAxisEquals(input.floatToIntAxisValue(0.6f), p1.axes().getOrDefault(VirtualAxis.RX, 0));
 			// WHILE_PRESSED actions
 			Assertions.assertTrue(p1.buttons()[0], "AxisToButton WHILE_PRESSED: leftX=0.9 in [0.8,1.0]");
 			Assertions.assertTrue(p1.buttons()[1], "ButtonToButton WHILE_PRESSED: SOUTH -> btn 1");
@@ -2776,11 +2777,11 @@ final class InputPipelineTest {
 			// RelativeAxis on RIGHTY: accumulate over polls
 			final var relAxes = noAxes();
 			relAxes[SDLGamepad.SDL_GAMEPAD_AXIS_RIGHTY] = 0.8f;
-			final var initialZ = input.getAxes().get(VirtualAxis.Z);
+			final var initialZ = input.getAxes().getOrDefault(VirtualAxis.Z, 0);
 			for (var i = 0; i < 10; i++) {
 				pollWithState(relAxes, noButtons());
 			}
-			Assertions.assertNotEquals(initialZ, input.getAxes().get(VirtualAxis.Z),
+			Assertions.assertNotEquals(initialZ, input.getAxes().getOrDefault(VirtualAxis.Z, 0),
 					"AxisToRelativeAxis: RIGHTY accumulated on Z");
 
 			// ========== Phase 2: Default mode - cycle action ==========
@@ -2818,7 +2819,7 @@ final class InputPipelineTest {
 			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_WEST] = true;
 			phase3Buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_STICK] = true;
 
-			final var initialRY = input.getAxes().get(VirtualAxis.RY);
+			final var initialRY = input.getAxes().getOrDefault(VirtualAxis.RY, 0);
 			final var initialRZ = input.getAxes().get(VirtualAxis.RZ);
 
 			// First poll: capture ON_PRESS btn 5 firing; DIK_F delayed
@@ -2838,7 +2839,7 @@ final class InputPipelineTest {
 			final var p3 = pollWithState(phase3Axes, phase3Buttons);
 
 			// Mode 1 overrides
-			Assertions.assertNotEquals(initialRY, input.getAxes().get(VirtualAxis.RY),
+			Assertions.assertNotEquals(initialRY, input.getAxes().getOrDefault(VirtualAxis.RY, 0),
 					"Mode 1 override: LEFTX -> RelativeAxis(RY)");
 			Assertions.assertNotEquals(initialRZ, input.getAxes().get(VirtualAxis.RZ),
 					"Mode 1 override: RIGHTX -> RelativeAxis(RZ)");
@@ -2868,14 +2869,14 @@ final class InputPipelineTest {
 			resetButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_LEFT_SHOULDER] = true;
 			pollWithState(phase3Axes, resetButtons);
 
-			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RY));
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().getOrDefault(VirtualAxis.RY, 0));
 
 			// Reset RZ via ButtonToAxisResetAction on RIGHT_SHOULDER (Phase 3 may have
 			// saturated it)
 			final var resetRZButtons = noButtons();
 			resetRZButtons[SDLGamepad.SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER] = true;
 			pollWithState(noAxes(), resetRZButtons);
-			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.RZ));
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().getOrDefault(VirtualAxis.RZ, 0));
 
 			// ========== Phase 5: Stack Mode 2 on Mode 1 (three-layer) ==========
 
@@ -2906,7 +2907,7 @@ final class InputPipelineTest {
 			final var p5 = pollWithState(phase5Axes, phase5Buttons);
 
 			// Mode 2 top layer overrides
-			assertAxisEquals(input.floatToIntAxisValue(0.7f), p5.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0.7f), p5.axes().getOrDefault(VirtualAxis.X, 0));
 			final var keystroke2 = new Keystroke(new Scancode[] { scancode2 }, new Scancode[0]);
 			Assertions.assertTrue(p5.downKeystrokes().contains(keystroke2), "Mode 2 override: SOUTH -> DIK_2");
 
@@ -3034,7 +3035,7 @@ final class InputPipelineTest {
 
 			final var p9 = pollWithState(phase9Axes, phase9Buttons);
 
-			assertAxisEquals(input.floatToIntAxisValue(0.5f), p9.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), p9.axes().getOrDefault(VirtualAxis.X, 0));
 			Assertions.assertTrue(p9.buttons()[1], "Back in default WHILE_PRESSED: SOUTH -> btn 1");
 			Assertions.assertFalse(p9.buttons()[5], "Mode 1 inactive: btn 5 not set");
 			Assertions.assertTrue(p9.downUpKeystrokes().contains(eKeystroke),
@@ -3283,18 +3284,19 @@ final class InputPipelineTest {
 			for (var i = 0; i < 10; i++) {
 				pollWithState(axes, noButtons());
 			}
-			final var accumulated = input.getAxes().get(VirtualAxis.X);
+			final var accumulated = input.getAxes().getOrDefault(VirtualAxis.X, 0);
 			Assertions.assertNotEquals(0, accumulated, "Axis accumulated value");
 
 			// Press reset - suppressed during delay
 			final var buttons = noButtons();
 			buttons[SDLGamepad.SDL_GAMEPAD_BUTTON_SOUTH] = true;
 			pollWithState(noAxes(), buttons);
-			Assertions.assertNotEquals(0, input.getAxes().get(VirtualAxis.X), "Reset suppressed during delay");
+			Assertions.assertNotEquals(0, input.getAxes().getOrDefault(VirtualAxis.X, 0),
+					"Reset suppressed during delay");
 
 			Thread.sleep(DELAY_WAIT_MS);
 			pollWithState(noAxes(), buttons);
-			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0f), input.getAxes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -3443,7 +3445,7 @@ final class InputPipelineTest {
 
 			// First poll: mode switch suppressed - LEFTX still maps to X
 			final var suppressed = pollWithState(axes, buttons);
-			assertAxisEquals(input.floatToIntAxisValue(0.5f), suppressed.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), suppressed.axes().getOrDefault(VirtualAxis.X, 0));
 
 			// Second poll after delay: mode switch fires (takes effect next poll)
 			Thread.sleep(DELAY_WAIT_MS);
@@ -3451,7 +3453,7 @@ final class InputPipelineTest {
 
 			// Third poll: mode now active, LEFTX maps to Y
 			final var afterSwitch = pollWithState(axes, noButtons());
-			assertAxisEquals(input.floatToIntAxisValue(0.5f), afterSwitch.axes().get(VirtualAxis.Y));
+			assertAxisEquals(input.floatToIntAxisValue(0.5f), afterSwitch.axes().getOrDefault(VirtualAxis.Y, 0));
 		}
 
 		@Test
@@ -3718,7 +3720,7 @@ final class InputPipelineTest {
 
 			// Confirm mode 1 is active - LEFTX maps to Y
 			final var outputMode1 = pollWithState(axes, noButtons());
-			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().get(VirtualAxis.Y));
+			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().getOrDefault(VirtualAxis.Y, 0));
 
 			// Toggle mode 1 off - deactivateMode suspends LEFTX
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
@@ -3730,7 +3732,7 @@ final class InputPipelineTest {
 			final var outputSuspended = pollWithState(axes, noButtons());
 			Assertions.assertTrue(input.isAxisSuspended(SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX),
 					"LEFTX should be suspended after mode deactivation");
-			assertAxisEquals(0, outputSuspended.axes().get(VirtualAxis.X));
+			assertAxisEquals(0, outputSuspended.axes().getOrDefault(VirtualAxis.X, 0));
 
 			// Return axis to dead zone to clear suspension
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0f;
@@ -3742,7 +3744,7 @@ final class InputPipelineTest {
 			// Now apply axis input again - should produce output normally
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.6f;
 			final var outputResumed = pollWithState(axes, noButtons());
-			assertAxisEquals(input.floatToIntAxisValue(0.6f), outputResumed.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0.6f), outputResumed.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test
@@ -3755,14 +3757,14 @@ final class InputPipelineTest {
 			axes[SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX] = 0.8f;
 
 			final var outputMode0 = pollWithState(axes, noButtons());
-			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode0.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode0.axes().getOrDefault(VirtualAxis.X, 0));
 
 			final var buttonsWithModeSwitch = noButtons();
 			buttonsWithModeSwitch[SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH] = true;
 			pollWithState(axes, buttonsWithModeSwitch);
 
 			final var outputMode1 = pollWithState(axes, buttonsWithModeSwitch);
-			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().get(VirtualAxis.Y));
+			assertAxisEquals(input.floatToIntAxisValue(0.8f), outputMode1.axes().getOrDefault(VirtualAxis.Y, 0));
 		}
 
 		@Test
@@ -3797,7 +3799,7 @@ final class InputPipelineTest {
 			pollWithState(axes, buttonsWithModeSwitch);
 
 			final var outputAfterRelease = pollWithState(axes, noButtons());
-			assertAxisEquals(input.floatToIntAxisValue(0.7f), outputAfterRelease.axes().get(VirtualAxis.Y));
+			assertAxisEquals(input.floatToIntAxisValue(0.7f), outputAfterRelease.axes().getOrDefault(VirtualAxis.Y, 0));
 		}
 	}
 
@@ -3916,7 +3918,7 @@ final class InputPipelineTest {
 
 			final var output = pollWithState(axes, buttons);
 
-			assertAxisEquals(input.floatToIntAxisValue(-0.3f), output.axes().get(VirtualAxis.X));
+			assertAxisEquals(input.floatToIntAxisValue(-0.3f), output.axes().getOrDefault(VirtualAxis.X, 0));
 			Assertions.assertTrue(output.buttons()[0]);
 		}
 
@@ -3931,7 +3933,8 @@ final class InputPipelineTest {
 			final var output1 = pollWithState(axes, noButtons());
 			final var output2 = pollWithState(axes, noButtons());
 
-			Assertions.assertEquals(output1.axes().get(VirtualAxis.X), output2.axes().get(VirtualAxis.X));
+			Assertions.assertEquals(output1.axes().getOrDefault(VirtualAxis.X, 0),
+					output2.axes().getOrDefault(VirtualAxis.X, 0));
 		}
 
 		@Test

@@ -30,6 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.IResetableAction;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.awt.EventQueue;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 import org.lwjgl.sdl.SDLProperties;
 
@@ -48,6 +51,7 @@ import org.lwjgl.sdl.SDLProperties;
 /// This class serves as the central input handler that polls SDL gamepads,
 /// dispatches actions defined in the active [Profile], and maintains the
 /// current state of all virtual axes, buttons, keystrokes, and mouse inputs.
+@NullMarked
 public final class Input {
 
 	/// Maximum number of virtual buttons supported.
@@ -108,14 +112,14 @@ public final class Input {
 	private final Map<Long, GamepadState> sdlGamepadToGamepadStateMap = new HashMap<>();
 
 	/// The controller selected for primary input.
-	private final Controller selectedController;
+	private final @Nullable Controller selectedController;
 
 	/// Map from virtual axis to its currently targeted integer value for smooth
 	/// movement.
 	private final Map<VirtualAxis, Integer> virtualAxisToTargetValueMap = new EnumMap<>(VirtualAxis.class);
 
 	/// Boolean state array for all virtual buttons.
-	private boolean[] buttons;
+	private boolean[] buttons = new boolean[0];
 
 	/// Flag indicating that all button and keystroke state should be reset on the
 	/// next poll.
@@ -163,11 +167,11 @@ public final class Input {
 	private boolean repeatModeActionWalk;
 
 	/// The current run mode that consumes the processed input.
-	private RunMode runMode;
+	private @Nullable RunMode runMode;
 
 	/// A rumble effect scheduled to be played on the next poll cycle, or `null` if
 	/// none.
-	private RumbleEffect scheduledRumbleEffect;
+	private @Nullable RumbleEffect scheduledRumbleEffect;
 
 	/// Number of scroll wheel clicks to emit this poll cycle.
 	private volatile int scrollClicks;
@@ -184,17 +188,17 @@ public final class Input {
 
 	/// Constructs an [Input] for the given controller.
 	///
-	/// @param main the main application instance
-	/// @param selectedController the controller selected for input
+	/// @param main the [Main] application instance
+	/// @param selectedController the [Controller] selected for input
 	/// @param axes initial axis values, or `null` to initialize all axes to zero
-	public Input(final Main main, final Controller selectedController, final Map<VirtualAxis, Integer> axes) {
+	public Input(final Main main, final @Nullable Controller selectedController,
+			final @Nullable Map<VirtualAxis, Integer> axes) {
 		this.main = main;
 		this.selectedController = selectedController;
 
-		skipAxisInitialization = axes != null;
-
-		if (skipAxisInitialization) {
+		if (axes != null) {
 			this.axes = axes;
+			skipAxisInitialization = true;
 		} else {
 			this.axes = new EnumMap<>(VirtualAxis.class);
 			EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
@@ -279,6 +283,8 @@ public final class Input {
 	/// @param value the float axis value, clamped to `[-1, 1]`
 	/// @return the corresponding integer axis value
 	public int floatToIntAxisValue(float value) {
+		Objects.requireNonNull(runMode, "Field runMode must not be null");
+
 		value = Math.max(value, -1f);
 		value = Math.min(value, 1f);
 
@@ -391,7 +397,7 @@ public final class Input {
 	/// Returns the current run mode.
 	///
 	/// @return the active [RunMode]
-	public RunMode getRunMode() {
+	public @Nullable RunMode getRunMode() {
 		return runMode;
 	}
 
@@ -405,7 +411,7 @@ public final class Input {
 	/// Returns the selected controller.
 	///
 	/// @return the [Controller] currently selected for input
-	public Controller getSelectedController() {
+	public @Nullable Controller getSelectedController() {
 		return selectedController;
 	}
 
@@ -420,6 +426,8 @@ public final class Input {
 		if (initialized) {
 			throw new IllegalStateException("Already initialized");
 		}
+
+		Objects.requireNonNull(runMode, "Field runMode must not be null");
 
 		swapLeftAndRightSticks = main.isSwapLeftAndRightSticks();
 		mapCircularAxesToSquareAxes = main.isMapCircularAxesToSquareAxes();
@@ -449,6 +457,8 @@ public final class Input {
 	/// Initializes the button state array based on the current run mode's button
 	/// count, capped at [#MAX_N_BUTTONS].
 	public void initButtons() {
+		Objects.requireNonNull(runMode, "Field runMode must not be null");
+
 		buttons = new boolean[Math.min(runMode.getNumButtons(), MAX_N_BUTTONS)];
 	}
 
@@ -481,7 +491,7 @@ public final class Input {
 	public void moveAxis(final VirtualAxis virtualAxis, final float targetValue) {
 		final var integerTargetValue = floatToIntAxisValue(targetValue);
 
-		if (axes.get(virtualAxis) != integerTargetValue) {
+		if (axes.getOrDefault(virtualAxis, 0) != integerTargetValue) {
 			virtualAxisToTargetValueMap.put(virtualAxis, integerTargetValue);
 		}
 	}
@@ -531,6 +541,7 @@ public final class Input {
 	///
 	/// @return `true` if the poll completed successfully
 	public boolean poll() {
+		Objects.requireNonNull(runMode, "Field runMode must not be null");
 		Objects.requireNonNull(selectedController, "Field selectedController must not be null");
 
 		final var currentTime = System.currentTimeMillis();
@@ -551,7 +562,7 @@ public final class Input {
 			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
 			while (sdlGamepadToGamepadStateMapIterator.hasNext()) {
 				final var entry = sdlGamepadToGamepadStateMapIterator.next();
-				final var sdlGamepad = entry.getKey();
+				final long sdlGamepad = entry.getKey();
 
 				if (sdlGamepad == selectedSdlGamepad) {
 					continue;
@@ -615,9 +626,9 @@ public final class Input {
 
 		virtualAxisToTargetValueMap.entrySet().removeIf(entry -> {
 			final var virtualAxis = entry.getKey();
-			final var targetValue = entry.getValue();
+			final int targetValue = entry.getValue();
 
-			final var currentValue = axes.get(virtualAxis);
+			final int currentValue = axes.getOrDefault(virtualAxis, 0);
 			final var delta = targetValue - currentValue;
 			if (delta != 0) {
 				final var axisRange = runMode.getMaxAxisValue() - runMode.getMinAxisValue();
@@ -742,7 +753,7 @@ public final class Input {
 		scheduledRumbleEffect = null;
 		lastPollTime = 0;
 		rateMultiplier = 0f;
-		buttons = null;
+		buttons = new boolean[0];
 		sdlGamepadToGamepadStateMap.clear();
 		virtualAxisToTargetValueMap.clear();
 		axisToEndSuspensionTimestampMap.clear();
@@ -788,7 +799,7 @@ public final class Input {
 	/// @param maxValue the maximum axis value, or `null` if unbounded
 	/// @param detentValue the detent value for haptic feedback, or `null` if none
 	public void setAxis(final VirtualAxis virtualAxis, final float value, final boolean hapticFeedback,
-			final Float minValue, final Float maxValue, final Float detentValue) {
+			final @Nullable Float minValue, final @Nullable Float maxValue, final @Nullable Float detentValue) {
 		setAxis(virtualAxis, floatToIntAxisValue(value), hapticFeedback,
 				minValue != null ? floatToIntAxisValue(minValue) : null,
 				maxValue != null ? floatToIntAxisValue(maxValue) : null,
@@ -808,13 +819,15 @@ public final class Input {
 	/// none
 	/// @param detentValue the detent value for light rumble feedback, or `null` if
 	/// none
-	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback, final Integer minValue,
-			final Integer maxValue, final Integer detentValue) {
+	private void setAxis(final VirtualAxis virtualAxis, int value, final boolean hapticFeedback,
+			final @Nullable Integer minValue, final @Nullable Integer maxValue, final @Nullable Integer detentValue) {
+		Objects.requireNonNull(runMode, "Field runMode must not be null");
+
 		value = Math.clamp(value, runMode.getMinAxisValue(), runMode.getMaxAxisValue());
 
 		final var prevValue = axes.put(virtualAxis, value);
 
-		if (hapticFeedback && prevValue != null && prevValue != value) {
+		if (hapticFeedback && prevValue != null && prevValue != value && minValue != null && maxValue != null) {
 			if (value == minValue || value == maxValue) {
 				scheduledRumbleEffect = RumbleEffect.STRONG;
 			} else if (detentValue != null && ((prevValue > detentValue && value <= detentValue)
@@ -843,8 +856,6 @@ public final class Input {
 	/// @param profile the profile to activate
 	/// @return `true` if the profile was set successfully
 	public boolean setProfile(final Profile profile) {
-		Objects.requireNonNull(profile, "Parameter profile must not be null");
-
 		for (final var button : profile.getButtonToModeActionsMap().keySet()) {
 			if (!isValidButton(button)) {
 				return false;
@@ -852,6 +863,7 @@ public final class Input {
 		}
 
 		final var modes = profile.getModes();
+		final Comparator<@Nullable String> comparator = Comparator.nullsFirst(Comparator.naturalOrder());
 		modes.sort((mode1, mode2) -> {
 			final var mode1IsDefaultMode = Profile.defaultMode.equals(mode1);
 			final var mode2IsDefaultMode = Profile.defaultMode.equals(mode2);
@@ -883,7 +895,7 @@ public final class Input {
 				return 1;
 			}
 
-			return mode1.getDescription().compareTo(mode2.getDescription());
+			return comparator.compare(mode1.getDescription(), mode2.getDescription());
 		});
 
 		for (final var mode : modes) {

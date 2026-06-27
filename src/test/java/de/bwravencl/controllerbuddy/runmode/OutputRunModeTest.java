@@ -170,8 +170,9 @@ final class OutputRunModeTest {
 
 		@BeforeEach
 		void setUp() {
+			Mockito.when(mockMain.getInput()).thenReturn(mockInput);
 			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
-			runMode = new LocalRunMode(mockMain, mockInput);
+			runMode = new LocalRunMode(mockMain);
 		}
 	}
 

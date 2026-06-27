@@ -25,6 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class IButtonToDelayableActionTest {
 
@@ -98,7 +100,7 @@ final class IButtonToDelayableActionTest {
 			final var action = new ButtonToButtonAction();
 			action.setDelay(1L);
 
-			final var mode = new Mode(UUID.randomUUID());
+			final var mode = new Mode(UUID.randomUUID(), null);
 			final var actionList = new ArrayList<IAction<Boolean>>();
 			actionList.add(action);
 			mode.getButtonToActionsMap().put(0, actionList);
@@ -128,7 +130,7 @@ final class IButtonToDelayableActionTest {
 			siblingAction.setActivation(Activation.ON_RELEASE);
 			// siblingAction is not delayed (default delay=0)
 
-			final var mode = new Mode(UUID.randomUUID());
+			final var mode = new Mode(UUID.randomUUID(), null);
 			final var actionList = new ArrayList<IAction<Boolean>>();
 			actionList.add(delayedAction);
 			actionList.add(siblingAction);

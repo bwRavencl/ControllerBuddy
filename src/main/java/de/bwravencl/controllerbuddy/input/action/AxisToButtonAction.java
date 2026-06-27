@@ -22,11 +22,13 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps axis input to a virtual button output.
 ///
 /// The button is considered pressed when the axis value falls within a
 /// configurable range defined by [#minAxisValue] and [#maxAxisValue].
+@NullMarked
 @Action(icon = "◉", title = "TO_BUTTON_ACTION_TITLE", description = "TO_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 20)
 public final class AxisToButtonAction extends ToButtonAction<Float> implements IAxisToDelayableAction {
 

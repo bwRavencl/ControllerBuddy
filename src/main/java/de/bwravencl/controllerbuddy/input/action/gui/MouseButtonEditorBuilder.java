@@ -19,12 +19,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for mouse button index properties, providing a spinner with a
 /// range of 1 to 5.
 ///
 /// Used to configure which physical mouse button (primary, secondary, middle,
 /// or extra) is pressed when the associated action fires.
+@NullMarked
 public final class MouseButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [MouseButtonEditorBuilder] for the specified action property.

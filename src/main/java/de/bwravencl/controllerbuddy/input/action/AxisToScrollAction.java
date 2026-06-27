@@ -23,12 +23,14 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps a controller axis to mouse scroll wheel input.
 ///
 /// Applies a dead zone and exponent curve to the axis value before converting
 /// it to scroll clicks.
 @Action(icon = "⇕", title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 35)
+@NullMarked
 public final class AxisToScrollAction extends ToScrollAction<Float> implements IAxisToAction {
 
 	/// Default dead zone threshold below which axis input is ignored.

@@ -23,6 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class ModeTest {
 
@@ -47,7 +49,7 @@ final class ModeTest {
 	Main mockMain;
 
 	private static Mode createMode() {
-		return new Mode(UUID.randomUUID());
+		return new Mode();
 	}
 
 	@Nested
@@ -207,8 +209,8 @@ final class ModeTest {
 		@DisplayName("two modes with the same UUID are equal and have the same hash code")
 		void equalModesHaveSameUuidAndHashCode() {
 			final var uuid = UUID.randomUUID();
-			final var a = new Mode(uuid);
-			final var b = new Mode(uuid);
+			final var a = new Mode(uuid, null);
+			final var b = new Mode(uuid, null);
 
 			Assertions.assertEquals(a, b);
 			Assertions.assertEquals(a.hashCode(), b.hashCode());
@@ -218,13 +220,13 @@ final class ModeTest {
 		@DisplayName("a Mode is not equal to a non-Mode object")
 		void modeIsNotEqualToNonModeObject() {
 			// noinspection AssertBetweenInconvertibleTypes
-			Assertions.assertNotEquals(new Mode(UUID.randomUUID()), "not a mode");
+			Assertions.assertNotEquals(new Mode(), "not a mode");
 		}
 
 		@Test
 		@DisplayName("two modes with different UUIDs are not equal")
 		void modesWithDifferentUuidsAreNotEqual() {
-			Assertions.assertNotEquals(new Mode(UUID.randomUUID()), new Mode(UUID.randomUUID()));
+			Assertions.assertNotEquals(new Mode(UUID.randomUUID(), null), new Mode(UUID.randomUUID(), null));
 		}
 	}
 

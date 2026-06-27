@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ActivationIntervalEditorBuilder;
 import java.lang.constant.Constable;
+import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for actions that support configurable minimum and
 /// maximum activation intervals.
@@ -31,6 +32,7 @@ import java.lang.constant.Constable;
 /// Both intervals are optional and configured independently.
 ///
 /// @param <V> the type of input value this action processes
+@NullMarked
 public abstract class ActivationIntervalAction<V extends Constable> extends DescribableAction<V>
 		implements IActivatableAction<V>, IInitializationAction<V> {
 

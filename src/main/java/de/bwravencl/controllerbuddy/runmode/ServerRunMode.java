@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
@@ -53,6 +52,8 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Server-side run mode that streams input state to a remote client.
 ///
@@ -60,6 +61,7 @@ import javax.swing.JOptionPane;
 /// state updates to a remote [ClientRunMode] over UDP. The server
 /// listens for client connections, performs a handshake, and then
 /// continuously streams serialized input data.
+@NullMarked
 public final class ServerRunMode extends RunMode {
 
 	/// The default UDP port used for server communication.
@@ -107,21 +109,20 @@ public final class ServerRunMode extends RunMode {
 	private final int timeout;
 
 	/// IP address of the currently connected client.
-	private InetAddress clientAddress;
+	private @Nullable InetAddress clientAddress;
 
 	/// Symmetric encryption key derived from the shared password.
-	private Key key;
+	private @Nullable Key key;
 
 	/// UDP socket used to communicate with the client.
-	private DatagramSocket serverSocket;
+	private @Nullable DatagramSocket serverSocket;
 
 	/// Constructs a [ServerRunMode].
 	///
 	/// @param main the main application instance providing port, timeout, and
 	/// encryption settings
-	/// @param input the input instance for controller state
-	public ServerRunMode(final Main main, final Input input) {
-		super(main, input);
+	public ServerRunMode(final Main main) {
+		super(main);
 
 		port = main.getPort();
 		timeout = main.getTimeout();
@@ -206,6 +207,12 @@ public final class ServerRunMode extends RunMode {
 						process();
 					}
 					clientAddress = receivePacket.getAddress();
+					if (clientAddress == null) {
+						clientAddress = serverSocket.getInetAddress();
+					}
+					if (clientAddress == null) {
+						break;
+					}
 
 					try (final var dataInputStream = new DataInputStream(
 							new ByteArrayInputStream(receivePacket.getData()))) {
@@ -233,9 +240,9 @@ public final class ServerRunMode extends RunMode {
 								controllerDisconnected();
 								return;
 							}
-							EventQueue.invokeLater(() -> main.setStatusBarText(
-									MessageFormat.format(Main.strings.getString("STATUS_CONNECTED_TO"),
-											clientAddress.getCanonicalHostName(), clientPort)));
+							final var clientHostName = clientAddress.getCanonicalHostName();
+							EventQueue.invokeLater(() -> main.setStatusBarText(MessageFormat.format(
+									Main.strings.getString("STATUS_CONNECTED_TO"), clientHostName, clientPort)));
 						}
 					}
 				}
@@ -300,7 +307,7 @@ public final class ServerRunMode extends RunMode {
 							try {
 								serverSocket.receive(receivePacket);
 
-								if (clientAddress.equals(receivePacket.getAddress())) {
+								if (clientAddress != null && clientAddress.equals(receivePacket.getAddress())) {
 									try (final var byteArrayInputStream = new ByteArrayInputStream(
 											receivePacket.getData());
 											final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
@@ -373,6 +380,7 @@ public final class ServerRunMode extends RunMode {
 	private void sendEncrypted(final ByteArrayOutputStream byteArrayOutputStream, final int clientPort)
 			throws IOException {
 		Objects.requireNonNull(cipher, "Field cipher must not be null");
+		Objects.requireNonNull(serverSocket, "Field serverSocket must not be null");
 
 		final var messageBytes = byteArrayOutputStream.toByteArray();
 		try {
@@ -433,7 +441,7 @@ public final class ServerRunMode extends RunMode {
 		///
 		/// @param id the numeric ID to look up
 		/// @return the matching [MessageType], or `null` if none exists
-		static MessageType fromId(final int id) {
+		static @Nullable MessageType fromId(final int id) {
 			return ID_TO_MESSAGE_TYPE_MAP.get(id);
 		}
 

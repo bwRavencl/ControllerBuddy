@@ -22,11 +22,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.awt.event.KeyEvent;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class LockKeyAdapterTest {
 
 	private static LockKeyAdapter createAdapter() {

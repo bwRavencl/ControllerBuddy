@@ -20,6 +20,8 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.lang.constant.Constable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Interface for actions that support different activation modes (while
 /// pressed, on press, on release).
@@ -30,11 +32,13 @@ import java.lang.constant.Constable;
 /// setting the activatable state.
 ///
 /// @param <V> the type of input value this action processes
+@NullMarked
 public interface IActivatableAction<V extends Constable> extends IInitializationAction<V> {
 
 	/// Returns the current activatable state of this action.
 	///
 	/// @return the activatable state
+	@Nullable
 	Activatable getActivatable();
 
 	/// Returns the configured activation mode for this action.

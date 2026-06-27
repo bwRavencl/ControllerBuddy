@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +41,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class AssignmentsScrollPaneTest {
 
@@ -162,7 +164,9 @@ final class AssignmentsScrollPaneTest {
 		void throwsForNonSquareDimension() {
 			final var invocationTargetException = Assertions.assertThrows(InvocationTargetException.class,
 					() -> invokeCheckDimensionIsSquare(new Dimension(50, 60)));
-			Assertions.assertEquals(IllegalArgumentException.class, invocationTargetException.getCause().getClass());
+			final var cause = invocationTargetException.getCause();
+			Assertions.assertNotNull(cause);
+			Assertions.assertEquals(IllegalArgumentException.class, cause.getClass());
 		}
 	}
 }

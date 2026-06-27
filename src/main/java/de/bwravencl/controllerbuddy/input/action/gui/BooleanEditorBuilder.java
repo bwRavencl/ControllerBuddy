@@ -22,21 +22,26 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Editor builder for boolean properties, rendering a [JCheckBox] that toggles
 /// the property value.
 ///
 /// The checkbox state is initialized from the current property value and
 /// updates the action property immediately when toggled.
+@NullMarked
 public class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(BooleanEditorBuilder.class.getName());
 
 	/// The checkbox rendered by this editor.
+	@Nullable
 	JCheckBox checkBox;
 
 	/// Constructs a [BooleanEditorBuilder] for the specified action property.
@@ -53,6 +58,8 @@ public class BooleanEditorBuilder extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
+
 		checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));
 		checkBox.setSelected((boolean) initialValue);
 		parentPanel.add(checkBox);

@@ -20,12 +20,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard.Direction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for on-screen keyboard direction properties, presenting a
 /// combo box of [Direction] values.
 ///
 /// Used to configure which direction on the on-screen keyboard is navigated
 /// when the associated action fires.
+@NullMarked
 public final class DirectionEditorBuilder extends ArrayEditorBuilder<Direction> {
 
 	/// Constructs a [DirectionEditorBuilder] for the specified action property.

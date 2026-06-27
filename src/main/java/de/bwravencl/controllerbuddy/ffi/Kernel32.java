@@ -23,6 +23,7 @@ import java.lang.foreign.Linker;
 import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
+import org.jspecify.annotations.NullMarked;
 
 /// Provides Java bindings to the Windows Kernel32 native library using the
 /// Foreign Function and Memory API.
@@ -31,6 +32,7 @@ import java.lang.invoke.MethodHandle;
 /// global [Arena] and exposed as static methods. This class cannot
 /// be instantiated.
 @SuppressWarnings({ "exports", "restricted" })
+@NullMarked
 public final class Kernel32 {
 
 	/// The native linker used to create method handles for native calls.

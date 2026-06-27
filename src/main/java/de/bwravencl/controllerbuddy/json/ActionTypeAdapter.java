@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
 
 /// Gson type adapter for serializing and deserializing [IAction] instances.
 ///
@@ -38,6 +39,7 @@ import java.util.logging.Logger;
 /// and `data` (serialized action) properties. During deserialization, resolves
 /// the action class by name and substitutes a [NullAction] if the class is not
 /// found.
+@NullMarked
 public final class ActionTypeAdapter implements JsonSerializer<IAction<?>>, JsonDeserializer<IAction<?>> {
 
 	/// JSON property name for the serialized action data.

@@ -26,6 +26,8 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.NullAction;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class ActionTypeAdapterTest {
 
@@ -115,7 +118,7 @@ final class ActionTypeAdapterTest {
 				}
 
 				@Override
-				public Type getOwnerType() {
+				public @Nullable Type getOwnerType() {
 					return null;
 				}
 

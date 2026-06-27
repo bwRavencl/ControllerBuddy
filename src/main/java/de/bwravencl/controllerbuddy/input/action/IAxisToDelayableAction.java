@@ -23,6 +23,7 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
+import org.jspecify.annotations.NullMarked;
 
 /// Interface for axis-triggered actions that support an activation delay.
 ///
@@ -31,6 +32,7 @@ import java.util.Map;
 /// only fires after the axis value remains within the configured range for the
 /// specified duration. Delayed activation can also deny activation of
 /// co-located undelayed on-release actions.
+@NullMarked
 public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<Float> {
 
 	/// Maps each axis delayable action to the timestamp when it was first
@@ -107,9 +109,8 @@ public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<
 		final var currentTime = System.currentTimeMillis();
 
 		if (value >= getMinAxisValue() && value <= getMaxAxisValue()) {
-			if (!ACTION_TO_DOWN_SINCE_MAP.containsKey(this)) {
-				ACTION_TO_DOWN_SINCE_MAP.put(this, currentTime);
-			} else if (currentTime - ACTION_TO_DOWN_SINCE_MAP.get(this) >= getDelay()) {
+			final var downSince = ACTION_TO_DOWN_SINCE_MAP.putIfAbsent(this, currentTime);
+			if (downSince != null && currentTime - downSince >= getDelay()) {
 				for (final var mode : input.getProfile().getModes()) {
 					final var actions = mode.getAxisToActionsMap().get(component);
 

@@ -39,6 +39,8 @@ import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// A Gson [TypeAdapterFactory] that provides custom type adapters for profile
@@ -49,6 +51,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// and style, resolves legacy enum constant names for [Activation], and
 /// migrates the deprecated `longPress` field to the delay mechanism on
 /// [IDelayableAction] instances.
+@NullMarked
 public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 
 	/// Legacy GLFW button index for the Back button.
@@ -119,8 +122,9 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 	/// @param type the type token for the target type
 	/// @param <T> the type being adapted
 	/// @return a [TypeAdapter] for the given type
+	@SuppressWarnings("NullAway")
 	@Override
-	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<@Nullable T> type) {
 		final var rawType = (Class<?>) type.getRawType();
 		if (rawType.isEnum()) {
 			final var delegate = gson.getDelegateAdapter(this, type);
@@ -128,7 +132,7 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 			return new TypeAdapter<>() {
 
 				@Override
-				public T read(final JsonReader in) throws IOException {
+				public @Nullable T read(final JsonReader in) throws IOException {
 					if (in.peek() == JsonToken.NULL) {
 						in.nextNull();
 						return null;
@@ -164,7 +168,7 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 			return new TypeAdapter<>() {
 
 				@Override
-				public T read(final JsonReader in) throws IOException {
+				public @Nullable T read(final JsonReader in) throws IOException {
 					final var jsonElement = gson.getAdapter(JsonElement.class).read(in);
 					final var object = delegate.fromJsonTree(jsonElement);
 
@@ -190,7 +194,7 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 		return new TypeAdapter<>() {
 
 			@Override
-			public T read(final JsonReader in) throws IOException {
+			public @Nullable T read(final JsonReader in) throws IOException {
 				final var obj = delegate.read(in);
 
 				switch (obj) {
@@ -223,9 +227,11 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 					}
 				}
 				case final OverlayAxis overlayAxis -> {
+					// noinspection ConstantValue
 					if (overlayAxis.getOrientation() == null) {
 						overlayAxis.setOrientation(OverlayAxisOrientation.VERTICAL);
 					}
+					// noinspection ConstantValue
 					if (overlayAxis.getStyle() == null) {
 						overlayAxis.setStyle(OverlayAxisStyle.SOLID);
 					}

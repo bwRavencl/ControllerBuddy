@@ -32,6 +32,8 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// Maps a gamepad button press to a mode switch.
@@ -40,6 +42,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// active mode actions to allow nested mode switching with proper deactivation
 /// order.
 @Action(icon = "⎇", title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
+@NullMarked
 public final class ButtonToModeAction implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	/// Symbol used to represent momentary mode activation.
@@ -58,7 +61,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 
 	/// UUID of the target mode to activate.
 	@ActionProperty(icon = "☰", title = "MODE_UUID_TITLE", description = "MODE_UUID_DESCRIPTION", editorBuilder = ModeEditorBuilder.class, overrideFieldName = "mode", overrideFieldType = Mode.class, order = 10)
-	private UUID modeUuid;
+	private @Nullable UUID modeUuid;
 
 	/// Whether this action uses toggle mode instead of momentary activation.
 	@ActionProperty(icon = "⇋", title = "TOGGLE_TITLE", description = "TOGGLE_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 11)
@@ -84,7 +87,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// @param input the current input state
 	/// @param profile the active profile
 	private void activateMode(final Input input, final Profile profile) {
-		if (!BUTTON_TO_MODE_ACTION_STACK.contains(this)) {
+		if (!BUTTON_TO_MODE_ACTION_STACK.contains(this) && modeUuid != null) {
 			BUTTON_TO_MODE_ACTION_STACK.push(this);
 			final var activeMode = profile.getActiveMode();
 
@@ -183,12 +186,9 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 
 		final var axes = activeMode.getAxisToActionsMap().keySet();
 		final var previousModeAxisToActionsMap = previousMode.getAxisToActionsMap();
-		final var main = input.getMain();
-		if (previousModeAxisToActionsMap != null) {
-			axes.stream().filter(previousModeAxisToActionsMap::containsKey)
-					.forEach(axis -> previousModeAxisToActionsMap.get(axis).stream()
-							.filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
-		}
+		axes.stream().filter(previousModeAxisToActionsMap::containsKey)
+				.forEach(axis -> previousModeAxisToActionsMap.getOrDefault(axis, List.of()).stream()
+						.filter(action -> action instanceof IAxisToAction).forEach(_ -> input.suspendAxis(axis)));
 
 		IAxisToDelayableAction.onModeDeactivated(activeMode);
 		IButtonToDelayableAction.onModeDeactivated(activeMode);
@@ -196,7 +196,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 		profile.setActiveMode(input, previousMode);
 
 		if (targetsOnScreenKeyboardMode()) {
-			main.setOnScreenKeyboardVisible(false);
+			input.getMain().setOnScreenKeyboardVisible(false);
 		}
 	}
 
@@ -238,10 +238,6 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	@Override
 	public String getDescription(final Input input) {
 		final var mode = getMode(input);
-		if (mode == null) {
-			return null;
-		}
-
 		return MessageFormat.format(Main.strings.getString("MODE_NAME"), mode.getDescription());
 	}
 
@@ -298,7 +294,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// `null`.
 	///
 	/// @param mode the target mode, or `null` to clear
-	public void setMode(final Mode mode) {
+	public void setMode(final @Nullable Mode mode) {
 		if (mode != null) {
 			modeUuid = mode.getUuid();
 		} else {

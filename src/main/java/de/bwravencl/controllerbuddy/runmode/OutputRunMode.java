@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.ffi.User32.INPUT.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Scancode;
@@ -48,6 +47,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -55,6 +55,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLVideo;
 
 /// Abstract base class for run modes that produce output to a virtual device.
@@ -63,6 +65,7 @@ import org.lwjgl.sdl.SDLVideo;
 /// keyboard, mouse, and lock-key state to platform-specific virtual devices
 /// (vJoy on Windows, uinput on Linux). Both [LocalRunMode] and [ClientRunMode]
 /// inherit from this class.
+@NullMarked
 public abstract class OutputRunMode extends RunMode {
 
 	/// The default vJoy device index.
@@ -82,6 +85,30 @@ public abstract class OutputRunMode extends RunMode {
 	private static final int WHEEL_DELTA = 120;
 
 	private static final Logger logger = Logger.getLogger(OutputRunMode.class.getName());
+
+	/// Current value of the virtual RX axis.
+	final DeviceValue axisRX = new DeviceValue();
+
+	/// Current value of the virtual RY axis.
+	final DeviceValue axisRY = new DeviceValue();
+
+	/// Current value of the virtual RZ axis.
+	final DeviceValue axisRZ = new DeviceValue();
+
+	/// Current value of the virtual slider 0 axis.
+	final DeviceValue axisS0 = new DeviceValue();
+
+	/// Current value of the virtual slider 1 axis.
+	final DeviceValue axisS1 = new DeviceValue();
+
+	/// Current value of the virtual X axis.
+	final DeviceValue axisX = new DeviceValue();
+
+	/// Current value of the virtual Y axis.
+	final DeviceValue axisY = new DeviceValue();
+
+	/// Current value of the virtual Z axis.
+	final DeviceValue axisZ = new DeviceValue();
 
 	/// Keystrokes that should be pressed and immediately released this cycle.
 	final Set<Keystroke> downUpKeystrokes = new HashSet<>();
@@ -125,32 +152,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// Lock keys that should be turned on this cycle.
 	final Set<LockKey> onLockKeys = new HashSet<>();
 
-	/// Current value of the virtual RX axis.
-	DeviceValue axisRX;
-
-	/// Current value of the virtual RY axis.
-	DeviceValue axisRY;
-
-	/// Current value of the virtual RZ axis.
-	DeviceValue axisRZ;
-
-	/// Current value of the virtual slider 0 axis.
-	DeviceValue axisS0;
-
-	/// Current value of the virtual slider 1 axis.
-	DeviceValue axisS1;
-
-	/// Current value of the virtual X axis.
-	DeviceValue axisX;
-
-	/// Current value of the virtual Y axis.
-	DeviceValue axisY;
-
-	/// Current value of the virtual Z axis.
-	DeviceValue axisZ;
-
 	/// Current state of all virtual buttons.
-	DeviceValue[] buttons;
+	DeviceValue[] buttons = new DeviceValue[0];
 
 	/// Horizontal mouse cursor movement delta for this output cycle.
 	int cursorDeltaX;
@@ -165,19 +168,19 @@ public abstract class OutputRunMode extends RunMode {
 	int scrollClicks;
 
 	/// Buffer used when writing brightness values to sysfs LED files.
-	private ByteBuffer brightnessByteBuffer;
+	private @Nullable ByteBuffer brightnessByteBuffer;
 
 	/// uinput device representing the virtual joystick.
-	private UinputDevice joystickUinputDevice;
+	private @Nullable UinputDevice joystickUinputDevice;
 
 	/// uinput device representing the virtual keyboard.
-	private UinputDevice keyboardUinputDevice;
+	private @Nullable UinputDevice keyboardUinputDevice;
 
 	/// Maps lock keys to the sysfs file channels used to control their LEDs.
-	private Map<LockKey, FileChannel> lockKeyToBrightnessFileChannelMap;
+	private @Nullable Map<LockKey, FileChannel> lockKeyToBrightnessFileChannelMap;
 
 	/// uinput device representing the virtual mouse.
-	private UinputDevice mouseUinputDevice;
+	private @Nullable UinputDevice mouseUinputDevice;
 
 	/// Timestamp of the previous keyboard input event in nanoseconds.
 	private long prevKeyInputTime;
@@ -192,9 +195,8 @@ public abstract class OutputRunMode extends RunMode {
 	/// Windows.
 	///
 	/// @param main the main application instance
-	/// @param input the input instance providing controller state
-	OutputRunMode(final Main main, final Input input) {
-		super(main, input);
+	OutputRunMode(final Main main) {
+		super(main);
 
 		if (Main.IS_WINDOWS) {
 			vJoyDevice = main.getVJoyDevice();
@@ -322,11 +324,13 @@ public abstract class OutputRunMode extends RunMode {
 			EventQueue.invokeLater(() -> main.setStatusBarText(
 					MessageFormat.format(Main.strings.getString("STATUS_DISCONNECTED_FROM_VJOY_DEVICE"), vJoyDevice)));
 		} else if (Main.IS_LINUX) {
-			for (final var event : Event.joystickEvents) {
-				try {
-					joystickUinputDevice.emit(event, 0, true);
-				} catch (final IOException e) {
-					logger.log(Level.WARNING, e.getMessage(), e);
+			if (joystickUinputDevice != null) {
+				for (final var event : Event.joystickEvents) {
+					try {
+						joystickUinputDevice.emit(event, 0, true);
+					} catch (final IOException e) {
+						logger.log(Level.WARNING, e.getMessage(), e);
+					}
 				}
 			}
 
@@ -384,6 +388,8 @@ public abstract class OutputRunMode extends RunMode {
 				sendInputChecked(input);
 			}
 		} else if (Main.IS_LINUX) {
+			Objects.requireNonNull(keyboardUinputDevice, "Field keyboardUinputDevice must not be null");
+
 			keyboardUinputDevice.emit(scancode.event(), down ? 1 : 0, true);
 		} else {
 			throw buildNotImplementedException();
@@ -429,6 +435,8 @@ public abstract class OutputRunMode extends RunMode {
 				sendInputChecked(input);
 			}
 		} else if (Main.IS_LINUX) {
+			Objects.requireNonNull(mouseUinputDevice, "Field mouseUinputDevice must not be null");
+
 			final var eventCode = switch (button) {
 			case 1 -> Event.BTN_LEFT;
 			case 2 -> Event.BTN_RIGHT;
@@ -713,15 +721,6 @@ public abstract class OutputRunMode extends RunMode {
 			return false;
 		}
 
-		axisX = new DeviceValue();
-		axisY = new DeviceValue();
-		axisZ = new DeviceValue();
-		axisRX = new DeviceValue();
-		axisRY = new DeviceValue();
-		axisRZ = new DeviceValue();
-		axisS0 = new DeviceValue();
-		axisS1 = new DeviceValue();
-
 		setNumButtons(numButtons);
 
 		if (main.isPreventPowerSaveMode() && !SDLVideo.SDL_DisableScreenSaver()) {
@@ -768,6 +767,11 @@ public abstract class OutputRunMode extends RunMode {
 				toolkit.setLockingKeyState(virtualKeyCode, false);
 			}
 		} else if (Main.IS_LINUX) {
+			Objects.requireNonNull(brightnessByteBuffer, "Field brightnessByteBuffer must not be null");
+			Objects.requireNonNull(keyboardUinputDevice, "Field keyboardUinputDevice must not be null");
+			Objects.requireNonNull(lockKeyToBrightnessFileChannelMap,
+					"Field lockKeyToBrightnessFileChannelMap must not be null");
+
 			final var brightnessFileChannel = lockKeyToBrightnessFileChannelMap.get(lockKey);
 			if (brightnessFileChannel == null) {
 				throw new IllegalStateException("No brightness file channel for " + lockKey.sysfsLedName() + " LED");
@@ -794,7 +798,7 @@ public abstract class OutputRunMode extends RunMode {
 	void setNumButtons(final int numButtons) {
 		super.setNumButtons(numButtons);
 
-		if (buttons == null || buttons.length != numButtons) {
+		if (buttons.length != numButtons) {
 			buttons = new DeviceValue[numButtons];
 			for (var i = 0; i < buttons.length; i++) {
 				buttons[i] = new DeviceValue();
@@ -808,7 +812,15 @@ public abstract class OutputRunMode extends RunMode {
 	/// Only values that have changed since the last write operation are sent;
 	/// unchanged values are skipped. On Windows, a warning is shown if any vJoy
 	/// write operation fails.
+	@SuppressWarnings("NullAway")
 	final void writeOutput() {
+		if (Main.IS_LINUX) {
+			Objects.requireNonNull(joystickUinputDevice, "Field joystickUinputDevice must not be null");
+			Objects.requireNonNull(keyboardUinputDevice, "Field keyboardUinputDevice must not be null");
+			Objects.requireNonNull(mouseUinputDevice, "Field mouseUinputDevice must not be null");
+			Objects.requireNonNull(brightnessByteBuffer, "Field brightnessByteBuffer must not be null");
+		}
+
 		var writeSucessful = true;
 
 		try {

@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract editor builder for numeric properties.
 ///
@@ -40,6 +43,7 @@ import javax.swing.text.DefaultFormatter;
 /// [#getMinimum()], [#getMaximum()], and [#getStepSize()].
 ///
 /// @param <T> the numeric type of the property being edited
+@NullMarked
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	/// Number of decimal places to which float spinner values are rounded.
@@ -48,9 +52,11 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	private static final Logger logger = Logger.getLogger(NumberEditorBuilder.class.getName());
 
 	/// The spinner component used to display and edit the numeric value.
+	@Nullable
 	JSpinner spinner;
 
 	/// The text field component inside the spinner editor.
+	@Nullable
 	JFormattedTextField textField;
 
 	/// Constructs a [NumberEditorBuilder] for the specified action property.
@@ -76,6 +82,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
+		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
+
 		final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
 		spinner = createSpinner(model);
 
@@ -128,7 +136,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		private final NumberEditorBuilder<?> numberEditorBuilder;
 
 		/// Optional consumer notified with each new value after it is applied.
-		private Consumer<Object> valueConsumer;
+		private @Nullable Consumer<Object> valueConsumer;
 
 		/// Constructs [JSpinnerSetPropertyChangeListener] with the target action and
 		/// setter method.

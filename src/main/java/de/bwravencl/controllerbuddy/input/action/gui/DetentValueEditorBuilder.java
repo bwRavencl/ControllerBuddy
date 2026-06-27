@@ -21,11 +21,13 @@ import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for optional detent value properties, providing a spinner
 /// with a range of -1.0 to 1.0 and a checkbox to enable or disable the
@@ -34,6 +36,7 @@ import javax.swing.JPanel;
 /// When the checkbox is unchecked, the property is set to `null`, indicating
 /// no detent position. When checked, the spinner value is applied as the
 /// detent point on the axis.
+@NullMarked
 public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 	private static final Logger logger = Logger.getLogger(DetentValueEditorBuilder.class.getName());
@@ -61,6 +64,8 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 		}
 
 		super.buildEditor(parentPanel);
+		Objects.requireNonNull(spinner, "Field spinner must not be null");
+
 		spinner.setEnabled(enabled);
 
 		final var checkBox = new JCheckBox(new AbstractAction() {
@@ -70,6 +75,7 @@ public final class DetentValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
+				Objects.requireNonNull(spinner, "Field spinner must not be null");
 				final var selected = ((JCheckBox) e.getSource()).isSelected();
 
 				spinner.setEnabled(selected);

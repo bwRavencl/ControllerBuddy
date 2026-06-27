@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// Represents an input mapping profile that defines modes, button-to-mode
@@ -37,6 +39,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// A profile contains one or more [Mode] instances. The first mode is always
 /// the [default Mode][#defaultMode].
 /// Profiles are cloneable for use in the profile editor.
+@NullMarked
 public final class Profile implements Cloneable {
 
 	/// The default mode that is always present as the first mode in a profile.
@@ -52,8 +55,7 @@ public final class Profile implements Cloneable {
 	private static final boolean DEFAULT_SHOW_OVERLAY = true;
 
 	static {
-		defaultMode = new Mode(DEFAULT_MODE_UUID);
-		defaultMode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+		defaultMode = new Mode(DEFAULT_MODE_UUID, Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
 	}
 
 	/// Index of the currently active mode within [#modes].
@@ -72,7 +74,7 @@ public final class Profile implements Cloneable {
 	private boolean showOverlay = DEFAULT_SHOW_OVERLAY;
 
 	/// Version string of the serialized profile.
-	private String version;
+	private @Nullable String version;
 
 	/// Maps virtual axes to their overlay axis display configurations.
 	private Map<VirtualAxis, OverlayAxis> virtualAxisToOverlayAxisMap = new EnumMap<>(VirtualAxis.class);
@@ -155,7 +157,7 @@ public final class Profile implements Cloneable {
 	/// Returns the version string of this profile.
 	///
 	/// @return the version string
-	public String getVersion() {
+	public @Nullable String getVersion() {
 		return version;
 	}
 

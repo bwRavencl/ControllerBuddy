@@ -17,9 +17,12 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
+import org.jspecify.annotations.NullMarked;
+
 /// Marker interface for actions that receive axis (float) input values.
 ///
 /// Extends [IAction] with a `Float` value type, identifying actions that
 /// process continuous analog axis data from controller inputs.
+@NullMarked
 public interface IAxisToAction extends IAction<Float> {
 }

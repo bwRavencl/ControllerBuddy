@@ -19,11 +19,13 @@ package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Scancode;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class OnScreenKeyboardTest {
 
 	private static String invokeGetDefaultKeyDisplayName(final String name) throws ReflectiveOperationException {

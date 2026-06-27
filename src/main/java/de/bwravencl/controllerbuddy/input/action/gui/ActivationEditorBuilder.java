@@ -22,7 +22,9 @@ import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
+import java.util.Objects;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for action activation mode properties, presenting a combo box
 /// of [Activation] values.
@@ -30,6 +32,7 @@ import javax.swing.JPanel;
 /// When used inside a cycle editor, the activation is forced to
 /// [Activation#ON_PRESS] and the combo box is disabled to prevent incompatible
 /// configurations.
+@NullMarked
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
 	/// Whether [#buildEditor(JPanel)] has completed, used to guard
@@ -57,6 +60,7 @@ public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation
 		}
 
 		super.buildEditor(parentPanel);
+		Objects.requireNonNull(comboBox, "Field comboBox must not be null");
 
 		if (cycleEditor) {
 			comboBox.setEnabled(false);

@@ -24,6 +24,9 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
+import java.util.Objects;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Maps a physical axis to a virtual axis using relative movement.
 ///
@@ -31,6 +34,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuild
 /// setting an absolute position, with support for dead zones, exponent curves,
 /// detent values, and haptic feedback.
 @Action(icon = "🎚️", title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
+@NullMarked
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	/// Default haptic feedback enabled state.
@@ -44,7 +48,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	/// Optional snap-to value for the virtual axis; `null` disables detent.
 	@ActionProperty(icon = "⬹", title = "DETENT_VALUE_TITLE", description = "DETENT_VALUE_DESCRIPTION", editorBuilder = DetentValueEditorBuilder.class, order = 203)
-	private Float detentValue = null;
+	private @Nullable Float detentValue = null;
 
 	/// Whether haptic feedback is triggered on axis movement.
 	@ActionProperty(icon = "⌇", title = "HAPTIC_FEEDBACK_TITLE", description = "HAPTIC_FEEDBACK_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 204)
@@ -81,7 +85,8 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 		}
 
 		final var runMode = input.getRunMode();
-		final var oldValue = Input.normalize(input.getAxes().get(virtualAxis), runMode.getMinAxisValue(),
+		Objects.requireNonNull(runMode, "Variable runMode must not be null");
+		final var oldValue = Input.normalize(input.getAxes().getOrDefault(virtualAxis, 0), runMode.getMinAxisValue(),
 				runMode.getMaxAxisValue(), -1f, 1f);
 
 		final var newValue = Math.clamp(oldValue + (invert ? -d : d), minValue, maxValue);
@@ -93,7 +98,7 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	/// Returns the optional detent (snap) value for the virtual axis.
 	///
 	/// @return the detent value, or `null` if no detent is configured
-	public Float getDetentValue() {
+	public @Nullable Float getDetentValue() {
 		return detentValue;
 	}
 

@@ -235,6 +235,8 @@ import org.freedesktop.dbus.annotations.DBusProperty.Access;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.freedesktop.dbus.types.Variant;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLError;
 import org.lwjgl.sdl.SDLEvents;
 import org.lwjgl.sdl.SDLGUID;
@@ -263,6 +265,7 @@ import org.xml.sax.SAXException;
 /// (local, client, server).
 /// This class is a singleton; the static `main` field holds the active
 /// instance.
+@NullMarked
 public final class Main extends JFrame {
 
 	/// Default horizontal gap in pixels used for layout spacing.
@@ -639,7 +642,7 @@ public final class Main extends JFrame {
 	static boolean skipMessageDialogs;
 
 	/// The singleton [Main] instance.
-	private static Main main;
+	private @Nullable static Main main;
 
 	/// Whether the application has received a termination signal.
 	private static volatile boolean terminated;
@@ -812,104 +815,104 @@ public final class Main extends JFrame {
 	private final JPanel visualizationPanel;
 
 	/// Cached overlay scaling factor used to avoid repeated preference reads.
-	private Float cachedOverlayScaling;
+	private @Nullable Float cachedOverlayScaling;
 
 	/// Cached touchpad cursor sensitivity used to avoid repeated preference reads.
-	private Float cachedTouchpadCursorSensitivity;
+	private @Nullable Float cachedTouchpadCursorSensitivity;
 
 	/// Cached touchpad scroll sensitivity used to avoid repeated preference reads.
-	private Float cachedTouchpadScrollSensitivity;
+	private @Nullable Float cachedTouchpadScrollSensitivity;
 
 	/// Action currently held on the internal clipboard for paste operations.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private IAction<?> clipboardAction;
+	private @Nullable IAction<?> clipboardAction;
 
 	/// The currently open profile file, or `null` if none is open.
-	private File currentFile;
+	private @Nullable File currentFile;
 
 	/// Overlay label showing the name of the currently active mode.
-	private JLabel currentModeLabel;
+	private @Nullable JLabel currentModeLabel;
 
 	/// Inner border providing padding inside the current mode label.
-	private EmptyBorder currentModeLabelInnerBorder;
+	private @Nullable EmptyBorder currentModeLabelInnerBorder;
 
 	/// Outer border providing a colored outline around the current mode label.
-	private LineBorder currentModeLabelOuterBorder;
+	private @Nullable LineBorder currentModeLabelOuterBorder;
 
 	/// Panel wrapping the current mode label in the overlay.
-	private JPanel currentModePanel;
+	private @Nullable JPanel currentModePanel;
 
 	/// DOM document builder used to parse and clone SVG documents.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private DocumentBuilder documentBuilder;
+	private @Nullable DocumentBuilder documentBuilder;
 
 	/// Whether a system tray is available on the current platform.
 	private boolean hasSystemTray = SystemTray.isSupported();
 
 	/// Horizontal panel holding axis indicator bars in the overlay.
-	private JPanel horizontalIndicatorPanel;
+	private @Nullable JPanel horizontalIndicatorPanel;
 
 	/// The active input handler, driving controller polling and action dispatch.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Input input;
+	private @Nullable Input input;
 
 	/// The run mode type that was active during the previous cycle.
 	private RunModeType lastRunModeType = RunModeType.NONE;
 
 	/// Display name of the currently loaded profile, or `null` if none is loaded.
-	private String loadedProfile = null;
+	private @Nullable String loadedProfile = null;
 
 	/// The currently active FlatLaf look-and-feel instance.
 	private FlatLaf lookAndFeel;
 
 	/// Combo box for selecting the active mode within the current profile.
-	private JComboBox<Mode> modeComboBox;
+	private @Nullable JComboBox<Mode> modeComboBox;
 
 	/// Executor that schedules periodic overlay position update tasks.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private ScheduledExecutorService overlayExecutorService;
+	private @Nullable ScheduledExecutorService overlayExecutorService;
 
 	/// The floating overlay window shown during an active run mode.
-	private volatile JFrame overlayFrame;
+	private @Nullable JFrame overlayFrame;
 
 	/// Drag listener that allows the overlay window to be repositioned.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private FrameDragListener overlayFrameDragListener;
+	private @Nullable FrameDragListener overlayFrameDragListener;
 
 	/// X coordinate of the first touch finger from the previous SDL event.
-	private Float prevFinger0X;
+	private @Nullable Float prevFinger0X;
 
 	/// Y coordinate of the first touch finger from the previous SDL event.
-	private Float prevFinger0Y;
+	private @Nullable Float prevFinger0Y;
 
 	/// Y coordinate of the second touch finger from the previous SDL event.
-	private Float prevFinger1Y;
+	private @Nullable Float prevFinger1Y;
 
 	/// Total display bounds rectangle recorded during the previous overlay update.
-	private Rectangle prevTotalDisplayBounds;
+	private @Nullable Rectangle prevTotalDisplayBounds;
 
 	/// The currently active run mode, or `null` when stopped.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private volatile RunMode runMode;
+	private @Nullable volatile RunMode runMode;
 
 	/// Whether an on-screen keyboard mode switch has been scheduled.
 	private volatile boolean scheduleOnScreenKeyboardModeSwitch;
 
 	/// The controller currently selected for input, or `null` if none.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private volatile Controller selectedController;
+	private @Nullable volatile Controller selectedController;
 
 	/// SDL tray entry handle for the show/hide window action.
 	private volatile long showTrayEntry;
 
 	/// Menu item that triggers starting the client run mode.
-	private JMenuItem startClientMenuItem;
+	private @Nullable JMenuItem startClientMenuItem;
 
 	/// SDL tray entry handle for the start-client action.
 	private long startClientTrayEntry;
 
 	/// Menu item that triggers starting the local run mode.
-	private JMenuItem startLocalMenuItem;
+	private @Nullable JMenuItem startLocalMenuItem;
 
 	/// SDL tray entry handle for the start-local action.
 	private long startLocalTrayEntry;
@@ -921,17 +924,17 @@ public final class Main extends JFrame {
 	private long stopTrayEntry;
 
 	/// SVG panel component rendering the controller visualization.
-	private SVGPanel svgPanel;
+	private @Nullable SVGPanel svgPanel;
 
 	/// Parsed DOM document of the template controller SVG resource.
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
-	private Document templateSvgDocument;
+	private @Nullable Document templateSvgDocument;
 
 	/// ViewBox rectangle extracted from the template SVG document.
-	private Rectangle templateSvgDocumentViewBox;
+	private @Nullable Rectangle templateSvgDocumentViewBox;
 
 	/// Combined bounding rectangle of all connected displays.
-	private volatile Rectangle totalDisplayBounds;
+	private @Nullable Rectangle totalDisplayBounds;
 
 	/// SDL system tray handle, or `0` if the tray is not available.
 	private volatile long tray;
@@ -943,7 +946,7 @@ public final class Main extends JFrame {
 	private volatile boolean unsavedChanges = false;
 
 	/// Label displaying the currently configured vJoy installation directory.
-	private JLabel vJoyDirectoryLabel;
+	private @Nullable JLabel vJoyDirectoryLabel;
 
 	/// Constructs the [Main] application window and initializes all subsystems.
 	///
@@ -1630,24 +1633,31 @@ public final class Main extends JFrame {
 									"/org/gnome/Shell/Extensions", Extensions.class);
 
 							final var gnomeShellVersion = extensions.getShellVersion();
-							if (gnomeShellVersion != null) {
-								final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
-								if (matcher.matches()) {
-									final var majorVersion = Integer.parseInt(matcher.group(1));
-									final var minorVersion = Integer.parseInt(matcher.group(2));
+							final var matcher = Pattern.compile("(\\d+)\\.(\\d+).*").matcher(gnomeShellVersion);
+							if (matcher.matches()) {
+								final var majorVersion = Integer.parseInt(matcher.group(1));
+								final var minorVersion = Integer.parseInt(matcher.group(2));
 
-									if ((majorVersion == 3 && minorVersion <= 25)) {
-										hasSystemTray = true;
-									} else if (majorVersion >= 45) {
-										final var gnomeSystemTrayExtensions = Set.of(
-												"appindicatorsupport@rgcjonas.gmail.com",
-												"status-icons@gnome-shell-extensions.gcampax.github.com",
-												"ubuntu-appindicators@ubuntu.com");
+								if ((majorVersion == 3 && minorVersion <= 25)) {
+									hasSystemTray = true;
+								} else if (majorVersion >= 45) {
+									final var gnomeSystemTrayExtensions = Set.of(
+											"appindicatorsupport@rgcjonas.gmail.com",
+											"status-icons@gnome-shell-extensions.gcampax.github.com",
+											"ubuntu-appindicators@ubuntu.com");
 
-										hasSystemTray = extensions.ListExtensions().entrySet().stream()
-												.anyMatch(e -> gnomeSystemTrayExtensions.contains(e.getKey())
-														&& Boolean.TRUE.equals(e.getValue().get("enabled").getValue()));
-									}
+									hasSystemTray = extensions.ListExtensions().entrySet().stream().anyMatch(e -> {
+										if (!gnomeSystemTrayExtensions.contains(e.getKey())) {
+											return false;
+										}
+
+										final var enabled = e.getValue().get("enabled");
+										if (enabled == null) {
+											return false;
+										}
+
+										return Boolean.TRUE.equals(enabled.getValue());
+									});
 								}
 							}
 						}
@@ -1831,9 +1841,7 @@ public final class Main extends JFrame {
 			sb.append(")");
 		}
 
-		if (controller.guid != null) {
-			sb.append(" [").append(controller.guid).append("]");
-		}
+		sb.append(" [").append(controller.guid).append("]");
 
 		return sb.toString();
 	}
@@ -2032,7 +2040,7 @@ public final class Main extends JFrame {
 	///
 	/// @param host the hostname or IP address string to validate
 	/// @return `true` if the host is non-null and non-blank, `false` otherwise
-	private static boolean isValidHost(final String host) {
+	private static boolean isValidHost(final @Nullable String host) {
 		return host != null && !host.isBlank();
 	}
 
@@ -2043,7 +2051,7 @@ public final class Main extends JFrame {
 	///
 	/// @param password the password string to validate
 	/// @return `true` if the password meets all requirements, `false` otherwise
-	private static boolean isValidPassword(final String password) {
+	private static boolean isValidPassword(final @Nullable String password) {
 		if (password == null) {
 			return false;
 		}
@@ -2056,7 +2064,7 @@ public final class Main extends JFrame {
 	///
 	/// @param message the contextual message to log alongside the SDL error
 	/// @return the SDL error detail string, or `null` if unavailable
-	public static String logSdlError(final String message) {
+	public static @Nullable String logSdlError(final String message) {
 		final var errorDetails = SDLError.SDL_GetError();
 		logger.warning(message + (errorDetails != null && !errorDetails.isBlank() ? ": " + errorDetails : ""));
 
@@ -2078,42 +2086,42 @@ public final class Main extends JFrame {
 
 			Thread.setDefaultUncaughtExceptionHandler(null);
 
-			if (!GraphicsEnvironment.isHeadless() && main != null) {
-				GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-					final var stringWriter = new StringWriter();
-					e.printStackTrace(new PrintWriter(stringWriter));
-
-					final var panel = new JPanel();
-					panel.setLayout(new BorderLayout(5, 5));
-					panel.add(new JLabel(MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
-							Constants.APPLICATION_NAME)), BorderLayout.NORTH);
-					final var textArea = new JTextArea(stringWriter.toString());
-					textArea.setEditable(false);
-					final var scrollPane = new JScrollPane(textArea);
-					scrollPane.setPreferredSize(new Dimension(600, 400));
-					panel.add(scrollPane, BorderLayout.CENTER);
-					GuiUtils.showMessageDialog(main, main, panel, strings.getString("ERROR_DIALOG_TITLE"),
-							JOptionPane.ERROR_MESSAGE);
-
-					if (main.unsavedChanges) {
-						try {
-							final var filename = main.currentFile != null ? main.currentFile.getName()
-									: "unnamed_profile";
-							final var file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
-
-							if (!file.exists()) {
-								main.saveProfile(file, false);
-							}
-						} catch (final Throwable t) {
-							logger.log(Level.SEVERE, t.getMessage(), t);
-						}
-					}
-
-					terminate(1, main);
-				});
-			} else {
+			if (GraphicsEnvironment.isHeadless() || main == null) {
 				terminate(1, main);
+				return;
 			}
+
+			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
+				final var stringWriter = new StringWriter();
+				e.printStackTrace(new PrintWriter(stringWriter));
+
+				final var panel = new JPanel();
+				panel.setLayout(new BorderLayout(5, 5));
+				panel.add(new JLabel(MessageFormat.format(strings.getString("UNCAUGHT_EXCEPTION_DIALOG_TEXT"),
+						Constants.APPLICATION_NAME)), BorderLayout.NORTH);
+				final var textArea = new JTextArea(stringWriter.toString());
+				textArea.setEditable(false);
+				final var scrollPane = new JScrollPane(textArea);
+				scrollPane.setPreferredSize(new Dimension(600, 400));
+				panel.add(scrollPane, BorderLayout.CENTER);
+				GuiUtils.showMessageDialog(main, main, panel, strings.getString("ERROR_DIALOG_TITLE"),
+						JOptionPane.ERROR_MESSAGE);
+
+				if (main != null && main.unsavedChanges) {
+					try {
+						final var filename = main.currentFile != null ? main.currentFile.getName() : "unnamed_profile";
+						final var file = new File(System.getProperty("java.io.tmpdir") + File.separator + filename);
+
+						if (!file.exists()) {
+							main.saveProfile(file, false);
+						}
+					} catch (final Throwable t) {
+						logger.log(Level.SEVERE, t.getMessage(), t);
+					}
+				}
+
+				terminate(1, main);
+			});
 		});
 
 		try {
@@ -2235,7 +2243,7 @@ public final class Main extends JFrame {
 	/// @param parentComponent the parent component for any fallback dialog, may be
 	/// `null`
 	/// @param uri the URI to open
-	private static void openBrowser(final Component parentComponent, final URI uri) {
+	private static void openBrowser(final @Nullable Component parentComponent, final URI uri) {
 		if (Desktop.isDesktopSupported()) {
 			final var desktop = Desktop.getDesktop();
 
@@ -2264,7 +2272,7 @@ public final class Main extends JFrame {
 	/// @param parentComponent the parent component for any fallback dialog may be
 	/// `null`
 	/// @param path the path component of the URL to open (e.g. `"/donate"`)
-	private static void openWebsite(final Component parentComponent, final String path) {
+	private static void openWebsite(final @Nullable Component parentComponent, final @Nullable String path) {
 		try {
 			openBrowser(parentComponent, new URI("https", "controllerbuddy.org", path, null));
 		} catch (final URISyntaxException e) {
@@ -2297,7 +2305,7 @@ public final class Main extends JFrame {
 	///
 	/// @param parentComponent the parent component for the dialog, may be `null`
 	/// @param uri the URI to display in the dialog message
-	private static void showPleaseVisitDialog(final Component parentComponent, final URI uri) {
+	private static void showPleaseVisitDialog(final @Nullable Component parentComponent, final URI uri) {
 		JOptionPane.showMessageDialog(parentComponent,
 				MessageFormat.format(strings.getString("PLEASE_VISIT_DIALOG_TEXT"), uri),
 				strings.getString("INFORMATION_DIALOG_TITLE"), JOptionPane.INFORMATION_MESSAGE);
@@ -2312,7 +2320,8 @@ public final class Main extends JFrame {
 	///
 	/// @param status the exit status code to pass to `System.exit`
 	/// @param main the [Main] instance to shut down, or `null` if none was created
-	private static void terminate(final int status, final Main main) {
+	private static void terminate(final int status, final @Nullable Main main) {
+		// noinspection ConstantValue
 		if (main != null && main.mainLoop != null) {
 			if (main.trayMenu != 0L && main.mainLoop.isAvailable()) {
 				try {
@@ -2347,6 +2356,8 @@ public final class Main extends JFrame {
 	/// relative to its text anchor
 	private int addTSpanElement(final List<? extends IAction<?>> actions, final Node parentNode,
 			final Set<String> usedSymbols) {
+		Objects.requireNonNull(input, "Field input must not be null");
+
 		return addTSpanElement(actions.stream().map(action -> {
 			var description = action.getDescription(input);
 
@@ -2457,12 +2468,18 @@ public final class Main extends JFrame {
 	/// @return the label width in pixels, including inner border insets and outer
 	/// border thickness, capped at the scaled maximum
 	private int calculateCurrentModeLabelWidth(final Mode mode) {
+		Objects.requireNonNull(currentModeLabel, "Field currentModeLabel must not be null");
+		Objects.requireNonNull(currentModeLabelInnerBorder, "Field currentModeLabelInnerBorder must not be null");
+		Objects.requireNonNull(currentModeLabelOuterBorder, "Field currentModeLabelOuterBorder must not be null");
+
 		final var fontMetrics = currentModeLabel.getFontMetrics(currentModeLabel.getFont());
 		final var overlayScaling = getOverlayScaling();
 		final var innerBorderInsets = currentModeLabelInnerBorder.getBorderInsets();
 
+		final var description = mode.getDescription();
+		final var stringWidth = description != null ? fontMetrics.stringWidth(description) : 0;
 		return Math.min(
-				(fontMetrics.stringWidth(mode.getDescription()) + innerBorderInsets.left + innerBorderInsets.right
+				(stringWidth + innerBorderInsets.left + innerBorderInsets.right
 						+ currentModeLabelOuterBorder.getThickness() * 2),
 				Math.round(OVERLAY_MODE_LABEL_MAX_WIDTH * overlayScaling));
 	}
@@ -2511,7 +2528,7 @@ public final class Main extends JFrame {
 	/// @param callable the task to execute
 	/// @param <T> the return type of the callable
 	/// @return the result of the callable
-	public <T> T executeWhileVisible(final Callable<T> callable) {
+	public <T> @Nullable T executeWhileVisible(final Callable<@Nullable T> callable) {
 		final var wasInvisible = !isVisible();
 		final var wasIconified = getState() == ICONIFIED;
 
@@ -2553,9 +2570,11 @@ public final class Main extends JFrame {
 	/// @param file the destination file; an `.html` extension is appended if
 	/// missing
 	public void exportVisualization(File file) {
+		Objects.requireNonNull(input, "Field input must not be null");
+
 		initTemplateSvgDocument();
-		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
+		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
 
 		final var filename = file.getName().toLowerCase(Locale.ROOT);
 		final var missingExtension = Arrays.stream(HTML_FILE_EXTENSIONS)
@@ -2696,7 +2715,9 @@ public final class Main extends JFrame {
 	private Document generateSvgDocument(final Mode mode, final boolean export, final Set<String> usedSymbols) {
 		initTemplateSvgDocument();
 		Objects.requireNonNull(documentBuilder, "Field documentBuilder must not be null");
+		Objects.requireNonNull(input, "Field input must not be null");
 		Objects.requireNonNull(templateSvgDocument, "Field templateSvgDocument must not be null");
+		Objects.requireNonNull(templateSvgDocumentViewBox, "Field templateSvgDocumentViewBox must not be null");
 
 		final var darkTheme = !export && isDarkLookAndFeel();
 
@@ -2731,7 +2752,7 @@ public final class Main extends JFrame {
 				swapped = swapLeftAndRightSticks;
 				yield swapLeftAndRightSticks ? SVG_ID_LEFT_Y : SVG_ID_RIGHT_Y;
 			}
-			default -> null;
+			default -> throw new UnsupportedOperationException("Unsupported axis: " + axis);
 			};
 
 			final var actions = mode.getAxisToActionsMap().get(axis);
@@ -2771,7 +2792,7 @@ public final class Main extends JFrame {
 			case SDLGamepad.SDL_GAMEPAD_BUTTON_START -> SVG_ID_START;
 			case SDLGamepad.SDL_GAMEPAD_BUTTON_WEST -> SVG_ID_X;
 			case SDLGamepad.SDL_GAMEPAD_BUTTON_NORTH -> SVG_ID_Y;
-			default -> null;
+			default -> throw new UnsupportedOperationException("Unsupported button: " + button);
 			};
 
 			final var combinedActions = new ArrayList<IAction<Boolean>>();
@@ -2828,6 +2849,7 @@ public final class Main extends JFrame {
 	/// Returns the currently copied action on the internal clipboard.
 	///
 	/// @return the action on the clipboard, or `null` if the clipboard is empty
+	@Nullable
 	IAction<?> getClipboardAction() {
 		return clipboardAction;
 	}
@@ -2870,7 +2892,8 @@ public final class Main extends JFrame {
 	/// Returns the current input handler.
 	///
 	/// @return the current input handler
-	Input getInput() {
+	@SuppressWarnings("exports")
+	public @Nullable Input getInput() {
 		return input;
 	}
 
@@ -3074,18 +3097,20 @@ public final class Main extends JFrame {
 	/// Handles a pending on-screen keyboard mode switch by activating the
 	/// corresponding `ButtonToModeAction` if a switch was previously scheduled.
 	public void handleOnScreenKeyboardModeChange() {
-		if (scheduleOnScreenKeyboardModeSwitch) {
-			for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
-				for (final var buttonToModeAction : buttonToModeActions) {
-					if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
-						buttonToModeAction.doAction(input, -1, true);
-						break;
-					}
+		if (!scheduleOnScreenKeyboardModeSwitch || input == null) {
+			return;
+		}
+
+		for (final var buttonToModeActions : input.getProfile().getButtonToModeActionsMap().values()) {
+			for (final var buttonToModeAction : buttonToModeActions) {
+				if (OnScreenKeyboard.onScreenKeyboardMode.equals(buttonToModeAction.getMode(input))) {
+					buttonToModeAction.doAction(input, -1, true);
+					break;
 				}
 			}
-
-			scheduleOnScreenKeyboardModeSwitch = false;
 		}
+
+		scheduleOnScreenKeyboardModeSwitch = false;
 	}
 
 	/// Processes the remaining command-line options after profile loading.
@@ -3204,6 +3229,8 @@ public final class Main extends JFrame {
 	/// overlay disabled or if neither multiple modes nor overlay axes are
 	/// configured.
 	private void initOverlay() {
+		Objects.requireNonNull(input, "Field input must not be null");
+
 		final var profile = input.getProfile();
 		if (!profile.isShowOverlay()) {
 			return;
@@ -3480,6 +3507,7 @@ public final class Main extends JFrame {
 	///
 	/// @return `true` if the look and feel is dark
 	boolean isDarkLookAndFeel() {
+		// noinspection ConstantValue
 		return lookAndFeel != null && lookAndFeel.isDark();
 	}
 
@@ -3510,6 +3538,8 @@ public final class Main extends JFrame {
 	/// @param totalDisplayBounds the total display bounds to test against
 	/// @return `true` if the overlay center is in the lower half
 	boolean isOverlayInLowerHalf(final Rectangle totalDisplayBounds) {
+		Objects.requireNonNull(overlayFrame, "Field overlayFrame must not be null");
+
 		return overlayFrame.getY() + overlayFrame.getHeight() / 2 < totalDisplayBounds.height / 2;
 	}
 
@@ -3534,6 +3564,7 @@ public final class Main extends JFrame {
 	/// @param instanceId the SDL instance ID of the controller to check
 	/// @return `true` if the specified controller is currently selected
 	private boolean isSelectedController(final int instanceId) {
+		final var selectedController = this.selectedController;
 		return selectedController != null && selectedController.instanceId == instanceId;
 	}
 
@@ -3601,7 +3632,9 @@ public final class Main extends JFrame {
 	/// @param initialLaunch `true` if this load is part of the initial
 	/// application startup
 	private void loadProfile(final File file, final boolean skipMessageDialogs, final boolean performGarbageCollection,
-			final CommandLine commandLine, final boolean initialLaunch) {
+			final @Nullable CommandLine commandLine, final boolean initialLaunch) {
+		Objects.requireNonNull(input, "Field input must not be null");
+
 		final var wasRunning = isRunning();
 		stopAll(true, false, performGarbageCollection);
 
@@ -3990,12 +4023,8 @@ public final class Main extends JFrame {
 		if (startClientMenuItem != null) {
 			startClientMenuItem.setEnabled(!running);
 		}
-		if (startServerMenuItem != null) {
-			startServerMenuItem.setEnabled(!running);
-		}
-		if (stopMenuItem != null) {
-			stopMenuItem.setEnabled(running);
-		}
+		startServerMenuItem.setEnabled(!running);
+		stopMenuItem.setEnabled(running);
 
 		mainLoop.runSync(this::updateTrayEntriesEnabled);
 
@@ -4019,7 +4048,7 @@ public final class Main extends JFrame {
 					if (controllers.add(controller)) {
 						logger.info(assembleControllerLoggingMessage("Connected controller ", controller));
 
-						if (input.isInitialized()) {
+						if (input != null && input.isInitialized()) {
 							input.openController(controller);
 						}
 
@@ -4034,9 +4063,12 @@ public final class Main extends JFrame {
 								controllers.remove(controller);
 								logger.info(assembleControllerLoggingMessage("Disconnected controller ", controller));
 
+								final var selectedController = this.selectedController;
 								if (selectedController != null && selectedController.instanceId == instanceId) {
-									selectedController = null;
-									input.deInit();
+									this.selectedController = null;
+									if (input != null) {
+										input.deInit();
+									}
 								}
 
 								EventQueue.invokeLater(() -> onControllersChanged(false));
@@ -4227,6 +4259,8 @@ public final class Main extends JFrame {
 	/// @param saveAsLastProfile `true` to persist the file path as the last used
 	/// profile in preferences
 	private void saveProfile(File file, final boolean saveAsLastProfile) {
+		Objects.requireNonNull(input, "Field input must not be null");
+
 		if (!file.getName().toLowerCase(Locale.ROOT).endsWith(PROFILE_FILE_SUFFIX)) {
 			file = new File(file.getAbsoluteFile() + PROFILE_FILE_SUFFIX);
 			profileFileChooser.setSelectedFile(file);
@@ -4315,7 +4349,7 @@ public final class Main extends JFrame {
 	@SuppressWarnings("exports")
 	public void setOverlayMode(final Mode mode) {
 		GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> {
-			if (currentModePanel == null || currentModeLabel == null) {
+			if (overlayFrame == null || currentModePanel == null || currentModeLabel == null) {
 				return;
 			}
 
@@ -4336,7 +4370,7 @@ public final class Main extends JFrame {
 	/// used controller GUID, and logs the selection.
 	///
 	/// @param controller the controller to select, or `null` to deselect
-	private void setSelectedController(final Controller controller) {
+	private void setSelectedController(final @Nullable Controller controller) {
 		if (Objects.equals(selectedController, controller)) {
 			return;
 		}
@@ -4345,10 +4379,7 @@ public final class Main extends JFrame {
 
 		if (controller != null) {
 			logger.info(assembleControllerLoggingMessage("Selected controller ", controller));
-
-			if (controller.guid != null) {
-				preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
-			}
+			preferences.put(PREFERENCES_LAST_CONTROLLER, controller.guid);
 		}
 	}
 
@@ -4357,8 +4388,8 @@ public final class Main extends JFrame {
 	///
 	/// @param controller the controller to select, or `null` to deselect
 	/// @param axes the axis values to restore, or `null` to use defaults
-	public void setSelectedControllerAndUpdateInput(final Controller controller,
-			@SuppressWarnings("exports") final Map<VirtualAxis, Integer> axes) {
+	public void setSelectedControllerAndUpdateInput(final @Nullable Controller controller,
+			@SuppressWarnings("exports") final @Nullable Map<VirtualAxis, Integer> axes) {
 		stopAll(true, false, true);
 
 		setSelectedController(controller);
@@ -4468,11 +4499,11 @@ public final class Main extends JFrame {
 	private void startClient() {
 		lastRunModeType = RunModeType.CLIENT;
 
-		if (isRunning()) {
+		if (isRunning() || input == null) {
 			return;
 		}
 
-		final var clientRunMode = new ClientRunMode(this, input);
+		final var clientRunMode = new ClientRunMode(this);
 		runMode = clientRunMode;
 		mainLoop.runAsync(clientRunMode);
 
@@ -4484,11 +4515,11 @@ public final class Main extends JFrame {
 	private void startLocal() {
 		lastRunModeType = RunModeType.LOCAL;
 
-		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
+		if (selectedController == null || input == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
-		final var localRunMode = new LocalRunMode(this, input);
+		final var localRunMode = new LocalRunMode(this);
 		runMode = localRunMode;
 		mainLoop.runAsync(localRunMode);
 
@@ -4514,11 +4545,11 @@ public final class Main extends JFrame {
 	private void startServer() {
 		lastRunModeType = RunModeType.SERVER;
 
-		if (selectedController == null || input.getSelectedController() == null || isRunning()) {
+		if (selectedController == null || input == null || input.getSelectedController() == null || isRunning()) {
 			return;
 		}
 
-		final var serverThread = new ServerRunMode(this, input);
+		final var serverThread = new ServerRunMode(this);
 		runMode = serverThread;
 		mainLoop.runAsync(serverThread);
 
@@ -4558,7 +4589,10 @@ public final class Main extends JFrame {
 		final var running = isClientRunning();
 
 		if (initiateStop && running) {
-			runMode.requestStop();
+			final var runMode = this.runMode;
+			if (runMode != null) {
+				runMode.requestStop();
+			}
 		}
 
 		if (running) {
@@ -4583,7 +4617,10 @@ public final class Main extends JFrame {
 		final var running = isLocalRunning();
 
 		if (initiateStop && running) {
-			runMode.requestStop();
+			final var runMode = this.runMode;
+			if (runMode != null) {
+				runMode.requestStop();
+			}
 		}
 
 		if (running) {
@@ -4630,7 +4667,9 @@ public final class Main extends JFrame {
 	/// @param initiateStop whether to call `requestStop()` on the active run mode
 	/// @param resetLastRunModeType whether to reset the last run mode type to
 	/// `NONE`
+	@SuppressWarnings("NullAway")
 	private void stopServer(final boolean initiateStop, final boolean resetLastRunModeType) {
+		final var runMode = this.runMode;
 		final var running = runMode instanceof ServerRunMode;
 
 		if (initiateStop && running) {
@@ -4660,6 +4699,7 @@ public final class Main extends JFrame {
 	/// Updates the device menu radio button selection to match the currently
 	/// selected controller.
 	public void updateDeviceMenuSelection() {
+		final var selectedController = this.selectedController;
 		if (selectedController == null) {
 			return;
 		}
@@ -4682,7 +4722,7 @@ public final class Main extends JFrame {
 	/// log messages
 	/// @return an SDL error string if the mappings could not be loaded, or `null`
 	/// on success
-	private String updateGameControllerMappings(final String path, final String sourceName) {
+	private @Nullable String updateGameControllerMappings(final String path, final String sourceName) {
 		return mainLoop.runSync(() -> {
 			final var numMappingsAdded = SDLGamepad.SDL_AddGamepadMappingsFromFile(path);
 
@@ -4844,6 +4884,8 @@ public final class Main extends JFrame {
 	/// @param totalDisplayBounds the bounding rectangle covering all connected
 	/// displays
 	private void updateOverlayAlignment(final Rectangle totalDisplayBounds) {
+		Objects.requireNonNull(overlayFrame, "Field overlayFrame must not be null");
+
 		final String horizontalIndicatorPanelConstraint;
 		final String currentModePanelConstraint;
 
@@ -4874,41 +4916,42 @@ public final class Main extends JFrame {
 	/// @param forceRepaint if `true`, all indicators are repainted regardless of
 	/// value changes
 	public void updateOverlayAxisIndicators(final boolean forceRepaint) {
-		if (runMode == null || (!isLocalRunning() && !isServerRunning())) {
+		final var runMode = this.runMode;
+		if (input == null || runMode == null || (!isLocalRunning() && !isServerRunning())) {
 			return;
 		}
 
-		EnumSet.allOf(VirtualAxis.class).stream().filter(virtualAxisToProgressBarMap::containsKey)
-				.forEach(virtualAxis -> {
-					final var progressBar = virtualAxisToProgressBarMap.get(virtualAxis);
-					var repaint = forceRepaint;
+		virtualAxisToProgressBarMap.forEach((virtualAxis, progressBar) -> {
+			var repaint = forceRepaint;
 
-					final var minAxisValue = runMode.getMinAxisValue();
-					final var maxAxisValue = runMode.getMaxAxisValue();
-					final var negativeMinAxisValue = minAxisValue < 0;
+			final var minAxisValue = runMode.getMinAxisValue();
+			final var maxAxisValue = runMode.getMaxAxisValue();
+			final var negativeMinAxisValue = minAxisValue < 0;
 
-					final var minimum = negativeMinAxisValue ? minAxisValue : -maxAxisValue;
-					final var maximum = negativeMinAxisValue ? maxAxisValue : minAxisValue;
+			final var minimum = negativeMinAxisValue ? minAxisValue : -maxAxisValue;
+			final var maximum = negativeMinAxisValue ? maxAxisValue : minAxisValue;
 
-					final var newMaximum = maximum - minimum;
-					if (progressBar.getMaximum() != newMaximum) {
-						progressBar.setMaximum(newMaximum);
-						repaint = true;
-					}
+			final var newMaximum = maximum - minimum;
+			if (progressBar.getMaximum() != newMaximum) {
+				progressBar.setMaximum(newMaximum);
+				repaint = true;
+			}
 
-					final var newValue = -input.getAxes().get(virtualAxis) - minimum - (negativeMinAxisValue ? 1 : 0);
-					if (progressBar.getValue() != newValue) {
-						progressBar.setValue(newValue);
-						repaint = true;
-					}
+			final var newValue = -input.getAxes().getOrDefault(virtualAxis, 0) - minimum
+					- (negativeMinAxisValue ? 1 : 0);
+			if (progressBar.getValue() != newValue) {
+				progressBar.setValue(newValue);
+				repaint = true;
+			}
 
-					if (repaint) {
-						progressBar.repaint();
-					}
-				});
+			if (repaint) {
+				progressBar.repaint();
+			}
+		});
 	}
 
 	/// Rebuilds the overlay indicators panel from the current profile settings.
+	@SuppressWarnings("NullAway")
 	void updateOverlayPanel() {
 		if (indicatorsListPanel == null) {
 			return;
@@ -5104,9 +5147,7 @@ public final class Main extends JFrame {
 		GuiUtils.setEnabledRecursive(modesListPanel, !running);
 		GuiUtils.setEnabledRecursive(newModePanel, !running);
 
-		if (assignmentsScrollPane != null) {
-			assignmentsScrollPane.setEnabled(!running);
-		}
+		assignmentsScrollPane.setEnabled(!running);
 
 		if (running || (input != null && !input.getProfile().isShowOverlay())) {
 			GuiUtils.setEnabledRecursive(indicatorsListPanel, false);
@@ -5161,7 +5202,7 @@ public final class Main extends JFrame {
 		GuiUtils.makeMillisecondSpinner(keyRepeatIntervalSpinner);
 		keyRepeatIntervalSpinner.addChangeListener(event -> {
 			final var keyRepeatInterval = (long) ((JSpinner) event.getSource()).getValue();
-			input.getProfile().setKeyRepeatInterval(keyRepeatInterval);
+			profile.setKeyRepeatInterval(keyRepeatInterval);
 			setUnsavedChanges(true);
 		});
 		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
@@ -5226,8 +5267,9 @@ public final class Main extends JFrame {
 	/// @param usedSymbols set that is populated with every symbol string added
 	/// to the SVG text
 	/// @return the total extension width contributed by the rendered text
+	@SuppressWarnings("NullAway")
 	private int updateSvgElements(final Document svgDocument, final String idPrefix,
-			final List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
+			final @Nullable List<? extends IAction<?>> actions, final boolean darkTheme, final boolean swapped,
 			final Set<String> usedSymbols) {
 		final var groupElement = getDocumentElementById(svgDocument, idPrefix + "Group")
 				.orElseThrow(() -> new IllegalArgumentException(
@@ -5504,7 +5546,12 @@ public final class Main extends JFrame {
 				@SuppressWarnings("unchecked")
 				@Override
 				public void actionPerformed(final ActionEvent e) {
-					final var selectedMode = (Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem();
+					Objects.requireNonNull(svgPanel, "Field svgPanel must not be null");
+
+					final var selectedMode = Objects.requireNonNull(
+							(Mode) ((JComboBox<Mode>) e.getSource()).getSelectedItem(),
+							"Variable selectedMode must not be null");
+
 					final var usedSymbols = new HashSet<String>();
 
 					final var document = generateSvgDocument(selectedMode, false, usedSymbols);
@@ -5675,7 +5722,7 @@ public final class Main extends JFrame {
 	/// @param instanceId the SDL instance ID of the controller
 	/// @param name the human-readable name of the controller
 	/// @param guid the globally unique ID string for the controller
-	public record Controller(int instanceId, String name, String guid) {
+	public record Controller(int instanceId, @Nullable String name, String guid) {
 
 		/// Constructs a [Controller] by resolving the name and GUID from the given SDL
 		/// instance ID.
@@ -5752,7 +5799,7 @@ public final class Main extends JFrame {
 		///
 		/// @param profileFile the currently open profile file, or `null` if no
 		/// profile is loaded
-		private HtmlFileChooser(final File profileFile) {
+		private HtmlFileChooser(final @Nullable File profileFile) {
 			super(new FileNameExtensionFilter(strings.getString("HTML_FILE_DESCRIPTION"), HTML_FILE_EXTENSIONS));
 
 			String filename;
@@ -5851,7 +5898,8 @@ public final class Main extends JFrame {
 		}
 
 		@Override
-		public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
+		public void insertString(final int offs, final @Nullable String str, final AttributeSet a)
+				throws BadLocationException {
 			if (str == null) {
 				return;
 			}
@@ -5927,6 +5975,8 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(vJoyDirectoryLabel, "Field vJoyDirectoryLabel must not be null");
+
 			final var vJoyDirectoryFileChooser = new LargeFileChooser(getVJoyDirectory());
 			vJoyDirectoryFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -6045,7 +6095,7 @@ public final class Main extends JFrame {
 		private final JSpinner timeoutSpinner;
 
 		/// Text field for entering the remote host address.
-		private JTextField hostTextField;
+		private @Nullable JTextField hostTextField;
 
 		/// Constructs a [ConnectionSettingsPanel] with or without a host field.
 		///
@@ -6069,7 +6119,7 @@ public final class Main extends JFrame {
 				hostTextField.setCaretPosition(0);
 				hostPanel.add(hostTextField);
 
-				if (host == null || host.isBlank()) {
+				if (host.isBlank()) {
 					hostTextField.grabFocus();
 				}
 			}
@@ -6118,7 +6168,7 @@ public final class Main extends JFrame {
 		/// Returns a localized error message string if validation fails.
 		///
 		/// @return `null` on success, or an error message string on failure
-		private String saveSettings() {
+		private @Nullable String saveSettings() {
 			if (hostTextField != null) {
 				final var host = hostTextField.getText().strip();
 				if (!isValidHost(host)) {
@@ -6195,8 +6245,13 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis)
-					.setInverted(((JCheckBox) e.getSource()).isSelected());
+			Objects.requireNonNull(input, "Field input must not be null");
+
+			final var overlayAxis = Objects.requireNonNull(
+					input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis),
+					"Variable overlayAxis must not be null");
+
+			overlayAxis.setInverted(((JCheckBox) e.getSource()).isSelected());
 
 			setUnsavedChanges(true);
 			updateOverlayPanel();
@@ -6243,6 +6298,8 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			final var mode = new Mode();
 			input.getProfile().getModes().add(mode);
 
@@ -6379,7 +6436,10 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			input.getProfile().removeMode(input, mode);
+
 			setUnsavedChanges(true);
 			updateModesPanel(false);
 			updateVisualizationPanel();
@@ -6478,6 +6538,9 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
+			final var selectedController = Main.this.selectedController;
 			if (selectedController != null && selectedController.instanceId == controller.instanceId) {
 				return;
 			}
@@ -6536,7 +6599,12 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			final var overlayAxis = input.getProfile().getVirtualAxisToOverlayAxisMap().get(virtualAxis);
+			if (overlayAxis == null) {
+				return;
+			}
 
 			final var color = JColorChooser.showDialog(Main.this, strings.getString("INDICATOR_COLOR_CHOOSER_TITLE"),
 					overlayAxis.getColor());
@@ -6710,6 +6778,8 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			final var orientation = (OverlayAxisOrientation) ((JComboBox<?>) e.getSource()).getSelectedItem();
 			if (orientation == null) {
 				return;
@@ -6748,6 +6818,8 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			final var style = (OverlayAxisStyle) ((JComboBox<?>) e.getSource()).getSelectedItem();
 			if (style == null) {
 				return;
@@ -6832,6 +6904,8 @@ public final class Main extends JFrame {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
+			Objects.requireNonNull(input, "Field input must not be null");
+
 			if (((JCheckBox) e.getSource()).isSelected()) {
 				input.getProfile().getVirtualAxisToOverlayAxisMap().put(virtualAxis, new OverlayAxis(virtualAxis));
 			} else {

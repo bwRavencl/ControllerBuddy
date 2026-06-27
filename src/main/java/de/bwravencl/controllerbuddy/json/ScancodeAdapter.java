@@ -26,11 +26,14 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.Scancode;
 import java.lang.reflect.Type;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [Scancode] instances.
 ///
 /// Supports deserializing from either a JSON number (key code) or a JSON string
 /// (scancode name). Serializes a [Scancode] using its name.
+@NullMarked
 public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDeserializer<Scancode> {
 
 	/// Deserializes a [Scancode] from a JSON element.
@@ -44,8 +47,8 @@ public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDese
 	/// @param context the deserialization context
 	/// @return the deserialized [Scancode]
 	@Override
-	public Scancode deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-			throws JsonParseException {
+	public Scancode deserialize(final JsonElement json, final Type typeOfT,
+			final @Nullable JsonDeserializationContext context) throws JsonParseException {
 		try {
 			Scancode scancode = null;
 			if (json.isJsonPrimitive()) {
@@ -78,7 +81,8 @@ public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDese
 	/// @param context the serialization context
 	/// @return a [JsonPrimitive] containing the scancode name
 	@Override
-	public JsonElement serialize(final Scancode src, final Type typeOfSrc, final JsonSerializationContext context) {
+	public JsonElement serialize(final Scancode src, final Type typeOfSrc,
+			final @Nullable JsonSerializationContext context) {
 		return new JsonPrimitive(src.name());
 	}
 }

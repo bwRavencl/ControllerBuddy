@@ -64,6 +64,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Utility class providing common GUI helper methods for window management,
 /// component creation, display bounds calculation, and frame persistence.
@@ -73,15 +75,16 @@ import javax.swing.undo.UndoManager;
 /// context menus, positioning frames across multiple displays, and showing
 /// message dialogs.
 @SuppressWarnings({ "exports" })
+@NullMarked
 public final class GuiUtils {
 
 	/// Reflective field accessor for the native window handle on Windows.
-	private static final Field hwndField;
+	private static final @Nullable Field hwndField;
 
 	private static final Logger logger = Logger.getLogger(GuiUtils.class.getName());
 
 	/// Reflective field accessor for the AWT component peer on Windows.
-	private static final Field peerField;
+	private static final @Nullable Field peerField;
 
 	static {
 		if (Main.IS_WINDOWS) {
@@ -155,7 +158,7 @@ public final class GuiUtils {
 	/// @param text the initial text
 	/// @param columns the number of columns for sizing
 	/// @return a new text field with a context menu
-	public static JTextField createTextFieldWithMenu(final String text, final int columns) {
+	public static JTextField createTextFieldWithMenu(@Nullable final String text, final int columns) {
 		return createTextFieldWithMenu(null, text, columns);
 	}
 
@@ -167,7 +170,8 @@ public final class GuiUtils {
 	/// @param text the initial text
 	/// @param columns the number of columns for sizing
 	/// @return a new text field with a context menu
-	public static JTextField createTextFieldWithMenu(final Document doc, final String text, final int columns) {
+	public static JTextField createTextFieldWithMenu(final @Nullable Document doc, @Nullable final String text,
+			final int columns) {
 		final var textField = new JTextField(doc, text, columns);
 
 		final var undoManager = new UndoManager();
@@ -275,7 +279,7 @@ public final class GuiUtils {
 	/// @param main the main application instance to store the bounds in, or `null`
 	/// to skip storage
 	/// @return the total display bounds rectangle
-	static Rectangle getAndStoreTotalDisplayBounds(final Main main) {
+	static Rectangle getAndStoreTotalDisplayBounds(final @Nullable Main main) {
 		final var totalDisplayBounds = new Rectangle();
 
 		for (final var graphicsDevice : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
@@ -392,7 +396,7 @@ public final class GuiUtils {
 	/// @param spinner the spinner to configure
 	/// @param columns the number of text field columns, or `null` to keep the
 	/// default
-	public static void makeMillisecondSpinner(final JSpinner spinner, final Integer columns) {
+	public static void makeMillisecondSpinner(final JSpinner spinner, final @Nullable Integer columns) {
 		final var numberEditor = new NumberEditor(spinner, "# " + Main.strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) numberEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 
@@ -409,7 +413,7 @@ public final class GuiUtils {
 	///
 	/// @param window the window to make topmost
 	static void makeWindowTopmost(final Window window) {
-		if (Main.IS_WINDOWS) {
+		if (Main.IS_WINDOWS && peerField != null && hwndField != null) {
 			try {
 				final var windowPeer = peerField.get(window);
 				final var windowHwnd = (long) hwndField.get(windowPeer);
@@ -444,10 +448,6 @@ public final class GuiUtils {
 	/// @param component the root component
 	/// @param enabled whether to enable or disable
 	static void setEnabledRecursive(final Component component, final boolean enabled) {
-		if (component == null) {
-			return;
-		}
-
 		component.setEnabled(enabled);
 
 		if (component instanceof final Container container) {
@@ -480,8 +480,9 @@ public final class GuiUtils {
 	/// @param title the dialog title
 	/// @param messageType the JOptionPane message type constant
 	/// @throws HeadlessException if the environment is headless
-	public static void showMessageDialog(final Main main, @SuppressWarnings("exports") final Component parentComponent,
-			final Object message, final String title, final int messageType) throws HeadlessException {
+	public static void showMessageDialog(final @Nullable Main main,
+			@SuppressWarnings("exports") final @Nullable Component parentComponent, final Object message,
+			final String title, final int messageType) throws HeadlessException {
 		showMessageDialog(main, parentComponent, message, title, messageType, null);
 	}
 
@@ -495,9 +496,10 @@ public final class GuiUtils {
 	/// @param messageType the JOptionPane message type constant
 	/// @param icon the icon to display, or `null` for the default
 	/// @throws HeadlessException if the environment is headless
-	public static void showMessageDialog(final Main main, @SuppressWarnings("exports") final Component parentComponent,
-			final Object message, final String title, final int messageType,
-			@SuppressWarnings("exports") final Icon icon) throws HeadlessException {
+	public static void showMessageDialog(final @Nullable Main main,
+			@SuppressWarnings("exports") final @Nullable Component parentComponent, final Object message,
+			final String title, final int messageType, @SuppressWarnings("exports") final @Nullable Icon icon)
+			throws HeadlessException {
 		if (Main.skipMessageDialogs) {
 			return;
 		}
@@ -524,7 +526,8 @@ public final class GuiUtils {
 	/// @param preferredSize the preferred size for the scroll pane, or `null` for
 	/// default sizing
 	/// @return a new scroll pane containing the component
-	public static JScrollPane wrapComponentInScrollPane(final Component component, final Dimension preferredSize) {
+	public static JScrollPane wrapComponentInScrollPane(final Component component,
+			final @Nullable Dimension preferredSize) {
 		final var scrollPane = new JScrollPane(component);
 
 		if (preferredSize != null) {
@@ -551,7 +554,7 @@ public final class GuiUtils {
 
 		/// The mouse position at the start of the current drag, or `null` if not
 		/// dragging.
-		private Point mouseDownLocation = null;
+		private @Nullable Point mouseDownLocation = null;
 
 		/// Constructs a [FrameDragListener] for the given main window and frame.
 		///

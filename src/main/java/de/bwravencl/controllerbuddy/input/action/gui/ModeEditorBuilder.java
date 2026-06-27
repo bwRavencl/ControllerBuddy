@@ -23,6 +23,7 @@ import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for mode selection properties, presenting a combo box
 /// populated with the non-default modes from the current profile plus the
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 /// Used to configure which [Mode] is activated when the associated action
 /// fires, allowing the user to switch between controller mapping contexts
 /// at runtime.
+@NullMarked
 public final class ModeEditorBuilder extends ArrayEditorBuilder<Mode> {
 
 	/// Constructs a [ModeEditorBuilder] for the specified action property.

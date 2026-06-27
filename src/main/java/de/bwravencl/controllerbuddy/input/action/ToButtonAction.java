@@ -24,6 +24,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for actions that map controller input to a virtual
 /// joystick button.
@@ -32,6 +34,7 @@ import java.text.MessageFormat;
 /// target button is identified by a zero-based button ID.
 ///
 /// @param <V> the type of input value this action processes
+@NullMarked
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
@@ -40,7 +43,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	int buttonId;
 
 	/// Current activatable state tracking whether the action may fire.
-	private transient Activatable activatable;
+	private transient @Nullable Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
@@ -50,7 +53,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	private transient boolean wasDown;
 
 	@Override
-	public Activatable getActivatable() {
+	public @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 

@@ -20,12 +20,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for lock key properties, presenting a combo box of available
 /// [LockKey] values (e.g., Caps Lock, Num Lock, Scroll Lock).
 ///
 /// Used to configure which lock key is toggled or synchronized when the
 /// associated action fires.
+@NullMarked
 public final class LockKeyEditorBuilder extends ArrayEditorBuilder<LockKey> {
 
 	/// Constructs a [LockKeyEditorBuilder] for the specified action property.

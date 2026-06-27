@@ -27,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract editor builder for enum or array-valued properties.
 ///
@@ -35,11 +37,13 @@ import javax.swing.JPanel;
 /// abstract [#getValues()] method.
 ///
 /// @param <T> the element type of the selectable values
+@NullMarked
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(ArrayEditorBuilder.class.getName());
 
 	/// The combo box component populated with selectable values.
+	@Nullable
 	JComboBox<T> comboBox;
 
 	/// Constructs an [ArrayEditorBuilder] for the specified action property.

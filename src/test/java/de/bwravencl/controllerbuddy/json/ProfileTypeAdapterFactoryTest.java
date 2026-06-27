@@ -29,12 +29,14 @@ import de.bwravencl.controllerbuddy.input.Profile;
 import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.awt.Color;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.sdl.SDLGamepad;
 
+@NullMarked
 final class ProfileTypeAdapterFactoryTest {
 
 	private static com.google.gson.Gson createGson() {
@@ -53,13 +55,6 @@ final class ProfileTypeAdapterFactoryTest {
 			Assertions.assertEquals(Activation.WHILE_PRESSED, gson.fromJson("\"WHILE_PRESSED\"", Activation.class));
 			Assertions.assertEquals(Activation.ON_PRESS, gson.fromJson("\"ON_PRESS\"", Activation.class));
 			Assertions.assertEquals(Activation.ON_RELEASE, gson.fromJson("\"ON_RELEASE\"", Activation.class));
-		}
-
-		@Test
-		@DisplayName("reads JSON null as null")
-		void readsNullAsNull() {
-			final var gson = createGson();
-			Assertions.assertNull(gson.fromJson("null", Activation.class));
 		}
 
 		@Test

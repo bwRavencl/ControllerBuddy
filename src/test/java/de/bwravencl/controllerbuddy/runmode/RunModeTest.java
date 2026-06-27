@@ -40,7 +40,8 @@ final class RunModeTest {
 	Main mockMain;
 
 	private RunMode createRunMode() {
-		return new RunMode(mockMain, mockInput) {
+		Mockito.when(mockMain.getInput()).thenReturn(mockInput);
+		return new RunMode(mockMain) {
 
 			@Override
 			Logger getLogger() {

@@ -24,6 +24,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MouseButtonEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for actions that produce mouse button output.
 ///
@@ -31,6 +33,7 @@ import java.text.MessageFormat;
 /// mode and activation interval.
 ///
 /// @param <V> the input value type
+@NullMarked
 abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
@@ -38,7 +41,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	private static final int DEFAULT_MOUSE_BUTTON = 1;
 
 	/// Current activatable state tracking whether the action may fire.
-	private transient Activatable activatable;
+	private transient @Nullable Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
@@ -52,7 +55,7 @@ abstract class ToMouseButtonAction<V extends Constable> extends ActivationInterv
 	private transient boolean wasDown;
 
 	@Override
-	public Activatable getActivatable() {
+	public @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 

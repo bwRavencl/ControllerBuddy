@@ -28,6 +28,8 @@ import java.io.Serial;
 import java.lang.reflect.Method;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for building property editors in the action editing
 /// dialog.
@@ -37,6 +39,7 @@ import javax.swing.JPanel;
 /// etc.). Each builder uses reflection to discover getter and setter methods on
 /// an [IAction] instance and wires up UI components to invoke the setter when
 /// the user changes a value.
+@NullMarked
 public abstract class EditorBuilder {
 
 	/// The action whose property is being edited.
@@ -50,7 +53,7 @@ public abstract class EditorBuilder {
 
 	/// The initial value of the property, read from the action at construction
 	/// time.
-	protected Object initialValue;
+	protected @Nullable Object initialValue;
 
 	/// Constructs an [EditorBuilder] by resolving the getter and setter methods for
 	/// the given field via reflection and reading the initial property value.

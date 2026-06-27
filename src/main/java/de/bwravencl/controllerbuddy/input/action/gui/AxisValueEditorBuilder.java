@@ -19,12 +19,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for axis value properties, providing a spinner with a range
 /// of -1.0 to 1.0 and a step size of 0.01.
 ///
 /// Subclasses may further restrict the range by overriding the minimum or
 /// maximum bound methods.
+@NullMarked
 public class AxisValueEditorBuilder extends NumberEditorBuilder<Float> {
 
 	/// Constructs a [AxisValueEditorBuilder] for the specified action property.

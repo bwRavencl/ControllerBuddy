@@ -19,12 +19,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for mouse click count properties, providing a spinner with a
 /// range of 1 to 1000.
 ///
 /// Used to configure how many times a mouse button is clicked when the
 /// associated action fires.
+@NullMarked
 public final class ClicksEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [ClicksEditorBuilder] for the specified action property.

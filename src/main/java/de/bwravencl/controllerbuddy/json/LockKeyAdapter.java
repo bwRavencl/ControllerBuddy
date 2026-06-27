@@ -26,11 +26,14 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.lang.reflect.Type;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [LockKey] instances.
 ///
 /// Supports deserializing from either a JSON number (virtual key code) or a
 /// JSON string (lock key name). Serializes a [LockKey] using its name.
+@NullMarked
 public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeserializer<LockKey> {
 
 	/// Deserializes a [LockKey] from a JSON element.
@@ -44,8 +47,8 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
 	/// @param context the deserialization context
 	/// @return the deserialized [LockKey]
 	@Override
-	public LockKey deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-			throws JsonParseException {
+	public LockKey deserialize(final JsonElement json, final Type typeOfT,
+			final @Nullable JsonDeserializationContext context) throws JsonParseException {
 		try {
 			LockKey lockKey = null;
 			if (json.isJsonPrimitive()) {
@@ -77,7 +80,8 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
 	/// @param context the serialization context
 	/// @return a [JsonPrimitive] containing the lock key name
 	@Override
-	public JsonElement serialize(final LockKey src, final Type typeOfSrc, final JsonSerializationContext context) {
+	public JsonElement serialize(final LockKey src, final Type typeOfSrc,
+			final @Nullable JsonSerializationContext context) {
 		return new JsonPrimitive(src.name());
 	}
 }

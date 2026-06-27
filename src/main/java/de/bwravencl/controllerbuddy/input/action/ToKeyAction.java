@@ -25,6 +25,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for actions that produce keystroke output.
 ///
@@ -32,11 +34,12 @@ import java.text.MessageFormat;
 /// mode and activation interval.
 ///
 /// @param <V> the input value type
+@NullMarked
 abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
 	/// Current activatable state tracking whether the action may fire.
-	private transient Activatable activatable;
+	private transient @Nullable Activatable activatable;
 
 	/// Delay in milliseconds before repeated activation triggers.
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
@@ -58,7 +61,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	@Override
-	public Activatable getActivatable() {
+	public @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 

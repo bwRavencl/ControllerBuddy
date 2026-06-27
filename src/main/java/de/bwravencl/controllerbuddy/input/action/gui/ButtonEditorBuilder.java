@@ -22,11 +22,14 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.io.Serial;
 import java.text.ParseException;
+import java.util.Objects;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JPanel;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.DefaultFormatterFactory;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Editor builder for gamepad button index properties, rendering a spinner with
 /// zero-based internal values displayed as one-based button numbers to the
@@ -35,6 +38,7 @@ import javax.swing.text.DefaultFormatterFactory;
 /// The display formatter adds one to the internal zero-based index so that
 /// buttons are presented to the user starting from 1, up to the total number
 /// of buttons reported by the connected controller.
+@NullMarked
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [ButtonEditorBuilder] for the specified action property.
@@ -52,6 +56,7 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		super.buildEditor(parentPanel);
+		Objects.requireNonNull(textField, "Field textField must not be null");
 
 		final var formatterFactory = new ZeroBasedFormatterFactory();
 		textField.setFormatterFactory(formatterFactory);
@@ -87,7 +92,7 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 		private static final long serialVersionUID = -7229427356426148291L;
 
 		@Override
-		public Object stringToValue(final String text) throws ParseException {
+		public @Nullable Object stringToValue(final @Nullable String text) throws ParseException {
 			if (text == null || text.isBlank()) {
 				return null;
 			}

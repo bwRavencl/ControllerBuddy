@@ -26,6 +26,7 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
+import org.jspecify.annotations.NullMarked;
 
 /// Provides Java bindings to Linux system calls and uinput ioctl constants via
 /// the Foreign Function & Memory API.
@@ -34,6 +35,7 @@ import java.lang.invoke.VarHandle;
 /// as well as memory layout definitions for uinput data structures used to
 /// create and manage virtual input devices.
 @SuppressWarnings({ "exports", "restricted", "SameParameterValue" })
+@NullMarked
 public final class Linux {
 
 	/// Linux `O_NONBLOCK` flag for non-blocking I/O.

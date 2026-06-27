@@ -27,13 +27,16 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
 
 /// Provides Java bindings to the vJoy virtual joystick driver library.
 ///
 /// Uses the Foreign Function and Memory API to interface with the vJoy driver.
 /// Functions are loaded dynamically at runtime via [#init(Main)].
 @SuppressWarnings({ "exports", "restricted" })
+@NullMarked
 public final class VjoyInterface {
 
 	/// HID usage value for the RX (rotation X) axis.
@@ -69,49 +72,62 @@ public final class VjoyInterface {
 	/// Native linker used to bind to vJoy library functions.
 	private static final Linker LINKER = Linker.nativeLinker();
 
+	/// Placeholder [MethodHandle] used as the initial value of `methodHandle`
+	/// before [#init] is called. Accepts any number of arguments (via
+	/// [MethodHandle#asVarargsCollector]) and, regardless of how it is invoked,
+	/// always throws an [IllegalStateException] indicating that initialization has
+	/// not yet occurred.
+	/// Intended to be invoked via [MethodHandle#invoke], not
+	/// [MethodHandle#invokeExact].
+	private static final MethodHandle UNINITIALIZED_METHOD_HANDLE = MethodHandles
+			.dropArguments(MethodHandles.insertArguments(
+					MethodHandles.throwException(Object.class, IllegalStateException.class), 0,
+					new IllegalStateException("MethodHandle was not initialized")), 0, Object[].class)
+			.asVarargsCollector(Object[].class);
+
 	private static final Logger logger = Logger.getLogger(VjoyInterface.class.getName());
 
 	/// Method handle for the `AcquireVJD` native function.
-	private static MethodHandle AcquireVJDMethodHandle;
+	private static MethodHandle AcquireVJDMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `DriverMatch` native function.
-	private static MethodHandle DriverMatchMethodHandle;
+	private static MethodHandle DriverMatchMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `GetVJDAxisExist` native function.
-	private static MethodHandle GetVJDAxisExistMethodHandle;
+	private static MethodHandle GetVJDAxisExistMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `GetVJDAxisMax` native function.
-	private static MethodHandle GetVJDAxisMaxMethodHandle;
+	private static MethodHandle GetVJDAxisMaxMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `GetVJDAxisMin` native function.
-	private static MethodHandle GetVJDAxisMinMethodHandle;
+	private static MethodHandle GetVJDAxisMinMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `GetVJDButtonNumber` native function.
-	private static MethodHandle GetVJDButtonNumberMethodHandle;
+	private static MethodHandle GetVJDButtonNumberMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `GetVJDStatus` native function.
-	private static MethodHandle GetVJDStatusMethodHandle;
+	private static MethodHandle GetVJDStatusMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `RelinquishVJD` native function.
-	private static MethodHandle RelinquishVJDMethodHandle;
+	private static MethodHandle RelinquishVJDMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `ResetButtons` native function.
-	private static MethodHandle ResetButtonsMethodHandle;
+	private static MethodHandle ResetButtonsMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `ResetVJD` native function.
-	private static MethodHandle ResetVJDMethodHandle;
+	private static MethodHandle ResetVJDMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `SetAxis` native function.
-	private static MethodHandle SetAxisMethodHandle;
+	private static MethodHandle SetAxisMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Method handle for the `SetBtn` native function.
-	private static MethodHandle SetBtnMethodHandle;
+	private static MethodHandle SetBtnMethodHandle = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Whether the vJoy library has been successfully initialized.
 	private static boolean initialized = false;
 
 	/// Method handle for the `vJoyEnabled` native function.
-	private static MethodHandle vJoyEnabled;
+	private static MethodHandle vJoyEnabled = UNINITIALIZED_METHOD_HANDLE;
 
 	/// Prevents instantiation.
 	private VjoyInterface() {
@@ -359,7 +375,7 @@ public final class VjoyInterface {
 	/// @return `true` if the vJoy driver is enabled
 	public static boolean vJoyEnabled() {
 		try {
-			return (int) vJoyEnabled.invokeExact() != 0;
+			return (int) vJoyEnabled.invoke() != 0;
 		} catch (final Throwable t) {
 			throw new RuntimeException(t);
 		}

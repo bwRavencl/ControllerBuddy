@@ -23,16 +23,19 @@ import de.bwravencl.controllerbuddy.input.action.ActivationIntervalAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction;
 import java.io.Serial;
+import java.util.Objects;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for activation interval properties, rendering a millisecond
 /// spinner with a range of 0 to 10,000 ms.
 ///
 /// The spinner is disabled when the current activation mode does not support a
 /// maximum interval or when editing inside a cycle editor.
+@NullMarked
 public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// The title of the property this editor builder handles.
@@ -59,6 +62,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 	@Override
 	public void buildEditor(final JPanel parentPanel) {
 		super.buildEditor(parentPanel);
+		Objects.requireNonNull(spinner, "Field spinner must not be null");
 
 		GuiUtils.makeMillisecondSpinner(spinner, 6);
 		((IUpdatableEditorComponent) spinner).onUpdate();

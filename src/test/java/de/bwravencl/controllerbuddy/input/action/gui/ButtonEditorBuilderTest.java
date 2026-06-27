@@ -20,12 +20,14 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import java.text.ParseException;
 import java.util.Arrays;
 import javax.swing.text.DefaultFormatter;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@NullMarked
 final class ButtonEditorBuilderTest {
 
 	@Nested

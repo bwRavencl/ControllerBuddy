@@ -26,12 +26,15 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.awt.Color;
 import java.lang.reflect.Type;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [Color] instances.
 ///
 /// Supports deserializing from either a JSON number (interpreted as an RGBA
 /// integer) or a JSON object with a `value` member. Serializes a [Color] as its
 /// RGB integer representation.
+@NullMarked
 public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 
 	/// Deserializes a [Color] from a JSON element.
@@ -45,8 +48,8 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 	/// @param context the deserialization context
 	/// @return the deserialized [Color]
 	@Override
-	public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
-			throws JsonParseException {
+	public Color deserialize(final JsonElement json, final Type typeOfT,
+			final @Nullable JsonDeserializationContext context) throws JsonParseException {
 		try {
 			Integer rgba = null;
 			if (json.isJsonPrimitive() && ((JsonPrimitive) json).isNumber()) {
@@ -79,7 +82,8 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 	/// @param context the serialization context
 	/// @return a [JsonPrimitive] containing the RGB integer
 	@Override
-	public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
+	public JsonElement serialize(final Color src, final Type typeOfSrc,
+			final @Nullable JsonSerializationContext context) {
 		return new JsonPrimitive(src.getRGB());
 	}
 }

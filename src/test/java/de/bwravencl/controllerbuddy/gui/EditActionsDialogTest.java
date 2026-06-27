@@ -23,6 +23,8 @@ import de.bwravencl.controllerbuddy.input.action.ToAxisAction;
 import java.awt.Toolkit;
 import java.lang.reflect.Field;
 import java.util.stream.IntStream;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+@NullMarked
 final class EditActionsDialogTest {
 
 	/// [EditActionsDialog]'s static initializer calls [Toolkit#createCustomCursor],
@@ -39,7 +42,7 @@ final class EditActionsDialogTest {
 	/// [Toolkit#getDefaultToolkit] in [BeforeAll] so the mock is active when the
 	/// final class initializer first runs (triggered by the first reference to
 	/// [EditActionsDialog] inside a test method body).
-	private static MockedStatic<Toolkit> toolkitMock;
+	private static @Nullable MockedStatic<Toolkit> toolkitMock;
 
 	@BeforeAll
 	static void setUpToolkitMock() {
@@ -50,7 +53,9 @@ final class EditActionsDialogTest {
 
 	@AfterAll
 	static void tearDownToolkitMock() {
-		toolkitMock.close();
+		if (toolkitMock != null) {
+			toolkitMock.close();
+		}
 	}
 
 	@Nested

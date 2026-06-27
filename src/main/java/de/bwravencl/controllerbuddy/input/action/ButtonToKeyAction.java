@@ -20,12 +20,14 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps a physical button press to a keyboard key press.
 ///
 /// Delegates to [ToKeyAction] for the actual keystroke handling and supports
 /// configurable activation delay via [IButtonToDelayableAction].
 @Action(icon = "⌨️", title = "TO_KEY_ACTION_TITLE", description = "TO_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 115)
+@NullMarked
 public final class ButtonToKeyAction extends ToKeyAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Processes a button input value by applying delay handling, then delegating

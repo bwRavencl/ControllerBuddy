@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Represents a keyboard keystroke consisting of modifier keys and regular
 /// keys.
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 /// Supports serialization using legacy key code sets for backward
 /// compatibility, converting between [Scancode]-based and integer-based
 /// representations as needed.
+@NullMarked
 public final class Keystroke implements Cloneable, Serializable {
 
 	@Serial
@@ -84,7 +87,7 @@ public final class Keystroke implements Cloneable, Serializable {
 
 	/// Checks equality based on key codes and modifier codes arrays.
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(final @Nullable Object obj) {
 		return obj instanceof final Keystroke keystroke && Arrays.equals(keyCodes, keystroke.keyCodes)
 				&& Arrays.equals(modifierCodes, keystroke.modifierCodes);
 	}

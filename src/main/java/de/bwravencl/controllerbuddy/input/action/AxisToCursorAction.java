@@ -23,12 +23,14 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
+import org.jspecify.annotations.NullMarked;
 
 /// Maps axis input to cursor movement.
 ///
 /// The axis value is transformed using a configurable dead zone and exponent
 /// curve, then applied as a cursor delta scaled by sensitivity and rate.
 @Action(icon = "➚", title = "TO_CURSOR_ACTION_TITLE", description = "TO_CURSOR_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 25)
+@NullMarked
 public final class AxisToCursorAction extends ToCursorAction<Float> implements IAxisToAction {
 
 	/// Default dead zone threshold below which axis input is ignored.

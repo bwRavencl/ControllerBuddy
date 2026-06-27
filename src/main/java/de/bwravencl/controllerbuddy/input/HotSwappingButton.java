@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import java.util.EnumSet;
+import org.jspecify.annotations.NullMarked;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// Enumeration of gamepad buttons that can be assigned as the hot-swapping
@@ -26,6 +27,7 @@ import org.lwjgl.sdl.SDLGamepad;
 ///
 /// Each constant maps a human-readable label to its corresponding SDL button
 /// ID. [#NONE] represents the unassigned state with an ID of `-1`.
+@NullMarked
 public enum HotSwappingButton {
 
 	/// No button assigned for hot-swapping.

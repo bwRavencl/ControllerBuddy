@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// Represents an input mode that maps gamepad axes and buttons to actions.
@@ -37,6 +39,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// Each mode has a unique UUID, a description, and contains mappings from
 /// axis/button indices to action lists. A [Profile] holds one or more modes
 /// that can be switched at runtime.
+@NullMarked
 public final class Mode implements Cloneable {
 
 	/// Maps axis indices to their associated action lists.
@@ -46,24 +49,26 @@ public final class Mode implements Cloneable {
 	private Map<Integer, List<IAction<Boolean>>> buttonToActionsMap = new HashMap<>();
 
 	/// Human-readable description of this mode.
-	private String description;
+	private @Nullable String description;
 
 	/// Unique identifier of this mode.
 	/// This field is not final to allow modification by Gson.
 	@SuppressWarnings({ "CanBeFinal", "FieldMayBeFinal" })
 	private UUID uuid;
 
-	/// Constructs a [Mode] with a random UUID and default description.
+	/// Constructs a [Mode] with a random UUID and the default description.
 	public Mode() {
 		uuid = UUID.randomUUID();
 		description = Main.strings.getString("NEW_MODE_DESCRIPTION");
 	}
 
-	/// Constructs a [Mode] with the specified UUID.
+	/// Constructs a [Mode] with the specified UUID and description.
 	///
 	/// @param uuid the unique identifier for this mode
-	public Mode(final UUID uuid) {
+	/// @param description the human-readable description of this mode
+	public Mode(final UUID uuid, final @Nullable String description) {
 		this.uuid = uuid;
+		this.description = description;
 	}
 
 	/// Creates a deep copy of an action map by cloning every action in each list.
@@ -99,7 +104,7 @@ public final class Mode implements Cloneable {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(final @Nullable Object obj) {
 		return obj instanceof final Mode mode && Objects.equals(uuid, mode.uuid);
 	}
 
@@ -139,7 +144,7 @@ public final class Mode implements Cloneable {
 	/// Returns the human-readable description of this mode.
 	///
 	/// @return the description of this mode
-	public String getDescription() {
+	public @Nullable String getDescription() {
 		return description;
 	}
 
@@ -165,13 +170,13 @@ public final class Mode implements Cloneable {
 	/// Sets the human-readable description of this mode.
 	///
 	/// @param description the new description for this mode
-	public void setDescription(final String description) {
+	public void setDescription(final @Nullable String description) {
 		this.description = description;
 	}
 
 	@Override
 	public String toString() {
-		return description;
+		return description != null ? description : uuid.toString();
 	}
 
 	/// Represents a gamepad component (axis or button) with stick-swapping support.

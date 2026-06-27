@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
@@ -46,6 +45,7 @@ import java.security.Key;
 import java.text.MessageFormat;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,6 +54,8 @@ import java.util.stream.Stream;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /// Client-side run mode that receives controller input state over the
 /// network.
@@ -61,6 +63,7 @@ import javax.swing.JOptionPane;
 /// Connects to a remote [ServerRunMode] via an encrypted UDP channel,
 /// receives serialized input state updates, and writes them to the
 /// local virtual output device.
+@NullMarked
 public final class ClientRunMode extends OutputRunMode {
 
 	/// Number of retries when attempting to establish the initial connection.
@@ -96,7 +99,7 @@ public final class ClientRunMode extends OutputRunMode {
 	private final int timeout;
 
 	/// UDP socket used to send and receive packets to and from the server.
-	private DatagramSocket clientSocket;
+	private @Nullable DatagramSocket clientSocket;
 
 	/// Current connection state of the client.
 	private ClientState clientState = ClientState.CONNECTING;
@@ -105,15 +108,14 @@ public final class ClientRunMode extends OutputRunMode {
 	private long counter = -1;
 
 	/// Resolved network address of the remote server host.
-	private InetAddress hostAddress;
+	private @Nullable InetAddress hostAddress;
 
 	/// Creates a [ClientRunMode] that will connect to the configured remote server.
 	///
 	/// @param main the main application instance providing host, port, timeout,
 	/// and encryption settings
-	/// @param input the input instance for controller state
-	public ClientRunMode(final Main main, final Input input) {
-		super(main, input);
+	public ClientRunMode(final Main main) {
+		super(main);
 
 		host = main.getHost();
 		port = main.getPort();
@@ -172,6 +174,8 @@ public final class ClientRunMode extends OutputRunMode {
 	@SuppressWarnings("unchecked")
 	@Override
 	boolean readInput() throws IOException {
+		Objects.requireNonNull(clientSocket, "Field clientSocket must not be null");
+
 		super.readInput();
 
 		var retVal = false;
@@ -304,14 +308,14 @@ public final class ClientRunMode extends OutputRunMode {
 
 							if (newCounter > counter) {
 								final var inputAxes = (EnumMap<VirtualAxis, Integer>) objectInputStream.readObject();
-								axisX.set(inputAxes.get(VirtualAxis.X));
-								axisY.set(inputAxes.get(VirtualAxis.Y));
-								axisZ.set(inputAxes.get(VirtualAxis.Z));
-								axisRX.set(inputAxes.get(VirtualAxis.RX));
-								axisRY.set(inputAxes.get(VirtualAxis.RY));
-								axisRZ.set(inputAxes.get(VirtualAxis.RZ));
-								axisS0.set(inputAxes.get(VirtualAxis.S0));
-								axisS1.set(inputAxes.get(VirtualAxis.S1));
+								axisX.set(inputAxes.getOrDefault(VirtualAxis.X, 0));
+								axisY.set(inputAxes.getOrDefault(VirtualAxis.Y, 0));
+								axisZ.set(inputAxes.getOrDefault(VirtualAxis.Z, 0));
+								axisRX.set(inputAxes.getOrDefault(VirtualAxis.RX, 0));
+								axisRY.set(inputAxes.getOrDefault(VirtualAxis.RY, 0));
+								axisRZ.set(inputAxes.getOrDefault(VirtualAxis.RZ, 0));
+								axisS0.set(inputAxes.getOrDefault(VirtualAxis.S0, 0));
+								axisS1.set(inputAxes.getOrDefault(VirtualAxis.S1, 0));
 
 								final var inputButtons = (boolean[]) objectInputStream.readObject();
 								for (var i = 0; i < numButtons; i++) {

@@ -22,6 +22,7 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
+import org.jspecify.annotations.NullMarked;
 
 /// Triggers a mouse button press when an axis value falls within a configurable
 /// range.
@@ -29,6 +30,7 @@ import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
 /// Extends [ToMouseButtonAction] with axis-specific min/max threshold support
 /// and delay handling.
 @Action(icon = "🖱️", title = "TO_MOUSE_BUTTON_ACTION_TITLE", description = "TO_MOUSE_BUTTON_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 30)
+@NullMarked
 public final class AxisToMouseButtonAction extends ToMouseButtonAction<Float> implements IAxisToDelayableAction {
 
 	/// Default upper bound of the axis activation range.

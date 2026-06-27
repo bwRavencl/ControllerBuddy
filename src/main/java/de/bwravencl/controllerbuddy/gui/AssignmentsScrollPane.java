@@ -47,6 +47,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.text.MessageFormat;
+import java.util.Objects;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -55,6 +56,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
 /// A scroll pane that displays a visual representation of a gamepad's controls
@@ -64,6 +67,7 @@ import org.lwjgl.sdl.SDLGamepad;
 /// direction) and opens an assignment editor dialog when clicked. The layout
 /// mimics a physical gamepad, with sticks, triggers, bumpers, and face
 /// buttons placed in their conventional positions.
+@NullMarked
 final class AssignmentsScrollPane extends JScrollPane {
 
 	/// Height in pixels used for all component buttons.
@@ -432,31 +436,32 @@ final class AssignmentsScrollPane extends JScrollPane {
 		boolean contentAreaFilled = true;
 
 		/// The color used for disabled button text.
+		@Nullable
 		Color disabledText;
 
 		/// The theme color used for the button border in its normal state.
-		private Color borderColor;
+		private @Nullable Color borderColor;
 
 		/// The theme background color used when the button is disabled.
-		private Color disabledBackground;
+		private @Nullable Color disabledBackground;
 
 		/// The theme border color used when the button is disabled.
-		private Color disabledBorderColor;
+		private @Nullable Color disabledBorderColor;
 
 		/// The theme background color used when the button is focused.
-		private Color focusedBackground;
+		private @Nullable Color focusedBackground;
 
 		/// The theme border color used when the button is focused.
-		private Color focusedBorderColor;
+		private @Nullable Color focusedBorderColor;
 
 		/// The theme background color used when the button is hovered.
-		private Color hoverBackground;
+		private @Nullable Color hoverBackground;
 
 		/// The theme border color used when the button is hovered.
-		private Color hoverBorderColor;
+		private @Nullable Color hoverBorderColor;
 
 		/// The theme background color used when the button is pressed.
-		private Color pressedBackground;
+		private @Nullable Color pressedBackground;
 
 		/// Constructs an [AssignmentsButton] with no associated action.
 		///
@@ -673,17 +678,18 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// The cached bounding rectangle used to detect when the shape must be
 		/// recomputed.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private Shape base;
+		private @Nullable Shape base;
 
 		/// The cached hit and paint shape for this button.
 		@SuppressWarnings({ "serial", "RedundantSuppression" })
-		private Shape shape;
+
+		private @Nullable Shape shape;
 
 		/// Whether this button can display a swap indicator when sticks are swapped.
 		private boolean swapTextPossible;
 
 		/// The display text rendered via the icon painter.
-		private String text;
+		private @Nullable String text;
 
 		/// Constructs a center [CompoundButton] for the stick-press component.
 		///
@@ -708,7 +714,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// @param peer the opposing axis button that shares this button's model or
 		/// `null` if there is no peer
 		private CompoundButton(final Main main, final JPanel parentPanel, final Component component,
-				final CompoundButtonLocation buttonLocation, final CompoundButton peer) {
+				final CompoundButtonLocation buttonLocation, final @Nullable CompoundButton peer) {
 			super(main);
 
 			preferredSize = parentPanel.getPreferredSize();
@@ -796,12 +802,12 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 					if (contentAreaFilled) {
 						beginBackground(g2d);
-
-						if (shape == null) {
-							initShape();
-						}
-
+						initShape();
 						g2d.fill(shape);
+					}
+
+					if (text == null) {
+						return;
 					}
 
 					beginForeground(g2d);
@@ -857,9 +863,8 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// Tests whether a point is within this button's shaped region.
 		@Override
 		public boolean contains(final int x, final int y) {
-			if (shape == null) {
-				initShape();
-			}
+			initShape();
+			Objects.requireNonNull(shape, "Field shape must not be null");
 
 			return shape.contains(x, y);
 		}
@@ -873,7 +878,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		}
 
 		@Override
-		public String getText() {
+		public @Nullable String getText() {
 			return null;
 		}
 
@@ -884,22 +889,24 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// locations it is a 90-degree pie arc with the center circle subtracted.
 		/// The shape is only recomputed when the bounds have changed.
 		private void initShape() {
-			if (!getBounds().equals(base)) {
-				base = getBounds();
+			if (shape != null && getBounds().equals(base)) {
+				return;
+			}
 
-				final var innerSize = getWidth() * 0.5f;
-				final var innerPos = innerSize * 0.5f;
-				final var innerShape = new Ellipse2D.Float(innerPos, innerPos, innerSize, innerSize);
+			base = getBounds();
 
-				if (CompoundButtonLocation.CENTER == buttonLocation) {
-					shape = innerShape;
-				} else {
-					final var outerShape = new Arc2D.Float(1, 1, getWidth() - 2, getHeight() - 2,
-							buttonLocation.startAngle, 90f, Arc2D.PIE);
-					final var outerArea = new Area(outerShape);
-					outerArea.subtract(new Area(innerShape));
-					shape = outerArea;
-				}
+			final var innerSize = getWidth() * 0.5f;
+			final var innerPos = innerSize * 0.5f;
+			final var innerShape = new Ellipse2D.Float(innerPos, innerPos, innerSize, innerSize);
+
+			if (CompoundButtonLocation.CENTER == buttonLocation) {
+				shape = innerShape;
+			} else {
+				final var outerShape = new Arc2D.Float(1, 1, getWidth() - 2, getHeight() - 2, buttonLocation.startAngle,
+						90f, Arc2D.PIE);
+				final var outerArea = new Area(outerShape);
+				outerArea.subtract(new Area(innerShape));
+				shape = outerArea;
 			}
 		}
 
@@ -922,11 +929,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 			final var g2d = (Graphics2D) g;
 			beginBorder(g2d);
-
-			if (shape == null) {
-				initShape();
-			}
-
+			initShape();
 			g2d.draw(shape);
 		}
 
