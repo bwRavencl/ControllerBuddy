@@ -3636,7 +3636,7 @@ public final class Main extends JFrame {
 		Objects.requireNonNull(input, "Field input must not be null");
 
 		final var wasRunning = isRunning();
-		stopAll(true, false, performGarbageCollection);
+		stopLocalAndServer(performGarbageCollection);
 
 		logger.info("Loading profile: " + file.getAbsolutePath());
 
@@ -3781,7 +3781,7 @@ public final class Main extends JFrame {
 	/// @param performGarbageCollection `true` if a garbage collection cycle
 	/// should be requested after stopping
 	private void newProfile(final boolean performGarbageCollection) {
-		stopAll(true, false, performGarbageCollection);
+		stopLocalAndServer(performGarbageCollection);
 
 		profileFileChooser.resetSelectedFile();
 		currentFile = null;
@@ -4216,9 +4216,8 @@ public final class Main extends JFrame {
 	public void restartLast() {
 		switch (lastRunModeType) {
 		case LOCAL -> startLocal();
-		case CLIENT -> startClient();
 		case SERVER -> startServer();
-		case NONE -> {
+		case CLIENT, NONE -> {
 		}
 		}
 	}
@@ -4388,7 +4387,7 @@ public final class Main extends JFrame {
 	/// @param axes the axis values to restore, or `null` to use defaults
 	public void setSelectedControllerAndUpdateInput(final @Nullable Controller controller,
 			@SuppressWarnings("exports") final @Nullable Map<VirtualAxis, Integer> axes) {
-		stopAll(true, false, true);
+		stopLocalAndServer(true);
 
 		setSelectedController(controller);
 
@@ -4557,11 +4556,11 @@ public final class Main extends JFrame {
 		startOverlayTimerTask();
 	}
 
-	/// Stops all active run modes.
+	/// Stops all active [RunMode]s.
 	///
-	/// @param initiateStop whether to request each run mode to stop
-	/// @param resetLastRunModeType whether to reset the last run mode type to
-	/// `NONE`
+	/// @param initiateStop whether to request each [RunMode] to stop
+	/// @param resetLastRunModeType whether to reset the last [RunModeType] to
+	/// [RunModeType#NONE]
 	/// @param performGarbageCollection whether to trigger garbage collection after
 	/// stopping
 	public void stopAll(final boolean initiateStop, final boolean resetLastRunModeType,
@@ -4639,6 +4638,21 @@ public final class Main extends JFrame {
 
 			onRunModeChanged(isRunningAgain);
 		});
+	}
+
+	/// Stops both the [LocalRunMode] and [ServerRunMode] if active.
+	///
+	/// @param performGarbageCollection whether to trigger garbage collection after
+	/// stopping
+	private void stopLocalAndServer(final boolean performGarbageCollection) {
+		if (IS_WINDOWS || IS_LINUX) {
+			stopLocal(true, false);
+		}
+		stopServer(true, false);
+
+		if (performGarbageCollection) {
+			System.gc();
+		}
 	}
 
 	/// Shuts down the overlay position-update executor, waiting up to 2 seconds for
