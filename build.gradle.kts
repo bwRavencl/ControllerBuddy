@@ -833,7 +833,6 @@ tasks.named<Test>("test") {
   jvmArgs("--enable-native-access=ALL-UNNAMED")
   jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
 
-  systemProperty("java.awt.headless", "true")
   systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
   if (os.isWindows) {
