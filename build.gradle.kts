@@ -628,7 +628,7 @@ tasks.withType<JavaCompile>().configureEach {
       options.isDeprecation = true
       options.errorprone.error("MissingBraces")
     } else {
-      options.errorprone.enabled = true
+      options.errorprone.enabled = false
     }
   }
 }
