@@ -20,6 +20,7 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.nativeplatform.platform.internal.Architectures
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.w3c.dom.Element
@@ -816,6 +817,16 @@ tasks.named("check") { dependsOn("checkJavadoc") }
 
 tasks.named<Test>("test") {
   useJUnitPlatform()
+
+  testLogging {
+    events(
+        TestLogEvent.PASSED,
+        TestLogEvent.SKIPPED,
+        TestLogEvent.FAILED,
+        TestLogEvent.STANDARD_OUT,
+        TestLogEvent.STANDARD_ERROR,
+    )
+  }
 
   jvmArgs(mockitoAgent.map { "-javaagent:${it.absolutePath}" })
   jvmArgs(commonJvmArgs)
