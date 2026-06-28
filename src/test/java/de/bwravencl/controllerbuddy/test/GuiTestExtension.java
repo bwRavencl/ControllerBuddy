@@ -19,6 +19,7 @@ package de.bwravencl.controllerbuddy.test;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -35,7 +36,7 @@ public final class GuiTestExtension implements AfterEachCallback, BeforeAllCallb
 
 	@Override
 	public void afterEach(final ExtensionContext context) throws Exception {
-		if (Thread.getAllStackTraces().keySet().stream().anyMatch(t -> "AWT-EventQueue-0".equals(t.getName()))) {
+		if (Toolkit.getDefaultToolkit().getSystemEventQueue() != null) {
 			EventQueue.invokeAndWait(() -> {
 			});
 		}
