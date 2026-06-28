@@ -59,16 +59,13 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
 import org.lwjgl.sdl.SDLGamepad;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-@TestClassOrder(ClassOrderer.Random.class)
 @SuppressWarnings("SameParameterValue")
 final class InputPipelineTest {
 
