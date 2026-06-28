@@ -3822,9 +3822,7 @@ public final class Main extends JFrame {
 		if (startLocalMenuItem != null) {
 			startLocalMenuItem.setVisible(controllerConnected);
 		}
-		if (startServerMenuItem != null) {
-			startServerMenuItem.setVisible(controllerConnected);
-		}
+		startServerMenuItem.setVisible(controllerConnected);
 
 		if (hasSystemTray) {
 			final var trayCreated = mainLoop.runSync(() -> {
@@ -4802,10 +4800,6 @@ public final class Main extends JFrame {
 	///
 	/// @param newModeAdded if `true`, scrolls to and focuses the newly added mode
 	void updateModesPanel(final boolean newModeAdded) {
-		if (modesListPanel == null) {
-			return;
-		}
-
 		modesListPanel.removeAll();
 
 		if (input == null) {
@@ -4953,10 +4947,6 @@ public final class Main extends JFrame {
 	/// Rebuilds the overlay indicators panel from the current profile settings.
 	@SuppressWarnings("NullAway")
 	void updateOverlayPanel() {
-		if (indicatorsListPanel == null) {
-			return;
-		}
-
 		indicatorsListPanel.removeAll();
 
 		if (input == null) {
@@ -5169,10 +5159,6 @@ public final class Main extends JFrame {
 	/// Does nothing if the panel has not yet been created or no input is
 	/// available.
 	private void updateProfileSettingsPanel() {
-		if (profileSettingsPanel == null) {
-			return;
-		}
-
 		profileSettingsPanel.removeAll();
 
 		if (input == null) {
@@ -5530,7 +5516,7 @@ public final class Main extends JFrame {
 	/// Rebuilds the visualization panel with SVG controller diagrams for all
 	/// profile modes.
 	void updateVisualizationPanel() {
-		if (visualizationPanel == null || svgPanel == null || input == null) {
+		if (svgPanel == null || input == null) {
 			return;
 		}
 
