@@ -5238,9 +5238,10 @@ public final class Main extends JFrame {
 	///
 	/// Enables the entry when the main frame is hidden and disables it when the
 	/// frame is visible, so the user can always bring the window back from the
-	/// tray. Does nothing if the tray entry has not been created.
+	/// tray. Does nothing if the tray entry has not been created or the main loop
+	/// is unavailable.
 	private void updateShowTrayEntry() {
-		if (showTrayEntry == 0L) {
+		if (showTrayEntry == 0L || !mainLoop.isAvailable()) {
 			return;
 		}
 
