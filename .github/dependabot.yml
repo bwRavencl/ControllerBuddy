@@ -15,6 +15,12 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     commit-message:
       prefix: chore
