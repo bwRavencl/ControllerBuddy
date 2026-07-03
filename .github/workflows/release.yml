@@ -57,7 +57,7 @@ jobs:
                 ;;
           esac
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -70,13 +70,13 @@ jobs:
           jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=$JAVA_VERSION&os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" -H  'accept: application/json' | jq -r '.[0].download_url')")
           echo "jdk_archive_filename=$jdk_archive_filename" >> "$GITHUB_OUTPUT"
       - name: Install JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@1bcf9fb12cf4aa7d266a90ae39939e61372fe520 # v5
         with:
           distribution: jdkfile
           jdkFile: ${{ runner.temp }}/${{ steps.download_zulu.outputs.jdk_archive_filename }}
           java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
         with:
           cache-disabled: true
           dependency-graph: generate-and-submit
@@ -139,7 +139,7 @@ jobs:
         run: ./gradlew distTar --info --non-interactive
       - name: Upload Build-Reports Artifact
         if: failure() && (steps.build_zip.outcome == 'failure' || steps.build_tgz.outcome == 'failure')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: spotbugs-reports
           path: |
@@ -155,13 +155,13 @@ jobs:
           echo "archive_filename=$(basename "$archive_path")" >> "$GITHUB_OUTPUT"
           echo "tag_name=$(basename -s .${{ steps.platform_variables.outputs.dist_archive_extension }} "$archive_path" | sed "s/^ControllerBuddy-//;s/${{ steps.platform_variables.outputs.dist_os }}-${{ steps.platform_variables.outputs.dist_arch }}-//")" >> "$GITHUB_OUTPUT"
       - name: Upload Archive Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: ${{ steps.release_variables.outputs.archive_filename }}
           path: ${{ steps.release_variables.outputs.archive_path }}
           if-no-files-found: error
       - name: Import GPG Key
-        uses: crazy-max/ghaction-import-gpg@v7
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
@@ -174,7 +174,7 @@ jobs:
           echo "signature_path=$signature_path" >> "$GITHUB_OUTPUT"
           echo "signature_filename=$(basename "$signature_path")" >> "$GITHUB_OUTPUT"
       - name: Upload Signature Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: ${{ steps.sign_archive.outputs.signature_filename }}
           path: ${{ steps.sign_archive.outputs.signature_path }}
@@ -184,7 +184,7 @@ jobs:
     needs: build
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
       - name: Collect Artifact Files
         id: collect_files
         shell: bash
@@ -202,18 +202,18 @@ jobs:
           done <<< "$files"
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: Check Tag
-        uses: action-pack/tag-exists@v1
+        uses: action-pack/tag-exists@8d084c20f1fddd530fea89ded6c836645684eed9 # v1
         id: check_tag
         with:
           tag: ${{ needs.build.outputs.tag_name }}
       - name: Tag Commit
         if: steps.check_tag.outputs.exists == 'false'
-        uses: tvdias/github-tagger@v0.0.2
+        uses: tvdias/github-tagger@ed7350546e3e503b5e942dffd65bc8751a95e49d # v0.0.2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.build.outputs.tag_name }}
       - name: Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3
         with:
           name: ControllerBuddy-${{ needs.build.outputs.tag_name }}
           tag_name: ${{ needs.build.outputs.tag_name }}
