@@ -68,8 +68,8 @@ public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeseri
 			return lockKey;
 		} catch (final JsonParseException e) {
 			throw e;
-		} catch (final Throwable t) {
-			throw new JsonParseException(t);
+		} catch (final Exception e) {
+			throw new JsonParseException(e);
 		}
 	}
 

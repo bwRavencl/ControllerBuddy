@@ -69,8 +69,8 @@ public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDese
 			return scancode;
 		} catch (final JsonParseException e) {
 			throw e;
-		} catch (final Throwable t) {
-			throw new JsonParseException(t);
+		} catch (final Exception e) {
+			throw new JsonParseException(e);
 		}
 	}
 

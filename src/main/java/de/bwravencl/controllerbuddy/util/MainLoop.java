@@ -138,8 +138,8 @@ public final class MainLoop {
 
 			try {
 				SDLInit.SDL_Quit();
-			} catch (final Throwable t) {
-				logger.log(Level.SEVERE, t.getMessage(), t);
+			} catch (final Exception e) {
+				logger.log(Level.SEVERE, e.getMessage(), e);
 			}
 
 			logger.info("Exiting main loop");
@@ -168,12 +168,12 @@ public final class MainLoop {
 					taskQueueEntry.resultFuture.complete(null);
 				}
 			}
-		} catch (final Throwable t) {
+		} catch (final Exception e) {
 			if (taskQueueEntry.resultFuture != null) {
-				taskQueueEntry.resultFuture.completeExceptionally(t);
+				taskQueueEntry.resultFuture.completeExceptionally(e);
 			} else {
 				shuttingDown = true;
-				throw new RuntimeException(t);
+				throw new RuntimeException(e);
 			}
 		}
 	}

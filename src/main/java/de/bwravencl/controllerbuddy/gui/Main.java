@@ -1676,8 +1676,10 @@ public final class Main extends JFrame {
 							}
 						}
 					}
-				} catch (final Throwable t) {
-					logger.log(Level.SEVERE, t.getMessage(), t);
+				} catch (final RuntimeException e) {
+					throw e;
+				} catch (final Exception e) {
+					logger.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 		}
@@ -1751,8 +1753,8 @@ public final class Main extends JFrame {
 			} finally {
 				Files.delete(tempFilePath);
 			}
-		} catch (final Throwable t) {
-			logger.log(Level.SEVERE, t.getMessage(), t);
+		} catch (final IOException e) {
+			logger.log(Level.SEVERE, e.getMessage(), e);
 			errorDetails = strings.getString("NO_ERROR_DETAILS");
 		}
 
@@ -2129,8 +2131,8 @@ public final class Main extends JFrame {
 						if (!file.exists()) {
 							main.saveProfile(file, false);
 						}
-					} catch (final Throwable t) {
-						logger.log(Level.SEVERE, t.getMessage(), t);
+					} catch (final Exception e1) {
+						logger.log(Level.SEVERE, e1.getMessage(), e1);
 					}
 				}
 
@@ -2159,7 +2161,7 @@ public final class Main extends JFrame {
 							if (portString != null) {
 								randomNumberString = lockFileReader.readLine();
 							}
-						} catch (final Throwable t) {
+						} catch (final IOException e) {
 							portString = null;
 							randomNumberString = null;
 						}
@@ -2292,8 +2294,8 @@ public final class Main extends JFrame {
 				try {
 					desktop.browse(uri);
 					return;
-				} catch (final Throwable t) {
-					logger.log(Level.WARNING, t.getMessage(), t);
+				} catch (final Exception e) {
+					logger.log(Level.WARNING, e.getMessage(), e);
 				}
 			}
 		}
@@ -4804,7 +4806,7 @@ public final class Main extends JFrame {
 		String errorDetails = null;
 		try {
 			errorDetails = updateGameControllerMappings(path, "external file: " + path);
-		} catch (final Throwable t) {
+		} catch (final Exception e) {
 			logger.warning("Could not read external game controller mappings file: " + path);
 
 			GuiUtils.showMessageDialog(this, this, MessageFormat

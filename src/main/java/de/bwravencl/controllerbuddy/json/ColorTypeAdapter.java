@@ -70,8 +70,8 @@ public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeseri
 			return new Color(rgba, true);
 		} catch (final JsonParseException e) {
 			throw e;
-		} catch (final Throwable t) {
-			throw new JsonParseException(t);
+		} catch (final Exception e) {
+			throw new JsonParseException(e);
 		}
 	}
 

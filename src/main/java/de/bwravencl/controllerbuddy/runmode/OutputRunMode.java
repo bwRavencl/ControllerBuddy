@@ -521,8 +521,8 @@ public abstract class OutputRunMode extends RunMode {
 		if (Main.IS_WINDOWS) {
 			try {
 				VjoyInterface.init(main);
-			} catch (final Throwable t) {
-				logger.log(Level.SEVERE, t.getMessage(), t);
+			} catch (final Exception e) {
+				logger.log(Level.SEVERE, e.getMessage(), e);
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 						Main.strings.getString("COULD_NOT_LOAD_VJOY_LIBRARY_DIALOG_TEXT"),
 						Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
@@ -671,8 +671,8 @@ public abstract class OutputRunMode extends RunMode {
 
 				EventQueue.invokeLater(
 						() -> main.setStatusBarText(Main.strings.getString("STATUS_CONNECTED_TO_UINPUT_DEVICES")));
-			} catch (final Throwable t) {
-				logger.log(Level.WARNING, t.getMessage(), t);
+			} catch (final Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
 
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 						Main.strings.getString("COULD_NOT_OPEN_UINPUT_DEVICE_DIALOG_TEXT"),
@@ -702,8 +702,8 @@ public abstract class OutputRunMode extends RunMode {
 								throw new RuntimeException(e);
 							}
 						}));
-			} catch (final Throwable t) {
-				logger.log(Level.WARNING, t.getMessage(), t);
+			} catch (final Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
 
 				EventQueue.invokeLater(() -> GuiUtils.showMessageDialog(main, main,
 						Main.strings.getString("CANNOT_READ_LED_STATUS_DIALOG_TEXT"),

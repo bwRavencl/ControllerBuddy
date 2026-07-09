@@ -193,8 +193,8 @@ public final class Linux {
 	public static int close(final int fd) {
 		try {
 			return (int) CLOSE_METHOD_HANDLE.invokeExact(fd);
-		} catch (final Throwable e) {
-			throw new RuntimeException(e);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -229,8 +229,8 @@ public final class Linux {
 	public static int open(final MemorySegment pathname, final int flags) {
 		try {
 			return (int) OPEN_METHOD_HANDLE.invokeExact(pathname, flags);
-		} catch (final Throwable e) {
-			throw new RuntimeException(e);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -243,8 +243,8 @@ public final class Linux {
 	public static long write(final int fd, final MemorySegment buf, final long count) {
 		try {
 			return (long) WRITE_METHOD_HANDLE.invokeExact(fd, buf, count);
-		} catch (final Throwable e) {
-			throw new RuntimeException(e);
+		} catch (final Throwable t) {
+			throw new RuntimeException(t);
 		}
 	}
 
