@@ -657,6 +657,7 @@ public final class Input {
 		final var activeMode = profile.getActiveMode();
 		final var axisToActionMap = activeMode.getAxisToActionsMap();
 		final var buttonToActionMap = activeMode.getButtonToActionsMap();
+		final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
 
 		for (var axis = 0; axis < SDLGamepad.SDL_GAMEPAD_AXIS_COUNT; axis++) {
 			final var axisValue = gamepadState.axes[axis];
@@ -667,12 +668,15 @@ public final class Input {
 
 			var actions = axisToActionMap.get(axis);
 			if (actions == null) {
-				final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
-				for (var i = 1; i < buttonToModeActionStack.size(); i++) {
-					actions = buttonToModeActionStack.get(i).getMode(this).getAxisToActionsMap().get(axis);
+				final var buttonToModeActionIterator = buttonToModeActionStack.iterator();
+				if (buttonToModeActionIterator.hasNext()) {
+					buttonToModeActionIterator.next();
 
-					if (actions != null) {
-						break;
+					while (buttonToModeActionIterator.hasNext()) {
+						actions = buttonToModeActionIterator.next().getMode(this).getAxisToActionsMap().get(axis);
+						if (actions != null) {
+							break;
+						}
 					}
 				}
 			}
@@ -691,12 +695,15 @@ public final class Input {
 		for (var button = 0; button <= SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT; button++) {
 			var actions = buttonToActionMap.get(button);
 			if (actions == null) {
-				final var buttonToModeActionStack = ButtonToModeAction.getButtonToModeActionStack();
-				for (var i = 1; i < buttonToModeActionStack.size(); i++) {
-					actions = buttonToModeActionStack.get(i).getMode(this).getButtonToActionsMap().get(button);
+				final var buttonToModeActionIterator = buttonToModeActionStack.iterator();
+				if (buttonToModeActionIterator.hasNext()) {
+					buttonToModeActionIterator.next();
 
-					if (actions != null) {
-						break;
+					while (buttonToModeActionIterator.hasNext()) {
+						actions = buttonToModeActionIterator.next().getMode(this).getButtonToActionsMap().get(button);
+						if (actions != null) {
+							break;
+						}
 					}
 				}
 			}

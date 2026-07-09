@@ -29,7 +29,8 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ModeEditorBuilder;
 import java.text.MessageFormat;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.NullMarked;
@@ -52,8 +53,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	public static final String TOGGLE_SYMBOL = "⇪";
 
 	/// Global stack tracking the currently active mode actions in activation order.
-	@SuppressWarnings("JdkObsolete")
-	private static final LinkedList<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new LinkedList<>();
+	private static final Deque<ButtonToModeAction> BUTTON_TO_MODE_ACTION_STACK = new ArrayDeque<>();
 
 	/// Delay in milliseconds before this action becomes active.
 	@ActionProperty(icon = "⏱️", title = "DELAY_TITLE", description = "DELAY_DESCRIPTION", editorBuilder = DelayEditorBuilder.class, order = 400)
@@ -73,7 +73,7 @@ public final class ButtonToModeAction implements IButtonToDelayableAction, IRese
 	/// Returns the global stack of currently active mode actions.
 	///
 	/// @return the mode action stack
-	public static List<ButtonToModeAction> getButtonToModeActionStack() {
+	public static Deque<ButtonToModeAction> getButtonToModeActionStack() {
 		return BUTTON_TO_MODE_ACTION_STACK;
 	}
 
