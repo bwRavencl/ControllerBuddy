@@ -121,6 +121,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -365,6 +366,9 @@ public final class Main extends JFrame {
 
 	/// Vertical gap in pixels between lower-bar buttons.
 	private static final int LOWER_BUTTONS_VGAP = 5;
+
+	/// Number of retries when attempting to read the single-instance lock file
+	private static final int NUM_LOCK_FILE_READ_RETRIES = 3;
 
 	/// CLI option name for the autostart mode selection.
 	private static final String OPTION_AUTOSTART = "autostart";
@@ -976,13 +980,23 @@ public final class Main extends JFrame {
 			try (final var singleInstanceServerSocket = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
 				SINGLE_INSTANCE_LOCK_FILE.deleteOnExit();
 
+				final var tempLockFilePath = Path.of(SINGLE_INSTANCE_LOCK_FILE.getAbsolutePath() + ".tmp");
 				final var randomNumber = random.nextInt();
 
 				try {
-					Files.writeString(SINGLE_INSTANCE_LOCK_FILE.toPath(),
-							singleInstanceServerSocket.getLocalPort() + "\n" + randomNumber, StandardCharsets.UTF_8);
+					Files.writeString(tempLockFilePath, singleInstanceServerSocket.getLocalPort() + "\n" + randomNumber,
+							StandardCharsets.UTF_8);
+
+					Files.move(tempLockFilePath, SINGLE_INSTANCE_LOCK_FILE.toPath(),
+							StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
 				} catch (final IOException e) {
 					logger.log(Level.SEVERE, e.getMessage(), e);
+
+					try {
+						Files.deleteIfExists(tempLockFilePath);
+					} catch (final IOException _) {
+						logger.log(Level.WARNING, e.getMessage(), e);
+					}
 				}
 
 				for (;;) {
@@ -2135,18 +2149,42 @@ public final class Main extends JFrame {
 				var continueLaunch = true;
 
 				if (SINGLE_INSTANCE_LOCK_FILE.exists()) {
-					try (final var fileBufferedReader = new BufferedReader(
-							new FileReader(SINGLE_INSTANCE_LOCK_FILE, StandardCharsets.UTF_8))) {
-						final var portString = fileBufferedReader.readLine();
-						if (portString == null) {
-							throw new IOException("Could not read port");
-						}
-						final var port = Integer.parseInt(portString);
+					String portString = null;
+					String randomNumberString = null;
 
-						final var randomNumberString = fileBufferedReader.readLine();
-						if (randomNumberString == null) {
-							throw new IOException("Could not read random number");
+					for (var i = 0; i < NUM_LOCK_FILE_READ_RETRIES; i++) {
+						try (final var lockFileReader = new BufferedReader(
+								new FileReader(SINGLE_INSTANCE_LOCK_FILE, StandardCharsets.UTF_8))) {
+							portString = lockFileReader.readLine();
+							if (portString != null) {
+								randomNumberString = lockFileReader.readLine();
+							}
+						} catch (final Throwable t) {
+							portString = null;
+							randomNumberString = null;
 						}
+
+						if (portString != null && randomNumberString != null) {
+							break;
+						}
+
+						if (i < NUM_LOCK_FILE_READ_RETRIES - 1) {
+							try {
+								Thread.sleep(100);
+							} catch (final InterruptedException e) {
+								Thread.currentThread().interrupt();
+								break;
+							}
+						}
+					}
+
+					try {
+						if (portString == null || randomNumberString == null) {
+							throw new IOException("Could not read single instance lock data after "
+									+ NUM_LOCK_FILE_READ_RETRIES + " retries");
+						}
+
+						final var port = Integer.parseInt(portString);
 
 						try (final var socket = new Socket(InetAddress.getLoopbackAddress(), port);
 								final var printStream = new PrintStream(socket.getOutputStream(), false,
@@ -2180,6 +2218,9 @@ public final class Main extends JFrame {
 							if (continueLaunch) {
 								logger.warning("Other " + Constants.APPLICATION_NAME
 										+ " instance did not acknowledge invocation");
+								terminate(1, null);
+
+								return;
 							}
 						}
 					} catch (final IOException | NumberFormatException e) {
