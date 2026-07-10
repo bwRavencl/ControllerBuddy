@@ -76,7 +76,7 @@ final class InputPipelineTest {
 
 	private Input input;
 
-	private long lastPollTime;
+	private long lastPollNanoTime;
 
 	private OnScreenKeyboard mockOnScreenKeyboard;
 
@@ -256,14 +256,14 @@ final class InputPipelineTest {
 	}
 
 	private OutputCapture pollWithState(final float[] axes, final boolean[] buttons) {
-		if (lastPollTime > 0L && System.currentTimeMillis() - lastPollTime < RunMode.DEFAULT_POLL_INTERVAL + 1L) {
+		if (lastPollNanoTime > 0L && System.nanoTime() - lastPollNanoTime < RunMode.DEFAULT_POLL_RATE_HZ + 1L) {
 			try {
-				Thread.sleep(RunMode.DEFAULT_POLL_INTERVAL);
+				Thread.sleep(RunMode.DEFAULT_POLL_RATE_HZ);
 			} catch (final InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 		}
-		lastPollTime = System.currentTimeMillis();
+		lastPollNanoTime = System.nanoTime();
 
 		injector.injectState(axes, buttons);
 		input.poll();
@@ -288,7 +288,7 @@ final class InputPipelineTest {
 		final var mockRunMode = Mockito.mock(RunMode.class);
 
 		Mockito.lenient().when(mockMain.getOnScreenKeyboard()).thenReturn(mockOnScreenKeyboard);
-		Mockito.lenient().when(mockMain.getPollInterval()).thenReturn(RunMode.DEFAULT_POLL_INTERVAL);
+		Mockito.lenient().when(mockMain.getPollRate()).thenReturn(RunMode.DEFAULT_POLL_RATE_HZ);
 		Mockito.lenient().when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
 		Mockito.lenient().when(mockMain.isMapCircularAxesToSquareAxes()).thenReturn(false);
 		Mockito.lenient().when(mockMain.isHapticFeedback()).thenReturn(false);
@@ -296,7 +296,8 @@ final class InputPipelineTest {
 		Mockito.lenient().when(mockRunMode.getMinAxisValue()).thenReturn((int) Short.MIN_VALUE);
 		Mockito.lenient().when(mockRunMode.getMaxAxisValue()).thenReturn((int) Short.MAX_VALUE);
 		Mockito.lenient().when(mockRunMode.getNumButtons()).thenReturn(128);
-		Mockito.lenient().when(mockRunMode.getPollInterval()).thenReturn(RunMode.DEFAULT_POLL_INTERVAL);
+		Mockito.lenient().when(mockRunMode.getPollPeriodNanos())
+				.thenReturn(Input.NANOS_PER_SECOND / RunMode.DEFAULT_POLL_RATE_HZ);
 
 		input = new Input(mockMain, mockController, null);
 		input.setRunMode(mockRunMode);
@@ -4051,7 +4052,7 @@ final class InputPipelineTest {
 		@DisplayName("all reflected Input fields exist")
 		void allReflectedInputFieldsExist() {
 			final var fieldNames = new String[] { "sdlGamepadToGamepadStateMap", "selectedSdlGamepad", "initialized",
-					"lastPollTime", "swapLeftAndRightSticks", "mapCircularAxesToSquareAxes" };
+					"lastPollNanoTime", "swapLeftAndRightSticks", "mapCircularAxesToSquareAxes" };
 
 			for (final var fieldName : fieldNames) {
 				try {

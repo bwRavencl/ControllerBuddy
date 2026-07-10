@@ -91,7 +91,7 @@ final class InputTest {
 		void suspensionExpiresAfterTimeout() throws Exception {
 			// Force an already-expired timestamp via reflection
 			input.suspendAxis(0);
-			final var field = input.getClass().getDeclaredField("axisToEndSuspensionTimestampMap");
+			final var field = input.getClass().getDeclaredField("axisToEndSuspensionTimeNanosMap");
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			final var map = (Map<Integer, Long>) field.get(input);
@@ -400,16 +400,14 @@ final class InputTest {
 		@Test
 		@DisplayName("removes expired axis suspensions on each poll")
 		void removesExpiredAxisSuspensionsOnPoll() throws Exception {
-			Mockito.when(mockRunMode.getPollInterval()).thenReturn(16L);
-
 			final var input = createInputWithRunMode();
 			input.suspendAxis(0);
 
-			final var field = Input.class.getDeclaredField("axisToEndSuspensionTimestampMap");
+			final var field = Input.class.getDeclaredField("axisToEndSuspensionTimeNanosMap");
 			field.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			final var map = (Map<Integer, Long>) field.get(input);
-			map.put(0, System.currentTimeMillis() - 1);
+			map.put(0, System.nanoTime() - 1);
 
 			input.poll();
 
@@ -419,8 +417,6 @@ final class InputTest {
 		@Test
 		@DisplayName("returns false when no gamepad state exists for the selected gamepad")
 		void returnsFalseWhenNoGamepadStateForSelectedGamepad() {
-			Mockito.when(mockRunMode.getPollInterval()).thenReturn(16L);
-
 			final var input = createInputWithRunMode();
 			Assertions.assertFalse(input.poll());
 		}
@@ -428,30 +424,33 @@ final class InputTest {
 		@Test
 		@DisplayName("sets rateMultiplier from elapsed wall-clock time on subsequent calls")
 		void setsRateMultiplierFromElapsedTimeOnSubsequentCalls() throws Exception {
-			Mockito.when(mockRunMode.getPollInterval()).thenReturn(16L);
+			final var pollPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_POLL_RATE_HZ;
+			Mockito.when(mockRunMode.getPollPeriodNanos()).thenReturn(pollPeriodNanos);
 
 			final var input = createInputWithRunMode();
-			input.poll(); // first call - seeds lastPollTime
+			input.poll(); // first call - seeds lastPollNanoTime
 
-			// Wind lastPollTime back by 100 ms to simulate elapsed time
-			final var field = Input.class.getDeclaredField("lastPollTime");
+			// Wind lastPollNanoTime back by 100 ms to simulate elapsed time
+			final var rewindInterval = 100_000_000L;
+			final var field = Input.class.getDeclaredField("lastPollNanoTime");
 			field.setAccessible(true);
-			field.set(input, (long) field.get(input) - 100L);
+			field.set(input, (long) field.get(input) - rewindInterval);
 
 			input.poll(); // second call - should use elapsed time
 
-			Assertions.assertEquals(100f / 1000f, input.getRateMultiplier(), 0.01f);
+			Assertions.assertEquals((float) rewindInterval / Input.NANOS_PER_SECOND, input.getRateMultiplier(), 0.01f);
 		}
 
 		@Test
-		@DisplayName("sets rateMultiplier from getPollInterval() on the first call when lastPollTime is 0")
+		@DisplayName("sets rateMultiplier from getPollPeriodNanos() on the first call when lastPollNanoTime is 0")
 		void setsRateMultiplierFromPollIntervalOnFirstCall() {
-			Mockito.when(mockRunMode.getPollInterval()).thenReturn(16L);
+			final var pollPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_POLL_RATE_HZ;
+			Mockito.when(mockRunMode.getPollPeriodNanos()).thenReturn(pollPeriodNanos);
 
 			final var input = createInputWithRunMode();
 			input.poll();
 
-			Assertions.assertEquals(16f / 1000f, input.getRateMultiplier(), 1e-6f);
+			Assertions.assertEquals((float) pollPeriodNanos / Input.NANOS_PER_SECOND, input.getRateMultiplier(), 1e-6f);
 		}
 	}
 

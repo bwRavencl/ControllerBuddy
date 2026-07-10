@@ -113,10 +113,10 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 	/// Creates a type adapter for the given type, applying profile migration logic
 	/// as needed.
 	///
-	/// Returns specialized adapters for enum types (with legacy name mapping),
-	/// [IDelayableAction]
-	/// subtypes (with `longPress` migration), and general types (with profile
-	/// version migration, default mode descriptions, and overlay axis defaults).
+	/// Returns specialized adapters for Profile types (with `keyRepeatInterval` and
+	/// GLFW migration), enum types (with legacy name mapping), [IDelayableAction]
+	/// subtypes (with `longPress` migration), and general types (with default mode
+	/// descriptions, and overlay axis defaults).
 	///
 	/// @param gson the Gson instance
 	/// @param type the type token for the target type
@@ -126,35 +126,98 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<@Nullable T> type) {
 		final var rawType = (Class<?>) type.getRawType();
-		if (rawType.isEnum()) {
-			final var delegate = gson.getDelegateAdapter(this, type);
+		final var delegate = gson.getDelegateAdapter(this, type);
 
+		if (rawType == Profile.class) {
 			return new TypeAdapter<>() {
 
 				@Override
-				public @Nullable T read(final JsonReader in) throws IOException {
-					if (in.peek() == JsonToken.NULL) {
-						in.nextNull();
-						return null;
+				public @Nullable T read(final JsonReader in) {
+					try {
+						final var jsonElement = gson.getAdapter(JsonElement.class).read(in);
+						final var object = delegate.fromJsonTree(jsonElement);
+
+						if (object instanceof final Profile profile && jsonElement.isJsonObject()) {
+							final var version = profile.getVersion();
+							if (version != null) {
+								final var versionParts = VersionUtils.getVersionIntegerParts(version);
+								if (versionParts.length >= 2 && versionParts[0] <= 1) {
+									if (versionParts[1] < 4) {
+										profile.setButtonToModeActionsMap(
+												profile.getButtonToModeActionsMap().entrySet().stream()
+														.collect(Collectors.toMap(
+																(entry) -> convertGlfwToSdlButton(entry.getKey()),
+																Entry::getValue)));
+
+										profile.getModes()
+												.forEach(mode -> mode.setButtonToActionsMap(mode.getButtonToActionsMap()
+														.entrySet().stream()
+														.collect(Collectors.toMap(
+																(entry) -> convertGlfwToSdlButton(entry.getKey()),
+																Entry::getValue))));
+									}
+
+									if (versionParts[1] < 9) {
+										final var jsonObject = jsonElement.getAsJsonObject();
+										if (jsonObject.has("keyRepeatInterval")) {
+											final var keyRepeatInterval = jsonObject.get("keyRepeatInterval")
+													.getAsLong();
+											if (keyRepeatInterval > 0L) {
+												final var keyRepeatRate = 1000L / keyRepeatInterval;
+												profile.setKeyRepeatRate(keyRepeatRate);
+											}
+										}
+									}
+								}
+							}
+						}
+
+						return object;
+					} catch (final JsonParseException e) {
+						throw e;
+					} catch (final Exception e) {
+						throw new JsonParseException(e);
 					}
+				}
 
-					var value = in.nextString();
+				@Override
+				public void write(final JsonWriter out, final T value) throws IOException {
+					delegate.write(out, value);
+				}
+			};
+		} else if (rawType.isEnum()) {
+			return new TypeAdapter<>() {
 
-					if (rawType == Activation.class) {
-						value = switch (value) {
-						case "REPEAT" -> Activation.WHILE_PRESSED.name();
-						case "SINGLE_IMMEDIATELY" -> Activation.ON_PRESS.name();
-						case "SINGLE_ON_RELEASE" -> Activation.ON_RELEASE.name();
-						default -> value;
-						};
+				@Override
+				public @Nullable T read(final JsonReader in) {
+					try {
+						if (in.peek() == JsonToken.NULL) {
+							in.nextNull();
+							return null;
+						}
+
+						var value = in.nextString();
+
+						if (rawType == Activation.class) {
+							value = switch (value) {
+							case "REPEAT" -> Activation.WHILE_PRESSED.name();
+							case "SINGLE_IMMEDIATELY" -> Activation.ON_PRESS.name();
+							case "SINGLE_ON_RELEASE" -> Activation.ON_RELEASE.name();
+							default -> value;
+							};
+						}
+
+						final var result = delegate.fromJson("\"" + value + "\"");
+						if (result == null) {
+							throw new JsonParseException("Invalid enum value '" + value + "' for " + rawType.getName());
+						}
+
+						return result;
+					} catch (final JsonParseException e) {
+						throw e;
+					} catch (final Exception e) {
+						throw new JsonParseException(e);
 					}
-
-					final var result = delegate.fromJson("\"" + value + "\"");
-					if (result == null) {
-						throw new JsonParseException("Invalid enum value '" + value + "' for " + rawType.getName());
-					}
-
-					return result;
 				}
 
 				@Override
@@ -163,23 +226,27 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 				}
 			};
 		} else if (IDelayableAction.class.isAssignableFrom(rawType)) {
-			final var delegate = gson.getDelegateAdapter(this, type);
-
 			return new TypeAdapter<>() {
 
 				@Override
-				public @Nullable T read(final JsonReader in) throws IOException {
-					final var jsonElement = gson.getAdapter(JsonElement.class).read(in);
-					final var object = delegate.fromJsonTree(jsonElement);
+				public @Nullable T read(final JsonReader in) {
+					try {
+						final var jsonElement = gson.getAdapter(JsonElement.class).read(in);
+						final var object = delegate.fromJsonTree(jsonElement);
 
-					if (object instanceof final IDelayableAction<?> delayableAction && jsonElement.isJsonObject()) {
-						final var jsonObject = jsonElement.getAsJsonObject();
-						if (jsonObject.has("longPress") && jsonObject.get("longPress").getAsBoolean()) {
-							delayableAction.setDelay(1000L);
+						if (object instanceof final IDelayableAction<?> delayableAction && jsonElement.isJsonObject()) {
+							final var jsonObject = jsonElement.getAsJsonObject();
+							if (jsonObject.has("longPress") && jsonObject.get("longPress").getAsBoolean()) {
+								delayableAction.setDelay(1000L);
+							}
 						}
-					}
 
-					return object;
+						return object;
+					} catch (final JsonParseException e) {
+						throw e;
+					} catch (final Exception e) {
+						throw new JsonParseException(e);
+					}
 				}
 
 				@Override
@@ -189,58 +256,41 @@ public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 			};
 		}
 
-		final var delegate = gson.getDelegateAdapter(this, type);
-
 		return new TypeAdapter<>() {
 
 			@Override
-			public @Nullable T read(final JsonReader in) throws IOException {
-				final var obj = delegate.read(in);
+			public @Nullable T read(final JsonReader in) {
+				try {
+					final var obj = delegate.read(in);
 
-				switch (obj) {
-				case final Profile profile -> {
-					final var version = profile.getVersion();
-					if (version == null) {
-						break;
+					switch (obj) {
+					case final Mode mode -> {
+						if (Profile.defaultMode.equals(mode)) {
+							mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
+						} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
+							mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
+						}
+					}
+					case final OverlayAxis overlayAxis -> {
+						// noinspection ConstantValue
+						if (overlayAxis.getOrientation() == null) {
+							overlayAxis.setOrientation(OverlayAxisOrientation.VERTICAL);
+						}
+						// noinspection ConstantValue
+						if (overlayAxis.getStyle() == null) {
+							overlayAxis.setStyle(OverlayAxisStyle.SOLID);
+						}
+					}
+					case null, default -> {
+					}
 					}
 
-					final var versionParts = VersionUtils.getVersionIntegerParts(version);
-					if (versionParts.length < 2) {
-						break;
-					}
-
-					if (versionParts[0] <= 1 && versionParts[1] < 4) {
-						profile.setButtonToModeActionsMap(
-								profile.getButtonToModeActionsMap().entrySet().stream().collect(Collectors
-										.toMap((entry) -> convertGlfwToSdlButton(entry.getKey()), Entry::getValue)));
-
-						profile.getModes().forEach(mode -> mode.setButtonToActionsMap(
-								mode.getButtonToActionsMap().entrySet().stream().collect(Collectors
-										.toMap((entry) -> convertGlfwToSdlButton(entry.getKey()), Entry::getValue))));
-					}
+					return obj;
+				} catch (final JsonParseException e) {
+					throw e;
+				} catch (final Exception e) {
+					throw new JsonParseException(e);
 				}
-				case final Mode mode -> {
-					if (Profile.defaultMode.equals(mode)) {
-						mode.setDescription(Main.strings.getString("DEFAULT_MODE_DESCRIPTION"));
-					} else if (OnScreenKeyboard.onScreenKeyboardMode.equals(mode)) {
-						mode.setDescription(Main.strings.getString("ON_SCREEN_KEYBOARD_MODE_DESCRIPTION"));
-					}
-				}
-				case final OverlayAxis overlayAxis -> {
-					// noinspection ConstantValue
-					if (overlayAxis.getOrientation() == null) {
-						overlayAxis.setOrientation(OverlayAxisOrientation.VERTICAL);
-					}
-					// noinspection ConstantValue
-					if (overlayAxis.getStyle() == null) {
-						overlayAxis.setStyle(OverlayAxisStyle.SOLID);
-					}
-				}
-				case null, default -> {
-				}
-				}
-
-				return obj;
 			}
 
 			@Override

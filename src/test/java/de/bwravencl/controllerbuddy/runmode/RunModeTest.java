@@ -91,6 +91,7 @@ final class RunModeTest {
 		@BeforeEach
 		void setUp() {
 			Mockito.when(mockMain.isSkipControllerDialogs()).thenReturn(true);
+			Mockito.when(mockMain.getPollRate()).thenReturn(RunMode.DEFAULT_POLL_RATE_HZ);
 			runMode = createRunMode();
 		}
 	}

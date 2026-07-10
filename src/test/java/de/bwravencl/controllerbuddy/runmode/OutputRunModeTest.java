@@ -171,6 +171,7 @@ final class OutputRunModeTest {
 		@BeforeEach
 		void setUp() {
 			Mockito.when(mockMain.getInput()).thenReturn(mockInput);
+			Mockito.when(mockMain.getPollRate()).thenReturn(RunMode.DEFAULT_POLL_RATE_HZ);
 			Mockito.when(mockInput.getProfile()).thenReturn(mockProfile);
 			runMode = new LocalRunMode(mockMain);
 		}

@@ -57,6 +57,9 @@ public final class Input {
 	/// Maximum number of virtual buttons supported.
 	public static final int MAX_N_BUTTONS = 128;
 
+	/// The number of nanoseconds in one second.
+	public static final long NANOS_PER_SECOND = 1_000_000_000L;
+
 	/// Minimum axis movement required to abort a suspension action.
 	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 
@@ -66,22 +69,23 @@ public final class Input {
 	/// Minimum delta factor applied to axis movement per poll cycle.
 	private static final float AXIS_MOVEMENT_MIN_DELTA_FACTOR = 0.1f;
 
-	/// Duration in milliseconds to suppress hot-swap polling after a swap.
-	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL = 2000L;
+	/// Duration in nanoseconds to suppress hot-swap polling after a swap.
+	private static final long HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL_NS = 2_000_000_000L;
 
-	/// Interval in milliseconds between hot-swap button polls.
-	private static final long HOT_SWAP_POLL_INTERVAL = 50L;
+	/// Interval in nanoseconds between hot-swap button polls.
+	private static final long HOT_SWAP_POLL_INTERVAL_NS = 50_000_000L;
 
-	/// Duration in milliseconds for which axis suspension is held.
-	private static final long SUSPENSION_TIME = 500L;
+	/// Duration in nanoseconds for which axis suspension is held.
+	private static final long SUSPENSION_TIME_NS = 500_000_000L;
 
 	private static final Logger logger = Logger.getLogger(Input.class.getName());
 
 	/// Current integer values for all virtual axes.
 	private final Map<VirtualAxis, Integer> axes;
 
-	/// Map from axis index to the timestamp when its suspension ends.
-	private final Map<Integer, Long> axisToEndSuspensionTimestampMap = new HashMap<>();
+	/// Map from axis index to the time in nanoseconds when its suspension shall
+	/// end.
+	private final Map<Integer, Long> axisToEndSuspensionTimeNanosMap = new HashMap<>();
 
 	/// Keystrokes currently held down continuously.
 	private final Set<Keystroke> downKeystrokes = new HashSet<>();
@@ -143,11 +147,11 @@ public final class Input {
 	/// Whether the input system has been successfully initialized.
 	private boolean initialized;
 
-	/// Timestamp of the last hot-swap poll in milliseconds.
-	private long lastHotSwapPollTime;
+	/// Timestamp of the last hot-swap poll in nanoseconds.
+	private long lastHotSwapPollNanoTime;
 
-	/// Timestamp of the last input poll in milliseconds.
-	private long lastPollTime;
+	/// Timestamp of the last input poll in nanoseconds.
+	private long lastPollNanoTime;
 
 	/// Whether circular axis values should be remapped to square axes.
 	private boolean mapCircularAxesToSquareAxes;
@@ -204,7 +208,7 @@ public final class Input {
 			EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
 		}
 
-		resetLastHotSwapPollTime();
+		resetLastHotSwapPollNanoTime();
 
 		profile = new Profile();
 	}
@@ -467,7 +471,7 @@ public final class Input {
 	/// @param axis the axis index to check
 	/// @return `true` if the axis is suspended
 	public boolean isAxisSuspended(final int axis) {
-		return axisToEndSuspensionTimestampMap.containsKey(axis);
+		return axisToEndSuspensionTimeNanosMap.containsKey(axis);
 	}
 
 	/// Returns whether this input instance has been initialized.
@@ -544,21 +548,21 @@ public final class Input {
 		Objects.requireNonNull(runMode, "Field runMode must not be null");
 		Objects.requireNonNull(selectedController, "Field selectedController must not be null");
 
-		final var currentTime = System.currentTimeMillis();
+		final var currentNanoTime = System.nanoTime();
 
-		axisToEndSuspensionTimestampMap.values().removeIf(timestamp -> timestamp < currentTime);
+		axisToEndSuspensionTimeNanosMap.values().removeIf(timestamp -> timestamp < currentNanoTime);
 
-		final long elapsedTime;
-		if (lastPollTime > 0L) {
-			elapsedTime = currentTime - lastPollTime;
+		final long elapsedNanoTime;
+		if (lastPollNanoTime > 0L) {
+			elapsedNanoTime = currentNanoTime - lastPollNanoTime;
 		} else {
-			elapsedTime = runMode.getPollInterval();
+			elapsedNanoTime = runMode.getPollPeriodNanos();
 		}
-		lastPollTime = currentTime;
-		rateMultiplier = (float) elapsedTime / 1000L;
+		lastPollNanoTime = currentNanoTime;
+		rateMultiplier = (float) elapsedNanoTime / NANOS_PER_SECOND;
 
 		if (hotSwappingButtonId != HotSwappingButton.NONE.id
-				&& currentTime - lastHotSwapPollTime > HOT_SWAP_POLL_INTERVAL) {
+				&& currentNanoTime - lastHotSwapPollNanoTime > HOT_SWAP_POLL_INTERVAL_NS) {
 			final var sdlGamepadToGamepadStateMapIterator = sdlGamepadToGamepadStateMap.entrySet().iterator();
 			while (sdlGamepadToGamepadStateMapIterator.hasNext()) {
 				final var entry = sdlGamepadToGamepadStateMapIterator.next();
@@ -601,7 +605,7 @@ public final class Input {
 				}
 			}
 
-			lastHotSwapPollTime = currentTime;
+			lastHotSwapPollNanoTime = currentNanoTime;
 		}
 
 		final var gamepadState = sdlGamepadToGamepadStateMap.get(selectedSdlGamepad);
@@ -663,7 +667,7 @@ public final class Input {
 			final var axisValue = gamepadState.axes[axis];
 
 			if (Math.abs(axisValue) <= ABORT_SUSPENSION_ACTION_DEADZONE) {
-				axisToEndSuspensionTimestampMap.remove(axis);
+				axisToEndSuspensionTimeNanosMap.remove(axis);
 			}
 
 			var actions = axisToActionMap.get(axis);
@@ -758,16 +762,16 @@ public final class Input {
 		skipAxisInitialization = false;
 		initialized = false;
 		scheduledRumbleEffect = null;
-		lastPollTime = 0;
+		lastPollNanoTime = 0L;
 		rateMultiplier = 0f;
 		buttons = new boolean[0];
 		sdlGamepadToGamepadStateMap.clear();
 		virtualAxisToTargetValueMap.clear();
-		axisToEndSuspensionTimestampMap.clear();
+		axisToEndSuspensionTimeNanosMap.clear();
 		hotSwappingButtonDownInstanceIds.clear();
 		hotSwappingButtonId = HotSwappingButton.NONE.id;
 
-		resetLastHotSwapPollTime();
+		resetLastHotSwapPollNanoTime();
 
 		profile.setActiveMode(this, 0);
 		clearOnNextPoll = false;
@@ -787,8 +791,8 @@ public final class Input {
 
 	/// Resets the hot-swap poll timer by advancing it by the initial suspension
 	/// interval, suppressing hot-swap checks immediately after a swap.
-	private void resetLastHotSwapPollTime() {
-		lastHotSwapPollTime = System.currentTimeMillis() + HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL;
+	private void resetLastHotSwapPollNanoTime() {
+		lastHotSwapPollNanoTime = System.nanoTime() + HOT_SWAP_POLL_INITIAL_SUSPENSION_INTERVAL_NS;
 	}
 
 	/// Schedules a full state clear to be performed at the start of the next
@@ -960,7 +964,7 @@ public final class Input {
 	///
 	/// @param axis the axis index to suspend
 	public void suspendAxis(final int axis) {
-		axisToEndSuspensionTimestampMap.put(axis, System.currentTimeMillis() + SUSPENSION_TIME);
+		axisToEndSuspensionTimeNanosMap.put(axis, System.nanoTime() + SUSPENSION_TIME_NS);
 	}
 
 	/// Updates the active hot-swapping button ID based on whether multiple

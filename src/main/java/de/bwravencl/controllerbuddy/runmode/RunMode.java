@@ -35,8 +35,8 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public abstract class RunMode implements Runnable {
 
-	/// The default polling interval in milliseconds.
-	public static final long DEFAULT_POLL_INTERVAL = 1L;
+	/// The default poll rate in hertz.
+	public static final long DEFAULT_POLL_RATE_HZ = 1000L;
 
 	private static final Logger logger = Logger.getLogger(RunMode.class.getName());
 
@@ -55,8 +55,8 @@ public abstract class RunMode implements Runnable {
 	/// The number of buttons available on the output device.
 	int numButtons;
 
-	/// The polling interval in milliseconds.
-	long pollInterval;
+	/// The poll period in nanoseconds.
+	long pollPeriodNanos;
 
 	/// Flag controlling whether the run loop continues; set to `false` to stop.
 	volatile boolean run = true;
@@ -71,7 +71,8 @@ public abstract class RunMode implements Runnable {
 	RunMode(final Main main) {
 		this.main = main;
 		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
-		pollInterval = main.getPollInterval();
+
+		pollPeriodNanos = Input.NANOS_PER_SECOND / main.getPollRate();
 
 		input.setRunMode(this);
 	}
@@ -127,11 +128,11 @@ public abstract class RunMode implements Runnable {
 		return numButtons;
 	}
 
-	/// Returns the poll interval in milliseconds used for input polling.
+	/// Returns the poll period in nanoseconds used for input polling.
 	///
-	/// @return the poll interval in milliseconds
-	public final long getPollInterval() {
-		return pollInterval;
+	/// @return the poll period in nanoseconds
+	public final long getPollPeriodNanos() {
+		return pollPeriodNanos;
 	}
 
 	/// Logs an informational message indicating that output has started.

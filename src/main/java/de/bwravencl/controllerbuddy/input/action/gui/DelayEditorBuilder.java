@@ -55,7 +55,7 @@ public final class DelayEditorBuilder extends NumberEditorBuilder<Long> {
 		super.buildEditor(parentPanel);
 		Objects.requireNonNull(spinner, "Field spinner must not be null");
 
-		GuiUtils.makeMillisecondSpinner(spinner, 6);
+		GuiUtils.makeMillisecondSpinner(spinner);
 
 		if (cycleEditor) {
 			spinner.setEnabled(false);

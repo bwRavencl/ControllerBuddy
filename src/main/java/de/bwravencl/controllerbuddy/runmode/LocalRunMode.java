@@ -141,20 +141,30 @@ public final class LocalRunMode extends OutputRunMode {
 	}
 
 	/// Runs the local polling loop: initializes the output device, then repeatedly
-	/// polls the controller, and writes the input state to the output device at the
-	/// configured poll interval until stopped.
+	/// polls the controller, and writes the input state to the output device at a
+	/// fixed rate until stopped.
 	@Override
 	public void run() {
 		logStart();
 
 		try {
 			if (init()) {
+				var nextPollTimeNanos = System.nanoTime();
+
 				while (run) {
 					if (readInput()) {
 						writeOutput();
 					}
-					// noinspection BusyWait
-					Thread.sleep(pollInterval);
+
+					nextPollTimeNanos += pollPeriodNanos;
+
+					final var sleepNanos = nextPollTimeNanos - System.nanoTime();
+					if (sleepNanos > 0L) {
+						// noinspection BusyWait
+						Thread.sleep(sleepNanos / 1_000_000L, (int) (sleepNanos % 1_000_000L));
+					} else {
+						nextPollTimeNanos = System.nanoTime();
+					}
 				}
 			} else {
 				forceStop = true;

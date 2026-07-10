@@ -64,7 +64,7 @@ public final class ActivationIntervalEditorBuilder extends NumberEditorBuilder<I
 		super.buildEditor(parentPanel);
 		Objects.requireNonNull(spinner, "Field spinner must not be null");
 
-		GuiUtils.makeMillisecondSpinner(spinner, 6);
+		GuiUtils.makeMillisecondSpinner(spinner);
 		((IUpdatableEditorComponent) spinner).onUpdate();
 	}
 

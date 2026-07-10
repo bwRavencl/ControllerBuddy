@@ -24,6 +24,7 @@ import de.bwravencl.controllerbuddy.ffi.User32.INPUT.MOUSEINPUT;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import de.bwravencl.controllerbuddy.input.Scancode;
@@ -994,13 +995,14 @@ public abstract class OutputRunMode extends RunMode {
 				doKeyboardInput(scancode, true);
 			}
 
-			final var currentTime = System.currentTimeMillis();
-			if (currentTime - prevKeyInputTime > input.getProfile().getKeyRepeatInterval()) {
+			final var currentTimeNanos = System.nanoTime();
+			final var keyRepeatIntervalNanos = Input.NANOS_PER_SECOND / input.getProfile().getKeyRepeatRate();
+			if (currentTimeNanos - prevKeyInputTime > keyRepeatIntervalNanos) {
 				for (final var scancode : newDownNormalKeys) {
 					doKeyboardInput(scancode, true);
 				}
 
-				prevKeyInputTime = currentTime;
+				prevKeyInputTime = currentTimeNanos;
 			}
 
 			for (final var keystroke : downUpKeystrokes) {

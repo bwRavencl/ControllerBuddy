@@ -463,8 +463,8 @@ public final class Main extends JFrame {
 	/// Preferences key for the stored connection password.
 	private static final String PREFERENCES_PASSWORD = "password";
 
-	/// Preferences key for the controller poll interval.
-	private static final String PREFERENCES_POLL_INTERVAL = "poll_interval";
+	/// Preferences key for the controller poll rate.
+	private static final String PREFERENCES_POLL_RATE = "poll_rate";
 
 	/// Preferences key for the stored network port.
 	private static final String PREFERENCES_PORT = "port";
@@ -1243,18 +1243,18 @@ public final class Main extends JFrame {
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var pollIntervalPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(pollIntervalPanel);
+		final var pollRatePanel = new JPanel(defaultFlowLayout);
+		inputSettingsPanel.add(pollRatePanel);
 
-		final var pollIntervalLabel = new JLabel(strings.getString("POLL_INTERVAL_LABEL"));
-		pollIntervalLabel.setPreferredSize(longSettingsLabelDimension);
-		pollIntervalPanel.add(pollIntervalLabel);
+		final var pollRateLabel = new JLabel(strings.getString("POLL_RATE_LABEL"));
+		pollRateLabel.setPreferredSize(longSettingsLabelDimension);
+		pollRatePanel.add(pollRateLabel);
 
-		final var pollIntervalSpinner = new JSpinner(new SpinnerNumberModel((Number) getPollInterval(), 1L, 100L, 1L));
-		GuiUtils.makeMillisecondSpinner(pollIntervalSpinner);
-		pollIntervalSpinner.addChangeListener(event -> preferences.putLong(PREFERENCES_POLL_INTERVAL,
-				(long) ((JSpinner) event.getSource()).getValue()));
-		pollIntervalPanel.add(pollIntervalSpinner);
+		final var pollRateSpinner = new JSpinner(new SpinnerNumberModel((Number) getPollRate(), 100L, 10_000L, 100L));
+		GuiUtils.makeHertzSpinner(pollRateSpinner);
+		pollRateSpinner.addChangeListener(
+				event -> preferences.putLong(PREFERENCES_POLL_RATE, (long) ((JSpinner) event.getSource()).getValue()));
+		pollRatePanel.add(pollRateSpinner);
 
 		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(physicalAxesPanel, constraints);
@@ -2981,11 +2981,11 @@ public final class Main extends JFrame {
 		return preferences.get(PREFERENCES_PASSWORD, "");
 	}
 
-	/// Returns the configured input poll interval in milliseconds.
+	/// Returns the configured input poll rate in hertz.
 	///
-	/// @return the poll interval in milliseconds
-	public long getPollInterval() {
-		return preferences.getLong(PREFERENCES_POLL_INTERVAL, RunMode.DEFAULT_POLL_INTERVAL);
+	/// @return the poll rate in hertz
+	public long getPollRate() {
+		return preferences.getLong(PREFERENCES_POLL_RATE, RunMode.DEFAULT_POLL_RATE_HZ);
 	}
 
 	/// Returns the configured network port.
@@ -5231,24 +5231,23 @@ public final class Main extends JFrame {
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		profileSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var keyRepeatIntervalPanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(keyRepeatIntervalPanel, constraints);
+		final var keyRepeatRatePanel = new JPanel(defaultFlowLayout);
+		inputSettingsPanel.add(keyRepeatRatePanel, constraints);
 
-		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_INTERVAL_LABEL"));
+		final var keyRepeatIntervalLabel = new JLabel(strings.getString("KEY_REPEAT_RATE_LABEL"));
 		keyRepeatIntervalLabel.setPreferredSize(longSettingsLabelDimension);
-		keyRepeatIntervalPanel.add(keyRepeatIntervalLabel);
+		keyRepeatRatePanel.add(keyRepeatIntervalLabel);
 
 		final var profile = input.getProfile();
 
-		final var keyRepeatIntervalSpinner = new JSpinner(
-				new SpinnerNumberModel((Number) profile.getKeyRepeatInterval(), 0L, 1000L, 1L));
-		GuiUtils.makeMillisecondSpinner(keyRepeatIntervalSpinner);
-		keyRepeatIntervalSpinner.addChangeListener(event -> {
-			final var keyRepeatInterval = (long) ((JSpinner) event.getSource()).getValue();
-			profile.setKeyRepeatInterval(keyRepeatInterval);
+		final var keyRepeatRateSpinner = new JSpinner(
+				new SpinnerNumberModel((Number) profile.getKeyRepeatRate(), 1L, 100L, 1L));
+		GuiUtils.makeHertzSpinner(keyRepeatRateSpinner);
+		keyRepeatRateSpinner.addChangeListener(event -> {
+			profile.setKeyRepeatRate((long) ((JSpinner) event.getSource()).getValue());
 			setUnsavedChanges(true);
 		});
-		keyRepeatIntervalPanel.add(keyRepeatIntervalSpinner);
+		keyRepeatRatePanel.add(keyRepeatRateSpinner);
 
 		final var appearanceSettingsPanel = new JPanel();
 		appearanceSettingsPanel.setLayout(new BoxLayout(appearanceSettingsPanel, BoxLayout.Y_AXIS));

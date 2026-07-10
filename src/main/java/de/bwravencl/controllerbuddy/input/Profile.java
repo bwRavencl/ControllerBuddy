@@ -45,8 +45,8 @@ public final class Profile implements Cloneable {
 	/// The default mode that is always present as the first mode in a profile.
 	public static final Mode defaultMode;
 
-	/// Default key repeat interval in milliseconds.
-	private static final long DEFAULT_KEY_REPEAT_INTERVAL = 30L;
+	/// Default key repeat rate in hertz.
+	private static final long DEFAULT_KEY_REPEAT_RATE_HZ = 33L;
 
 	/// UUID used to identify the default mode across serialization.
 	private static final UUID DEFAULT_MODE_UUID = UUID.fromString("067e6162-3b6f-4ae2-a171-2470b63dff00");
@@ -64,8 +64,8 @@ public final class Profile implements Cloneable {
 	/// Maps button indices to their associated button-to-mode action lists.
 	private Map<Integer, List<ButtonToModeAction>> buttonToModeActionsMap = new HashMap<>();
 
-	/// Key repeat interval in milliseconds.
-	private long keyRepeatInterval = DEFAULT_KEY_REPEAT_INTERVAL;
+	/// Key repeat rate in hertz.
+	private long keyRepeatRate = DEFAULT_KEY_REPEAT_RATE_HZ;
 
 	/// Ordered list of modes contained in this profile.
 	private List<Mode> modes = new ArrayList<>();
@@ -132,11 +132,11 @@ public final class Profile implements Cloneable {
 		return buttonToModeActionsMap;
 	}
 
-	/// Returns the key repeat interval in milliseconds.
+	/// Returns the key repeat rate in hertz.
 	///
-	/// @return the key repeat interval
-	public long getKeyRepeatInterval() {
-		return keyRepeatInterval;
+	/// @return the key repeat rate
+	public long getKeyRepeatRate() {
+		return keyRepeatRate;
 	}
 
 	/// Returns the mode with the specified UUID, if present.
@@ -240,11 +240,11 @@ public final class Profile implements Cloneable {
 		buttonToModeActionsMap = buttonToModeActionMap;
 	}
 
-	/// Sets the key repeat interval in milliseconds.
+	/// Sets the key repeat rate in hertz.
 	///
-	/// @param minKeyRepeatInterval the key repeat interval in milliseconds
-	public void setKeyRepeatInterval(final long minKeyRepeatInterval) {
-		keyRepeatInterval = minKeyRepeatInterval;
+	/// @param keyRepeatRate the key repeat rate in hertz
+	public void setKeyRepeatRate(final long keyRepeatRate) {
+		this.keyRepeatRate = keyRepeatRate;
 	}
 
 	/// Sets the list of modes for this profile, replacing the existing list.

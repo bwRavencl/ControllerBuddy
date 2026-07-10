@@ -180,6 +180,7 @@ public final class ServerRunMode extends RunMode {
 		var serverState = ServerState.LISTENING;
 		DatagramPacket receivePacket;
 		var counter = 0L;
+		var nextPollTimeNanos = 0L;
 
 		try {
 			serverSocket = new DatagramSocket(port);
@@ -230,12 +231,13 @@ public final class ServerRunMode extends RunMode {
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 								dataOutputStream.writeInt(MessageType.SERVER_HELLO.getId());
 								dataOutputStream.writeByte(PROTOCOL_VERSION);
-								dataOutputStream.writeLong(pollInterval);
+								dataOutputStream.writeLong(pollPeriodNanos);
 
 								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
 
 							serverState = ServerState.CONNECTED;
+							nextPollTimeNanos = System.nanoTime() + pollPeriodNanos;
 							if (!input.init()) {
 								controllerDisconnected();
 								return;
@@ -247,8 +249,14 @@ public final class ServerRunMode extends RunMode {
 					}
 				}
 				case CONNECTED -> {
-					// noinspection BusyWait
-					Thread.sleep(pollInterval);
+					final var sleepNanos = nextPollTimeNanos - System.nanoTime();
+					if (sleepNanos > 0L) {
+						// noinspection BusyWait
+						Thread.sleep(sleepNanos / 1_000_000L, (int) (sleepNanos % 1_000_000L));
+						nextPollTimeNanos += pollPeriodNanos;
+					} else {
+						nextPollTimeNanos = System.nanoTime() + pollPeriodNanos;
+					}
 
 					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
 							final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {

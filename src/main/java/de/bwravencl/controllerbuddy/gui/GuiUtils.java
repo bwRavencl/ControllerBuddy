@@ -383,27 +383,28 @@ public final class GuiUtils {
 		setFrameLocationRespectingBounds(frame, location, totalDisplayBounds);
 	}
 
+	/// Configures a spinner to display its value with a hertz unit suffix.
+	///
+	/// @param spinner the spinner to configure
+	public static void makeHertzSpinner(final JSpinner spinner) {
+		final var numberEditor = new NumberEditor(spinner, "# " + Main.strings.getString("HERTZ_SYMBOL"));
+		((DefaultFormatter) numberEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
+
+		final var textField = numberEditor.getTextField();
+		textField.setColumns(6);
+
+		spinner.setEditor(numberEditor);
+	}
+
 	/// Configures a spinner to display its value with a millisecond unit suffix.
 	///
 	/// @param spinner the spinner to configure
 	public static void makeMillisecondSpinner(final JSpinner spinner) {
-		makeMillisecondSpinner(spinner, null);
-	}
-
-	/// Configures a spinner to display its value with a millisecond unit suffix and
-	/// optionally sets the text field column count.
-	///
-	/// @param spinner the spinner to configure
-	/// @param columns the number of text field columns, or `null` to keep the
-	/// default
-	public static void makeMillisecondSpinner(final JSpinner spinner, final @Nullable Integer columns) {
 		final var numberEditor = new NumberEditor(spinner, "# " + Main.strings.getString("MILLISECOND_SYMBOL"));
 		((DefaultFormatter) numberEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 
-		if (columns != null) {
-			final var textField = numberEditor.getTextField();
-			textField.setColumns(6);
-		}
+		final var textField = numberEditor.getTextField();
+		textField.setColumns(6);
 
 		spinner.setEditor(numberEditor);
 	}
