@@ -1250,10 +1250,10 @@ public final class Main extends JFrame {
 		pollRateLabel.setPreferredSize(longSettingsLabelDimension);
 		pollRatePanel.add(pollRateLabel);
 
-		final var pollRateSpinner = new JSpinner(new SpinnerNumberModel((Number) getPollRate(), 100L, 10_000L, 100L));
+		final var pollRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollRate(), 100L, 10_000L, 100L,
+				event -> preferences.putLong(PREFERENCES_POLL_RATE,
+						((SpinnerNumberModel) event.getSource()).getNumber().longValue())));
 		GuiUtils.makeHertzSpinner(pollRateSpinner);
-		pollRateSpinner.addChangeListener(
-				event -> preferences.putLong(PREFERENCES_POLL_RATE, (long) ((JSpinner) event.getSource()).getValue()));
 		pollRatePanel.add(pollRateSpinner);
 
 		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
@@ -1418,12 +1418,12 @@ public final class Main extends JFrame {
 			vJoyDeviceLabel.setPreferredSize(longSettingsLabelDimension);
 			vJoyDevicePanel.add(vJoyDeviceLabel);
 
-			final var vJoyDeviceSpinner = new JSpinner(new SpinnerNumberModel(getVJoyDevice(), 1, 16, 1));
+			final var vJoyDeviceSpinner = new JSpinner(new ClampingSpinnerNumberModel(getVJoyDevice(), 1, 16, 1,
+					event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
+							((SpinnerNumberModel) event.getSource()).getNumber().intValue())));
 			final var vJoyDeviceSpinnerEditor = new NumberEditor(vJoyDeviceSpinner, "#");
 			((DefaultFormatter) vJoyDeviceSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			vJoyDeviceSpinner.setEditor(vJoyDeviceSpinnerEditor);
-			vJoyDeviceSpinner.addChangeListener(event -> preferences.putInt(PREFERENCES_VJOY_DEVICE,
-					(int) ((JSpinner) event.getSource()).getValue()));
 			vJoyDevicePanel.add(vJoyDeviceSpinner);
 		}
 
@@ -1453,14 +1453,14 @@ public final class Main extends JFrame {
 		overlayScalingLabel.setPreferredSize(longSettingsLabelDimension);
 		overlayScalingPanel.add(overlayScalingLabel);
 
-		final var overlayScalingSpinner = new JSpinner(new SpinnerNumberModel(getOverlayScaling(), 0.5, 6d, 0.25));
+		final var overlayScalingSpinner = new JSpinner(
+				new ClampingSpinnerNumberModel(getOverlayScaling(), 0.5f, 6f, 0.25f, event -> {
+					cachedOverlayScaling = ((SpinnerNumberModel) event.getSource()).getNumber().floatValue();
+					preferences.putFloat(PREFERENCES_OVERLAY_SCALING, cachedOverlayScaling);
+				}));
 		final var overlayScalingSpinnerEditor = new NumberEditor(overlayScalingSpinner, "#.## x");
 		((DefaultFormatter) overlayScalingSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		overlayScalingSpinner.setEditor(overlayScalingSpinnerEditor);
-		overlayScalingSpinner.addChangeListener(event -> {
-			cachedOverlayScaling = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
-			preferences.putFloat(PREFERENCES_OVERLAY_SCALING, cachedOverlayScaling);
-		});
 
 		overlayScalingPanel.add(overlayScalingSpinner);
 
@@ -1522,14 +1522,13 @@ public final class Main extends JFrame {
 		touchpadCursorSensitivityPanel.add(touchpadCursorSensitivityLabel);
 
 		final var cursorSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getTouchpadCursorSensitivity(), 0.1, 5d, 0.05));
+				new ClampingSpinnerNumberModel(getTouchpadCursorSensitivity(), 0.1f, 5f, 0.05f, event -> {
+					cachedTouchpadCursorSensitivity = ((SpinnerNumberModel) event.getSource()).getNumber().floatValue();
+					preferences.putFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, cachedTouchpadCursorSensitivity);
+				}));
 		final var cursorSensitivitySpinnerEditor = new NumberEditor(cursorSensitivitySpinner);
 		((DefaultFormatter) cursorSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		cursorSensitivitySpinner.setEditor(cursorSensitivitySpinnerEditor);
-		cursorSensitivitySpinner.addChangeListener(event -> {
-			cachedTouchpadCursorSensitivity = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
-			preferences.putFloat(PREFERENCES_TOUCHPAD_CURSOR_SENSITIVITY, cachedTouchpadCursorSensitivity);
-		});
 		touchpadCursorSensitivityPanel.add(cursorSensitivitySpinner);
 
 		touchpadScrollSensitivityPanel = new JPanel(defaultFlowLayout);
@@ -1540,14 +1539,13 @@ public final class Main extends JFrame {
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivityLabel);
 
 		final var touchpadScrollSensitivitySpinner = new JSpinner(
-				new SpinnerNumberModel(getTouchpadScrollSensitivity(), 0.1, 1d, 0.05));
+				new ClampingSpinnerNumberModel(getTouchpadScrollSensitivity(), 0.1f, 1f, 0.05f, event -> {
+					cachedTouchpadScrollSensitivity = ((SpinnerNumberModel) event.getSource()).getNumber().floatValue();
+					preferences.putFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, cachedTouchpadScrollSensitivity);
+				}));
 		final var scrollSensitivitySpinnerEditor = new NumberEditor(touchpadScrollSensitivitySpinner);
 		((DefaultFormatter) scrollSensitivitySpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 		touchpadScrollSensitivitySpinner.setEditor(scrollSensitivitySpinnerEditor);
-		touchpadScrollSensitivitySpinner.addChangeListener(event -> {
-			cachedTouchpadScrollSensitivity = ((Double) ((JSpinner) event.getSource()).getValue()).floatValue();
-			preferences.putFloat(PREFERENCES_TOUCHPAD_SCROLL_SENSITIVITY, cachedTouchpadScrollSensitivity);
-		});
 		touchpadScrollSensitivityPanel.add(touchpadScrollSensitivitySpinner);
 
 		final var touchpadEnabledCheckBox = new JCheckBox(strings.getString("TOUCHPAD_ENABLED_CHECK_BOX"));
@@ -5241,12 +5239,11 @@ public final class Main extends JFrame {
 		final var profile = input.getProfile();
 
 		final var keyRepeatRateSpinner = new JSpinner(
-				new SpinnerNumberModel((Number) profile.getKeyRepeatRate(), 1L, 100L, 1L));
+				new ClampingSpinnerNumberModel(profile.getKeyRepeatRate(), 1L, 100L, 1L, event -> {
+					profile.setKeyRepeatRate(((SpinnerNumberModel) event.getSource()).getNumber().longValue());
+					setUnsavedChanges(true);
+				}));
 		GuiUtils.makeHertzSpinner(keyRepeatRateSpinner);
-		keyRepeatRateSpinner.addChangeListener(event -> {
-			profile.setKeyRepeatRate((long) ((JSpinner) event.getSource()).getValue());
-			setUnsavedChanges(true);
-		});
 		keyRepeatRatePanel.add(keyRepeatRateSpinner);
 
 		final var appearanceSettingsPanel = new JPanel();
@@ -6174,7 +6171,7 @@ public final class Main extends JFrame {
 			portLabel.setPreferredSize(shortSettingsLabelDimension);
 			portPanel.add(portLabel);
 
-			portSpinner = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65_535, 1));
+			portSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPort(), 1024, 65_535, 1, null));
 			final var portSpinnerEditor = new NumberEditor(portSpinner, "#");
 			((DefaultFormatter) portSpinnerEditor.getTextField().getFormatter()).setCommitsOnValidEdit(true);
 			portSpinner.setEditor(portSpinnerEditor);
@@ -6187,7 +6184,7 @@ public final class Main extends JFrame {
 			timeoutLabel.setPreferredSize(shortSettingsLabelDimension);
 			timeoutPanel.add(timeoutLabel);
 
-			timeoutSpinner = new JSpinner(new SpinnerNumberModel(getTimeout(), 10, 60_000, 1));
+			timeoutSpinner = new JSpinner(new ClampingSpinnerNumberModel(getTimeout(), 10, 60_000, 1, null));
 			GuiUtils.makeMillisecondSpinner(timeoutSpinner);
 			timeoutPanel.add(timeoutSpinner);
 

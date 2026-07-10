@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action.gui;
 
+import de.bwravencl.controllerbuddy.gui.ClampingSpinnerNumberModel;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.lang.reflect.Method;
@@ -84,7 +85,8 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 	public void buildEditor(final JPanel parentPanel) {
 		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
 
-		final var model = new SpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(), getStepSize());
+		final var model = new ClampingSpinnerNumberModel((Number) initialValue, getMinimum(), getMaximum(),
+				getStepSize(), new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
 		spinner = createSpinner(model);
 
 		final var editor = spinner.getEditor();
@@ -93,8 +95,6 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 		final var formatter = (DefaultFormatter) textField.getFormatter();
 		formatter.setCommitsOnValidEdit(true);
-
-		spinner.addChangeListener(new JSpinnerSetPropertyChangeListener(action, setterMethod, this));
 
 		parentPanel.add(spinner);
 	}
@@ -164,7 +164,7 @@ abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 		@Override
 		public void stateChanged(final ChangeEvent e) {
 			try {
-				var value = ((JSpinner) e.getSource()).getValue();
+				var value = ((SpinnerNumberModel) e.getSource()).getNumber();
 
 				if (value instanceof final Float floatValue) {
 					value = roundFloat(floatValue);
