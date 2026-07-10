@@ -113,9 +113,8 @@ public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 	/// Formatter factory that always supplies a [ZeroBasedFormatter] instance for
 	/// the button index spinner field.
 	///
-	/// Overrides [DefaultFormatterFactory#getFormatter(JFormattedTextField)] to
-	/// ensure the one-based display conversion is applied regardless of the field
-	/// state.
+	/// Overrides [DefaultFormatterFactory#getFormatter] to ensure the one-based
+	/// display conversion is applied regardless of the field state.
 	private static final class ZeroBasedFormatterFactory extends DefaultFormatterFactory {
 
 		@Serial

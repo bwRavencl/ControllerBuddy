@@ -181,7 +181,7 @@ public final class Mode implements Cloneable {
 
 	/// Represents a gamepad component (axis or button) with stick-swapping support.
 	///
-	/// When stick swapping is enabled in the application, the [#index()] accessor
+	/// When stick swapping is enabled in the application, the [#index] accessor
 	/// transparently remaps left-stick and right-stick indices so that actions
 	/// follow the swap.
 	///

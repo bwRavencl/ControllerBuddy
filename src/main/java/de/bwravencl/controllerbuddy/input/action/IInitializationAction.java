@@ -25,8 +25,7 @@ import org.jspecify.annotations.NullMarked;
 /// input.
 ///
 /// Extends [IAction] to provide an initialization hook. Implementing actions
-/// use [#init(Input)] to reset the transient state to well-defined initial
-/// values.
+/// use [#init] to reset the transient state to well-defined initial values.
 ///
 /// @param <V> the type of input value this action processes
 @NullMarked

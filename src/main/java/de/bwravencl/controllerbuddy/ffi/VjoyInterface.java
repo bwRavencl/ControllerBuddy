@@ -34,7 +34,7 @@ import org.jspecify.annotations.NullMarked;
 /// Provides Java bindings to the vJoy virtual joystick driver library.
 ///
 /// Uses the Foreign Function and Memory API to interface with the vJoy driver.
-/// Functions are loaded dynamically at runtime via [#init(Main)].
+/// Functions are loaded dynamically at runtime via [#init].
 @SuppressWarnings({ "exports", "restricted" })
 @NullMarked
 public final class VjoyInterface {

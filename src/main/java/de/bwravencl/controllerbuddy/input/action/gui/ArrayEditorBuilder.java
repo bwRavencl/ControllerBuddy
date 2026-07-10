@@ -32,9 +32,9 @@ import org.jspecify.annotations.Nullable;
 
 /// Abstract editor builder for enum or array-valued properties.
 ///
-/// Renders a [JComboBox] populated with the values returned by [#getValues()].
+/// Renders a [JComboBox] populated with the values returned by [#getValues].
 /// Subclasses provide the concrete set of selectable values by implementing the
-/// abstract [#getValues()] method.
+/// abstract [#getValues] method.
 ///
 /// @param <T> the element type of the selectable values
 @NullMarked
@@ -82,7 +82,7 @@ abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 	/// property via the setter method.
 	///
 	/// Invoked automatically by the combo box whenever the user selects a
-	/// different item, and also calls [ArrayEditorBuilder#onNewValueSet()] to
+	/// different item, and also calls [ArrayEditorBuilder#onNewValueSet] to
 	/// allow subclasses to react to the change.
 	private final class JComboBoxSetPropertyAction extends PropertySetterAction {
 

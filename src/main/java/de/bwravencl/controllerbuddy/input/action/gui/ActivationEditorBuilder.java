@@ -35,8 +35,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public final class ActivationEditorBuilder extends ArrayEditorBuilder<Activation> {
 
-	/// Whether [#buildEditor(JPanel)] has completed, used to guard
-	/// [#onNewValueSet()].
+	/// Whether [#buildEditor] has completed, used to guard [#onNewValueSet].
 	private boolean initialized;
 
 	/// Constructs an [ActivationEditorBuilder] for the specified action property.

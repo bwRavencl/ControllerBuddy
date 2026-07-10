@@ -734,7 +734,7 @@ public abstract class OutputRunMode extends RunMode {
 	/// Reads input from the controller or network and updates internal state.
 	///
 	/// Subclasses override this method to poll the controller or receive network
-	/// data. The base implementation calls [#process()] and returns true.
+	/// data. The base implementation calls [#process] and returns true.
 	///
 	/// @return true if input was successfully read, false otherwise
 	/// @throws IOException if an I/O error occurs during input reading
@@ -1109,7 +1109,7 @@ public abstract class OutputRunMode extends RunMode {
 		}
 
 		/// Returns whether the value has changed since the last call to
-		/// [#setUnchanged()].
+		/// [#setUnchanged].
 		///
 		/// @return `true` if the value has changed
 		boolean isChanged() {

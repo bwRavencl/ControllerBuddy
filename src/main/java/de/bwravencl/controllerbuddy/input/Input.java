@@ -476,7 +476,7 @@ public final class Input {
 
 	/// Returns whether this input instance has been initialized.
 	///
-	/// @return `true` if [#init()] has completed successfully
+	/// @return `true` if [#init] has completed successfully
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -1077,7 +1077,7 @@ public final class Input {
 	/// Holds the most recently polled axis and button state for a single SDL
 	/// gamepad.
 	///
-	/// Wraps a native SDL gamepad handle and provides an [#update()] method that
+	/// Wraps a native SDL gamepad handle and provides an [#update] method that
 	/// reads all axis and button values via SDL, applies optional transformations
 	/// such as stick-swap and circular-to-square axis remapping, and stores the
 	/// normalized results for use by the input pipeline on each polling cycle.
