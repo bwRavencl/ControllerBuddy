@@ -27,7 +27,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import de.bwravencl.controllerbuddy.ffi.VjoyInterface;
-import de.bwravencl.controllerbuddy.gui.GuiUtils.FrameDragListener;
 import de.bwravencl.controllerbuddy.input.HotSwappingButton;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;

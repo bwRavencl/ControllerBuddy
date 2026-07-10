@@ -53,9 +53,6 @@ final class GuiUtilsTest {
 	JFrame mockFrame;
 
 	@Mock
-	Main mockMain;
-
-	@Mock
 	Preferences mockPreferences;
 
 	@SuppressWarnings("unchecked")
@@ -125,33 +122,6 @@ final class GuiUtilsTest {
 			final var popup = textField.getComponentPopupMenu();
 			triggerPopupShow(popup);
 			Assertions.assertTrue(((JMenuItem) popup.getComponent(0)).getAction().isEnabled());
-		}
-	}
-
-	@Nested
-	@DisplayName("FrameDragListener")
-	final class FrameDragListenerTests {
-
-		private GuiUtils.FrameDragListener listener;
-
-		@Test
-		@DisplayName("isDragging() returns true after mousePressed()")
-		void isDraggingAfterMousePressed() {
-			final var mockEvent = Mockito.mock(java.awt.event.MouseEvent.class);
-			Mockito.when(mockEvent.getPoint()).thenReturn(new Point(10, 20));
-			listener.mousePressed(mockEvent);
-			Assertions.assertTrue(listener.isDragging());
-		}
-
-		@Test
-		@DisplayName("isDragging() returns false before any mouse event")
-		void isNotDraggingInitially() {
-			Assertions.assertFalse(listener.isDragging());
-		}
-
-		@BeforeEach
-		void setUp() {
-			listener = new GuiUtils.FrameDragListener(mockMain, mockFrame);
 		}
 	}
 
