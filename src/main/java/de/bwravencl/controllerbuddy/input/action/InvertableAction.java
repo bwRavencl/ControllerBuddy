@@ -36,14 +36,14 @@ abstract class InvertableAction<V extends Constable> extends DescribableAction<V
 	/// Returns whether inversion is enabled for this action.
 	///
 	/// @return `true` if the action output is inverted
-	public boolean isInvert() {
+	public final boolean isInvert() {
 		return invert;
 	}
 
 	/// Sets whether inversion is enabled for this action.
 	///
 	/// @param invert `true` to invert the action output
-	public void setInvert(final boolean invert) {
+	public final void setInvert(final boolean invert) {
 		this.invert = invert;
 	}
 }

@@ -51,7 +51,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	private transient boolean wasDown;
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
+	public final Object clone() throws CloneNotSupportedException {
 		final var toKeyAction = (ToKeyAction<?>) super.clone();
 		toKeyAction.setKeystroke((Keystroke) keystroke.clone());
 
@@ -59,17 +59,17 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	@Override
-	public @Nullable Activatable getActivatable() {
+	public final @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 
 	@Override
-	public long getDelay() {
+	public final long getDelay() {
 		return delay;
 	}
 
 	@Override
-	public String getDescription(final Input input) {
+	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
 		}
@@ -80,7 +80,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	/// Returns the keystroke produced by this action.
 	///
 	/// @return the keystroke
-	public Keystroke getKeystroke() {
+	public final Keystroke getKeystroke() {
 		return keystroke;
 	}
 
@@ -94,7 +94,7 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	///
 	/// @param hot `true` if the input is currently active
 	/// @param input the current input state
-	void handleAction(boolean hot, final Input input) {
+	final void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getDownUpKeystrokes().add(keystroke);
 			return;
@@ -174,24 +174,24 @@ abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction
 	}
 
 	@Override
-	public void reset(final Input input) {
+	public final void reset(final Input input) {
 		wasDown = false;
 	}
 
 	@Override
-	public void setActivatable(final Activatable activatable) {
+	public final void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
 	}
 
 	@Override
-	public void setDelay(final long delay) {
+	public final void setDelay(final long delay) {
 		this.delay = delay;
 	}
 
 	/// Sets the keystroke produced by this action.
 	///
 	/// @param keystroke the keystroke to set
-	public void setKeystroke(final Keystroke keystroke) {
+	public final void setKeystroke(final Keystroke keystroke) {
 		this.keystroke = keystroke;
 	}
 }

@@ -82,21 +82,21 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	}
 
 	@Override
-	public Activation getActivation() {
+	public final Activation getActivation() {
 		return activation;
 	}
 
 	/// Returns the maximum activation interval in milliseconds.
 	///
 	/// @return the maximum activation interval, or zero if unlimited
-	public int getMaxActivationInterval() {
+	public final int getMaxActivationInterval() {
 		return maxActivationInterval;
 	}
 
 	/// Returns the minimum activation interval in milliseconds.
 	///
 	/// @return the minimum activation interval, or zero if none
-	public int getMinActivationInterval() {
+	public final int getMinActivationInterval() {
 		return minActivationInterval;
 	}
 
@@ -110,7 +110,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	///
 	/// @param hot `true` if the input is currently active (pressed/in-range)
 	/// @return the effective hot state after applying interval constraints
-	boolean handleActivationInterval(final boolean hot) {
+	final boolean handleActivationInterval(final boolean hot) {
 		final var hasMinActivationInterval = minActivationInterval > 0L;
 		final var hasMaxActivationInterval = maxActivationInterval > 0L && activationSupportsMaxInterval(activation);
 
@@ -151,7 +151,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	///
 	/// @param input the current input state
 	@Override
-	public void init(final Input input) {
+	public final void init(final Input input) {
 		IActivatableAction.super.init(input);
 
 		wasUp = INITIAL_WAS_UP;
@@ -164,7 +164,7 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	///
 	/// @param activation the activation mode to set
 	@Override
-	public void setActivation(final Activation activation) {
+	public final void setActivation(final Activation activation) {
 		this.activation = activation;
 
 		if (!activationSupportsMaxInterval(activation)) {
@@ -175,14 +175,14 @@ public abstract class ActivationIntervalAction<V extends Constable> extends Desc
 	/// Sets the maximum activation interval in milliseconds.
 	///
 	/// @param maxActivationInterval the maximum interval to set
-	public void setMaxActivationInterval(final int maxActivationInterval) {
+	public final void setMaxActivationInterval(final int maxActivationInterval) {
 		this.maxActivationInterval = maxActivationInterval;
 	}
 
 	/// Sets the minimum activation interval in milliseconds.
 	///
 	/// @param minActivationInterval the minimum interval to set
-	public void setMinActivationInterval(final int minActivationInterval) {
+	public final void setMinActivationInterval(final int minActivationInterval) {
 		this.minActivationInterval = minActivationInterval;
 	}
 }

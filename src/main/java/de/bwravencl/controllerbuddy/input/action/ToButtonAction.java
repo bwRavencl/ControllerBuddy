@@ -51,7 +51,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	private transient boolean wasDown;
 
 	@Override
-	public @Nullable Activatable getActivatable() {
+	public final @Nullable Activatable getActivatable() {
 		return activatable;
 	}
 
@@ -63,7 +63,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	@Override
-	public long getDelay() {
+	public final long getDelay() {
 		return delay;
 	}
 
@@ -72,7 +72,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	/// @param input the current input state
 	/// @return the action description
 	@Override
-	public String getDescription(final Input input) {
+	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
 		}
@@ -90,7 +90,7 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	///
 	/// @param hot `true` if the input is currently active
 	/// @param input the current input state
-	void handleAction(boolean hot, final Input input) {
+	final void handleAction(boolean hot, final Input input) {
 		if (activatable == Activatable.ALWAYS) {
 			input.getButtons()[buttonId] = true;
 			return;
@@ -171,24 +171,24 @@ public abstract class ToButtonAction<V extends Constable> extends ActivationInte
 	}
 
 	@Override
-	public void reset(final Input input) {
+	public final void reset(final Input input) {
 		wasDown = false;
 	}
 
 	@Override
-	public void setActivatable(final Activatable activatable) {
+	public final void setActivatable(final Activatable activatable) {
 		this.activatable = activatable;
 	}
 
 	/// Sets the zero-based ID of the target virtual button.
 	///
 	/// @param buttonId the button ID to set
-	public void setButtonId(final int buttonId) {
+	public final void setButtonId(final int buttonId) {
 		this.buttonId = buttonId;
 	}
 
 	@Override
-	public void setDelay(final long delay) {
+	public final void setDelay(final long delay) {
 		this.delay = delay;
 	}
 }

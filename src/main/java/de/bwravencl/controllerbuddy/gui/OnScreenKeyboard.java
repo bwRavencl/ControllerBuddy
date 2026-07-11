@@ -661,7 +661,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// Returns whether this button is currently pressed.
 		///
 		/// @return `true` if the button is pressed
-		boolean isPressed() {
+		final boolean isPressed() {
 			return pressed;
 		}
 
@@ -730,7 +730,7 @@ public final class OnScreenKeyboard extends JFrame {
 
 		/// Updates the UI delegate and refreshes theme colors and borders.
 		@Override
-		public void updateUI() {
+		public final void updateUI() {
 			super.updateUI();
 			updateTheme();
 		}
@@ -896,7 +896,7 @@ public final class OnScreenKeyboard extends JFrame {
 		/// @return the preferred size
 		@SuppressWarnings({ "lossy-conversions", "NarrowingCompoundAssignment" })
 		@Override
-		public Dimension getPreferredSize() {
+		public final Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();
 
 			if (this instanceof NumPadKeyboardButton) {
@@ -924,7 +924,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		boolean poll(final Input input) {
+		final boolean poll(final Input input) {
 			if (mouseDown || changed) {
 				if (doDownUp) {
 					input.getDownUpKeystrokes().add(keystroke);
@@ -947,7 +947,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void press(final boolean lock) {
+		final void press(final boolean lock) {
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(KEYBOARD_BUTTON_HELD_BACKGROUND));
 
 			if (heldButtons.add(this)) {
@@ -961,7 +961,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void release() {
+		final void release() {
 			GuiUtils.invokeOnEventDispatchThreadIfRequired(() -> setBackground(defaultBackground));
 
 			if (heldButtons.remove(this)) {
@@ -978,7 +978,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void toggleLock() {
+		final void toggleLock() {
 			if (heldButtons.contains(this)) {
 				release();
 			} else {
@@ -1024,7 +1024,7 @@ public final class OnScreenKeyboard extends JFrame {
 		///
 		/// @param showAlternativeKeyName `true` to display the alternative label,
 		/// `false` to display the default label
-		void setShowAlternativeKeyName(final boolean showAlternativeKeyName) {
+		final void setShowAlternativeKeyName(final boolean showAlternativeKeyName) {
 			setText(showAlternativeKeyName ? alternativeKeyName : defaultKeyName);
 		}
 	}
@@ -1064,7 +1064,7 @@ public final class OnScreenKeyboard extends JFrame {
 		///
 		/// @return the preferred size
 		@Override
-		public Dimension getPreferredSize() {
+		public final Dimension getPreferredSize() {
 			final var preferredSize = super.getPreferredSize();
 
 			if (lockKey.virtualKeyCode() == KeyEvent.VK_CAPS_LOCK) {
@@ -1075,7 +1075,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		boolean poll(final Input input) {
+		final boolean poll(final Input input) {
 			if (changed) {
 				if (locked.get()) {
 					input.getOnLockKeys().add(lockKey);
@@ -1090,7 +1090,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void press(final boolean lock) {
+		final void press(final boolean lock) {
 			if (wasUp) {
 				toggleLock();
 				wasUp = false;
@@ -1100,7 +1100,7 @@ public final class OnScreenKeyboard extends JFrame {
 		}
 
 		@Override
-		void release() {
+		final void release() {
 			wasUp = true;
 			setPressed(false);
 		}

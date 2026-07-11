@@ -486,7 +486,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// enabling antialiasing and setting the state-dependent background color.
 		///
 		/// @param g2d the graphics context to configure
-		void beginBackground(final Graphics2D g2d) {
+		final void beginBackground(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 			final var background = FlatButtonUI.buttonStateColor(this, getBackground(), disabledBackground,
@@ -501,7 +501,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		///
 		/// @param g2d the graphics context to configure
 		/// @see #isBorderAntialiasingNeeded()
-		void beginBorder(final Graphics2D g2d) {
+		final void beginBorder(final Graphics2D g2d) {
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					isBorderAntialiasingNeeded() ? RenderingHints.VALUE_ANTIALIAS_ON
 							: RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -517,7 +517,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// (text and icons) by setting the state-dependent foreground color.
 		///
 		/// @param g2d the graphics context to configure
-		void beginForeground(final Graphics2D g2d) {
+		final void beginForeground(final Graphics2D g2d) {
 			g2d.setColor(getForeground());
 		}
 
@@ -557,7 +557,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// @param g the graphics context
 		/// @param textRect the bounding rectangle in which to paint the text
 		/// @param text the text to paint
-		void paintText(final Graphics g, final Rectangle textRect, final String text) {
+		final void paintText(final Graphics g, final Rectangle textRect, final String text) {
 			final var foreground = isEnabled() ? getForeground() : disabledText;
 
 			if (text.length() > 1) {
@@ -611,7 +611,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 		/// Stores the content area filled flag without delegating to the superclass,
 		/// since custom painting is handled manually.
 		@Override
-		public void setContentAreaFilled(final boolean b) {
+		public final void setContentAreaFilled(final boolean b) {
 			contentAreaFilled = b;
 		}
 
@@ -638,7 +638,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 
 		/// Updates the UI delegate and refreshes theme colors.
 		@Override
-		public void updateUI() {
+		public final void updateUI() {
 			super.updateUI();
 
 			updateTheme();

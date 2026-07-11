@@ -46,12 +46,12 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	/// Returns the number of scroll clicks per input event.
 	///
 	/// @return the number of clicks
-	public int getClicks() {
+	public final int getClicks() {
 		return clicks;
 	}
 
 	@Override
-	public String getDescription(final Input input) {
+	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
 		}
@@ -68,7 +68,7 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	///
 	/// @param input the current input state
 	/// @param d the raw scroll delta
-	void scroll(final Input input, float d) {
+	final void scroll(final Input input, float d) {
 		d = invert ? -d : d;
 		d += remainingD;
 
@@ -85,7 +85,7 @@ public abstract class ToScrollAction<V extends Constable> extends InvertableActi
 	/// Sets the number of scroll clicks per input event.
 	///
 	/// @param clicks the number of clicks
-	public void setClicks(final int clicks) {
+	public final void setClicks(final int clicks) {
 		this.clicks = clicks;
 	}
 }

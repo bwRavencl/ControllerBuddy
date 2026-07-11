@@ -50,7 +50,7 @@ public class AxisValueEditorBuilder extends NumberEditorBuilder<Float> {
 	}
 
 	@Override
-	Number getStepSize() {
+	final Number getStepSize() {
 		return 0.01f;
 	}
 }

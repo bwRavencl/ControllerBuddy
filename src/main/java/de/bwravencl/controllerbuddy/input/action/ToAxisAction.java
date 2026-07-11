@@ -43,7 +43,7 @@ public abstract class ToAxisAction<V extends Constable> extends InvertableAction
 	/// @param input the current input state
 	/// @return the action description
 	@Override
-	public String getDescription(final Input input) {
+	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
 		}
@@ -54,14 +54,14 @@ public abstract class ToAxisAction<V extends Constable> extends InvertableAction
 	/// Returns the target virtual axis.
 	///
 	/// @return the virtual axis
-	public VirtualAxis getVirtualAxis() {
+	public final VirtualAxis getVirtualAxis() {
 		return virtualAxis;
 	}
 
 	/// Sets the target virtual axis.
 	///
 	/// @param virtualAxis the virtual axis to target
-	public void setVirtualAxis(final VirtualAxis virtualAxis) {
+	public final void setVirtualAxis(final VirtualAxis virtualAxis) {
 		this.virtualAxis = virtualAxis;
 	}
 }

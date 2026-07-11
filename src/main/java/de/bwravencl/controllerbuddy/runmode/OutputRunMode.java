@@ -794,7 +794,7 @@ public abstract class OutputRunMode extends RunMode {
 	}
 
 	@Override
-	void setNumButtons(final int numButtons) {
+	final void setNumButtons(final int numButtons) {
 		super.setNumButtons(numButtons);
 
 		if (buttons.length != numButtons) {

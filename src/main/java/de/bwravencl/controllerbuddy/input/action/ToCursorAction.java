@@ -51,14 +51,14 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	/// Returns the mouse axis targeted by this action.
 	///
 	/// @return the mouse axis
-	public MouseAxis getAxis() {
+	public final MouseAxis getAxis() {
 		return axis;
 	}
 
 	/// Returns the cursor sensitivity value.
 	///
 	/// @return the cursor sensitivity
-	public int getCursorSensitivity() {
+	public final int getCursorSensitivity() {
 		return cursorSensitivity;
 	}
 
@@ -67,7 +67,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	/// @param input the current input state
 	/// @return the action description
 	@Override
-	public String getDescription(final Input input) {
+	public final String getDescription(final Input input) {
 		if (!isDescriptionEmpty()) {
 			return super.getDescription(input);
 		}
@@ -83,7 +83,7 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	///
 	/// @param input the current input state
 	/// @param d the raw movement delta in pixels
-	void moveCursor(final Input input, float d) {
+	final void moveCursor(final Input input, float d) {
 		d = invert ? -d : d;
 		d += remainingD;
 
@@ -105,14 +105,14 @@ public abstract class ToCursorAction<V extends Constable> extends InvertableActi
 	/// Sets the mouse axis targeted by this action.
 	///
 	/// @param axis the mouse axis to target
-	public void setAxis(final MouseAxis axis) {
+	public final void setAxis(final MouseAxis axis) {
 		this.axis = axis;
 	}
 
 	/// Sets the cursor sensitivity value.
 	///
 	/// @param cursorSensitivity the sensitivity to set
-	public void setCursorSensitivity(final int cursorSensitivity) {
+	public final void setCursorSensitivity(final int cursorSensitivity) {
 		this.cursorSensitivity = cursorSensitivity;
 	}
 

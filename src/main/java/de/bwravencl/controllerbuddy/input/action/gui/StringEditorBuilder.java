@@ -55,7 +55,7 @@ public class StringEditorBuilder extends EditorBuilder {
 	}
 
 	@Override
-	public void buildEditor(final JPanel parentPanel) {
+	public final void buildEditor(final JPanel parentPanel) {
 		final var textField = GuiUtils.createTextFieldWithMenu((String) initialValue, 17);
 		textField.setCaretPosition(0);
 

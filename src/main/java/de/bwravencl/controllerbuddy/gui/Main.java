@@ -5788,7 +5788,7 @@ public final class Main extends JFrame {
 
 		@SuppressWarnings("fallthrough")
 		@Override
-		public void approveSelection() {
+		public final void approveSelection() {
 			final var file = getSelectedFile();
 			if (file.exists() && getDialogType() == SAVE_DIALOG) {
 				final var selectedOption = JOptionPane.showConfirmDialog(this,
@@ -5963,7 +5963,7 @@ public final class Main extends JFrame {
 		}
 
 		@Override
-		protected void setup(final FileSystemView view) {
+		protected final void setup(final FileSystemView view) {
 			super.setup(view);
 
 			setPreferredSize(new Dimension(DIALOG_BOUNDS_WIDTH, DIALOG_BOUNDS_HEIGHT));
@@ -6129,7 +6129,7 @@ public final class Main extends JFrame {
 		}
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
+		public final void actionPerformed(final ActionEvent e) {
 			showConnectDialog();
 		}
 
@@ -7164,7 +7164,7 @@ public final class Main extends JFrame {
 		private static final long serialVersionUID = 1387266903295357716L;
 
 		@Override
-		public void actionPerformed(final ActionEvent e) {
+		public final void actionPerformed(final ActionEvent e) {
 			if (handleUnsavedChanges()) {
 				doAction();
 			}

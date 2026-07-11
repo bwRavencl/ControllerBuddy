@@ -43,7 +43,7 @@ public abstract class DescribableAction<V extends Constable> implements IAction<
 	/// Returns the raw custom description string, or `null` if none is set.
 	///
 	/// @return the custom description, or `null`
-	public @Nullable String getDescription() {
+	public final @Nullable String getDescription() {
 		return description;
 	}
 
@@ -66,14 +66,14 @@ public abstract class DescribableAction<V extends Constable> implements IAction<
 	/// Returns whether the custom description is empty or unset.
 	///
 	/// @return `true` if no custom description has been set
-	boolean isDescriptionEmpty() {
+	final boolean isDescriptionEmpty() {
 		return description == null || description.isEmpty();
 	}
 
 	/// Sets the custom description for this action.
 	///
 	/// @param description the description text to set
-	public void setDescription(final String description) {
+	public final void setDescription(final String description) {
 		this.description = description;
 	}
 }

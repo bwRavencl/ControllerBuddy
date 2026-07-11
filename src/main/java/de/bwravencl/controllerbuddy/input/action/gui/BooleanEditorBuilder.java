@@ -55,7 +55,7 @@ public class BooleanEditorBuilder extends EditorBuilder {
 	}
 
 	@Override
-	public void buildEditor(final JPanel parentPanel) {
+	public final void buildEditor(final JPanel parentPanel) {
 		Objects.requireNonNull(initialValue, "Field initialValue must not be null");
 
 		checkBox = new JCheckBox(new JCheckBoxSetPropertyAction(action, setterMethod));

@@ -109,14 +109,14 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	/// Returns the dead zone threshold below which axis values are treated as zero.
 	///
 	/// @return the dead zone value
-	public float getDeadZone() {
+	public final float getDeadZone() {
 		return deadZone;
 	}
 
 	/// Returns the exponent used for the response curve.
 	///
 	/// @return the exponent value
-	public float getExponent() {
+	public final float getExponent() {
 		return exponent;
 	}
 
@@ -124,21 +124,21 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	/// initialization.
 	///
 	/// @return the initial axis value
-	public float getInitialValue() {
+	public final float getInitialValue() {
 		return initialValue;
 	}
 
 	/// Returns the maximum output axis value.
 	///
 	/// @return the maximum value
-	public float getMaxValue() {
+	public final float getMaxValue() {
 		return maxValue;
 	}
 
 	/// Returns the minimum output axis value.
 	///
 	/// @return the minimum value
-	public float getMinValue() {
+	public final float getMinValue() {
 		return minValue;
 	}
 
@@ -146,7 +146,7 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	///
 	/// @param input the input state
 	@Override
-	public void init(final Input input) {
+	public final void init(final Input input) {
 		if (!input.isSkipAxisInitialization()) {
 			input.setAxis(virtualAxis, invert ? -initialValue : initialValue, false, null, null, null);
 		}
@@ -155,35 +155,35 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 	/// Sets the dead zone threshold.
 	///
 	/// @param deadZone the dead zone value
-	public void setDeadZone(final float deadZone) {
+	public final void setDeadZone(final float deadZone) {
 		this.deadZone = deadZone;
 	}
 
 	/// Sets the exponent for the response curve.
 	///
 	/// @param exponent the exponent value
-	public void setExponent(final float exponent) {
+	public final void setExponent(final float exponent) {
 		this.exponent = exponent;
 	}
 
 	/// Sets the initial value for the virtual axis.
 	///
 	/// @param initialValue the initial value
-	public void setInitialValue(final float initialValue) {
+	public final void setInitialValue(final float initialValue) {
 		this.initialValue = initialValue;
 	}
 
 	/// Sets the maximum output axis value.
 	///
 	/// @param maxValue the maximum value
-	public void setMaxValue(final float maxValue) {
+	public final void setMaxValue(final float maxValue) {
 		this.maxValue = maxValue;
 	}
 
 	/// Sets the minimum output value for the axis mapping.
 	///
 	/// @param minValue the minimum value
-	public void setMinValue(final float minValue) {
+	public final void setMinValue(final float minValue) {
 		this.minValue = minValue;
 	}
 }
