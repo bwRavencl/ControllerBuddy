@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.test;
 import de.bwravencl.controllerbuddy.gui.Main;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 /// [Main]`.skipMessageDialogs` to `true`. After every test it drains the AWT
 /// event queue (if the EDT is running) so that asynchronously posted events
 /// cannot leak into the following tests.
+@NullMarked
 public final class GuiTestExtension implements AfterEachCallback, BeforeAllCallback {
 
 	private static volatile boolean initialized;

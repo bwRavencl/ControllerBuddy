@@ -20,6 +20,7 @@ package de.bwravencl.controllerbuddy.runmode;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import java.util.logging.Logger;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class RunModeTest {
 

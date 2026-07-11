@@ -25,6 +25,7 @@ import de.bwravencl.controllerbuddy.input.action.ButtonToButtonAction;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class OutputRunModeTest {
 

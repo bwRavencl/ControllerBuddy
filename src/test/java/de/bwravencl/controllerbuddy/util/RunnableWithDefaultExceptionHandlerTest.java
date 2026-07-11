@@ -17,6 +17,7 @@
 
 package de.bwravencl.controllerbuddy.util;
 
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@NullMarked
 @ExtendWith(MockitoExtension.class)
 final class RunnableWithDefaultExceptionHandlerTest {
 
