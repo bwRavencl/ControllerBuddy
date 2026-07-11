@@ -424,8 +424,8 @@ final class InputTest {
 		@Test
 		@DisplayName("sets rateMultiplier from elapsed wall-clock time on subsequent calls")
 		void setsRateMultiplierFromElapsedTimeOnSubsequentCalls() throws Exception {
-			final var pollPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
-			Mockito.when(mockRunMode.getPollPeriodNanos()).thenReturn(pollPeriodNanos);
+			final var pollingPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
+			Mockito.when(mockRunMode.getPollingPeriodNanos()).thenReturn(pollingPeriodNanos);
 
 			final var input = createInputWithRunMode();
 			input.poll(); // first call - seeds lastPollNanoTime
@@ -442,15 +442,16 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("sets rateMultiplier from getPollPeriodNanos() on the first call when lastPollNanoTime is 0")
+		@DisplayName("sets rateMultiplier from getPollingPeriodNanos() on the first call when lastPollNanoTime is 0")
 		void setsRateMultiplierFromPollIntervalOnFirstCall() {
-			final var pollPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
-			Mockito.when(mockRunMode.getPollPeriodNanos()).thenReturn(pollPeriodNanos);
+			final var pollingPeriodNanos = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
+			Mockito.when(mockRunMode.getPollingPeriodNanos()).thenReturn(pollingPeriodNanos);
 
 			final var input = createInputWithRunMode();
 			input.poll();
 
-			Assertions.assertEquals((float) pollPeriodNanos / Input.NANOS_PER_SECOND, input.getRateMultiplier(), 1e-6f);
+			Assertions.assertEquals((float) pollingPeriodNanos / Input.NANOS_PER_SECOND, input.getRateMultiplier(),
+					1e-6f);
 		}
 	}
 

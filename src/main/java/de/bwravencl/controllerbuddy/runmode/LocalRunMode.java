@@ -154,7 +154,7 @@ public final class LocalRunMode extends OutputRunMode {
 						writeOutput();
 					}
 
-					nextPollTimeNanos += pollPeriodNanos;
+					nextPollTimeNanos += pollingPeriodNanos;
 
 					final var sleepNanos = nextPollTimeNanos - System.nanoTime();
 					if (sleepNanos > 0L) {

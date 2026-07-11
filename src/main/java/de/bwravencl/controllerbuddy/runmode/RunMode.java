@@ -62,8 +62,8 @@ public abstract class RunMode implements Runnable {
 	/// The number of buttons available on the output device.
 	int numButtons;
 
-	/// The poll period in nanoseconds.
-	long pollPeriodNanos;
+	/// The polling period in nanoseconds.
+	long pollingPeriodNanos;
 
 	/// Flag controlling whether the run loop continues; set to `false` to stop.
 	volatile boolean run = true;
@@ -138,11 +138,11 @@ public abstract class RunMode implements Runnable {
 		return numButtons;
 	}
 
-	/// Returns the poll period in nanoseconds used for input polling.
+	/// Returns the polling period in nanoseconds used for input polling.
 	///
-	/// @return the poll period in nanoseconds
-	public final long getPollPeriodNanos() {
-		return pollPeriodNanos;
+	/// @return the polling period in nanoseconds
+	public final long getPollingPeriodNanos() {
+		return pollingPeriodNanos;
 	}
 
 	/// Logs an informational message indicating that output has started.
@@ -186,12 +186,12 @@ public abstract class RunMode implements Runnable {
 		input.initButtons();
 	}
 
-	/// Sets the polling rate in hertz, calculating the corresponding poll period in
-	/// nanoseconds.
+	/// Sets the polling rate in hertz, calculating the corresponding polling period
+	/// in nanoseconds.
 	///
 	/// @param pollingRate the desired polling rate in hertz
 	private void setPollingRate(final int pollingRate) {
-		pollPeriodNanos = Input.NANOS_PER_SECOND / pollingRate;
+		pollingPeriodNanos = Input.NANOS_PER_SECOND / pollingRate;
 	}
 
 	/// Enables the maximum polling rate.

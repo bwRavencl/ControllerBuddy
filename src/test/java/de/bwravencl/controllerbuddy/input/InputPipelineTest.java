@@ -298,7 +298,7 @@ final class InputPipelineTest {
 		Mockito.lenient().when(mockRunMode.getMinAxisValue()).thenReturn((int) Short.MIN_VALUE);
 		Mockito.lenient().when(mockRunMode.getMaxAxisValue()).thenReturn((int) Short.MAX_VALUE);
 		Mockito.lenient().when(mockRunMode.getNumButtons()).thenReturn(128);
-		Mockito.lenient().when(mockRunMode.getPollPeriodNanos())
+		Mockito.lenient().when(mockRunMode.getPollingPeriodNanos())
 				.thenReturn(Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
 
 		input = new Input(mockMain, mockController, null);

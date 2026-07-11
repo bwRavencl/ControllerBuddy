@@ -234,7 +234,7 @@ public final class ServerRunMode extends RunMode {
 							}
 
 							serverState = ServerState.CONNECTED;
-							nextPollTimeNanos = System.nanoTime() + pollPeriodNanos;
+							nextPollTimeNanos = System.nanoTime() + pollingPeriodNanos;
 							if (!input.init()) {
 								controllerDisconnected();
 								return;
@@ -250,9 +250,9 @@ public final class ServerRunMode extends RunMode {
 					if (sleepNanos > 0L) {
 						// noinspection BusyWait
 						Thread.sleep(sleepNanos / 1_000_000L, (int) (sleepNanos % 1_000_000L));
-						nextPollTimeNanos += pollPeriodNanos;
+						nextPollTimeNanos += pollingPeriodNanos;
 					} else {
-						nextPollTimeNanos = System.nanoTime() + pollPeriodNanos;
+						nextPollTimeNanos = System.nanoTime() + pollingPeriodNanos;
 					}
 
 					try (final var byteArrayOutputStream = new ByteArrayOutputStream();

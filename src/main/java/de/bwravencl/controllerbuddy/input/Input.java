@@ -562,7 +562,7 @@ public final class Input {
 		if (lastPollNanoTime > 0L) {
 			elapsedNanoTime = currentNanoTime - lastPollNanoTime;
 		} else {
-			elapsedNanoTime = runMode.getPollPeriodNanos();
+			elapsedNanoTime = runMode.getPollingPeriodNanos();
 		}
 		lastPollNanoTime = currentNanoTime;
 		rateMultiplier = (float) elapsedNanoTime / NANOS_PER_SECOND;
