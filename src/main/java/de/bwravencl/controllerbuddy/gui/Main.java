@@ -1247,9 +1247,9 @@ public final class Main extends JFrame {
 		pollingRateLabel.setPreferredSize(longSettingsLabelDimension);
 		pollingRatePanel.add(pollingRateLabel);
 
-		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 50L, 1000L, 100L,
-				event -> preferences.putLong(PREFERENCES_POLLING_RATE,
-						((SpinnerNumberModel) event.getSource()).getNumber().longValue())));
+		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 50, 1000, 100,
+				event -> preferences.putInt(PREFERENCES_POLLING_RATE,
+						((SpinnerNumberModel) event.getSource()).getNumber().intValue())));
 		GuiUtils.makeHertzSpinner(pollingRateSpinner);
 		pollingRatePanel.add(pollingRateSpinner);
 
@@ -2979,8 +2979,8 @@ public final class Main extends JFrame {
 	/// Returns the configured input polling rate in hertz.
 	///
 	/// @return the polling rate in hertz
-	public long getPollingRate() {
-		return preferences.getLong(PREFERENCES_POLLING_RATE, RunMode.DEFAULT_POLLING_RATE_HZ);
+	public int getPollingRate() {
+		return preferences.getInt(PREFERENCES_POLLING_RATE, RunMode.DEFAULT_POLLING_RATE_HZ);
 	}
 
 	/// Returns the configured network port.

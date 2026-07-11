@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 public abstract class RunMode implements Runnable {
 
 	/// The default polling rate in hertz.
-	public static final long DEFAULT_POLLING_RATE_HZ = 500L;
+	public static final int DEFAULT_POLLING_RATE_HZ = 500;
 
 	private static final Logger logger = Logger.getLogger(RunMode.class.getName());
 
