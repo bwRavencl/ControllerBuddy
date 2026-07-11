@@ -73,8 +73,6 @@ val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
     listOf(
-        "-Xms96m",
-        "-Xmx96m",
         "-XX:+UseSerialGC",
         "-XX:+UseCompactObjectHeaders",
         "-XX:TieredStopAtLevel=1",
@@ -83,6 +81,8 @@ val commonJvmArgs =
 val runJvmArgs =
     commonJvmArgs +
         listOf(
+            "-Xms24m",
+            "-Xmx48m",
             "--add-exports=org.lwjgl/org.lwjgl.system.ffm=org.lwjgl.sdl",
             "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
             "--illegal-final-field-mutation=deny",
