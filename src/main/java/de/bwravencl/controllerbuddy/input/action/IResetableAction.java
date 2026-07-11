@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// Interface for actions whose transient state can be reset to initial values.
 ///
@@ -27,7 +26,6 @@ import org.jspecify.annotations.NullMarked;
 /// for example, when the input system is restarted.
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public interface IResetableAction<V extends Constable> extends IAction<V> {
 
 	/// Resets the transient state of this action.

@@ -54,7 +54,6 @@ import java.util.stream.Stream;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.JOptionPane;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Client-side run mode that receives controller input state over the
@@ -63,7 +62,6 @@ import org.jspecify.annotations.Nullable;
 /// Connects to a remote [ServerRunMode] via an encrypted UDP channel,
 /// receives serialized input state updates, and writes them to the
 /// local virtual output device.
-@NullMarked
 public final class ClientRunMode extends OutputRunMode {
 
 	/// Number of retries when attempting to establish the initial connection.

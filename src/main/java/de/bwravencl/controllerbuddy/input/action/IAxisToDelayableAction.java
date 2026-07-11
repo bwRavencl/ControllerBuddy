@@ -23,7 +23,6 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
-import org.jspecify.annotations.NullMarked;
 
 /// Interface for axis-triggered actions that support an activation delay.
 ///
@@ -32,7 +31,6 @@ import org.jspecify.annotations.NullMarked;
 /// only fires after the axis value remains within the configured range for the
 /// specified duration. Delayed activation can also deny activation of
 /// co-located undelayed on-release actions.
-@NullMarked
 public interface IAxisToDelayableAction extends IAxisToAction, IDelayableAction<Float> {
 
 	/// Maps each axis delayable action to the timestamp when it was first

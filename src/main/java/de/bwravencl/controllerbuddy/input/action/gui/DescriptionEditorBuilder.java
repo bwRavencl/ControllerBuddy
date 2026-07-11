@@ -19,14 +19,12 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for action description properties.
 ///
 /// Extends [StringEditorBuilder] to additionally repaint the assigned-actions
 /// list whenever the description value changes, keeping the list display in
 /// sync with the edited text.
-@NullMarked
 public final class DescriptionEditorBuilder extends StringEditorBuilder {
 
 	/// Constructs a [DescriptionEditorBuilder] for the specified action property.

@@ -91,7 +91,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -105,7 +104,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// within a profile.
 /// - **Cycle editor**: edits the sub-actions within a [ButtonToCycleAction].
 @SuppressWarnings("exports")
-@NullMarked
 public final class EditActionsDialog extends JDialog {
 
 	/// Horizontal weight for the actions list columns in the grid layout.

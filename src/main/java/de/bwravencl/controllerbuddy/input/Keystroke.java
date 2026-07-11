@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Represents a keyboard keystroke consisting of modifier keys and regular
@@ -37,7 +36,6 @@ import org.jspecify.annotations.Nullable;
 /// Supports serialization using legacy key code sets for backward
 /// compatibility, converting between [Scancode]-based and integer-based
 /// representations as needed.
-@NullMarked
 public final class Keystroke implements Cloneable, Serializable {
 
 	@Serial

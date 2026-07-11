@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 import org.lwjgl.sdl.SDLProperties;
@@ -51,7 +50,6 @@ import org.lwjgl.sdl.SDLProperties;
 /// This class serves as the central input handler that polls SDL gamepads,
 /// dispatches actions defined in the active [Profile], and maintains the
 /// current state of all virtual axes, buttons, keystrokes, and mouse inputs.
-@NullMarked
 public final class Input {
 
 	/// Maximum number of virtual buttons supported.

@@ -29,14 +29,12 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.logging.Logger;
-import org.jspecify.annotations.NullMarked;
 
 /// Provides Java bindings to the vJoy virtual joystick driver library.
 ///
 /// Uses the Foreign Function and Memory API to interface with the vJoy driver.
 /// Functions are loaded dynamically at runtime via [#init].
 @SuppressWarnings({ "exports", "restricted" })
-@NullMarked
 public final class VjoyInterface {
 
 	/// HID usage value for the RX (rotation X) axis.

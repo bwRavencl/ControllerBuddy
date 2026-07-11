@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.gui;
 import java.io.Serial;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// A [SpinnerNumberModel] that clamps out-of-range values to the nearest bound
@@ -31,7 +30,6 @@ import org.jspecify.annotations.Nullable;
 /// failing construction, the value is silently clamped, and if clamping
 /// occurred, the supplied [ChangeListener] is notified immediately so callers
 /// can keep any external state in sync with the corrected value.
-@NullMarked
 public final class ClampingSpinnerNumberModel extends SpinnerNumberModel {
 
 	@Serial

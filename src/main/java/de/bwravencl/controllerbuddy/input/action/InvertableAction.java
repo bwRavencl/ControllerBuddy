@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.input.action;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for actions whose effect can be inverted.
 ///
@@ -28,7 +27,6 @@ import org.jspecify.annotations.NullMarked;
 /// axis direction or scroll direction).
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
 
 	/// Whether the action output is inverted.

@@ -19,14 +19,12 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for cursor sensitivity properties, providing a spinner with a
 /// range of 1 to 100,000.
 ///
 /// Higher values make the cursor move faster in response to axis input, while
 /// lower values produce finer-grained movement.
-@NullMarked
 public final class CursorSensitivityEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [CursorSensitivityEditorBuilder] for the specified action

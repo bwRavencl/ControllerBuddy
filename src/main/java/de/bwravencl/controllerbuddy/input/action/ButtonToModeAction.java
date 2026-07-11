@@ -33,7 +33,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.UUID;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -43,7 +42,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// active mode actions to allow nested mode switching with proper deactivation
 /// order.
 @Action(icon = "⎇", title = "BUTTON_TO_MODE_ACTION_TITLE", description = "BUTTON_TO_MODE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 145)
-@NullMarked
 public final class ButtonToModeAction implements IButtonToDelayableAction, IResetableAction<Boolean> {
 
 	/// Symbol used to represent momentary mode activation.

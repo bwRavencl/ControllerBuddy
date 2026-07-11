@@ -55,7 +55,6 @@ import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import org.jspecify.annotations.NullMarked;
 
 /// An on-screen virtual keyboard displayed as a translucent, always-on-top
 /// popup window.
@@ -64,7 +63,6 @@ import org.jspecify.annotations.NullMarked;
 /// hold, and lock operations. It renders a standard QWERTY layout with function
 /// keys, numpad, and modifier keys.
 @SuppressWarnings("exports")
-@NullMarked
 public final class OnScreenKeyboard extends JFrame {
 
 	/// The mode associated with the on-screen keyboard.

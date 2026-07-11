@@ -541,14 +541,11 @@ tasks.register("generateConstants") {
         """
             package de.bwravencl.controllerbuddy.constants;
 
-            import org.jspecify.annotations.NullMarked;
-
             /// Build-time generated constants for the application.
             ///
             /// Contains the application name, version string, build timestamp, and
             /// aggregated license HTML that are populated at compile time by the Gradle
             /// build.
-            @NullMarked
             public final class Constants {
 
             	/// Prevents instantiation.
@@ -591,8 +588,11 @@ tasks.register("generateModuleInfo") {
   doLast {
     moduleInfoFile.writeText(
         """
+        import org.jspecify.annotations.NullMarked;
+
         /// Module descriptor for the ControllerBuddy application.
         @SuppressWarnings("Java9RedundantRequiresStatement")
+        @NullMarked
         module de.bwravencl.controllerbuddy {
         	exports de.bwravencl.controllerbuddy.gui;
 
@@ -635,8 +635,9 @@ tasks.withType<JavaCompile>().configureEach {
 
       options.errorprone {
         error("MissingBraces")
+        error("RequireExplicitNullMarking")
 
-        option("NullAway:OnlyNullMarked", true)
+        option("NullAway:AnnotatedPackages", mainModule)
         option("NullAway:JSpecifyMode", true)
       }
     } else {

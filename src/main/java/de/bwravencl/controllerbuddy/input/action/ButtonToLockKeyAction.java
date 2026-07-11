@@ -26,7 +26,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.LockKeyEditorBuilder;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a button press to toggling a lock key (e.g., Caps Lock, Num Lock,
 /// Scroll Lock).
@@ -35,7 +34,6 @@ import org.jspecify.annotations.NullMarked;
 /// off lock key set depending on the [#on] property. Uses edge detection so
 /// that holding the button does not repeatedly toggle the key.
 @Action(icon = "🔒", title = "BUTTON_TO_LOCK_KEY_ACTION_TITLE", description = "BUTTON_TO_LOCK_KEY_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 116)
-@NullMarked
 public final class ButtonToLockKeyAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 

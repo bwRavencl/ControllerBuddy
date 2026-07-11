@@ -26,14 +26,12 @@ import de.bwravencl.controllerbuddy.input.action.gui.DeadZoneEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.ExponentEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxAxisValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MinAxisValueEditorBuilder;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a physical axis input to a virtual axis output.
 ///
 /// Applies dead zone filtering, exponent-based response curves, and value
 /// normalization to translate raw axis values into the configured virtual axis
 /// range.
-@NullMarked
 @Action(icon = "🕹", title = "TO_AXIS_ACTION_TITLE", description = "TO_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 10)
 public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToAction, IInitializationAction<Float> {
 

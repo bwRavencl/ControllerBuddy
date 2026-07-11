@@ -235,7 +235,6 @@ import org.freedesktop.dbus.annotations.DBusProperty.Access;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.freedesktop.dbus.types.Variant;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLError;
 import org.lwjgl.sdl.SDLEvents;
@@ -265,7 +264,6 @@ import org.xml.sax.SAXException;
 /// (local, client, server).
 /// This class is a singleton; the static `main` field holds the active
 /// instance.
-@NullMarked
 public final class Main extends JFrame {
 
 	/// Default horizontal gap in pixels used for layout spacing.

@@ -95,9 +95,10 @@ The conventions below are **not** auto-enforced and must be followed manually:
 - Localization: user-facing strings go in resource bundles (`strings.properties`, `strings_de_DE.properties`), not hardcoded.
 - Module system: packages that need Gson serialization require an `opens ... to com.google.gson` directive. These are defined in the `generateModuleInfo` task in `build.gradle.kts` - not in `module-info.java` directly, as that file is generated.
 - Nullness annotations: use JSpecify annotations from `org.jspecify.annotations.*` to define nullness contracts.
-    - Annotate all new classes with `@NullMarked` to make types non-null by default within the class scope.
-    - Use `@Nullable` explicitly on type uses where `null` is an acceptable value.
-    - Place `@Nullable` immediately before the type name, after modifiers like `final`.
+    - The module is null-marked by default for `src/main` via `package-info.java`; never add `@NullMarked` to individual main classes.
+    - Test classes are not covered by that module-level marking, so annotate every test class with `@NullMarked` individually.
+    - Use `@Nullable` explicitly on any parameter, field, or return type that may hold `null`.
+    - Place `@Nullable` immediately before the type name, after modifiers like `final` (e.g. `private final @Nullable String name;`).
 - Documentation comments: follow the rules below for all Javadoc comments.
     - **Language** use American English, not British English.
     - **Syntax:** use `///` Markdown Javadoc comments (JEP 467), not `/** */` Javadoc.

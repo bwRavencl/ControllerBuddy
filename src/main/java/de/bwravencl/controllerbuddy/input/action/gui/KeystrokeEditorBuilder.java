@@ -66,7 +66,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Editor builder for keystroke properties, rendering two filterable checkbox
@@ -75,7 +74,6 @@ import org.jspecify.annotations.Nullable;
 /// Displays a visualization of the resulting key combination that updates
 /// in real time as the user selects or deselects scancodes. Both lists
 /// support prefix and wildcard filtering to quickly locate specific keys.
-@NullMarked
 public final class KeystrokeEditorBuilder extends EditorBuilder {
 
 	/// Width in pixels of the key list scroll pane.

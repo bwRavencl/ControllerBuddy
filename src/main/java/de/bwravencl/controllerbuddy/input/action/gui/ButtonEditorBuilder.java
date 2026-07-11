@@ -28,7 +28,6 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JPanel;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.DefaultFormatterFactory;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Editor builder for gamepad button index properties, rendering a spinner with
@@ -38,7 +37,6 @@ import org.jspecify.annotations.Nullable;
 /// The display formatter adds one to the internal zero-based index so that
 /// buttons are presented to the user starting from 1, up to the total number
 /// of buttons reported by the connected controller.
-@NullMarked
 public final class ButtonEditorBuilder extends NumberEditorBuilder<Integer> {
 
 	/// Constructs a [ButtonEditorBuilder] for the specified action property.

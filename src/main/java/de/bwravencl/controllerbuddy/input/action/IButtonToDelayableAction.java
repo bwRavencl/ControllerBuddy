@@ -23,7 +23,6 @@ import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activatable;
 import de.bwravencl.controllerbuddy.input.action.IActivatableAction.Activation;
 import java.util.HashMap;
 import java.util.Map;
-import org.jspecify.annotations.NullMarked;
 
 /// Interface for button-triggered actions that support an activation delay.
 ///
@@ -32,7 +31,6 @@ import org.jspecify.annotations.NullMarked;
 /// action only fires after the button remains pressed for the specified
 /// duration. Delayed activation can also deny activation of co-located
 /// undelayed on-release actions.
-@NullMarked
 public interface IButtonToDelayableAction extends IDelayableAction<Boolean> {
 
 	/// Maps each delayable action to the timestamp when it was first activated.

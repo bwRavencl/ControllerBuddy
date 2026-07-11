@@ -20,7 +20,6 @@ package de.bwravencl.controllerbuddy.util;
 import de.bwravencl.controllerbuddy.constants.Constants;
 import java.util.Arrays;
 import java.util.Optional;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Utilities for parsing and comparing version strings.
@@ -28,7 +27,6 @@ import org.jspecify.annotations.Nullable;
 /// Provides methods to split a version string into integer parts, get the
 /// major and minor versions of the running application, and compare an
 /// arbitrary version string against the current application version.
-@NullMarked
 public final class VersionUtils {
 
 	/// Prevents instantiation.

@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input.action;
 
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// Interface for actions whose activation can be delayed by a configurable
 /// duration.
@@ -28,7 +27,6 @@ import org.jspecify.annotations.NullMarked;
 /// input has been held for at least the specified number of milliseconds.
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public interface IDelayableAction<V extends Constable> extends IAction<V> {
 
 	/// Default delay duration in milliseconds (no delay).

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jspecify.annotations.NullMarked;
 
 /// Represents a toggle lock key such as Caps Lock, Num Lock, or Scroll Lock.
 ///
@@ -35,7 +34,6 @@ import org.jspecify.annotations.NullMarked;
 /// @param virtualKeyCode the AWT virtual key code for this lock key
 /// @param event the corresponding Linux uinput event
 /// @param sysfsLedName the sysfs LED name used to read lock state on Linux
-@NullMarked
 public record LockKey(String name, int virtualKeyCode, Event event, String sysfsLedName) {
 
 	/// Suffix appended to key names to form lock key display names.

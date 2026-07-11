@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Abstract editor builder for enum or array-valued properties.
@@ -37,7 +36,6 @@ import org.jspecify.annotations.Nullable;
 /// abstract [#getValues] method.
 ///
 /// @param <T> the element type of the selectable values
-@NullMarked
 abstract class ArrayEditorBuilder<T> extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(ArrayEditorBuilder.class.getName());

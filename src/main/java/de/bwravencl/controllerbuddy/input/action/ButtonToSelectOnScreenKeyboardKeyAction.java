@@ -27,14 +27,12 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DirectionEditorBuilder;
 import java.text.MessageFormat;
 import java.util.Locale;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a gamepad button press to moving the on-screen keyboard key selector.
 ///
 /// Moves the selection cursor in the configured direction with acceleration:
 /// repeated holds increase the movement speed up to a peak rate.
 @Action(icon = "✥", title = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_SELECT_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 510)
-@NullMarked
 public final class ButtonToSelectOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IResetableAction<Boolean> {
 

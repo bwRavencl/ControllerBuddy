@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for maximum axis value properties, restricting the minimum to
 /// 0.0 so that only non-negative axis values can be selected.
@@ -27,7 +26,6 @@ import org.jspecify.annotations.NullMarked;
 /// Extends [AxisValueEditorBuilder] with a fixed lower bound of 0.0, ensuring
 /// the configured maximum is always within the valid positive half of the axis
 /// range.
-@NullMarked
 public final class MaxAxisValueEditorBuilder extends AxisValueEditorBuilder {
 
 	/// Constructs a [MaxAxisValueEditorBuilder] for the specified action property.

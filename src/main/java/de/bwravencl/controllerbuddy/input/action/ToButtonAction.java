@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.ButtonEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for actions that map controller input to a virtual
@@ -34,7 +33,6 @@ import org.jspecify.annotations.Nullable;
 /// target button is identified by a zero-based button ID.
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public abstract class ToButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 

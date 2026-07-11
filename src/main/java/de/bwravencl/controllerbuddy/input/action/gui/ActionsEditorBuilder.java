@@ -27,7 +27,6 @@ import java.text.MessageFormat;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for sub-action list properties, providing a button that opens
 /// a nested [EditActionsDialog] for editing the actions within a
@@ -36,7 +35,6 @@ import org.jspecify.annotations.NullMarked;
 /// The button label shows the current number of sub-actions. Clicking it opens
 /// the nested dialog, allowing the user to add, remove, and reorder the
 /// sub-actions of a cycle action.
-@NullMarked
 public final class ActionsEditorBuilder extends EditorBuilder {
 
 	/// Constructs an [ActionsEditorBuilder] for the specified action property.

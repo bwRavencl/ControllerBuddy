@@ -56,7 +56,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 import javax.swing.UIManager;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -67,7 +66,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// direction) and opens an assignment editor dialog when clicked. The layout
 /// mimics a physical gamepad, with sticks, triggers, bumpers, and face
 /// buttons placed in their conventional positions.
-@NullMarked
 final class AssignmentsScrollPane extends JScrollPane {
 
 	/// Height in pixels used for all component buttons.

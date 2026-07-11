@@ -21,14 +21,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.jspecify.annotations.NullMarked;
 
 /// Annotation that marks a class as a controller action and provides metadata
 /// for the UI.
 ///
 /// Applied to action types to define their category, display title,
 /// description, and ordering within the editor.
-@NullMarked
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Action {

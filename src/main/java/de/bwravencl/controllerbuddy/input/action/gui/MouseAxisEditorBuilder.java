@@ -20,14 +20,12 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import de.bwravencl.controllerbuddy.input.action.ToCursorAction.MouseAxis;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for mouse axis properties, presenting a combo box of
 /// [MouseAxis] values (horizontal or vertical).
 ///
 /// Used to configure which axis of the mouse pointer is driven by the
 /// associated action.
-@NullMarked
 public final class MouseAxisEditorBuilder extends ArrayEditorBuilder<MouseAxis> {
 
 	/// Constructs a [MouseAxisEditorBuilder] for the specified action property.

@@ -19,14 +19,12 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for maximum relative speed properties, providing a spinner
 /// with a range of 0.1 to 100.0 and a step size of 0.1.
 ///
 /// Controls the upper bound of the relative speed at which axis-driven actions
 /// (such as cursor movement) are applied.
-@NullMarked
 public final class MaxRelativeSpeedEditorBuilder extends NumberEditorBuilder<Float> {
 
 	/// Constructs a [MaxRelativeSpeedEditorBuilder] for the specified action

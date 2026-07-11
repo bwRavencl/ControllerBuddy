@@ -52,7 +52,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JOptionPane;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Server-side run mode that streams input state to a remote client.
@@ -61,7 +60,6 @@ import org.jspecify.annotations.Nullable;
 /// state updates to a remote [ClientRunMode] over UDP. The server
 /// listens for client connections, performs a handshake, and then
 /// continuously streams serialized input data.
-@NullMarked
 public final class ServerRunMode extends RunMode {
 
 	/// The default UDP port used for server communication.

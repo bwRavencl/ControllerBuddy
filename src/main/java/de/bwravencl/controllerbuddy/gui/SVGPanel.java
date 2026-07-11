@@ -35,7 +35,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Panel that renders an [SVGDocument] with interactive zoom and pan support.
@@ -43,7 +42,6 @@ import org.jspecify.annotations.Nullable;
 /// Left-clicking zooms in and right-clicking zooms out at the cursor position.
 /// When zoomed in, the user can pan by dragging the panel. The mouse wheel also
 /// adjusts the zoom level incrementally.
-@NullMarked
 final class SVGPanel extends JPanel {
 
 	/// Maximum zoom factor the panel allows.

@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for dead zone properties, providing a spinner with a range of
 /// 0.0 to 1.0 and a step size of 0.01.
@@ -27,7 +26,6 @@ import org.jspecify.annotations.NullMarked;
 /// The dead zone defines the portion of the axis range near the center that
 /// is treated as neutral, preventing small unintentional movements from
 /// triggering an action.
-@NullMarked
 public final class DeadZoneEditorBuilder extends NumberEditorBuilder<Float> {
 
 	/// Constructs a [DeadZoneEditorBuilder] for the specified action property.

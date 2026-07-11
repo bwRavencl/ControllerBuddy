@@ -21,7 +21,6 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// Root interface for all controller input actions in the action type
 /// hierarchy.
@@ -31,7 +30,6 @@ import org.jspecify.annotations.NullMarked;
 /// and support cloning.
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public interface IAction<V extends Constable> extends Cloneable {
 
 	/// Returns a default human-readable description for the given action, derived

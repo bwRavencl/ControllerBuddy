@@ -22,7 +22,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a gamepad button press to mouse scroll wheel movement.
 ///
@@ -30,7 +29,6 @@ import org.jspecify.annotations.NullMarked;
 /// to the input polling rate. Releasing the button resets the accumulated
 /// scroll remainder.
 @Action(icon = "⇕", title = "TO_SCROLL_ACTION_TITLE", description = "TO_SCROLL_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 130)
-@NullMarked
 public final class ButtonToScrollAction extends ToScrollAction<Boolean> implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.

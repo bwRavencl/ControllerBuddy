@@ -62,7 +62,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Utility class providing common GUI helper methods for window management,
@@ -73,7 +72,6 @@ import org.jspecify.annotations.Nullable;
 /// context menus, positioning frames across multiple displays, and showing
 /// message dialogs.
 @SuppressWarnings({ "exports" })
-@NullMarked
 public final class GuiUtils {
 
 	/// Reflective field accessor for the native window handle on Windows.

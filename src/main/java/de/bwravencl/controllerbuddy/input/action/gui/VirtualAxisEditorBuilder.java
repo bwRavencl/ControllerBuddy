@@ -20,14 +20,12 @@ package de.bwravencl.controllerbuddy.input.action.gui;
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.IAction;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for virtual axis properties, presenting a combo box of
 /// [VirtualAxis] values.
 ///
 /// Used to configure which virtual output axis (e.g., X, Y, Z, Rx, Ry, Rz, or
 /// slider) is written to when the associated action fires.
-@NullMarked
 public final class VirtualAxisEditorBuilder extends ArrayEditorBuilder<VirtualAxis> {
 
 	/// Constructs a [VirtualAxisEditorBuilder] for the specified action property.

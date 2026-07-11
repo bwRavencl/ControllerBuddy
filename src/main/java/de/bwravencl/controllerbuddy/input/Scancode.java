@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import org.jspecify.annotations.NullMarked;
 
 /// Represents a keyboard scancode mapping a display name to a DirectInput key
 /// code and a Linux input event.
@@ -36,7 +35,6 @@ import org.jspecify.annotations.NullMarked;
 /// @param name the human-readable display name for the key
 /// @param keyCode the DirectInput scancode value
 /// @param event the corresponding Linux uinput event
-@NullMarked
 public record Scancode(String name, int keyCode, Event event) {
 
 	/// '0' key

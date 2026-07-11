@@ -24,14 +24,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Logger;
-import org.jspecify.annotations.NullMarked;
 
 /// Run mode for local input processing on the same machine.
 ///
 /// Polls a locally connected controller for input and writes the
 /// resulting axis, button, key, and mouse state to the virtual
 /// output device.
-@NullMarked
 public final class LocalRunMode extends OutputRunMode {
 
 	private static final Logger logger = Logger.getLogger(LocalRunMode.class.getName());

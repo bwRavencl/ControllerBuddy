@@ -25,7 +25,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DetentValueEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.MaxRelativeSpeedEditorBuilder;
 import java.util.Objects;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Maps a physical axis to a virtual axis using relative movement.
@@ -34,7 +33,6 @@ import org.jspecify.annotations.Nullable;
 /// setting an absolute position, with support for dead zones, exponent curves,
 /// detent values, and haptic feedback.
 @Action(icon = "🎚️", title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
-@NullMarked
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
 	/// Default haptic feedback enabled state.

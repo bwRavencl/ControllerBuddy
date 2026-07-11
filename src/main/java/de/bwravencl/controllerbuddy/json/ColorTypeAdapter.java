@@ -26,7 +26,6 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.awt.Color;
 import java.lang.reflect.Type;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [Color] instances.
@@ -34,7 +33,6 @@ import org.jspecify.annotations.Nullable;
 /// Supports deserializing from either a JSON number (interpreted as an RGBA
 /// integer) or a JSON object with a `value` member. Serializes a [Color] as its
 /// RGB integer representation.
-@NullMarked
 public final class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 
 	/// Deserializes a [Color] from a JSON element.

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -39,7 +38,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// A profile contains one or more [Mode] instances. The first mode is always
 /// the [default Mode][#defaultMode].
 /// Profiles are cloneable for use in the profile editor.
-@NullMarked
 public final class Profile implements Cloneable {
 
 	/// The default mode that is always present as the first mode in a profile.

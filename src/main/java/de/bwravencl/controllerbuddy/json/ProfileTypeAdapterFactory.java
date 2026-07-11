@@ -39,7 +39,6 @@ import de.bwravencl.controllerbuddy.util.VersionUtils;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -51,7 +50,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// and style, resolves legacy enum constant names for [Activation], and
 /// migrates the deprecated `longPress` field to the delay mechanism on
 /// [IDelayableAction] instances.
-@NullMarked
 public final class ProfileTypeAdapterFactory implements TypeAdapterFactory {
 
 	/// Legacy GLFW button index for the Back button.

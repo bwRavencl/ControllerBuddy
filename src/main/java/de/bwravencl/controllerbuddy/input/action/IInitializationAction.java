@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.Input;
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// Interface for actions that require initialization before they can process
 /// input.
@@ -28,7 +27,6 @@ import org.jspecify.annotations.NullMarked;
 /// use [#init] to reset the transient state to well-defined initial values.
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public interface IInitializationAction<V extends Constable> extends IAction<V> {
 
 	/// Initializes or resets the transient state of this action.

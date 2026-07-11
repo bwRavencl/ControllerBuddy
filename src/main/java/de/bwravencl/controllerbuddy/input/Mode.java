@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLGamepad;
 
@@ -39,7 +38,6 @@ import org.lwjgl.sdl.SDLGamepad;
 /// Each mode has a unique UUID, a description, and contains mappings from
 /// axis/button indices to action lists. A [Profile] holds one or more modes
 /// that can be switched at runtime.
-@NullMarked
 public final class Mode implements Cloneable {
 
 	/// Maps axis indices to their associated action lists.

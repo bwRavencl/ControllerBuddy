@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategor
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a gamepad button press to pressing the currently selected on-screen
 /// keyboard key.
@@ -32,7 +31,6 @@ import org.jspecify.annotations.NullMarked;
 /// Supports a lock-key mode that toggles the key state on each press, as well
 /// as a standard press-and-release mode tied to the button hold duration.
 @Action(icon = "⬇️", title = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_TITLE", description = "BUTTON_TO_PRESS_ON_SCREEN_KEYBOARD_KEY_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 520)
-@NullMarked
 public final class ButtonToPressOnScreenKeyboardKeyAction
 		implements IButtonToDelayableAction, IInitializationAction<Boolean> {
 

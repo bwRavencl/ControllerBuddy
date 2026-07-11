@@ -17,15 +17,12 @@
 
 package de.bwravencl.controllerbuddy.util;
 
-import org.jspecify.annotations.NullMarked;
-
 /// A [Runnable] wrapper that propagates uncaught exceptions.
 ///
 /// Delegates uncaught exceptions to the thread's default uncaught
 /// exception handler instead of silently swallowing them.
 ///
 /// @param runnable the runnable to wrap
-@NullMarked
 public record RunnableWithDefaultExceptionHandler(Runnable runnable) implements Runnable {
 
 	@Override

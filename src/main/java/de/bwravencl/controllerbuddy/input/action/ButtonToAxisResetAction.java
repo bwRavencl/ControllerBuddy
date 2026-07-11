@@ -29,7 +29,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.BooleanEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Maps a button press to resetting a virtual axis to a configurable value.
@@ -38,7 +37,6 @@ import org.jspecify.annotations.Nullable;
 /// enabled) to the configured reset value. Supports configurable activation
 /// modes and delay.
 @Action(icon = "🕹", title = "BUTTON_TO_AXIS_RESET_ACTION_TITLE", description = "BUTTON_TO_AXIS_RESET_ACTION_DESCRIPTION", category = ActionCategory.BUTTON_AND_CYCLES, order = 135)
-@NullMarked
 public final class ButtonToAxisResetAction extends DescribableAction<Boolean>
 		implements IButtonToDelayableAction, IActivatableAction<Boolean> {
 

@@ -22,14 +22,12 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.AxisValueEditorBuilder;
-import org.jspecify.annotations.NullMarked;
 
 /// Triggers a keystroke when an axis value falls within a configurable range.
 ///
 /// Extends [ToKeyAction] with axis-specific min/max threshold support and delay
 /// handling.
 @Action(icon = "⌨️", title = "TO_KEY_ACTION_TITLE", description = "TO_KEY_ACTION_DESCRIPTION", category = ActionCategory.AXIS_AND_TRIGGER, order = 40)
-@NullMarked
 public final class AxisToKeyAction extends ToKeyAction<Float> implements IAxisToDelayableAction {
 
 	/// Default upper bound of the axis activation range.

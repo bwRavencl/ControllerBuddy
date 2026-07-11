@@ -26,14 +26,12 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.Scancode;
 import java.lang.reflect.Type;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [Scancode] instances.
 ///
 /// Supports deserializing from either a JSON number (key code) or a JSON string
 /// (scancode name). Serializes a [Scancode] using its name.
-@NullMarked
 public final class ScancodeAdapter implements JsonSerializer<Scancode>, JsonDeserializer<Scancode> {
 
 	/// Deserializes a [Scancode] from a JSON element.

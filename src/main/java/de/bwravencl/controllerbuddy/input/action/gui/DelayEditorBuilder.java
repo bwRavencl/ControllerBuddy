@@ -22,14 +22,12 @@ import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 import java.util.Objects;
 import javax.swing.JPanel;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for delay properties, rendering a millisecond spinner with a
 /// range of 0 to 10,000 ms.
 ///
 /// The spinner is disabled when editing inside a cycle editor because
 /// per-action delay configuration is not applicable in that context.
-@NullMarked
 public final class DelayEditorBuilder extends NumberEditorBuilder<Long> {
 
 	/// Constructs a [DelayEditorBuilder] for the specified action property.

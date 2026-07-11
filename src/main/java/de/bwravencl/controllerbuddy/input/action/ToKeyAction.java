@@ -25,7 +25,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import de.bwravencl.controllerbuddy.input.action.gui.KeystrokeEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Abstract base class for actions that produce keystroke output.
@@ -34,7 +33,6 @@ import org.jspecify.annotations.Nullable;
 /// mode and activation interval.
 ///
 /// @param <V> the input value type
-@NullMarked
 abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 

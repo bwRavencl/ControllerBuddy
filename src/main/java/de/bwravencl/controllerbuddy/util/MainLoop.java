@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLInit;
 
@@ -36,7 +35,6 @@ import org.lwjgl.sdl.SDLInit;
 /// All SDL API calls must be executed on this loop's thread. Tasks can be
 /// submitted synchronously (blocking the caller) or asynchronously. The loop
 /// also polls SDL events when SDL event polling is active.
-@NullMarked
 public final class MainLoop {
 
 	private static final Logger logger = Logger.getLogger(MainLoop.class.getName());

@@ -21,14 +21,12 @@ import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import java.awt.Color;
 import javax.swing.SwingConstants;
-import org.jspecify.annotations.NullMarked;
 
 /// Represents the visual configuration for a virtual axis displayed on the
 /// overlay.
 ///
 /// Each overlay axis has a color, orientation, style, and an inversion flag
 /// that control how the axis indicator is rendered on screen.
-@NullMarked
 public final class OverlayAxis implements Cloneable {
 
 	/// Color used to render the axis indicator on the overlay.

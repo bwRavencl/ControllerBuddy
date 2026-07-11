@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.VirtualAxisEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for actions that map controller input to a virtual
 /// joystick axis.
@@ -33,7 +32,6 @@ import org.jspecify.annotations.NullMarked;
 /// translated into axis values for the target [VirtualAxis].
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public abstract class ToAxisAction<V extends Constable> extends InvertableAction<V> {
 
 	/// The target virtual axis to which input values are mapped.

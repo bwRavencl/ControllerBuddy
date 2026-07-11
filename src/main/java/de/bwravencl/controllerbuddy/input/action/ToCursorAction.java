@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.CursorSensitivityEditorBuil
 import de.bwravencl.controllerbuddy.input.action.gui.MouseAxisEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
-import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for actions that map controller input to mouse cursor
 /// movement.
@@ -33,7 +32,6 @@ import org.jspecify.annotations.NullMarked;
 /// movement is accumulated across frames via [#remainingD].
 ///
 /// @param <V> the type of input value this action processes
-@NullMarked
 public abstract class ToCursorAction<V extends Constable> extends InvertableAction<V> {
 
 	/// Default cursor sensitivity applied when none is explicitly configured.

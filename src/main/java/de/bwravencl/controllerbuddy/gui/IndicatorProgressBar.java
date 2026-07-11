@@ -29,7 +29,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.util.Set;
 import javax.swing.JProgressBar;
-import org.jspecify.annotations.NullMarked;
 
 /// Custom progress bar used as an overlay axis indicator, supporting solid and
 /// line styles, orientation, inversion, detent markers, and overlay scaling.
@@ -38,7 +37,6 @@ import org.jspecify.annotations.NullMarked;
 /// directly in the component's `paintComponent` method. Detent positions are
 /// shown as tick marks, and the bar dimensions are scaled by the configured
 /// overlay scaling factor.
-@NullMarked
 final class IndicatorProgressBar extends JProgressBar {
 
 	/// Long dimension in pixels of the overlay progress indicator bar.

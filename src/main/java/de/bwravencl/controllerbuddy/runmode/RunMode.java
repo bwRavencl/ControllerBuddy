@@ -24,7 +24,6 @@ import java.awt.EventQueue;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for all run modes in the ControllerBuddy application.
 ///
@@ -32,7 +31,6 @@ import org.jspecify.annotations.NullMarked;
 /// generated. Concrete subclasses implement specific execution strategies such
 /// as local output, client-server networking, or server-side input polling.
 /// Each run mode runs on its own thread via [Runnable].
-@NullMarked
 public abstract class RunMode implements Runnable {
 
 	/// The default poll rate in hertz.

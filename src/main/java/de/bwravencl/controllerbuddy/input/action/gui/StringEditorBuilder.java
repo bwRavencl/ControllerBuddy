@@ -32,14 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.jspecify.annotations.NullMarked;
 
 /// Editor builder for string properties, rendering a text field that updates
 /// the action property on every document change, action event, and focus loss.
 ///
 /// This ensures the property value stays in sync with the text field contents
 /// regardless of how the user commits the input.
-@NullMarked
 public class StringEditorBuilder extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(StringEditorBuilder.class.getName());

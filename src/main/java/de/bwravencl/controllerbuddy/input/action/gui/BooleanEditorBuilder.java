@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Editor builder for boolean properties, rendering a [JCheckBox] that toggles
@@ -35,7 +34,6 @@ import org.jspecify.annotations.Nullable;
 ///
 /// The checkbox state is initialized from the current property value and
 /// updates the action property immediately when toggled.
-@NullMarked
 public class BooleanEditorBuilder extends EditorBuilder {
 
 	private static final Logger logger = Logger.getLogger(BooleanEditorBuilder.class.getName());

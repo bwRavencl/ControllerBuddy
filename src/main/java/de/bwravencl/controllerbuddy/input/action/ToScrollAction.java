@@ -24,7 +24,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.ClicksEditorBuilder;
 import java.lang.constant.Constable;
 import java.text.MessageFormat;
 import java.util.Locale;
-import org.jspecify.annotations.NullMarked;
 
 /// Abstract base class for actions that produce scroll wheel output.
 ///
@@ -32,7 +31,6 @@ import org.jspecify.annotations.NullMarked;
 /// the accumulated total reaches a full click.
 ///
 /// @param <V> the input value type
-@NullMarked
 public abstract class ToScrollAction<V extends Constable> extends InvertableAction<V> {
 
 	/// Default number of scroll clicks used when none is explicitly configured.

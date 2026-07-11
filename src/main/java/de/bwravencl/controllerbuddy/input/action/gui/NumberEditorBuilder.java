@@ -34,7 +34,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Abstract editor builder for numeric properties.
@@ -44,7 +43,6 @@ import org.jspecify.annotations.Nullable;
 /// [#getMinimum], [#getMaximum], and [#getStepSize].
 ///
 /// @param <T> the numeric type of the property being edited
-@NullMarked
 abstract class NumberEditorBuilder<T extends Number> extends EditorBuilder {
 
 	/// Number of decimal places to which float spinner values are rounded.

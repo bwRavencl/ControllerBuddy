@@ -26,14 +26,12 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import de.bwravencl.controllerbuddy.input.LockKey;
 import java.lang.reflect.Type;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /// Gson type adapter for serializing and deserializing [LockKey] instances.
 ///
 /// Supports deserializing from either a JSON number (virtual key code) or a
 /// JSON string (lock key name). Serializes a [LockKey] using its name.
-@NullMarked
 public final class LockKeyAdapter implements JsonSerializer<LockKey>, JsonDeserializer<LockKey> {
 
 	/// Deserializes a [LockKey] from a JSON element.

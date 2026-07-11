@@ -23,7 +23,6 @@ import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import de.bwravencl.controllerbuddy.input.action.annotation.ActionProperty;
 import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a button press to releasing all on-screen keyboard keys.
 ///
@@ -31,7 +30,6 @@ import org.jspecify.annotations.NullMarked;
 /// keyboard key and releases it, effectively clearing the on-screen keyboard
 /// state in one step.
 @Action(icon = "⬆️", title = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_TITLE", description = "BUTTON_TO_RELEASE_ALL_ON_SCREEN_KEYBOARD_KEYS_ACTION_DESCRIPTION", category = ActionCategory.ON_SCREEN_KEYBOARD_MODE, order = 530)
-@NullMarked
 public final class ButtonToReleaseAllOnScreenKeyboardKeysAction implements IButtonToDelayableAction {
 
 	/// Delay in milliseconds before this action becomes active.

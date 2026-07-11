@@ -27,7 +27,6 @@ import de.bwravencl.controllerbuddy.input.action.gui.DelayEditorBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jspecify.annotations.NullMarked;
 
 /// Maps a button press to cycling through a list of sub-actions.
 ///
@@ -36,7 +35,6 @@ import org.jspecify.annotations.NullMarked;
 /// on-release activation modes, configurable delay, and can be reset to the
 /// beginning of the cycle.
 @Action(icon = ButtonToCycleAction.CYCLE_SYMBOL, title = "BUTTON_TO_CYCLE_ACTION_TITLE", description = "BUTTON_TO_CYCLE_ACTION_DESCRIPTION", category = ActionCategory.BUTTON, order = 140)
-@NullMarked
 public final class ButtonToCycleAction extends DescribableAction<Boolean>
 		implements IActivatableAction<Boolean>, IButtonToDelayableAction, IResetableAction<Boolean> {
 

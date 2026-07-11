@@ -21,14 +21,12 @@ import de.bwravencl.controllerbuddy.input.Input;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action;
 import de.bwravencl.controllerbuddy.input.action.annotation.Action.ActionCategory;
 import java.lang.constant.Constable;
-import org.jspecify.annotations.NullMarked;
 
 /// A no-op action that performs no work when executed.
 ///
 /// This is used as a placeholder action in configurations where an action slot
 /// must be filled, but no actual behavior is desired.
 @Action(icon = "∅", title = "NULL_ACTION_TITLE", description = "NULL_ACTION_DESCRIPTION", category = ActionCategory.ALL, order = 999)
-@NullMarked
 public final class NullAction implements IAction<Constable> {
 
 	@Override
