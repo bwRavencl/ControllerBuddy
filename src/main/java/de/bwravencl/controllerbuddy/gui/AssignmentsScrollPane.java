@@ -376,6 +376,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 			button = new AssignmentsButton(main, new EditComponentAction(main, name, component));
 		}
 
+		final Dimension dimension;
 		if (component.type() == ComponentType.BUTTON
 				&& (round || component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_DOWN
 						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT
@@ -384,10 +385,11 @@ final class AssignmentsScrollPane extends JScrollPane {
 			final var size = component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE
 					? BUTTON_HEIGHT + BUTTON_HEIGHT / 2
 					: BUTTON_HEIGHT;
-			button.setPreferredSize(new Dimension(size, size));
+			dimension = new Dimension(size, size);
 		} else {
-			button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));
+			dimension = new Dimension(135, BUTTON_HEIGHT);
 		}
+		button.setPreferredSize(dimension);
 
 		return button;
 	}
