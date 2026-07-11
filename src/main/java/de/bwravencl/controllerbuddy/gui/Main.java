@@ -1247,8 +1247,8 @@ public final class Main extends JFrame {
 		pollingRateLabel.setPreferredSize(longSettingsLabelDimension);
 		pollingRatePanel.add(pollingRateLabel);
 
-		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 100L, 10_000L,
-				100L, event -> preferences.putLong(PREFERENCES_POLLING_RATE,
+		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 50L, 1000L, 100L,
+				event -> preferences.putLong(PREFERENCES_POLLING_RATE,
 						((SpinnerNumberModel) event.getSource()).getNumber().longValue())));
 		GuiUtils.makeHertzSpinner(pollingRateSpinner);
 		pollingRatePanel.add(pollingRateSpinner);
