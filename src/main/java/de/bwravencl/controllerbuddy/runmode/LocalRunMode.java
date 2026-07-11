@@ -56,7 +56,7 @@ public final class LocalRunMode extends OutputRunMode {
 	boolean readInput() throws IOException {
 		super.readInput();
 
-		if (!input.poll()) {
+		if (!pollInput()) {
 			controllerDisconnected();
 
 			return false;

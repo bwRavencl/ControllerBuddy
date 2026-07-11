@@ -391,8 +391,16 @@ public final class Input {
 	/// Returns the rate multiplier based on elapsed time since the last poll.
 	/// Used to scale time-dependent actions for frame-rate independence.
 	///
+	/// If this method is called while a [RunMode] is active, it will also invoke
+	/// [RunMode#useMaxPollingRate] to enable maximum polling rate for the
+	/// next cycle.
+	///
 	/// @return the rate multiplier
 	public float getRateMultiplier() {
+		if (runMode != null) {
+			runMode.useMaxPollingRate();
+		}
+
 		return rateMultiplier;
 	}
 

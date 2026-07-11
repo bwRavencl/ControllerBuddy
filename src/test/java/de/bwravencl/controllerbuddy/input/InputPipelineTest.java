@@ -72,6 +72,8 @@ import org.mockito.Mockito;
 @NullMarked
 final class InputPipelineTest {
 
+	private static final long POLL_PERIOD_NANOS = Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ;
+
 	private GamepadStateInjector injector;
 
 	private Input input;
@@ -256,18 +258,17 @@ final class InputPipelineTest {
 	}
 
 	private OutputCapture pollWithState(final float[] axes, final boolean[] buttons) {
-		if (lastPollNanoTime > 0L && System.nanoTime() - lastPollNanoTime < RunMode.DEFAULT_POLLING_RATE_HZ + 1L) {
+		final var currentTime = System.nanoTime();
+		if (lastPollNanoTime > 0L && currentTime - lastPollNanoTime < POLL_PERIOD_NANOS + 1_000_000L) {
 			try {
-				Thread.sleep(RunMode.DEFAULT_POLLING_RATE_HZ);
+				Thread.sleep(POLL_PERIOD_NANOS / 1_000_000, (int) (POLL_PERIOD_NANOS % 1_000_000));
 			} catch (final InterruptedException _) {
 				Thread.currentThread().interrupt();
 			}
 		}
 		lastPollNanoTime = System.nanoTime();
-
 		injector.injectState(axes, buttons);
 		input.poll();
-
 		return OutputCapture.captureAndReset(input);
 	}
 
@@ -288,7 +289,8 @@ final class InputPipelineTest {
 		final var mockRunMode = Mockito.mock(RunMode.class);
 
 		Mockito.lenient().when(mockMain.getOnScreenKeyboard()).thenReturn(mockOnScreenKeyboard);
-		Mockito.lenient().when(mockMain.getPollingRate()).thenReturn(RunMode.DEFAULT_POLLING_RATE_HZ);
+		Mockito.lenient().when(mockMain.getMinPollingRate()).thenReturn(RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+		Mockito.lenient().when(mockMain.getMaxPollingRate()).thenReturn(RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
 		Mockito.lenient().when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
 		Mockito.lenient().when(mockMain.isMapCircularAxesToSquareAxes()).thenReturn(false);
 		Mockito.lenient().when(mockMain.isHapticFeedback()).thenReturn(false);
@@ -297,7 +299,7 @@ final class InputPipelineTest {
 		Mockito.lenient().when(mockRunMode.getMaxAxisValue()).thenReturn((int) Short.MAX_VALUE);
 		Mockito.lenient().when(mockRunMode.getNumButtons()).thenReturn(128);
 		Mockito.lenient().when(mockRunMode.getPollPeriodNanos())
-				.thenReturn(Input.NANOS_PER_SECOND / RunMode.DEFAULT_POLLING_RATE_HZ);
+				.thenReturn(Input.NANOS_PER_SECOND / RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
 
 		input = new Input(mockMain, mockController, null);
 		input.setRunMode(mockRunMode);

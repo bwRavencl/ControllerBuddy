@@ -222,7 +222,6 @@ public final class ClientRunMode extends OutputRunMode {
 											Main.strings.getString("ERROR_DIALOG_TITLE"), JOptionPane.ERROR_MESSAGE));
 									retry = -1;
 								} else {
-									pollPeriodNanos = dataInputStream.readLong();
 									success = true;
 								}
 							} else {

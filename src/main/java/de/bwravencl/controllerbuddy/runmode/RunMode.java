@@ -33,8 +33,11 @@ import javax.swing.JOptionPane;
 /// Each run mode runs on its own thread via [Runnable].
 public abstract class RunMode implements Runnable {
 
-	/// The default polling rate in hertz.
-	public static final int DEFAULT_POLLING_RATE_HZ = 500;
+	/// The default maximum polling rate in hertz.
+	public static final int DEFAULT_MAX_POLLING_RATE_HZ = 500;
+
+	/// The default minimum polling rate in hertz.
+	public static final int DEFAULT_MIN_POLLING_RATE_HZ = 125;
 
 	private static final Logger logger = Logger.getLogger(RunMode.class.getName());
 
@@ -43,6 +46,12 @@ public abstract class RunMode implements Runnable {
 
 	/// The main application instance.
 	final Main main;
+
+	/// The maximum polling rate.
+	private final int maxPollingRate;
+
+	/// The minimum polling rate.
+	private final int minPollingRate;
 
 	/// The maximum axis value reported by the output device.
 	int maxAxisValue;
@@ -70,7 +79,10 @@ public abstract class RunMode implements Runnable {
 		this.main = main;
 		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
 
-		pollPeriodNanos = Input.NANOS_PER_SECOND / main.getPollingRate();
+		minPollingRate = main.getMinPollingRate();
+		maxPollingRate = main.getMaxPollingRate();
+
+		useMinPollingRate();
 
 		input.setRunMode(this);
 	}
@@ -143,6 +155,15 @@ public abstract class RunMode implements Runnable {
 		getLogger().info("Stopped output");
 	}
 
+	/// Resets polling rate to minimum and then polls the input device for new
+	/// state.
+	///
+	/// @return `true` if the input device is available, `false` otherwise
+	final boolean pollInput() {
+		useMinPollingRate();
+		return input.poll();
+	}
+
 	/// Polls SDL events and yields the main loop, advancing the application event
 	/// cycle by one step.
 	final void process() {
@@ -163,5 +184,23 @@ public abstract class RunMode implements Runnable {
 	void setNumButtons(final int numButtons) {
 		this.numButtons = numButtons;
 		input.initButtons();
+	}
+
+	/// Sets the polling rate in hertz, calculating the corresponding poll period in
+	/// nanoseconds.
+	///
+	/// @param pollingRate the desired polling rate in hertz
+	private void setPollingRate(final int pollingRate) {
+		pollPeriodNanos = Input.NANOS_PER_SECOND / pollingRate;
+	}
+
+	/// Enables the maximum polling rate.
+	public final void useMaxPollingRate() {
+		setPollingRate(maxPollingRate);
+	}
+
+	/// Enables the minimum polling rate.
+	final void useMinPollingRate() {
+		setPollingRate(minPollingRate);
 	}
 }

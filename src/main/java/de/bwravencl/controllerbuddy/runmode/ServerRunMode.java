@@ -75,7 +75,7 @@ public final class ServerRunMode extends RunMode {
 	static final int IV_LENGTH = 12;
 
 	/// Protocol version byte included in handshake packets.
-	static final byte PROTOCOL_VERSION = 3;
+	static final byte PROTOCOL_VERSION = 4;
 
 	/// Length in bytes of the password-based key derivation salt.
 	static final int SALT_LENGTH = 100;
@@ -229,7 +229,6 @@ public final class ServerRunMode extends RunMode {
 									final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
 								dataOutputStream.writeInt(MessageType.SERVER_HELLO.getId());
 								dataOutputStream.writeByte(PROTOCOL_VERSION);
-								dataOutputStream.writeLong(pollPeriodNanos);
 
 								sendEncrypted(byteArrayOutputStream, clientPort);
 							}
@@ -261,7 +260,7 @@ public final class ServerRunMode extends RunMode {
 						dataOutputStream.writeInt(MessageType.UPDATE.getId());
 						dataOutputStream.writeLong(counter);
 
-						if (!input.poll()) {
+						if (!pollInput()) {
 							controllerDisconnected();
 							return;
 						}

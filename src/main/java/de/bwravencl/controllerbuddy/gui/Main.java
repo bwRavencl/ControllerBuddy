@@ -454,14 +454,17 @@ public final class Main extends JFrame {
 	/// Preferences key for the map-circular-axes-to-square setting.
 	private static final String PREFERENCES_MAP_CIRCULAR_AXES_TO_SQUARE = "map_circular_axes_to_square";
 
+	/// Preferences key for the maximum polling rate.
+	private static final String PREFERENCES_MAX_POLLING_RATE = "max_polling_rate";
+
+	/// Preferences key for the minimum polling rate.
+	private static final String PREFERENCES_MIN_POLLING_RATE = "min_polling_rate";
+
 	/// Preferences key for the overlay scaling factor.
 	private static final String PREFERENCES_OVERLAY_SCALING = "overlay_scaling";
 
 	/// Preferences key for the stored connection password.
 	private static final String PREFERENCES_PASSWORD = "password";
-
-	/// Preferences key for the controller polling rate.
-	private static final String PREFERENCES_POLLING_RATE = "polling_rate";
 
 	/// Preferences key for the stored network port.
 	private static final String PREFERENCES_PORT = "port";
@@ -732,8 +735,14 @@ public final class Main extends JFrame {
 	@SuppressWarnings({ "serial", "RedundantSuppression" })
 	private final MainLoop mainLoop;
 
+	/// Model for the maximum polling rate spinner control.
+	private final SpinnerNumberModel maxPollingRateSpinnerNumberModel;
+
 	/// The application menu bar.
 	private final JMenuBar menuBar = new JMenuBar();
+
+	/// Model for the minimum polling rate spinner control.
+	private final SpinnerNumberModel minPollingRateSpinnerNumberModel;
 
 	/// Panel holding the list of profile mode entries.
 	private final JPanel modesListPanel;
@@ -1240,18 +1249,39 @@ public final class Main extends JFrame {
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var pollingRatePanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(pollingRatePanel);
+		final var minPollingRatePanel = new JPanel(defaultFlowLayout);
+		inputSettingsPanel.add(minPollingRatePanel);
 
-		final var pollingRateLabel = new JLabel(strings.getString("POLLING_RATE_LABEL"));
-		pollingRateLabel.setPreferredSize(longSettingsLabelDimension);
-		pollingRatePanel.add(pollingRateLabel);
+		final var minPollingRateLabel = new JLabel(strings.getString("MIN_POLLING_RATE_LABEL"));
+		minPollingRateLabel.setPreferredSize(longSettingsLabelDimension);
+		minPollingRatePanel.add(minPollingRateLabel);
 
-		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 50, 1000, 100,
-				event -> preferences.putInt(PREFERENCES_POLLING_RATE,
-						((SpinnerNumberModel) event.getSource()).getNumber().intValue())));
-		GuiUtils.makeHertzSpinner(pollingRateSpinner);
-		pollingRatePanel.add(pollingRateSpinner);
+		minPollingRateSpinnerNumberModel = new ClampingSpinnerNumberModel(getMinPollingRate(), 50, getMaxPollingRate(),
+				5, event -> {
+					preferences.putInt(PREFERENCES_MIN_POLLING_RATE,
+							((SpinnerNumberModel) event.getSource()).getNumber().intValue());
+					updatePollingRateBounds();
+				});
+		final var minPollingRateSpinner = new JSpinner(minPollingRateSpinnerNumberModel);
+		GuiUtils.makeHertzSpinner(minPollingRateSpinner);
+		minPollingRatePanel.add(minPollingRateSpinner);
+
+		final var maxPollingRatePanel = new JPanel(defaultFlowLayout);
+		inputSettingsPanel.add(maxPollingRatePanel);
+
+		final var maxPollingRateLabel = new JLabel(strings.getString("MAX_POLLING_RATE_LABEL"));
+		maxPollingRateLabel.setPreferredSize(longSettingsLabelDimension);
+		maxPollingRatePanel.add(maxPollingRateLabel);
+
+		maxPollingRateSpinnerNumberModel = new ClampingSpinnerNumberModel(getMaxPollingRate(), getMinPollingRate(),
+				1000, 100, event -> {
+					preferences.putInt(PREFERENCES_MAX_POLLING_RATE,
+							((SpinnerNumberModel) event.getSource()).getNumber().intValue());
+					updatePollingRateBounds();
+				});
+		final var maxPollingRateSpinner = new JSpinner(maxPollingRateSpinnerNumberModel);
+		GuiUtils.makeHertzSpinner(maxPollingRateSpinner);
+		maxPollingRatePanel.add(maxPollingRateSpinner);
 
 		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(physicalAxesPanel, constraints);
@@ -2950,6 +2980,20 @@ public final class Main extends JFrame {
 		return mainLoop;
 	}
 
+	/// Returns the configured maximum input polling rate in hertz.
+	///
+	/// @return the maximum polling rate in hertz
+	public int getMaxPollingRate() {
+		return preferences.getInt(PREFERENCES_MAX_POLLING_RATE, RunMode.DEFAULT_MAX_POLLING_RATE_HZ);
+	}
+
+	/// Returns the configured minimum input polling rate in hertz.
+	///
+	/// @return the minimum polling rate in hertz
+	public int getMinPollingRate() {
+		return preferences.getInt(PREFERENCES_MIN_POLLING_RATE, RunMode.DEFAULT_MIN_POLLING_RATE_HZ);
+	}
+
 	/// Returns the on-screen keyboard instance.
 	///
 	/// @return the on-screen keyboard instance
@@ -2974,13 +3018,6 @@ public final class Main extends JFrame {
 	/// @return the configured network password
 	public String getPassword() {
 		return preferences.get(PREFERENCES_PASSWORD, "");
-	}
-
-	/// Returns the configured input polling rate in hertz.
-	///
-	/// @return the polling rate in hertz
-	public int getPollingRate() {
-		return preferences.getInt(PREFERENCES_POLLING_RATE, RunMode.DEFAULT_POLLING_RATE_HZ);
 	}
 
 	/// Returns the configured network port.
@@ -5202,6 +5239,27 @@ public final class Main extends JFrame {
 			updateProfileSettingsPanel();
 		}
 		GuiUtils.setEnabledRecursive(globalSettingsPanel, !running);
+	}
+
+	/// Synchronizes the min/max polling rate spinner models so neither can be set
+	/// to an invalid range relative to the other.
+	///
+	/// The maximum of [#minPollingRateSpinnerNumberModel] is kept in sync with the
+	/// current max polling rate, and the minimum of
+	/// [#maxPollingRateSpinnerNumberModel] is kept in sync with the current min
+	/// polling rate.
+	///
+	/// Both models are null-checked because this method may be called while the two
+	/// fields are still being constructed, before both have been assigned.
+	@SuppressWarnings("ConstantValue")
+	private void updatePollingRateBounds() {
+		if (minPollingRateSpinnerNumberModel != null) {
+			minPollingRateSpinnerNumberModel.setMaximum(getMaxPollingRate());
+		}
+
+		if (maxPollingRateSpinnerNumberModel != null) {
+			maxPollingRateSpinnerNumberModel.setMinimum(getMinPollingRate());
+		}
 	}
 
 	/// Rebuilds the profile settings panel with the current profile's settings.
