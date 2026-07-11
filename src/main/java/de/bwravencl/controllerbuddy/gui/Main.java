@@ -460,8 +460,8 @@ public final class Main extends JFrame {
 	/// Preferences key for the stored connection password.
 	private static final String PREFERENCES_PASSWORD = "password";
 
-	/// Preferences key for the controller poll rate.
-	private static final String PREFERENCES_POLL_RATE = "poll_rate";
+	/// Preferences key for the controller polling rate.
+	private static final String PREFERENCES_POLLING_RATE = "polling_rate";
 
 	/// Preferences key for the stored network port.
 	private static final String PREFERENCES_PORT = "port";
@@ -1240,18 +1240,18 @@ public final class Main extends JFrame {
 				.setBorder(BorderFactory.createTitledBorder(strings.getString("INPUT_OUTPUT_SETTINGS_BORDER_TITLE")));
 		globalSettingsPanel.add(inputSettingsPanel, constraints);
 
-		final var pollRatePanel = new JPanel(defaultFlowLayout);
-		inputSettingsPanel.add(pollRatePanel);
+		final var pollingRatePanel = new JPanel(defaultFlowLayout);
+		inputSettingsPanel.add(pollingRatePanel);
 
-		final var pollRateLabel = new JLabel(strings.getString("POLL_RATE_LABEL"));
-		pollRateLabel.setPreferredSize(longSettingsLabelDimension);
-		pollRatePanel.add(pollRateLabel);
+		final var pollingRateLabel = new JLabel(strings.getString("POLLING_RATE_LABEL"));
+		pollingRateLabel.setPreferredSize(longSettingsLabelDimension);
+		pollingRatePanel.add(pollingRateLabel);
 
-		final var pollRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollRate(), 100L, 10_000L, 100L,
-				event -> preferences.putLong(PREFERENCES_POLL_RATE,
+		final var pollingRateSpinner = new JSpinner(new ClampingSpinnerNumberModel(getPollingRate(), 100L, 10_000L,
+				100L, event -> preferences.putLong(PREFERENCES_POLLING_RATE,
 						((SpinnerNumberModel) event.getSource()).getNumber().longValue())));
-		GuiUtils.makeHertzSpinner(pollRateSpinner);
-		pollRatePanel.add(pollRateSpinner);
+		GuiUtils.makeHertzSpinner(pollingRateSpinner);
+		pollingRatePanel.add(pollingRateSpinner);
 
 		final var physicalAxesPanel = new JPanel(defaultFlowLayout);
 		inputSettingsPanel.add(physicalAxesPanel, constraints);
@@ -2976,11 +2976,11 @@ public final class Main extends JFrame {
 		return preferences.get(PREFERENCES_PASSWORD, "");
 	}
 
-	/// Returns the configured input poll rate in hertz.
+	/// Returns the configured input polling rate in hertz.
 	///
-	/// @return the poll rate in hertz
-	public long getPollRate() {
-		return preferences.getLong(PREFERENCES_POLL_RATE, RunMode.DEFAULT_POLL_RATE_HZ);
+	/// @return the polling rate in hertz
+	public long getPollingRate() {
+		return preferences.getLong(PREFERENCES_POLLING_RATE, RunMode.DEFAULT_POLLING_RATE_HZ);
 	}
 
 	/// Returns the configured network port.

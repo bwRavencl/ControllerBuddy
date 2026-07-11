@@ -33,8 +33,8 @@ import javax.swing.JOptionPane;
 /// Each run mode runs on its own thread via [Runnable].
 public abstract class RunMode implements Runnable {
 
-	/// The default poll rate in hertz.
-	public static final long DEFAULT_POLL_RATE_HZ = 1000L;
+	/// The default polling rate in hertz.
+	public static final long DEFAULT_POLLING_RATE_HZ = 1000L;
 
 	private static final Logger logger = Logger.getLogger(RunMode.class.getName());
 
@@ -70,7 +70,7 @@ public abstract class RunMode implements Runnable {
 		this.main = main;
 		input = Objects.requireNonNull(main.getInput(), "Field input must not be null");
 
-		pollPeriodNanos = Input.NANOS_PER_SECOND / main.getPollRate();
+		pollPeriodNanos = Input.NANOS_PER_SECOND / main.getPollingRate();
 
 		input.setRunMode(this);
 	}
