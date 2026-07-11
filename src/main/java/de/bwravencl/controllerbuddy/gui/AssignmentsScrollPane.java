@@ -149,7 +149,7 @@ final class AssignmentsScrollPane extends JScrollPane {
 				constraints);
 
 		constraints.gridx = 2;
-		constraints.gridy = 1;
+		constraints.gridy = 2;
 		assignmentsPanel.add(createComponentButton(Main.strings.getString("GUIDE_BUTTON"),
 				new Component(main, ComponentType.BUTTON, SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE)), constraints);
 
@@ -381,8 +381,10 @@ final class AssignmentsScrollPane extends JScrollPane {
 						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_LEFT
 						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_RIGHT
 						|| component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_DPAD_UP)) {
-			// noinspection SuspiciousNameCombination
-			button.setPreferredSize(new Dimension(BUTTON_HEIGHT, BUTTON_HEIGHT));
+			final var size = component.index() == SDLGamepad.SDL_GAMEPAD_BUTTON_GUIDE
+					? BUTTON_HEIGHT + BUTTON_HEIGHT / 2
+					: BUTTON_HEIGHT;
+			button.setPreferredSize(new Dimension(size, size));
 		} else {
 			button.setPreferredSize(new Dimension(135, BUTTON_HEIGHT));
 		}
