@@ -220,3 +220,7 @@ jobs:
           draft: false
           prerelease: false
           files: ${{ steps.collect_files.outputs.files }}
+      - name: Trigger Release Monitoring Check
+        run: |
+          sleep 20
+          curl -X POST https://release-monitoring.org/api/v2/versions/ -H "Authorization: token ${{ secrets.RELEASE_MONITORING_TOKEN }}" -H 'Content-Type: application/json' -d '{"id": "376393"}'
