@@ -20,12 +20,14 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     outputs:
       tag_name: ${{ steps.release_variables.outputs.tag_name }}
     steps:
       - name: Setup Platform Variables
         id: platform_variables
-        shell: bash
         run: |
           case ${{ matrix.os }} in
             windows-latest)
@@ -64,7 +66,6 @@ jobs:
           submodules: true
       - name: Download Zulu (without CRaC)
         id: download_zulu
-        shell: bash
         run: |
           cd $RUNNER_TEMP
           jdk_archive_filename=$(curl -LOs -w '%{filename_effective}' "$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=$JAVA_VERSION&os=${{ steps.platform_variables.outputs.jdk_os }}&arch=${{ steps.platform_variables.outputs.jdk_arch }}&archive_type=${{ steps.platform_variables.outputs.jdk_archive_type }}&java_package_type=jdk&javafx_bundled=false&crac_supported=false&release_status=ga&availability_types=CA&certifications=tck" -H  'accept: application/json' | jq -r '.[0].download_url')")
@@ -81,7 +82,6 @@ jobs:
           cache-disabled: true
           dependency-graph: generate-and-submit
       - name: Setup Gradle Init Script
-        shell: bash
         run: |
           mkdir -p $HOME/.gradle
           cat << 'EOF' > "$HOME/.gradle/init.gradle.kts"
@@ -148,7 +148,6 @@ jobs:
           if-no-files-found: ignore
       - name: Setup Release Variables
         id: release_variables
-        shell: bash
         run: |
           archive_path=$(find build/distributions/ControllerBuddy-*.${{ steps.platform_variables.outputs.dist_archive_extension }} -maxdepth 1 -type f -print0)
           echo "archive_path=$archive_path" >> "$GITHUB_OUTPUT"
@@ -167,7 +166,6 @@ jobs:
           passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
       - name: Sign Archive
         id: sign_archive
-        shell: bash
         run: |
           signature_path="${{ steps.release_variables.outputs.archive_path }}.sig"
           gpg --local-user 8590BB74C0F559F8AC911C1D8058553A1FD36B23 --pinentry-mode loopback --passphrase ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }} --detach-sig --output "$signature_path" --yes ${{ steps.release_variables.outputs.archive_path }}
@@ -187,7 +185,6 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
       - name: Collect Artifact Files
         id: collect_files
-        shell: bash
         run: |
           files=$(find . -iname 'ControllerBuddy-*' -mindepth 2 -maxdepth 2 -type f)
           if [ -z "$files" ]
