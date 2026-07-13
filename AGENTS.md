@@ -15,7 +15,7 @@ See @README for detailed project overview.
 - **Input Handling:** LWJGL 3.4 (SDL3)
 - **Native Access:** FFM API (Project Panama)
 - **GUI:** Swing with FlatLaf
-- **Serialization:** Gson 2.13
+- **Serialization:** Gson 2.14
 - **Testing:** JUnit 6, Mockito 5
 
 ## Environment Setup
