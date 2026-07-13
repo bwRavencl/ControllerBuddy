@@ -117,7 +117,7 @@ dependencies {
   spotbugs("com.github.spotbugs:spotbugs:4.10.3")
 
   val dbusJavaVersion = "5.2.0"
-  val lwjglVersion = "3.4.1"
+  val lwjglVersion = "3.4.2"
   val mockitoVersion = "5.23.0"
 
   val lwjglOs =
