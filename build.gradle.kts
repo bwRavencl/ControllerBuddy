@@ -83,6 +83,7 @@ val runJvmArgs =
         listOf(
             "-Xms24m",
             "-Xmx48m",
+            "--add-exports=java.base/jdk.internal.misc=org.lwjgl",
             "--enable-native-access=$mainModule,com.formdev.flatlaf,org.lwjgl",
             "--illegal-final-field-mutation=deny",
         )
@@ -830,6 +831,7 @@ tasks.named<Test>("test") {
 
   jvmArgs(mockitoAgent.map { "-javaagent:${it.absolutePath}" })
   jvmArgs(commonJvmArgs)
+  jvmArgs("--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED")
   jvmArgs("--enable-native-access=ALL-UNNAMED")
   jvmArgs("--enable-final-field-mutation=ALL-UNNAMED")
 
