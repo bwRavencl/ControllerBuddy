@@ -157,7 +157,7 @@ dependencies {
   implementation("org.lwjgl:lwjgl-sdl:$lwjglVersion:natives-$lwjglPlatform")
   implementation("org.slf4j:slf4j-jdk14:2.0.18")
 
-  testImplementation(platform("org.junit:junit-bom:6.1.1"))
+  testImplementation(platform("org.junit:junit-bom:6.1.2"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   @Suppress("AvoidDuplicateDependencies", "RedundantSuppression")
