@@ -38,7 +38,6 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -166,10 +165,11 @@ public final class ServerRunMode extends RunMode {
 		}
 	}
 
-	/// Runs the server loop: binds a UDP socket, waits for a client handshake,
-	/// then repeatedly polls the controller, serializes the input state, encrypts
-	/// it, and sends it to the connected client. Periodically checks that the
-	/// client is still alive.
+	/// Runs the server loop: binds a UDP socket, waits for a client handshake, then
+	/// repeatedly polls the controller, and - only when the input state has
+	/// actually changed since the last packet - serializes it, encrypts it, and
+	/// sends it to the connected client. Periodically checks that the client is
+	/// still alive.
 	@Override
 	public void run() {
 		logStart();
@@ -178,7 +178,14 @@ public final class ServerRunMode extends RunMode {
 		var serverState = ServerState.LISTENING;
 		DatagramPacket receivePacket;
 		var counter = 0L;
+		var pollCycle = 0L;
 		var nextPollTimeNanos = 0L;
+
+		var lastSentAxesHash = 0;
+		var lastSentButtonsHash = 0;
+		var lastSentDownMouseButtonsHash = 0;
+		var lastSentDownKeystrokesHash = 0;
+		var hasLastSent = false;
 
 		try {
 			serverSocket = new DatagramSocket(port);
@@ -193,6 +200,13 @@ public final class ServerRunMode extends RunMode {
 				switch (serverState) {
 				case LISTENING -> {
 					counter = 0;
+					pollCycle = 0;
+					lastSentAxesHash = 0;
+					lastSentButtonsHash = 0;
+					lastSentDownMouseButtonsHash = 0;
+					lastSentDownKeystrokesHash = 0;
+					hasLastSent = false;
+
 					receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 					serverSocket.setSoTimeout(100);
 					for (;;) {
@@ -255,49 +269,85 @@ public final class ServerRunMode extends RunMode {
 						nextPollTimeNanos = System.nanoTime() + pollingPeriodNanos;
 					}
 
-					try (final var byteArrayOutputStream = new ByteArrayOutputStream();
-							final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-						dataOutputStream.writeInt(MessageType.UPDATE.getId());
-						dataOutputStream.writeLong(counter);
+					pollCycle++;
 
-						if (!pollInput()) {
-							controllerDisconnected();
-							return;
-						}
-						try (final var objectOutputStream = new ObjectOutputStream(dataOutputStream)) {
-							objectOutputStream.writeObject(input.getAxes());
-							objectOutputStream.writeObject(input.getButtons());
-							objectOutputStream.writeInt(input.getCursorDeltaX());
-							objectOutputStream.writeInt(input.getCursorDeltaY());
-							objectOutputStream.writeObject(new HashSet<>(input.getDownMouseButtons()));
-							objectOutputStream.writeObject(input.getDownUpMouseButtons());
-							objectOutputStream.writeObject(input.getDownKeystrokes());
-							objectOutputStream.writeObject(input.getDownUpKeystrokes());
-
-							objectOutputStream.writeInt(input.getScrollClicks());
-
-							objectOutputStream.writeObject(input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
-									.collect(Collectors.toSet()));
-							objectOutputStream.writeObject(input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
-									.collect(Collectors.toSet()));
-
-							input.setCursorDeltaX(0);
-							input.setCursorDeltaY(0);
-
-							input.getDownUpMouseButtons().clear();
-							input.getDownUpKeystrokes().clear();
-
-							input.setScrollClicks(0);
-
-							input.getOnLockKeys().clear();
-							input.getOffLockKeys().clear();
-
-							sendEncrypted(byteArrayOutputStream, clientPort);
-							counter++;
-						}
+					if (!pollInput()) {
+						controllerDisconnected();
+						return;
 					}
 
-					if (counter % REQUEST_ALIVE_INTERVAL == 0) {
+					final var currentAxes = input.getAxes();
+					final var currentButtons = input.getButtons();
+					final var currentDownMouseButtons = input.getDownMouseButtons();
+					final var currentDownKeystrokes = input.getDownKeystrokes();
+					final var currentDownUpMouseButtons = input.getDownUpMouseButtons();
+					final var currentDownUpKeystrokes = input.getDownUpKeystrokes();
+					final var currentScrollClicks = input.getScrollClicks();
+					final var currentCursorDeltaX = input.getCursorDeltaX();
+					final var currentCursorDeltaY = input.getCursorDeltaY();
+					final var currentOnLockKeys = input.getOnLockKeys().stream().map(LockKey::virtualKeyCode)
+							.collect(Collectors.toSet());
+					final var currentOffLockKeys = input.getOffLockKeys().stream().map(LockKey::virtualKeyCode)
+							.collect(Collectors.toSet());
+
+					final var currentAxesHash = currentAxes.hashCode();
+					final var currentButtonsHash = Arrays.hashCode(currentButtons);
+					final var currentDownMouseButtonsHash = currentDownMouseButtons.hashCode();
+					final var currentDownKeystrokesHash = currentDownKeystrokes.hashCode();
+
+					final var stateChanged = !hasLastSent || currentAxesHash != lastSentAxesHash
+							|| currentButtonsHash != lastSentButtonsHash
+							|| currentDownMouseButtonsHash != lastSentDownMouseButtonsHash
+							|| currentDownKeystrokesHash != lastSentDownKeystrokesHash
+							|| !currentDownUpMouseButtons.isEmpty() || !currentDownUpKeystrokes.isEmpty()
+							|| !currentOnLockKeys.isEmpty() || !currentOffLockKeys.isEmpty() || currentCursorDeltaX != 0
+							|| currentCursorDeltaY != 0 || currentScrollClicks != 0;
+
+					if (stateChanged) {
+						try (final var byteArrayOutputStream = new ByteArrayOutputStream();
+								final var dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+							dataOutputStream.writeInt(MessageType.UPDATE.getId());
+							dataOutputStream.writeLong(counter);
+
+							try (final var objectOutputStream = new ObjectOutputStream(dataOutputStream)) {
+								objectOutputStream.writeObject(currentAxes);
+								objectOutputStream.writeObject(currentButtons);
+								objectOutputStream.writeInt(currentCursorDeltaX);
+								objectOutputStream.writeInt(currentCursorDeltaY);
+								objectOutputStream.writeObject(currentDownMouseButtons);
+								objectOutputStream.writeObject(currentDownUpMouseButtons);
+								objectOutputStream.writeObject(currentDownKeystrokes);
+								objectOutputStream.writeObject(currentDownUpKeystrokes);
+
+								objectOutputStream.writeInt(currentScrollClicks);
+
+								objectOutputStream.writeObject(currentOnLockKeys);
+								objectOutputStream.writeObject(currentOffLockKeys);
+
+								input.setCursorDeltaX(0);
+								input.setCursorDeltaY(0);
+
+								input.getDownUpMouseButtons().clear();
+								input.getDownUpKeystrokes().clear();
+
+								input.setScrollClicks(0);
+
+								input.getOnLockKeys().clear();
+								input.getOffLockKeys().clear();
+
+								sendEncrypted(byteArrayOutputStream, clientPort);
+								counter++;
+							}
+						}
+
+						lastSentAxesHash = currentAxesHash;
+						lastSentButtonsHash = currentButtonsHash;
+						lastSentDownMouseButtonsHash = currentDownMouseButtonsHash;
+						lastSentDownKeystrokesHash = currentDownKeystrokesHash;
+						hasLastSent = true;
+					}
+
+					if (pollCycle % REQUEST_ALIVE_INTERVAL == 0) {
 						var gotClientAlive = false;
 						for (var i = 0; i < NUM_REQUEST_ALIVE_RETRIES; i++) {
 							try (final var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -318,7 +368,6 @@ public final class ServerRunMode extends RunMode {
 											final var dataInputStream = new DataInputStream(byteArrayInputStream)) {
 										final var messageType = dataInputStream.readInt();
 										if (messageType == MessageType.CLIENT_ALIVE.getId()) {
-											counter++;
 											gotClientAlive = true;
 											break;
 										}
