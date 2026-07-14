@@ -35,11 +35,20 @@ import org.jspecify.annotations.Nullable;
 @Action(icon = "🎚️", title = "AXIS_TO_RELATIVE_AXIS_ACTION_TITLE", description = "AXIS_TO_RELATIVE_AXIS_ACTION_DESCRIPTION", category = ActionCategory.AXIS, order = 15)
 public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 
+	/// Default dead zone threshold below which axis values are treated as zero.
+	private static final float DEFAULT_DEAD_ZONE = 0.25f;
+
+	/// Default exponent used for the response curve (quadratic).
+	private static final float DEFAULT_EXPONENT = 2f;
+
 	/// Default haptic feedback enabled state.
 	private static final boolean DEFAULT_HAPTIC_FEEDBACK = false;
 
+	/// Default initial value assigned to the virtual axis on initialization.
+	private static final float DEFAULT_INITIAL_VALUE = 1f;
+
 	/// Default maximum relative speed for axis movement.
-	private static final float DEFAULT_MAX_RELATIVE_SPEED = 4f;
+	private static final float DEFAULT_MAX_RELATIVE_SPEED = 3f;
 
 	/// Accumulated sub-unit movement remainder carried over between frames.
 	transient float remainingD;
@@ -55,6 +64,14 @@ public final class AxisToRelativeAxisAction extends AxisToAxisAction {
 	/// Maximum relative speed applied to axis movement per polling cycle.
 	@ActionProperty(icon = "⏩", title = "MAX_RELATIVE_SPEED_TITLE", description = "MAX_RELATIVE_SPEED_DESCRIPTION", editorBuilder = MaxRelativeSpeedEditorBuilder.class, order = 201)
 	private float maxRelativeSpeed = DEFAULT_MAX_RELATIVE_SPEED;
+
+	/// Constructs an [AxisToRelativeAxisAction] with sensible default values,
+	/// overriding those from [AxisToAxisAction].
+	public AxisToRelativeAxisAction() {
+		deadZone = DEFAULT_DEAD_ZONE;
+		exponent = DEFAULT_EXPONENT;
+		initialValue = DEFAULT_INITIAL_VALUE;
+	}
 
 	/// Applies relative axis movement based on the current axis value, dead zone,
 	/// exponent curve, and maximum relative speed. Accumulates subunit remainders
