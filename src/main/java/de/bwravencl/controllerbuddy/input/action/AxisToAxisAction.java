@@ -88,12 +88,11 @@ public class AxisToAxisAction extends ToAxisAction<Float> implements IAxisToActi
 			value = 0f;
 		} else {
 			final float inMax;
-			if (exponent != 0f) {
-				inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
-
-				value = Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent);
-			} else {
+			if (exponent == 1f) {
 				inMax = 1f;
+			} else {
+				inMax = (float) Math.pow((1f - deadZone) * 100f, exponent);
+				value = Math.signum(value) * (float) Math.pow((absValue - deadZone) * 100f, exponent);
 			}
 
 			if (value >= 0f) {

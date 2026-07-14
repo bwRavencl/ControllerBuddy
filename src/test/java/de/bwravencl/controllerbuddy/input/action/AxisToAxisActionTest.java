@@ -112,9 +112,9 @@ final class AxisToAxisActionTest {
 		}
 
 		@Test
-		@DisplayName("exponent=0 bypasses the power curve and uses linear normalization")
+		@DisplayName("exponent=1 bypasses the power curve and uses linear normalization")
 		void zeroExponentUsesLinearNormalization() {
-			action.setExponent(0f);
+			action.setExponent(1f);
 			action.doAction(mockInput, 0, 0.5f);
 
 			final var valueCaptor = ArgumentCaptor.forClass(Float.class);
