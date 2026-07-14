@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
 /// mode and activation interval.
 ///
 /// @param <V> the input value type
-abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
+public abstract class ToMouseButtonAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
 	/// Default mouse button number used when none is explicitly configured.

@@ -27,7 +27,7 @@ import java.lang.constant.Constable;
 /// axis direction or scroll direction).
 ///
 /// @param <V> the type of input value this action processes
-abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
+public abstract class InvertableAction<V extends Constable> extends DescribableAction<V> {
 
 	/// Whether the action output is inverted.
 	@ActionProperty(icon = "🔃", title = "INVERT_TITLE", description = "INVERT_DESCRIPTION", editorBuilder = BooleanEditorBuilder.class, order = 500)

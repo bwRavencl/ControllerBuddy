@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
 /// mode and activation interval.
 ///
 /// @param <V> the input value type
-abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
+public abstract class ToKeyAction<V extends Constable> extends ActivationIntervalAction<V>
 		implements IDelayableAction<V>, IResetableAction<V> {
 
 	/// Current activatable state tracking whether the action may fire.
