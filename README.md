@@ -62,7 +62,7 @@ Mappings are organized into **Modes** - distinct functional layers activated or 
 * **Mode Switching:** Swap entire mapping layouts dynamically on the fly using toggle or momentary buttons to multiply the total number of available functions on your controller.
 * **Virtual Joystick Control:** Map inputs to virtual buttons and axes, including the ability to reset axes to specific preconfigured positions.
 * **Relative Axis Mapping:** Solves the challenge of mapping persistent controls to self-centering sticks.
-A relative axis maintains its value even after the physical stick is released - ideal for stable control over **throttle** or **camera angles**.
+  A relative axis maintains its value even after the physical stick is released - ideal for stable control over **throttle** or **camera angles**.
 * **Keyboard & Mouse Emulation:** Full support for keystrokes (including modifiers), mouse buttons, cursor movement, and scrolling.
 * **Action Cycles:** Sequence multiple sub-actions that trigger one after another with each press.
 * **On-Screen Keyboard:** A gamepad-driven virtual keyboard that allows for the input of keystrokes and combinations without a requiring a physical keyboard.
