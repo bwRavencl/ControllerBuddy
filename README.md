@@ -14,7 +14,8 @@ ControllerBuddy is an advanced gamepad mapping software that supports the creati
 
 In addition to the simple mapping of buttons and axes of a physical game controller to keyboard and mouse input, ControllerBuddy also supports feeding input commands to a virtual joystick device (vJoy/uinput).
 
-ControllerBuddy eliminates the need for an expensive HOTAS setup to enjoy your favorite simulators. It gives you full control using just a gamepad - without even needing a keyboard or mouse.
+ControllerBuddy eliminates the need for an expensive HOTAS setup to enjoy your favorite simulators.
+It gives you full control using just a gamepad - without even needing a keyboard or mouse.
 
 ## ⬇️ Download and Installation
 
@@ -60,7 +61,8 @@ Mappings are organized into **Modes** - distinct functional layers activated or 
 
 * **Mode Switching:** Swap entire mapping layouts dynamically on the fly using toggle or momentary buttons to multiply the total number of available functions on your controller.
 * **Virtual Joystick Control:** Map inputs to virtual buttons and axes, including the ability to reset axes to specific preconfigured positions.
-* **Relative Axis Mapping:** Solves the challenge of mapping persistent controls to self-centering sticks. A relative axis maintains its value even after the physical stick is released - ideal for stable control over **throttle** or **camera angles**.
+* **Relative Axis Mapping:** Solves the challenge of mapping persistent controls to self-centering sticks.
+A relative axis maintains its value even after the physical stick is released - ideal for stable control over **throttle** or **camera angles**.
 * **Keyboard & Mouse Emulation:** Full support for keystrokes (including modifiers), mouse buttons, cursor movement, and scrolling.
 * **Action Cycles:** Sequence multiple sub-actions that trigger one after another with each press.
 * **On-Screen Keyboard:** A gamepad-driven virtual keyboard that allows for the input of keystrokes and combinations without a requiring a physical keyboard.
@@ -98,7 +100,8 @@ ControllerBuddy can be used as a standalone local tool or distributed over a net
 **Profiles** are JSON-based configuration files that tailor ControllerBuddy to specific games.
 Once loaded, they can be edited and saved through the built-in interface.
 
-To manage complex setups, Profiles organize your input mappings into **Modes**. Think of Modes as different **layers or "shift-states"** for your controller.
+To manage complex setups, Profiles organize your input mappings into **Modes**.
+Think of Modes as different **layers or "shift-states"** for your controller.
 
 Within each Mode, you can map an axis or button to one or more **Actions**.  
 By assigning different Actions to the same control across multiple Modes, you enable ControllerBuddy to instantly remap your controller as you switch between layers.
