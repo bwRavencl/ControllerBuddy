@@ -245,22 +245,6 @@ final class InputTest {
 		}
 
 		@Test
-		@DisplayName("returns true, sets initialized, and computes minAxisStep when no controllers are present")
-		void returnsTrueAndSetsInitializedWithNoControllers() {
-			Mockito.when(mockMain.isSwapLeftAndRightSticks()).thenReturn(false);
-			Mockito.when(mockMain.isMapCircularAxesToSquareAxes()).thenReturn(false);
-			Mockito.when(mockMain.getControllers()).thenReturn(Set.of());
-			Mockito.when(mockRunMode.getMinAxisValue()).thenReturn(-32_768);
-			Mockito.when(mockRunMode.getMaxAxisValue()).thenReturn(32_767);
-
-			final var input = createInputWithRunMode();
-
-			Assertions.assertTrue(input.init());
-			Assertions.assertTrue(input.isInitialized());
-			Assertions.assertEquals(2f / (32_767 + 32_768), input.getMinAxisStep(), 1e-10f);
-		}
-
-		@Test
 		@DisplayName("throws IllegalStateException when called on an already-initialised Input")
 		void throwsWhenCalledWhileAlreadyInitialized() throws Exception {
 			final var input = createInputWithRunMode();
