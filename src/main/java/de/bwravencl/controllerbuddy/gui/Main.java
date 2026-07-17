@@ -1274,7 +1274,7 @@ public final class Main extends JFrame {
 		maxPollingRatePanel.add(maxPollingRateLabel);
 
 		maxPollingRateSpinnerNumberModel = new ClampingSpinnerNumberModel(getMaxPollingRate(), getMinPollingRate(),
-				1000, 100, event -> {
+				10_000, 100, event -> {
 					preferences.putInt(PREFERENCES_MAX_POLLING_RATE,
 							((SpinnerNumberModel) event.getSource()).getNumber().intValue());
 					updatePollingRateBounds();
