@@ -73,7 +73,6 @@ val tmpDir: Provider<Directory> = layout.buildDirectory.dir("tmp")
 val mainModule: String = project.application.mainModule.get()
 val commonJvmArgs =
     listOf(
-        "-XX:+UseSerialGC",
         "-XX:+UseCompactObjectHeaders",
         "-XX:TieredStopAtLevel=1",
         "-XX:ReservedCodeCacheSize=32m",
