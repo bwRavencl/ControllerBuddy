@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 public abstract class RunMode implements Runnable {
 
 	/// The default maximum polling rate in hertz.
-	public static final int DEFAULT_MAX_POLLING_RATE_HZ = 500;
+	public static final int DEFAULT_MAX_POLLING_RATE_HZ = 1000;
 
 	/// The default minimum polling rate in hertz.
 	public static final int DEFAULT_MIN_POLLING_RATE_HZ = 125;
