@@ -18,7 +18,7 @@
 package de.bwravencl.controllerbuddy.input.action.gui;
 
 import de.bwravencl.controllerbuddy.gui.EditActionsDialog;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
+import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.IAction;
 
 /// Editor builder for virtual axis properties, presenting a combo box of

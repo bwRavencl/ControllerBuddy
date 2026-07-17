@@ -19,7 +19,6 @@ package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.Controller;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.runmode.RunMode;
 import java.util.ArrayList;
 import java.util.EnumMap;

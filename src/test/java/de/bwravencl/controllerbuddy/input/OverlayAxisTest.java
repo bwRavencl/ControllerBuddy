@@ -17,7 +17,6 @@
 
 package de.bwravencl.controllerbuddy.input;
 
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
 import java.awt.Color;
 import javax.swing.SwingConstants;

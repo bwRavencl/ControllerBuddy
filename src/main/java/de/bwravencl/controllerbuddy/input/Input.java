@@ -20,8 +20,6 @@ package de.bwravencl.controllerbuddy.input;
 import de.bwravencl.controllerbuddy.gui.Main;
 import de.bwravencl.controllerbuddy.gui.Main.Controller;
 import de.bwravencl.controllerbuddy.gui.OnScreenKeyboard;
-import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisOrientation;
-import de.bwravencl.controllerbuddy.input.OverlayAxis.OverlayAxisStyle;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAxisToDelayableAction;
 import de.bwravencl.controllerbuddy.input.action.IButtonToDelayableAction;
@@ -206,7 +204,7 @@ public final class Input {
 			skipAxisInitialization = true;
 		} else {
 			this.axes = new EnumMap<>(VirtualAxis.class);
-			EnumSet.allOf(Input.VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
+			EnumSet.allOf(VirtualAxis.class).forEach(virtualAxis -> this.axes.put(virtualAxis, 0));
 		}
 
 		resetLastHotSwapPollNanoTime();
@@ -1022,64 +1020,6 @@ public final class Input {
 			this.lowFrequencyRumble = lowFrequencyRumble;
 			this.highFrequencyRumble = highFrequencyRumble;
 			this.duration = duration;
-		}
-	}
-
-	/// Represents the virtual axes available for input mapping.
-	///
-	/// Each constant corresponds to one axis channel on the virtual device and
-	/// carries default overlay orientation and rendering style metadata used
-	/// when displaying the axis value in the on-screen overlay.
-	public enum VirtualAxis {
-
-		/// X axis (left stick horizontal).
-		X(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
-		/// Y axis (left stick vertical).
-		Y(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
-		/// Z axis (additional axis).
-		Z(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
-		/// RX axis (right stick horizontal).
-		RX(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
-		/// RY axis (right stick vertical).
-		RY(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
-		/// RZ axis (additional rotational axis).
-		RZ(OverlayAxisOrientation.HORIZONTAL, OverlayAxisStyle.LINE),
-		/// Slider 0 axis.
-		S0(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID),
-		/// Slider 1 axis.
-		S1(OverlayAxisOrientation.VERTICAL, OverlayAxisStyle.SOLID);
-
-		/// The default overlay orientation for this virtual axis.
-		private final OverlayAxisOrientation defaultOverlayAxisOrientation;
-
-		/// The default overlay rendering style for this virtual axis.
-		private final OverlayAxisStyle defaultOverlayAxisStyle;
-
-		/// Constructs a [VirtualAxis] constant with the given default overlay
-		/// orientation and rendering style.
-		///
-		/// @param defaultOverlayAxisOrientation the default overlay orientation for
-		/// this axis
-		/// @param defaultOverlayAxisStyle the default overlay rendering style for this
-		/// axis
-		VirtualAxis(final OverlayAxisOrientation defaultOverlayAxisOrientation,
-				final OverlayAxisStyle defaultOverlayAxisStyle) {
-			this.defaultOverlayAxisOrientation = defaultOverlayAxisOrientation;
-			this.defaultOverlayAxisStyle = defaultOverlayAxisStyle;
-		}
-
-		/// Returns the default overlay orientation for this virtual axis.
-		///
-		/// @return the default overlay axis orientation
-		public OverlayAxisOrientation getDefaultOrientation() {
-			return defaultOverlayAxisOrientation;
-		}
-
-		/// Returns the default overlay rendering style for this virtual axis.
-		///
-		/// @return the default overlay axis style
-		public OverlayAxisStyle getDefaultStyle() {
-			return defaultOverlayAxisStyle;
 		}
 	}
 

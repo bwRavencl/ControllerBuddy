@@ -18,7 +18,6 @@
 package de.bwravencl.controllerbuddy.input;
 
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 

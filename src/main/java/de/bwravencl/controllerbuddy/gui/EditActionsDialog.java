@@ -18,11 +18,11 @@
 package de.bwravencl.controllerbuddy.gui;
 
 import de.bwravencl.controllerbuddy.input.Input;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Mode;
 import de.bwravencl.controllerbuddy.input.Mode.Component;
 import de.bwravencl.controllerbuddy.input.Mode.Component.ComponentType;
 import de.bwravencl.controllerbuddy.input.Profile;
+import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;

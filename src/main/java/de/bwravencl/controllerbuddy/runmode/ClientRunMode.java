@@ -19,9 +19,9 @@ package de.bwravencl.controllerbuddy.runmode;
 
 import de.bwravencl.controllerbuddy.gui.GuiUtils;
 import de.bwravencl.controllerbuddy.gui.Main;
-import de.bwravencl.controllerbuddy.input.Input.VirtualAxis;
 import de.bwravencl.controllerbuddy.input.Keystroke;
 import de.bwravencl.controllerbuddy.input.LockKey;
+import de.bwravencl.controllerbuddy.input.VirtualAxis;
 import de.bwravencl.controllerbuddy.runmode.ServerRunMode.MessageType;
 import java.awt.EventQueue;
 import java.io.ByteArrayInputStream;
