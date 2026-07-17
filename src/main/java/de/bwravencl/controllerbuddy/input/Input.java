@@ -73,6 +73,9 @@ public final class Input {
 	/// Interval in nanoseconds between hot-swap button polls.
 	private static final long HOT_SWAP_POLL_INTERVAL_NS = 50_000_000L;
 
+	/// Baseline value used to scale the minimum axis step size.
+	private static final float MIN_AXIS_STEP_BASE_VALUE = 2f;
+
 	/// Duration in nanoseconds for which axis suspension is held.
 	private static final long SUSPENSION_TIME_NS = 500_000_000L;
 
@@ -451,7 +454,7 @@ public final class Input {
 			}
 		}
 
-		minAxisStep = 2f / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
+		minAxisStep = MIN_AXIS_STEP_BASE_VALUE / (runMode.getMaxAxisValue() - runMode.getMinAxisValue());
 
 		profile.getModes().forEach(mode -> mode.getAllActions().forEach(action -> {
 			if (action instanceof final IInitializationAction<?> initializationAction) {
